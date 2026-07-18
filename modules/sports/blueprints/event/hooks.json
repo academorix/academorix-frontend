@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/event/hooks",
+  "$version": 1,
+  "title": "event — tenancy hooks",
+  "description": "This module is tenant-aware and participates in tenancy + facility lifecycle. Two hooks: prevent orphans on tenant erasure, and cascade event_facilities cleanup on facility retirement.",
+  "reference": {
+    "contract": "academorix://modules/tenancy/hooks",
+    "hierarchy_note": "See hierarchy.md §12 for tenancy-lifecycle vs domain-event separation."
+  },
+  "hooks": [
+    {
+      "class": "Academorix\\Sports\\Event\\Hooks\\PreventEventOrphansOnTenantErased",
+      "event": "tenancy::TenantErased",
+      "lifecycle_phase": "before_cascade",
+      "queue": null,
+      "purpose": "Runs BEFORE tenancy's FK cascade drops the tenant. Iterates every Event on the tenant + verifies no active inbound reference remains (Session.event_id, EventTeam.event_id, athlete_enrollment references — Wave 3+). When any inbound reference exists, logs a diagnostic in the tenancy erasure report. Does NOT rehome Events to another tenant. The actual DELETE fires afterward via the tenant_id FK CASCADE + event_facilities cascades via CASCADE FK."
+    },
+    {
+      "class": "Academorix\\Sports\\Event\\Hooks\\CascadeEventFacilitiesOnFacilityRetired",
+      "event": "facility::FacilityRetired",
+      "lifecycle_phase": "after_commit",
+      "queue": "sports",
+      "purpose": "Fires when a Facility is retired (facility module Wave 2). Cascades: finds active event_facilities rows referencing the retired facility. For each: fire EventFacilityRemoved + soft-delete the pivot row + emit a warning to the event's admin via the event.venue_changed notification (cannot-opt-out) so the tenant reroutes the event to another facility. Does NOT auto-cancel the event — the tenant decides whether to reschedule, relocate, or cancel."
+    }
+  ],
+  "notes": [
+    "`hooks.json` and `listeners.json` are BOTH legitimate. Hooks are tenancy-lifecycle-specific + participate in the tenancy transaction; listeners are general domain-event subscribers.",
+    "See .kiro/steering/hierarchy.md §12 for the split between bootstrappers (per-request tenant switch) and hooks (lifecycle events)."
+  ]
+}

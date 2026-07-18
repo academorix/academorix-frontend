@@ -1,0 +1,111 @@
+{
+  "$version": 1,
+  "title": "Athlete consent — sample scenarios",
+  "description": "Reference examples of consent snapshots + recording flows for the tenant admin UI's onboarding tour + the /athletes/{athlete}/consents playground. Every sample is anonymised — no real user IDs. Real-world consent recording flows use the athlete's live guardian roster.",
+  "samples": [
+    {
+      "name": "Minor — full consent",
+      "description": "The typical case for a 12-year-old whose parent has recorded every consent at signup.",
+      "athlete_profile": { "age_years": 12, "is_minor": true },
+      "consent_snapshot": {
+        "consent_photo_release": true,
+        "consent_medical_disclosure": true,
+        "consent_third_party": true,
+        "consent_recorded_at": "2026-06-01T10:00:00Z",
+        "consent_recorded_by_user_id": "usr_01H8SAMPLEGUARDIAN01234567890",
+        "recorded_by_relationship": "mother"
+      }
+    },
+    {
+      "name": "Minor — photo declined",
+      "description": "Parent opts the child out of marketing photos but agrees to medical disclosure to coaches (safety) + third-party sharing (insurance).",
+      "athlete_profile": { "age_years": 14, "is_minor": true },
+      "consent_snapshot": {
+        "consent_photo_release": false,
+        "consent_medical_disclosure": true,
+        "consent_third_party": true,
+        "consent_recorded_at": "2026-06-01T10:00:00Z",
+        "consent_recorded_by_user_id": "usr_01H8SAMPLEGUARDIAN01234567890",
+        "recorded_by_relationship": "father"
+      }
+    },
+    {
+      "name": "Minor — medical declined (bare minimum)",
+      "description": "Highly privacy-conscious parent — only third-party sharing agreed to (mandatory for insurance-covered activity).",
+      "athlete_profile": { "age_years": 8, "is_minor": true },
+      "consent_snapshot": {
+        "consent_photo_release": false,
+        "consent_medical_disclosure": false,
+        "consent_third_party": true,
+        "consent_recorded_at": "2026-06-01T10:00:00Z",
+        "consent_recorded_by_user_id": "usr_01H8SAMPLEGUARDIAN01234567890"
+      },
+      "notes": "In this scenario, coaches DO NOT see medical fields even if they're recorded — the MedicalDisclosureGate returns false. HR staff still see them."
+    },
+    {
+      "name": "Adult — self-recorded",
+      "description": "An 22-year-old adult athlete recording their own consents at signup.",
+      "athlete_profile": { "age_years": 22, "is_minor": false },
+      "consent_snapshot": {
+        "consent_photo_release": true,
+        "consent_medical_disclosure": true,
+        "consent_third_party": false,
+        "consent_recorded_at": "2026-06-01T10:00:00Z",
+        "consent_recorded_by_user_id": "usr_01H8SAMPLEATHLETESELF01234567",
+        "recorded_by_relationship": "self"
+      }
+    },
+    {
+      "name": "Adult — turned 18 mid-year (re-consent flow)",
+      "description": "Athlete just crossed the legal_adult_age boundary. Prior guardian-recorded consents expired; the athlete must re-record their own.",
+      "athlete_profile": { "age_years": 18, "is_minor": false },
+      "consent_snapshot": {
+        "consent_photo_release": true,
+        "consent_medical_disclosure": true,
+        "consent_third_party": true,
+        "consent_recorded_at": "2026-07-15T10:00:00Z",
+        "consent_recorded_by_user_id": "usr_01H8SAMPLEATHLETESELF01234567",
+        "recorded_by_relationship": "self",
+        "prior_consent_recorded_by_user_id": "usr_01H8SAMPLEGUARDIAN01234567890",
+        "prior_consent_expired_at": "2026-07-15T00:00:00Z"
+      },
+      "notes": "AthleteMinorTurnedAdult fires on the 18th birthday; the SDUI surfaces a re-consent banner + walks the newly-adult athlete through recording their own snapshot."
+    },
+    {
+      "name": "Expired snapshot (workflow entitlement on)",
+      "description": "Consents recorded 380 days ago — past the 365-day re-consent cadence. Tenant carries athlete_consent_workflow entitlement. Athlete is flagged as expired; downstream photo-consent-required flows refuse until re-consent.",
+      "athlete_profile": { "age_years": 10, "is_minor": true },
+      "consent_snapshot": {
+        "consent_photo_release": true,
+        "consent_medical_disclosure": true,
+        "consent_third_party": true,
+        "consent_recorded_at": "2025-06-25T10:00:00Z",
+        "consent_recorded_by_user_id": "usr_01H8SAMPLEGUARDIAN01234567890",
+        "expires_at": "2026-06-25T10:00:00Z",
+        "metadata": {
+          "consent_expired_at": "2026-07-15T04:00:00Z"
+        }
+      }
+    },
+    {
+      "name": "Revoked photo consent",
+      "description": "Parent revoked photo release after the child's photo appeared in a public gallery they didn't remember approving. Fires AthleteConsentRevoked; marketing team notified to remove existing images.",
+      "athlete_profile": { "age_years": 15, "is_minor": true },
+      "consent_snapshot": {
+        "consent_photo_release": false,
+        "consent_medical_disclosure": true,
+        "consent_third_party": true,
+        "consent_recorded_at": "2026-07-10T14:00:00Z",
+        "consent_recorded_by_user_id": "usr_01H8SAMPLEGUARDIAN01234567890",
+        "revocation_history": [
+          {
+            "revoked_consent": "photo_release",
+            "revoked_at": "2026-07-10T14:00:00Z",
+            "revoked_by_user_id": "usr_01H8SAMPLEGUARDIAN01234567890",
+            "reason": "Photo appeared in marketing without explicit approval"
+          }
+        ]
+      }
+    }
+  ]
+}

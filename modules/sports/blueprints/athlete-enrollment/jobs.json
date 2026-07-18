@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/athlete-enrollment/jobs",
+  "$version": 1,
+  "title": "athlete-enrollment — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\ActivateConfirmedEnrollmentsJob",
+      "queue": "athlete-enrollment",
+      "purpose": "Every 15 minutes: sweep confirmed enrollments whose team's season has reached in_progress state + trigger status → active via EnrollmentAtomicityCoordinator. Handles the transition when a season starts + all confirmed enrollments need to be activated in one bulk pass.",
+      "steps": [
+        "SELECT id FROM athlete_enrollments WHERE status='confirmed' AND deleted_at IS NULL",
+        "  JOIN seasons ON seasons.id=athlete_enrollments.season_id",
+        "  WHERE seasons.status='in_progress' AND seasons.starts_at <= now()",
+        "For each in batches of 100: invoke EnrollmentAtomicityCoordinator::activate(enrollment); on failure fires EnrollmentAtomicityFailed + records retry_count metadata"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 900,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\ExpireExpiredProvisionalEnrollmentsJob",
+      "queue": "athlete-enrollment",
+      "purpose": "Daily: sweep provisional enrollments past config.athlete_enrollment.provisional_ttl_days (default 14) without guardian consent + transition to expired.",
+      "steps": [
+        "SELECT id FROM athlete_enrollments WHERE enrollment_type='provisional' AND status IN ('submitted', 'payment_pending', 'consent_pending') AND created_at < today() - config('athlete_enrollment.provisional_ttl_days', 14) days AND deleted_at IS NULL",
+        "For each: transition to expired; fire EnrollmentExpired; release slot"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\PromoteWaitlistedEnrollmentsJob",
+      "queue": "athlete-enrollment",
+      "purpose": "Every 15 minutes: for each team, if capacity has opened (active enrollments < team.capacity), promote the earliest-waitlisted enrollment. Fires EnrollmentPromotedFromWaitlist. Recomputes waitlist_position for the remaining waitlisted rows on the team.",
+      "steps": [
+        "SELECT team_id FROM athlete_enrollments WHERE status='waitlisted' AND deleted_at IS NULL GROUP BY team_id",
+        "For each team: compute current_active_count = SELECT COUNT(*) WHERE team_id=? AND status IN ('confirmed', 'active') AND deleted_at IS NULL; if current_active_count < team.capacity:",
+        "  SELECT id FROM athlete_enrollments WHERE team_id=? AND status='waitlisted' AND deleted_at IS NULL ORDER BY waitlist_position ASC LIMIT (team.capacity - current_active_count)",
+        "  For each: transition to 'submitted' with waitlist_position=null + fire EnrollmentPromotedFromWaitlist",
+        "  Recompute waitlist_position for remaining waitlisted rows"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 900,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\ReconcileEnrollmentTeamMemberInvariantJob",
+      "queue": "athlete-enrollment",
+      "purpose": "Nightly: verify the atomic conversion invariant. Every enrollment with status='active' MUST have a live TeamMember; every TeamMember MUST have a matching active enrollment. Every finding is a P1 signal.",
+      "steps": [
+        "Enrollment-side check: SELECT id FROM athlete_enrollments WHERE status='active' AND (team_member_id IS NULL OR NOT EXISTS(SELECT 1 FROM team_members WHERE id=athlete_enrollments.team_member_id AND deleted_at IS NULL))",
+        "  For each: fire diagnostic event EnrollmentInvariantBroken + emit metric academorix.athlete_enrollment.invariant.broken",
+        "TeamMember-side check: SELECT id FROM team_members WHERE member_type='athlete' AND status='active' AND deleted_at IS NULL AND NOT EXISTS(SELECT 1 FROM athlete_enrollments WHERE team_member_id=team_members.id AND status='active' AND deleted_at IS NULL)",
+        "  For each: fire diagnostic event OrphanTeamMemberDetected — a TeamMember without a corresponding enrollment (likely from manual roster edits bypassing the enrollment flow — a compliance smell)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\PurgeCompletedEnrollmentsJob",
+      "queue": "athlete-enrollment",
+      "purpose": "Yearly: hard-purge completed / withdrawn / expelled / expired enrollments past 7 years retention.",
+      "steps": [
+        "SELECT id FROM athlete_enrollments WHERE status IN ('completed', 'withdrawn', 'expelled', 'expired') AND (completed_at OR withdrawn_at OR expired_at) < now() - interval '7 years' LIMIT 500",
+        "For each: attempt hard delete; catch FK constraints + record 'retention_blocked'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Jobs\\NotifyEnrollmentDeadlineJob",
+      "queue": "athlete-enrollment",
+      "purpose": "Daily: sweep pending enrollments (status='submitted' or 'payment_pending' or 'consent_pending') within N days of the season's registration_closes_at. Dispatches EnrollmentDeadlineApproachingNotification at 14/7/1-day thresholds.",
+      "steps": [
+        "SELECT e.id, s.registration_closes_at, s.name FROM athlete_enrollments e JOIN seasons s ON s.id=e.season_id WHERE e.status IN ('submitted', 'payment_pending', 'consent_pending') AND s.registration_closes_at BETWEEN now() AND now() + 14 days AND e.deleted_at IS NULL",
+        "For each: compute days_remaining; dispatch reminder at [14, 7, 1]-day thresholds (dedup per enrollment_id + threshold)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    }
+  ]
+}

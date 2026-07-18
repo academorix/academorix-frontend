@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/sports-registry/settings",
+  "$version": 1,
+  "title": "sports-registry — settings",
+  "description": "Tenant-scoped policy for the sports registry catalog. Small + Medium tiers see a mostly read-only settings pane (indicating the tenant is locked to the platform catalog); Enterprise tenants see the full custom-creation surface.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "sports_registry",
+      "class": "Academorix\\Sports\\Registry\\Settings\\SportsRegistrySettings",
+      "label": "Sports catalog",
+      "description": "Configure the tenant's sports taxonomy — platform-seeded rows + tenant custom entries (Enterprise-only).",
+      "icon": "trophy",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 60,
+      "permission": "sports.manage",
+      "sections": [
+        {
+          "label": "Catalog scope",
+          "description": "How the tenant reads the sports catalog.",
+          "icon": "book-open",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "include_beta_sports",
+              "controlType": "toggle",
+              "label": "Include beta sports in the picker",
+              "defaultValue": false,
+              "helpText": "When off, sports flagged as beta (early-stage taxonomy) are hidden from the tenant picker. When on, tenants see them + can enroll athletes against beta slugs.",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_discipline_selection",
+              "controlType": "select",
+              "label": "Default discipline picker behaviour",
+              "defaultValue": "prompt",
+              "options": {
+                "prompt": "Prompt the user to pick a discipline explicitly",
+                "auto_first": "Auto-select the first discipline (sort_order 0) when the sport has only one",
+                "auto_default": "Auto-select the discipline flagged as tenant default (if configured)"
+              },
+              "helpText": "Applies across every Wave 3 module's discipline picker (Team edit, Enrollment, Event).",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Custom entries",
+          "description": "Manage tenant custom Sport / Discipline / Position rows.",
+          "icon": "sparkles",
+          "sortOrder": 2,
+          "requiresEntitlement": "sports_registry_custom",
+          "fields": [
+            {
+              "name": "allow_admins_to_create_customs",
+              "controlType": "toggle",
+              "label": "Allow admins to create custom sports",
+              "defaultValue": true,
+              "helpText": "When off, only tenant owners can create customs (a common shape for tenants that want tight taxonomy control). When on, admins can too.",
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_on_custom_created",
+              "controlType": "toggle",
+              "label": "Notify tenant admins on custom creation",
+              "defaultValue": true,
+              "helpText": "Sends TenantCustomSportCreatedNotification to admins + owners.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Reconciliation + drift",
+          "description": "How the system detects + surfaces dangling sport_key references.",
+          "icon": "arrow-path",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "alert_on_drift",
+              "controlType": "toggle",
+              "label": "Alert on reference drift",
+              "defaultValue": true,
+              "helpText": "When on, ReconcileSportReferencesJob dispatches SportPrefixResolutionFailedNotification per detected drift row. Off = drift is only logged.",
+              "sortOrder": 1
+            },
+            {
+              "name": "drift_alarm_threshold",
+              "controlType": "number",
+              "label": "Drift-alarm threshold (rows)",
+              "defaultValue": 10,
+              "min": 0,
+              "max": 100000,
+              "helpText": "When 24-hour drift-count exceeds this threshold, health probe `sports-registry-drift-count-bounded` flips to warn. 0 = never alarm; useful during migrations.",
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

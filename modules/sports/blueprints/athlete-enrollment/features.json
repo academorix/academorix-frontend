@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/athlete-enrollment/features",
+  "$version": 1,
+  "title": "athlete-enrollment — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    { "key": "athlete_enrollment.core", "displayName": "Enrollments", "description": "Enrollment catalogue + lifecycle. On every tier.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
+    { "key": "athlete_enrollment.waitlist", "displayName": "Waitlist workflow", "description": "Medium+. Enables waitlist state + automatic promotion.", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
+    { "key": "athlete_enrollment.provisional", "displayName": "Provisional enrollments", "description": "Enterprise-only. Enables provisional state for pending-consent past deadlines.", "defaultEnabled": false, "planTiers": ["enterprise"] },
+    { "key": "athlete_enrollment.trial_conversion", "displayName": "Trial conversion", "description": "Enables enrollment_type='trial_converted' + the source_trial_id path. Requires teams module's TeamTrial workflow to be provisioned.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
+    { "key": "athlete_enrollment.jersey_assignment", "displayName": "Jersey number assignment", "description": "Enables jersey_number_assigned + partial unique index enforcement.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
+    { "key": "athlete_enrollment.late_registration", "displayName": "Late registration", "description": "Enables enrollment_type='late' + late-fee handling. Requires Wave 4 Finance for the fee.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] }
+  ]
+}

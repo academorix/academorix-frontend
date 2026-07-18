@@ -1,0 +1,107 @@
+{
+  "id": "sports-registry.position-picker",
+  "title": "Position picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Single-select for Positions. Filters by parent discipline_key. Renders as HeroUI `ComboBox`. Consumed by AthleteEnrollment + Team roster flows.",
+  "notes": [
+    "Parent discipline_key filter is REQUIRED.",
+    "The Medium tier hides the position picker on downstream enrollment forms (per `sports_registry.position_picker` feature flag). Enterprise tenants + Enterprise entitlement holders see it."
+  ],
+  "props": {
+    "name": { "type": "string", "required": true },
+    "label": { "type": "string", "default": "Position" },
+    "required": { "type": "boolean", "default": false },
+    "clearable": { "type": "boolean", "default": true },
+    "placeholder": { "type": "string", "default": "Search positions..." },
+    "size": { "type": "string", "default": "md" },
+    "defaultValue": { "type": "string", "default": null },
+    "disciplineKey": { "type": "string", "required": true, "description": "Parent discipline slug — filter to Positions belonging to this Discipline." },
+    "fieldPositionsOnly": { "type": "boolean", "default": false, "description": "When true, filters to `filter[is_field_position]=true` — hides bench roles like assistant_coach." },
+    "filter": { "type": "string", "default": "active", "enum": ["active", "all"] }
+  },
+  "dataSources": [
+    {
+      "name": "positions",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/positions?filter[discipline_key]=' + props.disciplineKey + (props.filter === 'all' ? '' : '&filter[is_active]=true') + (props.fieldPositionsOnly ? '&filter[is_field_position]=true' : '') + '&sort=sort_order,name'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 1800 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": { "menuTrigger": "focus" },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" },
+          "isDisabled": { "$expr": "!props.disciplineKey" }
+        }
+      },
+      "children": [
+        { "kind": "Label", "bindings": { "children": { "$ref": "props.label" } } },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        { "kind": "Description", "props": { "children": "Pick a discipline first" }, "bindings": { "hidden": { "$expr": "!!props.disciplineKey" } } },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-80" },
+              "bindings": { "items": { "$ref": "positions" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.slug, id: item.slug, textValue: item.name + ' ' + item.slug }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1 flex-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col flex-1" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.name" } } },
+                              { "kind": "Chip", "props": { "size": "xs", "variant": "danger", "children": "OFF" }, "bindings": { "hidden": { "$expr": "!item.is_offensive" } } },
+                              { "kind": "Chip", "props": { "size": "xs", "variant": "info", "children": "DEF" }, "bindings": { "hidden": { "$expr": "!item.is_defensive" } } }
+                            ]
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted font-mono" },
+                            "bindings": {
+                              "children": { "$expr": "item.slug + (item.typical_jersey_range_min ? ' · #' + item.typical_jersey_range_min + '-' + item.typical_jersey_range_max : '')" }
+                            }
+                          }
+                        ]
+                      },
+                      { "kind": "ListBox.ItemIndicator" }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

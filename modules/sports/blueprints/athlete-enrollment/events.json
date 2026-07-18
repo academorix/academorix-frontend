@@ -1,0 +1,381 @@
+{
+  "id": "academorix://modules/athlete-enrollment/events",
+  "$version": 1,
+  "title": "athlete-enrollment — published events",
+  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit`. Lifecycle events (submit / confirm / activate / complete / withdraw / expel) fan out to notifications + activity + audit. EnrollmentAtomicityFailed is a P1 event fired when the atomic conversion to TeamMember fails — every occurrence requires investigation.",
+  "events": [
+    {
+      "name": "EnrollmentSubmitted",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentSubmitted",
+      "trigger": "AthleteEnrollmentProvisioner committed. Consumes 1 unit of athlete_enrollment_slot on the tenant's active per-season entitlement.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentSubmittedNotification (to primary guardian + admin + coach)",
+        "athlete-enrollment::SnapshotAgeGroupOnEnrollmentSubmitted (in-band snapshot from athlete.current_age_group_id)",
+        "cache::InvalidateTeamRosterCache"
+      ],
+      "payload": {
+        "enrollment_id": "ULID (aen_*)",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "team_id": "ULID",
+        "athlete_id": "ULID",
+        "season_id": "ULID",
+        "age_group_snapshot_id": "ULID (age_*) | null",
+        "enrollment_source": "string",
+        "enrollment_type": "string",
+        "source_trial_id": "ULID (ttr_*) | null",
+        "price_amount_cents": "integer",
+        "price_currency": "string | null",
+        "created_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "EnrollmentAgeGroupSnapshotSet",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentAgeGroupSnapshotSet",
+      "trigger": "SnapshotAgeGroupOnEnrollmentSubmitted hook set the initial age_group_snapshot_id. Fires immediately after EnrollmentSubmitted.",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "age_group_snapshot_id": "ULID (age_*) | null",
+        "athlete_dob": "YYYY-MM-DD",
+        "resolved_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "EnrollmentAgeGroupSnapshotMismatched",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentAgeGroupSnapshotMismatched",
+      "trigger": "The age_group_snapshot_matches_team_age_group rule fires as a SOFT-WARN — the snapshot doesn't match the team's declared age_group_id. Non-fatal, but flagged for admin review. Common cases: an under-age athlete playing up (allowed with note), an over-age athlete playing down (typically disallowed).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchAgeGroupMismatchNotification (to admin + coach only — informational)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_age_group_id": "ULID",
+        "team_age_group_id": "ULID",
+        "athlete_age_years": "integer",
+        "mismatch_kind": "'playing_up' | 'playing_down' | 'no_team_age_group' | 'no_athlete_snapshot'"
+      }
+    },
+    {
+      "name": "EnrollmentConfirmed",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentConfirmed",
+      "trigger": "Status transitioned {submitted, payment_pending, consent_pending} → confirmed. All preconditions (payment + consent) met. Consent snapshot captured at this transition.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentConfirmedNotification (to primary guardian + admin + coach)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID",
+        "athlete_id": "ULID",
+        "confirmed_at": "ISO 8601",
+        "confirmed_by_user_id": "ULID",
+        "consent_snapshot": "object (from athlete's consent state at this moment)"
+      }
+    },
+    {
+      "name": "EnrollmentActivated",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentActivated",
+      "trigger": "Status transitioned confirmed → active. Season started + athlete is on the live roster. Fires alongside EnrollmentTeamMemberCreated in the same transaction.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentActivatedNotification (to primary guardian + admin + coach + team members)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID",
+        "athlete_id": "ULID",
+        "team_member_id": "ULID (trm_*) — created atomically in the same transaction",
+        "activated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "EnrollmentTeamMemberCreated",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentTeamMemberCreated",
+      "trigger": "In the same transaction as EnrollmentActivated, the ConvertEnrollmentToTeamMemberAtomically hook created a teams::TeamMember row. Fires alongside teams::TeamMemberJoined so downstream consumers see both.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "cache::InvalidateTeamRosterCache",
+        "cache::InvalidateTeamMemberCache"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID",
+        "team_member_id": "ULID",
+        "athlete_id": "ULID",
+        "member_type": "'athlete'"
+      }
+    },
+    {
+      "name": "EnrollmentAtomicityFailed",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentAtomicityFailed",
+      "trigger": "P1 event. The ConvertEnrollmentToTeamMemberAtomically hook rolled back the DB transaction — either the enrollment update OR the TeamMember create failed. The enrollment stays in confirmed state; ActivateConfirmedEnrollmentsJob will retry on the next cycle. Every fire is a compliance-critical signal.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "notifications::DispatchAtomicityFailureNotification (to admin + safeguarding_officer — cannot-opt-out)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "attempted_at": "ISO 8601",
+        "failure_reason": "string (exception class + message)"
+      }
+    },
+    {
+      "name": "EnrollmentCompleted",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentCompleted",
+      "trigger": "Status transitioned active → completed. Terminal happy path. Season ended — athlete completed the enrollment. Also fires via season::SeasonCompleted cascade.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentCompletedNotification (to primary guardian + admin + coach)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID",
+        "athlete_id": "ULID",
+        "season_id": "ULID",
+        "completed_at": "ISO 8601",
+        "days_active": "integer"
+      }
+    },
+    {
+      "name": "EnrollmentWithdrawn",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentWithdrawn",
+      "trigger": "Status transitioned active/confirmed → withdrawn. Terminal (parent-initiated exit). Cascades: soft-deletes the linked TeamMember.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentWithdrawnNotification (to primary guardian + admin + coach)",
+        "teams::SoftDeleteTeamMemberOnEnrollmentWithdrawn (Wave 3+; cascade cleanup)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID",
+        "athlete_id": "ULID",
+        "withdrawal_reason": "string",
+        "withdrawn_at": "ISO 8601",
+        "withdrawn_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "EnrollmentExpelled",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentExpelled",
+      "trigger": "Status transitioned active → expelled. Terminal (disciplinary termination). Audit-critical.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentExpelledNotification (to primary guardian + admin + safeguarding_officer — cannot-opt-out)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID",
+        "athlete_id": "ULID",
+        "expulsion_reason": "string",
+        "expelled_at": "ISO 8601",
+        "expelled_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "EnrollmentExpired",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentExpired",
+      "trigger": "ExpireExpiredProvisionalEnrollmentsJob detected an enrollment past registration_closes_at + expiry_ttl_days without reaching confirmed. Fires per expired enrollment. Releases 1 unit of athlete_enrollment_slot.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentExpiredNotification (to primary guardian + admin)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "expired_at": "ISO 8601",
+        "prior_status": "string",
+        "days_since_submission": "integer"
+      }
+    },
+    {
+      "name": "EnrollmentWaitlisted",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentWaitlisted",
+      "trigger": "Status transitioned submitted → waitlisted. Team at capacity at submit time; waitlist workflow enabled. Fires with waitlist_position (queue rank).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentWaitlistedNotification (to primary guardian + admin)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID",
+        "athlete_id": "ULID",
+        "waitlist_position": "integer",
+        "waitlisted_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "EnrollmentPromotedFromWaitlist",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentPromotedFromWaitlist",
+      "trigger": "PromoteWaitlistedEnrollmentsJob picked the earliest-waitlisted enrollment when team capacity opened. Status transitions waitlisted → submitted (or directly to confirmed if all other preconditions already met).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEnrollmentPromotedFromWaitlistNotification (cannot-opt-out — the guardian wants to know)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID",
+        "was_waitlist_position": "integer",
+        "days_on_waitlist": "integer",
+        "new_status": "string"
+      }
+    },
+    {
+      "name": "EnrollmentCapacityExceeded",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentCapacityExceeded",
+      "trigger": "Recoverable event. Fires when an enrollment is submitted for a team at capacity + waitlist entitlement is on — the observer moves the enrollment to waitlisted. When waitlist entitlement is off (Small tier), the observer refuses the submit with TEAM_AT_CAPACITY error and this event doesn't fire.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchCapacityExceededNotification (to admin — informational)"
+      ],
+      "payload": {
+        "team_id": "ULID",
+        "tenant_id": "ULID",
+        "capacity": "integer",
+        "current_active_count": "integer",
+        "waitlisted_enrollment_id": "ULID"
+      }
+    },
+    {
+      "name": "EnrollmentProvisionalCreated",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentProvisionalCreated",
+      "trigger": "Enterprise-only. Enrollment created with enrollment_type='provisional' — pending guardian consent past the deadline. The enrollment consumes a slot + holds the roster position while consent is chased.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchProvisionalCreatedNotification (to primary guardian + admin — consent chase)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "team_id": "ULID",
+        "provisional_ttl_days": "integer (from config)"
+      }
+    },
+    {
+      "name": "EnrollmentConsentReceived",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentConsentReceived",
+      "trigger": "Consent snapshot updated from a prior state where required consents were missing to a state where they're recorded. Distinct from athlete::AthleteConsentRecorded because the enrollment observes it in its own context.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchConsentReceivedNotification (to admin — enrollment can now transition to confirmed)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "consent_snapshot": "object",
+        "received_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "EnrollmentConsentSnapshotUpdated",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentConsentSnapshotUpdated",
+      "trigger": "consent_snapshot JSONB mutated on an existing enrollment (rare — usually consent_snapshot is captured at confirm-time + never touched again unless the parent athlete's consent state materially changes).",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "EnrollmentPaymentStatusChanged",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentPaymentStatusChanged",
+      "trigger": "payment_status mutated. Wave 4 Finance module fires this — currently a placeholder for the payment_status transitions (none → pending → paid).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPaymentStatusChangedNotification (to primary guardian)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "from_status": "string",
+        "to_status": "string",
+        "price_amount_cents": "integer",
+        "price_currency": "string"
+      }
+    },
+    {
+      "name": "EnrollmentPositionAssigned",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentPositionAssigned",
+      "trigger": "position_assigned mutated (coach assigns a position). Fires once per assignment.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPositionAssignedNotification (to primary guardian + athlete)"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "from_position": "string | null",
+        "to_position": "string",
+        "assigned_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "EnrollmentJerseyAssigned",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Events\\EnrollmentJerseyAssigned",
+      "trigger": "jersey_number_assigned mutated. Enforced unique per team via partial unique index.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchJerseyAssignedNotification"
+      ],
+      "payload": {
+        "enrollment_id": "ULID",
+        "tenant_id": "ULID",
+        "from_jersey": "integer | null",
+        "to_jersey": "integer",
+        "assigned_by_user_id": "ULID"
+      }
+    }
+  ]
+}

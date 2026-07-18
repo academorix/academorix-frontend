@@ -1,0 +1,109 @@
+{
+  "id": "academorix://modules/athlete/relations",
+  "$version": 1,
+  "title": "athlete — model relationships",
+  "description": "One owned entity: Athlete. Belongs to Tenant (CASCADE) + Branch (RESTRICT) + optionally User (RESTRICT, nullable). Cascades organization + region through branch, application through tenant per hierarchy.md §2. No `application_id` on any row — cascades through `tenant_id → tenants.application_id`. No `organization_id` or `region_id` — cascades through `branch_id → branches.organization_id / branches.region_id`. Every outbound FK stays same-tenant per tenancy-columns.md §5. The `current_age_group_id` is a SNAPSHOT — nightly-recomputed pointer to an AgeGroup row. When the source AgeGroup is deleted, the FK is SET NULL and the next snapshot job re-resolves.",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "Athlete",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every Athlete row is tenant-scoped per tenancy-columns.md §3. Cascade delete on TenantErased via `PurgeAthleteDataForErasedTenant` hook — writes compliance audit + migrates athlete_medical_history rows to the compliance-archive table (they outlive the tenant per 7-year regulated-health retention)."
+    },
+    {
+      "from": "Athlete",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "Home branch. RESTRICT: branches cannot be hard-deleted while Athletes reference them. Branch archive is blocked by PreventAthleteOrphansOnBranchArchived hook when active athletes exist. Immutable in Wave 3a — transfer flow lands Wave 3b."
+    },
+    {
+      "from": "Athlete",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "user_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "OPTIONAL. Null when the athlete has no login (minors typically until 13-16). Non-null when the athlete has an account (adults + older minors). RESTRICT: a User row cannot be soft-deleted or archived while an active Athlete row references it. The archive flow must run first — Athlete.status → archived — which fires AthleteArchived → UnblockUserArchiveWhenLastAthleteArchived lifts the block. IMMUTABLE post-first-link — you cannot repoint an athlete at a different User (that would launder audit trail)."
+    },
+    {
+      "from": "Athlete",
+      "kind": "belongsTo",
+      "to": "age-group::AgeGroup",
+      "foreignKey": "current_age_group_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Snapshot — nightly-recomputed pointer to the AgeGroup the athlete currently falls into. SET NULL when the source AgeGroup is soft-deleted OR archived; RollAthleteAgeGroupSnapshotJob's next pass re-resolves against the tenant's current catalog. NOT a hard 'belongs-to' semantically — the athlete belongs to their DOB; the age-group is a computed classifier."
+    },
+    {
+      "from": "Athlete",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "consent_recorded_by_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The User who recorded the current consent snapshot (typically the primary AthleteGuardian for minors; the athlete themselves post-adulthood). SET NULL on User archive so the audit trail (via athlete_medical_history + AthleteConsentRecorded event payload) survives while the live reference is nulled."
+    },
+    {
+      "from": "Athlete",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "withdrawn_by_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The User who filed the withdrawal. SET NULL to preserve the athlete row when the withdrawing user's account is later erased."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules (Wave 3+) attach to Athlete via the traits shipped here:",
+    "examples": [
+      "athlete-guardian::AthleteGuardian (Wave 3a, sibling) — athlete_id references Athlete.id (CASCADE — when an athlete is hard-deleted, guardian rows go too)",
+      "athlete-enrollment::AthleteEnrollment (Wave 3a, sibling) — athlete_id references Athlete.id (RESTRICT — cannot delete an athlete with active/paused enrollments)",
+      "teams::TeamMember (Wave 3+) — polymorphic; when member_type='athlete', member_id references Athlete.id",
+      "event::EventRegistration (Wave 3+) — athlete_id references Athlete.id",
+      "session::SessionAttendance (Wave 4+) — athlete_id references Athlete.id",
+      "attendance::ClockEntry (Wave 4+) — attendee polymorphic",
+      "finance::Membership (Wave 4+) — athlete_id references Athlete.id",
+      "notifications::NotificationPreference (Wave 4+) — polymorphic subject",
+      "safeguarding::MedicalClearance (Wave 4+) — athlete_id references Athlete.id + reads the medical cluster"
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing athletes.id — Athlete archive cascade-checks live in AthleteObserver.saving. The one CASCADE is AthleteGuardian (sibling module) since a guardian row without its athlete is meaningless."
+  },
+  "morphs": [],
+  "accessor_chain": {
+    "description": "The Athlete model exposes accessors that keep the PII cluster behind one boundary. The redactor pipeline (from data-classes.json) applies uniformly.",
+    "Athlete": {
+      "full_name": "first_name + ' ' + last_name",
+      "display_name": "preferred_name ?? first_name",
+      "age_years": "computed floor((today - date_of_birth) / 365)",
+      "is_minor": "age_years < config.athlete.minor_min_age (default 16)",
+      "consent_summary": "{ photo_release, medical_disclosure, third_party, recorded_at, recorded_by_user_id, expires_at (12mo from recorded_at when athlete_consent_workflow entitlement is on) }",
+      "current_age_group": "belongsTo (nightly snapshot; not a live join per every-row query)",
+      "email": "user->identity->email WHEN user_id IS NOT NULL, ELSE null",
+      "phone": "user->profile->phone_e164 WHEN user_id IS NOT NULL, ELSE emergency_contact_phone (with permission check)",
+      "avatar_url": "profile_photo_url ?? user->profile->avatar_url",
+      "locale": "user->profile->locale WHEN user_id IS NOT NULL, ELSE primary_language ?? branch->region->locale",
+      "timezone": "user->profile->timezone WHEN user_id IS NOT NULL, ELSE branch->region->timezone",
+      "medical_conditions": "REDACTED unless caller carries `athlete.view.medical`",
+      "medical_allergies": "REDACTED unless caller carries `athlete.view.medical`",
+      "medical_medications": "REDACTED unless caller carries `athlete.view.medical`",
+      "medical_notes": "REDACTED unless caller carries `athlete.view.medical`",
+      "emergency_contact_name": "REDACTED unless caller carries `athlete.view.emergency_contact`",
+      "emergency_contact_phone": "REDACTED unless caller carries `athlete.view.emergency_contact`",
+      "emergency_contact_relationship": "REDACTED unless caller carries `athlete.view.emergency_contact`"
+    }
+  },
+  "notes": [
+    "Athlete carries `application_id` INDIRECTLY via its Tenant (via tenants.application_id) — never as a direct column. Enforced by tenancy-compliance-auditor per tenancy-columns.md §2 (only the 8 named rows carry application_id directly).",
+    "Athlete cascades organization + region through its Branch. `athlete.organization_id` and `athlete.region_id` DO NOT EXIST — they are forbidden columns per tenancy-columns.md §5.",
+    "Athlete.branch_id is IMMUTABLE post-create in Wave 3a. Wave 3b ships a `athlete_branches` multi-branch pivot + a transfer flow with the AthleteBranchChanged event.",
+    "Athlete.user_id is IMMUTABLE POST-FIRST-LINK. You can link once (null → non-null); you cannot re-link to a different user. The correct path for an errantly-linked athlete is: archive the athlete → create a new athlete row + link to the correct user.",
+    "Athlete.date_of_birth is IMMUTABLE POST-CREATE. DOB is age-group-eligibility-critical. Typo fixes require super_admin override event (Wave 3+) — Wave 3a has NO OVERRIDE PATH (typos must be handled by archiving + re-creating).",
+    "Athlete.current_age_group_id is a SNAPSHOT, not a live join. Every read of `athlete->current_age_group` returns the cached pointer; every enrollment form should use the resolver (AgeGroupResolver::resolveFor(athlete)) for the authoritative computation. The snapshot exists for indexed filtering (list every U12 athlete) and for enrollment-time freezing (see athlete-enrollment::age_group_snapshot_id).",
+    "There is NO `Student` / `Learner` / `Trainee` model. Athlete IS the person being coached — the naming reflects the domain-agnostic scope (a swimmer, a basketballer, a music student — all are athletes in the model)."
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/athlete-guardian/notifications",
+  "$version": 1,
+  "title": "athlete-guardian — notification classes + categories",
+  "namespace": "Academorix\\Sports\\AthleteGuardian\\Notifications",
+  "notifications": [
+    "GuardianAddedNotification",
+    "GuardianRemovedNotification",
+    "GuardianRoleChangedNotification",
+    "GuardianVerifiedNotification",
+    "GuardianVerificationDisputedNotification",
+    "GuardianPrimaryChangedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "guardian.added",
+      "display_name": "Guardian added",
+      "description": "Sent to admin + existing guardians + the new guardian's User when they're added to an athlete. Confirms the addition + verification-pending state.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "guardian.removed",
+      "display_name": "Guardian removed",
+      "description": "Sent to admin + remaining guardians when a guardian is removed. Cannot-opt-out — every co-parent should know when the roster changes.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "guardian.role_changed",
+      "display_name": "Guardian role updated",
+      "description": "Sent to the affected guardian when their role flags change (has_legal_custody, can_pickup, can_receive_communications, can_authorise_medical_care). Confirms the change so the guardian knows what they can and cannot do.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "guardian.verified",
+      "display_name": "Guardian verified",
+      "description": "Sent to the guardian + admin when their verification completes. Includes the verification_method (auto-household / hr-manual / silent-acceptance).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "guardian.dispute",
+      "display_name": "Guardian verification disputed",
+      "description": "Sent to guardian + admin + safeguarding_officer when a verified guardian is flagged for review. Consent-recording BLOCKED until resolved. Cannot-opt-out.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "guardian.primary_changed",
+      "display_name": "Primary guardian changed",
+      "description": "Sent to all guardians of the athlete + admin when the primary guardian shifts. Cannot-opt-out — every guardian should know who currently holds primary status.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

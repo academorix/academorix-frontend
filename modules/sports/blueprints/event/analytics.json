@@ -1,0 +1,130 @@
+{
+  "id": "academorix://modules/event/analytics",
+  "$version": 1,
+  "title": "event — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Event Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "event_type", "format", "visibility", "days_until_start", "has_entry_fee", "has_prize_pool", "has_livestream", "has_sponsors", "is_multi_facility", "has_minor_registrants_expected"],
+      "description": "New Event created. days_until_start = starts_at - created_at. Feature-toggle usage feeds tier-adoption analytics."
+    },
+    {
+      "name": "Event Announced",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "visibility", "days_until_start"]
+    },
+    {
+      "name": "Event Registration Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "trigger", "days_before_start"]
+    },
+    {
+      "name": "Event Registration Closed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "trigger", "registered_count_snapshot", "is_full_at_close"]
+    },
+    {
+      "name": "Event Started",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "trigger", "final_registered_count"]
+    },
+    {
+      "name": "Event Completed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "trigger", "final_registered_count", "duration_hours"]
+    },
+    {
+      "name": "Event Cancelled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "registered_count_at_cancel", "days_before_start_at_cancel", "cancellation_category"],
+      "description": "cancellation_category is derived from cancellation_reason via a simple keyword classifier (weather / low_signups / staff_shortage / venue_conflict / regulatory / other). The raw reason is NEVER sent to Segment (may contain PII)."
+    },
+    {
+      "name": "Event Rescheduled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "days_delta_start", "days_delta_end", "affected_registration_count"],
+      "description": "days_delta_* is the signed delta from the previous date."
+    },
+    {
+      "name": "Event Venue Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "affected_registration_count", "changed_branch", "changed_primary_facility"]
+    },
+    {
+      "name": "Event Pricing Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "status_at_change", "delta_entry_fee_pct", "delta_late_fee_pct", "audit_severity"],
+      "description": "delta_*_pct is the percentage change from previous value. Audit-critical when audit_severity='critical' (post-registration_open)."
+    },
+    {
+      "name": "Event Minor Eligibility Corrected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "excluded_registration_count", "excluded_minor_count", "status_at_change"],
+      "description": "Audit-critical. Feeds a dashboard for regulator-facing incidents."
+    },
+    {
+      "name": "Event Published",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "previous_visibility"]
+    },
+    {
+      "name": "Event Unpublished",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "new_visibility"]
+    },
+    {
+      "name": "Event Livestream Activated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "is_password_protected", "days_before_start"]
+    },
+    {
+      "name": "Event Facility Added",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "purpose", "is_primary", "facility_count_after"]
+    },
+    {
+      "name": "Event Facility Removed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "event_id", "was_primary", "facility_count_after"]
+    },
+    {
+      "name": "Event Slot Exceeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier", "calendar_year", "attempted_event_type"],
+      "description": "event_slot entitlement cap refused a create. Feeds the upsell funnel."
+    },
+    {
+      "name": "Event Upcoming Endpoint Hit",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "returned_count", "cache_hit"],
+      "description": "Feeds cache-warming decisions on the hot /events/upcoming endpoint."
+    }
+  ],
+  "notes": [
+    "Event.name, description, private_notes are NEVER sent to Segment (may contain PII).",
+    "cancellation_reason is CATEGORISED before send (keyword classifier); raw reason stays server-side.",
+    "primary_sport_key is NEVER sent — opaque tenant-scoped taxonomy.",
+    "Financial + child-safeguarding + audit-critical events use consent_required=essential because they feed compliance dashboards that operate independently of tenant consent."
+  ]
+}

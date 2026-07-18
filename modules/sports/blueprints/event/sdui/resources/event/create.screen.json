@@ -1,0 +1,141 @@
+{
+  "id": "event.event.create",
+  "title": "New event",
+  "version": 1,
+  "kind": "SduiScreen",
+  "resource": "event",
+  "route": "/events/new",
+  "description": "Multi-card create form. Progressive disclosure: identity + schedule required; presentation + pricing + eligibility optional. Feature-gated cards hidden per entitlements.",
+  "form": {
+    "endpoint": "POST /api/v1/events",
+    "onSuccess": { "$action": "route.push", "urlExpr": "'/events/' + response.data.id" }
+  },
+  "nodes": [
+    {
+      "kind": "PageHeader",
+      "children": [{ "kind": "PageHeader.Title", "props": { "children": "New event" } }]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Identity" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "TextField", "props": { "name": "name", "label": "Name", "isRequired": true, "maxLength": 128 } },
+            { "kind": "TextField", "props": { "name": "slug", "label": "Slug", "helpText": "Auto-generated from name if omitted", "maxLength": 64 } },
+            { "kind": "Widget", "props": { "id": "organization.organization-picker", "props": { "name": "organization_id", "label": "Organization", "isRequired": true } } },
+            { "kind": "Widget", "props": { "id": "branch.branch-picker", "props": { "name": "branch_id", "label": "Branch (optional)", "clearable": true, "helpText": "Leave empty for org-wide or multi-branch events" } } },
+            { "kind": "Widget", "props": { "id": "season.season-picker", "props": { "name": "season_id", "label": "Season (optional)", "clearable": true } } },
+            { "kind": "TextField", "props": { "name": "primary_sport_key", "label": "Primary sport (optional)", "helpText": "Leave empty for multi-sport events", "maxLength": 32 } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Type & format" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "ComboBox", "props": { "name": "event_type", "label": "Event type", "isRequired": true, "options": ["tournament", "match", "showcase", "workshop", "camp", "conference", "social", "graduation", "awards_ceremony", "open_house", "other"] } },
+            { "kind": "ComboBox", "props": { "name": "format", "label": "Format (optional)", "clearable": true, "helpText": "Options filtered by selected event_type" } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Schedule" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "DatePicker", "props": { "name": "starts_at", "label": "Starts at", "isRequired": true, "granularity": "minute" } },
+            { "kind": "DatePicker", "props": { "name": "ends_at", "label": "Ends at", "isRequired": true, "granularity": "minute" } },
+            { "kind": "TextField", "props": { "name": "timezone", "label": "Timezone (optional, IANA)", "helpText": "Falls back to branch/region timezone" } },
+            { "kind": "DatePicker", "props": { "name": "registration_opens_at", "label": "Registration opens (optional)", "granularity": "minute" } },
+            { "kind": "DatePicker", "props": { "name": "registration_closes_at", "label": "Registration closes (optional)", "granularity": "minute" } },
+            { "kind": "Switch", "props": { "name": "allow_late_registration", "label": "Allow late registration" } },
+            { "kind": "NumberField", "props": { "name": "late_registration_fee_cents", "label": "Late registration fee (cents)", "minValue": 0, "helpText": "Required when late registration allowed" } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Eligibility & capacity" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "NumberField", "props": { "name": "max_participants", "label": "Max participants (optional)", "minValue": 1 } },
+            { "kind": "NumberField", "props": { "name": "max_teams", "label": "Max teams (optional)", "minValue": 1 } },
+            { "kind": "NumberField", "props": { "name": "min_age", "label": "Minimum age (optional)", "minValue": 3, "maxValue": 100 } },
+            { "kind": "NumberField", "props": { "name": "max_age", "label": "Maximum age (optional)", "minValue": 3, "maxValue": 100 } },
+            { "kind": "ComboBox", "props": { "name": "gender_category", "label": "Gender category (optional)", "clearable": true, "options": ["male", "female", "mixed", "any"] } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Pricing" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "NumberField", "props": { "name": "entry_fee_cents", "label": "Entry fee (cents)", "minValue": 0, "defaultValue": 0 } },
+            { "kind": "TextField", "props": { "name": "entry_fee_currency", "label": "Currency (ISO 4217)", "pattern": "^[A-Z]{3}$", "helpText": "Required when entry_fee > 0" } },
+            {
+              "kind": "View",
+              "bindings": { "hidden": { "$expr": "!features.includes('sports_events.prize_pool')" } },
+              "children": [
+                { "kind": "NumberField", "props": { "name": "prize_pool_cents", "label": "Prize pool (cents, Enterprise)", "minValue": 0 } },
+                { "kind": "TextField", "props": { "name": "prize_pool_currency", "label": "Prize pool currency (ISO 4217)", "pattern": "^[A-Z]{3}$" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Presentation" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "ComboBox", "props": { "name": "visibility", "label": "Visibility", "isRequired": true, "defaultValue": "tenant_only", "options": ["public", "tenant_only", "participants_only", "private"] } },
+            { "kind": "TextArea", "props": { "name": "description", "label": "Description (Markdown)", "rows": 6 } },
+            { "kind": "TextArea", "props": { "name": "private_notes", "label": "Private notes (admin-only)", "rows": 3, "helpText": "Never rendered to end-users" } },
+            { "kind": "TextField", "props": { "name": "hero_image_url", "label": "Hero image URL (optional)" } },
+            { "kind": "TextField", "props": { "name": "rules_document_url", "label": "Rules document URL (optional)" } },
+            {
+              "kind": "View",
+              "bindings": { "hidden": { "$expr": "!features.includes('sports_events.livestream')" } },
+              "children": [
+                { "kind": "TextField", "props": { "name": "livestream_url", "label": "Livestream URL (HTTPS, optional)" } },
+                { "kind": "TextField", "props": { "name": "livestream_password", "label": "Livestream password (confidential)", "type": "password" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "FormActions",
+      "children": [
+        { "kind": "Button", "props": { "variant": "outline", "children": "Cancel" }, "bindings": { "onPress": { "$action": "route.push", "url": "/events" } } },
+        { "kind": "Button", "props": { "variant": "solid", "type": "submit", "children": "Create event" } }
+      ]
+    }
+  ]
+}

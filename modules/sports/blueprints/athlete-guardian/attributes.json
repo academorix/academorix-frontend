@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/athlete-guardian/attributes",
+  "$version": 1,
+  "title": "athlete-guardian — PHP attribute contracts",
+  "description": "One attribute. `#[AsAthleteGuardianListener]` on a service class marks it as a subscriber to guardianship-lifecycle events — AttributeDiscovery picks it up and wires it to the event map declared in `events.json`.",
+  "namespace": "Academorix\\Sports\\AthleteGuardian\\Attributes",
+  "attributes": [
+    {
+      "name": "AsAthleteGuardianListener",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Attributes\\AsAthleteGuardianListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to AthleteGuardian lifecycle events (GuardianAdded / GuardianRemoved / PrimaryGuardianChanged / GuardianCustodyChanged / GuardianVerified / GuardianVerificationDisputed / GuardianVerificationRevoked / GuardianCanPickupToggled / GuardianCanReceiveCommunicationsToggled / GuardianCanAuthoriseMedicalCareToggled / GuardianCommunicationsBounced).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names. Empty = subscribe to every event in `Academorix\\Sports\\AthleteGuardian\\Events\\Guardian*`. Names resolve against events.json at boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsAthleteGuardianListener(events: ['GuardianRemoved'], queue: 'athlete-guardian', priority: 20)]\nfinal class ReleasePrimaryGuardianSlotOnGuardianRemoved\n{\n    public function __invoke(GuardianRemoved $event): void\n    {\n        // Auto-elect the new primary when the removed guardian was primary.\n    }\n}"
+    }
+  ]
+}

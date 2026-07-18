@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/athlete/retention",
+  "$version": 1,
+  "title": "athlete — retention windows",
+  "description": "Active + paused athletes never expire. Graduated athletes retain indefinitely (alumni relations) unless the tenant opts into graduate_purge_after_years. Withdrawn + archived athletes enter a two-phase retention: 90-day grace hold on emergency_contact_* + medical_* fields (GDPR Art. 5(1)(c) minimisation), then 7-year retention on the demographic + status metadata (SOC 2 CC6.3 + safeguarding retention + national medical-record retention). Medical history rows retain 7 years even after the parent Athlete is hard-deleted — migrated to a compliance-archive table for the residual window. Same pattern as staff_compensation_history in the staff module.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) — data minimisation (medical + emergency contact redaction at 90 days)",
+    "gdpr Art. 8 — parental consent for children (retention aligns with consent-recorded_at + 12mo re-consent cadence when workflow entitlement on)",
+    "gdpr Art. 9 — special-category data (regulated_health-tier for medical fields)",
+    "gdpr Art. 17 — right to erasure (with medical-retention Art. 17(3)(b) exception)",
+    "soc2 CC6.3 — segregation of duties audit trail retention",
+    "national medical-record law — 7-year retention floor (US HIPAA, EU medical device regulation, UK GDPR Art. 9 supplementary Act)",
+    "coppa — US children under 13, 30-day retention post-consent-revocation (special-case)"
+  ],
+  "retention": [
+    {
+      "entity": "Athlete — active / paused",
+      "hot": { "days": "indefinite — never expires while non-terminal" },
+      "purge": {
+        "trigger": "never (until transitioned to graduated/withdrawn/archived)",
+        "action": "no-op",
+        "notes": "Athletes in non-terminal states are the living roster. Retention only applies once status IN ('graduated', 'withdrawn', 'archived')."
+      }
+    },
+    {
+      "entity": "Athlete — graduated",
+      "hot": { "days": "indefinite unless graduate_purge_after_years is set (default 0 = off)" },
+      "purge": {
+        "trigger": "> config.athlete.retention.graduate_purge_after_years past graduated_at (when set)",
+        "action": "transition to archived, then continue through the archive-retention pipeline",
+        "notes": "Most tenants retain graduated athletes for alumni relations. Some may opt into a 10 / 15-year auto-purge for privacy-conscious tenants."
+      }
+    },
+    {
+      "entity": "Athlete — emergency_contact_* + medical_* (post-terminal)",
+      "hot": { "days": 90, "description": "emergency_contact_name + emergency_contact_phone + emergency_contact_relationship + medical_conditions + medical_allergies + medical_medications + medical_notes" },
+      "purge": {
+        "trigger": "status IN ('withdrawn', 'archived') AND deleted_at + 90 days (or withdrawn_at + 90 days if archived without soft-delete)",
+        "action": "field-level redaction (replace with [REDACTED]) via PurgeArchivedAthletesJob phase 1",
+        "notes": "Preserves the rest of the row for the 7-year retention. Only the confidential + regulated_health sub-fields are redacted. The audit trail keeps the pre-redaction values in the athlete_medical_history table with 7-year retention (regulated-access only)."
+      }
+    },
+    {
+      "entity": "Athlete — demographic metadata (post-terminal)",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years)" },
+      "purge": {
+        "trigger": "> 7 years past deleted_at + no downstream references (AthleteEnrollment hard-purged, Membership hard-purged)",
+        "action": "hard delete via PurgeArchivedAthletesJob phase 2",
+        "notes": "RESTRICT FKs catch active references; the job records `retention_blocked` metric when hard-delete is refused. Retention runs against deleted_at, not created_at — the compliance clock starts at archival."
+      }
+    },
+    {
+      "entity": "athlete_medical_history rows",
+      "hot": { "days": "co-terminous with Athlete row" },
+      "cold": { "days": "2555 (7 years) — outlives the parent Athlete hard-purge if necessary" },
+      "purge": {
+        "trigger": "> 7 years past history_row.created_at",
+        "action": "hard delete from athlete_medical_history table",
+        "notes": "PARENT-INDEPENDENT retention. When a tenant is erased (TenantErased), medical_history rows migrate to a compliance-archive table (retained in encrypted form by ops for the residual 7-year window). This is a regulatory-compliance requirement — medical-record retention outlives the tenant relationship. Same pattern as staff_compensation_history."
+      }
+    },
+    {
+      "entity": "AthleteGuardian rows",
+      "hot": { "days": "cascade-delete with parent Athlete" },
+      "purge": {
+        "trigger": "Athlete hard-delete (CASCADE FK)",
+        "action": "cascaded via the athlete row",
+        "notes": "Guardian rows have no independent retention — they exist only in service of the parent athlete."
+      }
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention. This applies to normal audits + the dedicated athlete_medical_history stream.",
+    "TenantErased cascades hard-delete of every Athlete row via FK CASCADE, but the audit rows + medical_history rows survive the cascade (per audit module's outlives-source design + the compliance-archive migration for medical history).",
+    "Athletes turning 18 via CheckAthleteMinorTurnedAdultJob: prior guardian-recorded consents auto-expire (metadata.consent_re_record_required=true) — the retention on those historical consents follows the audit-log 7-year rule; the LIVE consent snapshot rolls forward at re-consent."
+  ]
+}

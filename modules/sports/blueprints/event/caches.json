@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/event/caches",
+  "$version": 1,
+  "title": "event — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["event", "event-upcoming", "event-registration-window"],
+  "keys": [
+    {
+      "pattern": "evt:upcoming:{tenant_id}:{org_id?}:{branch_id?}",
+      "description": "The /events/upcoming endpoint — 20 events with status IN (announced, registration_open, registration_closed, in_progress) sorted by starts_at asc. 60-second TTL.",
+      "ttlSeconds": 60,
+      "tags": ["event", "event-upcoming"],
+      "invalidatedBy": [
+        "EventObserver.created",
+        "EventObserver.updated (starts_at OR status OR visibility touched)",
+        "EventObserver.deleted",
+        "RollEventStatusJob per-row transition"
+      ]
+    },
+    {
+      "pattern": "evt:list:{tenant_id}",
+      "description": "Full event list for a tenant. Small payload (id, name, slug, status, starts_at, primary_facility_id).",
+      "ttlSeconds": 120,
+      "tags": ["event"],
+      "invalidatedBy": [
+        "EventObserver.created",
+        "EventObserver.updated",
+        "EventObserver.deleted",
+        "EventObserver.restored"
+      ]
+    },
+    {
+      "pattern": "evt:full:{event_id}",
+      "description": "Full Event row + facilities eager-loaded. Read on every event detail page + by EventPhaseCalculator.",
+      "ttlSeconds": 120,
+      "tags": ["event"],
+      "invalidatedBy": [
+        "EventObserver.updated",
+        "EventObserver.deleted",
+        "EventFacilityObserver.created (event's cache invalidated)",
+        "EventFacilityObserver.updated",
+        "EventFacilityObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "evt:registration_window:{event_id}",
+      "description": "Precomputed registration-window state (is_open / opens_at / closes_at / is_late_window). Read by event.enforce_registration_open middleware on every Wave 3+ enrollment request.",
+      "ttlSeconds": 30,
+      "tags": ["event", "event-registration-window"],
+      "invalidatedBy": [
+        "EventObserver.updated (registration timestamps OR status OR allow_late_registration changed)"
+      ]
+    },
+    {
+      "pattern": "evt:phase:{event_id}",
+      "description": "Cached phase evaluation for an event (draft / announced / registration_open / registration_closed / in_progress / completed / cancelled / archived). 30-second TTL because phase can transition at hour boundaries.",
+      "ttlSeconds": 30,
+      "tags": ["event"],
+      "invalidatedBy": [
+        "EventObserver.updated (status OR starts_at OR ends_at OR registration timestamps changed)",
+        "RollEventStatusJob per-row transition"
+      ]
+    },
+    {
+      "pattern": "evt:facilities:{event_id}",
+      "description": "Full event_facilities list for one event + facility metadata eager-loaded. Read on event detail page + by ReconcileEventFacilityBookingsJob.",
+      "ttlSeconds": 300,
+      "tags": ["event"],
+      "invalidatedBy": [
+        "EventFacilityObserver.created",
+        "EventFacilityObserver.updated",
+        "EventFacilityObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "evt:cooling_off:{event_id}",
+      "description": "Cooling-off cache marker set by ExpireEventCoolingOffJob. Presence indicates the event was cancelled recently (within event.cooling_off.window_hours) and cannot be re-opened yet.",
+      "ttlSeconds": 86400,
+      "tags": ["event"],
+      "invalidatedBy": ["ExpireEventCoolingOffJob (extends TTL until window elapses)"]
+    },
+    {
+      "pattern": "evt:reminder:{event_id}:{window}",
+      "description": "Dedupe marker for NotifyEventReminderJob (window: T-24h / T-1h). Prevents double-firing when the job re-runs within the reminder window.",
+      "ttlSeconds": 3600,
+      "tags": ["event"],
+      "invalidatedBy": ["NotifyEventReminderJob completion for that window"]
+    },
+    {
+      "pattern": "evt:reconciler_last_run",
+      "description": "Timestamp of the last successful ReconcileEventFacilityBookingsJob run. Read by health probe.",
+      "ttlSeconds": 172800,
+      "tags": ["event"],
+      "invalidatedBy": ["ReconcileEventFacilityBookingsJob completion"]
+    },
+    {
+      "pattern": "evt:public_listings:{tenant_id}",
+      "description": "Public listings for the tenant (visibility=public + status IN (announced, registration_open, registration_closed, in_progress)). Longer TTL because public listings change less frequently. Read by the tenant marketing page.",
+      "ttlSeconds": 300,
+      "tags": ["event", "event-public"],
+      "invalidatedBy": [
+        "EventPublished",
+        "EventUnpublished",
+        "EventObserver.updated (starts_at / status changed AND visibility=public)"
+      ]
+    }
+  ]
+}

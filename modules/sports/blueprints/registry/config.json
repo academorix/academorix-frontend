@@ -1,0 +1,153 @@
+{
+  "id": "academorix://modules/sports-registry/config",
+  "$version": 1,
+  "title": "sports-registry — developer configuration",
+  "configFile": "config/sports_registry.php",
+  "envPrefix": "SPORTS_REGISTRY_",
+  "sections": {
+    "provisioning": {
+      "keys": [
+        {
+          "path": "sports_registry.provisioning.seed_platform_catalog_on_boot",
+          "type": "bool",
+          "env": "SPORTS_REGISTRY_SEED_ON_BOOT",
+          "default": true,
+          "description": "When true (default), foundation::ApplicationBooted dispatches SeedPlatformSportsCatalogJob synchronously when the sports table is empty. Off = platform must run `sports:registry:seed-platform-catalog` manually before any tenant lands. Off is only safe in migration harnesses where a bespoke seed handles it."
+        },
+        {
+          "path": "sports_registry.provisioning.catalog_version",
+          "type": "integer",
+          "default": 1,
+          "description": "Bumps when `data/platform-sports-catalog.json` changes materially (new sports added, existing ones deactivated, taxonomy reshaped). Downstream consumers (tenant admin picker, ops dashboards) compare against the cached copy + refetch when the numbers diverge. Also drives the invalidation of the `sports:default_catalog:v{version}` cache key on deploy."
+        },
+        {
+          "path": "sports_registry.provisioning.async",
+          "type": "bool",
+          "env": "SPORTS_REGISTRY_ASYNC_SEED",
+          "default": false,
+          "description": "When true, SeedPlatformSportsCatalogJob is dispatched to a queue. When false (default), it runs synchronously at boot inside the foundation::ApplicationBooted handler. Sync is safer (no request lands before the catalog is present); async is available for boot-time performance tuning on large deployments. The DEFAULT is sync unlike most other modules — the catalog is a hard prerequisite for every Wave 3 write."
+        }
+      ]
+    },
+    "reconciler": {
+      "keys": [
+        {
+          "path": "sports_registry.reconciler.schedule",
+          "type": "string",
+          "env": "SPORTS_REGISTRY_RECONCILE_CRON",
+          "default": "15 4 * * *",
+          "description": "Cron expression for ReconcileSportReferencesJob. Nightly 04:15 UTC by default (staggered from other reconcilers: age-group 03:30, region 03:15, season 03:45)."
+        },
+        {
+          "path": "sports_registry.reconciler.reference_tables",
+          "type": "array<string>",
+          "default": ["teams"],
+          "description": "Downstream tables the reconciler scans for dangling sport_key / discipline_key / position_key references. Wave 3a: only `teams` exists (via the concurrent Wave 2b teams module); Wave 3+ appends `athlete_enrollments`, `coaches`, `events`, `sessions`, `seasons`, `age_groups`, `facilities`. New Wave 3 modules append themselves here in their own config publish — no edit to this module needed."
+        },
+        {
+          "path": "sports_registry.reconciler.reference_columns",
+          "type": "array<object>",
+          "default": [
+            { "table": "teams", "sport_key_column": "sport_key", "discipline_key_column": "discipline_key", "position_key_column": null },
+            { "table": "athlete_enrollments", "sport_key_column": "sport_key", "discipline_key_column": "discipline_key", "position_key_column": "position_key" },
+            { "table": "coaches", "sport_key_column": "sport_key", "discipline_key_column": null, "position_key_column": null },
+            { "table": "events", "sport_key_column": "sport_key", "discipline_key_column": "discipline_key", "position_key_column": null },
+            { "table": "sessions", "sport_key_column": "sport_key", "discipline_key_column": null, "position_key_column": null },
+            { "table": "seasons", "sport_key_column": "sport_key", "discipline_key_column": null, "position_key_column": null },
+            { "table": "age_groups", "sport_key_column": "sport_key", "discipline_key_column": null, "position_key_column": null }
+          ],
+          "description": "Per-table column mapping — some tables carry the full triple (athlete_enrollments), others only sport_key. The reconciler iterates the tables in `reference_tables` + reads its columns from this map."
+        },
+        {
+          "path": "sports_registry.reconciler.alert_on_drift",
+          "type": "bool",
+          "default": true,
+          "description": "When true, drift (an unresolved sport_key / discipline_key / position_key) fires SportPrefixResolutionFailed + pages ops per `config('monitoring.channels.compliance')`. Off = drift is only logged; ops must poll audit_events."
+        },
+        {
+          "path": "sports_registry.reconciler.chunk_size",
+          "type": "integer",
+          "default": 500,
+          "description": "Row chunk size when iterating a reference table. Keeps memory bounded when a tenant carries thousands of enrollments."
+        }
+      ]
+    },
+    "validation": {
+      "keys": [
+        {
+          "path": "sports_registry.validation.platform_min_age_floor",
+          "type": "integer",
+          "default": 3,
+          "description": "Platform-wide minimum for Sport.age_range_min. 3 is the practical floor (real programmes rarely include younger participants)."
+        },
+        {
+          "path": "sports_registry.validation.platform_max_age_ceiling",
+          "type": "integer",
+          "default": 99,
+          "description": "Platform-wide maximum for Sport.age_range_max. 99 is the sanity ceiling."
+        },
+        {
+          "path": "sports_registry.validation.reserved_slugs",
+          "type": "array<string>",
+          "default": ["platform", "system", "admin", "seeded", "default", "any", "all"],
+          "description": "Slugs refused at write time. Reserved for internal tooling — any attempt to create a row with one of these slugs is rejected with SLUG_RESERVED (422)."
+        }
+      ]
+    },
+    "resolution": {
+      "keys": [
+        {
+          "path": "sports_registry.resolution.include_historical",
+          "type": "bool",
+          "default": true,
+          "description": "When true (default), SportKeyResolver::resolve() returns deactivated rows when the active layer misses. Downstream historical enrollments referencing an old sport_key still resolve. Off = strict-active resolution; historical enrollments would fail with SPORT_KEY_UNRESOLVED (potentially breaking archived enrollment views)."
+        },
+        {
+          "path": "sports_registry.resolution.prefer_tenant_custom",
+          "type": "bool",
+          "default": true,
+          "description": "When true, tenant customs shadow platform slugs during resolution (though the WRITE path forbids slug collisions, so this only matters in edge cases where the config changes mid-flight). Off = platform always wins."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "sports_registry.retention.custom_deactivated_days",
+          "type": "integer",
+          "env": "SPORTS_REGISTRY_CUSTOM_DEACTIVATED_DAYS",
+          "default": 730,
+          "description": "Days a deactivated tenant custom row must remain quiet (is_active=false) before PurgeArchivedRegistryRowsJob is eligible to hard-delete it. Default 730 (2 years) — long enough that a re-activation is unlikely but not so long that the row becomes a permanent zombie. Only applies to tenant customs; platform-seeded rows are NEVER hard-deleted."
+        },
+        {
+          "path": "sports_registry.retention.audit_row_retention_days",
+          "type": "integer",
+          "default": 2555,
+          "description": "Days audit rows produced by this module survive after their source row is hard-deleted. Default 2555 (7 years) for SportPrefixResolutionFailed events (compliance replay). 730 days (2 years) for regular Registry mutations. Read-only reference — actual retention is enforced by the audit module's retention policy."
+        }
+      ]
+    },
+    "cache": {
+      "keys": [
+        {
+          "path": "sports_registry.cache.platform_catalog_ttl_seconds",
+          "type": "integer",
+          "default": 86400,
+          "description": "TTL for `sports:list:platform` — cached platform-seeded catalog. Long TTL because the platform catalog changes rarely (only on platform admin write or reseed)."
+        },
+        {
+          "path": "sports_registry.cache.tenant_catalog_ttl_seconds",
+          "type": "integer",
+          "default": 1800,
+          "description": "TTL for `sports:list:tenant:{tenant_id}` — cached merged catalog (platform + tenant customs). Medium TTL because tenant customs may be added / edited more frequently."
+        },
+        {
+          "path": "sports_registry.cache.resolver_ttl_seconds",
+          "type": "integer",
+          "default": 3600,
+          "description": "TTL for `sports:resolve:{tenant_id}:{sport_key}:{discipline_key?}:{position_key?}` — cached resolver answers. Long TTL because slugs are immutable — the resolver answer for a given triple can only change when the underlying row is deactivated (which invalidates the key via observer)."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "id": "academorix://modules/event/jobs",
+  "$version": 1,
+  "title": "event — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\Event\\Jobs\\RollEventStatusJob",
+      "queue": "sports",
+      "purpose": "Hourly cron. Walks every active Event + transitions its status based on now() vs its registration_opens_at / registration_closes_at / starts_at / ends_at timestamps. Automated counterpart to the manual action routes; idempotent.",
+      "steps": [
+        "SELECT id, status, registration_opens_at, registration_closes_at, starts_at, ends_at FROM events WHERE deleted_at IS NULL AND status NOT IN ('completed', 'cancelled', 'archived') LIMIT 5000 FOR UPDATE SKIP LOCKED.",
+        "For each row: compute target phase via EventPhaseCalculator (pure function given the row + now()).",
+        "announced -> registration_open when registration_opens_at IS NOT NULL AND now() >= registration_opens_at.",
+        "registration_open -> registration_closed when registration_closes_at IS NOT NULL AND now() >= registration_closes_at.",
+        "(announced OR registration_closed) -> in_progress when now() >= starts_at.",
+        "in_progress -> completed when now() >= ends_at + 1 hour grace (allows late-running events to wrap without an early auto-complete).",
+        "For each transition: fire the matching specific event alongside umbrella EventStatusChanged with trigger='automated_phase_roll'.",
+        "Never transitions to cancelled or archived — those require an explicit admin action."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "event-roll-status-global",
+      "tries": 3,
+      "backoff": [60, 300, 900],
+      "note": "Similar pattern to season's RollSeasonPhaseJob but Event-specific transitions. Every fire traces back to a specific hour boundary."
+    },
+    {
+      "class": "Academorix\\Sports\\Event\\Jobs\\ExpireExpiredEventRegistrationsJob",
+      "queue": "sports",
+      "purpose": "Every 15 minutes. Fine-grained pass that catches events whose registration_closes_at fell within the last 15 minutes so the closure is prompt (matches season's close-expired job cadence). Transitions registration_open -> registration_closed.",
+      "steps": [
+        "SELECT id, allow_late_registration, registration_closes_at FROM events WHERE status='registration_open' AND registration_closes_at IS NOT NULL AND registration_closes_at <= now() AND deleted_at IS NULL LIMIT 500 FOR UPDATE SKIP LOCKED.",
+        "For each: transition status -> registration_closed + fire EventRegistrationClosed with trigger='automated_phase_roll'.",
+        "The observer's usual guardrails apply."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 900,
+      "uniqueVia": "event-expire-registrations-global",
+      "tries": 3,
+      "backoff": [30, 120, 300]
+    },
+    {
+      "class": "Academorix\\Sports\\Event\\Jobs\\NotifyEventReminderJob",
+      "queue": "notifications",
+      "purpose": "Runs 24h + 1h before an event's starts_at. Dispatches EventReminderNotification to every registered participant + coach + guardian for minors. The Wave 3 enrollment surface computes the recipients list; pre-Wave-3 falls back to every tenant member with visibility >= tenant_only.",
+      "steps": [
+        "Query events where status IN ('registration_open', 'registration_closed') AND starts_at BETWEEN now() + interval '55 minutes' AND now() + interval '65 minutes' (for T-1h) OR starts_at BETWEEN now() + interval '23h 55m' AND now() + interval '24h 5m' (for T-24h).",
+        "For each match: dispatch EventReminderNotification via the notifications module + fire EventReminderScheduled with the recipient count.",
+        "Skip events that have already received a reminder in the same window (dedupe via cache marker `evt:reminder:{event_id}:{window}`)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "tries": 3,
+      "backoff": [30, 120, 300]
+    },
+    {
+      "class": "Academorix\\Sports\\Event\\Jobs\\ReconcileEventFacilityBookingsJob",
+      "queue": "low",
+      "purpose": "Nightly at 04:00 UTC. Verifies that every active event_facilities row has a corresponding facility::ResourceBooking (bkg_*) spanning the event's [starts_at, ends_at] window for the appropriate purpose. Auto-creates missing bookings + flags orphan bookings (bookings pointing at a detached event_facilities row).",
+      "steps": [
+        "SELECT id, event_id, facility_id, purpose FROM event_facilities WHERE deleted_at IS NULL.",
+        "For each: query facility::resource_bookings WHERE facility_id = ? AND starts_at <= event.ends_at AND ends_at >= event.starts_at AND metadata->>'event_facility_id' = event_facility.id.",
+        "When no matching booking exists: dispatch a facility::CreateResourceBooking action with metadata.event_facility_id set, so downstream facility reconciliation ties the two rows together.",
+        "When a booking exists but the event_facilities row is soft-deleted: log a diagnostic + auto-cancel the booking (returns the facility slot to the pool).",
+        "Write the reconciliation report to audit_events."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "note": "The event module OWNS the composition contract — sessions (Wave 3b) compose ResourceBookings directly, but events compose them THROUGH the event_facilities pivot for the venue-blocking side. Wave 3+ enrollment/finance may layer further pricing on top of these bookings."
+    },
+    {
+      "class": "Academorix\\Sports\\Event\\Jobs\\PurgeArchivedEventsJob",
+      "queue": "low",
+      "purpose": "Daily at 04:30 UTC. Hard-deletes soft-deleted (archived) Event rows past `event.retention.archived_events_retention_days` (default 2555 = 7 years for financial retention) IF no inbound FK row still references them.",
+      "steps": [
+        "SELECT id, tenant_id FROM events WHERE deleted_at IS NOT NULL AND deleted_at < NOW() - INTERVAL 'event.retention.archived_events_retention_days days' LIMIT 500.",
+        "For each: verify no inbound rows reference (sessions.event_id, event_teams.event_id, event_facilities.event_id — see event.purge.dependency_checks config). If any references remain, SKIP + log.",
+        "When clear: hard-delete the row + fire EventDeleted (mode='hard'). event_facilities cascade via DB FK.",
+        "The audit row survives per financial retention (7 years)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Event\\Jobs\\NotifyEventUpcomingJob",
+      "queue": "notifications",
+      "purpose": "Weekly on Monday 09:00 UTC. Fans out a 'this week's events' digest to every tenant member with the appropriate visibility. Aggregated per tenant to avoid noise. Skipped for tenants with no events in the coming 7 days.",
+      "steps": [
+        "For each tenant with sports_events entitlement + at least one event in the coming 7 days with status IN ('registration_open', 'registration_closed'): compose a digest email listing the events.",
+        "Recipients: tenant members whose role sees at least visibility='tenant_only' (excludes guardians whose only registered athlete has no event this week).",
+        "Dispatch as a batched notification via the notifications module.",
+        "Skip when the tenant has already received a digest this week."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Event\\Jobs\\ExpireEventCoolingOffJob",
+      "queue": "low",
+      "purpose": "Runs every 4 hours. Enforces the cancellation cooling-off period: an event cancelled within `event.cooling_off.window_hours` (default 24h) of registration_opens_at cannot be re-opened during the cooling-off window — this prevents rapid-fire cancel/reopen cycles that would spam registered participants. After the window, the event may be restored + re-announced.",
+      "steps": [
+        "SELECT id, cancelled_at FROM events WHERE status='cancelled' AND cancelled_at IS NOT NULL AND cancelled_at > NOW() - INTERVAL 'event.cooling_off.window_hours hours' LIMIT 500.",
+        "For each: refresh the cache marker `evt:cooling_off:{event_id}` with the remaining window.",
+        "The `event.enforce_registration_open` middleware (Wave 3+) reads this marker to refuse re-open attempts during the cooling-off window."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 14400,
+      "tries": 2
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "athlete_enrollment.widgets.roster-slot-indicator",
+  "title": "Roster slot indicator",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete_enrollment.roster-slot-indicator",
+  "description": "Compact 'N of M' indicator showing team's active roster count vs capacity. Color-coded: green (< 80% full), yellow (80-99%), red (at or over capacity).",
+  "params": {
+    "current": { "type": "integer", "required": true, "description": "Current active enrollment count on the team." },
+    "capacity": { "type": "integer", "required": true, "description": "Team's max capacity." },
+    "size": { "type": "string", "required": false, "default": "sm" }
+  },
+  "nodes": [
+    {
+      "kind": "View",
+      "props": { "className": "flex items-center gap-2" },
+      "children": [
+        {
+          "kind": "Chip",
+          "propsExpr": "{ size: $params.size, variant: ($params.current / $params.capacity) >= 1.0 ? 'danger' : ($params.current / $params.capacity) >= 0.8 ? 'warning' : 'success' }",
+          "children": [
+            { "kind": "Text", "propsExpr": "{ children: $params.current + ' / ' + $params.capacity }" }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted", "children": "on roster" }
+        }
+      ]
+    }
+  ]
+}

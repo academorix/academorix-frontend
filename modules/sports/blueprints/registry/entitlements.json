@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/sports-registry/entitlements",
+  "$version": 1,
+  "title": "sports-registry — declared entitlements",
+  "description": "Two published entitlement keys plus one implicit. `sports_registry_read` is the implicit boolean — every tenant reads the merged catalog regardless of tier (this is not surfaced in the entitlements API because it's always on). `sports_registry_custom` gates the ability to create tenant customs at all — Enterprise-only. `sports_registry_custom_slot` caps the per-entity-type custom count — Enterprise default unlimited, but the slot exists so future tiering can introduce caps without a schema change.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }, { "kind": "slot" }],
+  "entitlements": [
+    {
+      "key": "sports_registry_read",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Implicit — every tier reads the merged sports catalog (platform-seeded + own tenant customs). Never off; the entitlements module skips the check on GET routes but the key is codified here for auditor completeness. If a future tier legitimately loses catalog access, flip the default for that plan — the entitlement gate is already wired."
+    },
+    {
+      "key": "sports_registry_custom",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables creating tenant custom Sport / Discipline / Position rows. Off (Small + Medium) = POST /api/v1/sports (and disciplines, positions) returns SPORTS_REGISTRY_CUSTOM_DISABLED (402). On (Enterprise) = tenant admins may add their own sports for programmes not in the platform catalog (rare, but the escape hatch matters). Rationale for Small + Medium lockout: the platform 30+ sport catalog covers >99% of realistic tenant programmes; keeping the taxonomy uniform across the fleet lets every downstream analytics + BI pipeline join on sport_key without tenant-specific vocabulary drift. Enterprise tenants that legitimately need a custom sport get the flag as part of their contract."
+    },
+    {
+      "key": "sports_registry_custom_slot",
+      "kind": "slot",
+      "unit": "custom_rows",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": null },
+      "description": "Per-entity-type custom row cap. Consumed on `is_platform_seeded=false` create — one slot for a custom Sport, one slot for a custom Discipline, one slot for a custom Position. Enterprise default: unlimited (null). The slot exists so future tiering variants (e.g. an intermediate tier that allows 3-5 customs) can be introduced without schema changes. Refuses with SPORTS_REGISTRY_CUSTOM_QUOTA_EXCEEDED (402) once exhausted. Platform-seeded rows do NOT consume slots — they are a platform invariant, not a purchase. Deactivating a custom row does NOT return the slot; hard-deleting does (rare — customs almost never delete once referenced downstream)."
+    }
+  ],
+  "notes": [
+    "There is NO per-sport entitlement. A tenant reads the ENTIRE platform catalog regardless of the sports they actually run — the catalog is small enough (400+ records total across the three tables) that per-tenant slicing would add complexity for no user value.",
+    "Downgrading Enterprise → Medium does NOT auto-deactivate existing customs. Downstream Wave 3 rows may still reference the custom sport_key values, so silently deactivating would break enrollments. The entitlement reconciler surfaces the drift + suggests a manual audit path (list customs, migrate downstream references, then deactivate).",
+    "The `sports_registry_read` entitlement is deliberately non-configurable in the tenant admin UI — it's always on. Its presence in the catalog is for the entitlements-service auditor + for future tier evolution."
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/athlete-guardian/retention",
+  "$version": 1,
+  "title": "athlete-guardian — retention windows",
+  "description": "Active + pending + disputed guardians retain for the lifetime of the parent Athlete. Revoked guardians retain 7 years for audit (compliance-critical). Soft-deleted guardians: 7-year retention from deleted_at then hard-purge. Athlete hard-delete cascades to all guardian rows regardless of retention state.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) — data minimisation",
+    "gdpr Art. 8 — parental consent audit",
+    "soc2 CC6.3 — segregation of duties audit trail",
+    "coppa — verifiable parental consent evidence"
+  ],
+  "retention": [
+    {
+      "entity": "AthleteGuardian — pending / verified / disputed",
+      "hot": { "days": "co-terminous with parent Athlete" },
+      "purge": {
+        "trigger": "never (until soft-delete or revocation)",
+        "action": "no-op"
+      }
+    },
+    {
+      "entity": "AthleteGuardian — revoked",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years past revoked_at)" },
+      "purge": {
+        "trigger": "> 7 years past revoked_at",
+        "action": "hard delete via PurgeArchivedGuardiansJob",
+        "notes": "Revoked guardians retain the row + revoke_reason for compliance audit. Regulatory investigations may look back years."
+      }
+    },
+    {
+      "entity": "AthleteGuardian — soft-deleted",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years past deleted_at)" },
+      "purge": {
+        "trigger": "> 7 years past deleted_at",
+        "action": "hard delete via PurgeArchivedGuardiansJob"
+      }
+    },
+    {
+      "entity": "verification_document_file_id references",
+      "hot": { "days": "co-terminous with guardian row" },
+      "purge": {
+        "trigger": "guardian hard-delete",
+        "action": "cascaded via storage::File retention (Wave 4+)"
+      }
+    }
+  ],
+  "cross_reference": [
+    "TenantErased cascades hard-delete of every AthleteGuardian row via FK CASCADE. Audit rows survive per the audit module's outlives-source design.",
+    "Athlete hard-delete cascades all guardian rows regardless of their own retention state — the guardian row without an athlete is meaningless."
+  ]
+}

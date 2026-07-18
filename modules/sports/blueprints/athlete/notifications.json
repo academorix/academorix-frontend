@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/athlete/notifications",
+  "$version": 1,
+  "title": "athlete — notification classes + categories",
+  "namespace": "Academorix\\Sports\\Athlete\\Notifications",
+  "notifications": [
+    "AthleteWelcomeNotification",
+    "AthleteConsentRecordedNotification",
+    "AthleteConsentExpiringNotification",
+    "AthleteAgeGroupSnapshotChangedNotification",
+    "AthleteMinorTurnedAdultNotification",
+    "AthletePausedForSafeguardingNotification",
+    "AthleteGraduatedNotification",
+    "AthleteWithdrawnNotification"
+  ],
+  "categories": [
+    {
+      "slug": "athlete.welcome",
+      "display_name": "Welcome — new athlete",
+      "description": "Sent to the primary guardian (for minors) or the athlete directly (for adults) when their Athlete row is first created. Includes onboarding checklist link + emergency-contact-request nudge + consent-recording nudge.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "athlete.consent_recorded",
+      "display_name": "Consent recorded",
+      "description": "Sent to the guardian who recorded consents + to admin for compliance visibility. Includes the specific consents recorded + effective date + (when workflow entitlement on) expiry date.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "athlete.consent_expiring",
+      "display_name": "Consent expiring soon",
+      "description": "Sent at 30 / 14 / 7-day pre-expiry thresholds when the tenant carries athlete_consent_workflow entitlement. Includes the specific consents nearing expiry + the re-consent workflow link.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "athlete.age_group_snapshot_changed",
+      "display_name": "Age group updated",
+      "description": "Sent to the primary guardian when the athlete crosses an age-group boundary (birthday drift or AgeGroup bounds mutation). Informational — guardians know their child has aged up. Opt-in — some guardians don't need every age-group flip.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "operational_opt_in",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "athlete.minor_turned_adult",
+      "display_name": "Athlete turned 18 — re-consent needed",
+      "description": "Sent to the athlete + primary guardian on the 18th birthday. Explains that prior consents (recorded by guardian) have expired + the adult athlete now records their own. Cannot-opt-out — compliance-critical.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "athlete.paused_for_safeguarding",
+      "display_name": "Athlete paused",
+      "description": "Sent to guardian + safeguarding_officer + coach team when an athlete transitions to paused. paused_reason is redacted to non-safeguarding recipients. Cannot-opt-out.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "athlete.graduated",
+      "display_name": "Athlete graduated",
+      "description": "Celebratory. Sent to guardian + admin + coach team when an athlete graduates.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "athlete.withdrawn",
+      "display_name": "Athlete withdrawn",
+      "description": "Sent to admin + coach when an athlete withdraws. Guardian receives a separate confirmation via the withdrawal-initiated flow. withdrawal_reason redacted to non-HR recipients.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

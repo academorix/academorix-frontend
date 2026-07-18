@@ -1,0 +1,23 @@
+{
+  "id": "athlete_enrollment.widgets.waitlist-position-badge",
+  "title": "Waitlist position badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete_enrollment.waitlist-position-badge",
+  "description": "Chip showing 'Waitlist #N of M' for waitlisted enrollments. Powers the parent-facing dashboard's 'your child is #3 on the waitlist' cue.",
+  "params": {
+    "waitlist_position": { "type": "integer", "required": true },
+    "total_waitlisted": { "type": "integer", "required": false, "description": "Optional total waitlist size for the team. When omitted, only the position renders." },
+    "size": { "type": "string", "required": false, "default": "sm" }
+  },
+  "nodes": [
+    {
+      "kind": "Chip",
+      "propsExpr": "{ size: $params.size, variant: 'warning', className: 'font-medium' }",
+      "children": [
+        { "kind": "Icon", "props": { "name": "queue-list", "className": "size-3 mr-1" } },
+        { "kind": "Text", "propsExpr": "{ children: 'Waitlist #' + $params.waitlist_position + ($params.total_waitlisted ? ' of ' + $params.total_waitlisted : '') }" }
+      ]
+    }
+  ]
+}

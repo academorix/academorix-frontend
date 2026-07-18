@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/sports-registry/webhooks",
+  "$version": 1,
+  "title": "sports-registry — outbound webhooks",
+  "description": "Tenant admins can subscribe to sport-catalog-lifecycle events via the webhook module (shared/webhooks, Wave 4). This blueprint declares the event types this module publishes. Payload shapes mirror the corresponding entries in `events.json` — the webhook module wraps them in the standard envelope.",
+  "reference": {
+    "publishedBy": "webhooks",
+    "resolvedBy": "GET /api/v1/webhooks/event-types"
+  },
+  "event_types": [
+    {
+      "type": "sports_registry.sport.created",
+      "description": "New Sport row created. Payload includes name, slug, category, governing_body, gender_typical, is_platform_seeded, source.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.sport.updated",
+      "description": "Sport mutated. Payload lists `changed_fields`.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.sport.deactivated",
+      "description": "Sport is_active flipped from true → false. Payload includes downstream_reference_count.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.discipline.created",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.discipline.updated",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.discipline.deactivated",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.position.created",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.position.updated",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.position.deactivated",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.catalog.seeded",
+      "description": "The platform catalog was seeded. Fires at platform first-boot + on explicit reseed. Payload includes { catalog_version, seeded_by, sport_count, discipline_count, position_count, duration_ms }.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.catalog.updated",
+      "description": "The platform catalog was updated (adds / updates / deactivates). Fires on reseed with force. Payload includes summary lists of added / updated / deactivated slugs per level.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "sports_registry.prefix_resolution_failed",
+      "description": "A downstream row references a sport_key / discipline_key / position_key that failed to resolve. Payload includes { source_table, source_row_id, source_column, unresolved_value, resolver_context }. Audit-critical.",
+      "since_version": "1.0.0"
+    }
+  ],
+  "notes": [
+    "Every payload is signed with the tenant's webhook secret (HMAC-SHA256) per the shared webhook contract.",
+    "Sport / Discipline / Position rows carry no PII — payloads are safe to route to any tenant-approved webhook destination.",
+    "The prefix_resolution_failed event MAY carry a source_row_id that hints at a specific enrollment / team; downstream security review confirms this is not PII (the ID is a ULID, not a name / email / phone). Tenants routing this event to third-party ops tools should ensure the destination is authorised to see internal ULIDs."
+  ]
+}

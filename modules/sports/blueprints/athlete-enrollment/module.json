@@ -1,0 +1,225 @@
+{
+  "$version": 1,
+  "name": "athlete-enrollment",
+  "alias": "athlete_enrollment",
+  "namespace": "Academorix\\Sports\\AthleteEnrollment",
+  "description": "The roster attachment binding an Athlete to a specific Team within a specific Season. Answers 'which athletes are on team X this season?'. Snapshotted: `age_group_snapshot_id` is FROZEN at enrollment time so birthday drift after registration doesn't affect eligibility for the current season — a U10 athlete who turns 11 mid-season stays on the U10 team through the season boundary. Payment status tracked forward-compat for Wave 4 Finance integration (price_amount_cents + price_currency + payment_status enum). Consent snapshot at enroll time captures the guardian's consent state for provisional/confirmed transitions. Registration workflow: submitted (fresh registration, awaiting approval or payment) → payment_pending (approved but awaiting Wave 4 payment) → consent_pending (payment cleared, awaiting guardian consent for minors) → confirmed (all preconditions met, athlete on roster from planned start date) → active (season started, athlete currently enrolled) → completed (season end, terminal happy path) / withdrawn (parent left mid-season) / expelled (disciplinary termination) / expired (never reached confirmed within registration window). ATOMIC CONVERSION: the enrollment observer creates a `teams::TeamMember` row (with `member_type='athlete'`, `member_id=enrollment.athlete_id`) in the same DB transaction when status → active. Rollback on either side aborts both. The `team_member_id` FK on enrollment tracks the created TeamMember. Consumes 1 unit of `athlete_enrollment_slot` entitlement per season (Small=15 / Medium=250 / Enterprise=unlimited; aligns with athlete_slot at each tier — most tenants enroll their whole roster). Ships lifecycle events, atomicity + waitlist + capacity handling. Trial conversion path: when `enrollment_type='trial_converted'`, `source_trial_id` references the originating TeamTrial (teams module). Late registration + waitlist promotion driven by scheduled jobs. Provisional enrollment (Enterprise-only) allows pending-consent state past the deadline — for regulatory-sensitive tenants with strict consent verification.",
+  "keywords": [
+    "enrollment",
+    "roster",
+    "signup",
+    "registration",
+    "team",
+    "season",
+    "athlete",
+    "age-group-snapshot",
+    "birthday-drift",
+    "consent-snapshot",
+    "waitlist",
+    "provisional",
+    "trial-conversion",
+    "team-member",
+    "atomic-conversion",
+    "payment-pending",
+    "late-registration",
+    "tenant",
+    "branch",
+    "wave-3a"
+  ],
+  "priority": 57,
+  "providers": [
+    "Academorix\\Sports\\AthleteEnrollment\\Providers\\AthleteEnrollmentServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "organization",
+    "region",
+    "branch",
+    "entitlements",
+    "teams",
+    "athlete",
+    "season",
+    "age-group"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "event",
+    "session",
+    "finance",
+    "notifications",
+    "attendance"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToAthleteEnrollment",
+      "HasEnrollmentHistory"
+    ],
+    "attributes": [
+      "AsAthleteEnrollmentListener"
+    ],
+    "blueprints": [
+      "athlete-enrollment"
+    ],
+    "middleware": [
+      "athlete_enrollment.enforce_capacity",
+      "athlete_enrollment.enforce_registration_window"
+    ],
+    "events": [
+      "EnrollmentSubmitted",
+      "EnrollmentConfirmed",
+      "EnrollmentActivated",
+      "EnrollmentCompleted",
+      "EnrollmentWithdrawn",
+      "EnrollmentExpelled",
+      "EnrollmentExpired",
+      "EnrollmentPositionAssigned",
+      "EnrollmentJerseyAssigned",
+      "EnrollmentTeamMemberCreated",
+      "EnrollmentPaymentStatusChanged",
+      "EnrollmentConsentSnapshotUpdated",
+      "EnrollmentAgeGroupSnapshotSet",
+      "EnrollmentWaitlisted",
+      "EnrollmentPromotedFromWaitlist",
+      "EnrollmentCapacityExceeded",
+      "EnrollmentAgeGroupSnapshotMismatched",
+      "EnrollmentAtomicityFailed",
+      "EnrollmentProvisionalCreated",
+      "EnrollmentConsentReceived"
+    ],
+    "policies": [
+      "AthleteEnrollmentPolicy"
+    ],
+    "hooks": [
+      "PreventEnrollmentOrphansOnAthleteArchived",
+      "PreventEnrollmentOrphansOnTeamArchived",
+      "PreventEnrollmentOrphansOnSeasonArchived",
+      "PurgeAthleteEnrollmentDataForErasedTenant",
+      "ConvertEnrollmentToTeamMemberAtomically",
+      "SnapshotAgeGroupOnEnrollmentSubmitted"
+    ],
+    "commands": [
+      "enrollment:list",
+      "enrollment:describe",
+      "enrollment:submit",
+      "enrollment:confirm",
+      "enrollment:activate",
+      "enrollment:complete",
+      "enrollment:withdraw",
+      "enrollment:expel",
+      "enrollment:waitlist",
+      "enrollment:promote-from-waitlist",
+      "enrollment:assign-position",
+      "enrollment:assign-jersey",
+      "enrollment:reconcile-team-members",
+      "enrollment:cascade-purge",
+      "enrollment:report-atomicity-failures"
+    ],
+    "jobs": [
+      "ActivateConfirmedEnrollmentsJob",
+      "ExpireExpiredProvisionalEnrollmentsJob",
+      "PromoteWaitlistedEnrollmentsJob",
+      "ReconcileEnrollmentTeamMemberInvariantJob",
+      "PurgeCompletedEnrollmentsJob",
+      "NotifyEnrollmentDeadlineJob"
+    ],
+    "notifications": [
+      "EnrollmentSubmittedNotification",
+      "EnrollmentConfirmedNotification",
+      "EnrollmentActivatedNotification",
+      "EnrollmentPaymentPendingNotification",
+      "EnrollmentConsentPendingNotification",
+      "EnrollmentWaitlistedNotification",
+      "EnrollmentPromotedFromWaitlistNotification",
+      "EnrollmentWithdrawnNotification",
+      "EnrollmentExpelledNotification",
+      "EnrollmentExpiredNotification",
+      "EnrollmentDeadlineApproachingNotification",
+      "EnrollmentCompletedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.enrollments",
+      "team.{teamId}.enrollments",
+      "athlete.{athleteId}.enrollments",
+      "user.{userId}.enrollments"
+    ],
+    "observers": [
+      "AthleteEnrollmentObserver"
+    ],
+    "rules": [
+      "valid_iso4217_currency",
+      "valid_positive_int",
+      "valid_enrollment_status_transition",
+      "valid_enrollment_type",
+      "athlete_active_or_paused",
+      "team_active",
+      "season_registration_open",
+      "age_group_snapshot_matches_team_age_group",
+      "one_active_enrollment_per_athlete_team_season",
+      "team_has_capacity",
+      "provisional_requires_entitlement",
+      "trial_source_matches_team_and_season",
+      "consent_snapshot_present_when_confirmed"
+    ],
+    "casts": [
+      "EnrollmentStatus",
+      "EnrollmentType",
+      "EnrollmentSource",
+      "EnrollmentPaymentStatus",
+      "WithdrawalReason"
+    ],
+    "views": [],
+    "lang": [
+      "athlete-enrollment"
+    ],
+    "config": [
+      "athlete_enrollment"
+    ],
+    "macros": [],
+    "bindings": [
+      "AthleteEnrollmentRepository",
+      "AthleteEnrollmentProvisioner",
+      "EnrollmentStatusMachine",
+      "EnrollmentAtomicityCoordinator",
+      "TeamCapacityResolver",
+      "WaitlistPositionResolver",
+      "AgeGroupSnapshotService"
+    ],
+    "resources": [
+      "athlete-enrollment"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing enrollment CRUD + lifecycle transitions + waitlist management + position/jersey assignment + parent-facing 'my enrollments' surface.",
+      "routes": [
+        "GET /api/v1/enrollments",
+        "POST /api/v1/enrollments",
+        "GET /api/v1/enrollments/{enrollment}",
+        "PATCH /api/v1/enrollments/{enrollment}",
+        "DELETE /api/v1/enrollments/{enrollment}",
+        "POST /api/v1/enrollments/{enrollment}/confirm",
+        "POST /api/v1/enrollments/{enrollment}/activate",
+        "POST /api/v1/enrollments/{enrollment}/complete",
+        "POST /api/v1/enrollments/{enrollment}/withdraw",
+        "POST /api/v1/enrollments/{enrollment}/expel",
+        "POST /api/v1/enrollments/{enrollment}/waitlist",
+        "POST /api/v1/enrollments/{enrollment}/promote-from-waitlist",
+        "POST /api/v1/enrollments/{enrollment}/assign-position",
+        "POST /api/v1/enrollments/{enrollment}/assign-jersey",
+        "GET /api/v1/me/enrollments",
+        "GET /api/v1/teams/{team}/enrollments"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling + atomicity-failure audit for compliance ops.",
+      "routes": [
+        "GET /api/v1/platform/enrollments",
+        "GET /api/v1/platform/enrollments/{enrollment}",
+        "GET /api/v1/platform/enrollments/atomicity-failures"
+      ]
+    }
+  }
+}

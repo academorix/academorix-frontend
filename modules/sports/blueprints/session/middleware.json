@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/session/middleware",
+  "$version": 1,
+  "title": "session — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "session.resolve_active",
+      "class": "Academorix\\Sports\\Session\\Http\\Middleware\\ResolveActiveSession",
+      "priority": 60,
+      "description": "Resolves the caller's active Session when a route depends on one. Reads `X-Session-Id` header when the caller's active tenant has a matching session AND the session is not archived. Sets Request::activeSession(). Runs AFTER event.resolve_active.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"],
+      "responses": [
+        {
+          "condition": "X-Session-Id header points at a session in a different tenant",
+          "http": 403,
+          "code": "SESSION_CROSS_TENANT",
+          "audit_severity": "warn"
+        },
+        {
+          "condition": "X-Session-Id points at an archived session",
+          "http": 410,
+          "code": "SESSION_ARCHIVED",
+          "audit_severity": "info"
+        },
+        {
+          "condition": "No X-Session-Id header",
+          "http": 200,
+          "code": null,
+          "audit_severity": "none",
+          "description": "Middleware sets Request::activeSession() = null. Route-level logic decides whether one is required."
+        }
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::user.resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::user.enforce_tenant_membership" },
+    { "middleware": "entitlements::entitlement.enforce" },
+    { "middleware": "season::season.resolve_active" },
+    { "middleware": "event::event.resolve_active" }
+  ]
+}

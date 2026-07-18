@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/event/attributes",
+  "$version": 1,
+  "title": "event — PHP attribute contracts",
+  "description": "One attribute — `#[AsEventListener]` — marks a service class as a subscriber to event-lifecycle events. AttributeDiscovery scans + wires it to the event map declared in events.json.",
+  "namespace": "Academorix\\Sports\\Event\\Attributes",
+  "attributes": [
+    {
+      "name": "AsEventListener",
+      "class": "Academorix\\Sports\\Event\\Attributes\\AsEventListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`EventCreated`, `EventCancellationBroadcast`, `EventPricingChanged`, etc.). Empty = subscribe to every event in Academorix\\Sports\\Event\\Events\\*. Names validated against events.json at boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering. Lower runs first."
+        }
+      ],
+      "example": "#[AsEventListener(events: ['EventCancellationBroadcast', 'EventPricingChanged'], queue: 'notifications-critical', priority: 50)]\nfinal class NotifyOnCriticalEventChange\n{\n    public function __invoke(EventCancellationBroadcast|EventPricingChanged $event): void\n    {\n        // ...\n    }\n}"
+    }
+  ]
+}

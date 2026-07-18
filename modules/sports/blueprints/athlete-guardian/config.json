@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/athlete-guardian/config",
+  "$version": 1,
+  "title": "athlete-guardian — developer configuration",
+  "configFile": "config/athlete_guardian.php",
+  "envPrefix": "ATHLETE_GUARDIAN_",
+  "sections": {
+    "verification": {
+      "keys": [
+        {
+          "path": "athlete_guardian.verification.pending_ttl_days",
+          "type": "int",
+          "env": "ATHLETE_GUARDIAN_VERIFICATION_PENDING_TTL_DAYS",
+          "default": 30,
+          "description": "Days after which pending guardians auto-revoke if never verified by HR. When athlete_guardian_verification entitlement is off, silent-acceptance short-circuits this at 24h."
+        },
+        {
+          "path": "athlete_guardian.verification.silent_acceptance_hours",
+          "type": "int",
+          "default": 24,
+          "description": "Hours after GuardianAdded that silent-acceptance kicks in (when athlete_guardian_verification entitlement is off)."
+        },
+        {
+          "path": "athlete_guardian.verification.trusted_domains",
+          "type": "array",
+          "default": [],
+          "description": "Email domain allow-list for auto-household verification. When the guardian's User.email domain matches one here, auto-verify without waiting for household detection. Rare — for tenants with dedicated parent-domain email suffixes."
+        }
+      ]
+    },
+    "communications": {
+      "keys": [
+        {
+          "path": "athlete_guardian.communications.bounce_threshold",
+          "type": "int",
+          "default": 3,
+          "description": "After N permanent-bounce events on a guardian's User email, auto-disable can_receive_communications + fire GuardianCommunicationsBounced."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "athlete_guardian.reconciliation.primary_scan_batch_size",
+          "type": "int",
+          "default": 500
+        },
+        {
+          "path": "athlete_guardian.reconciliation.expected_invariant_findings",
+          "type": "int",
+          "default": 0,
+          "description": "Baseline. Any finding is a P1 signal."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "athlete_guardian.retention.years",
+          "type": "int",
+          "default": 7,
+          "description": "Days after deleted_at OR revoked_at at which the row becomes eligible for hard-purge."
+        }
+      ]
+    }
+  }
+}

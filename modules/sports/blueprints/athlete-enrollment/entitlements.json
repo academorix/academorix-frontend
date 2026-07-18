@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/athlete-enrollment/entitlements",
+  "$version": 1,
+  "title": "athlete-enrollment — declared entitlements",
+  "description": "Three entitlement keys. `athlete_enrollment_slot` (slot cap per season) matches athlete_slot at each tier. `athlete_enrollment_waitlist` (boolean) enables waitlist workflow when teams are at capacity. `athlete_enrollment_provisional` (boolean) enables provisional enrollment state for pending-consent scenarios past the deadline.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "athlete_enrollment_slot",
+      "kind": "slot",
+      "unit": "enrollments per season",
+      "defaultsByPlan": { "small": 15, "medium": 250, "enterprise": null },
+      "description": "Active enrollment cap PER SEASON. Small: 15 (matches athlete_slot — typically each athlete has one enrollment per season). Medium: 250. Enterprise: unlimited. Consumed on EnrollmentSubmitted (any non-terminal state counts). Released on EnrollmentCompleted / Withdrawn / Expelled / Expired. The per-season scoping means an athlete in Team A + Team B in the same season counts as TWO enrollments.",
+      "enforcedBy": [
+        "AthleteEnrollmentObserver.creating consumes 1 unit via EntitlementGate::consume('athlete_enrollment_slot', season_id=this.season_id)",
+        "AthleteEnrollmentObserver.updating (status → completed/withdrawn/expelled/expired) releases 1 unit",
+        "TenantSubscription downgrade triggers a warning via reconciler; does not auto-cancel over-quota enrollments"
+      ]
+    },
+    {
+      "key": "athlete_enrollment_waitlist",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the waitlist workflow. When ON, submissions to a team at capacity move to waitlisted status; PromoteWaitlistedEnrollmentsJob promotes the top of the queue when capacity opens. When OFF (Small default), submissions to a team at capacity refuse with TEAM_AT_CAPACITY (409).",
+      "enforcedBy": [
+        "AthleteEnrollmentObserver.creating: when team is at capacity AND gate on, sets status='waitlisted' + waitlist_position; when gate off, refuses with TEAM_AT_CAPACITY",
+        "PromoteWaitlistedEnrollmentsJob no-ops for tenants without the entitlement",
+        "SDUI waitlist section hidden when features array does not include 'athlete_enrollment.waitlist'"
+      ]
+    },
+    {
+      "key": "athlete_enrollment_provisional",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables enrollment_type='provisional' — creates enrollments in a pending-consent state past the deadline for regulatory-sensitive tenants. Provisional enrollments consume a slot + hold the roster position while consent is chased. Auto-expires after config.athlete_enrollment.provisional_ttl_days (default 14). When OFF (Small + Medium default), enrollment_type='provisional' is refused with ENROLLMENT_PROVISIONAL_NOT_ENTITLED.",
+      "enforcedBy": [
+        "AthleteEnrollmentObserver.creating: refuses enrollment_type='provisional' when gate off",
+        "ExpireExpiredProvisionalEnrollmentsJob no-ops for tenants without the entitlement",
+        "SDUI provisional-enrollment option hidden when features array does not include 'athlete_enrollment.provisional'"
+      ]
+    }
+  ]
+}

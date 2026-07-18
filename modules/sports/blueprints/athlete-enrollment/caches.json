@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/athlete-enrollment/caches",
+  "$version": 1,
+  "title": "athlete-enrollment — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["athlete_enrollment", "athlete_enrollment.roster", "athlete_enrollment.waitlist", "athlete_enrollment.by_athlete"],
+  "keys": [
+    {
+      "pattern": "aen:roster:{team_id}:{season_id}",
+      "description": "Active roster for a team + season. Read hot on team detail pages + coach dashboards.",
+      "ttlSeconds": 300,
+      "tags": ["athlete_enrollment", "athlete_enrollment.roster"],
+      "invalidatedBy": ["EnrollmentActivated", "EnrollmentWithdrawn", "EnrollmentExpelled", "EnrollmentCompleted"]
+    },
+    {
+      "pattern": "aen:waitlist:{team_id}:{season_id}",
+      "description": "Waitlist queue for a team + season. Feeds the PromoteWaitlistedEnrollmentsJob + admin waitlist UI.",
+      "ttlSeconds": 300,
+      "tags": ["athlete_enrollment", "athlete_enrollment.waitlist"],
+      "invalidatedBy": ["EnrollmentWaitlisted", "EnrollmentPromotedFromWaitlist"]
+    },
+    {
+      "pattern": "aen:by_athlete:{athlete_id}",
+      "description": "All enrollments for an athlete. Read hot on athlete detail pages.",
+      "ttlSeconds": 300,
+      "tags": ["athlete_enrollment", "athlete_enrollment.by_athlete"],
+      "invalidatedBy": ["EnrollmentSubmitted", "EnrollmentActivated", "EnrollmentWithdrawn", "EnrollmentCompleted"]
+    },
+    {
+      "pattern": "aen:by_user:{user_id}",
+      "description": "All enrollments associated with a User via athlete.user_id OR guardian relationship. Feeds /me/enrollments.",
+      "ttlSeconds": 300,
+      "tags": ["athlete_enrollment"],
+      "invalidatedBy": ["EnrollmentSubmitted", "EnrollmentActivated", "EnrollmentWithdrawn", "EnrollmentCompleted"]
+    },
+    {
+      "pattern": "aen:team_capacity:{team_id}:{season_id}",
+      "description": "Current active enrollment count for a team + season. Compared against team.capacity for waitlist decisions.",
+      "ttlSeconds": 60,
+      "tags": ["athlete_enrollment", "athlete_enrollment.roster"],
+      "invalidatedBy": ["EnrollmentActivated", "EnrollmentWithdrawn", "EnrollmentExpelled", "EnrollmentCompleted"]
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/session/jobs",
+  "$version": 1,
+  "title": "session — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\Session\\Jobs\\StartScheduledSessionsJob",
+      "queue": "sports",
+      "purpose": "Every 5 minutes. Transitions Session.status from confirmed -> in_progress when resource_booking.starts_at <= now(). Fine-grained cadence because attendance UX depends on the session being in in_progress when coaches start check-ins.",
+      "steps": [
+        "SELECT id, resource_booking_id FROM sessions WHERE status='confirmed' AND deleted_at IS NULL LIMIT 500 FOR UPDATE SKIP LOCKED, JOIN resource_bookings ON resource_bookings.id = sessions.resource_booking_id WHERE resource_bookings.starts_at <= now().",
+        "For each: transition status -> in_progress + fire SessionStarted with checked_in_count_at_start snapshot.",
+        "Skip sessions that were auto-cancelled by CancelUnderMinimumSessionsJob."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "tries": 3,
+      "backoff": [30, 120, 300]
+    },
+    {
+      "class": "Academorix\\Sports\\Session\\Jobs\\CompleteFinishedSessionsJob",
+      "queue": "sports",
+      "purpose": "Every 5 minutes. Transitions in_progress -> completed when resource_booking.ends_at + 15-minute grace <= now(). Grace lets late-running sessions wrap without early auto-complete.",
+      "steps": [
+        "SELECT id, resource_booking_id FROM sessions WHERE status='in_progress' AND deleted_at IS NULL LIMIT 500 FOR UPDATE SKIP LOCKED, JOIN resource_bookings WHERE resource_bookings.ends_at + interval '15 minutes' <= now().",
+        "For each: transition status -> completed + fire SessionCompleted with final counts + attendance_rate."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "tries": 3,
+      "backoff": [30, 120, 300]
+    },
+    {
+      "class": "Academorix\\Sports\\Session\\Jobs\\CancelUnderMinimumSessionsJob",
+      "queue": "sports",
+      "purpose": "Every 5 minutes. Auto-cancels sessions where checked_in_athletes_count < attendance_min after the session has started (5 minutes past starts_at). Fires SessionAttendanceBelowMinimum + SessionCancelled with trigger='automated_under_minimum'.",
+      "steps": [
+        "SELECT id, attendance_min, checked_in_athletes_count FROM sessions WHERE status='in_progress' AND attendance_min IS NOT NULL AND deleted_at IS NULL LIMIT 500 FOR UPDATE SKIP LOCKED, JOIN resource_bookings WHERE resource_bookings.starts_at + interval '5 minutes' <= now().",
+        "For each row where checked_in_athletes_count < attendance_min: fire SessionAttendanceBelowMinimum + transition status -> cancelled with cancellation_reason='Attendance below minimum threshold' + trigger='automated_under_minimum'."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "tries": 3,
+      "backoff": [30, 120, 300]
+    },
+    {
+      "class": "Academorix\\Sports\\Session\\Jobs\\ReconcileAttendanceCountsJob",
+      "queue": "low",
+      "purpose": "Nightly at 02:00 UTC. Recomputes checked_in_athletes_count + absent_athletes_count denormalised counters from session_attendance pivot rows. Catches drift from concurrent writes.",
+      "steps": [
+        "SELECT s.id, COUNT(sa.id) FILTER (WHERE sa.status IN ('checked_in', 'late')) AS checked_in, COUNT(sa.id) FILTER (WHERE sa.status='absent') AS absent FROM sessions s LEFT JOIN session_attendance sa ON sa.session_id=s.id AND sa.deleted_at IS NULL WHERE s.deleted_at IS NULL AND s.status IN ('completed', 'in_progress') GROUP BY s.id.",
+        "For each: UPDATE sessions SET checked_in_athletes_count=?, absent_athletes_count=? WHERE id=? AND (checked_in_athletes_count != ? OR absent_athletes_count != ?).",
+        "Report the number of drifted rows to a telemetry counter."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Session\\Jobs\\AggregateSessionRatingsJob",
+      "queue": "low",
+      "purpose": "Nightly at 02:30 UTC. Aggregates individual ratings (stored in session_ratings table via Wave 3+ ratings module OR in metadata pre-Wave-3) into Session.session_rating + session_rating_count. Additionally feeds AggregateCoachRatingsJob (Wave 2b coaching module) with per-coach aggregates.",
+      "steps": [
+        "For each completed session with new ratings since last run: recompute avg(rating) + count(rating) + write to Session.session_rating + session_rating_count.",
+        "Fire SessionRatingAggregated per session for downstream coach-rating aggregation.",
+        "Skip tenants without session_coach_ratings entitlement (Small tier)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Session\\Jobs\\NotifySessionReminderJob",
+      "queue": "notifications",
+      "purpose": "Dispatched at T-24h + T-1h relative to session start. Sends SessionReminderNotification to registered athletes + coach + guardians for minors.",
+      "steps": [
+        "Query sessions where status IN ('scheduled', 'confirmed') AND resource_booking.starts_at BETWEEN now()+55m AND now()+65m (for T-1h) OR BETWEEN now()+23h55m AND now()+24h5m (for T-24h).",
+        "Skip sessions with dedupe marker `ses:reminder:{session_id}:{window}` present.",
+        "Dispatch SessionReminderNotification to recipients (attendance-derived) via the notifications module."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Sports\\Session\\Jobs\\PurgeCompletedSessionsJob",
+      "queue": "low",
+      "purpose": "Daily at 05:00 UTC. Hard-deletes soft-deleted (archived) session rows past `session.retention.completed_sessions_retention_days` (default 2555 = 7 years — financial + coaching + safeguarding records) IF no inbound reference remains.",
+      "steps": [
+        "SELECT id FROM sessions WHERE deleted_at IS NOT NULL AND deleted_at < NOW() - INTERVAL 'session.retention.completed_sessions_retention_days days' LIMIT 500.",
+        "For each: verify no session_attendance row remains that has safeguarding-relevant notes. When safeguarding-flagged rows exist, EXTEND retention indefinitely (skip forever until manual review — regulator retention).",
+        "When clear: hard-delete + fire SessionDeleted (mode='hard'). session_attendance cascades via DB FK.",
+        "Audit row survives 7 years."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "note": "Safeguarding-flagged sessions NEVER hard-delete — the incident audit trail must survive indefinitely for regulator response."
+    }
+  ]
+}

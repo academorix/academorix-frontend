@@ -1,0 +1,35 @@
+{
+  "id": "event.event-visibility-chip",
+  "title": "Event visibility chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact HeroUI `Chip` showing an Event's visibility tier. Variant map: public=success, tenant_only=neutral, participants_only=info, private=warning.",
+  "props": {
+    "visibility": {
+      "type": "string",
+      "required": true,
+      "enum": ["public", "tenant_only", "participants_only", "private"]
+    },
+    "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "({ public: 'success', tenant_only: 'neutral', participants_only: 'info', private: 'warning' })[props.visibility]"
+          },
+          "leadingIcon": {
+            "$expr": "({ public: 'globe-outline', tenant_only: 'building-office-outline', participants_only: 'users-outline', private: 'lock-closed-outline' })[props.visibility]"
+          },
+          "children": {
+            "$expr": "({ public: 'Public', tenant_only: 'Tenant only', participants_only: 'Participants only', private: 'Private' })[props.visibility]"
+          }
+        }
+      }
+    }
+  ]
+}

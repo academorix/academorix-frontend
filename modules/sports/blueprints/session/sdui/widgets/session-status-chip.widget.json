@@ -1,0 +1,32 @@
+{
+  "id": "session.session-status-chip",
+  "title": "Session status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact HeroUI `Chip` showing a Session's lifecycle status. Variant map: scheduled=neutral, confirmed=info, in_progress=accent, completed=success, cancelled=danger, rescheduled=warning.",
+  "props": {
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": ["scheduled", "confirmed", "in_progress", "completed", "cancelled", "rescheduled"]
+    },
+    "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "({ scheduled: 'neutral', confirmed: 'info', in_progress: 'accent', completed: 'success', cancelled: 'danger', rescheduled: 'warning' })[props.status]"
+          },
+          "children": {
+            "$expr": "({ scheduled: 'Scheduled', confirmed: 'Confirmed', in_progress: 'In progress', completed: 'Completed', cancelled: 'Cancelled', rescheduled: 'Rescheduled' })[props.status]"
+          }
+        }
+      }
+    }
+  ]
+}

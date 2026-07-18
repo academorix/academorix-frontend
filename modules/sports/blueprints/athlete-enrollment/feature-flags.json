@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/athlete-enrollment/feature-flags",
+  "$version": 1,
+  "title": "athlete-enrollment — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    { "key": "athlete_enrollment.create_writes", "kind": "kill-switch", "default": "on", "description": "Master toggle for enrollment create. Off = POST returns 503." },
+    { "key": "athlete_enrollment.status_transitions", "kind": "kill-switch", "default": "on", "description": "Off = every state transition endpoint returns 503. Emergency-only." },
+    { "key": "athlete_enrollment.activation_job", "kind": "kill-switch", "default": "on", "description": "Off = ActivateConfirmedEnrollmentsJob no-ops. Enrollments stay in confirmed state." },
+    { "key": "athlete_enrollment.waitlist_promotion_job", "kind": "kill-switch", "default": "on", "description": "Off = PromoteWaitlistedEnrollmentsJob no-ops. Waitlist stays frozen until re-enabled." },
+    { "key": "athlete_enrollment.expiry_job", "kind": "kill-switch", "default": "on", "description": "Off = ExpireExpiredProvisionalEnrollmentsJob no-ops. Expired enrollments accumulate." },
+    { "key": "athlete_enrollment.reconciler_job", "kind": "kill-switch", "default": "on", "description": "Off = ReconcileEnrollmentTeamMemberInvariantJob no-ops. Atomicity drift accumulates until re-enabled — dangerous." },
+    { "key": "athlete_enrollment.retention_purge", "kind": "kill-switch", "default": "on", "description": "Off = PurgeCompletedEnrollmentsJob no-ops." }
+  ]
+}

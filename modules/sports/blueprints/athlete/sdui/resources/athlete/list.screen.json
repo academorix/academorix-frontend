@@ -1,0 +1,301 @@
+{
+  "id": "athlete.resources.athlete.list",
+  "title": "Athletes",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/athletes",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "athlete", "entity": "athlete", "action": "list" },
+  "requiresPermission": "athletes.viewAny",
+  "dataSources": [
+    {
+      "name": "athletes",
+      "kind": "http.get",
+      "url": "/api/v1/athletes",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "age_groups",
+      "kind": "http.get",
+      "url": "/api/v1/age-groups?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/athlete_slot",
+      "unwrap": "data"
+    },
+    {
+      "name": "features",
+      "kind": "http.get",
+      "url": "/api/v1/features",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Athletes" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "The people being coached at your academy." }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" },
+                    "size": "sm",
+                    "label": "Athlete slots"
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "user-plus",
+                    "children": "Add athlete"
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "to": "/tenant/athletes/create"
+                    }
+                  },
+                  "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
+                  "requiresPermission": "athletes.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": {
+                "label": "Branch",
+                "menuTrigger": "focus",
+                "className": "min-w-56"
+              },
+              "bindings": { "items": { "$ref": "branches" } },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "branch_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "active", "label": "Active" },
+                { "id": "paused", "label": "Paused" },
+                { "id": "graduated", "label": "Graduated" },
+                { "id": "withdrawn", "label": "Withdrawn" },
+                { "id": "archived", "label": "Archived" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Age group", "menuTrigger": "focus", "className": "min-w-48" },
+              "bindings": { "items": { "$ref": "age_groups" } },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "current_age_group_id",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Minors only" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "is_minor",
+                  "valueExpr": "$isSelected ? 'true' : null"
+                }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Has user account" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set",
+                  "field": "has_user",
+                  "valueExpr": "$isSelected ? 'true' : null"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Athletes table", "className": "w-full" },
+          "bindings": {
+            "rows": { "$ref": "athletes" },
+            "isLoading": { "$ref": "athletes.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "user-group", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No athletes yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add your first athlete to get started." } }
+            ]
+          },
+          "columns": [
+            {
+              "key": "name",
+              "label": "Name",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3" },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "src": { "$expr": "row.consent_photo_release ? row.profile_photo_url : null" },
+                      "name": { "$ref": "row.display_name" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium" },
+                            "bindings": { "children": { "$ref": "row.display_name" } }
+                          },
+                          {
+                            "kind": "Widget",
+                            "widget": "athlete.minor-badge",
+                            "bindings": {
+                              "hidden": { "$expr": "!row.is_minor" }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$expr": "row.age_years ? row.age_years + ' years old' : ''" } }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "key": "age_group",
+              "label": "Age group",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "athlete.age-group-badge",
+                "bindings": { "age_group_id": { "$ref": "row.current_age_group_id" } }
+              }
+            },
+            { "key": "branch_id", "label": "Branch" },
+            {
+              "key": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "children": { "$ref": "row.status" },
+                  "variant": {
+                    "$expr": "row.status === 'active' ? 'success' : row.status === 'paused' ? 'warning' : row.status === 'graduated' ? 'primary' : 'neutral'"
+                  }
+                }
+              }
+            },
+            {
+              "key": "has_user",
+              "label": "User account",
+              "renderer": {
+                "kind": "Icon",
+                "bindings": {
+                  "hidden": { "$expr": "!row.user_id" }
+                },
+                "props": { "name": "check-circle", "className": "size-5 text-success" }
+              }
+            },
+            {
+              "key": "consents",
+              "label": "Consents",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "athlete.consent-summary",
+                "bindings": {
+                  "consent_photo_release": { "$ref": "row.consent_photo_release" },
+                  "consent_medical_disclosure": { "$ref": "row.consent_medical_disclosure" },
+                  "consent_third_party": { "$ref": "row.consent_third_party" },
+                  "consent_recorded_at": { "$ref": "row.consent_recorded_at" }
+                }
+              }
+            }
+          ],
+          "rowActions": {
+            "onPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/athletes/' + row.id"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

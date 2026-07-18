@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/athlete/config",
+  "$version": 1,
+  "title": "athlete — developer configuration",
+  "configFile": "config/athlete.php",
+  "envPrefix": "ATHLETE_",
+  "sections": {
+    "minor_bounds": {
+      "keys": [
+        {
+          "path": "athlete.minor_min_age",
+          "type": "int",
+          "env": "ATHLETE_MINOR_MIN_AGE",
+          "default": 16,
+          "description": "Age below which the athlete is considered a minor for consent purposes. Some jurisdictions use 13 (US COPPA), some 16 (GDPR default), some 18 (safeguarding-conservative). Default 16 is EU-conservative. Downstream: minor athletes require guardian-recorded consent; their names are stripped from cross-tenant platform-admin reads; direct-to-athlete communications refuse."
+        },
+        {
+          "path": "athlete.legal_adult_age",
+          "type": "int",
+          "default": 18,
+          "description": "Age at which prior guardian-recorded consents auto-expire + the adult athlete records their own consents. CheckAthleteMinorTurnedAdultJob keys off this + config.athlete.minor_min_age."
+        }
+      ]
+    },
+    "consent": {
+      "keys": [
+        {
+          "path": "athlete.consent.reconsent_cadence_days",
+          "type": "int",
+          "default": 365,
+          "description": "How often consents must be re-recorded for GDPR audit-ready evidence. Only active when tenant carries athlete_consent_workflow entitlement."
+        },
+        {
+          "path": "athlete.consent.reminder_thresholds_days",
+          "type": "array",
+          "default": [30, 14, 7],
+          "description": "ReconcileAthleteConsentsJob dispatches reminders at these day-thresholds before consent_recorded_at + 365 days."
+        },
+        {
+          "path": "athlete.consent.enforce_guardian_authorisation",
+          "type": "bool",
+          "default": false,
+          "description": "Wave 3a: false (soft-warn on consent by non-authorised recorder). Wave 3b: true (hard-fail once AthleteGuardian module + cross-module lookup lands)."
+        }
+      ]
+    },
+    "medical": {
+      "keys": [
+        {
+          "path": "athlete.medical.max_field_length",
+          "type": "int",
+          "default": 8192,
+          "description": "Character cap on each medical_* text field. Prevents pathological writes ballooning the audit stream."
+        },
+        {
+          "path": "athlete.medical.audit_queue",
+          "type": "string",
+          "default": "medical-audit",
+          "description": "Dedicated queue for medical-audit dispatches. Isolated from the normal notifications queue to preserve audit-integrity guarantees."
+        },
+        {
+          "path": "athlete.medical.history_retention_years",
+          "type": "int",
+          "default": 7,
+          "description": "How long athlete_medical_history rows retain. Aligns with medical-record retention across the platform."
+        }
+      ]
+    },
+    "age_group_snapshot": {
+      "keys": [
+        {
+          "path": "athlete.age_group_snapshot.recompute_stale_after_hours",
+          "type": "int",
+          "default": 48,
+          "description": "Reads of athlete.current_age_group_id past this age trigger an in-band re-resolution. Normal path: nightly RollAthleteAgeGroupSnapshotJob refreshes."
+        },
+        {
+          "path": "athlete.age_group_snapshot.batch_size",
+          "type": "int",
+          "default": 500,
+          "description": "Nightly job batch size."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "athlete.retention.emergency_contact_redaction_days",
+          "type": "int",
+          "default": 90,
+          "description": "Days after Athlete.deleted_at at which emergency_contact_* + medical_* fields are redacted."
+        },
+        {
+          "path": "athlete.retention.record_years",
+          "type": "int",
+          "default": 7,
+          "description": "Days after Athlete.deleted_at at which the row becomes eligible for hard-purge (subject to no downstream references)."
+        },
+        {
+          "path": "athlete.retention.graduate_purge_after_years",
+          "type": "int",
+          "default": 0,
+          "description": "Optional purge for graduated (not withdrawn/archived) athletes. Default 0 (off) — most tenants retain graduated athletes indefinitely for alumni relations."
+        }
+      ]
+    },
+    "notifications": {
+      "keys": [
+        {
+          "path": "athlete.notifications.age_group_change_recipients",
+          "type": "array",
+          "default": ["guardian"],
+          "description": "Which recipient groups receive AthleteAgeGroupSnapshotChangedNotification. Options: guardian / athlete / coach / hr / branch_manager. Default is just guardian to avoid noise."
+        }
+      ]
+    }
+  }
+}

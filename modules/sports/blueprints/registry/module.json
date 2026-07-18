@@ -1,0 +1,159 @@
+{
+  "$version": 1,
+  "name": "registry",
+  "alias": "sports_registry",
+  "namespace": "Academorix\\Sports\\Registry",
+  "description": "The sport CATALOG. Owns the canonical Sport + Discipline + Position taxonomy that hardens the free-text `sport_key` + position identifier strings used across every Wave 3 sports module. Three entities. Sport (`spo_`) — top-level sport (`football`, `basketball`, `swimming`, `yoga`, `tennis`, `general_fitness`, 38 platform-seeded sports); every Team, AthleteEnrollment, Coach, Event, Session references `sport_key` which resolves to `Sport.slug`. Discipline (`dis_`) — sport sub-variant / competition format (`football_11v11`, `football_futsal`, `basketball_5v5`, `basketball_3x3`, `swimming_freestyle`, `swimming_relay`); one Sport hasMany Disciplines. Position (`pos_`) — sport-specific role / position (`football_goalkeeper`, `football_defender`, `football_midfielder`, `football_forward`; `basketball_point_guard`, `basketball_center`; `swimming_freestyler`; plus generic `coach`, `assistant_coach`, `medical_staff`); one Discipline hasMany Positions. Ships `data/platform-sports-catalog.json` — a 30+ sport seed loaded by SportCatalogSeeder on first-boot bootstrap. Platform-scoped (tenant_id NULL for platform-seeded rows); tenant customs (tenant_id NOT NULL) available only on Enterprise via the `sports_registry_custom` entitlement. Small + Medium tenants are locked to the platform catalog. NEVER carries `application_id` — the catalog crosses applications and every product deployment reads the same taxonomy. NEVER carries `region_id`, `branch_id`, `organization_id`, `scope_node_id`. Downstream sports modules reference this catalog via `sport_key` string lookup, not FK — so this module has `extendedBy: []` and every consumer stays loosely coupled. Wave 3a of the sports tier (priority 60 — boots after tenancy/application/entitlements, before every other sports module).",
+  "keywords": [
+    "sport",
+    "sports",
+    "sport-key",
+    "discipline",
+    "position",
+    "catalog",
+    "taxonomy",
+    "registry",
+    "reference-data",
+    "platform-scoped",
+    "seeded",
+    "football",
+    "basketball",
+    "swimming",
+    "tennis",
+    "yoga",
+    "general-fitness",
+    "governing-body",
+    "fifa",
+    "fiba",
+    "fina",
+    "wave-3a"
+  ],
+  "priority": 60,
+  "providers": ["Academorix\\Sports\\Registry\\Providers\\RegistryServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application", "entitlements"],
+  "extendedBy": [],
+  "planned_consumers": [
+    "team",
+    "athlete",
+    "athlete-enrollment",
+    "coach",
+    "event",
+    "session",
+    "age-group",
+    "finance",
+    "notifications"
+  ],
+  "contributes": {
+    "traits": ["ReferencesSport", "HasSportRegistryCatalog"],
+    "attributes": ["AsSportRegistryListener"],
+    "blueprints": [],
+    "middleware": [],
+    "events": [
+      "SportCreated",
+      "SportUpdated",
+      "SportDeactivated",
+      "DisciplineCreated",
+      "DisciplineUpdated",
+      "DisciplineDeactivated",
+      "PositionCreated",
+      "PositionUpdated",
+      "PositionDeactivated",
+      "TenantCustomSportCreated",
+      "TenantCustomDisciplineCreated",
+      "TenantCustomPositionCreated",
+      "SportCatalogSeeded",
+      "SportCatalogUpdated",
+      "SportPrefixResolutionFailed"
+    ],
+    "policies": ["SportPolicy", "DisciplinePolicy", "PositionPolicy"],
+    "hooks": ["PreventCustomRegistryOrphansOnTenantErased"],
+    "commands": [
+      "sports:registry:list",
+      "sports:registry:describe",
+      "sports:registry:resolve",
+      "sports:registry:seed-platform-catalog",
+      "sports:registry:reseed-platform-catalog",
+      "sports:registry:reconcile-references",
+      "sports:registry:create-custom-sport",
+      "sports:registry:create-custom-discipline",
+      "sports:registry:create-custom-position",
+      "sports:registry:deactivate"
+    ],
+    "jobs": [
+      "SeedPlatformSportsCatalogJob",
+      "ReconcileSportReferencesJob",
+      "PurgeArchivedRegistryRowsJob"
+    ],
+    "notifications": [
+      "TenantCustomSportCreatedNotification",
+      "SportPrefixResolutionFailedNotification",
+      "SportCatalogUpdatedNotification"
+    ],
+    "broadcasts": [],
+    "observers": ["SportObserver", "DisciplineObserver", "PositionObserver"],
+    "rules": [
+      "valid_sport_key",
+      "valid_discipline_key",
+      "valid_position_key",
+      "valid_hex_color",
+      "valid_iconify_identifier",
+      "sport_key_registered",
+      "discipline_belongs_to_sport",
+      "position_belongs_to_discipline"
+    ],
+    "casts": ["SportCategory", "GenderTypical", "FormatType", "HexColor"],
+    "views": [],
+    "lang": ["sports-registry"],
+    "config": ["sports_registry"],
+    "macros": [],
+    "bindings": [
+      "SportRepository",
+      "DisciplineRepository",
+      "PositionRepository",
+      "SportCatalogSeeder",
+      "SportKeyResolver",
+      "CustomEntryFactory",
+      "SportReferenceReconciler"
+    ],
+    "resources": ["sport", "discipline", "position"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing read across the merged catalog (platform + tenant customs) + write on tenant customs only (Enterprise, via sports_registry_custom entitlement). Platform-seeded rows are strictly read-only on the tenant plane.",
+      "routes": [
+        "GET /api/v1/sports",
+        "GET /api/v1/sports/{sport}",
+        "POST /api/v1/sports",
+        "PATCH /api/v1/sports/{sport}",
+        "DELETE /api/v1/sports/{sport}",
+        "GET /api/v1/disciplines",
+        "GET /api/v1/disciplines/{discipline}",
+        "POST /api/v1/disciplines",
+        "PATCH /api/v1/disciplines/{discipline}",
+        "DELETE /api/v1/disciplines/{discipline}",
+        "GET /api/v1/positions",
+        "GET /api/v1/positions/{position}",
+        "POST /api/v1/positions",
+        "PATCH /api/v1/positions/{position}",
+        "DELETE /api/v1/positions/{position}",
+        "GET /api/v1/sports/resolve"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant catalog administration. Platform admins can add/edit platform-level rows (visible to every tenant) + view every tenant custom + re-run the SportCatalogSeeder against the shipped JSON.",
+      "routes": [
+        "GET /api/v1/platform/sports",
+        "POST /api/v1/platform/sports",
+        "GET /api/v1/platform/sports/{sport}",
+        "PATCH /api/v1/platform/sports/{sport}",
+        "DELETE /api/v1/platform/sports/{sport}",
+        "GET /api/v1/platform/disciplines",
+        "POST /api/v1/platform/disciplines",
+        "GET /api/v1/platform/positions",
+        "POST /api/v1/platform/positions",
+        "POST /api/v1/platform/sports/reseed"
+      ]
+    }
+  }
+}

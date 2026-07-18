@@ -1,0 +1,254 @@
+{
+  "$version": 1,
+  "name": "session",
+  "alias": "session",
+  "namespace": "Academorix\\Sports\\Session",
+  "description": "A single practice / lesson / class instance. Composes a ResourceBooking (from facility module) for the physical slot + adds sport-specific fields (head_coach, session_type, attendance_capacity, curriculum_topic). Sessions are ATTACHED to Teams — recurring team practices generate one Session per week per Team. Standalone sessions (private lessons, ad-hoc training) attach directly to Athletes via a session-attendance pivot. Ships: Session model with lifecycle (scheduled -> confirmed -> in_progress -> completed -> cancelled -> rescheduled), attendance tracking via SessionAttendance pivot, coach assignment (head + up to 3 assistants), session ratings feed the Coach.rating aggregator (Wave 2b), booking-cascade on facility retirement (cascade cancels attached sessions). Downstream: Wave 3 attendance module writes to the pivot; Wave 4 finance module attributes revenue per session (private-lesson pricing).",
+  "keywords": [
+    "session",
+    "sessions",
+    "practice",
+    "training",
+    "lesson",
+    "private-lesson",
+    "group-lesson",
+    "class",
+    "drop-in",
+    "workshop",
+    "trial",
+    "assessment",
+    "game",
+    "open-gym",
+    "attendance",
+    "check-in",
+    "coach",
+    "head-coach",
+    "assistant-coach",
+    "curriculum",
+    "lesson-plan",
+    "rating",
+    "capacity",
+    "team",
+    "athlete",
+    "season",
+    "event",
+    "facility",
+    "resource-booking",
+    "safeguarding",
+    "minors",
+    "wave-3b"
+  ],
+  "priority": 65,
+  "providers": [
+    "Academorix\\Sports\\Session\\Providers\\SessionServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "organization",
+    "region",
+    "branch",
+    "entitlements",
+    "teams",
+    "athlete",
+    "athlete-enrollment",
+    "season",
+    "age-group",
+    "facility",
+    "staff"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "attendance",
+    "finance",
+    "notifications",
+    "coaching",
+    "scheduling"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToSession",
+      "HasSessionAttendance"
+    ],
+    "attributes": [
+      "AsSessionListener"
+    ],
+    "blueprints": [
+      "sessions",
+      "session_attendance"
+    ],
+    "middleware": [
+      "session.resolve_active"
+    ],
+    "events": [
+      "SessionScheduled",
+      "SessionConfirmed",
+      "SessionRescheduled",
+      "SessionCancelled",
+      "SessionStarted",
+      "SessionCompleted",
+      "SessionCoachAssigned",
+      "SessionCoachReassigned",
+      "SessionCurriculumTopicUpdated",
+      "SessionAttendanceCapacityChanged",
+      "SessionAthleteCheckedIn",
+      "SessionAthleteMarkedAbsent",
+      "SessionAthleteMarkedLate",
+      "SessionAthleteRemoved",
+      "SessionAttendanceBelowMinimum",
+      "SessionRatingReceived",
+      "SessionRatingAggregated",
+      "SessionLessonPlanUpdated",
+      "SessionMinorSafeguardingIncident",
+      "SessionArchived",
+      "SessionRestored",
+      "SessionDeleted"
+    ],
+    "policies": [
+      "SessionPolicy",
+      "SessionAttendancePolicy"
+    ],
+    "hooks": [
+      "PreventSessionOrphansOnTenantErased",
+      "CancelSessionsOnFacilityRetired",
+      "ReassignCoachOnCoachDeactivated"
+    ],
+    "commands": [
+      "session:list",
+      "session:describe",
+      "session:create",
+      "session:confirm",
+      "session:reschedule",
+      "session:cancel",
+      "session:start",
+      "session:complete",
+      "session:check-in",
+      "session:mark-absent",
+      "session:mark-late",
+      "session:remove-athlete",
+      "session:assign-coach",
+      "session:update-curriculum",
+      "session:aggregate-ratings",
+      "session:reconcile-attendance",
+      "session:archive",
+      "session:restore"
+    ],
+    "jobs": [
+      "StartScheduledSessionsJob",
+      "CompleteFinishedSessionsJob",
+      "CancelUnderMinimumSessionsJob",
+      "ReconcileAttendanceCountsJob",
+      "AggregateSessionRatingsJob",
+      "NotifySessionReminderJob",
+      "PurgeCompletedSessionsJob"
+    ],
+    "notifications": [
+      "SessionScheduledNotification",
+      "SessionRescheduledNotification",
+      "SessionCancelledNotification",
+      "SessionReminderNotification",
+      "SessionCoachAssignedNotification",
+      "SessionCoachReassignedNotification",
+      "SessionCurriculumUpdatedNotification",
+      "SessionRatingRequestNotification",
+      "SessionSafeguardingIncidentNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.sessions",
+      "team.{teamId}.sessions",
+      "coach.{coachId}.sessions",
+      "athlete.{athleteId}.sessions"
+    ],
+    "observers": [
+      "SessionObserver",
+      "SessionAttendanceObserver"
+    ],
+    "rules": [
+      "valid_session_type",
+      "valid_session_gender_category",
+      "valid_attendance_capacity",
+      "valid_attendance_min",
+      "valid_assistant_coaches_array",
+      "valid_equipment_needed_array",
+      "valid_session_rating",
+      "valid_session_status_transition",
+      "session_within_resource_booking_window",
+      "session_coach_belongs_to_tenant",
+      "session_athletes_belong_to_team",
+      "no_overlapping_sessions_per_coach",
+      "attendance_capacity_not_exceeded"
+    ],
+    "casts": [
+      "SessionType",
+      "SessionStatus",
+      "SessionGenderCategory",
+      "AttendanceStatus"
+    ],
+    "views": [],
+    "lang": [
+      "session"
+    ],
+    "config": [
+      "session"
+    ],
+    "macros": [
+      "Request::activeSession",
+      "Request::activeSessionId"
+    ],
+    "bindings": [
+      "SessionRepository",
+      "SessionAttendanceRepository",
+      "SessionProvisioner",
+      "SessionPhaseCalculator",
+      "AttendanceEvaluator",
+      "SessionRatingAggregator",
+      "CoachAvailabilityGate",
+      "SessionCapacityGate",
+      "SessionCancellationBroadcaster"
+    ],
+    "resources": [
+      "session",
+      "session-attendance"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing session CRUD + lifecycle transitions + attendance tracking (check-in / mark-absent / mark-late) + coach assignment + ratings.",
+      "routes": [
+        "GET /api/v1/sessions",
+        "POST /api/v1/sessions",
+        "GET /api/v1/sessions/{session}",
+        "PATCH /api/v1/sessions/{session}",
+        "DELETE /api/v1/sessions/{session}",
+        "POST /api/v1/sessions/{session}/confirm",
+        "POST /api/v1/sessions/{session}/reschedule",
+        "POST /api/v1/sessions/{session}/cancel",
+        "POST /api/v1/sessions/{session}/start",
+        "POST /api/v1/sessions/{session}/complete",
+        "POST /api/v1/sessions/{session}/assign-coach",
+        "POST /api/v1/sessions/{session}/update-curriculum",
+        "POST /api/v1/sessions/{session}/archive",
+        "POST /api/v1/sessions/{session}/restore",
+        "GET /api/v1/sessions/{session}/attendance",
+        "POST /api/v1/sessions/{session}/attendance",
+        "POST /api/v1/sessions/{session}/attendance/{attendance}/check-in",
+        "POST /api/v1/sessions/{session}/attendance/{attendance}/mark-absent",
+        "POST /api/v1/sessions/{session}/attendance/{attendance}/mark-late",
+        "DELETE /api/v1/sessions/{session}/attendance/{attendance}",
+        "POST /api/v1/sessions/{session}/ratings",
+        "GET /api/v1/sessions/today",
+        "GET /api/v1/sessions/upcoming"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling + safeguarding-incident cross-tenant search.",
+      "routes": [
+        "GET /api/v1/platform/sessions",
+        "GET /api/v1/platform/sessions/{session}",
+        "GET /api/v1/platform/sessions/safeguarding-incidents"
+      ]
+    }
+  }
+}

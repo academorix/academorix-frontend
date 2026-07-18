@@ -1,0 +1,103 @@
+{
+  "id": "sports-registry.sport-picker",
+  "title": "Sport picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Reusable single-select for the merged sports catalog (platform-seeded + own tenant customs). Renders as HeroUI `ComboBox` (per the ui-components rule). Options grouped by category via `ListBox.Section`. Consumed by every Wave 3 form that writes a `sport_key` — Team edit, AthleteEnrollment, Coach, Event, Session, Facility (via a multi-select variant).",
+  "notes": [
+    "Uses `ComboBox` — 30+ platform sports + Enterprise customs. Search is essential.",
+    "Filters to `filter[is_active]=true` by default. Callers may pass `filter=all` to include deactivated sports (rare — usually only historical enrollment editors).",
+    "Every item renderer surfaces the sport chip (icon + color + name + governing body) so the caller can visually confirm the pick without opening a detail modal."
+  ],
+  "props": {
+    "name": { "type": "string", "required": true, "description": "Form field name (e.g. `sport_key`). The widget writes the Sport's slug, not the ULID." },
+    "label": { "type": "string", "default": "Sport" },
+    "required": { "type": "boolean", "default": false },
+    "clearable": { "type": "boolean", "default": false },
+    "placeholder": { "type": "string", "default": "Search sports..." },
+    "helpText": { "type": "string", "default": null },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
+    "defaultValue": { "type": "string", "default": null, "description": "Pre-selected sport slug." },
+    "category": { "type": "string", "default": null, "description": "When set, filters options to this category (e.g. `team_sport`)." },
+    "genderTypical": { "type": "string", "default": null, "description": "When set, filters options to matching gender_typical." },
+    "filter": { "type": "string", "default": "active", "enum": ["active", "all"] }
+  },
+  "dataSources": [
+    {
+      "name": "sports",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/sports?filter[is_active]=' + (props.filter === 'all' ? '' : 'true') + (props.category ? '&filter[category]=' + props.category : '') + (props.genderTypical ? '&filter[gender_typical]=' + props.genderTypical : '') + '&sort=category,sort_order,name'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 1800 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": { "menuTrigger": "focus" },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" }
+        }
+      },
+      "children": [
+        { "kind": "Label", "bindings": { "children": { "$ref": "props.label" } } },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        { "kind": "Description", "bindings": { "hidden": { "$expr": "!props.helpText" }, "children": { "$ref": "props.helpText" } } },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-96" },
+              "bindings": { "items": { "$ref": "sports" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.slug, id: item.slug, textValue: item.name + ' ' + item.slug + ' ' + (item.governing_body || '') }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1" },
+                    "children": [
+                      { "kind": "View", "props": { "className": "size-4 rounded-full flex-shrink-0" }, "bindings": { "props": { "style": { "$expr": "{ backgroundColor: item.primary_color || '#94A3B8' }" } } } },
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col flex-1 min-w-0" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              { "kind": "Text", "props": { "className": "font-medium truncate" }, "bindings": { "children": { "$ref": "item.name" } } },
+                              { "kind": "Chip", "props": { "size": "xs", "variant": "info", "children": "Platform" }, "bindings": { "hidden": { "$expr": "!item.is_platform_seeded" } } },
+                              { "kind": "Chip", "props": { "size": "xs", "variant": "accent", "children": "Custom" }, "bindings": { "hidden": { "$expr": "item.is_platform_seeded" } } }
+                            ]
+                          },
+                          { "kind": "Text", "props": { "className": "text-xs text-muted font-mono" }, "bindings": { "children": { "$expr": "item.slug + (item.governing_body ? ' · ' + item.governing_body : '')" } } }
+                        ]
+                      },
+                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

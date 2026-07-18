@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/athlete-guardian/compliance",
+  "$version": 1,
+  "title": "athlete-guardian — compliance evidence",
+  "description": "AthleteGuardian is legal-custody + safeguarding-adjacent. Every guardianship record, verification event, and role-flag change is compliance-relevant. GDPR Art. 8 (parental consent), COPPA, FERPA (school-type tenants), SOC 2 CC6.3, anti-fraud (verification workflow prevents unauthorised claim of guardianship).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 8",
+          "principle": "conditions applicable to child's consent",
+          "evidence": "AthleteGuardian is the source of truth for who can record consents for a minor athlete. The `has_legal_custody=true` flag + `verification_status='verified'` are prerequisites for the athlete-consent module to accept a consent record. The cross-module rule `consent_recorded_by_authorised_guardian` chains through ConsentDelegationChain."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "Guardian rows cascade with parent Athlete hard-delete. Revoked guardians retain 7 years for audit."
+        }
+      ]
+    },
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "verifiable parental consent",
+          "evidence": "For US tenants with athletes under 13, the `athlete_guardian_verification` entitlement (Enterprise) + HR-verified workflow with signed-document upload satisfies COPPA's verifiable-consent requirement. Enforced by athlete::consent_recorded_by_authorised_guardian rule in Wave 3b."
+        }
+      ]
+    },
+    "ferpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "parent access to education records (US school tenants)",
+          "evidence": "Guardians with `has_legal_custody=true` inherit parent-access rights per FERPA. The .own scope for guardians resolves against active + verified rows."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "`athlete_guardians.verify` + `.dispute` + `.revoke` are HR + safeguarding_officer + owner only. Branch managers CANNOT unilaterally dispute or revoke (retaliation safeguard)."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "ReconcilePrimaryGuardianInvariantJob is the P1 signal — every finding is investigated. `academorix.athlete_guardian.primary.invariant_violations` should stay at 0."
+        }
+      ]
+    },
+    "safeguarding": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "pickup authorisation audit",
+          "evidence": "`can_pickup` toggle is audited on every change. Reception staff verify against the cache before releasing a minor to an adult."
+        },
+        {
+          "principle": "medical authorisation audit",
+          "evidence": "`can_authorise_medical_care` requires `has_legal_custody=true`. Every change is audited with 7-year retention. Emergency medical decisions route through this list."
+        }
+      ]
+    },
+    "anti_fraud": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "verification workflow prevents unauthorised claim",
+          "evidence": "The three verification paths (auto-household / hr-manual / silent-acceptance) all leave a compliance trail. Disputed guardians BLOCK from consent recording — the safeguard against fraudulent claims."
+        }
+      ]
+    }
+  }
+}

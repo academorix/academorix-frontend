@@ -1,0 +1,261 @@
+{
+  "id": "academorix://modules/sports-registry/schemas/sport",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Sport",
+  "description": "Top-level sport in the platform catalog. Carries `tenant_id` NULLABLE — NULL = platform-scoped (visible to every tenant), non-null = tenant custom (Enterprise-only). NEVER `application_id` (the catalog crosses applications), NEVER `region_id`, NEVER `branch_id`, NEVER `organization_id`, NEVER `scope_node_id` (registry is a scope-node entity, not a scope consumer), NEVER `parent_id` (the tree is Sport → Discipline → Position via typed FK columns, not self-referential). `slug` is IMMUTABLE post-create — downstream Wave 3 rows carry the slug as a string. `is_platform_seeded` is IMMUTABLE. `tenant_id` is IMMUTABLE.",
+  "type": "object",
+  "x-module": "sports-registry",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "sports",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "spo_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Registry\\Models\\Sport",
+    "interface": "Academorix\\Sports\\Registry\\Contracts\\Data\\SportInterface",
+    "implements": ["Academorix\\Sports\\Registry\\Contracts\\Data\\SportInterface"],
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasSlug",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "HasTranslations",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_active": "boolean",
+      "is_platform_seeded": "boolean",
+      "age_range_min": "integer",
+      "age_range_max": "integer",
+      "sort_order": "integer",
+      "category": "Academorix\\Sports\\Registry\\Enums\\SportCategory",
+      "gender_typical": "Academorix\\Sports\\Registry\\Enums\\GenderTypical",
+      "primary_color": "Academorix\\Sports\\Registry\\Casts\\HexColor",
+      "metadata": "array"
+    },
+    "appends": ["display_label", "downstream_reference_count", "discipline_count"],
+    "observers": ["SportObserver"],
+    "relations_note": "hasMany disciplines::Discipline via disciplines.sport_id (RESTRICT). belongsTo tenancy::Tenant via tenant_id (CASCADE, nullable — NULL = platform-scoped).",
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "One first-party table. Composite scoping via (tenant_id NULL for platform, slug) unique. Partial unique index enforces slug uniqueness within the scoping tuple.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `spo_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "The tenant that owns this Sport, OR NULL for platform-seeded rows. CASCADE aligns with tenancy's TenantErased contract. Platform-seeded rows survive tenant erasure (they carry tenant_id NULL — no owner)."
+      },
+      "name": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Display name (e.g. 'Football', 'Basketball', 'Swimming', 'Yoga', 'General Fitness'). Localizable via HasTranslations."
+      },
+      "slug": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "URL-safe identifier. Regex `^[a-z][a-z0-9_]*$`. IMMUTABLE post-create. Reserved: platform, system, admin, seeded, default, any, all. Unique per (tenant_id, slug) partial WHERE deleted_at IS NULL."
+      },
+      "category": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: team_sport / individual_sport / racquet / combat / aquatic / winter / cycling / track_field / fitness / recreational."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-form description. Localizable."
+      },
+      "governing_body": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Official governing body (FIFA / FIBA / FINA / World Rugby / ICC / …). Editorial + optional."
+      },
+      "gender_typical": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "any",
+        "description": "Enum: male_only / female_only / mixed / any. Advisory — shapes tenant UI (a male-only sport hides female options in the picker) but does NOT enforce eligibility at the write path (downstream Athlete modules handle enforcement)."
+      },
+      "age_range_min": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Advisory lower age bound (3-99). Shapes downstream AgeGroup admin UI. Not enforced on write."
+      },
+      "age_range_max": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Advisory upper age bound (3-99)."
+      },
+      "primary_color": {
+        "type": "string",
+        "length": 7,
+        "nullable": true,
+        "description": "CSS hex color (#RGB or #RRGGBB). Used for the sport chip in the tenant UI."
+      },
+      "icon": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Iconify identifier (`mdi:soccer`, `game-icons:basketball-ball`). Regex: `^[a-z0-9-]+:[a-z0-9-]+$`. Rendered by the frontend via Iconify."
+      },
+      "sort_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 100,
+        "description": "Ascending sort in the tenant picker. Category groups sort first; sort_order within category second."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "False = deactivated (hidden from tenant picker). Historical downstream references still resolve via SportKeyResolver. Deactivation is the standard 'delete' path — hard-delete is rare + refuses for platform-seeded rows."
+      },
+      "is_platform_seeded": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "True when the row was created by SportCatalogSeeder from data/platform-sports-catalog.json. IMMUTABLE — set once + never mutated. Platform-seeded rows have tenant_id NULL + are visible to every tenant + cannot be hard-deleted."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form metadata (from HasMetadata trait). Never exposed on the wire without `?include=metadata`."
+      },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "slug"],
+        "unique": true,
+        "name": "sports_scope_slug_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One live slug per scoping tuple. Platform-scoped (tenant_id IS NULL) + tenant customs (tenant_id = X) share the same partial-unique behaviour. Slug collision between platform + tenant is caught by the observer (SPORT_KEY_COLLIDES_WITH_PLATFORM); this index is the DB-level guard."
+      },
+      {
+        "columns": ["category", "sort_order"],
+        "unique": false,
+        "name": "sports_picker_idx",
+        "description": "Fast scan for the tenant picker (order by category asc, sort_order asc)."
+      },
+      {
+        "columns": ["is_platform_seeded", "is_active"],
+        "unique": false,
+        "name": "sports_flags_idx",
+        "description": "Catalog rollup queries (platform-only + active-only)."
+      },
+      {
+        "columns": ["gender_typical"],
+        "unique": false,
+        "name": "sports_gender_idx",
+        "description": "Filter query for gender-segregated pickers."
+      },
+      {
+        "columns": ["deleted_at"],
+        "unique": false,
+        "name": "sports_deleted_at_idx",
+        "description": "PurgeArchivedRegistryRowsJob sweeps by deleted_at."
+      }
+    ]
+  },
+  "required": ["id", "name", "slug", "category", "gender_typical", "sort_order", "is_active", "is_platform_seeded", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^spo_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "minLength": 2, "maxLength": 64 },
+    "slug": { "type": "string", "minLength": 2, "maxLength": 32, "pattern": "^[a-z][a-z0-9_]*$" },
+    "category": {
+      "type": "string",
+      "enum": ["team_sport", "individual_sport", "racquet", "combat", "aquatic", "winter", "cycling", "track_field", "fitness", "recreational"]
+    },
+    "description": { "type": ["string", "null"], "maxLength": 500 },
+    "governing_body": { "type": ["string", "null"], "maxLength": 128 },
+    "gender_typical": { "type": "string", "enum": ["male_only", "female_only", "mixed", "any"] },
+    "age_range_min": { "type": ["integer", "null"], "minimum": 3, "maximum": 99 },
+    "age_range_max": { "type": ["integer", "null"], "minimum": 3, "maximum": 99 },
+    "primary_color": { "type": ["string", "null"], "pattern": "^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$" },
+    "icon": { "type": ["string", "null"], "pattern": "^[a-z0-9-]+:[a-z0-9-]+$", "maxLength": 64 },
+    "sort_order": { "type": "integer", "minimum": 0, "maximum": 9999 },
+    "is_active": { "type": "boolean" },
+    "is_platform_seeded": { "type": "boolean" },
+    "metadata": { "type": ["object", "null"] },
+    "display_label": {
+      "type": "string",
+      "description": "Computed. `<name>` — localised via HasTranslations."
+    },
+    "downstream_reference_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Computed. Count of Wave 3 rows across every table in reconciler config that reference this Sport's slug. Included on show responses; suppressed on list responses unless explicitly requested."
+    },
+    "discipline_count": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Computed. Count of active Discipline children under this Sport."
+    },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["display_label", "downstream_reference_count", "discipline_count"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`spo_<26>`)", "slug (case-insensitive within the caller's merged catalog — platform + own tenant customs)"]
+  },
+  "invariants": [
+    "slug matches `^[a-z][a-z0-9_]*$` AND is not in the reserved list.",
+    "category is one of the 10 enum values.",
+    "gender_typical is one of the 4 enum values.",
+    "age_range_min <= age_range_max when both set; each in 3..99 (INVALID_AGE_RANGE).",
+    "slug IMMUTABLE post-create (SLUG_IMMUTABLE 422).",
+    "is_platform_seeded IMMUTABLE post-create (IS_PLATFORM_SEEDED_IMMUTABLE 403).",
+    "tenant_id IMMUTABLE post-create (TENANT_IMMUTABLE 422).",
+    "is_platform_seeded=true rows CANNOT be hard-deleted (PLATFORM_ROW_HARD_DELETE_FORBIDDEN 403).",
+    "Tenant custom rows (is_platform_seeded=false) cannot shadow platform slugs (SPORT_KEY_COLLIDES_WITH_PLATFORM 422).",
+    "Deactivation refuses when active Disciplines exist (SPORT_HAS_ACTIVE_DISCIPLINES 409) unless cascade=true.",
+    "Deactivation refuses when downstream Wave 3 references exist (SPORT_REFERENCE_IN_USE 409).",
+    "Non-seeded (is_platform_seeded=false) rows count against `sports_registry_custom_slot` entitlement; seeded rows do NOT."
+  ]
+}

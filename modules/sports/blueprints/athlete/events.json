@@ -1,0 +1,346 @@
+{
+  "id": "academorix://modules/athlete/events",
+  "$version": 1,
+  "title": "athlete — published events",
+  "namespace": "Academorix\\Sports\\Athlete\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Athlete lifecycle events (create / status-change / pause / graduate / withdraw / archive / restore) fan out to notifications + activity + audit. AthleteMedicalUpdated is a PRIVATE-TIER event — dispatches on the dedicated `medical-audit` queue and the payload NEVER routes through the tenant activity feed (the audit row lands in the separate athlete_medical_history table). AthleteMinorTurnedAdult fires from the CheckAthleteMinorTurnedAdultJob on the 18th birthday for compliance-visibility.",
+  "events": [
+    {
+      "name": "AthleteCreated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteCreated",
+      "trigger": "AthleteProvisioner committed successfully. Fires exactly once per athlete row. Consumes 1 unit of athlete_slot before commit (observer creating hook).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteWelcomeNotification (to the created-by admin AND to any primary guardian resolved at create-time — Wave 3b hooks the guardian path in the same commit as athlete-guardian)",
+        "cache::InvalidateBranchAthleteListCache",
+        "athlete::SetAgeGroupSnapshotOnAthleteCreated (in-band snapshot resolution — the row is unusable in enrollment forms without a snapshot)"
+      ],
+      "payload": {
+        "athlete_id": "ULID (ath_*)",
+        "tenant_id": "ULID (ten_*)",
+        "branch_id": "ULID (brn_*)",
+        "user_id": "ULID (usr_*) | null",
+        "first_name": "string",
+        "last_name": "string",
+        "date_of_birth": "YYYY-MM-DD",
+        "age_years_at_create": "integer",
+        "is_minor_at_create": "boolean",
+        "current_age_group_id": "ULID (age_*) | null",
+        "created_by_user_id": "ULID (usr_*)",
+        "source": "'admin_created' | 'self_serve' | 'trial_converted' | 'import' | 'api'"
+      }
+    },
+    {
+      "name": "AthleteUpdated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteUpdated",
+      "trigger": "Any Athlete scalar field mutated except status (dedicated transition events), consent_* (AthleteConsentRecorded / AthleteConsentRevoked / AthletePhotoConsentChanged), medical_* (AthleteMedicalUpdated — private-tier), emergency_contact_* (AthleteEmergencyContactUpdated), user_id (AthleteLinkedToUser), current_age_group_id (AthleteAgeGroupSnapshotUpdated).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "updated_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "AthleteLinkedToUser",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteLinkedToUser",
+      "trigger": "Athlete.user_id transitioned null → non-null. Fires when the minor athlete turns 13-16 + gets a User account, OR when an adult signup's Athlete row is bound to the newly-created User. Never fires for user_id changes (immutable post-first-link).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteLinkedToUserNotification (to the User's login channel — welcome to your athlete account)",
+        "cache::InvalidateAthletesByUserCache"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "user_id": "ULID",
+        "linked_by_user_id": "ULID",
+        "trigger": "'admin_linked' | 'self_serve_signup' | 'minor_turned_adult' | 'guardian_delegated'"
+      }
+    },
+    {
+      "name": "AthleteStatusChanged",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteStatusChanged",
+      "trigger": "Athlete.status transitioned. Umbrella event; also fires alongside the dedicated status events (AthletePausedForSafeguarding / AthleteGraduated / AthleteWithdrawn / AthleteArchived / AthleteRestored) so listeners can subscribe to the umbrella when the specific reason doesn't matter to them.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateBranchAthleteListCache"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "from_status": "string",
+        "to_status": "string",
+        "changed_by_user_id": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "AthleteAgeGroupSnapshotUpdated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteAgeGroupSnapshotUpdated",
+      "trigger": "RollAthleteAgeGroupSnapshotJob detected the athlete's resolved age-group flipped (birthday drift + AgeGroupBoundsChanged / AgeGroupCutoffChanged cascade). Aggregated event — fires once per job invocation per athlete whose snapshot changed. Athlete.current_age_group_id + current_age_group_snapshot_at are updated on the same transaction.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteAgeGroupSnapshotChangedNotification (opt-in — to guardians when the child moves to a new age group, e.g. U10 → U12)",
+        "athlete-enrollment::MaybeInvalidateEnrollmentEligibility (Wave 3+ — enrollments whose team's age_group_id no longer matches this athlete's snapshot fire a soft-warning flag)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "from_age_group_id": "ULID (age_*) | null",
+        "to_age_group_id": "ULID (age_*) | null",
+        "trigger": "'birthday_drift' | 'age_group_bounds_changed' | 'age_group_cutoff_changed' | 'manual_refresh'",
+        "computed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AthleteMedicalUpdated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteMedicalUpdated",
+      "trigger": "Any of medical_conditions / medical_allergies / medical_medications / medical_notes mutated. PRIVATE-TIER event — payload NEVER routed through the activity feed. Audit row lands in the dedicated athlete_medical_history table with 7-year regulated-health retention. Consumers include the Safeguarding module (Wave 4+ medical-clearance workflow).",
+      "queue": "medical-audit",
+      "consumers": [
+        "audit::WriteToMedicalHistoryLog (retention: 7 years; NOT the normal audits table)",
+        "notifications::DispatchAthleteMedicalUpdatedNotification (opt-in — to primary AthleteGuardian ONLY, via HR channel)",
+        "safeguarding::RecomputeClearanceStatus (Wave 4+ placeholder)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_by_user_id": "ULID",
+        "changed_fields": "string[] (e.g. ['medical_conditions', 'medical_allergies'] — NEVER the values themselves)",
+        "changed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AthleteConsentRecorded",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteConsentRecorded",
+      "trigger": "Athlete.consent_recorded_at transitioned null → non-null OR was refreshed with new values (re-consent). Fires alongside AthletePhotoConsentChanged when photo consent specifically flipped.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — safeguarding compliance)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteConsentRecordedNotification (to guardian + admin)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "consent_recorded_by_user_id": "ULID (usually the primary AthleteGuardian for minors)",
+        "consent_photo_release": "boolean",
+        "consent_medical_disclosure": "boolean",
+        "consent_third_party": "boolean",
+        "consent_recorded_at": "ISO 8601",
+        "expires_at": "ISO 8601 | null (12 months from recorded_at when athlete_consent_workflow entitlement is on)"
+      }
+    },
+    {
+      "name": "AthleteConsentRevoked",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteConsentRevoked",
+      "trigger": "Any consent_* flag transitioned true → false. Consent revocation is a compliance-critical event. Fires per revocation (multiple flags flipping in one write emits multiple events for auditability).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteConsentRevokedNotification (to guardian + admin — cannot-opt-out; compliance-critical)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "revoked_by_user_id": "ULID",
+        "revoked_consent": "'photo_release' | 'medical_disclosure' | 'third_party'",
+        "reason": "string | null",
+        "revoked_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AthletePausedForSafeguarding",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthletePausedForSafeguarding",
+      "trigger": "Athlete.status transitioned active → paused. Distinct from the umbrella AthleteStatusChanged because pause is safeguarding-adjacent and drives dedicated notification cascade + auto-expiry job.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthletePausedForSafeguardingNotification (to guardian + safeguarding officer — cannot-opt-out)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "paused_at": "ISO 8601",
+        "paused_reason": "string",
+        "expected_return_at": "YYYY-MM-DD | null",
+        "paused_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "AthleteReturnedFromPause",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteReturnedFromPause",
+      "trigger": "Athlete.status transitioned paused → active. Clears paused_at + paused_reason.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteReturnedFromPauseNotification (to guardian)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "returned_at": "ISO 8601",
+        "returned_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "AthleteGraduated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteGraduated",
+      "trigger": "Athlete.status transitioned active → graduated. Soft-terminal — the row is retained for alumni relations.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteGraduatedNotification (to guardian + admin — celebratory)",
+        "athlete-enrollment::CloseActiveEnrollmentsOnAthleteGraduated (Wave 3+ — every active enrollment transitions to 'completed')"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "graduated_at": "YYYY-MM-DD",
+        "graduated_by_user_id": "ULID",
+        "days_of_membership": "integer (created_at → graduated_at)"
+      }
+    },
+    {
+      "name": "AthleteWithdrawn",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteWithdrawn",
+      "trigger": "Athlete.status transitioned active/paused → withdrawn. Terminal. Requires withdrawal_reason.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — compliance)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteWithdrawnNotification (to admin + coach; guardian is opt-in — some withdrawals are guardian-initiated)",
+        "athlete-enrollment::CancelActiveEnrollmentsOnAthleteWithdrawn (Wave 3+)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "withdrawal_reason": "string",
+        "withdrawal_notes": "string | null",
+        "withdrawn_at": "YYYY-MM-DD",
+        "withdrawn_by_user_id": "ULID",
+        "was_guardian_initiated": "boolean"
+      }
+    },
+    {
+      "name": "AthleteArchived",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteArchived",
+      "trigger": "Athlete soft-deleted (deleted_at set). Status transitions to 'archived'. Releases 1 unit of athlete_slot entitlement.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "archived_by_user_id": "ULID",
+        "reason": "string | null",
+        "prior_status": "string"
+      }
+    },
+    {
+      "name": "AthleteRestored",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteRestored",
+      "trigger": "Archived athlete restored (deleted_at cleared, status → active). Consumes 1 unit of athlete_slot. Only within retention window.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "restored_by_user_id": "ULID",
+        "was_archived_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AthleteDeleted",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteDeleted",
+      "trigger": "Athlete hard-deleted. Fires from PurgeArchivedAthletesJob after 7-year retention window + no downstream references. Also fires on TenantErased cascade.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "deleted_by": "'retention_purge' | 'tenant_erasure'",
+        "was_archived_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AthleteEmergencyContactUpdated",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteEmergencyContactUpdated",
+      "trigger": "Any of emergency_contact_name / emergency_contact_phone / emergency_contact_relationship mutated. Audit-relevant for safety compliance.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — safeguarding)",
+        "activity::WriteToActivityLog (WITHOUT the field values — activity feed shows 'emergency contact updated', not the phone number)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_by_user_id": "ULID",
+        "changed_fields": "string[] (e.g. ['emergency_contact_phone'] — NEVER the values)"
+      }
+    },
+    {
+      "name": "AthletePhotoConsentChanged",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthletePhotoConsentChanged",
+      "trigger": "Athlete.consent_photo_release specifically flipped. Distinct event because it drives immediate downstream cascade (marketing collateral, gallery visibility, social-media auto-inclusion — Wave 5+).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthletePhotoConsentChangedNotification (to marketing team — cannot-opt-out; ensures marketing pauses use)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "from_value": "boolean",
+        "to_value": "boolean",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "AthleteMinorTurnedAdult",
+      "class": "Academorix\\Sports\\Athlete\\Events\\AthleteMinorTurnedAdult",
+      "trigger": "CheckAthleteMinorTurnedAdultJob detected an athlete crossing config.athlete.minor_min_age (default 16) OR 18 (legal-adult boundary). Fires per athlete per crossing. Downstream flags: consent snapshot should be re-recorded by the athlete themselves (their prior consents by a guardian expire); AthleteGuardian rows with can_authorise_medical_care=true may auto-downgrade (config-driven, Wave 3b).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — record-transition audit)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAthleteMinorTurnedAdultNotification (to athlete + primary guardian — cannot-opt-out; drives the re-consent flow)"
+      ],
+      "payload": {
+        "athlete_id": "ULID",
+        "tenant_id": "ULID",
+        "date_of_birth": "YYYY-MM-DD",
+        "age_years": "integer (16 or 18)",
+        "boundary_crossed": "'minor_min_age' | 'legal_adult_18'",
+        "consent_re_record_required": "boolean (true when boundary_crossed='legal_adult_18' + prior consents were guardian-recorded)"
+      }
+    }
+  ]
+}

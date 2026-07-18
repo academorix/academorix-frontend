@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/athlete-enrollment/rules",
+  "$version": 1,
+  "title": "athlete-enrollment — validation rules",
+  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Rules",
+  "rules": [
+    { "name": "valid_iso4217_currency", "class": "Academorix\\Foundation\\Rules\\ValidIso4217Currency", "signature": "valid_iso4217_currency", "description": "ISO 4217 3-letter currency code. Used on price_currency." },
+    { "name": "valid_positive_int", "class": "Academorix\\Foundation\\Rules\\ValidPositiveInt", "signature": "valid_positive_int", "description": "Non-negative integer. Used on price_amount_cents + jersey_number_*." },
+    {
+      "name": "valid_enrollment_status_transition",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\ValidEnrollmentStatusTransition",
+      "signature": "valid_enrollment_status_transition",
+      "description": "Enforces the state-machine from x-invariants. Valid transitions: submitted → {payment_pending, consent_pending, confirmed, waitlisted, expired}; payment_pending → {consent_pending, confirmed, expired}; consent_pending → {confirmed, expired}; confirmed → {active, expired}; active → {completed, withdrawn, expelled}; waitlisted → {submitted (promotion), expired}. Refuses any other transition.",
+      "default_message": "The enrollment status transition from :from to :to is not allowed."
+    },
+    {
+      "name": "valid_enrollment_type",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\ValidEnrollmentType",
+      "signature": "valid_enrollment_type",
+      "description": "Enforces enrollment_type enum + cross-field: trial_converted requires source_trial_id; provisional requires the entitlement.",
+      "default_message": "The enrollment type is not valid or its prerequisites are not met."
+    },
+    {
+      "name": "athlete_active_or_paused",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\AthleteActiveOrPaused",
+      "signature": "athlete_active_or_paused",
+      "description": "Refuses when the referenced Athlete.status NOT IN ('active', 'paused'). Withdrawn / graduated / archived athletes cannot enroll.",
+      "default_message": "The athlete must be active or paused to enroll."
+    },
+    {
+      "name": "team_active",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\TeamActive",
+      "signature": "team_active",
+      "description": "Refuses when Team.status != 'active'.",
+      "default_message": "The team must be active for enrollment."
+    },
+    {
+      "name": "season_registration_open",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\SeasonRegistrationOpen",
+      "signature": "season_registration_open",
+      "description": "Refuses when Season.status NOT IN ('registration_open', 'in_progress'). Enrollments during in_progress become 'late' type (with a fee, tenant-configurable).",
+      "default_message": "Registration for this season is not open."
+    },
+    {
+      "name": "age_group_snapshot_matches_team_age_group",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\AgeGroupSnapshotMatchesTeamAgeGroup",
+      "signature": "age_group_snapshot_matches_team_age_group",
+      "description": "SOFT-WARN. Fires EnrollmentAgeGroupSnapshotMismatched when the snapshot doesn't match team.age_group_id. Does NOT block submission — many tenants allow athletes to play up (e.g. U10 playing on U12 team). Playing DOWN typically disallowed but tenant-configurable.",
+      "default_message": "The athlete's age group does not match the team's age group. This may be an intentional play-up but has been flagged.",
+      "kind": "soft_warn"
+    },
+    {
+      "name": "one_active_enrollment_per_athlete_team_season",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\OneActiveEnrollmentPerAthleteTeamSeason",
+      "signature": "one_active_enrollment_per_athlete_team_season",
+      "description": "Enforces the partial unique index. One active enrollment per (athlete, team, season).",
+      "default_message": "This athlete already has an active enrollment on this team for this season."
+    },
+    {
+      "name": "team_has_capacity",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\TeamHasCapacity",
+      "signature": "team_has_capacity",
+      "description": "Checks team.capacity vs current active enrollment count. When at capacity + waitlist entitlement off, refuses; when at capacity + waitlist entitlement on, transitions to waitlisted state (not a refusal).",
+      "default_message": "The team is at capacity and waitlist is not enabled for this tenant."
+    },
+    {
+      "name": "provisional_requires_entitlement",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\ProvisionalRequiresEntitlement",
+      "signature": "provisional_requires_entitlement",
+      "description": "Refuses enrollment_type='provisional' when tenant lacks athlete_enrollment_provisional entitlement.",
+      "default_message": "Provisional enrollment is Enterprise-only."
+    },
+    {
+      "name": "trial_source_matches_team_and_season",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\TrialSourceMatchesTeamAndSeason",
+      "signature": "trial_source_matches_team_and_season",
+      "description": "Refuses when source_trial_id references a TeamTrial with a different team_id OR when the trial's status is not 'converted'.",
+      "default_message": "The trial source does not match this enrollment's team, or the trial is not in a converted state."
+    },
+    {
+      "name": "consent_snapshot_present_when_confirmed",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Rules\\ConsentSnapshotPresentWhenConfirmed",
+      "signature": "consent_snapshot_present_when_confirmed",
+      "description": "Refuses status → confirmed when consent_snapshot is null OR when required consents (based on athlete's minor status + tenant's required consent set) are not present in the snapshot.",
+      "default_message": "Consent snapshot is required at confirmation. Ensure the athlete's consents are recorded before confirming enrollment."
+    }
+  ]
+}

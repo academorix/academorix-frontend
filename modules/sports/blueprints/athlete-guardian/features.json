@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/athlete-guardian/features",
+  "$version": 1,
+  "title": "athlete-guardian — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "athlete_guardian.core",
+      "displayName": "Guardians",
+      "description": "Guardian catalogue + lifecycle. Available on every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "athlete_guardian.multi_guardian",
+      "displayName": "Multi-guardian split-family support",
+      "description": "Medium+. Enables >1 guardian per athlete (split families, primary + secondary guardians). When off (Small), the observer refuses adding a second guardian.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "athlete_guardian.verification_workflow",
+      "displayName": "HR-verified guardian workflow",
+      "description": "Enterprise-only. Adds HR-manual verification with signed-document upload. When off, verification is silent-acceptance after 24h.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "athlete_guardian.consent_delegation",
+      "displayName": "Consent delegation chain",
+      "description": "Enables the cross-module ConsentDelegationChain resolver. When AthleteGuardian is provisioned, this feature is on — the athlete module's consent_recorded_by_authorised_guardian rule uses it. Wave 3b hooks the hard-fail; Wave 3a soft-warns.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

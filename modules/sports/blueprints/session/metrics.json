@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/session/metrics",
+  "$version": 1,
+  "title": "session — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.session",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["session_type", "status", "trigger", "audit_severity"],
+    "forbiddenAsLabels": ["session_id", "tenant_id", "athlete_id", "coach_id", "sport_key"]
+  },
+  "metrics": [
+    { "name": "academorix.session.scheduled.total", "kind": "counter", "unit": "sessions", "labels": ["session_type"] },
+    { "name": "academorix.session.status_transition.total", "kind": "counter", "unit": "transitions", "labels": ["from_status", "to_status", "trigger"] },
+    { "name": "academorix.session.cancelled.total", "kind": "counter", "unit": "cancellations", "labels": ["cancellation_category", "trigger"] },
+    { "name": "academorix.session.rescheduled.total", "kind": "counter", "unit": "reschedules", "labels": [] },
+    { "name": "academorix.session.coach_reassigned.total", "kind": "counter", "unit": "reassignments", "labels": ["audit_severity"] },
+    { "name": "academorix.session.checkin.total", "kind": "counter", "unit": "checkins", "labels": ["on_time"] },
+    { "name": "academorix.session.absent.total", "kind": "counter", "unit": "absences", "labels": [] },
+    { "name": "academorix.session.late.total", "kind": "counter", "unit": "late_checkins", "labels": [] },
+    { "name": "academorix.session.late_minutes", "kind": "histogram", "unit": "minutes", "buckets": [1, 5, 15, 30, 60], "labels": [] },
+    { "name": "academorix.session.attendance_rate", "kind": "histogram", "unit": "ratio", "buckets": [0.25, 0.5, 0.75, 0.9, 1.0], "labels": ["session_type"] },
+    { "name": "academorix.session.under_minimum_cancellation.total", "kind": "counter", "unit": "cancellations", "labels": ["session_type"] },
+    { "name": "academorix.session.rating_received.total", "kind": "counter", "unit": "ratings", "labels": [] },
+    { "name": "academorix.session.rating_average", "kind": "gauge", "unit": "rating", "labels": ["session_type"], "description": "Rolling average session_rating per session_type." },
+    { "name": "academorix.session.safeguarding_incident.total", "kind": "counter", "unit": "incidents", "labels": [], "description": "Every fire feeds regulator-facing dashboard. Ideally near-zero." },
+    { "name": "academorix.session.active.count", "kind": "gauge", "unit": "sessions", "labels": ["status", "session_type"] },
+    { "name": "academorix.session.slot_exhaustion.total", "kind": "counter", "unit": "refusals", "labels": [] },
+    { "name": "academorix.session.middleware_resolve.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [1, 5, 20, 100], "labels": [] },
+    { "name": "academorix.session.middleware_reject.total", "kind": "counter", "unit": "rejects", "labels": ["reason"] },
+    { "name": "academorix.session.start_job.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [50, 200, 1000, 5000], "labels": [] },
+    { "name": "academorix.session.complete_job.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [50, 200, 1000, 5000], "labels": [] },
+    { "name": "academorix.session.aggregate_ratings_job.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [100, 500, 5000, 30000], "labels": [] },
+    { "name": "academorix.session.attendance_count_drift.count", "kind": "gauge", "unit": "sessions", "labels": [], "description": "Sessions with denormalised counter drift. Populated by ReconcileAttendanceCountsJob." },
+    { "name": "academorix.session.purge_pending.count", "kind": "gauge", "unit": "sessions", "labels": [] }
+  ]
+}

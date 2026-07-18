@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/athlete/entitlements",
+  "$version": 1,
+  "title": "athlete — declared entitlements",
+  "description": "Three entitlement keys. `athlete_slot` caps active-athlete headcount (aligns with user_slot per hierarchy.md §7 — most tenants budget athletes + users together). `athlete_medical_tracking` is an OPT-IN boolean gating the medical cluster (regulated_health-tier data). `athlete_consent_workflow` gates the full recordable consent workflow (Enterprise only — tracks per-purpose expiry + revocation for GDPR Art. 8 audit-ready evidence).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "athlete_slot",
+      "kind": "slot",
+      "unit": "athletes",
+      "defaultsByPlan": { "small": 15, "medium": 250, "enterprise": null },
+      "description": "Active + paused athlete headcount cap. Small: 15 (micro-academy / studio profile). Medium: 250 (typical academy). Enterprise: unlimited (null cap). Consumed on Athlete.creating + on status archived → active (restore). Released on status → archived + on hard-delete. Graduated and withdrawn athletes ALSO release the slot at the transition — graduating an athlete lets a tenant free up capacity for a new intake without paying to archive them (soft-terminal state preserves alumni relations for free). Matches user_slot at each tier per hierarchy.md §7 rationale (a tenant that pays for 15 users typically wants 15 athletes; a Medium tenant with 250 users likely runs 250 athletes).",
+      "enforcedBy": [
+        "AthleteObserver.creating consumes 1 unit via EntitlementGate::consume('athlete_slot')",
+        "AthleteObserver.updating (status archived → active) consumes 1 unit",
+        "AthleteObserver.updating (status → archived / graduated / withdrawn) releases 1 unit",
+        "AthleteObserver.deleted (soft-delete) is a no-op (release already fired on the transition)",
+        "TenantSubscription downgrade triggers a warning via the reconciler but does NOT auto-archive over-quota rows — HR/admin must choose which athletes to archive"
+      ]
+    },
+    {
+      "key": "athlete_medical_tracking",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Opt-in gate for the medical_conditions / medical_allergies / medical_medications / medical_notes columns. OFF on Small tier by default (Small tenants without HR staff shouldn't accidentally collect regulated_health data); ON on Medium + Enterprise. When off, columns MUST be NULL — observer refuses writes with ATHLETE_MEDICAL_TRACKING_NOT_ENABLED (402). When on, columns become writable but still require `athlete.manage.medical` permission on every write path (permission separate from entitlement — the gate says the FEATURE is available; the permission says WHO can use it).",
+      "enforcedBy": [
+        "AthleteObserver.creating refuses medical_* writes when gate is off",
+        "AthleteObserver.updating refuses medical_* writes when gate is off",
+        "athlete.enforce_medical_permission middleware returns 402 on the /medical sub-resource when the gate is off (before even checking the caller's permission — the feature isn't available)",
+        "SDUI medical section hidden when features array does not include 'athlete.medical_tracking'"
+      ],
+      "compliance_note": "This gate is a data-minimisation lever. Turning it ON is a compliance-relevant tenant decision — the ops team logs the toggle in the compliance audit trail. Small tenants who need medical tracking on a small athlete count can pay for a one-off Medium upgrade rather than the whole platform expanding its regulated-health footprint by default."
+    },
+    {
+      "key": "athlete_consent_workflow",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables the full recordable consent workflow: recordable events (AthleteConsentRecorded / AthleteConsentRevoked), 12-month re-consent reminder cadence (via ReconcileAthleteConsentsJob), per-purpose retention log, and the /athletes/{athlete}/consents sub-resource. When off (Small + Medium default), the consent snapshot on the Athlete row is a bare three-boolean set with `consent_recorded_at` + `consent_recorded_by_user_id` — no expiry, no reminders, no per-flag history. When on, the workflow adds audit-ready evidence for GDPR Art. 8 + safeguarding regulator inquiries.",
+      "enforcedBy": [
+        "AthleteConsentGate::isWorkflowEnabled(tenant) returns false for Small + Medium tiers → the /consents sub-resource returns 402 ATHLETE_CONSENT_WORKFLOW_NOT_ENABLED",
+        "ReconcileAthleteConsentsJob skips tenants without the entitlement",
+        "SDUI consent-workflow surface (add/revoke consent modals, expiry chip on athlete profile) hidden when features array does not include 'athlete.consent_workflow'"
+      ]
+    }
+  ]
+}

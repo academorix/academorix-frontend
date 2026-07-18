@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/athlete/broadcasts",
+  "$version": 1,
+  "title": "athlete — realtime broadcast channels",
+  "description": "Three broadcast channel families for live UI updates. Tenant-level channel for cross-branch HR dashboards; branch-level channel for the branch-manager's daily roster view; user-level channel for a User's own athletes (parent-facing 'my kids' surface + adult-athlete self-view). Reverb driver is the default transport. Medical events are DELIBERATELY NOT broadcast on any channel — they route through the notifications module's HR channel only.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.athletes",
+      "class": "Academorix\\Sports\\Athlete\\Broadcasts\\TenantAthletesChannel",
+      "description": "Tenant-wide athlete lifecycle stream. Sink for HR + safeguarding dashboards showing cross-branch activity.",
+      "authorization": "sanctum::authed AND tenant_matches AND permission `athletes.viewAny`",
+      "events": [
+        "AthleteCreated",
+        "AthleteStatusChanged",
+        "AthletePausedForSafeguarding",
+        "AthleteReturnedFromPause",
+        "AthleteGraduated",
+        "AthleteWithdrawn",
+        "AthleteArchived",
+        "AthleteConsentRecorded",
+        "AthleteConsentRevoked",
+        "AthleteMinorTurnedAdult",
+        "AthleteAgeGroupSnapshotUpdated"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Payload is trimmed to non-confidential fields (see data-classes.json). Medical changes NEVER broadcast on this channel. First name + last name of MINORS stripped from the payload (regulated_minor tier); only age_group_id + branch_id remain."
+    },
+    {
+      "name": "branch.{branchId}.athletes",
+      "class": "Academorix\\Sports\\Athlete\\Broadcasts\\BranchAthletesChannel",
+      "description": "Branch-scoped athlete activity. Powers the branch manager's live roster view.",
+      "authorization": "sanctum::authed AND (permission `athletes.viewAny` scoped to branch_id OR branch_manager for this branch OR platform_admin)",
+      "events": [
+        "AthleteCreated",
+        "AthletePausedForSafeguarding",
+        "AthleteReturnedFromPause",
+        "AthleteGraduated",
+        "AthleteWithdrawn",
+        "AthleteAgeGroupSnapshotUpdated"
+      ],
+      "throttle": "30 events/minute per channel",
+      "notes": "Minor names stripped as with the tenant channel."
+    },
+    {
+      "name": "user.{userId}.athletes",
+      "class": "Academorix\\Sports\\Athlete\\Broadcasts\\UserAthletesChannel",
+      "description": "Per-user athlete stream — powers the 'my kids' widget for guardians + the self-view widget for adult athletes. Emits events for athletes the caller is responsible for (via AthleteGuardian rows) OR the athlete they ARE (via user_id).",
+      "authorization": "sanctum::authed AND user_matches",
+      "events": [
+        "AthleteCreated (where athlete.user_id = userId OR EXISTS(AthleteGuardian where user_id=userId AND athlete_id=athlete.id))",
+        "AthleteStatusChanged (same predicate)",
+        "AthleteLinkedToUser (where user_id = userId)",
+        "AthletePausedForSafeguarding (same predicate)",
+        "AthleteReturnedFromPause (same predicate)",
+        "AthleteGraduated (same predicate)",
+        "AthleteWithdrawn (same predicate)",
+        "AthleteConsentRecorded (same predicate)",
+        "AthleteConsentExpiring (from the reconciler; same predicate)",
+        "AthleteAgeGroupSnapshotUpdated (same predicate)",
+        "AthleteMinorTurnedAdult (where athlete.user_id = userId OR guardian.user_id = userId)"
+      ],
+      "throttle": "10 events/minute per channel",
+      "notes": "AthleteMedicalUpdated is dispatched through a separate HR-channel mechanism — never on the realtime channel (private-tier). Photo consent flips (AthletePhotoConsentChanged) DO broadcast because guardians want live confirmation their preference took effect."
+    }
+  ]
+}

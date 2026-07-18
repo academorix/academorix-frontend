@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/athlete-guardian/data-classes",
+  "$version": 1,
+  "title": "athlete-guardian — field classification",
+  "description": "AthleteGuardian carries mostly public-tier (structural) + internal-tier (verification state) fields. Notes + dispute_reason + revoke_reason are confidential-tier (HR-visible only). Guardian names + emails cascade the redactor treatment from their User (regulated_minor tier when the underlying athlete is a minor).",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "AthleteGuardian.id",
+      "AthleteGuardian.tenant_id",
+      "AthleteGuardian.athlete_id",
+      "AthleteGuardian.user_id",
+      "AthleteGuardian.relationship",
+      "AthleteGuardian.is_primary",
+      "AthleteGuardian.verification_status"
+    ],
+    "internal": [
+      "AthleteGuardian.has_legal_custody",
+      "AthleteGuardian.can_pickup",
+      "AthleteGuardian.can_receive_communications",
+      "AthleteGuardian.can_authorise_medical_care",
+      "AthleteGuardian.verification_method",
+      "AthleteGuardian.verified_at",
+      "AthleteGuardian.verified_by_user_id",
+      "AthleteGuardian.verification_document_file_id",
+      "AthleteGuardian.metadata",
+      "AthleteGuardian.created_by",
+      "AthleteGuardian.updated_by",
+      "AthleteGuardian.created_at",
+      "AthleteGuardian.updated_at"
+    ],
+    "confidential": [
+      "AthleteGuardian.notes (HR-visible only)",
+      "AthleteGuardian.dispute_reason (HR + safeguarding_officer visible)",
+      "AthleteGuardian.dispute_recorded_by_user_id",
+      "AthleteGuardian.revoke_reason (HR + safeguarding_officer visible; 7-year audit retention)",
+      "AthleteGuardian.revoked_by_user_id"
+    ],
+    "restricted": [],
+    "regulated_minor": [
+      "For guardians of MINOR athletes: the guardian's User first_name + last_name are STRIPPED from cross-tenant platform-admin reads (minor-adjacent data protection). Guardian's own User.email is redacted to domain-only for the same audience."
+    ],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "AthleteGuardian.verification_status (every transition — audit-critical, 7-year retention)",
+      "AthleteGuardian.is_primary (every flip — cannot-opt-out notification)",
+      "AthleteGuardian.has_legal_custody (every change — compliance-critical)",
+      "AthleteGuardian.can_authorise_medical_care (every change — medical safeguarding audit)",
+      "AthleteGuardian.can_pickup (every change — safety audit)",
+      "AthleteGuardian.can_receive_communications (every change)",
+      "AthleteGuardian.relationship (every change)",
+      "AthleteGuardian.deleted_at (soft-delete audit)"
+    ]
+  },
+  "notes": [
+    "Guardian rows themselves carry no PII fields — the PII lives in the linked User + Profile. The redactor pipeline for user data applies transitively when a guardian row is read through Guardian.user->profile.",
+    "For minor athletes, the guardian's name + email are subject to the same regulated_minor stripping as the athlete's — cross-tenant platform-admin reads never expose the guardian's identity when the underlying athlete is a minor.",
+    "Guardian.notes + dispute_reason + revoke_reason are HR-visible internal fields — they do NOT surface on the tenant activity feed. Only the FACT that a dispute / revoke happened is audit-visible."
+  ]
+}

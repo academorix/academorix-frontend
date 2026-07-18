@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/athlete-enrollment/data-classes",
+  "$version": 1,
+  "title": "athlete-enrollment — field classification",
+  "description": "AthleteEnrollment carries mostly internal-tier structural data. Notes fields (enrollment_notes, coach_notes) are confidential-tier (HR/coach-visible only). Consent snapshot inherits the tier of its constituent flags (mostly internal — the FACT of consent is not sensitive; the DATA those consents unlock is).",
+  "classes": {
+    "public": [
+      "AthleteEnrollment.id",
+      "AthleteEnrollment.tenant_id",
+      "AthleteEnrollment.team_id",
+      "AthleteEnrollment.athlete_id",
+      "AthleteEnrollment.season_id",
+      "AthleteEnrollment.age_group_snapshot_id",
+      "AthleteEnrollment.status",
+      "AthleteEnrollment.enrollment_type"
+    ],
+    "internal": [
+      "AthleteEnrollment.branch_id",
+      "AthleteEnrollment.team_member_id",
+      "AthleteEnrollment.source_trial_id",
+      "AthleteEnrollment.enrollment_source",
+      "AthleteEnrollment.position_preference",
+      "AthleteEnrollment.position_assigned",
+      "AthleteEnrollment.jersey_number_preference",
+      "AthleteEnrollment.jersey_number_assigned",
+      "AthleteEnrollment.price_amount_cents",
+      "AthleteEnrollment.price_currency",
+      "AthleteEnrollment.payment_status",
+      "AthleteEnrollment.consent_snapshot",
+      "AthleteEnrollment.confirmed_at",
+      "AthleteEnrollment.activated_at",
+      "AthleteEnrollment.completed_at",
+      "AthleteEnrollment.waitlisted_at",
+      "AthleteEnrollment.waitlist_position",
+      "AthleteEnrollment.expired_at",
+      "AthleteEnrollment.metadata",
+      "AthleteEnrollment.created_by",
+      "AthleteEnrollment.updated_by",
+      "AthleteEnrollment.created_at",
+      "AthleteEnrollment.updated_at"
+    ],
+    "confidential": [
+      "AthleteEnrollment.enrollment_notes (HR + coach visible)",
+      "AthleteEnrollment.coach_notes (coach-only)",
+      "AthleteEnrollment.withdrawal_reason (HR + admin visible; 7-year audit retention)",
+      "AthleteEnrollment.withdrawn_by_user_id"
+    ],
+    "regulated_minor": [
+      "For enrollments of MINOR athletes: the enrollment surface inherits the regulated_minor tier for cross-tenant reads."
+    ],
+    "audit_log": [
+      "AthleteEnrollment.status (every transition — audit-critical, 7-year retention for withdrawn/expelled)",
+      "AthleteEnrollment.payment_status (every transition — Wave 4 finance audit)",
+      "AthleteEnrollment.team_member_id (atomic conversion signal)",
+      "AthleteEnrollment.consent_snapshot (every update — safeguarding compliance)",
+      "AthleteEnrollment.position_assigned (every change)",
+      "AthleteEnrollment.jersey_number_assigned (every change)",
+      "AthleteEnrollment.withdrawal_reason (audit-critical)"
+    ]
+  },
+  "notes": [
+    "AthleteEnrollment carries NO PII directly — the PII is in the linked Athlete + Team + Season. Cross-tenant regulated_minor stripping applies transitively.",
+    "Coach notes are coach-only — never surfaced to guardians / athletes / peers.",
+    "Consent snapshot is a POINT-IN-TIME copy. Even when the athlete revokes consents later, the enrollment's snapshot preserves the state at confirm time for audit."
+  ]
+}

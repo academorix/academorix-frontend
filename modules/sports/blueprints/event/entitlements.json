@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/event/entitlements",
+  "$version": 1,
+  "title": "event — declared entitlements",
+  "description": "Seven entitlement keys. `sports_events` is the boolean master gate for the whole module. `event_slot` caps events per calendar year. `event_public_visibility` gates the public/tenant_only distinction (Medium+ can publish to public marketing pages). `event_livestream` gates the livestream_url/password columns (Medium+). `event_prize_pool` gates the prize_pool_cents column (Enterprise only). `event_multi_facility` gates attaching 2+ facilities to one event (Enterprise). `event_sponsors` gates the sponsors JSONB field (Enterprise).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "sports_events",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. All tiers get the module — even Small (a small academy still runs the occasional match / graduation). Small has hard slot caps; Medium + Enterprise progressively lift them. Off = the whole module is invisible: no event CRUD, no routes reachable, no reminders fire, no ResourceBookings compose through the event surface.",
+      "enforcedBy": [
+        "event.enforce_entitlement middleware on every /api/v1/events + /api/v1/events/{event}/* route",
+        "EventObserver.creating refuses when the gate is closed (EVENT_FEATURE_NOT_ENTITLED, 402)",
+        "SDUI resource surfaces hidden when features array does not include 'sports_events.core'"
+      ]
+    },
+    {
+      "key": "event_slot",
+      "kind": "slot",
+      "unit": "events per calendar year",
+      "defaultsByPlan": { "small": 12, "medium": 60, "enterprise": null },
+      "description": "How many Events a tenant can have IN ONE CALENDAR YEAR that the event overlaps. Small: 12 (one per month). Medium: 60 (roughly one per week). Enterprise: unlimited (null). Consumed on Event create; the accounting window is any calendar year that the event overlaps (an event crossing Dec-Feb counts against both years). Cancelled + archived events STILL count against their year (financial retention).",
+      "enforcedBy": [
+        "EventObserver.creating consumes 1 unit via EntitlementGate::consume('event_slot', { calendar_years: overlapping })",
+        "EventObserver.deleted (hard-delete only — post-retention) releases the slot"
+      ]
+    },
+    {
+      "key": "event_public_visibility",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables `visibility='public'` — event appears on the tenant's public marketing page + external search. Medium + Enterprise. Small can still create events but only visibility IN (tenant_only, participants_only, private).",
+      "enforcedBy": [
+        "EventObserver.creating refuses when visibility='public' and gate is closed (EVENT_PUBLIC_VISIBILITY_NOT_ENTITLED, 402)",
+        "EventObserver.saving refuses visibility transitions to 'public' when gate is closed",
+        "SDUI create + edit screens hide the 'public' option when features array does not include 'sports_events.public_visibility'"
+      ]
+    },
+    {
+      "key": "event_livestream",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables `livestream_url` + `livestream_password` columns + the EventLivestreamActivated event. Medium + Enterprise. Small tenants who upload a URL get refused at the observer.",
+      "enforcedBy": [
+        "EventObserver.creating refuses when livestream_url IS NOT NULL and gate is closed (EVENT_LIVESTREAM_NOT_ENTITLED, 402)",
+        "SDUI create + edit screens hide the livestream fields when features array does not include 'sports_events.livestream'"
+      ]
+    },
+    {
+      "key": "event_prize_pool",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables `prize_pool_cents` + `prize_pool_currency` columns. Enterprise-only — most tenants don't run cash-prize competitions, and those that do are typically federation-tier tenants on Enterprise.",
+      "enforcedBy": [
+        "EventObserver.creating refuses when prize_pool_cents IS NOT NULL and gate is closed (EVENT_PRIZE_POOL_NOT_ENTITLED, 402)",
+        "SDUI create + edit screens hide the prize_pool fields when features array does not include 'sports_events.prize_pool'"
+      ]
+    },
+    {
+      "key": "event_multi_facility",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables attaching 2+ facilities to one Event (a large tournament across multiple courts). Enterprise-only. Small + Medium tenants can attach exactly 0 or 1 facility.",
+      "enforcedBy": [
+        "EventFacilityObserver.creating refuses when the target event already has an active event_facilities row and gate is closed (EVENT_MULTI_FACILITY_NOT_ENTITLED, 402)",
+        "SDUI event-facility surfaces refuse the second attachment when features array does not include 'sports_events.multi_facility'"
+      ]
+    },
+    {
+      "key": "event_sponsors",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables the `sponsors` JSONB field. Enterprise-only — sponsorship is a federation / large-tournament feature.",
+      "enforcedBy": [
+        "EventObserver.creating refuses when sponsors IS NOT NULL AND non-empty and gate is closed (EVENT_SPONSORS_NOT_ENTITLED, 402)",
+        "SDUI create + edit screens hide the sponsors editor when features array does not include 'sports_events.sponsors'"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/sports-registry/helpers",
+  "$version": 1,
+  "title": "sports-registry — helper functions",
+  "description": "Four published helpers for common sport-catalog lookups from any layer (controller, action, listener, blade template, artisan command). Sport keys are NOT a request-scoped context axis (there is no `X-Sport-Id` header), so the helpers accept explicit arguments rather than reading from request state.",
+  "namespace": "Academorix\\Sports\\Registry\\Support",
+  "helpers": [
+    {
+      "signature": "resolve_sport(string $sport_key, ?string $discipline_key = null, ?string $position_key = null, ?string $tenant_id = null): array | null",
+      "purpose": "Returns the resolved triple (Sport [, Discipline [, Position]]) OR null when nothing resolves. Delegates to `SportKeyResolver::resolve(...)`. Tenant defaults to the caller's active tenant from RequestContext when omitted.",
+      "behaviours": [
+        "Cheap — resolution is cached at `sports:resolve:{tenant_id}:{sport_key}[:{discipline_key}[:{position_key}]]` for 1 hour.",
+        "Tenant customs win over platform-seeded when both match (config-driven per `sports_registry.resolution.prefer_tenant_custom`).",
+        "Returns partial resolutions: {sport_key} alone returns the Sport row; adding discipline_key extends the result to (Sport + Discipline); adding position_key returns the full triple.",
+        "When any level fails to resolve, returns null (the caller decides whether to throw SPORT_KEY_UNRESOLVED). The bare helper is silent — use `resolve_sport_or_fail()` when a throw is desired."
+      ],
+      "usage_example": "$triple = resolve_sport('football', 'football_11v11', 'football_goalkeeper');\n// \u2192 ['sport' => Sport{football}, 'discipline' => Discipline{football_11v11}, 'position' => Position{football_goalkeeper}]"
+    },
+    {
+      "signature": "resolve_sport_or_fail(string $sport_key, ?string $discipline_key = null, ?string $position_key = null, ?string $tenant_id = null): array",
+      "purpose": "Same as `resolve_sport()` but throws SportKeyUnresolvedException (422) when any level fails to resolve. Used at write time in downstream Wave 3 modules where an unresolved key is a hard failure.",
+      "behaviours": [
+        "Delegates to `resolve_sport()`; when the result is null, throws with the specific unresolved level (SPORT_KEY_UNRESOLVED / DISCIPLINE_KEY_UNRESOLVED / POSITION_KEY_UNRESOLVED).",
+        "The thrown exception carries the resolver's search trace for debugging."
+      ],
+      "usage_example": "$triple = resolve_sport_or_fail($enrollment->sport_key, $enrollment->discipline_key, $enrollment->position_key);\n// throws SportKeyUnresolvedException on miss"
+    },
+    {
+      "signature": "sport_display_name(string $sport_key, ?string $locale = null): string",
+      "purpose": "Returns the Sport's localised display name. Consumes the SportKeyResolver + localization's HasTranslations trait. Locale defaults to the caller's active locale.",
+      "behaviours": [
+        "Falls back to the Sport's canonical English name when the requested locale is not translated.",
+        "Returns the slug verbatim as a last resort when the sport_key doesn't resolve — never throws (this is a display-only helper).",
+        "Used in email subjects + notification bodies + dashboard chip labels."
+      ],
+      "usage_example": "$name = sport_display_name('football', 'ar');\n// \u2192 '\u0643\u0631\u0629 \u0627\u0644\u0642\u062f\u0645'"
+    },
+    {
+      "signature": "sports_catalog_for_tenant(?string $tenant_id = null): Collection<Sport>",
+      "purpose": "Returns the merged catalog (platform-seeded + tenant customs) for the given tenant (defaults to the caller's active tenant). Active-only unless overridden.",
+      "behaviours": [
+        "Reads from `sports:list:tenant:{tenant_id}` cache (1800s TTL).",
+        "Sorted by category asc, sort_order asc, name asc.",
+        "Used by the tenant admin catalog UI + every downstream sport-picker widget."
+      ],
+      "usage_example": "$catalog = sports_catalog_for_tenant();\nforeach ($catalog as $sport) { echo $sport->name; }"
+    }
+  ],
+  "notes": [
+    "Every helper here is a thin wrapper. Prefer container-injected services (`SportRepository`, `SportKeyResolver`, `CustomEntryFactory`) for anything more complex — helpers are a convenience for readable one-liners in view + controller code.",
+    "No `active_sport()` helper — sports are NOT a request-scoped context. Callers must pass the sport_key explicitly."
+  ],
+  "examples": [
+    {
+      "title": "Validate sport_key on write",
+      "code": "$sport = resolve_sport_or_fail($request->sport_key);\n// $sport is the resolved Sport model + relations (Discipline + Position if provided)"
+    },
+    {
+      "title": "Render sport chip in a template",
+      "code": "{{ sport_display_name($athleteEnrollment->sport_key) }}"
+    },
+    {
+      "title": "Populate a select in the tenant admin UI",
+      "code": "$options = sports_catalog_for_tenant()->map(fn ($s) => ['key' => $s->slug, 'label' => $s->name]);\n// $options ready for HeroUI ComboBox"
+    }
+  ]
+}

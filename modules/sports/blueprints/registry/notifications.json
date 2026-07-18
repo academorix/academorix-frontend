@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/sports-registry/notifications",
+  "$version": 1,
+  "title": "sports-registry — notification classes + categories",
+  "namespace": "Academorix\\Sports\\Registry\\Notifications",
+  "notifications": [
+    "TenantCustomSportCreatedNotification",
+    "SportPrefixResolutionFailedNotification",
+    "SportCatalogUpdatedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "sports_registry.custom_sport_created",
+      "display_name": "Custom sport created",
+      "description": "Sent to tenant admins when a new custom Sport (or Discipline / Position) is added to the tenant's catalog. Distinct from SportCatalogSeeded — the platform catalog fires silently (system invariant). Opt-in; default on for admins + owners.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "sports_registry.prefix_resolution_failed",
+      "display_name": "Sport reference could not be resolved",
+      "description": "Sent when the reconciler detects a Wave 3 row referencing a sport_key / discipline_key / position_key that doesn't resolve against the tenant's merged catalog. Includes { source_table, source_row_id, unresolved_value }. Throttled — one notification per (tenant, source_table, source_row_id) per hour to prevent notification flood when a whole table has drift. Cannot opt out because dangling references may break downstream enrollment flows.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "sports_registry.catalog_updated",
+      "display_name": "Sports catalog updated",
+      "description": "Sent to tenant admins when the platform catalog changes (adds new sports, updates existing, deactivates removed). Includes a summary { added: [slugs], updated: [slugs], deactivated: [slugs] }. Opt-in; default OFF (most tenants don't care about platform catalog evolution — those that do (Enterprise with heavy sport-specific configs) opt in).",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": true
+    }
+  ]
+}

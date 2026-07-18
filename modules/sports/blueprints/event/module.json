@@ -1,0 +1,256 @@
+{
+  "$version": 1,
+  "name": "event",
+  "alias": "event",
+  "namespace": "Academorix\\Sports\\Event",
+  "description": "Sport competitive / social / educational event — tournament, match, showcase, workshop, camp opening, awards ceremony. Answers 'what's happening at our tenant on date X?'. Multi-day + multi-facility supported. Every Event optionally references a Season for temporal context. Team participation tracked via teams::EventTeam (Wave 2b nullable FK; Wave 3 hardens). Ships: Event model with lifecycle (draft -> announced -> registration_open -> registration_closed -> in_progress -> completed -> cancelled -> archived), rich metadata (public/private, capacity, entry_fee, format), scheduled auto-transitions, event-specific SDUI screens, per-Event ResourceBookings via a event<->facility pivot (nullable — some events use no facility, e.g. virtual awards, camp-openings held outdoors). Downstream: Session.event_id (nullable — a session may or may not be part of an event's schedule), teams::EventTeam.event_id (nullable pre-Wave-3, hardens with Wave 3 migration), Wave 4 finance module attaches invoices per registered participant.",
+  "keywords": [
+    "event",
+    "events",
+    "tournament",
+    "match",
+    "competition",
+    "showcase",
+    "workshop",
+    "camp",
+    "clinic",
+    "graduation",
+    "awards-ceremony",
+    "conference",
+    "livestream",
+    "registration",
+    "capacity",
+    "entry-fee",
+    "prize-pool",
+    "sponsors",
+    "public-visibility",
+    "single-elimination",
+    "double-elimination",
+    "round-robin",
+    "group-stage",
+    "seeded-bracket",
+    "friendly",
+    "tenant",
+    "organization",
+    "branch",
+    "season",
+    "facility",
+    "team",
+    "athlete",
+    "wave-3b"
+  ],
+  "priority": 62,
+  "providers": [
+    "Academorix\\Sports\\Event\\Providers\\EventServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "organization",
+    "region",
+    "branch",
+    "entitlements",
+    "teams",
+    "season",
+    "age-group",
+    "facility"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "session",
+    "athlete-enrollment",
+    "finance",
+    "notifications",
+    "attendance",
+    "marketing"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToEvent",
+      "HasEventFacilities"
+    ],
+    "attributes": [
+      "AsEventListener"
+    ],
+    "blueprints": [
+      "events",
+      "event_facilities"
+    ],
+    "middleware": [
+      "event.resolve_active",
+      "event.enforce_registration_open"
+    ],
+    "events": [
+      "EventCreated",
+      "EventUpdated",
+      "EventStatusChanged",
+      "EventAnnounced",
+      "EventRegistrationOpened",
+      "EventRegistrationClosed",
+      "EventStarted",
+      "EventCompleted",
+      "EventCancelled",
+      "EventRescheduled",
+      "EventVenueChanged",
+      "EventCapacityChanged",
+      "EventPricingChanged",
+      "EventMinorEligibilityCorrected",
+      "EventArchived",
+      "EventRestored",
+      "EventPublished",
+      "EventUnpublished",
+      "EventFacilityAdded",
+      "EventFacilityRemoved",
+      "EventPrimaryFacilityChanged",
+      "EventCancellationBroadcast",
+      "EventReminderScheduled",
+      "EventLivestreamActivated"
+    ],
+    "policies": [
+      "EventPolicy",
+      "EventFacilityPolicy"
+    ],
+    "hooks": [
+      "PreventEventOrphansOnTenantErased",
+      "CascadeEventFacilitiesOnFacilityRetired"
+    ],
+    "commands": [
+      "event:list",
+      "event:describe",
+      "event:create",
+      "event:announce",
+      "event:open-registration",
+      "event:close-registration",
+      "event:start",
+      "event:complete",
+      "event:cancel",
+      "event:archive",
+      "event:restore",
+      "event:publish",
+      "event:unpublish",
+      "event:add-facility",
+      "event:remove-facility",
+      "event:set-primary-facility",
+      "event:roll-status",
+      "event:reconcile-facility-bookings"
+    ],
+    "jobs": [
+      "RollEventStatusJob",
+      "ExpireExpiredEventRegistrationsJob",
+      "NotifyEventReminderJob",
+      "ReconcileEventFacilityBookingsJob",
+      "PurgeArchivedEventsJob",
+      "NotifyEventUpcomingJob",
+      "ExpireEventCoolingOffJob"
+    ],
+    "notifications": [
+      "EventAnnouncedNotification",
+      "EventRegistrationOpeningNotification",
+      "EventRegistrationClosingNotification",
+      "EventReminderNotification",
+      "EventCancellationBroadcastNotification",
+      "EventRescheduledNotification",
+      "EventVenueChangedNotification",
+      "EventPricingChangedNotification",
+      "EventMinorEligibilityCorrectedNotification",
+      "EventLivestreamActivatedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.events",
+      "event.{eventId}.registration",
+      "event.{eventId}.livestream"
+    ],
+    "observers": [
+      "EventObserver",
+      "EventFacilityObserver"
+    ],
+    "rules": [
+      "valid_event_type",
+      "valid_event_format",
+      "valid_event_date_range",
+      "valid_event_registration_window",
+      "valid_event_age_range",
+      "valid_gender_category",
+      "valid_visibility_value",
+      "valid_entry_fee",
+      "valid_prize_pool",
+      "valid_sponsors_json",
+      "valid_livestream_url",
+      "valid_event_facility_purpose",
+      "one_primary_facility_per_event",
+      "event_facility_within_branch"
+    ],
+    "casts": [
+      "EventType",
+      "EventFormat",
+      "EventStatus",
+      "EventVisibility",
+      "EventGenderCategory",
+      "EventFacilityPurpose"
+    ],
+    "views": [],
+    "lang": [
+      "event"
+    ],
+    "config": [
+      "event"
+    ],
+    "macros": [
+      "Request::activeEvent",
+      "Request::activeEventId"
+    ],
+    "bindings": [
+      "EventRepository",
+      "EventFacilityRepository",
+      "EventProvisioner",
+      "EventPhaseCalculator",
+      "EventFacilityBookingReconciler",
+      "EventRegistrationWindowEvaluator",
+      "EventEligibilityEvaluator",
+      "EventCancellationBroadcaster",
+      "EventPricingChangeGate"
+    ],
+    "resources": [
+      "event",
+      "event-facility"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing event CRUD + lifecycle transitions (announce / open-registration / close-registration / start / complete / cancel / archive / restore / publish / unpublish) + facility attach/detach + primary-facility management.",
+      "routes": [
+        "GET /api/v1/events",
+        "POST /api/v1/events",
+        "GET /api/v1/events/{event}",
+        "PATCH /api/v1/events/{event}",
+        "DELETE /api/v1/events/{event}",
+        "POST /api/v1/events/{event}/announce",
+        "POST /api/v1/events/{event}/open-registration",
+        "POST /api/v1/events/{event}/close-registration",
+        "POST /api/v1/events/{event}/start",
+        "POST /api/v1/events/{event}/complete",
+        "POST /api/v1/events/{event}/cancel",
+        "POST /api/v1/events/{event}/archive",
+        "POST /api/v1/events/{event}/restore",
+        "POST /api/v1/events/{event}/publish",
+        "POST /api/v1/events/{event}/unpublish",
+        "GET /api/v1/events/{event}/facilities",
+        "POST /api/v1/events/{event}/facilities",
+        "DELETE /api/v1/events/{event}/facilities/{eventFacility}",
+        "POST /api/v1/events/{event}/facilities/{eventFacility}/set-primary",
+        "GET /api/v1/events/upcoming",
+        "GET /api/v1/events/{event}/livestream"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling + force-cancel escape hatch when an event went sideways and the tenant needs help unwinding.",
+      "routes": [
+        "GET /api/v1/platform/events",
+        "GET /api/v1/platform/events/{event}",
+        "POST /api/v1/platform/events/{event}/force-cancel"
+      ]
+    }
+  }
+}

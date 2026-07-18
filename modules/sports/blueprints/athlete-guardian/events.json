@@ -1,0 +1,247 @@
+{
+  "id": "academorix://modules/athlete-guardian/events",
+  "$version": 1,
+  "title": "athlete-guardian — published events",
+  "namespace": "Academorix\\Sports\\AthleteGuardian\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Guardianship lifecycle events fan out to notifications + activity + audit. Verification events (Verified / Disputed / Revoked) are audit-critical with 7-year retention. Primary-guardian changes are cannot-opt-out — the shift affects every downstream cascade + notification routing.",
+  "events": [
+    {
+      "name": "GuardianAdded",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianAdded",
+      "trigger": "AthleteGuardianProvisioner committed successfully. Fires once per guardian row.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGuardianAddedNotification (to admin + existing guardians + the new guardian's User)",
+        "athlete-guardian::VerifyGuardianByEmailDomainJob (dispatched immediately for auto-verify attempt)",
+        "cache::InvalidateAthleteGuardiansCache",
+        "cache::InvalidateGuardiansForUserCache"
+      ],
+      "payload": {
+        "guardian_id": "ULID (agu_*)",
+        "tenant_id": "ULID (ten_*)",
+        "athlete_id": "ULID (ath_*)",
+        "user_id": "ULID (usr_*)",
+        "relationship": "string",
+        "is_primary_at_create": "boolean",
+        "has_legal_custody": "boolean",
+        "added_by_user_id": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "GuardianRemoved",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianRemoved",
+      "trigger": "Guardian soft-deleted (deleted_at set). If the removed guardian was is_primary=true, the observer auto-elects a new primary + fires PrimaryGuardianChanged in the same transaction.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGuardianRemovedNotification (to admin + remaining guardians)",
+        "athlete-guardian::ReleasePrimaryGuardianSlotOnGuardianRemoved (auto-elect new primary when applicable)"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "user_id": "ULID",
+        "was_primary": "boolean",
+        "removed_by_user_id": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "GuardianRoleChanged",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianRoleChanged",
+      "trigger": "Guardian.relationship OR notes mutated. Distinct from flag-change events (which have dedicated events).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "changed_fields": "string[]",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "PrimaryGuardianChanged",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\PrimaryGuardianChanged",
+      "trigger": "is_primary flag transitioned within (tenant, athlete) tuple. Fires with the previous primary's ID + the new primary's ID. Every downstream notification cascade routes through the primary guardian.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPrimaryGuardianChangedNotification (to all guardians + admin — cannot-opt-out)",
+        "cache::InvalidateAthletePrimaryGuardianCache"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "from_guardian_id": "ULID | null (null when this is the first primary — GuardianAdded fires that path)",
+        "to_guardian_id": "ULID",
+        "changed_by_user_id": "ULID",
+        "trigger": "'manual' | 'auto_on_removal'"
+      }
+    },
+    {
+      "name": "GuardianCustodyChanged",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCustodyChanged",
+      "trigger": "has_legal_custody flag flipped. Distinct event because custody changes are compliance-critical + drive downstream cascades (can_authorise_medical_care may auto-flip when has_legal_custody flips false).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — compliance-critical)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGuardianCustodyChangedNotification (to guardian + admin)"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "from_value": "boolean",
+        "to_value": "boolean",
+        "reason": "string | null",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "GuardianVerified",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianVerified",
+      "trigger": "verification_status transitioned pending → verified OR disputed → verified. Unlocks consent-recording for the guardian.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGuardianVerifiedNotification (to guardian + admin)"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "user_id": "ULID",
+        "verification_method": "'auto_household' | 'hr_manual' | 'silent_acceptance' | 'self_declared'",
+        "verified_at": "ISO 8601",
+        "verified_by_user_id": "ULID | null (null for auto / silent methods)"
+      }
+    },
+    {
+      "name": "GuardianVerificationDisputed",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianVerificationDisputed",
+      "trigger": "verification_status transitioned verified → disputed. HR flag — the guardian is under review; consent-recording BLOCKED until resolved.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGuardianVerificationDisputedNotification (to guardian + admin + safeguarding_officer — cannot-opt-out)"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "dispute_reason": "string",
+        "disputed_at": "ISO 8601",
+        "disputed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "GuardianVerificationRevoked",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianVerificationRevoked",
+      "trigger": "verification_status transitioned {pending, verified, disputed} → revoked. Terminal — the guardianship row stays for audit but is treated as inactive across every downstream consumer.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGuardianRevokedNotification (to guardian + admin + safeguarding_officer — cannot-opt-out)"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "revoke_reason": "string",
+        "revoked_at": "ISO 8601",
+        "revoked_by_user_id": "ULID",
+        "was_primary": "boolean"
+      }
+    },
+    {
+      "name": "GuardianCanPickupToggled",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCanPickupToggled",
+      "trigger": "can_pickup flag flipped. Reception staff refresh cached pickup roster.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateAthletePickupListCache"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "from_value": "boolean",
+        "to_value": "boolean",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "GuardianCanReceiveCommunicationsToggled",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCanReceiveCommunicationsToggled",
+      "trigger": "can_receive_communications flag flipped. Notification routing updates.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::InvalidateGuardianCommunicationsPrefCache"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "from_value": "boolean",
+        "to_value": "boolean",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "GuardianCanAuthoriseMedicalCareToggled",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCanAuthoriseMedicalCareToggled",
+      "trigger": "can_authorise_medical_care flag flipped. Medical clearance workflow (Wave 4+) refreshes.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGuardianMedicalAuthorisationChangedNotification (to guardian + safeguarding_officer)"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "from_value": "boolean",
+        "to_value": "boolean",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "GuardianCommunicationsBounced",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Events\\GuardianCommunicationsBounced",
+      "trigger": "Wave 4+ Notifications module detected permanent delivery failure to a guardian's User. Auto-disables can_receive_communications after N permanent bounces (default 3).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGuardianCommunicationsBouncedNotification (to admin — email failing, please contact guardian)"
+      ],
+      "payload": {
+        "guardian_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "bounce_count": "integer",
+        "channel": "'mail' | 'sms' | 'push'",
+        "auto_disabled_communications": "boolean"
+      }
+    }
+  ]
+}

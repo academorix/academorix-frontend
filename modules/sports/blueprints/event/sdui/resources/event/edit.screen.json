@@ -1,0 +1,134 @@
+{
+  "id": "event.event.edit",
+  "title": "Edit event",
+  "version": 1,
+  "kind": "SduiScreen",
+  "resource": "event",
+  "route": "/events/{event}/edit",
+  "description": "Multi-card edit form. Immutable fields (tenant_id, organization_id, branch_id post-registration_open, starts_at/ends_at post-announced without dates.shift permission, entry_fee_cents post-registration_open without pricing.change permission, min_age/max_age narrowing post-registration_open without eligibility.narrow permission) are disabled with tooltips explaining why. Warning banners surface for audit-critical fields (dates.shift, pricing.change, eligibility.narrow).",
+  "dataSources": [
+    {
+      "name": "event",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/events/' + route.params.event + '?include=organization,branch,season,primary_facility'",
+      "unwrap": "data"
+    }
+  ],
+  "form": {
+    "endpointExpr": "'PATCH /api/v1/events/' + route.params.event",
+    "initialValuesExpr": "event",
+    "onSuccess": { "$action": "route.push", "urlExpr": "'/events/' + route.params.event" }
+  },
+  "nodes": [
+    {
+      "kind": "PageHeader",
+      "children": [
+        { "kind": "PageHeader.Title", "bindings": { "children": { "$expr": "'Edit event: ' + event.name" } } }
+      ]
+    },
+    {
+      "kind": "View",
+      "bindings": { "hidden": { "$expr": "!['registration_open', 'registration_closed', 'in_progress'].includes(event.status)" } },
+      "children": [
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "leadingIcon": "exclamation-triangle-outline",
+            "title": "Post-registration-open changes are audit-critical",
+            "description": "Date shifts, venue changes, pricing changes, and eligibility narrowing affect registered participants and generate cannot-opt-out notifications. Financial changes retained 7 years in audit."
+          }
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Identity" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "TextField", "props": { "name": "name", "label": "Name", "isRequired": true, "maxLength": 128 } },
+            { "kind": "TextField", "props": { "name": "slug", "label": "Slug", "maxLength": 64 } },
+            { "kind": "Widget", "props": { "id": "organization.organization-picker", "props": { "name": "organization_id", "label": "Organization", "isDisabled": true, "helpText": "Immutable post-create" } } },
+            { "kind": "Widget", "props": { "id": "branch.branch-picker", "props": { "name": "branch_id", "label": "Branch (optional)", "clearable": true } }, "bindings": { "props": { "isDisabled": { "$expr": "['registration_open', 'registration_closed', 'in_progress'].includes(event.status) && !caller.can('events.venue.change')" }, "helpText": { "$expr": "['registration_open', 'registration_closed', 'in_progress'].includes(event.status) ? 'Post-registration-open changes require events.venue.change permission' : null" } } } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Schedule" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "DatePicker", "props": { "name": "starts_at", "label": "Starts at", "isRequired": true, "granularity": "minute" }, "bindings": { "props": { "isDisabled": { "$expr": "['completed', 'cancelled', 'archived'].includes(event.status) || (['announced', 'registration_open', 'registration_closed', 'in_progress'].includes(event.status) && !caller.can('events.dates.shift'))" } } } },
+            { "kind": "DatePicker", "props": { "name": "ends_at", "label": "Ends at", "isRequired": true, "granularity": "minute" } },
+            { "kind": "DatePicker", "props": { "name": "registration_opens_at", "label": "Registration opens", "granularity": "minute" } },
+            { "kind": "DatePicker", "props": { "name": "registration_closes_at", "label": "Registration closes", "granularity": "minute" } },
+            { "kind": "Switch", "props": { "name": "allow_late_registration", "label": "Allow late registration" } },
+            { "kind": "NumberField", "props": { "name": "late_registration_fee_cents", "label": "Late registration fee (cents)", "minValue": 0 } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Eligibility & capacity" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "NumberField", "props": { "name": "max_participants", "label": "Max participants", "minValue": 1 } },
+            { "kind": "NumberField", "props": { "name": "max_teams", "label": "Max teams", "minValue": 1 } },
+            { "kind": "NumberField", "props": { "name": "min_age", "label": "Minimum age", "minValue": 3, "maxValue": 100 }, "bindings": { "props": { "isDisabled": { "$expr": "['registration_open', 'registration_closed', 'in_progress'].includes(event.status) && !caller.can('events.eligibility.narrow')" } } } },
+            { "kind": "NumberField", "props": { "name": "max_age", "label": "Maximum age", "minValue": 3, "maxValue": 100 } },
+            { "kind": "ComboBox", "props": { "name": "gender_category", "label": "Gender category", "clearable": true, "options": ["male", "female", "mixed", "any"] } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Pricing" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "NumberField", "props": { "name": "entry_fee_cents", "label": "Entry fee (cents)", "minValue": 0 }, "bindings": { "props": { "isDisabled": { "$expr": "['registration_open', 'registration_closed', 'in_progress'].includes(event.status) && !caller.can('events.pricing.change')" } } } },
+            { "kind": "TextField", "props": { "name": "entry_fee_currency", "label": "Currency (ISO 4217)", "pattern": "^[A-Z]{3}$" } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Presentation" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "ComboBox", "props": { "name": "visibility", "label": "Visibility", "options": ["public", "tenant_only", "participants_only", "private"] } },
+            { "kind": "TextArea", "props": { "name": "description", "label": "Description (Markdown)", "rows": 6 } },
+            { "kind": "TextArea", "props": { "name": "private_notes", "label": "Private notes (admin-only)", "rows": 3 } },
+            { "kind": "TextField", "props": { "name": "hero_image_url", "label": "Hero image URL" } },
+            { "kind": "TextField", "props": { "name": "rules_document_url", "label": "Rules document URL" } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "FormActions",
+      "children": [
+        { "kind": "Button", "props": { "variant": "outline", "children": "Cancel" }, "bindings": { "onPress": { "$action": "route.push", "urlExpr": "'/events/' + route.params.event" } } },
+        { "kind": "Button", "props": { "variant": "solid", "type": "submit", "children": "Save changes" } }
+      ]
+    }
+  ]
+}

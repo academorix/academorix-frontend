@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/athlete/features",
+  "$version": 1,
+  "title": "athlete — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "athlete.core",
+      "displayName": "Athletes",
+      "description": "Athlete catalogue + lifecycle. Available on every tier — every academy needs athletes.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "athlete.medical_tracking",
+      "displayName": "Medical tracking",
+      "description": "Enables the medical_* columns + the /athletes/{athlete}/medical sub-resource. Off on Small (opt-in Medium+). Data is regulated_health-tier; requires the athlete_medical_tracking entitlement + athletes.manage.medical permission.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "athlete.emergency_contact",
+      "displayName": "Emergency contact tracking",
+      "description": "Enables the emergency_contact_* fields. On by default because every tenant needs this for safety.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "athlete.consent_workflow",
+      "displayName": "Full consent workflow",
+      "description": "Enterprise-only. Recordable consent events + 12-month re-consent cadence + per-purpose expiry log. When off (Small + Medium), consent is a bare three-boolean snapshot with recorded_at + recorded_by_user_id.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "athlete.age_group_snapshot",
+      "displayName": "Age-group snapshot",
+      "description": "Nightly recomputation of Athlete.current_age_group_id + AthleteAgeGroupSnapshotUpdated events on birthday drift. Always on when age-group module is provisioned.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "athlete.safeguarding_pause",
+      "displayName": "Safeguarding pause workflow",
+      "description": "Enables the pause + return-from-pause endpoints with reason recording + safeguarding_officer notification cascade. Always on — every tenant needs the safeguarding lever.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "athlete.guardian_delegated_consent",
+      "displayName": "Guardian-delegated consent",
+      "description": "Enterprise + hooked once AthleteGuardian module lands (Wave 3b). Enables the cross-module authorization check that a minor's consent recorder must be a User with an active AthleteGuardian row + has_legal_custody=true.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

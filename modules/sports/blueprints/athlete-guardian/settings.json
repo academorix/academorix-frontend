@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/athlete-guardian/settings",
+  "$version": 1,
+  "title": "athlete-guardian — settings",
+  "description": "Tenant-facing preferences for guardian workflow (verification cadence, dispute review) + user preferences for guardians managing their own guardianships.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "athlete_guardian",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Settings\\AthleteGuardianSettings",
+      "label": "Guardians",
+      "description": "Tenant-wide guardian workflow defaults.",
+      "icon": "users",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 46,
+      "permission": "athlete_guardians.viewAny",
+      "sections": [
+        {
+          "label": "Verification",
+          "icon": "shield-check",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "pending_ttl_days",
+              "controlType": "number",
+              "label": "Pending TTL (days)",
+              "defaultValue": 30,
+              "min": 1,
+              "max": 90,
+              "helpText": "Days after which pending guardians auto-revoke if never verified.",
+              "sortOrder": 1
+            },
+            {
+              "name": "silent_acceptance_hours",
+              "controlType": "number",
+              "label": "Silent acceptance window (hours)",
+              "defaultValue": 24,
+              "min": 1,
+              "max": 168,
+              "helpText": "Hours after Guardian Added at which silent-acceptance kicks in (Small + Medium tiers; Enterprise requires HR manual verify).",
+              "sortOrder": 2
+            },
+            {
+              "name": "trusted_domains",
+              "controlType": "multi-text",
+              "label": "Trusted email domains for auto-household",
+              "defaultValue": [],
+              "helpText": "Domains matching auto-verify guardians as household members.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Communications",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "bounce_threshold",
+              "controlType": "number",
+              "label": "Bounce threshold (permanent bounces)",
+              "defaultValue": 3,
+              "min": 1,
+              "max": 10,
+              "helpText": "After N permanent bounces on a guardian's email, auto-disable can_receive_communications.",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

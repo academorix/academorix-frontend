@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/athlete-guardian/traits",
+  "$version": 1,
+  "title": "athlete-guardian — trait composition",
+  "description": "Two owned traits — `BelongsToAthleteGuardian` for downstream models that carry a `guardian_id` FK (Wave 4+ CustodyScheduleEntry + MedicalClearanceAuthorisation), `HasGuardianRelationships` on the User model exposing per-user guardianship accessors.",
+  "owned": [
+    {
+      "trait": "Academorix\\Sports\\AthleteGuardian\\Concerns\\BelongsToAthleteGuardian",
+      "description": "Mixed into any downstream model that carries a `guardian_id` FK. Adds the `guardian()` belongsTo relation + a `resolveInGuardian(?AthleteGuardian)` query scope + a `booted()` hook that refuses to save when guardian.tenant_id != row.tenant_id (cross-tenant defense-in-depth).",
+      "public": true,
+      "usedBy": [
+        "custody-schedule::CustodyScheduleEntry (Wave 4+ — pointing at the guardian who has custody for a given period)",
+        "medical-clearance::MedicalClearanceAuthorisation (Wave 4+ — pointing at the guardian who authorised medical care for an athlete session)"
+      ],
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Sports\\AthleteGuardian\\Concerns\\HasGuardianRelationships",
+      "description": "Composed onto the User model. Adds sibling accessors: `guardianships()` (hasMany AthleteGuardian where user_id = this.id), `activeGuardianships()` (filtered by is_active), `primaryGuardianships()` (where is_primary=true), `authorisedForMedical()` (where has_legal_custody + can_authorise_medical_care). Read-only accessors; every write goes through AthleteGuardianProvisioner.",
+      "public": true,
+      "usedBy": [
+        "user::User (exposes guardianships accessor to every consumer holding the User model)"
+      ],
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
+    ],
+    "athlete": [
+      { "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete", "reason": "AthleteGuardian carries athlete_id — cascades tenant + branch through the athlete." }
+    ],
+    "user": [
+      { "trait": "Academorix\\User\\Concerns\\BelongsToUser", "reason": "AthleteGuardian carries user_id — enables .own scoping for guardians managing their own guardianships." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every state mutation (verification, primary flip, role flags) is compliance-relevant." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }
+    ]
+  },
+  "composition": {
+    "athleteGuardian": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToAthlete",
+        "BelongsToUser",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant precedes every scope-observing trait. BelongsToAthlete precedes BelongsToUser (athlete resolves the tenant-branch chain first). No BelongsToBranch — cascades through athlete. No BelongsToOrganization / BelongsToRegion — same reason."
+    }
+  }
+}

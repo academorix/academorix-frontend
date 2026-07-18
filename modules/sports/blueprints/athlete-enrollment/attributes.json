@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/athlete-enrollment/attributes",
+  "$version": 1,
+  "title": "athlete-enrollment — PHP attribute contracts",
+  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Attributes",
+  "attributes": [
+    {
+      "name": "AsAthleteEnrollmentListener",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Attributes\\AsAthleteEnrollmentListener",
+      "targets": ["class"],
+      "description": "Marks a service as a subscriber to enrollment lifecycle events. EnrollmentAtomicityFailed requires explicit opt-in (it routes on notifications-critical queue and is P1).",
+      "params": [
+        { "name": "events", "type": "array<string>", "default": [], "description": "Empty = subscribe to every Academorix\\Sports\\AthleteEnrollment\\Events\\Enrollment* event EXCEPT EnrollmentAtomicityFailed (explicit opt-in required)." },
+        { "name": "queue", "type": "string | null", "default": null },
+        { "name": "priority", "type": "integer", "default": 100 }
+      ],
+      "example": "#[AsAthleteEnrollmentListener(events: ['EnrollmentActivated'], queue: 'athlete-enrollment')]\nfinal class InvalidateTeamRosterOnActivation\n{\n    public function __invoke(EnrollmentActivated $event): void { /* ... */ }\n}"
+    }
+  ]
+}

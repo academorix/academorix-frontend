@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/sports-registry/jobs",
+  "$version": 1,
+  "title": "sports-registry — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\Registry\\Jobs\\SeedPlatformSportsCatalogJob",
+      "queue": "notifications",
+      "purpose": "First-boot / on-demand seeder for the platform sports catalog. Parses `data/platform-sports-catalog.json` + UPSERTs the 30+ Sport rows, their nested Disciplines, and their nested Positions. Idempotent — running a second time with the JSON unchanged is a no-op (upsert on (tenant_id NULL, slug) primary conflict resolution).",
+      "steps": [
+        "Verify the sports table's platform-scoped row count (WHERE tenant_id IS NULL) against the shipped JSON entry count. When counts match + `--force` is NOT set, log 'catalog already seeded' + exit.",
+        "Load `data/platform-sports-catalog.json` from the shipped artifact path.",
+        "For each Sport entry: UPSERT via SportProvisioner with { tenant_id=NULL, is_platform_seeded=true, ...entry }. The observer skips slot consumption for is_platform_seeded=true. Fire SportCreated only when the row is truly new (upsert reports isInsert).",
+        "For each Discipline nested under the Sport: UPSERT via DisciplineProvisioner keyed on (sport_id, slug). Same is_platform_seeded=true bypass.",
+        "For each Position nested under the Discipline: UPSERT via PositionProvisioner keyed on (discipline_id, slug).",
+        "When `--force` is set + a previously-seeded row is NOT present in the current JSON, MARK it deactivated (is_active=false) instead of hard-deleting. Deactivation preserves downstream historical references.",
+        "Fire SportCatalogSeeded once at the end with { catalog_version, sport_ids, discipline_ids, position_ids, seeded_by, duration_ms }.",
+        "When --force resulted in adds/updates/deactivates, ALSO fire SportCatalogUpdated with per-slug adds + updates + deactivates lists."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "'platform-sports-catalog-seed'",
+      "tries": 3,
+      "backoff": [30, 300, 900],
+      "note": "Runs on the notifications queue at platform first-boot triggered by the foundation::ApplicationBooted listener; also runnable on-demand via the CLI `sports:registry:seed-platform-catalog` OR the platform-admin route POST /api/v1/platform/sports/reseed. The uniqueness key is a fixed string (not tenant-scoped) because the seeder acts globally. Refuses to overlap with ReconcileSportReferencesJob to avoid double-touching rows."
+    },
+    {
+      "class": "Academorix\\Sports\\Registry\\Jobs\\ReconcileSportReferencesJob",
+      "queue": "low",
+      "purpose": "Nightly at 04:15 UTC. Scans every table listed in `config('sports_registry.reconciler.reference_tables')` for `sport_key` / `discipline_key` / `position_key` values that fail to resolve against the catalog. Every failure fires SportPrefixResolutionFailed + logs to `academorix.sports_registry.reference_drift.count` metric.",
+      "steps": [
+        "Read the reference-tables config. Wave 3a: `['teams']`; Wave 3+ appends `['athlete_enrollments', 'coaches', 'events', 'sessions', 'seasons', 'age_groups', 'facilities']`.",
+        "For each table + tenant scoping: enumerate rows with non-null sport_key. Group by (tenant_id, sport_key) to minimise resolver calls.",
+        "For each (tenant_id, sport_key) group: call `SportKeyResolver::resolve(sport_key, null, null, $tenant)`. On failure, fire `SportPrefixResolutionFailed` per row + increment `academorix.sports_registry.reference_drift.count{table=X, kind=sport}`.",
+        "Repeat for `discipline_key` (call `resolve(sport_key, discipline_key, null, $tenant)`) + `position_key` (full triple resolve).",
+        "Aggregate the results into a reconciliation report row in `audit_events` + optionally alert per `config('sports_registry.reconciler.alert_on_drift')`.",
+        "The reconciler NEVER edits downstream rows — it just reports. Fixes require operator action (deactivate the referring row, update the sport_key value, or restore the missing catalog row)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "note": "Reference tables are added by convention — each Wave 3 module opts in by appending its table name to the config, no observer edit needed. When a tenant carries thousands of enrollments the job iterates in chunks (default 500) to keep memory bounded. Refuses to overlap with SeedPlatformSportsCatalogJob to avoid inconsistent snapshots."
+    },
+    {
+      "class": "Academorix\\Sports\\Registry\\Jobs\\PurgeArchivedRegistryRowsJob",
+      "queue": "low",
+      "purpose": "Weekly at 05:30 UTC on Sunday. Hard-deletes tenant custom (is_platform_seeded=false, tenant_id NOT NULL) rows that have been deactivated (is_active=false) for more than the retention window AND have zero downstream references. Platform-seeded rows are NEVER purged — they are permanent.",
+      "steps": [
+        "SELECT id, tenant_id, slug FROM sports WHERE is_active=false AND is_platform_seeded=false AND updated_at < NOW() - INTERVAL 'sports_registry.retention.custom_deactivated_days days'.",
+        "Verify no inbound downstream references via ReconcileSportReferencesJob's resolver-check for THIS row's slug. When zero references remain, hard-delete + fire SportDeleted with mode='hard'. When any reference remains, skip.",
+        "Repeat for disciplines + positions in the same run.",
+        "The audit row for each hard-delete survives 7 years per compliance retention.",
+        "The job intentionally runs weekly (not daily) because customs almost never hard-delete — the workload is trivial + more frequent runs waste queue slots."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "tries": 2,
+      "note": "Conservative — the config default `sports_registry.retention.custom_deactivated_days=730` (2 years) means a tenant custom that was deactivated must remain quiet for 2 years before it's eligible for hard-delete. Explicit `sports:registry:deactivate --force-hard-delete` bypasses the retention window (support tooling; requires ops sign-off) but never applies to platform-seeded rows."
+    }
+  ]
+}

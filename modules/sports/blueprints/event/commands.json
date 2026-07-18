@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/event/commands",
+  "$version": 1,
+  "title": "event — Artisan commands",
+  "commands": [
+    {
+      "signature": "event:list {--tenant=} {--status=} {--organization=} {--branch=} {--season=} {--sport=} {--type=} {--include-archived} {--limit=50}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\ListEventsCommand",
+      "purpose": "Enumerate events. Filter by tenant / status / scope / season / sport / event_type. Prints id, tenant, name, type, starts_at, status, primary_facility, registered_count."
+    },
+    {
+      "signature": "event:describe {event : ULID or slug} {--tenant=} {--include-facilities} {--include-registrations} {--include-audit-history}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\DescribeEventCommand",
+      "purpose": "Print the full resolution trace for one Event: full row + resolved phase + attached facilities + registration window status + inbound reference counts (sessions.event_id, event_teams.event_id, athlete_enrollments) + last 10 audit rows when --include-audit-history."
+    },
+    {
+      "signature": "event:create {tenant : ULID or slug} {organization : ULID or slug} {name} {starts_at} {ends_at} {--type=match} {--branch=} {--season=} {--sport=} {--slug=} {--visibility=tenant_only} {--entry-fee-cents=} {--entry-fee-currency=} {--max-participants=} {--min-age=} {--max-age=} {--reg-opens=} {--reg-closes=} {--allow-late} {--late-fee-cents=} {--announce}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\CreateEventCommand",
+      "purpose": "CLI create. Consumes 1 event_slot per overlapping calendar year unless --system is set. --announce transitions the event to announced immediately after create."
+    },
+    {
+      "signature": "event:announce {event : ULID or slug} {--reason=}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\AnnounceEventCommand",
+      "purpose": "Manual transition draft -> announced. Fires EventAnnounced."
+    },
+    {
+      "signature": "event:open-registration {event : ULID or slug} {--reason=} {--early}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\OpenRegistrationCommand",
+      "purpose": "Manual transition announced -> registration_open. --early bypasses the registration_opens_at guardrail."
+    },
+    {
+      "signature": "event:close-registration {event : ULID or slug} {--reason=}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\CloseRegistrationCommand",
+      "purpose": "Manual transition registration_open -> registration_closed."
+    },
+    {
+      "signature": "event:start {event : ULID or slug} {--reason=} {--early}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\StartEventCommand",
+      "purpose": "Manual transition to in_progress. --early bypasses the starts_at guardrail."
+    },
+    {
+      "signature": "event:complete {event : ULID or slug} {--reason=}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\CompleteEventCommand",
+      "purpose": "Manual transition in_progress -> completed."
+    },
+    {
+      "signature": "event:cancel {event : ULID or slug} {reason : cancellation reason (REQUIRED)} {--force}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\CancelEventCommand",
+      "purpose": "Cancel the event. Fires EventCancelled + EventCancellationBroadcast. --force bypasses the cooling-off check."
+    },
+    {
+      "signature": "event:archive {event : ULID or slug} {--reason=}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\ArchiveEventCommand",
+      "purpose": "Soft-archive a completed or cancelled event. Fires EventArchived."
+    },
+    {
+      "signature": "event:restore {event : ULID or slug}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\RestoreEventCommand",
+      "purpose": "Restore an archived event to its prior terminal status (completed/cancelled). Only within retention window."
+    },
+    {
+      "signature": "event:publish {event : ULID or slug}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\PublishEventCommand",
+      "purpose": "Set visibility='public'. Gated by event_public_visibility entitlement."
+    },
+    {
+      "signature": "event:unpublish {event : ULID or slug} {--visibility=tenant_only}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\UnpublishEventCommand",
+      "purpose": "Set visibility to a non-public value."
+    },
+    {
+      "signature": "event:add-facility {event : ULID or slug} {facility : ULID or slug} {--purpose=competition} {--primary}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\AddFacilityCommand",
+      "purpose": "Attach a facility. Multi-facility gated by event_multi_facility entitlement."
+    },
+    {
+      "signature": "event:remove-facility {event : ULID or slug} {event_facility : ULID}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\RemoveFacilityCommand",
+      "purpose": "Detach a facility (soft-delete). Auto-promotes another facility to primary if needed."
+    },
+    {
+      "signature": "event:set-primary-facility {event : ULID or slug} {event_facility : ULID}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\SetPrimaryFacilityCommand",
+      "purpose": "Flip is_primary=true on one facility (auto-demotes the previous primary). Fires EventPrimaryFacilityChanged + EventVenueChanged when post-registration_open."
+    },
+    {
+      "signature": "event:roll-status {--tenant=} {--dry-run}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\RollStatusCommand",
+      "purpose": "Force-run RollEventStatusJob. --dry-run reports the planned transitions."
+    },
+    {
+      "signature": "event:reconcile-facility-bookings {--tenant=} {--dry-run}",
+      "class": "Academorix\\Sports\\Event\\Console\\Commands\\ReconcileFacilityBookingsCommand",
+      "purpose": "Force-run ReconcileEventFacilityBookingsJob. Verifies event_facilities ↔ resource_bookings integrity."
+    }
+  ]
+}

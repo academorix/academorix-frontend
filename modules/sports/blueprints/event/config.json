@@ -1,0 +1,146 @@
+{
+  "id": "academorix://modules/event/config",
+  "$version": 1,
+  "title": "event — developer configuration",
+  "configFile": "config/event.php",
+  "envPrefix": "EVENT_",
+  "sections": {
+    "phase_roll": {
+      "keys": [
+        {
+          "path": "event.phase_roll.schedule",
+          "type": "string",
+          "env": "EVENT_ROLL_CRON",
+          "default": "0 * * * *",
+          "description": "Cron expression for RollEventStatusJob. Hourly on the hour."
+        },
+        {
+          "path": "event.phase_roll.batch_size",
+          "type": "int",
+          "default": 5000,
+          "description": "Max rows RollEventStatusJob loads per run."
+        },
+        {
+          "path": "event.phase_roll.completion_grace_hours",
+          "type": "int",
+          "default": 1,
+          "description": "Hours past ends_at before RollEventStatusJob auto-completes an event. Allows late-running events to wrap without early auto-complete."
+        }
+      ]
+    },
+    "registration": {
+      "keys": [
+        {
+          "path": "event.registration.expire_expired_schedule",
+          "type": "string",
+          "env": "EVENT_EXPIRE_REGISTRATIONS_CRON",
+          "default": "*/15 * * * *",
+          "description": "Cron expression for ExpireExpiredEventRegistrationsJob."
+        },
+        {
+          "path": "event.registration.reminder_windows",
+          "type": "array<string>",
+          "default": ["T-24h", "T-1h"],
+          "description": "When to schedule reminder notifications relative to starts_at."
+        },
+        {
+          "path": "event.registration.opening_reminder_windows",
+          "type": "array<string>",
+          "default": ["T-24h", "T-1h"],
+          "description": "When to schedule opening-reminder notifications relative to registration_opens_at."
+        },
+        {
+          "path": "event.registration.closing_reminder_windows",
+          "type": "array<string>",
+          "default": ["T-48h", "T-24h", "T-2h"],
+          "description": "When to schedule closing-reminder notifications relative to registration_closes_at."
+        }
+      ]
+    },
+    "cooling_off": {
+      "keys": [
+        {
+          "path": "event.cooling_off.window_hours",
+          "type": "int",
+          "env": "EVENT_COOLING_OFF_HOURS",
+          "default": 24,
+          "description": "Hours after cancellation during which the event cannot be re-opened. Prevents rapid-fire cancel/reopen cycles that spam registered participants."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "event.reconciliation.facility_bookings_schedule",
+          "type": "string",
+          "env": "EVENT_RECONCILE_FACILITY_BOOKINGS_CRON",
+          "default": "0 4 * * *",
+          "description": "Cron expression for ReconcileEventFacilityBookingsJob. Daily at 04:00 UTC."
+        }
+      ]
+    },
+    "archive_dependency_checks": {
+      "keys": [
+        {
+          "path": "event.archive.dependency_checks",
+          "type": "array<string>",
+          "default": ["sessions", "event_teams", "athlete_enrollments"],
+          "description": "Table names that must have no active row referencing an Event for the archive path to proceed. Wave 3+ modules append their table names here without editing the observer. Wave 3a only `event_teams` exists on disk (via the Wave 2b teams module)."
+        }
+      ]
+    },
+    "purge_dependency_checks": {
+      "keys": [
+        {
+          "path": "event.purge.dependency_checks",
+          "type": "array<string>",
+          "default": ["sessions", "event_teams", "athlete_enrollments"],
+          "description": "Same list as archive.dependency_checks — reused by PurgeArchivedEventsJob."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "event.retention.archived_events_retention_days",
+          "type": "int",
+          "env": "EVENT_ARCHIVE_RETENTION_DAYS",
+          "default": 2555,
+          "description": "Days a soft-deleted Event stays archived before hard-delete. Default 2555 (7 years — financial retention floor)."
+        }
+      ]
+    },
+    "cache": {
+      "keys": [
+        {
+          "path": "event.cache.upcoming_ttl_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "TTL for `evt:upcoming:{tenant}:{organization?}:{branch?}` — the /events/upcoming endpoint."
+        },
+        {
+          "path": "event.cache.full_ttl_seconds",
+          "type": "int",
+          "default": 120,
+          "description": "TTL for `evt:full:{event_id}` — full event row + facilities."
+        },
+        {
+          "path": "event.cache.registration_window_ttl_seconds",
+          "type": "int",
+          "default": 30,
+          "description": "TTL for `evt:registration_window:{event_id}` — the precomputed registration-window state."
+        }
+      ]
+    },
+    "livestream": {
+      "keys": [
+        {
+          "path": "event.livestream.password_delivery_channels",
+          "type": "array<string>",
+          "default": ["mail"],
+          "description": "Channels used to deliver the livestream_password to registered participants. Never in-app rendering — mail (or secure vault link) only."
+        }
+      ]
+    }
+  }
+}

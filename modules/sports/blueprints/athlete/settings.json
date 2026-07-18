@@ -1,0 +1,165 @@
+{
+  "id": "academorix://modules/athlete/settings",
+  "$version": 1,
+  "title": "athlete — settings",
+  "description": "Tenant-facing preferences (athlete lifecycle defaults, consent workflow toggles, retention preferences) + user-level preferences (guardian display preferences for the /me/athletes surface).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "athlete",
+      "class": "Academorix\\Sports\\Athlete\\Settings\\AthleteSettings",
+      "label": "Athletes",
+      "description": "Tenant-wide athlete lifecycle defaults + feature opt-ins.",
+      "icon": "user-group",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 45,
+      "permission": "athletes.viewAny",
+      "sections": [
+        {
+          "label": "Minor age boundaries",
+          "description": "Age at which the athlete is considered a minor for consent + safeguarding purposes.",
+          "icon": "shield-check",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "minor_min_age",
+              "controlType": "number",
+              "label": "Minor age threshold",
+              "defaultValue": 16,
+              "min": 13,
+              "max": 18,
+              "helpText": "Athletes below this age require guardian-recorded consent. 13 = US COPPA minimum; 16 = GDPR default; 18 = safeguarding-conservative.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Medical tracking",
+          "description": "Enable medical fields on athlete rows. Data is regulated_health-tier, retained 7 years.",
+          "icon": "heart",
+          "sortOrder": 2,
+          "requiresEntitlement": "athlete_medical_tracking",
+          "fields": [
+            {
+              "name": "enable_medical_tracking",
+              "controlType": "toggle",
+              "label": "Track medical information",
+              "defaultValue": false,
+              "helpText": "Enables the medical_* columns + the /medical sub-resource. Regulated_health-tier data with 7-year retention. Turning this on writes a compliance audit row.",
+              "requiresPermission": "owner",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Consent workflow",
+          "description": "Full recordable consent workflow with expiry + revocation history.",
+          "icon": "document-check",
+          "sortOrder": 3,
+          "requiresEntitlement": "athlete_consent_workflow",
+          "fields": [
+            {
+              "name": "enable_consent_workflow",
+              "controlType": "toggle",
+              "label": "Enable full consent workflow",
+              "defaultValue": false,
+              "helpText": "Enterprise-only. Adds 12-month re-consent cadence + per-purpose expiry log. When off, consent is a bare three-boolean snapshot.",
+              "sortOrder": 1
+            },
+            {
+              "name": "reconsent_cadence_days",
+              "controlType": "number",
+              "label": "Re-consent cadence (days)",
+              "defaultValue": 365,
+              "min": 90,
+              "max": 730,
+              "helpText": "How often consents must be re-recorded. GDPR audit best-practice is annual (365 days).",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "consent_reminder_thresholds_days",
+              "controlType": "multi-select",
+              "label": "Consent expiring reminder cadence",
+              "defaultValue": [30, 14, 7],
+              "options": {
+                "60": "60 days before",
+                "30": "30 days before",
+                "14": "14 days before",
+                "7": "7 days before",
+                "1": "1 day before"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "age_group_change_notify_guardian",
+              "controlType": "toggle",
+              "label": "Notify guardians when child's age group flips",
+              "defaultValue": true,
+              "helpText": "Sends AthleteAgeGroupSnapshotChangedNotification when the nightly job detects a birthday-drift or catalog-change flip.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "icon": "trash",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "graduate_purge_after_years",
+              "controlType": "number",
+              "label": "Purge graduated athletes after (years)",
+              "defaultValue": 0,
+              "min": 0,
+              "max": 30,
+              "helpText": "0 = never purge graduated athletes (default, retains alumni indefinitely). Set to 10 or 15 for privacy-conscious tenants that don't want long-term alumni retention.",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "athlete_user",
+      "class": "Academorix\\Sports\\Athlete\\Settings\\AthleteUserSettings",
+      "label": "My athletes",
+      "description": "Per-user preferences for how the /me/athletes surface + notification cadence work.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 60,
+      "sections": [
+        {
+          "label": "Reminders",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "receive_age_group_change_notifications",
+              "controlType": "toggle",
+              "label": "Notify me when my child's age group changes",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_consent_expiring_reminders",
+              "controlType": "toggle",
+              "label": "Notify me when my child's consents are expiring",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/athlete-guardian/listeners",
+  "$version": 1,
+  "title": "athlete-guardian — subscribed events",
+  "listeners": [
+    {
+      "event": "user::UserSoftDeleted",
+      "listener": "Academorix\\Sports\\AthleteGuardian\\Listeners\\PreventUserArchiveWithActiveGuardianship",
+      "queue": "athlete-guardian",
+      "priority": 47,
+      "purpose": "Pre-write hook: refuses User soft-delete when the User is sole guardian for a minor athlete."
+    },
+    {
+      "event": "athlete-guardian::GuardianAdded",
+      "listener": "Academorix\\Sports\\AthleteGuardian\\Listeners\\DispatchVerifyGuardianByEmailDomainJob",
+      "queue": "athlete-guardian",
+      "priority": 30,
+      "purpose": "Dispatches the auto-verify job immediately on guardian creation."
+    },
+    {
+      "event": "athlete-guardian::GuardianRemoved",
+      "listener": "Academorix\\Sports\\AthleteGuardian\\Listeners\\ReleasePrimaryGuardianSlotOnGuardianRemoved",
+      "queue": "athlete-guardian",
+      "priority": 20,
+      "purpose": "When the removed guardian was primary, auto-elects a new primary from remaining verified guardians."
+    },
+    {
+      "event": "athlete-guardian::GuardianVerificationRevoked",
+      "listener": "Academorix\\Sports\\AthleteGuardian\\Listeners\\AutoDemoteRevokedPrimary",
+      "queue": "athlete-guardian",
+      "priority": 20,
+      "purpose": "When a revoked guardian was primary, auto-elects a new primary."
+    },
+    {
+      "event": "notifications::PermanentBounceDetected",
+      "listener": "Academorix\\Sports\\AthleteGuardian\\Listeners\\DisableGuardianCommunicationsOnBounceThreshold",
+      "queue": "athlete-guardian",
+      "purpose": "Wave 4+: after N permanent bounces on a guardian's User email (config.athlete_guardian.communications.bounce_threshold), auto-flips can_receive_communications to false + fires GuardianCommunicationsBounced."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Sports\\AthleteGuardian\\Listeners\\PurgeAthleteGuardianDataForErasedTenant",
+      "queue": "athlete-guardian",
+      "purpose": "Cascade delete via FK; writes compliance audit."
+    },
+    {
+      "event": "athlete::AthleteArchived",
+      "listener": "Academorix\\Sports\\AthleteGuardian\\Listeners\\SoftDeleteGuardiansOnAthleteArchived",
+      "queue": "athlete-guardian",
+      "purpose": "When an athlete archives (soft-delete), guardian rows remain but are effectively inactive (their is_active accessor returns false since athlete.status='archived'). No hard cascade — the rows stay for audit. On Athlete HARD-delete, the FK CASCADE takes over."
+    }
+  ]
+}

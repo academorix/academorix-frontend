@@ -1,0 +1,212 @@
+{
+  "id": "academorix://modules/athlete-enrollment/routes",
+  "$version": 1,
+  "title": "athlete-enrollment — HTTP routes",
+  "description": "Tenant-facing enrollment CRUD + lifecycle transitions + waitlist management + position/jersey assignment + parent-facing /me/enrollments surface + team-scoped /teams/{team}/enrollments roster view. Platform-admin cross-tenant + atomicity-failure audit.",
+  "groups": [
+    {
+      "name": "tenant-enrollments",
+      "prefix": "/api/v1/enrollments",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "resolve.application",
+        "user.resolve_active_tenant",
+        "tenant.resolve",
+        "user.enforce_tenant_membership",
+        "throttle:athlete-enrollment-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@index",
+          "permission": "enrollments.viewAny",
+          "description": "filter[branch_id], filter[team_id], filter[athlete_id], filter[season_id], filter[status], filter[enrollment_type], filter[age_group_snapshot_id], filter[payment_status]. Guardians see only their own children's enrollments via .own scope."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@store",
+          "permission": "enrollments.create",
+          "description": "Body: EnrollmentSubmitData { team_id, athlete_id, season_id, enrollment_source, enrollment_type, source_trial_id?, position_preference?, jersey_number_preference?, price_amount_cents, price_currency? }. Consumes 1 unit of athlete_enrollment_slot. Snapshots age_group_id in-band. Fires EnrollmentSubmitted."
+        },
+        {
+          "method": "GET",
+          "path": "/{enrollment}",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@show",
+          "permission": "enrollments.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{enrollment}",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@update",
+          "permission": "enrollments.update",
+          "description": "Body: EnrollmentUpdateData (excludes team_id, athlete_id, season_id, branch_id [immutable], age_group_snapshot_id [snapshot], enrollment_type [immutable], source_trial_id [immutable], status [dedicated endpoints], team_member_id [job-only]). Position + jersey + notes update via this endpoint."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{enrollment}",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@destroy",
+          "permission": "enrollments.delete",
+          "description": "Soft-delete. Refused when status IN ('active', 'confirmed') — must transition to a terminal state first."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/confirm",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@confirm",
+          "permission": "enrollments.confirm",
+          "description": "Transitions submitted/payment_pending/consent_pending → confirmed. Requires payment_status='paid' when price_amount_cents > 0. Captures consent_snapshot from athlete's current state. Fires EnrollmentConfirmed."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/activate",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@activate",
+          "permission": "enrollments.activate",
+          "description": "Transitions confirmed → active. Manual activation path — the ActivateConfirmedEnrollmentsJob is the automatic path. Triggers the atomic conversion to TeamMember."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/complete",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@complete",
+          "permission": "enrollments.complete",
+          "description": "Transitions active → completed. Terminal happy path. Also fired via season::SeasonCompleted cascade."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/withdraw",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@withdraw",
+          "permission": "enrollments.withdraw",
+          "description": "Body: { withdrawal_reason (required), withdrawal_notes? }. Terminal. Cascades: soft-deletes linked TeamMember. Releases 1 unit of slot."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/expel",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@expel",
+          "permission": "enrollments.expel",
+          "description": "Body: { expulsion_reason (required) }. Terminal + audit-critical. Fires EnrollmentExpelled (retention: 7 years). HR + safeguarding_officer + admin only."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/waitlist",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@waitlist",
+          "permission": "enrollments.waitlist",
+          "description": "Manual waitlist path. Admin can move a submitted enrollment to waitlist. Auto-waitlist happens in the observer when team is at capacity."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/promote-from-waitlist",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@promoteFromWaitlist",
+          "permission": "enrollments.promote-from-waitlist",
+          "description": "Manual promotion. PromoteWaitlistedEnrollmentsJob is the automatic path."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/assign-position",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@assignPosition",
+          "permission": "enrollments.assign-position",
+          "description": "Body: { position: string }. Coach-facing. Fires EnrollmentPositionAssigned."
+        },
+        {
+          "method": "POST",
+          "path": "/{enrollment}/assign-jersey",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\AthleteEnrollmentController@assignJersey",
+          "permission": "enrollments.assign-jersey",
+          "description": "Body: { jersey_number: int }. Enforces jersey uniqueness on the team via partial unique index."
+        }
+      ]
+    },
+    {
+      "name": "tenant-team-enrollments",
+      "prefix": "/api/v1/teams/{team}/enrollments",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "resolve.application",
+        "user.resolve_active_tenant",
+        "tenant.resolve",
+        "user.enforce_tenant_membership",
+        "throttle:athlete-enrollment-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Team-scoped enrollment list. Feeds the team detail page's roster + waitlist sections.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\TeamEnrollmentsController@index",
+          "permission": "enrollments.viewAny",
+          "description": "Scoped to the {team}. filter[status], filter[season_id]. Groups results by status (active roster + confirmed + waitlist + submitted + terminal)."
+        }
+      ]
+    },
+    {
+      "name": "tenant-my-enrollments",
+      "prefix": "/api/v1/me/enrollments",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "resolve.application",
+        "user.resolve_active_tenant",
+        "tenant.resolve",
+        "throttle:athlete-enrollment-tenant",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Guardian / adult-athlete facing 'my enrollments' surface.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Tenant\\MyEnrollmentsController@index",
+          "permission": "enrollments.view.own",
+          "description": "List enrollments for (a) the caller's own athlete row (self as adult athlete), PLUS (b) athletes linked via active AthleteGuardian rows where user_id = current_user_id."
+        }
+      ]
+    },
+    {
+      "name": "platform-enrollments",
+      "prefix": "/api/v1/platform/enrollments",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Platform\\EnrollmentsController@index",
+          "permission": "platform.enrollments.viewAny",
+          "description": "Cross-tenant list. Minor athlete names redacted."
+        },
+        {
+          "method": "GET",
+          "path": "/{enrollment}",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Platform\\EnrollmentsController@show",
+          "permission": "platform.enrollments.view"
+        },
+        {
+          "method": "GET",
+          "path": "/atomicity-failures",
+          "controller": "Academorix\\Sports\\AthleteEnrollment\\Http\\Controllers\\Platform\\AtomicityFailuresController@export",
+          "permission": "platform.enrollments.audit-atomicity",
+          "description": "Compliance audit — every EnrollmentAtomicityFailed event in the last N days. Super_admin only."
+        }
+      ]
+    }
+  ]
+}

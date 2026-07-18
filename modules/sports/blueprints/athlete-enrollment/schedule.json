@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/athlete-enrollment/schedule",
+  "$version": 1,
+  "title": "athlete-enrollment — scheduled tasks",
+  "entries": [
+    { "name": "enrollment-activate-confirmed", "command": "queue:dispatch --job=Academorix\\Sports\\AthleteEnrollment\\Jobs\\ActivateConfirmedEnrollmentsJob", "cron": "*/15 * * * *", "timezone": "UTC", "purpose": "Every 15 minutes: activate confirmed enrollments whose season has started." },
+    { "name": "enrollment-promote-waitlisted", "command": "queue:dispatch --job=Academorix\\Sports\\AthleteEnrollment\\Jobs\\PromoteWaitlistedEnrollmentsJob", "cron": "*/15 * * * *", "timezone": "UTC", "purpose": "Every 15 minutes: promote waitlist top when capacity opens." },
+    { "name": "enrollment-expire-provisional", "command": "queue:dispatch --job=Academorix\\Sports\\AthleteEnrollment\\Jobs\\ExpireExpiredProvisionalEnrollmentsJob", "cron": "0 6 * * *", "timezone": "UTC", "purpose": "Daily 06:00 UTC: expire provisional enrollments past TTL." },
+    { "name": "enrollment-notify-deadlines", "command": "queue:dispatch --job=Academorix\\Sports\\AthleteEnrollment\\Jobs\\NotifyEnrollmentDeadlineJob", "cron": "0 9 * * *", "timezone": "UTC", "purpose": "Daily 09:00 UTC: send registration-deadline reminders." },
+    { "name": "enrollment-reconcile-team-members", "command": "queue:dispatch --job=Academorix\\Sports\\AthleteEnrollment\\Jobs\\ReconcileEnrollmentTeamMemberInvariantJob", "cron": "0 3 * * *", "timezone": "UTC", "purpose": "Nightly 03:00 UTC: verify atomicity invariant. Every finding is P1." },
+    { "name": "enrollment-purge-completed", "command": "queue:dispatch --job=Academorix\\Sports\\AthleteEnrollment\\Jobs\\PurgeCompletedEnrollmentsJob", "cron": "0 4 * * 0", "timezone": "UTC", "purpose": "Weekly Sunday 04:00 UTC: hard-purge terminal enrollments past 7-year retention." }
+  ]
+}

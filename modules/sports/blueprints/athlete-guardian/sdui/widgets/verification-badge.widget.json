@@ -1,0 +1,37 @@
+{
+  "id": "athlete_guardian.widgets.verification-badge",
+  "title": "Guardian verification badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete_guardian.verification-badge",
+  "description": "Chip showing verification_status. Green (verified), yellow (pending), red (disputed), grey-strikethrough (revoked). Tooltip on hover shows verification_method + verified_at + verified_by_user_id when applicable.",
+  "params": {
+    "verification_status": { "type": "string", "required": true, "enum": ["pending", "verified", "disputed", "revoked"] },
+    "verification_method": { "type": "string", "required": false },
+    "verified_at": { "type": "string", "required": false },
+    "verified_by_user_id": { "type": "string", "required": false },
+    "size": { "type": "string", "required": false, "default": "sm" }
+  },
+  "nodes": [
+    {
+      "kind": "Tooltip",
+      "propsExpr": "{ content: $params.verification_method ? 'Verified via ' + $params.verification_method + ' at ' + $params.verified_at : 'Status: ' + $params.verification_status }",
+      "children": [
+        {
+          "kind": "Chip",
+          "propsExpr": "{ size: $params.size, variant: $params.verification_status === 'verified' ? 'success' : $params.verification_status === 'pending' ? 'warning' : $params.verification_status === 'disputed' ? 'danger' : 'neutral', className: $params.verification_status === 'revoked' ? 'line-through opacity-60' : '' }",
+          "children": [
+            {
+              "kind": "Icon",
+              "propsExpr": "{ name: $params.verification_status === 'verified' ? 'shield-check' : $params.verification_status === 'pending' ? 'clock' : $params.verification_status === 'disputed' ? 'exclamation-triangle' : 'x-circle', className: 'size-3 mr-1' }"
+            },
+            {
+              "kind": "Text",
+              "propsExpr": "{ children: $params.verification_status, className: 'text-xs capitalize' }"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

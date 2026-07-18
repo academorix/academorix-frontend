@@ -28,6 +28,11 @@
       "entity": "ActivityLog",
       "description": "Per-tenant activity feed row."
     },
+    "aen_": {
+      "module": "athlete-enrollment",
+      "entity": "AthleteEnrollment",
+      "description": "Roster attachment binding an Athlete to a Team + Season. Atomic conversion creates a teams::TeamMember in the same DB transaction on status → active. age_group_snapshot_id frozen at enrollment for birthday-drift isolation."
+    },
     "aev_": {
       "module": "auth",
       "entity": "EmailVerification",
@@ -42,6 +47,11 @@
       "module": "grants",
       "entity": "AccessGrant",
       "description": "Per-resource dynamic access grant. Polymorphic subject + resource, JSONB permissions, decision enum (allow/deny - deny wins)."
+    },
+    "agu_": {
+      "module": "athlete-guardian",
+      "entity": "AthleteGuardian",
+      "description": "Parent / legal-guardian pivot binding an Athlete to a User. Exactly one is_primary=true per Athlete when any exists. Four role flags (has_legal_custody, can_pickup, can_receive_communications, can_authorise_medical_care). Verification workflow with auto/hr/silent paths."
     },
     "ajd_": {
       "module": "auth",
@@ -98,6 +108,11 @@
       "entity": "ApiVersion",
       "description": "Versioned API surface entry.",
       "renamed_from": "aver_"
+    },
+    "ath_": {
+      "module": "athlete",
+      "entity": "Athlete",
+      "description": "The person being coached. Belongs to Tenant + Branch + optional User. Snapshot demographic + medical (REGULATED_HEALTH) + emergency contact (CONFIDENTIAL) profile with 7-year retention + 90-day post-archive redaction. Consent snapshot per GDPR Art. 8 for minors."
     },
     "atr_": {
       "module": "auth",
@@ -172,6 +187,11 @@
       "entity": "NotificationDigest",
       "description": "Batched digest of pending notifications (daily/weekly)."
     },
+    "dis_": {
+      "module": "sports-registry",
+      "entity": "Discipline",
+      "description": "Sport sub-variant / competition format (football_11v11, football_futsal, basketball_5v5, basketball_3x3, swimming_freestyle, swimming_relay). One Sport hasMany Disciplines. Slug IMMUTABLE post-create."
+    },
     "dlg_": {
       "module": "delegation",
       "entity": "RoleDelegation",
@@ -203,10 +223,20 @@
       "entity": "Dsar",
       "description": "Data-subject-access-request state machine (received -> triaging -> collecting -> assembling -> delivered | rejected)."
     },
+    "efc_": {
+      "module": "event",
+      "entity": "EventFacility",
+      "description": "Event ↔ Facility pivot attaching N facilities to one event. Enterprise-only for N>1 via event_multi_facility entitlement. Exactly one is_primary=true per event."
+    },
     "ent_": {
       "module": "entitlements",
       "entity": "Entitlement",
       "description": "Resolved (tenant, key) quota row."
+    },
+    "eve_": {
+      "module": "event",
+      "entity": "Event",
+      "description": "Sport competitive / social / educational event — tournament, match, showcase, workshop, camp, awards ceremony. Belongs to Tenant + Organization + optional Branch + optional Season. Multi-facility via event_facilities pivot."
     },
     "evt_": {
       "module": "teams",
@@ -340,6 +370,11 @@
       "entity": "PlatformUser",
       "description": "Academorix-staff principal on the `platform_admin` guard. Cross-tenant + cross-application by construction."
     },
+    "pos_": {
+      "module": "sports-registry",
+      "entity": "Position",
+      "description": "Sport-specific role / position (football_goalkeeper, football_defender, basketball_point_guard, basketball_center, swimming_freestyler). One Discipline hasMany Positions. Slug IMMUTABLE post-create."
+    },
     "pref_": {
       "module": "notifications",
       "entity": "NotificationPreference",
@@ -381,10 +416,20 @@
       "entity": "SearchAliasEntry",
       "description": "Synonym / alias entry for a search index."
     },
+    "sat_": {
+      "module": "session",
+      "entity": "SessionAttendance",
+      "description": "Session ↔ Athlete pivot with attendance state (registered / checked_in / absent / late / excused). One athlete attends a session once."
+    },
     "sea_": {
       "module": "season",
       "entity": "Season",
       "description": "Time-bounded competition/training cycle. Lifecycle planned → registration_open → in_progress → playoffs → completed → archived. Belongs to Tenant + Organization (optional) + Branch (optional) with an optional sport_key for sport-scoped seasons. Exactly one is_current=true per scoping tuple."
+    },
+    "ses_": {
+      "module": "session",
+      "entity": "Session",
+      "description": "A single practice / lesson / class instance. Composes facility::ResourceBooking for the physical slot. Adds coach, session_type, curriculum, attendance tracking, safeguarding-incident chain."
     },
     "set_": {
       "module": "settings",
@@ -410,6 +455,12 @@
       "module": "search",
       "entity": "SearchOption",
       "description": "Per-index tuning options (ranking rules, stop words)."
+    },
+    "spo_": {
+      "module": "sports-registry",
+      "entity": "Sport",
+      "description": "Top-level sport catalog entry (football, basketball, swimming, yoga, tennis, general_fitness, ...). tenant_id NULL = platform-scoped; non-null = tenant custom. Slug IMMUTABLE post-create — downstream Wave 3 modules reference by string.",
+      "promoted_from_reserved": true
     },
     "spr_": {
       "module": "compliance",
@@ -565,13 +616,6 @@
       "description": "Recurring transfer schedule."
     }
   },
-  "reserved_for_future": {
-    "spo_": {
-      "module": "sports (planned)",
-      "entity": "Sport",
-      "description": "Reserved."
-    }
-  },
   "renaming_history": [
     {
       "from": "aver_",
@@ -668,6 +712,12 @@
       "to": "tea_ (active)",
       "date": "2026-07-18",
       "reason": "Wave 2b teams module blueprint landed; prefix promoted from reserved_for_future to active."
+    },
+    {
+      "from": "spo_ (reserved)",
+      "to": "spo_ (active)",
+      "date": "2026-07-18",
+      "reason": "Wave 3c sports-registry module blueprint landed; prefix promoted from reserved_for_future to active."
     }
   ],
   "validation": {

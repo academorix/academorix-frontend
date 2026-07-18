@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/sports-registry/analytics",
+  "$version": 1,
+  "title": "sports-registry — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Sport Registry Custom Sport Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "sport_id", "slug", "category", "gender_typical", "governing_body"],
+      "description": "Tenant admin created a custom Sport. Feeds the sports-registry-adoption dashboard — Enterprise tenants adding customs signal programme diversity that platform admins may want to codify into the platform catalog."
+    },
+    {
+      "name": "Sport Registry Custom Discipline Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "discipline_id", "sport_id", "sport_is_platform_seeded", "slug", "format_type"],
+      "description": "Tenant admin created a custom Discipline. `sport_is_platform_seeded` distinguishes 'custom Discipline under platform Sport' (extending the taxonomy) from 'custom Discipline under custom Sport' (fully custom branch)."
+    },
+    {
+      "name": "Sport Registry Custom Position Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "position_id", "discipline_id", "discipline_is_platform_seeded", "slug", "is_field_position"]
+    },
+    {
+      "name": "Sport Registry Deactivated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "entity_kind", "entity_id", "slug", "was_platform_seeded", "downstream_reference_count"],
+      "description": "entity_kind: sport / discipline / position. Feeds the downstream-impact dashboard — deactivations with high downstream_reference_count signal breaking changes that need customer comms."
+    },
+    {
+      "name": "Sport Registry Custom Disabled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier"],
+      "description": "Small or Medium tier tenant attempted to create a custom. Feeds the upsell funnel — the frequency of these refusals per tenant signals a strong Enterprise upgrade candidate."
+    },
+    {
+      "name": "Sport Registry Quota Exceeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "tier", "entity_kind", "used", "cap"],
+      "description": "Attempt to create a custom past the sports_registry_custom_slot cap. Enterprise default is unlimited, so this fires rarely — but it exists in case a future tier variant introduces a cap."
+    },
+    {
+      "name": "Sport Registry Resolver Called",
+      "kind": "track",
+      "consent_required": "analytics",
+      "properties": ["tenant_id", "outcome", "level", "cache_status"],
+      "description": "outcome: matched / unresolved. level: sport / sport+discipline / triple. cache_status: hit / miss. Sample-throttled to 1% because the resolver is called on nearly every Wave 3 write."
+    },
+    {
+      "name": "Sport Registry Prefix Resolution Failed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "source_table", "source_column", "unresolved_value", "resolver_context"],
+      "description": "The reconciler detected a dangling reference. `resolver_context`: read / write / reconciler — distinguishes runtime failures from batch scans. Feeds the drift dashboard."
+    },
+    {
+      "name": "Sport Registry Catalog Seeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["seeded_by", "catalog_version", "sport_count", "discipline_count", "position_count", "duration_ms"],
+      "description": "Platform seeder completed. seeded_by: platform_boot / admin_reseed / legacy_backfill_command."
+    },
+    {
+      "name": "Sport Registry Catalog Updated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["catalog_version_before", "catalog_version_after", "added_count", "updated_count", "deactivated_count"],
+      "description": "Platform admin ran a reseed that changed the catalog. Feeds the versioning dashboard."
+    }
+  ],
+  "notes": [
+    "sport_id / discipline_id / position_id are ULIDs (anonymised identifiers). No PII risk.",
+    "The registry carries zero PII by design — every event is safe to route to Segment + downstream analytics without redaction.",
+    "The high-volume 'Sport Registry Resolver Called' event is sampled to 1% (`config('sports_registry.telemetry.resolver_sample_ratio')`) — the resolver is called on nearly every Wave 3 write + resolver cache tuning is more useful than a full call trace."
+  ]
+}

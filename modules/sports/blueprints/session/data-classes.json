@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/session/data-classes",
+  "$version": 1,
+  "title": "session — field classification",
+  "description": "Session tracks physical attendance including minors. HIGH child-safeguarding responsibility: session_notes may contain incident narrative + minor's identifying details. safeguarding_incident_flag is regulator-facing. Attendance pivot rows carry minor athletes' presence — regulator-relevant.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Session.id",
+      "Session.tenant_id",
+      "Session.branch_id",
+      "Session.name",
+      "Session.slug",
+      "Session.session_type",
+      "Session.status",
+      "Session.starts_at (derived)",
+      "Session.ends_at (derived)",
+      "Session.attendance_capacity",
+      "Session.attendance_min",
+      "Session.gender_category",
+      "Session.sport_key",
+      "SessionAttendance.id",
+      "SessionAttendance.session_id",
+      "SessionAttendance.status",
+      "SessionAttendance.checked_in_at"
+    ],
+    "internal": [
+      "Session.description",
+      "Session.curriculum_topic",
+      "Session.lesson_plan_url",
+      "Session.equipment_needed",
+      "Session.metadata",
+      "Session.head_coach_id",
+      "Session.assistant_coach_ids",
+      "Session.supervising_staff_id",
+      "Session.team_id",
+      "Session.season_id",
+      "Session.event_id",
+      "Session.age_group_id",
+      "Session.resource_booking_id",
+      "SessionAttendance.athlete_id",
+      "SessionAttendance.athlete_enrollment_id",
+      "SessionAttendance.late_minutes"
+    ],
+    "confidential": [
+      "Session.session_notes",
+      "SessionAttendance.notes"
+    ],
+    "restricted": [
+      "Session.safeguarding_incident_flag (when true)",
+      "Session.session_notes (when safeguarding_incident_flag=true — regulator-tier)"
+    ],
+    "regulated_minor": [
+      "SessionAttendance.athlete_id (when athlete is a minor — 90% of academy sessions)",
+      "SessionAttendance.checked_in_at (minor's physical presence timestamp — regulatory interest)",
+      "SessionAttendance.checked_out_at (minor's departure timestamp)",
+      "SessionAttendance.notes (may contain minor's medical/behavioural details)",
+      "Session.session_notes (when session includes minors)"
+    ],
+    "regulated_health": [
+      "SessionAttendance.notes (may reference injuries, medical events)"
+    ],
+    "regulated_financial": [
+      "Session.session_type (drives per-lesson pricing when private_lesson/group_lesson)",
+      "Session.cancellation_notice_at (drives refund policy — <24h notice may be non-refundable)"
+    ],
+    "audit_log": [
+      "Session.status (every transition -> audits)",
+      "Session.resource_booking_id (every swap via reschedule -> audits, warn severity)",
+      "Session.head_coach_id (every change -> audits, critical severity <24h + minors present)",
+      "Session.safeguarding_incident_flag (every flip to true -> audits, regulator-tier retention)",
+      "Session.session_notes (writes when safeguarding_incident_flag=true -> audits, regulator-tier)",
+      "Session.cancellation_reason (audits, financial retention)",
+      "SessionAttendance.status (every transition -> audits for minors)",
+      "SessionAttendance.checked_in_at (audits for minors)",
+      "SessionAttendance.checked_out_at (audits for minors)",
+      "Session.deleted_at (audits, 7-year retention or indefinite for safeguarding)"
+    ]
+  },
+  "notes": [
+    "Session.session_notes MAY contain minor's identifying details when safeguarding-relevant. Never rendered on public/participant wire surfaces. Admin + owner + coach only.",
+    "SessionAttendance rows for minor athletes are per-se safeguarding records — retention floors on top of standard financial retention.",
+    "safeguarding_incident_flag=true triggers extended retention — the row survives indefinitely until manual regulator-cleared purge.",
+    "session_type='private_lesson' + 'group_lesson' are financial (Wave 4 finance invoices per lesson). cancellation_notice_at drives refund policy.",
+    "head_coach_id changes <24h before start when minors are present are critical audit — parents planned around the specific coach identity for safeguarding reasons."
+  ]
+}

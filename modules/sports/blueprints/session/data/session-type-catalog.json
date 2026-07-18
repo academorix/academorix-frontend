@@ -1,0 +1,95 @@
+{
+  "$version": 1,
+  "title": "Session type catalog",
+  "description": "Reference table of the 11 session_type enum values with descriptions + typical durations + coach requirements + entitlement gating. Loaded by SessionProvisioner + rendered on the create form.",
+  "types": {
+    "practice": {
+      "label": "Practice",
+      "typical_duration_minutes": 90,
+      "requires_head_coach": true,
+      "billing_model": "team_membership",
+      "entitlement": "sports_sessions",
+      "description": "Recurring team practice. Head coach required. Attendance tracked but billing runs through team membership (not per-session)."
+    },
+    "lesson": {
+      "label": "Lesson",
+      "typical_duration_minutes": 60,
+      "requires_head_coach": true,
+      "billing_model": "session_type_dependent",
+      "entitlement": "sports_sessions",
+      "description": "Generic instructional session. Requires head coach."
+    },
+    "class": {
+      "label": "Class",
+      "typical_duration_minutes": 60,
+      "requires_head_coach": true,
+      "billing_model": "class_pass",
+      "entitlement": "sports_sessions",
+      "description": "Scheduled class (yoga, spin, aerobics). Requires head coach. Billing via class pass or membership."
+    },
+    "private_lesson": {
+      "label": "Private lesson",
+      "typical_duration_minutes": 45,
+      "requires_head_coach": true,
+      "billing_model": "per_session",
+      "entitlement": "session_private_lessons",
+      "description": "1:1 lesson. Requires head coach. Billed per session. Medium+ entitlement."
+    },
+    "group_lesson": {
+      "label": "Group lesson",
+      "typical_duration_minutes": 60,
+      "requires_head_coach": true,
+      "billing_model": "per_session",
+      "entitlement": "session_private_lessons",
+      "description": "Small-group lesson (typically 2-6 athletes). Requires head coach. Billed per session. Medium+ entitlement."
+    },
+    "drop_in": {
+      "label": "Drop-in",
+      "typical_duration_minutes": 60,
+      "requires_head_coach": false,
+      "billing_model": "day_pass",
+      "entitlement": "sports_sessions",
+      "description": "Open session, no coach required. Attendance via drop-in day-pass."
+    },
+    "workshop": {
+      "label": "Workshop",
+      "typical_duration_minutes": 120,
+      "requires_head_coach": true,
+      "billing_model": "per_session",
+      "entitlement": "sports_sessions",
+      "description": "Skill-focused workshop. Head coach required. Standalone billing."
+    },
+    "trial": {
+      "label": "Trial",
+      "typical_duration_minutes": 60,
+      "requires_head_coach": true,
+      "billing_model": "free_or_deposit",
+      "entitlement": "sports_sessions",
+      "description": "Prospect trial session. Head coach required. Free or deposit-refundable."
+    },
+    "assessment": {
+      "label": "Assessment",
+      "typical_duration_minutes": 45,
+      "requires_head_coach": true,
+      "billing_model": "per_session",
+      "entitlement": "sports_sessions",
+      "description": "Athlete skill assessment. Coach evaluates + writes recap notes."
+    },
+    "game": {
+      "label": "Game",
+      "typical_duration_minutes": 90,
+      "requires_head_coach": true,
+      "billing_model": "team_membership",
+      "entitlement": "sports_sessions",
+      "description": "Competitive game / match. Head coach required (referee = staff role). Bundled with team membership."
+    },
+    "open_gym": {
+      "label": "Open gym",
+      "typical_duration_minutes": 60,
+      "requires_head_coach": false,
+      "billing_model": "day_pass_or_membership",
+      "entitlement": "sports_sessions",
+      "description": "Unstaffed open access. No coach. Attendance via day-pass or facility membership."
+    }
+  }
+}

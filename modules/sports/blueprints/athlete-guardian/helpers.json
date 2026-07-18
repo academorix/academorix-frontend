@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/athlete-guardian/helpers",
+  "$version": 1,
+  "title": "athlete-guardian — helper functions",
+  "description": "Ergonomic helpers for resolving primary guardian, checking guardianship status, resolving pickup roster + medical authorisation.",
+  "namespace": "Academorix\\Sports\\AthleteGuardian\\Support",
+  "helpers": [
+    {
+      "signature": "primary_guardian_for(Athlete $athlete): ?AthleteGuardian",
+      "purpose": "Returns the active primary guardian for an athlete, or null when none exists. Cache-hot.",
+      "delegates_to": "PrimaryGuardianResolver::resolve()"
+    },
+    {
+      "signature": "guardians_for(Athlete $athlete, bool $active_only = true): Collection<AthleteGuardian>",
+      "purpose": "Returns all guardians for an athlete. active_only=true (default) filters to is_active=true.",
+      "delegates_to": "AthleteGuardianRepository::forAthlete()"
+    },
+    {
+      "signature": "guardianships_of(User $user, bool $active_only = true): Collection<AthleteGuardian>",
+      "purpose": "Returns all guardianships held by a User. Feeds /me/guardianships."
+    },
+    {
+      "signature": "user_is_guardian_of(User $user, Athlete $athlete, bool $active_only = true): bool",
+      "purpose": "True when the User has an active guardianship on the athlete. Used by the .own scope + the athlete-consent rule."
+    },
+    {
+      "signature": "user_can_authorise_medical_for(User $user, Athlete $athlete): bool",
+      "purpose": "True when the User has an active guardianship on the athlete with can_authorise_medical_care=true AND has_legal_custody=true AND verification_status='verified'. Used by Wave 4+ Medical Clearance workflow."
+    },
+    {
+      "signature": "user_can_pickup(User $user, Athlete $athlete): bool",
+      "purpose": "True when the User has an active guardianship with can_pickup=true. Reception staff check this on session dismissal."
+    },
+    {
+      "signature": "user_can_record_consent_for(User $user, Athlete $athlete): bool",
+      "purpose": "True when the User has an active + verified guardianship with has_legal_custody=true on the athlete. Used by athlete::consent_recorded_by_authorised_guardian rule (Wave 3b hard-fail).",
+      "delegates_to": "ConsentDelegationChain::userCanRecordFor()"
+    }
+  ]
+}

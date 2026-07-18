@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/athlete-guardian/subprocessors",
+  "$version": 1,
+  "title": "athlete-guardian — subprocessors",
+  "description": "The AthleteGuardian module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream: notifications module dispatches guardian notifications; storage module (Wave 4+) stores verification documents.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching GuardianAdded / GuardianRemoved / GuardianVerified / etc. notifications via mail / SMS / push channels."
+    },
+    {
+      "module": "storage",
+      "reference": "storage::subprocessors.json (Wave 4+)",
+      "used_for": "Signed verification document uploads for HR-manual verification workflow (Enterprise + athlete_guardian_verification entitlement on). 7-year retention aligned with guardian row."
+    }
+  ],
+  "notes": [
+    "GDPR Art. 30 requires this record even when empty.",
+    "Adding a subprocessor to this module (e.g. ID-verification API for automated guardian identity proofing) requires: update this file + refresh compliance.json Art. 28 + notify tenants on the subprocessor list."
+  ]
+}

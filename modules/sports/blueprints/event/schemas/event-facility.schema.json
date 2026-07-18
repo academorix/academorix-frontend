@@ -1,0 +1,139 @@
+{
+  "id": "academorix://modules/event/schemas/event-facility",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "EventFacility",
+  "description": "Pivot row attaching a Facility to an Event. An Event may attach 0..N facilities (0 for virtual awards / camp-openings held outdoors; N for multi-facility tournaments). Carries `tenant_id` + `event_id` + `facility_id`. Cascades organization + region + branch through facility_id. NEVER carries `application_id` / `organization_id` / `region_id` / `branch_id` / `scope_node_id`. Exactly one `is_primary=true` per event (partial unique index).",
+  "type": "object",
+  "x-module": "event",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "event_facilities",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "efc_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Event\\Models\\EventFacility",
+    "interface": "Academorix\\Sports\\Event\\Contracts\\Data\\EventFacilityInterface",
+    "implements": ["Academorix\\Sports\\Event\\Contracts\\Data\\EventFacilityInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToEvent",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "purpose": "EventFacilityPurpose",
+      "is_primary": "boolean",
+      "metadata": "array"
+    },
+    "observers": ["EventFacilityObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `efc_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "event_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "events", "column": "id", "onDelete": "cascade" },
+        "description": "CASCADE — the pivot's lifetime is bounded by the event."
+      },
+      "facility_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "facilities", "column": "id", "onDelete": "restrict" },
+        "description": "RESTRICT — a facility with active event attachments cannot be retired without first detaching the events (matches the facility module's cascade rules)."
+      },
+      "is_primary": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "At most one primary facility per event. The primary is what the event card + notifications reference as 'the venue'."
+      },
+      "purpose": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'competition'",
+        "description": "Enum: competition / warm_up / registration / spectator / vip. Describes what the facility is used FOR at this event."
+      },
+      "sort_order": { "type": "integer", "nullable": false, "default": 100 },
+      "notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["event_id", "facility_id"],
+        "unique": true,
+        "name": "event_facilities_pair_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "A facility attaches to an event once (multi-attachment for different purposes is an anti-pattern; use one row + set purpose to the most-important use)."
+      },
+      {
+        "columns": ["event_id"],
+        "unique": true,
+        "name": "event_facilities_primary_unique",
+        "predicate": "is_primary = true AND deleted_at IS NULL",
+        "description": "At most one primary per event."
+      },
+      { "columns": ["tenant_id", "facility_id"], "name": "event_facilities_facility_idx" },
+      { "columns": ["tenant_id", "event_id"], "name": "event_facilities_event_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "event_id",
+    "facility_id",
+    "is_primary",
+    "purpose",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^efc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "event_id": { "type": "string", "pattern": "^eve_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "facility_id": { "type": "string", "pattern": "^fac_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "is_primary": { "type": "boolean" },
+    "purpose": {
+      "type": "string",
+      "enum": ["competition", "warm_up", "registration", "spectator", "vip"]
+    },
+    "sort_order": { "type": "integer", "minimum": 0, "maximum": 9999 },
+    "notes": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "facility.tenant_id = event_facility.tenant_id (same-tenant invariant)",
+    "facility.branch_id resolves to a branch in the event's organization (when event.branch_id IS NOT NULL, they should match; when event.branch_id IS NULL the facility's branch may be any within event.organization_id)",
+    "event_id + facility_id IMMUTABLE post-create — to move a facility, delete + recreate",
+    "COUNT(*) FILTER (WHERE is_primary=true AND deleted_at IS NULL) <= 1 per event_id",
+    "event.status NOT IN ('completed', 'cancelled', 'archived') at create time — cannot attach a facility to a finished event"
+  ]
+}

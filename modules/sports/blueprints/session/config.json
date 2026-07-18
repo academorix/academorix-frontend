@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/session/config",
+  "$version": 1,
+  "title": "session — developer configuration",
+  "configFile": "config/session.php",
+  "envPrefix": "SESSION_",
+  "sections": {
+    "phase_roll": {
+      "keys": [
+        { "path": "session.phase_roll.start_schedule", "type": "string", "env": "SESSION_START_CRON", "default": "*/5 * * * *", "description": "Cron for StartScheduledSessionsJob (every 5 min)." },
+        { "path": "session.phase_roll.complete_schedule", "type": "string", "env": "SESSION_COMPLETE_CRON", "default": "*/5 * * * *", "description": "Cron for CompleteFinishedSessionsJob." },
+        { "path": "session.phase_roll.completion_grace_minutes", "type": "int", "default": 15, "description": "Minutes past resource_booking.ends_at before auto-complete fires." },
+        { "path": "session.phase_roll.under_minimum_schedule", "type": "string", "env": "SESSION_UNDER_MIN_CRON", "default": "*/5 * * * *" },
+        { "path": "session.phase_roll.under_minimum_grace_minutes", "type": "int", "default": 5, "description": "Minutes past starts_at before the under-minimum job evaluates attendance." }
+      ]
+    },
+    "attendance": {
+      "keys": [
+        { "path": "session.attendance.late_grace_minutes", "type": "int", "default": 10, "description": "Check-ins later than this many minutes past starts_at are marked 'late' rather than 'checked_in'." },
+        { "path": "session.attendance.reconcile_schedule", "type": "string", "env": "SESSION_RECONCILE_ATTENDANCE_CRON", "default": "0 2 * * *", "description": "Cron for ReconcileAttendanceCountsJob (nightly 02:00 UTC)." }
+      ]
+    },
+    "ratings": {
+      "keys": [
+        { "path": "session.ratings.aggregate_schedule", "type": "string", "env": "SESSION_AGGREGATE_RATINGS_CRON", "default": "30 2 * * *", "description": "Cron for AggregateSessionRatingsJob (nightly 02:30 UTC)." },
+        { "path": "session.ratings.request_notification_delay_hours", "type": "int", "default": 1, "description": "Hours after SessionCompleted before dispatching SessionRatingRequestNotification (lets attendees process the session first)." },
+        { "path": "session.ratings.max_days_after_completion_to_rate", "type": "int", "default": 7, "description": "Ratings received > N days after session completion are refused." }
+      ]
+    },
+    "reminders": {
+      "keys": [
+        { "path": "session.reminders.windows", "type": "array<string>", "default": ["T-24h", "T-1h"], "description": "Reminder cadence relative to starts_at." }
+      ]
+    },
+    "notice_windows": {
+      "keys": [
+        { "path": "session.notice.short_notice_hours", "type": "int", "default": 24, "description": "Cancellations + coach reassignments within this window are 'short notice' and require the specific short-notice permission." }
+      ]
+    },
+    "retention": {
+      "keys": [
+        { "path": "session.retention.completed_sessions_retention_days", "type": "int", "env": "SESSION_RETENTION_DAYS", "default": 2555, "description": "Retention floor 7 years. Safeguarding-flagged sessions extended indefinitely." },
+        { "path": "session.retention.safeguarding_extends_indefinitely", "type": "bool", "default": true, "description": "When true, safeguarding_incident_flag=true sessions never hard-delete. Manual review required to purge." }
+      ]
+    },
+    "cache": {
+      "keys": [
+        { "path": "session.cache.today_ttl_seconds", "type": "int", "default": 60, "description": "TTL for `ses:today:{tenant}` — the /sessions/today endpoint." },
+        { "path": "session.cache.full_ttl_seconds", "type": "int", "default": 60, "description": "TTL for `ses:full:{session_id}`." },
+        { "path": "session.cache.coach_schedule_ttl_seconds", "type": "int", "default": 300, "description": "TTL for `ses:coach:{coach_id}` — coach's upcoming session list." }
+      ]
+    }
+  }
+}

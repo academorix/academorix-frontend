@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/sports-registry/relations",
+  "$version": 1,
+  "title": "sports-registry — model relationships",
+  "description": "Three-level catalog tree: Sport hasMany Disciplines; Discipline hasMany Positions. Every entity carries `tenant_id` NULLABLE — NULL = platform-scoped (visible to every tenant), non-null = tenant custom (Enterprise-only). Cross-tenant FKs are forbidden. A custom Discipline may hang off a platform Sport (an Enterprise tenant extends the platform taxonomy without shadowing the base row). NO application_id / region_id / branch_id / organization_id / scope_node_id / parent_id on any row (per `.kiro/steering/tenancy-columns.md` §5). Downstream Wave 3 modules DO NOT reference these tables by FK — they carry `sport_key` / `discipline_key` / `position_key` as plain string columns, and the `SportKeyResolver` service maps strings to rows at read time. That's why `extendedBy: []` — every consumer is loosely coupled via slug.",
+  "internal": [
+    {
+      "from": "Sport",
+      "kind": "hasMany",
+      "to": "Discipline",
+      "foreignKey": "sport_id",
+      "onDelete": "restrict",
+      "description": "One Sport, many Disciplines. RESTRICT because a Sport with active Disciplines cannot be deleted (only deactivated). Platform Sports NEVER hard-delete; tenant custom Sports hard-delete only after every Discipline + downstream reference is gone."
+    },
+    {
+      "from": "Discipline",
+      "kind": "belongsTo",
+      "to": "Sport",
+      "foreignKey": "sport_id",
+      "onDelete": "restrict",
+      "description": "The parent Sport. Cross-tenant reference is forbidden by observer: a custom Discipline (tenant_id=X) may reference a platform Sport (tenant_id=NULL) but NEVER another tenant's custom Sport (tenant_id=Y)."
+    },
+    {
+      "from": "Discipline",
+      "kind": "hasMany",
+      "to": "Position",
+      "foreignKey": "discipline_id",
+      "onDelete": "restrict",
+      "description": "One Discipline, many Positions. Same delete semantics as Sport→Discipline."
+    },
+    {
+      "from": "Position",
+      "kind": "belongsTo",
+      "to": "Discipline",
+      "foreignKey": "discipline_id",
+      "onDelete": "restrict",
+      "description": "The parent Discipline. Same cross-tenant rules as Discipline→Sport."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Sport",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "nullable": true,
+      "description": "The tenant that owns this Sport, OR NULL for platform-seeded rows. CASCADE aligns with tenancy's TenantErased contract — a tenant's custom sports vanish with the tenant. Platform-seeded rows survive tenant erasure (tenant_id IS NULL means no tenant ownership)."
+    },
+    {
+      "from": "Discipline",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "nullable": true,
+      "description": "Same shape as Sport.tenant_id."
+    },
+    {
+      "from": "Position",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "nullable": true,
+      "description": "Same shape as Sport.tenant_id."
+    }
+  ],
+  "inbound": {
+    "description": "NO downstream module holds an FK to sports / disciplines / positions. Every consumer references the catalog via STRING columns (`sport_key`, `discipline_key`, `position_key`) resolved at read time through `SportKeyResolver`. That's what makes `extendedBy: []` on this module — the registry's shape can evolve without cascading schema changes across every sports module.",
+    "referring_string_columns": [
+      "teams::Team.sport_key (nullable) — Wave 2b. String matches sports.slug where is_active OR historical.",
+      "teams::Team.discipline_key (nullable) — Wave 2b. String matches disciplines.slug.",
+      "athlete-enrollment::AthleteEnrollment.sport_key (required) — Wave 3+.",
+      "athlete-enrollment::AthleteEnrollment.discipline_key (nullable) — Wave 3+.",
+      "athlete-enrollment::AthleteEnrollment.position_key (nullable) — Wave 3+.",
+      "coach::Coach.sport_key (required) — Wave 3+ (a coach specialises in one or more sports).",
+      "event::Event.sport_key (required) — Wave 3+.",
+      "session::Session.sport_key (nullable) — Wave 3+ (sport-agnostic sessions like general_fitness may leave it null).",
+      "season::Season.sport_key (nullable) — already exists in the season module Wave 3a. Enterprise via season_sport_scoping.",
+      "age-group::AgeGroup.sport_key (nullable) — already exists in the age-group module Wave 3a. Enterprise via age_group_sport_specific.",
+      "facility::Facility.compatible_sport_keys (array<string>, nullable) — Wave 2b. Multi-sport facilities list every sport_key they support."
+    ],
+    "resolver_service": "SportKeyResolver — every consumer that needs to validate or hydrate a sport_key calls it via the injected service. The resolver returns the merged (platform + tenant custom) catalog scoped to the caller's active tenant.",
+    "reconciler": "ReconcileSportReferencesJob — nightly scan across every table listed in `config('sports_registry.reconciler.reference_tables')` catching dangling sport_key / discipline_key / position_key references that don't resolve. Failures fire `SportPrefixResolutionFailed` + surface in the ops dashboard."
+  },
+  "morphs": [
+    {
+      "name": "scopeNode",
+      "type": "MorphOne",
+      "target": {
+        "module": "scope",
+        "model": "ScopeNode",
+        "class": "Academorix\\Scope\\Models\\ScopeNode"
+      },
+      "morphType": "entity_type",
+      "morphId": "entity_id",
+      "description": "Every Sport (platform + custom) projects into the scope substrate as a node under the platform / tenant root. Enables per-Sport configuration overrides on the config-consumer modules (settings, notifications, entitlements). NOT a scope consumer itself: Sport rows never carry `scope_node_id` (per `.kiro/steering/tenancy-columns.md` §4). Disciplines + Positions do NOT ship a scope-node projection — they are addressable only via the Sport's projection."
+    }
+  ],
+  "notes": [
+    "Sport → Discipline → Position is a compile-time tree via typed FK columns. It is NOT a self-referential `parent_id` recursion — the levels are semantically distinct (sports are top-level categories; disciplines are competition formats; positions are player roles).",
+    "Cross-tenant references are refused at the observer level. A tenant custom Discipline pointing at another tenant's custom Sport is rejected with `CROSS_TENANT_REGISTRY_REFERENCE` (422) — the observer's before-save hook checks `parentSport.tenant_id IN (NULL, this.tenant_id)`.",
+    "Slug uniqueness rules are partial-unique on (tenant_id, slug). A platform Sport with slug='football' + a tenant Sport with slug='football' is a COLLISION refused with `SPORT_KEY_COLLIDES_WITH_PLATFORM` (422). The observer refuses; the DB partial unique index is the belt-and-braces guard. Sport, Discipline, Position all follow the same rule per their respective scoping tuple.",
+    "The seeded platform catalog uses NATURAL keys (slug) for both idempotency + display. The seeder UPSERTS on (tenant_id NULL, slug) so a re-seed picks up JSON edits without duplicating rows.",
+    "Position hierarchies (e.g. 'starting_goalkeeper' vs 'backup_goalkeeper') are NOT modelled here — Position is flat per Discipline. Roster depth-chart concerns live on Team (Wave 2b) via a separate TeamPosition pivot."
+  ]
+}

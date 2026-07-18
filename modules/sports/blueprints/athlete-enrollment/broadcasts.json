@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/athlete-enrollment/broadcasts",
+  "$version": 1,
+  "title": "athlete-enrollment — realtime broadcast channels",
+  "description": "Four broadcast channels: tenant / team / athlete / user. Powers live roster views + parent-facing enrollment status dashboards.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.enrollments",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Broadcasts\\TenantEnrollmentsChannel",
+      "description": "Tenant-wide enrollment lifecycle stream.",
+      "authorization": "sanctum::authed AND tenant_matches AND permission `enrollments.viewAny`",
+      "events": [
+        "EnrollmentSubmitted",
+        "EnrollmentConfirmed",
+        "EnrollmentActivated",
+        "EnrollmentWithdrawn",
+        "EnrollmentExpelled",
+        "EnrollmentExpired",
+        "EnrollmentWaitlisted",
+        "EnrollmentPromotedFromWaitlist",
+        "EnrollmentCompleted"
+      ],
+      "throttle": "50 events/minute"
+    },
+    {
+      "name": "team.{teamId}.enrollments",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Broadcasts\\TeamEnrollmentsChannel",
+      "description": "Team-scoped roster + waitlist stream.",
+      "authorization": "sanctum::authed AND (permission `enrollments.viewAny` scoped to team OR team member OR coach on team)",
+      "events": [
+        "EnrollmentActivated",
+        "EnrollmentWithdrawn",
+        "EnrollmentExpelled",
+        "EnrollmentPositionAssigned",
+        "EnrollmentJerseyAssigned",
+        "EnrollmentPromotedFromWaitlist"
+      ],
+      "throttle": "30 events/minute"
+    },
+    {
+      "name": "athlete.{athleteId}.enrollments",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Broadcasts\\AthleteEnrollmentsChannel",
+      "description": "Per-athlete enrollment stream. Powers the athlete detail page's live roster indicator.",
+      "authorization": "sanctum::authed AND (permission `enrollments.view` scoped to athlete OR athlete's guardian OR self)",
+      "events": [
+        "EnrollmentSubmitted",
+        "EnrollmentConfirmed",
+        "EnrollmentActivated",
+        "EnrollmentCompleted",
+        "EnrollmentWithdrawn",
+        "EnrollmentExpelled",
+        "EnrollmentWaitlisted",
+        "EnrollmentPromotedFromWaitlist"
+      ],
+      "throttle": "10 events/minute"
+    },
+    {
+      "name": "user.{userId}.enrollments",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Broadcasts\\UserEnrollmentsChannel",
+      "description": "Per-user enrollment stream — powers the /me/enrollments live widget for guardians + adult athletes.",
+      "authorization": "sanctum::authed AND user_matches",
+      "events": [
+        "EnrollmentSubmitted (where athlete.user_id = userId OR guardian.user_id = userId)",
+        "EnrollmentConfirmed (same)",
+        "EnrollmentActivated (same)",
+        "EnrollmentWaitlisted (same)",
+        "EnrollmentPromotedFromWaitlist (same)",
+        "EnrollmentDeadlineApproaching (same)",
+        "EnrollmentCompleted (same)"
+      ],
+      "throttle": "10 events/minute"
+    }
+  ]
+}

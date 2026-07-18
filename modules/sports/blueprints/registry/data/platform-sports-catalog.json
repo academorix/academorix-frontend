@@ -1,0 +1,1550 @@
+{
+  "$version": 1,
+  "title": "Platform sports catalog — seed data",
+  "description": "The 30+ sport baseline shipped by the platform. Loaded on first-boot via SeedPlatformSportsCatalogJob (tenant_id NULL, is_platform_seeded=true for every row). Every downstream tenant reads this catalog as read-only reference data; Enterprise tenants may extend it with customs. The seeder is IDEMPOTENT — running it against a JSON snapshot that matches the DB state is a no-op. On explicit reseed with --force, the seeder UPSERTs new rows, updates existing rows, and DEACTIVATES rows that were removed from the JSON (never hard-deletes).",
+  "catalog_version": 1,
+  "as_of": "2026-07-15",
+  "notes": [
+    "Slugs use lowercase snake_case; parent-prefixed for descendants (`football_11v11`, `football_goalkeeper`). This makes them self-describing when read out of context (an enrollment carrying `sport_key='football_goalkeeper'` would fail resolver validation — the position slug goes in the position_key column).",
+    "The name field is English-only in this seed; the localization module's HasTranslations trait can populate other locales via the seed extension (Arabic, French, Spanish, ...). Consumers holding a Sport model read `$sport->name` which returns the caller's locale automatically.",
+    "gender_typical defaults to 'any' when omitted. Some sports (e.g. netball is typically female-dominant, though not exclusively) leave it 'any' rather than 'female_only' — the field is advisory + should not lock out participation.",
+    "The `governing_body` field cites the primary international federation for reference. Downstream tenants may add tenant-custom Sport rows with different governing_body values when they follow a national/regional federation.",
+    "Icons reference Iconify (`mdi:*`, `game-icons:*`). The frontend resolves them via the Iconify CDN at render time.",
+    "player_count_min / player_count_max on Discipline are advisory — they shape defaults in the Team creation UI but do NOT enforce roster size at write time (downstream Team module handles enforcement).",
+    "The positions list per Sport / Discipline is a REPRESENTATIVE seed, not exhaustive. Tenants that need specialised positions (e.g. American football has dozens more position variants) can add customs on Enterprise."
+  ],
+  "sports": [
+    {
+      "slug": "football",
+      "name": "Football (Soccer)",
+      "category": "team_sport",
+      "description": "Association football / soccer. The world's most popular team sport.",
+      "governing_body": "FIFA",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 65,
+      "primary_color": "#22C55E",
+      "icon": "mdi:soccer",
+      "sort_order": 10,
+      "disciplines": [
+        {
+          "slug": "football_11v11",
+          "name": "11-a-side Football",
+          "description": "Standard 11-player format on a full-size pitch. 90-minute matches divided into two 45-minute halves.",
+          "format_type": "team",
+          "player_count_min": 11,
+          "player_count_max": 18,
+          "session_duration_default_minutes": 90,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "football_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_offensive": false, "is_defensive": true, "typical_jersey_range_min": 1, "typical_jersey_range_max": 1, "sort_order": 1 },
+            { "slug": "football_center_back", "name": "Center Back", "is_field_position": true, "is_offensive": false, "is_defensive": true, "typical_jersey_range_min": 2, "typical_jersey_range_max": 6, "sort_order": 10 },
+            { "slug": "football_full_back", "name": "Full Back", "is_field_position": true, "is_offensive": false, "is_defensive": true, "typical_jersey_range_min": 2, "typical_jersey_range_max": 6, "sort_order": 20 },
+            { "slug": "football_defensive_midfielder", "name": "Defensive Midfielder", "is_field_position": true, "is_offensive": false, "is_defensive": true, "typical_jersey_range_min": 4, "typical_jersey_range_max": 8, "sort_order": 30 },
+            { "slug": "football_central_midfielder", "name": "Central Midfielder", "is_field_position": true, "is_offensive": null, "is_defensive": null, "typical_jersey_range_min": 6, "typical_jersey_range_max": 10, "sort_order": 40 },
+            { "slug": "football_attacking_midfielder", "name": "Attacking Midfielder", "is_field_position": true, "is_offensive": true, "is_defensive": false, "typical_jersey_range_min": 8, "typical_jersey_range_max": 11, "sort_order": 50 },
+            { "slug": "football_winger", "name": "Winger", "is_field_position": true, "is_offensive": true, "is_defensive": false, "typical_jersey_range_min": 7, "typical_jersey_range_max": 11, "sort_order": 60 },
+            { "slug": "football_striker", "name": "Striker", "is_field_position": true, "is_offensive": true, "is_defensive": false, "typical_jersey_range_min": 9, "typical_jersey_range_max": 11, "sort_order": 70 }
+          ]
+        },
+        {
+          "slug": "football_futsal",
+          "name": "Futsal",
+          "description": "5-a-side indoor variant with smaller ball + hard court + no rebound walls.",
+          "format_type": "team",
+          "player_count_min": 5,
+          "player_count_max": 12,
+          "session_duration_default_minutes": 40,
+          "sort_order": 2,
+          "positions": [
+            { "slug": "football_futsal_goalkeeper", "name": "Futsal Goalkeeper", "is_field_position": true, "is_offensive": false, "is_defensive": true, "sort_order": 1 },
+            { "slug": "football_futsal_fixo", "name": "Fixo (Defender)", "is_field_position": true, "is_offensive": false, "is_defensive": true, "sort_order": 10 },
+            { "slug": "football_futsal_ala", "name": "Ala (Winger)", "is_field_position": true, "is_offensive": true, "is_defensive": false, "sort_order": 20 },
+            { "slug": "football_futsal_pivot", "name": "Pivot (Striker)", "is_field_position": true, "is_offensive": true, "is_defensive": false, "sort_order": 30 }
+          ]
+        },
+        {
+          "slug": "football_5v5",
+          "name": "5-a-side Football",
+          "description": "Small-sided recreational format. Common at community centers + youth academies.",
+          "format_type": "team",
+          "player_count_min": 5,
+          "player_count_max": 10,
+          "session_duration_default_minutes": 40,
+          "sort_order": 3,
+          "positions": [
+            { "slug": "football_5v5_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
+            { "slug": "football_5v5_defender", "name": "Defender", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
+            { "slug": "football_5v5_midfielder", "name": "Midfielder", "is_field_position": true, "sort_order": 20 },
+            { "slug": "football_5v5_forward", "name": "Forward", "is_field_position": true, "is_offensive": true, "sort_order": 30 }
+          ]
+        },
+        {
+          "slug": "football_7v7",
+          "name": "7-a-side Football (Youth)",
+          "description": "Youth-development format. Common for U8-U11 in Europe + North America.",
+          "format_type": "team",
+          "player_count_min": 7,
+          "player_count_max": 12,
+          "session_duration_default_minutes": 60,
+          "sort_order": 4,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "basketball",
+      "name": "Basketball",
+      "category": "team_sport",
+      "description": "5-on-5 hoop-and-ball court sport. Second-most popular team sport globally.",
+      "governing_body": "FIBA",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 65,
+      "primary_color": "#F97316",
+      "icon": "mdi:basketball",
+      "sort_order": 20,
+      "disciplines": [
+        {
+          "slug": "basketball_5v5",
+          "name": "FIBA 5v5",
+          "description": "Standard 5-player format. Four 10-minute quarters (FIBA) or 12-minute quarters (NBA).",
+          "format_type": "team",
+          "player_count_min": 5,
+          "player_count_max": 12,
+          "session_duration_default_minutes": 48,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "basketball_point_guard", "name": "Point Guard", "is_field_position": true, "is_offensive": true, "is_defensive": null, "typical_jersey_range_min": 1, "typical_jersey_range_max": 5, "sort_order": 1 },
+            { "slug": "basketball_shooting_guard", "name": "Shooting Guard", "is_field_position": true, "is_offensive": true, "is_defensive": null, "sort_order": 10 },
+            { "slug": "basketball_small_forward", "name": "Small Forward", "is_field_position": true, "is_offensive": true, "is_defensive": null, "sort_order": 20 },
+            { "slug": "basketball_power_forward", "name": "Power Forward", "is_field_position": true, "is_offensive": null, "is_defensive": true, "sort_order": 30 },
+            { "slug": "basketball_center", "name": "Center", "is_field_position": true, "is_offensive": null, "is_defensive": true, "sort_order": 40 }
+          ]
+        },
+        {
+          "slug": "basketball_3x3",
+          "name": "3x3 Streetball",
+          "description": "FIBA 3x3 half-court format. First to 21 points OR 10 minutes.",
+          "format_type": "team",
+          "player_count_min": 3,
+          "player_count_max": 4,
+          "session_duration_default_minutes": 10,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "rugby",
+      "name": "Rugby Union",
+      "category": "team_sport",
+      "description": "15-a-side full-contact ball sport.",
+      "governing_body": "World Rugby",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 40,
+      "primary_color": "#DC2626",
+      "icon": "mdi:rugby",
+      "sort_order": 30,
+      "disciplines": [
+        {
+          "slug": "rugby_15s",
+          "name": "Rugby 15s",
+          "description": "Standard 15-player format. Two 40-minute halves.",
+          "format_type": "team",
+          "player_count_min": 15,
+          "player_count_max": 23,
+          "session_duration_default_minutes": 80,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "rugby_prop", "name": "Prop", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
+            { "slug": "rugby_hooker", "name": "Hooker", "is_field_position": true, "sort_order": 10 },
+            { "slug": "rugby_lock", "name": "Lock", "is_field_position": true, "sort_order": 20 },
+            { "slug": "rugby_flanker", "name": "Flanker", "is_field_position": true, "sort_order": 30 },
+            { "slug": "rugby_number_8", "name": "Number 8", "is_field_position": true, "sort_order": 40 },
+            { "slug": "rugby_scrum_half", "name": "Scrum-half", "is_field_position": true, "sort_order": 50 },
+            { "slug": "rugby_fly_half", "name": "Fly-half", "is_field_position": true, "is_offensive": true, "sort_order": 60 },
+            { "slug": "rugby_center", "name": "Center", "is_field_position": true, "sort_order": 70 },
+            { "slug": "rugby_wing", "name": "Wing", "is_field_position": true, "is_offensive": true, "sort_order": 80 },
+            { "slug": "rugby_fullback", "name": "Fullback", "is_field_position": true, "is_defensive": true, "sort_order": 90 }
+          ]
+        },
+        {
+          "slug": "rugby_7s",
+          "name": "Rugby 7s",
+          "description": "Olympic 7-a-side variant. Two 7-minute halves.",
+          "format_type": "team",
+          "player_count_min": 7,
+          "player_count_max": 12,
+          "session_duration_default_minutes": 14,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "american_football",
+      "name": "American Football",
+      "category": "team_sport",
+      "description": "11-a-side gridiron football.",
+      "governing_body": "NFL / IFAF",
+      "gender_typical": "any",
+      "age_range_min": 8,
+      "age_range_max": 40,
+      "primary_color": "#78350F",
+      "icon": "mdi:football",
+      "sort_order": 40,
+      "disciplines": [
+        {
+          "slug": "american_football_11v11",
+          "name": "Standard 11-a-side",
+          "format_type": "team",
+          "player_count_min": 11,
+          "player_count_max": 53,
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "american_football_quarterback", "name": "Quarterback", "is_field_position": true, "is_offensive": true, "sort_order": 1 },
+            { "slug": "american_football_running_back", "name": "Running Back", "is_field_position": true, "is_offensive": true, "sort_order": 10 },
+            { "slug": "american_football_wide_receiver", "name": "Wide Receiver", "is_field_position": true, "is_offensive": true, "sort_order": 20 },
+            { "slug": "american_football_offensive_lineman", "name": "Offensive Lineman", "is_field_position": true, "is_offensive": true, "sort_order": 30 },
+            { "slug": "american_football_defensive_lineman", "name": "Defensive Lineman", "is_field_position": true, "is_defensive": true, "sort_order": 40 },
+            { "slug": "american_football_linebacker", "name": "Linebacker", "is_field_position": true, "is_defensive": true, "sort_order": 50 },
+            { "slug": "american_football_cornerback", "name": "Cornerback", "is_field_position": true, "is_defensive": true, "sort_order": 60 },
+            { "slug": "american_football_safety", "name": "Safety", "is_field_position": true, "is_defensive": true, "sort_order": 70 }
+          ]
+        },
+        {
+          "slug": "american_football_flag",
+          "name": "Flag Football",
+          "description": "Non-contact variant with belt-flag tackles. 5-9 players per side.",
+          "format_type": "team",
+          "player_count_min": 5,
+          "player_count_max": 12,
+          "session_duration_default_minutes": 40,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "cricket",
+      "name": "Cricket",
+      "category": "team_sport",
+      "description": "11-a-side bat-and-ball sport.",
+      "governing_body": "ICC",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 55,
+      "primary_color": "#065F46",
+      "icon": "mdi:cricket",
+      "sort_order": 50,
+      "disciplines": [
+        {
+          "slug": "cricket_test",
+          "name": "Test Cricket",
+          "description": "Multi-day format (up to 5 days). Two innings per side.",
+          "format_type": "team",
+          "player_count_min": 11,
+          "player_count_max": 15,
+          "session_duration_default_minutes": 480,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "cricket_odi",
+          "name": "One Day International",
+          "description": "50-over per side single-day format.",
+          "format_type": "team",
+          "player_count_min": 11,
+          "player_count_max": 15,
+          "session_duration_default_minutes": 480,
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "cricket_t20",
+          "name": "Twenty20",
+          "description": "20-over per side ~3-hour format.",
+          "format_type": "team",
+          "player_count_min": 11,
+          "player_count_max": 15,
+          "session_duration_default_minutes": 180,
+          "sort_order": 3,
+          "positions": [
+            { "slug": "cricket_batter", "name": "Batter", "is_field_position": true, "is_offensive": true, "sort_order": 1 },
+            { "slug": "cricket_bowler", "name": "Bowler", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
+            { "slug": "cricket_wicketkeeper", "name": "Wicket-keeper", "is_field_position": true, "is_defensive": true, "sort_order": 20 },
+            { "slug": "cricket_all_rounder", "name": "All-rounder", "is_field_position": true, "sort_order": 30 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "baseball",
+      "name": "Baseball",
+      "category": "team_sport",
+      "description": "9-a-side bat-and-ball sport played on a diamond.",
+      "governing_body": "WBSC",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 40,
+      "primary_color": "#78350F",
+      "icon": "mdi:baseball",
+      "sort_order": 60,
+      "disciplines": [
+        {
+          "slug": "baseball_standard",
+          "name": "Standard 9-inning",
+          "format_type": "team",
+          "player_count_min": 9,
+          "player_count_max": 25,
+          "session_duration_default_minutes": 180,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "baseball_pitcher", "name": "Pitcher", "is_field_position": true, "is_defensive": true, "typical_jersey_range_min": 1, "typical_jersey_range_max": 99, "sort_order": 1 },
+            { "slug": "baseball_catcher", "name": "Catcher", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
+            { "slug": "baseball_infielder", "name": "Infielder", "is_field_position": true, "is_defensive": true, "sort_order": 20 },
+            { "slug": "baseball_outfielder", "name": "Outfielder", "is_field_position": true, "is_defensive": true, "sort_order": 30 },
+            { "slug": "baseball_designated_hitter", "name": "Designated Hitter", "is_field_position": true, "is_offensive": true, "sort_order": 40 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "hockey",
+      "name": "Field Hockey",
+      "category": "team_sport",
+      "description": "11-a-side stick-and-ball sport on grass or turf.",
+      "governing_body": "FIH",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 45,
+      "primary_color": "#059669",
+      "icon": "mdi:hockey-sticks",
+      "sort_order": 70,
+      "disciplines": [
+        {
+          "slug": "hockey_11v11",
+          "name": "Standard 11-a-side",
+          "format_type": "team",
+          "player_count_min": 11,
+          "player_count_max": 18,
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "hockey_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
+            { "slug": "hockey_defender", "name": "Defender", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
+            { "slug": "hockey_midfielder", "name": "Midfielder", "is_field_position": true, "sort_order": 20 },
+            { "slug": "hockey_forward", "name": "Forward", "is_field_position": true, "is_offensive": true, "sort_order": 30 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "ice_hockey",
+      "name": "Ice Hockey",
+      "category": "team_sport",
+      "description": "6-a-side stick-and-puck sport on ice.",
+      "governing_body": "IIHF",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 45,
+      "primary_color": "#1D4ED8",
+      "icon": "mdi:hockey-puck",
+      "sort_order": 80,
+      "disciplines": [
+        {
+          "slug": "ice_hockey_6v6",
+          "name": "Standard 6-a-side",
+          "format_type": "team",
+          "player_count_min": 6,
+          "player_count_max": 23,
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "ice_hockey_goaltender", "name": "Goaltender", "is_field_position": true, "is_defensive": true, "typical_jersey_range_min": 30, "typical_jersey_range_max": 39, "sort_order": 1 },
+            { "slug": "ice_hockey_defenseman", "name": "Defenseman", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
+            { "slug": "ice_hockey_center", "name": "Center", "is_field_position": true, "sort_order": 20 },
+            { "slug": "ice_hockey_winger", "name": "Winger", "is_field_position": true, "is_offensive": true, "sort_order": 30 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "volleyball",
+      "name": "Volleyball",
+      "category": "team_sport",
+      "description": "6-a-side net-and-ball sport.",
+      "governing_body": "FIVB",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 55,
+      "primary_color": "#F59E0B",
+      "icon": "mdi:volleyball",
+      "sort_order": 90,
+      "disciplines": [
+        {
+          "slug": "volleyball_indoor",
+          "name": "Indoor Volleyball",
+          "description": "6-a-side indoor. Best of 5 sets to 25 points.",
+          "format_type": "team",
+          "player_count_min": 6,
+          "player_count_max": 14,
+          "session_duration_default_minutes": 90,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "volleyball_setter", "name": "Setter", "is_field_position": true, "sort_order": 1 },
+            { "slug": "volleyball_outside_hitter", "name": "Outside Hitter", "is_field_position": true, "is_offensive": true, "sort_order": 10 },
+            { "slug": "volleyball_opposite_hitter", "name": "Opposite Hitter", "is_field_position": true, "is_offensive": true, "sort_order": 20 },
+            { "slug": "volleyball_middle_blocker", "name": "Middle Blocker", "is_field_position": true, "is_defensive": true, "sort_order": 30 },
+            { "slug": "volleyball_libero", "name": "Libero", "is_field_position": true, "is_defensive": true, "sort_order": 40 }
+          ]
+        },
+        {
+          "slug": "volleyball_beach",
+          "name": "Beach Volleyball",
+          "description": "2-a-side outdoor sand variant.",
+          "format_type": "pairs",
+          "player_count_min": 2,
+          "player_count_max": 2,
+          "session_duration_default_minutes": 60,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "handball",
+      "name": "Handball",
+      "category": "team_sport",
+      "description": "7-a-side indoor throw-and-catch goal sport.",
+      "governing_body": "IHF",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 40,
+      "primary_color": "#0EA5E9",
+      "icon": "mdi:handball",
+      "sort_order": 100,
+      "disciplines": [
+        {
+          "slug": "handball_indoor",
+          "name": "Indoor Handball",
+          "format_type": "team",
+          "player_count_min": 7,
+          "player_count_max": 14,
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "handball_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
+            { "slug": "handball_wing", "name": "Wing", "is_field_position": true, "is_offensive": true, "sort_order": 10 },
+            { "slug": "handball_back", "name": "Back", "is_field_position": true, "sort_order": 20 },
+            { "slug": "handball_center_back", "name": "Center Back", "is_field_position": true, "sort_order": 30 },
+            { "slug": "handball_line_player", "name": "Line Player (Pivot)", "is_field_position": true, "is_offensive": true, "sort_order": 40 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "netball",
+      "name": "Netball",
+      "category": "team_sport",
+      "description": "7-a-side ball-through-hoop sport, Commonwealth heritage.",
+      "governing_body": "World Netball",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 45,
+      "primary_color": "#EC4899",
+      "icon": "game-icons:hoop-and-ball",
+      "sort_order": 110,
+      "disciplines": [
+        {
+          "slug": "netball_standard",
+          "name": "Standard 7-a-side",
+          "format_type": "team",
+          "player_count_min": 7,
+          "player_count_max": 12,
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "netball_goal_shooter", "name": "Goal Shooter", "is_field_position": true, "is_offensive": true, "sort_order": 1 },
+            { "slug": "netball_goal_attack", "name": "Goal Attack", "is_field_position": true, "is_offensive": true, "sort_order": 10 },
+            { "slug": "netball_wing_attack", "name": "Wing Attack", "is_field_position": true, "is_offensive": true, "sort_order": 20 },
+            { "slug": "netball_centre", "name": "Centre", "is_field_position": true, "sort_order": 30 },
+            { "slug": "netball_wing_defence", "name": "Wing Defence", "is_field_position": true, "is_defensive": true, "sort_order": 40 },
+            { "slug": "netball_goal_defence", "name": "Goal Defence", "is_field_position": true, "is_defensive": true, "sort_order": 50 },
+            { "slug": "netball_goal_keeper", "name": "Goal Keeper", "is_field_position": true, "is_defensive": true, "sort_order": 60 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "lacrosse",
+      "name": "Lacrosse",
+      "category": "team_sport",
+      "description": "10-a-side stick-and-ball sport with a netted stick.",
+      "governing_body": "World Lacrosse",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 40,
+      "primary_color": "#7C3AED",
+      "icon": "mdi:lacrosse",
+      "sort_order": 120,
+      "disciplines": [
+        {
+          "slug": "lacrosse_field",
+          "name": "Field Lacrosse",
+          "format_type": "team",
+          "player_count_min": 10,
+          "player_count_max": 23,
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "lacrosse_goalie", "name": "Goalie", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
+            { "slug": "lacrosse_defender", "name": "Defender", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
+            { "slug": "lacrosse_midfielder", "name": "Midfielder", "is_field_position": true, "sort_order": 20 },
+            { "slug": "lacrosse_attacker", "name": "Attacker", "is_field_position": true, "is_offensive": true, "sort_order": 30 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "swimming",
+      "name": "Swimming",
+      "category": "aquatic",
+      "description": "Individual + relay aquatic racing across four canonical strokes.",
+      "governing_body": "World Aquatics (FINA)",
+      "gender_typical": "any",
+      "age_range_min": 4,
+      "age_range_max": 80,
+      "primary_color": "#0284C7",
+      "icon": "mdi:swim",
+      "sort_order": 130,
+      "disciplines": [
+        {
+          "slug": "swimming_freestyle",
+          "name": "Freestyle",
+          "description": "Front-crawl racing across all distances (50m, 100m, 200m, 400m, 800m, 1500m).",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "session_duration_default_minutes": 90,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "swimming_freestyler", "name": "Freestyler", "is_field_position": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "slug": "swimming_backstroke",
+          "name": "Backstroke",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "sort_order": 2,
+          "positions": [
+            { "slug": "swimming_backstroker", "name": "Backstroker", "is_field_position": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "slug": "swimming_breaststroke",
+          "name": "Breaststroke",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "sort_order": 3,
+          "positions": [
+            { "slug": "swimming_breaststroker", "name": "Breaststroker", "is_field_position": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "slug": "swimming_butterfly",
+          "name": "Butterfly",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "sort_order": 4,
+          "positions": [
+            { "slug": "swimming_butterflier", "name": "Butterflier", "is_field_position": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "slug": "swimming_individual_medley",
+          "name": "Individual Medley",
+          "description": "All four strokes in one race (butterfly → backstroke → breaststroke → freestyle).",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "sort_order": 5,
+          "positions": [
+            { "slug": "swimming_medlist", "name": "Medlist", "is_field_position": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "slug": "swimming_relay",
+          "name": "Relay",
+          "description": "4x freestyle or 4x medley team relays.",
+          "format_type": "relay",
+          "player_count_min": 4,
+          "player_count_max": 4,
+          "sort_order": 6,
+          "positions": [
+            { "slug": "swimming_relay_lead", "name": "Lead-off Swimmer", "is_field_position": true, "sort_order": 1 },
+            { "slug": "swimming_relay_anchor", "name": "Anchor", "is_field_position": true, "sort_order": 10 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "water_polo",
+      "name": "Water Polo",
+      "category": "aquatic",
+      "description": "7-a-side ball sport played in a pool.",
+      "governing_body": "World Aquatics",
+      "gender_typical": "any",
+      "age_range_min": 8,
+      "age_range_max": 40,
+      "primary_color": "#0891B2",
+      "icon": "mdi:water-polo",
+      "sort_order": 140,
+      "disciplines": [
+        {
+          "slug": "water_polo_standard",
+          "name": "Standard 7-a-side",
+          "format_type": "team",
+          "player_count_min": 7,
+          "player_count_max": 13,
+          "session_duration_default_minutes": 32,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "water_polo_goalkeeper", "name": "Goalkeeper", "is_field_position": true, "is_defensive": true, "sort_order": 1 },
+            { "slug": "water_polo_defender", "name": "Defender", "is_field_position": true, "is_defensive": true, "sort_order": 10 },
+            { "slug": "water_polo_wing", "name": "Wing", "is_field_position": true, "sort_order": 20 },
+            { "slug": "water_polo_driver", "name": "Driver", "is_field_position": true, "is_offensive": true, "sort_order": 30 },
+            { "slug": "water_polo_center", "name": "Center Forward", "is_field_position": true, "is_offensive": true, "sort_order": 40 }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "tennis",
+      "name": "Tennis",
+      "category": "racquet",
+      "description": "Singles + doubles racquet sport played on grass, clay, or hard court.",
+      "governing_body": "ITF",
+      "gender_typical": "any",
+      "age_range_min": 4,
+      "age_range_max": 80,
+      "primary_color": "#84CC16",
+      "icon": "mdi:tennis",
+      "sort_order": 150,
+      "disciplines": [
+        {
+          "slug": "tennis_singles",
+          "name": "Singles",
+          "description": "1v1 best-of-3 or best-of-5 sets.",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "session_duration_default_minutes": 90,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "tennis_doubles",
+          "name": "Doubles",
+          "description": "2v2 pairs format.",
+          "format_type": "pairs",
+          "player_count_min": 2,
+          "player_count_max": 2,
+          "session_duration_default_minutes": 90,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "badminton",
+      "name": "Badminton",
+      "category": "racquet",
+      "description": "Indoor racquet sport with a shuttlecock.",
+      "governing_body": "BWF",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 65,
+      "primary_color": "#EAB308",
+      "icon": "mdi:badminton",
+      "sort_order": 160,
+      "disciplines": [
+        {
+          "slug": "badminton_singles",
+          "name": "Singles",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "session_duration_default_minutes": 45,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "badminton_doubles",
+          "name": "Doubles",
+          "format_type": "pairs",
+          "player_count_min": 2,
+          "player_count_max": 2,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "squash",
+      "name": "Squash",
+      "category": "racquet",
+      "description": "Indoor racquet sport played in a four-walled court.",
+      "governing_body": "PSA World Tour",
+      "gender_typical": "any",
+      "age_range_min": 8,
+      "age_range_max": 65,
+      "primary_color": "#000000",
+      "icon": "mdi:racquetball",
+      "sort_order": 170,
+      "disciplines": [
+        {
+          "slug": "squash_singles",
+          "name": "Singles",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "table_tennis",
+      "name": "Table Tennis",
+      "category": "racquet",
+      "description": "Indoor small-ball racquet sport played on a table.",
+      "governing_body": "ITTF",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 80,
+      "primary_color": "#EF4444",
+      "icon": "mdi:table-tennis",
+      "sort_order": 180,
+      "disciplines": [
+        {
+          "slug": "table_tennis_singles",
+          "name": "Singles",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "session_duration_default_minutes": 30,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "table_tennis_doubles",
+          "name": "Doubles",
+          "format_type": "pairs",
+          "player_count_min": 2,
+          "player_count_max": 2,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "gymnastics",
+      "name": "Gymnastics",
+      "category": "individual_sport",
+      "description": "Artistic + rhythmic gymnastics disciplines.",
+      "governing_body": "FIG",
+      "gender_typical": "any",
+      "age_range_min": 3,
+      "age_range_max": 30,
+      "primary_color": "#A855F7",
+      "icon": "mdi:gymnastics",
+      "sort_order": 190,
+      "disciplines": [
+        {
+          "slug": "gymnastics_artistic",
+          "name": "Artistic Gymnastics",
+          "description": "Apparatus-based routines (floor, beam, bars, vault, rings, pommel horse).",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "session_duration_default_minutes": 120,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "gymnastics_rhythmic",
+          "name": "Rhythmic Gymnastics",
+          "description": "Apparatus-based routines with hoop, ball, ribbon, clubs, rope.",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 5,
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "gymnastics_trampoline",
+          "name": "Trampoline",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "athletics",
+      "name": "Athletics (Track & Field)",
+      "category": "track_field",
+      "description": "Running, jumping, throwing, and combined-event disciplines.",
+      "governing_body": "World Athletics",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 80,
+      "primary_color": "#DC2626",
+      "icon": "mdi:run",
+      "sort_order": 200,
+      "disciplines": [
+        {
+          "slug": "athletics_sprints",
+          "name": "Sprints",
+          "description": "100m, 200m, 400m running.",
+          "format_type": "individual",
+          "player_count_min": 1,
+          "player_count_max": 1,
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": [
+            { "slug": "athletics_sprinter", "name": "Sprinter", "is_field_position": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "slug": "athletics_middle_distance",
+          "name": "Middle Distance",
+          "description": "800m, 1500m running.",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "athletics_long_distance",
+          "name": "Long Distance",
+          "description": "5000m, 10000m, marathon.",
+          "format_type": "individual",
+          "sort_order": 3,
+          "positions": []
+        },
+        {
+          "slug": "athletics_jumps",
+          "name": "Jumps",
+          "description": "High jump, long jump, triple jump, pole vault.",
+          "format_type": "individual",
+          "sort_order": 4,
+          "positions": [
+            { "slug": "athletics_jumper", "name": "Jumper", "is_field_position": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "slug": "athletics_throws",
+          "name": "Throws",
+          "description": "Shot put, discus, hammer, javelin.",
+          "format_type": "individual",
+          "sort_order": 5,
+          "positions": [
+            { "slug": "athletics_thrower", "name": "Thrower", "is_field_position": true, "sort_order": 1 }
+          ]
+        },
+        {
+          "slug": "athletics_relay",
+          "name": "Relays",
+          "description": "4x100m, 4x400m team relays.",
+          "format_type": "relay",
+          "player_count_min": 4,
+          "player_count_max": 4,
+          "sort_order": 6,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "cycling",
+      "name": "Cycling",
+      "category": "cycling",
+      "description": "Road, track, mountain-bike, and BMX cycling.",
+      "governing_body": "UCI",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 75,
+      "primary_color": "#F97316",
+      "icon": "mdi:bike",
+      "sort_order": 210,
+      "disciplines": [
+        {
+          "slug": "cycling_road",
+          "name": "Road Cycling",
+          "format_type": "individual",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "cycling_track",
+          "name": "Track Cycling",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "cycling_mountain_bike",
+          "name": "Mountain Bike",
+          "format_type": "individual",
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "triathlon",
+      "name": "Triathlon",
+      "category": "individual_sport",
+      "description": "Multi-sport race: swim + bike + run.",
+      "governing_body": "World Triathlon",
+      "gender_typical": "any",
+      "age_range_min": 10,
+      "age_range_max": 70,
+      "primary_color": "#0F766E",
+      "icon": "game-icons:trail",
+      "sort_order": 220,
+      "disciplines": [
+        {
+          "slug": "triathlon_sprint",
+          "name": "Sprint Triathlon",
+          "description": "750m swim / 20km bike / 5km run.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 90,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "triathlon_olympic",
+          "name": "Olympic Triathlon",
+          "description": "1.5km swim / 40km bike / 10km run.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 180,
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "triathlon_ironman",
+          "name": "Ironman",
+          "description": "3.86km swim / 180km bike / 42.2km run.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 720,
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "martial_arts",
+      "name": "Martial Arts",
+      "category": "combat",
+      "description": "Umbrella sport covering karate, taekwondo, judo, BJJ, and other styles.",
+      "governing_body": "Various (WKF / WT / IJF / IBJJF)",
+      "gender_typical": "any",
+      "age_range_min": 4,
+      "age_range_max": 65,
+      "primary_color": "#EA580C",
+      "icon": "mdi:karate",
+      "sort_order": 230,
+      "disciplines": [
+        {
+          "slug": "martial_arts_karate",
+          "name": "Karate",
+          "description": "Traditional Japanese striking + kata art.",
+          "format_type": "individual",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "martial_arts_taekwondo",
+          "name": "Taekwondo",
+          "description": "Korean kicking-focused striking art.",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "martial_arts_judo",
+          "name": "Judo",
+          "description": "Japanese throwing + grappling art.",
+          "format_type": "individual",
+          "sort_order": 3,
+          "positions": []
+        },
+        {
+          "slug": "martial_arts_bjj",
+          "name": "Brazilian Jiu-Jitsu",
+          "description": "Ground-fighting grappling art focused on submissions.",
+          "format_type": "individual",
+          "sort_order": 4,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "boxing",
+      "name": "Boxing",
+      "category": "combat",
+      "description": "Amateur + professional boxing.",
+      "governing_body": "AIBA / WBA / WBC / IBF / WBO",
+      "gender_typical": "any",
+      "age_range_min": 8,
+      "age_range_max": 40,
+      "primary_color": "#991B1B",
+      "icon": "mdi:boxing-glove",
+      "sort_order": 240,
+      "disciplines": [
+        {
+          "slug": "boxing_amateur",
+          "name": "Amateur Boxing",
+          "description": "3-round olympic-style bouts.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 30,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "boxing_professional",
+          "name": "Professional Boxing",
+          "description": "4-12 round professional bouts.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 60,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "wrestling",
+      "name": "Wrestling",
+      "category": "combat",
+      "description": "Greco-Roman + freestyle wrestling.",
+      "governing_body": "UWW",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 40,
+      "primary_color": "#78716C",
+      "icon": "game-icons:wrestling",
+      "sort_order": 250,
+      "disciplines": [
+        {
+          "slug": "wrestling_freestyle",
+          "name": "Freestyle Wrestling",
+          "format_type": "individual",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "wrestling_greco_roman",
+          "name": "Greco-Roman Wrestling",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "fencing",
+      "name": "Fencing",
+      "category": "combat",
+      "description": "Sword-based combat sport with three weapon disciplines.",
+      "governing_body": "FIE",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 65,
+      "primary_color": "#4B5563",
+      "icon": "game-icons:crossed-swords",
+      "sort_order": 260,
+      "disciplines": [
+        {
+          "slug": "fencing_foil",
+          "name": "Foil",
+          "format_type": "individual",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "fencing_epee",
+          "name": "Épée",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "fencing_sabre",
+          "name": "Sabre",
+          "format_type": "individual",
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "skiing",
+      "name": "Skiing",
+      "category": "winter",
+      "description": "Alpine + nordic + freestyle skiing.",
+      "governing_body": "FIS",
+      "gender_typical": "any",
+      "age_range_min": 4,
+      "age_range_max": 75,
+      "primary_color": "#0EA5E9",
+      "icon": "mdi:ski",
+      "sort_order": 270,
+      "disciplines": [
+        {
+          "slug": "skiing_alpine",
+          "name": "Alpine Skiing",
+          "description": "Downhill / slalom / giant-slalom / super-G.",
+          "format_type": "individual",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "skiing_cross_country",
+          "name": "Cross-Country Skiing",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "skiing_freestyle",
+          "name": "Freestyle Skiing",
+          "description": "Moguls, aerials, halfpipe, slopestyle.",
+          "format_type": "individual",
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "snowboarding",
+      "name": "Snowboarding",
+      "category": "winter",
+      "description": "Alpine + freestyle snowboarding.",
+      "governing_body": "FIS",
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 60,
+      "primary_color": "#7DD3FC",
+      "icon": "mdi:snowboard",
+      "sort_order": 280,
+      "disciplines": [
+        {
+          "slug": "snowboarding_freestyle",
+          "name": "Freestyle Snowboarding",
+          "description": "Halfpipe, slopestyle, big air.",
+          "format_type": "individual",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "snowboarding_racing",
+          "name": "Snowboard Racing",
+          "description": "Boardercross + parallel giant slalom.",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "figure_skating",
+      "name": "Figure Skating",
+      "category": "winter",
+      "description": "Ice-based routines with jumps, spins, and choreography.",
+      "governing_body": "ISU",
+      "gender_typical": "any",
+      "age_range_min": 4,
+      "age_range_max": 40,
+      "primary_color": "#E0E7FF",
+      "icon": "mdi:ice-skate",
+      "sort_order": 290,
+      "disciplines": [
+        {
+          "slug": "figure_skating_singles",
+          "name": "Singles",
+          "format_type": "individual",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "figure_skating_pairs",
+          "name": "Pairs",
+          "format_type": "pairs",
+          "player_count_min": 2,
+          "player_count_max": 2,
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "figure_skating_ice_dance",
+          "name": "Ice Dance",
+          "format_type": "pairs",
+          "player_count_min": 2,
+          "player_count_max": 2,
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "yoga",
+      "name": "Yoga",
+      "category": "fitness",
+      "description": "Physical + breathing + meditation practice.",
+      "governing_body": null,
+      "gender_typical": "any",
+      "age_range_min": 5,
+      "age_range_max": 90,
+      "primary_color": "#A78BFA",
+      "icon": "mdi:yoga",
+      "sort_order": 300,
+      "disciplines": [
+        {
+          "slug": "yoga_hatha",
+          "name": "Hatha Yoga",
+          "description": "Foundational style — slow-paced holds.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "yoga_vinyasa",
+          "name": "Vinyasa Yoga",
+          "description": "Flow-based style — poses linked by breath.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 60,
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "yoga_ashtanga",
+          "name": "Ashtanga Yoga",
+          "description": "Traditional set-sequence style — intense.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 90,
+          "sort_order": 3,
+          "positions": []
+        },
+        {
+          "slug": "yoga_yin",
+          "name": "Yin Yoga",
+          "description": "Slow deep-stretch style — long holds.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 75,
+          "sort_order": 4,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "pilates",
+      "name": "Pilates",
+      "category": "fitness",
+      "description": "Low-impact strength + flexibility method.",
+      "governing_body": null,
+      "gender_typical": "any",
+      "age_range_min": 8,
+      "age_range_max": 90,
+      "primary_color": "#F472B6",
+      "icon": "mdi:human-female",
+      "sort_order": 310,
+      "disciplines": [
+        {
+          "slug": "pilates_mat",
+          "name": "Mat Pilates",
+          "format_type": "individual",
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "pilates_reformer",
+          "name": "Reformer Pilates",
+          "format_type": "individual",
+          "session_duration_default_minutes": 60,
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "general_fitness",
+      "name": "General Fitness",
+      "category": "fitness",
+      "description": "Umbrella sport for gym-based strength + cardio training that doesn't fit a specific sport taxonomy.",
+      "governing_body": null,
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 90,
+      "primary_color": "#64748B",
+      "icon": "mdi:dumbbell",
+      "sort_order": 320,
+      "disciplines": [
+        {
+          "slug": "general_fitness_strength",
+          "name": "Strength Training",
+          "description": "Resistance training with weights or machines.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "general_fitness_cardio",
+          "name": "Cardio Training",
+          "description": "Treadmill, bike, rowing.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 45,
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "general_fitness_hiit",
+          "name": "HIIT",
+          "description": "High-intensity interval training.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 30,
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "crossfit",
+      "name": "CrossFit",
+      "category": "fitness",
+      "description": "High-intensity constantly-varied functional-movement training.",
+      "governing_body": "CrossFit Inc.",
+      "gender_typical": "any",
+      "age_range_min": 12,
+      "age_range_max": 65,
+      "primary_color": "#000000",
+      "icon": "game-icons:strong",
+      "sort_order": 330,
+      "disciplines": [
+        {
+          "slug": "crossfit_wod",
+          "name": "WOD (Workout of the Day)",
+          "description": "Standard prescribed daily workout.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "dance",
+      "name": "Dance",
+      "category": "fitness",
+      "description": "Umbrella for competitive + recreational dance styles.",
+      "governing_body": "WDSF",
+      "gender_typical": "any",
+      "age_range_min": 3,
+      "age_range_max": 80,
+      "primary_color": "#F43F5E",
+      "icon": "mdi:dance-ballroom",
+      "sort_order": 340,
+      "disciplines": [
+        {
+          "slug": "dance_ballet",
+          "name": "Ballet",
+          "format_type": "individual",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "dance_contemporary",
+          "name": "Contemporary",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "dance_hip_hop",
+          "name": "Hip-Hop",
+          "format_type": "individual",
+          "sort_order": 3,
+          "positions": []
+        },
+        {
+          "slug": "dance_ballroom",
+          "name": "Ballroom",
+          "format_type": "pairs",
+          "player_count_min": 2,
+          "player_count_max": 2,
+          "sort_order": 4,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "aerobics",
+      "name": "Aerobics",
+      "category": "fitness",
+      "description": "Cardiovascular group-exercise format.",
+      "governing_body": "FIG (competitive)",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 80,
+      "primary_color": "#FB923C",
+      "icon": "mdi:human-female-dance",
+      "sort_order": 350,
+      "disciplines": [
+        {
+          "slug": "aerobics_group",
+          "name": "Group Aerobics",
+          "format_type": "individual",
+          "session_duration_default_minutes": 60,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "aerobics_step",
+          "name": "Step Aerobics",
+          "format_type": "individual",
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "chess",
+      "name": "Chess",
+      "category": "recreational",
+      "description": "Two-player strategy board game.",
+      "governing_body": "FIDE",
+      "gender_typical": "any",
+      "age_range_min": 4,
+      "age_range_max": 99,
+      "primary_color": "#1F2937",
+      "icon": "mdi:chess-king",
+      "sort_order": 360,
+      "disciplines": [
+        {
+          "slug": "chess_classical",
+          "name": "Classical Chess",
+          "description": "Long time-control (90+ minutes per player).",
+          "format_type": "individual",
+          "session_duration_default_minutes": 240,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "chess_rapid",
+          "name": "Rapid Chess",
+          "description": "15-60 minute per-player time controls.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 45,
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "chess_blitz",
+          "name": "Blitz Chess",
+          "description": "3-5 minute per-player time controls.",
+          "format_type": "individual",
+          "session_duration_default_minutes": 10,
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "esports",
+      "name": "Esports",
+      "category": "recreational",
+      "description": "Competitive video-game play across multiple game titles.",
+      "governing_body": "IESF",
+      "gender_typical": "any",
+      "age_range_min": 6,
+      "age_range_max": 40,
+      "primary_color": "#8B5CF6",
+      "icon": "mdi:gamepad-variant",
+      "sort_order": 370,
+      "disciplines": [
+        {
+          "slug": "esports_moba",
+          "name": "MOBA",
+          "description": "Multiplayer Online Battle Arena (League of Legends, Dota 2).",
+          "format_type": "team",
+          "player_count_min": 5,
+          "player_count_max": 7,
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "esports_fps",
+          "name": "First-Person Shooter",
+          "description": "Counter-Strike, Valorant, Overwatch.",
+          "format_type": "team",
+          "player_count_min": 5,
+          "player_count_max": 7,
+          "sort_order": 2,
+          "positions": []
+        },
+        {
+          "slug": "esports_fighting",
+          "name": "Fighting Games",
+          "description": "Street Fighter, Tekken, Smash Bros.",
+          "format_type": "individual",
+          "sort_order": 3,
+          "positions": []
+        }
+      ]
+    },
+    {
+      "slug": "general_recreation",
+      "name": "General Recreation",
+      "category": "recreational",
+      "description": "Umbrella sport for programmes that don't fit a specific sport taxonomy (mixed-activity summer camps, general PE, adventure-play).",
+      "governing_body": null,
+      "gender_typical": "any",
+      "age_range_min": 3,
+      "age_range_max": 99,
+      "primary_color": "#94A3B8",
+      "icon": "mdi:playlist-play",
+      "sort_order": 380,
+      "disciplines": [
+        {
+          "slug": "general_recreation_camp",
+          "name": "Summer Camp",
+          "description": "Multi-activity summer programme.",
+          "format_type": "team",
+          "sort_order": 1,
+          "positions": []
+        },
+        {
+          "slug": "general_recreation_pe",
+          "name": "Physical Education",
+          "description": "School-based PE programme.",
+          "format_type": "team",
+          "sort_order": 2,
+          "positions": []
+        }
+      ]
+    }
+  ]
+}

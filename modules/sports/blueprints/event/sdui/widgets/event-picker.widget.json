@@ -1,0 +1,127 @@
+{
+  "id": "event.event-picker",
+  "title": "Event picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable single-select for Events filtered by scoping tuple. Renders as HeroUI `ComboBox` per the ui-components rule. Consumed by session + athlete-enrollment + team-event flows and any admin surface that needs an event pick. Groups by status (in_progress first, then registration_open, then registration_closed, then announced, then upcoming/completed; archived hidden by default).",
+  "notes": [
+    "Uses `ComboBox` — tenants may run many concurrent events.",
+    "Hides `archived` and `cancelled` by default; caller can pass `showTerminal=true`.",
+    "Filters by visibility per caller's role.",
+    "Displays a status chip inline (see event-status-chip widget)."
+  ],
+  "props": {
+    "name": { "type": "string", "required": true },
+    "label": { "type": "string", "default": "Event" },
+    "required": { "type": "boolean", "default": false },
+    "clearable": { "type": "boolean", "default": false },
+    "placeholder": { "type": "string", "default": "Search events..." },
+    "helpText": { "type": "string", "default": null },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
+    "defaultValue": { "type": "string", "default": null },
+    "organizationId": { "type": "string", "default": null },
+    "branchId": { "type": "string", "default": null },
+    "seasonId": { "type": "string", "default": null },
+    "eventType": { "type": "string", "default": null },
+    "sportKey": { "type": "string", "default": null },
+    "showTerminal": { "type": "boolean", "default": false }
+  },
+  "dataSources": [
+    {
+      "name": "events",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/events?' + qs({ 'filter[organization_id]': props.organizationId, 'filter[branch_id]': props.branchId, 'filter[season_id]': props.seasonId, 'filter[event_type]': props.eventType, 'filter[primary_sport_key]': props.sportKey, 'filter[status]': (props.showTerminal ? null : 'announced,registration_open,registration_closed,in_progress'), 'sort': '-status,-starts_at', 'include': 'primary_facility' })",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": { "menuTrigger": "focus" },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" }
+        }
+      },
+      "children": [
+        { "kind": "Label", "bindings": { "children": { "$ref": "props.label" } } },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "Description",
+          "bindings": {
+            "hidden": { "$expr": "!props.helpText" },
+            "children": { "$ref": "props.helpText" }
+          }
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-96" },
+              "bindings": { "items": { "$ref": "events" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.id, id: item.id, textValue: item.name + ' ' + item.slug }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col flex-1 min-w-0" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              {
+                                "kind": "Text",
+                                "props": { "className": "font-medium truncate" },
+                                "bindings": { "children": { "$ref": "item.name" } }
+                              },
+                              {
+                                "kind": "Widget",
+                                "props": { "id": "event.event-status-chip" },
+                                "bindings": { "props": { "status": { "$ref": "item.status" }, "size": "xs" } }
+                              }
+                            ]
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted font-mono" },
+                            "bindings": {
+                              "children": {
+                                "$expr": "item.starts_at + ' · ' + item.event_type + (item.primary_facility ? ' · ' + item.primary_facility.name : '')"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

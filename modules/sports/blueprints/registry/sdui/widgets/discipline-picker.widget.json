@@ -1,0 +1,107 @@
+{
+  "id": "sports-registry.discipline-picker",
+  "title": "Discipline picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Single-select for Disciplines. Filters by parent sport_key. Renders as HeroUI `ComboBox`. Consumed by AthleteEnrollment, Event, and Team creation flows.",
+  "notes": [
+    "The parent sport_key filter is REQUIRED — a discipline picker without a resolved sport is meaningless. Consumers pass sport_key via props.",
+    "Options include only disciplines whose parent Sport is is_active + matches the parent scope."
+  ],
+  "props": {
+    "name": { "type": "string", "required": true, "description": "Form field name (e.g. `discipline_key`). Widget writes the Discipline slug." },
+    "label": { "type": "string", "default": "Discipline" },
+    "required": { "type": "boolean", "default": false },
+    "clearable": { "type": "boolean", "default": true },
+    "placeholder": { "type": "string", "default": "Search disciplines..." },
+    "size": { "type": "string", "default": "md" },
+    "defaultValue": { "type": "string", "default": null },
+    "sportKey": { "type": "string", "required": true, "description": "Parent sport slug — the picker filters to Disciplines belonging to this Sport." },
+    "filter": { "type": "string", "default": "active", "enum": ["active", "all"] }
+  },
+  "dataSources": [
+    {
+      "name": "disciplines",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/disciplines?filter[sport_key]=' + props.sportKey + (props.filter === 'all' ? '' : '&filter[is_active]=true') + '&sort=sort_order,name'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 1800 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": { "menuTrigger": "focus" },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" },
+          "isDisabled": { "$expr": "!props.sportKey" }
+        }
+      },
+      "children": [
+        { "kind": "Label", "bindings": { "children": { "$ref": "props.label" } } },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            { "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "Description",
+          "props": { "children": "Pick a sport first" },
+          "bindings": { "hidden": { "$expr": "!!props.sportKey" } }
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-80" },
+              "bindings": { "items": { "$ref": "disciplines" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.slug, id: item.slug, textValue: item.name + ' ' + item.slug }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1 flex-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col flex-1" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.name" } } },
+                              { "kind": "Chip", "props": { "size": "xs", "variant": "neutral" }, "bindings": { "hidden": { "$expr": "!item.format_type" }, "children": { "$ref": "item.format_type" } } }
+                            ]
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted" },
+                            "bindings": { "children": { "$expr": "(item.player_count_min || 1) + '-' + (item.player_count_max || 1) + ' players · ' + (item.session_duration_default_minutes || 60) + ' min'" } }
+                          }
+                        ]
+                      },
+                      { "kind": "ListBox.ItemIndicator" }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

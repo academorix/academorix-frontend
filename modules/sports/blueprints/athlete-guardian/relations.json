@@ -1,0 +1,101 @@
+{
+  "id": "academorix://modules/athlete-guardian/relations",
+  "$version": 1,
+  "title": "athlete-guardian — model relationships",
+  "description": "One owned entity: AthleteGuardian. Pivot between Tenant + Athlete + User. Cascades organization + region + branch through athlete → branch. Cascades application through tenant. No `application_id`, `organization_id`, `region_id`, `branch_id`, or `scope_node_id` — forbidden columns per tenancy-columns.md §5. Every outbound FK stays same-tenant per defense-in-depth.",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "AthleteGuardian",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every guardian row is tenant-scoped per tenancy-columns.md §3. Cascade delete on TenantErased via PurgeAthleteGuardianDataForErasedTenant hook."
+    },
+    {
+      "from": "AthleteGuardian",
+      "kind": "belongsTo",
+      "to": "athlete::Athlete",
+      "foreignKey": "athlete_id",
+      "onDelete": "cascade",
+      "description": "The athlete this row grants guardianship over. CASCADE — guardian rows have no meaning without their athlete. When an Athlete is hard-deleted (past 7-year retention), guardian rows go with it. IMMUTABLE post-create — a guardian belongs to one athlete forever."
+    },
+    {
+      "from": "AthleteGuardian",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "user_id",
+      "onDelete": "restrict",
+      "description": "The guardian's login. RESTRICT — the User cannot be soft-deleted while they hold an active guardianship. The guardian handoff flow (transfer guardianship to another User) must complete first. Enforced by PreventUserArchiveWithActiveGuardianship hook."
+    },
+    {
+      "from": "AthleteGuardian",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "verified_by_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The HR User who verified this guardian (typically staff — HR role). SET NULL on User archive so the audit trail survives while the reference nulls."
+    },
+    {
+      "from": "AthleteGuardian",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "dispute_recorded_by_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The User who filed the dispute. SET NULL for audit trail preservation."
+    },
+    {
+      "from": "AthleteGuardian",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "revoked_by_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The User who filed the revocation. SET NULL for audit trail preservation."
+    },
+    {
+      "from": "AthleteGuardian",
+      "kind": "belongsTo",
+      "to": "storage::File",
+      "foreignKey": "verification_document_file_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Wave 4+ storage integration. RESTRICT — signed verification documents cannot be hard-deleted while referenced. 7-year retention aligned with the guardian row."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules (Wave 3+) reach AthleteGuardian through the cross-module rule + resolver — never a direct FK from another table (except the polymorphic morph on notifications).",
+    "examples": [
+      "athlete::AthleteObserver — for minor athletes, consent_recorded_by_user_id MUST resolve to a User with an active AthleteGuardian row on the athlete + has_legal_custody=true (Wave 3b hard-fail via consent_recorded_by_authorised_guardian rule)",
+      "athlete-enrollment::AthleteEnrollment (Wave 3a sibling) — enrollment approval routes through the primary guardian's User for consent on provisional enrollments",
+      "notifications::NotificationRoutingHook (Wave 4+) — routes athlete-adjacent notifications to guardians with can_receive_communications=true",
+      "safeguarding::MedicalClearance (Wave 4+) — reads guardians with can_authorise_medical_care=true for emergency medical decisions"
+    ],
+    "onDelete": "N/A — no inbound FKs to guardian rows."
+  },
+  "morphs": [],
+  "accessor_chain": {
+    "description": "The AthleteGuardian model delegates presentation accessors to its athlete + user for uniform display.",
+    "AthleteGuardian": {
+      "guardian_display_name": "user->profile->display_name ?? user->profile->first_name",
+      "guardian_email": "user->identity->email",
+      "guardian_phone": "user->profile->phone_e164",
+      "guardian_avatar_url": "user->profile->avatar_url",
+      "athlete_display_name": "athlete->display_name",
+      "days_since_added": "computed floor((today - created_at) / 86400)",
+      "is_active": "verification_status IN ('verified', 'pending', 'disputed') AND deleted_at IS NULL",
+      "can_record_consent": "is_active AND verification_status='verified' AND has_legal_custody=true"
+    }
+  },
+  "notes": [
+    "AthleteGuardian carries `application_id` INDIRECTLY via its Tenant. Enforced by tenancy-compliance-auditor.",
+    "AthleteGuardian cascades organization + region + branch through its Athlete → Branch. `guardian.organization_id`, `guardian.region_id`, `guardian.branch_id` DO NOT EXIST — forbidden columns.",
+    "AthleteGuardian.athlete_id + user_id are IMMUTABLE post-create. Re-pointing is an audit-trail launder; the correct path is remove + re-add.",
+    "AthleteGuardian.tenant_id is IMMUTABLE. Cross-tenant guardian moves are forbidden.",
+    "The `is_primary` flag is transaction-atomic — the /set-primary route promotes-and-demotes in one DB transaction. Concurrent flips are caught by the partial unique index + observer's SELECT ... FOR UPDATE.",
+    "There is NO `Parent` / `ParentLink` model. AthleteGuardian IS the parent-child link — the naming reflects the domain-agnostic scope (a legal guardian may not be a parent; a foster parent + court-appointed guardian all fit)."
+  ]
+}

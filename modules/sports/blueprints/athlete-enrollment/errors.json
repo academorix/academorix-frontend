@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/athlete-enrollment/errors",
+  "$version": 1,
+  "title": "athlete-enrollment — error codes",
+  "namespace": "athlete_enrollment",
+  "errors": [
+    { "code": "ENROLLMENT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_not_found" },
+    { "code": "ENROLLMENT_ATHLETE_INACTIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_athlete_inactive", "description": "Cannot enroll a withdrawn/graduated/archived athlete." },
+    { "code": "ENROLLMENT_TEAM_INACTIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_team_inactive" },
+    { "code": "ENROLLMENT_SEASON_NOT_OPEN", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_season_not_open" },
+    { "code": "ENROLLMENT_DUPLICATE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_duplicate", "description": "This athlete already has an active enrollment on this team for this season." },
+    { "code": "ENROLLMENT_QUOTA_EXCEEDED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_quota_exceeded", "description": "Reached athlete_enrollment_slot cap for this season. Small: 15, Medium: 250." },
+    { "code": "TEAM_AT_CAPACITY", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.team_at_capacity", "description": "Team is at capacity + waitlist is not enabled on your tier." },
+    { "code": "ENROLLMENT_PROVISIONAL_NOT_ENTITLED", "http": 402, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_provisional_not_entitled", "description": "Provisional enrollments are Enterprise-only." },
+    { "code": "ENROLLMENT_TRIAL_SOURCE_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_trial_source_required" },
+    { "code": "ENROLLMENT_TRIAL_SOURCE_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_trial_source_invalid", "description": "The referenced trial is not in a converted state OR does not match this team/season." },
+    { "code": "ENROLLMENT_CURRENCY_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_currency_required" },
+    { "code": "ENROLLMENT_TEAM_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_enrollment.errors.enrollment_team_id_immutable" },
+    { "code": "ENROLLMENT_ATHLETE_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_enrollment.errors.enrollment_athlete_id_immutable" },
+    { "code": "ENROLLMENT_SEASON_ID_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_enrollment.errors.enrollment_season_id_immutable" },
+    { "code": "ENROLLMENT_AGE_GROUP_SNAPSHOT_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_enrollment.errors.enrollment_age_group_snapshot_immutable", "description": "age_group_snapshot_id is frozen at submission. Cannot be edited post-create." },
+    { "code": "ENROLLMENT_TYPE_IMMUTABLE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "warn", "i18n_key": "athlete_enrollment.errors.enrollment_type_immutable" },
+    { "code": "ENROLLMENT_STATUS_TRANSITION_INVALID", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_status_transition_invalid" },
+    { "code": "ENROLLMENT_CONSENT_SNAPSHOT_MISSING", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_consent_snapshot_missing", "description": "Consent snapshot is required for confirmed status. Record athlete consents first." },
+    { "code": "ENROLLMENT_WITHDRAWAL_REASON_REQUIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_withdrawal_reason_required" },
+    { "code": "ENROLLMENT_ACTIVE_CANNOT_DELETE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_active_cannot_delete", "description": "Cannot delete an active or confirmed enrollment. Withdraw or complete it first." },
+    { "code": "ENROLLMENT_JERSEY_NUMBER_TAKEN", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.enrollment_jersey_number_taken", "description": "Another active enrollment on this team already has this jersey number." },
+    { "code": "ATOMICITY_FAILURE", "http": 500, "retryable": true, "user_facing": false, "audit_severity": "error", "i18n_key": "athlete_enrollment.errors.atomicity_failure", "description": "P1 event. The atomic conversion to TeamMember failed. Enrollment stays in confirmed state; ActivateConfirmedEnrollmentsJob will retry." },
+    { "code": "ATHLETE_HAS_ACTIVE_ENROLLMENTS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.athlete_has_active_enrollments", "description": "Athlete cannot archive while active enrollments exist. Use cascade=true or complete/withdraw enrollments first." },
+    { "code": "TEAM_HAS_ACTIVE_ENROLLMENTS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.team_has_active_enrollments" },
+    { "code": "SEASON_HAS_ACTIVE_ENROLLMENTS", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "athlete_enrollment.errors.season_has_active_enrollments" }
+  ]
+}

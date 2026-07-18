@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/athlete-enrollment/retention",
+  "$version": 1,
+  "title": "athlete-enrollment — retention windows",
+  "description": "Active + confirmed + waitlisted enrollments never expire. Completed / withdrawn / expelled / expired enrollments retain 7 years post terminal transition (season-history + membership-record retention for federation compliance).",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c)",
+    "gdpr Art. 17 (retention exception for regulatory records)",
+    "federation regulatory records (age-eligibility multi-year lookback)"
+  ],
+  "retention": [
+    { "entity": "AthleteEnrollment — active / confirmed / waitlisted / submitted / payment_pending / consent_pending", "hot": { "days": "indefinite (until terminal transition)" } },
+    { "entity": "AthleteEnrollment — completed", "hot": { "days": 365 }, "cold": { "days": "2555 (7 years post completed_at)" }, "purge": { "trigger": "> 7 years past completed_at + no downstream references", "action": "hard delete via PurgeCompletedEnrollmentsJob" } },
+    { "entity": "AthleteEnrollment — withdrawn", "hot": { "days": 365 }, "cold": { "days": "2555 (7 years post withdrawn_at)" }, "purge": { "trigger": "> 7 years past withdrawn_at", "action": "hard delete" } },
+    { "entity": "AthleteEnrollment — expelled", "hot": { "days": 365 }, "cold": { "days": "2555 (7 years post withdrawn_at)" }, "purge": { "trigger": "> 7 years past withdrawn_at", "action": "hard delete", "notes": "Retention aligned with anti-discrimination audit — federation regulators may inspect multi-year disciplinary trails." } },
+    { "entity": "AthleteEnrollment — expired", "hot": { "days": 365 }, "cold": { "days": "365 (1 year post expired_at)" }, "purge": { "trigger": "> 1 year past expired_at", "action": "hard delete", "notes": "Expired enrollments retain shorter than terminal ones — the athlete never joined a team; no season-history exists." } },
+    { "entity": "consent_snapshot JSONB", "hot": { "days": "co-terminous with parent enrollment" }, "purge": { "trigger": "enrollment hard-delete", "action": "cascaded via the enrollment row" } }
+  ],
+  "cross_reference": [
+    "TenantErased cascades hard-delete of every enrollment. Audit rows survive.",
+    "Athlete hard-delete cascades enrollments via RESTRICT — athlete must transition all enrollments to terminal states first, then archive."
+  ]
+}

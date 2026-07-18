@@ -1,0 +1,93 @@
+{
+  "id": "academorix://modules/athlete/data-classes",
+  "$version": 1,
+  "title": "athlete — field classification",
+  "description": "Athlete carries FOUR tiers of sensitivity: public identifiers (id, tenant_id, branch_id, first_name for internal display), internal operational data (dates, gender, dominant_hand, height/weight, status, age-group snapshot), CONFIDENTIAL (emergency contact cluster + registration_notes, gated by athlete.view.emergency_contact), REGULATED_HEALTH (medical cluster, gated by athlete.view.medical), plus REGULATED_MINOR when the athlete is a minor (age_years < config.athlete.minor_min_age). Consent flags themselves are internal-tier (the fact of a boolean isn't sensitive; the DATA those consents unlock is). The redactor pipeline applies field-level gates on egress — a caller with `athlete.view` but WITHOUT `athlete.view.medical` sees an Athlete object with medical_* keys entirely stripped from the JSON.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Athlete.id",
+      "Athlete.tenant_id",
+      "Athlete.branch_id",
+      "Athlete.current_age_group_id (used in enrollment forms)"
+    ],
+    "internal": [
+      "Athlete.user_id (when linked; internal to tenant staff)",
+      "Athlete.external_id",
+      "Athlete.first_name (surface value for tenant-internal display; wire-level PII when the athlete is a minor)",
+      "Athlete.middle_name",
+      "Athlete.last_name",
+      "Athlete.preferred_name",
+      "Athlete.date_of_birth (age-group critical; not shown to non-HR peers)",
+      "Athlete.gender",
+      "Athlete.pronouns",
+      "Athlete.height_cm",
+      "Athlete.weight_kg",
+      "Athlete.dominant_hand",
+      "Athlete.primary_language",
+      "Athlete.profile_photo_url",
+      "Athlete.current_age_group_snapshot_at",
+      "Athlete.consent_photo_release",
+      "Athlete.consent_medical_disclosure",
+      "Athlete.consent_third_party",
+      "Athlete.consent_recorded_at",
+      "Athlete.consent_recorded_by_user_id",
+      "Athlete.status",
+      "Athlete.paused_at",
+      "Athlete.graduated_at",
+      "Athlete.withdrawn_at",
+      "Athlete.withdrawn_by_user_id",
+      "Athlete.metadata",
+      "Athlete.created_by",
+      "Athlete.updated_by",
+      "Athlete.deleted_by",
+      "Athlete.created_at",
+      "Athlete.updated_at",
+      "Athlete.deleted_at"
+    ],
+    "confidential": [
+      "Athlete.emergency_contact_name (gated by athlete.view.emergency_contact)",
+      "Athlete.emergency_contact_phone (gated by athlete.view.emergency_contact)",
+      "Athlete.emergency_contact_relationship (gated by athlete.view.emergency_contact)",
+      "Athlete.registration_notes (HR-visible only — never surfaced to guardians)",
+      "Athlete.paused_reason (HR-visible — the reason a child was paused is confidential)",
+      "Athlete.withdrawal_reason (HR + admin visible — reason for withdrawal is compliance-relevant, not for peers)"
+    ],
+    "restricted": [
+      "Athlete.paused_reason (when paused_reason contains safeguarding-critical language — an HR-only sub-tier applies here; feature deferred to Wave 4+ Safeguarding module which introduces the safeguarding_officer role)"
+    ],
+    "regulated_minor": [
+      "For every Athlete where age_years < config.athlete.minor_min_age (default 16): the ENTIRE row inherits the minor-tier egress redaction rules. First name + last name are stripped from cross-tenant platform-admin reads (support staff never see minors' names outside the tenant plane). Photos never appear on public-facing surfaces regardless of consent_photo_release when minor. Communications route strictly through the guardian's channels — direct-to-athlete channels refused."
+    ],
+    "regulated_health": [
+      "Athlete.medical_conditions (gated by athlete.view.medical)",
+      "Athlete.medical_allergies (gated by athlete.view.medical)",
+      "Athlete.medical_medications (gated by athlete.view.medical)",
+      "Athlete.medical_notes (gated by athlete.view.medical)",
+      "athlete_medical_history rows (dedicated audit table with 7-year retention; every mutation to a medical_* field writes here)"
+    ],
+    "regulated_financial": [],
+    "audit_log": [
+      "Athlete.status (every transition — pause / graduate / withdraw / archive / restore)",
+      "Athlete.user_id (every link — one-way from null to non-null)",
+      "Athlete.date_of_birth (every super_admin override — should almost never happen)",
+      "Athlete.branch_id (every change — Wave 3b immutable; when the transfer flow lands, every change is audit-critical)",
+      "Athlete.medical_conditions / medical_allergies / medical_medications / medical_notes (every mutation → athlete_medical_history table with 7-year retention; NOT the normal audits table)",
+      "Athlete.emergency_contact_name / emergency_contact_phone / emergency_contact_relationship (every mutation → normal audits table, 7-year retention for confidential-tier fields)",
+      "Athlete.consent_photo_release / consent_medical_disclosure / consent_third_party (every flip — compliance-critical)",
+      "Athlete.deleted_at (soft-delete audit)",
+      "Athlete.withdrawal_reason (audit-critical for compliance)",
+      "Athlete.paused_reason (audit-critical for safeguarding)",
+      "Athlete.current_age_group_id (every snapshot flip — birthday drift + AgeGroup catalog changes)"
+    ]
+  },
+  "notes": [
+    "The redactor pipeline (from telemetry::RedactorProcessor) applies to every Athlete row on egress. Callers with `athlete.view.medical` see medical_*; callers with `athlete.view.medical.own` see their OWN medical fields (rare — an adult athlete viewing their own record). Callers with neither see the fields stripped from the JSON entirely.",
+    "Same pattern for emergency_contact — gated by `athlete.view.emergency_contact` (or `.own` — an adult athlete may view their own emergency contact).",
+    "Athlete.registration_notes and Athlete.paused_reason are HR-visible internal fields — they do NOT surface on the tenant activity feed. When paused_reason contains safeguarding language, it inherits the restricted tier of the enclosing context.",
+    "Medical writes DO NOT feed the activity feed. Coaches should not accidentally see 'X updated Y's allergies' scrolling past — the AthleteMedicalUpdated event routes to the medical-audit queue exclusively + the activity-feed listener DOES NOT subscribe.",
+    "The 90-day post-archive redaction on emergency_contact + medical fields aligns with GDPR Art. 5(1)(c) minimisation. Employment metadata retains 7 years for legal record.",
+    "Regulated_minor sub-tier: for minors, first_name + last_name are still shown on the tenant plane (staff MUST identify children in their care) but are STRIPPED from cross-tenant platform-admin reads. Aligns with best-practice minor-data-protection design (COPPA in the US, GDPR Art. 8 in EU).",
+    "Regulated_health rows in athlete_medical_history retain 7 years even after the parent Athlete row is hard-deleted. The retention pipeline keeps the audit rows alive per health-record regulation."
+  ]
+}

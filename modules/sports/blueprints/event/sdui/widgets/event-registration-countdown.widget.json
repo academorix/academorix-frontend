@@ -1,0 +1,40 @@
+{
+  "id": "event.event-registration-countdown",
+  "title": "Event registration countdown",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Live countdown to the next registration window boundary. When status='announced' with registration_opens_at in the future: 'Opens in Xd Xh'. When status='registration_open': 'Closes in Xd Xh'. When status='registration_closed' + within late window: 'Late window closes in Xd Xh'. Otherwise: hidden. Updates every 60 seconds via internal tick.",
+  "props": {
+    "event": { "type": "object", "required": true, "description": "The event row (or subset with status + registration_opens_at + registration_closes_at + late_registration_ends_at + allow_late_registration)." },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-2" },
+      "bindings": {
+        "hidden": {
+          "$expr": "props.event.status NOT IN ['announced', 'registration_open', 'registration_closed'] OR (props.event.status='announced' AND !props.event.registration_opens_at)"
+        }
+      },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "props": {
+              "size": { "$ref": "props.size" },
+              "variant": {
+                "$expr": "props.event.status = 'registration_open' ? 'accent' : (props.event.status = 'announced' ? 'info' : 'warning')"
+              },
+              "leadingIcon": "clock-outline",
+              "children": {
+                "$expr": "props.event.status = 'announced' ? ('Opens ' + formatCountdown(props.event.registration_opens_at)) : (props.event.status = 'registration_open' ? ('Closes ' + formatCountdown(props.event.registration_closes_at)) : (props.event.allow_late_registration && props.event.late_registration_ends_at ? ('Late window closes ' + formatCountdown(props.event.late_registration_ends_at)) : ''))"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

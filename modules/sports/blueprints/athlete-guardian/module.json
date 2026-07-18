@@ -1,0 +1,177 @@
+{
+  "$version": 1,
+  "name": "athlete-guardian",
+  "alias": "athlete_guardian",
+  "namespace": "Academorix\\Sports\\AthleteGuardian",
+  "description": "Parent/legal-guardian relationship binding an Athlete to a User. Answers 'who is responsible for this minor?'. Enables the parent-user to book sessions, pay memberships, receive notifications, and consent to activities on behalf of a minor Athlete. Multiple guardians per Athlete supported (split families, primary + secondary guardians). Exactly one `is_primary=true` guardian per Athlete when any exist. Every guardian carries a `relationship` enum + `has_legal_custody` bool + `can_pickup` bool + `can_receive_communications` bool + `can_authorise_medical_care` bool. Ships: AthleteGuardian pivot with tenant_id + athlete_id + user_id; PrimaryGuardianResolver (returns the primary guardian for an athlete, cache-hot); ConsentDelegationChain for propagating athlete consents through the primary guardian (Wave 3b hooks into athlete::consent_recorded_by_authorised_guardian rule); verification workflow (auto-verified on same-household email domain match, else HR review) with `verification_status` enum (pending / verified / disputed / revoked). Small tier limited to 1 guardian per athlete (`athlete_multi_guardian` gate); Medium+ unlocks multi-guardian split-family support; Enterprise adds `athlete_guardian_verification` HR-verification workflow. Cascade: hard-deleted on Athlete hard-delete (CASCADE FK — guardian rows have no meaning without their athlete). Notifications routed through guardian's User + channel preferences (Wave 3+ Notifications module). Domain-agnostic: applies wherever a minor participant needs a legally responsible adult — sports, music school, tutoring, camps.",
+  "keywords": [
+    "guardian",
+    "parent",
+    "legal-guardian",
+    "custody",
+    "primary-guardian",
+    "split-family",
+    "minor",
+    "consent",
+    "pickup-authorisation",
+    "medical-authorisation",
+    "verification",
+    "same-household",
+    "relationship",
+    "athlete",
+    "tenant",
+    "wave-3a"
+  ],
+  "priority": 56,
+  "providers": [
+    "Academorix\\Sports\\AthleteGuardian\\Providers\\AthleteGuardianServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "organization",
+    "region",
+    "branch",
+    "user",
+    "entitlements",
+    "athlete"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "athlete-enrollment",
+    "finance",
+    "notifications",
+    "safeguarding",
+    "communications"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToAthleteGuardian",
+      "HasGuardianRelationships"
+    ],
+    "attributes": [
+      "AsAthleteGuardianListener"
+    ],
+    "blueprints": [
+      "athlete-guardian"
+    ],
+    "middleware": [
+      "athlete_guardian.enforce_verified"
+    ],
+    "events": [
+      "GuardianAdded",
+      "GuardianRemoved",
+      "GuardianRoleChanged",
+      "PrimaryGuardianChanged",
+      "GuardianCustodyChanged",
+      "GuardianVerified",
+      "GuardianVerificationDisputed",
+      "GuardianVerificationRevoked",
+      "GuardianCanPickupToggled",
+      "GuardianCanReceiveCommunicationsToggled",
+      "GuardianCanAuthoriseMedicalCareToggled",
+      "GuardianCommunicationsBounced"
+    ],
+    "policies": [
+      "AthleteGuardianPolicy"
+    ],
+    "hooks": [
+      "PreventUserArchiveWithActiveGuardianship",
+      "PurgeAthleteGuardianDataForErasedTenant",
+      "ReleasePrimaryGuardianSlotOnGuardianRemoved"
+    ],
+    "commands": [
+      "guardian:list",
+      "guardian:describe",
+      "guardian:add",
+      "guardian:remove",
+      "guardian:set-primary",
+      "guardian:set-role",
+      "guardian:set-custody",
+      "guardian:verify",
+      "guardian:dispute",
+      "guardian:revoke",
+      "guardian:reconcile-primary",
+      "guardian:audit-verification"
+    ],
+    "jobs": [
+      "VerifyGuardianByEmailDomainJob",
+      "ReconcilePrimaryGuardianInvariantJob",
+      "PurgeArchivedGuardiansJob"
+    ],
+    "notifications": [
+      "GuardianAddedNotification",
+      "GuardianRemovedNotification",
+      "GuardianRoleChangedNotification",
+      "GuardianVerifiedNotification",
+      "GuardianVerificationDisputedNotification",
+      "GuardianPrimaryChangedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.guardians",
+      "athlete.{athleteId}.guardians",
+      "user.{userId}.guardianships"
+    ],
+    "observers": [
+      "AthleteGuardianObserver"
+    ],
+    "rules": [
+      "valid_guardian_relationship",
+      "valid_guardian_role_flags",
+      "one_primary_guardian_per_athlete",
+      "guardian_user_active",
+      "guardian_athlete_active",
+      "no_duplicate_guardian_per_athlete_user"
+    ],
+    "casts": [
+      "GuardianRelationship",
+      "GuardianVerificationStatus"
+    ],
+    "views": [],
+    "lang": [
+      "athlete-guardian"
+    ],
+    "config": [
+      "athlete_guardian"
+    ],
+    "macros": [],
+    "bindings": [
+      "AthleteGuardianRepository",
+      "AthleteGuardianProvisioner",
+      "PrimaryGuardianResolver",
+      "ConsentDelegationChain",
+      "GuardianVerificationGate",
+      "SameHouseholdDetector"
+    ],
+    "resources": [
+      "athlete-guardian"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing AthleteGuardian CRUD, verification workflow, primary-guardian swap, custody + role management. Guardians see their own guardianships via /me/guardianships; admin manages the full list.",
+      "routes": [
+        "GET /api/v1/athletes/{athlete}/guardians",
+        "POST /api/v1/athletes/{athlete}/guardians",
+        "GET /api/v1/athletes/{athlete}/guardians/{guardian}",
+        "PATCH /api/v1/athletes/{athlete}/guardians/{guardian}",
+        "DELETE /api/v1/athletes/{athlete}/guardians/{guardian}",
+        "POST /api/v1/athletes/{athlete}/guardians/{guardian}/set-primary",
+        "POST /api/v1/athletes/{athlete}/guardians/{guardian}/verify",
+        "POST /api/v1/athletes/{athlete}/guardians/{guardian}/dispute",
+        "POST /api/v1/athletes/{athlete}/guardians/{guardian}/revoke",
+        "GET /api/v1/me/guardianships"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling + verification audit for compliance ops.",
+      "routes": [
+        "GET /api/v1/platform/guardianships",
+        "GET /api/v1/platform/guardianships/{guardian}",
+        "GET /api/v1/platform/guardianships/audit-verification"
+      ]
+    }
+  }
+}

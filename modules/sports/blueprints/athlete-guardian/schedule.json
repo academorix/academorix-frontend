@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/athlete-guardian/schedule",
+  "$version": 1,
+  "title": "athlete-guardian — scheduled tasks",
+  "entries": [
+    {
+      "name": "athlete-guardian-reconcile-primary",
+      "command": "queue:dispatch --job=Academorix\\Sports\\AthleteGuardian\\Jobs\\ReconcilePrimaryGuardianInvariantJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03:00 UTC: verify one-primary-per-athlete invariant. Every finding is a P1 signal."
+    },
+    {
+      "name": "athlete-guardian-purge-archived",
+      "command": "queue:dispatch --job=Academorix\\Sports\\AthleteGuardian\\Jobs\\PurgeArchivedGuardiansJob",
+      "cron": "0 5 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 05:00 UTC: hard-purge soft-deleted or revoked guardians past 7-year retention."
+    }
+  ]
+}

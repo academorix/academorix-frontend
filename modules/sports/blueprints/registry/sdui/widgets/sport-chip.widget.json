@@ -1,0 +1,56 @@
+{
+  "id": "sports-registry.sport-chip",
+  "title": "Sport chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact display chip showing sport icon + colored dot + name + optional category. Rendered in Team detail views, AthleteEnrollment cards, Event listings, roster rows — everywhere a sport_key needs a human-readable label. Not interactive — pure display.",
+  "notes": [
+    "Uses HeroUI `Chip` — no bespoke class-name literals per the ui-components rule.",
+    "The primary chip's background color comes from Sport.primary_color; the icon renders via Iconify with Sport.icon as the identifier.",
+    "When `showCategory=true`, appends a subordinate category chip in the neutral variant."
+  ],
+  "props": {
+    "sportKey": { "type": "string", "required": true, "description": "Sport slug — the widget hydrates the row via SportKeyResolver." },
+    "showIcon": { "type": "boolean", "default": true },
+    "showCategory": { "type": "boolean", "default": false },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md"] }
+  },
+  "dataSources": [
+    {
+      "name": "sport",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/sports/resolve?sport_key=' + props.sportKey",
+      "unwrap": "data.sport",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "inline-flex items-center gap-1" },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "props": {
+              "size": { "$ref": "props.size" },
+              "variant": { "$expr": "sport.primary_color ? 'custom' : 'neutral'" },
+              "style": { "$expr": "sport.primary_color ? { backgroundColor: sport.primary_color, borderColor: sport.primary_color } : {}" },
+              "children": { "$ref": "sport.name" },
+              "leadingIcon": { "$expr": "props.showIcon ? sport.icon : null" }
+            }
+          }
+        },
+        {
+          "kind": "Chip",
+          "props": { "size": "xs", "variant": "neutral" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showCategory" },
+            "children": { "$ref": "sport.category" }
+          }
+        }
+      ]
+    }
+  ]
+}

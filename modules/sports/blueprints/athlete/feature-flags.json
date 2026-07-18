@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/athlete/feature-flags",
+  "$version": 1,
+  "title": "athlete — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based entitlements. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "athlete.create_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for athlete create routes. Off = POST /athletes returns 503. Emergency-only (used during DB migrations of the athletes table or athlete_slot entitlement)."
+    },
+    {
+      "key": "athlete.medical_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PATCH /athletes/{athlete}/medical returns 503. Emergency-only if the medical-audit queue is unstable + we need to freeze writes to preserve audit integrity."
+    },
+    {
+      "key": "athlete.medical_reads",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GET /athletes/{athlete}/medical returns 503. Rarely used — reads don't create data integrity risk — but exists for compliance-freeze scenarios (regulator investigation with a hold order)."
+    },
+    {
+      "key": "athlete.consent_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST + DELETE /athletes/{athlete}/consents return 503. Emergency-only during consent-workflow migrations."
+    },
+    {
+      "key": "athlete.age_group_snapshot_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = RollAthleteAgeGroupSnapshotJob no-ops. Used when a bad AgeGroup catalog change would cascade-corrupt snapshots — turn off + fix catalog + turn back on."
+    },
+    {
+      "key": "athlete.minor_turned_adult_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CheckAthleteMinorTurnedAdultJob no-ops. Keeps existing consent snapshots + suppresses the AthleteMinorTurnedAdult notification cascade."
+    },
+    {
+      "key": "athlete.consent_reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileAthleteConsentsJob no-ops. Suppresses expiry reminders + consent-expired flag setting."
+    },
+    {
+      "key": "athlete.auto_link_user",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = AutoLinkAthleteToUserOnEmailMatchJob no-ops. Manual link only via /athletes/{athlete}/link-user."
+    },
+    {
+      "key": "athlete.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeArchivedAthletesJob no-ops. Only flip off for maintenance windows or regulator-hold scenarios where retention pause is legally mandated."
+    }
+  ]
+}

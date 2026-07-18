@@ -1,0 +1,111 @@
+{
+  "id": "athlete_guardian.widgets.guardian-picker",
+  "title": "Guardian picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete_guardian.guardian-picker",
+  "description": "Searchable single-select for picking an active guardian on a given athlete. Used in downstream flows (medical clearance, pickup roster) where the caller selects an authorised guardian. Uses HeroUI ComboBox per ui-components.md rule.",
+  "params": {
+    "name": { "type": "string", "required": true },
+    "label": { "type": "string", "required": false, "default": "Guardian" },
+    "athlete_id": { "type": "string", "required": true, "description": "The athlete whose guardians to show." },
+    "requires_custody": { "type": "boolean", "required": false, "default": false, "description": "When true, filters to guardians with has_legal_custody=true." },
+    "requires_medical_authorisation": { "type": "boolean", "required": false, "default": false, "description": "When true, filters to guardians with can_authorise_medical_care=true." },
+    "requires_pickup": { "type": "boolean", "required": false, "default": false, "description": "When true, filters to guardians with can_pickup=true." }
+  },
+  "dataSources": [
+    {
+      "name": "guardians",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/athletes/' + $params.athlete_id + '/guardians?filter[verification_status]=verified' + ($params.requires_custody ? '&filter[has_legal_custody]=true' : '') + ($params.requires_medical_authorisation ? '&filter[can_authorise_medical_care]=true' : '') + ($params.requires_pickup ? '&filter[can_pickup]=true' : '')",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "kind": "ComboBox",
+      "props": {
+        "name": { "$param": "name" },
+        "label": { "$param": "label" },
+        "menuTrigger": "focus"
+      },
+      "children": [
+        { "kind": "Label", "propsExpr": "{ children: $params.label }" },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            { "kind": "Input", "props": { "placeholder": "Search guardian..." } },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "bindings": { "items": { "$ref": "guardians" } },
+              "children": [
+                {
+                  "kind": "ListBox.Item",
+                  "propsExpr": "{ id: $item.id, textValue: $item.guardian_display_name + ' (' + $item.relationship + ')' }",
+                  "children": [
+                    {
+                      "kind": "View",
+                      "props": { "className": "flex items-center gap-2 py-1" },
+                      "children": [
+                        {
+                          "kind": "Avatar",
+                          "props": { "size": "xs" },
+                          "bindings": {
+                            "src": { "$ref": "$item.guardian_avatar_url" },
+                            "name": { "$ref": "$item.guardian_display_name" }
+                          }
+                        },
+                        {
+                          "kind": "View",
+                          "children": [
+                            {
+                              "kind": "View",
+                              "props": { "className": "flex items-center gap-2" },
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-sm font-medium" },
+                                  "bindings": { "children": { "$ref": "$item.guardian_display_name" } }
+                                },
+                                {
+                                  "kind": "Chip",
+                                  "props": { "size": "xs", "variant": "primary" },
+                                  "bindings": {
+                                    "children": { "$ref": "$item.relationship" },
+                                    "hidden": { "$expr": "!$item.is_primary" }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "Widget",
+                              "widget": "athlete_guardian.guardian-role-flags",
+                              "bindings": {
+                                "has_legal_custody": { "$ref": "$item.has_legal_custody" },
+                                "can_pickup": { "$ref": "$item.can_pickup" },
+                                "can_receive_communications": { "$ref": "$item.can_receive_communications" },
+                                "can_authorise_medical_care": { "$ref": "$item.can_authorise_medical_care" }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    { "kind": "ListBox.ItemIndicator" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

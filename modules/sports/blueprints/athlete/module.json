@@ -1,0 +1,225 @@
+{
+  "$version": 1,
+  "name": "athlete",
+  "alias": "athlete",
+  "namespace": "Academorix\\Sports\\Athlete",
+  "description": "The person being coached. Answers 'who is being trained here?'. May lack a login (children under `athlete.minor_min_age`, default 16, typically have no `user_id`) — the underlying User is nullable + optional. Every Athlete belongs to Tenant (CASCADE) + Branch (RESTRICT — you cannot archive a branch that still has active athletes) + optionally User (RESTRICT — an adult athlete's user cannot be archived while the athlete row references it). Ships two sensitivity clusters distinct from the base row: CONFIDENTIAL (emergency contact — name / phone / relationship, gated by `athlete.view.emergency_contact`) and REGULATED_HEALTH (medical conditions / allergies / medications / notes, gated by `athlete.view.medical`, retained 7 years per medical-record retention floor, redacted 90 days post-archival). Ships a nightly `RollAthleteAgeGroupSnapshotJob` that recomputes `current_age_group_id` per Athlete against the tenant's active AgeGroup catalog + fires `AthleteAgeGroupSnapshotUpdated` when the group flips (birthday drift). Consent snapshot per GDPR Art. 8 (parental consent required for under-13s in EU / under-16s in most jurisdictions — modelled as `consent_photo_release` / `consent_medical_disclosure` / `consent_third_party` booleans + `consent_recorded_at` + `consent_recorded_by_user_id` — the recording User is typically the athlete's primary AthleteGuardian when the athlete is a minor). Consumes 1 unit of the `athlete_slot` entitlement on create (Small=15 / Medium=250 / Enterprise=unlimited — aligns with user_slot because most tenants budget athletes + users together); every AthleteEnrollment also consumes an `athlete_enrollment_slot`, kept distinct so tenants can have paused athletes without burning enrollment capacity. Lifecycle: active → paused → active OR active → graduated (terminal — kept for alumni relations + historical reference) OR active → withdrawn (terminal — parent chose to leave) OR active → archived (terminal — HR/admin decision). Downstream (Wave 3+): AthleteGuardian binds athletes to responsible Users; AthleteEnrollment attaches athletes to Team + Season; Event/Session reference athletes for participation; Attendance tracks their presence; Finance/Membership contracts pay for their enrollment; Notifications reach the athlete's guardians; Safeguarding auditors read the medical + consent cluster. Domain-agnostic: an athlete can be a swimmer, a basketballer, a chess player, or a music student — the module's naming is sports-first but the shape works for any student/trainee.",
+  "keywords": [
+    "athlete",
+    "student",
+    "trainee",
+    "learner",
+    "minor",
+    "youth",
+    "adult-athlete",
+    "guardian",
+    "consent",
+    "gdpr-art-8",
+    "medical-record",
+    "safeguarding",
+    "emergency-contact",
+    "age-group-snapshot",
+    "birthday-drift",
+    "pause",
+    "graduate",
+    "withdraw",
+    "archive",
+    "tenant",
+    "branch",
+    "wave-3a"
+  ],
+  "priority": 55,
+  "providers": [
+    "Academorix\\Sports\\Athlete\\Providers\\AthleteServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "organization",
+    "region",
+    "branch",
+    "entitlements",
+    "age-group"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "athlete-guardian",
+    "athlete-enrollment",
+    "event",
+    "session",
+    "teams",
+    "finance",
+    "notifications",
+    "attendance",
+    "safeguarding",
+    "communications"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToAthlete",
+      "HasAthleteHealthProfile"
+    ],
+    "attributes": [
+      "AsAthleteListener"
+    ],
+    "blueprints": [
+      "athlete"
+    ],
+    "middleware": [
+      "athlete.enforce_active",
+      "athlete.enforce_medical_permission",
+      "athlete.enforce_emergency_contact_permission"
+    ],
+    "events": [
+      "AthleteCreated",
+      "AthleteUpdated",
+      "AthleteLinkedToUser",
+      "AthleteStatusChanged",
+      "AthleteAgeGroupSnapshotUpdated",
+      "AthleteMedicalUpdated",
+      "AthleteConsentRecorded",
+      "AthleteConsentRevoked",
+      "AthletePausedForSafeguarding",
+      "AthleteReturnedFromPause",
+      "AthleteGraduated",
+      "AthleteWithdrawn",
+      "AthleteArchived",
+      "AthleteRestored",
+      "AthleteDeleted",
+      "AthleteEmergencyContactUpdated",
+      "AthletePhotoConsentChanged",
+      "AthleteMinorTurnedAdult"
+    ],
+    "policies": [
+      "AthletePolicy"
+    ],
+    "hooks": [
+      "PreventAthleteOrphansOnBranchArchived",
+      "PreventUserArchiveWithActiveAthlete",
+      "PurgeAthleteDataForErasedTenant",
+      "SetAgeGroupSnapshotOnAthleteCreated"
+    ],
+    "commands": [
+      "athlete:list",
+      "athlete:describe",
+      "athlete:create",
+      "athlete:link-user",
+      "athlete:pause",
+      "athlete:return-from-pause",
+      "athlete:graduate",
+      "athlete:withdraw",
+      "athlete:archive",
+      "athlete:restore",
+      "athlete:record-consent",
+      "athlete:revoke-consent",
+      "athlete:refresh-age-group-snapshot",
+      "athlete:audit-medical",
+      "athlete:reconcile-age-group"
+    ],
+    "jobs": [
+      "RollAthleteAgeGroupSnapshotJob",
+      "CheckAthleteMinorTurnedAdultJob",
+      "ReconcileAthleteConsentsJob",
+      "PurgeArchivedAthletesJob",
+      "AutoLinkAthleteToUserOnEmailMatchJob"
+    ],
+    "notifications": [
+      "AthleteWelcomeNotification",
+      "AthleteConsentRecordedNotification",
+      "AthleteConsentExpiringNotification",
+      "AthleteAgeGroupSnapshotChangedNotification",
+      "AthleteMinorTurnedAdultNotification",
+      "AthletePausedForSafeguardingNotification",
+      "AthleteGraduatedNotification",
+      "AthleteWithdrawnNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.athletes",
+      "branch.{branchId}.athletes",
+      "user.{userId}.athletes"
+    ],
+    "observers": [
+      "AthleteObserver"
+    ],
+    "rules": [
+      "valid_hex_color",
+      "valid_e164_phone",
+      "valid_url",
+      "valid_bcp47_locale",
+      "valid_iso4217_currency",
+      "valid_positive_int",
+      "valid_dob",
+      "valid_athlete_status_transition",
+      "consent_recorded_by_authorised_guardian",
+      "medical_notes_within_length",
+      "one_active_athlete_per_user_tenant",
+      "athlete_age_within_platform_bounds"
+    ],
+    "casts": [
+      "AthleteStatus",
+      "AthleteGender",
+      "AthleteDominantHand",
+      "WithdrawalReason"
+    ],
+    "views": [],
+    "lang": [
+      "athlete"
+    ],
+    "config": [
+      "athlete"
+    ],
+    "macros": [
+      "Request::activeAthlete",
+      "Request::activeAthleteId"
+    ],
+    "bindings": [
+      "AthleteRepository",
+      "AthleteProvisioner",
+      "AgeGroupSnapshotResolver",
+      "AthleteConsentGate",
+      "MedicalDisclosureGate",
+      "EmergencyContactGate",
+      "AthleteStatusMachine"
+    ],
+    "resources": [
+      "athlete"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing Athlete CRUD, lifecycle transitions (pause / return / graduate / withdraw / archive / restore), medical + emergency-contact sub-resources (permission-gated 403 at the middleware boundary so unpermissioned callers never touch the DB), consent recording, and a 'my athletes' surface for guardian Users to see the athletes they're responsible for.",
+      "routes": [
+        "GET /api/v1/athletes",
+        "POST /api/v1/athletes",
+        "GET /api/v1/athletes/{athlete}",
+        "PATCH /api/v1/athletes/{athlete}",
+        "DELETE /api/v1/athletes/{athlete}",
+        "POST /api/v1/athletes/{athlete}/link-user",
+        "POST /api/v1/athletes/{athlete}/pause",
+        "POST /api/v1/athletes/{athlete}/return-from-pause",
+        "POST /api/v1/athletes/{athlete}/graduate",
+        "POST /api/v1/athletes/{athlete}/withdraw",
+        "POST /api/v1/athletes/{athlete}/archive",
+        "POST /api/v1/athletes/{athlete}/restore",
+        "GET /api/v1/athletes/{athlete}/medical",
+        "PATCH /api/v1/athletes/{athlete}/medical",
+        "GET /api/v1/athletes/{athlete}/emergency-contact",
+        "PATCH /api/v1/athletes/{athlete}/emergency-contact",
+        "GET /api/v1/athletes/{athlete}/consents",
+        "POST /api/v1/athletes/{athlete}/consents",
+        "DELETE /api/v1/athletes/{athlete}/consents/{consent}",
+        "GET /api/v1/me/athletes"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling. Medical + emergency contact ALWAYS redacted at this plane (support staff never see tenant health data or emergency contacts). Audit-medical endpoint gated behind super_admin with two-person approval.",
+      "routes": [
+        "GET /api/v1/platform/athletes",
+        "GET /api/v1/platform/athletes/{athlete}",
+        "GET /api/v1/platform/athletes/audit-medical"
+      ]
+    }
+  }
+}

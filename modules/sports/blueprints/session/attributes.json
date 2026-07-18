@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/session/attributes",
+  "$version": 1,
+  "title": "session — PHP attribute contracts",
+  "description": "One attribute — `#[AsSessionListener]` — marks a service class as a subscriber to session-lifecycle events. AttributeDiscovery scans + wires it to the event map declared in events.json.",
+  "namespace": "Academorix\\Sports\\Session\\Attributes",
+  "attributes": [
+    {
+      "name": "AsSessionListener",
+      "class": "Academorix\\Sports\\Session\\Attributes\\AsSessionListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names. Empty = subscribe to every event in Academorix\\Sports\\Session\\Events\\*. Names validated against events.json at boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsSessionListener(events: ['SessionMinorSafeguardingIncident', 'SessionCoachReassigned'], queue: 'notifications-critical', priority: 50)]\nfinal class NotifyOnCriticalSessionChange\n{\n    public function __invoke(SessionMinorSafeguardingIncident|SessionCoachReassigned $event): void\n    {\n        // ...\n    }\n}"
+    }
+  ]
+}

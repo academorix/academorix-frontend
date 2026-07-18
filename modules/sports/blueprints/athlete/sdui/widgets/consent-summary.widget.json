@@ -1,0 +1,53 @@
+{
+  "id": "athlete.widgets.consent-summary",
+  "title": "Consent summary",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete.consent-summary",
+  "description": "Inline three-icon summary of an athlete's consent snapshot. Icon states: green-check (consented + recorded < 335 days ago), yellow-warning (consented but recording is approaching expiry at 335+ days when athlete_consent_workflow entitlement is on), red-x (not consented). Rendered in the athlete-list DataGrid consents column + on the athlete detail header.",
+  "params": {
+    "consent_photo_release": { "type": "boolean", "required": true },
+    "consent_medical_disclosure": { "type": "boolean", "required": true },
+    "consent_third_party": { "type": "boolean", "required": true },
+    "consent_recorded_at": { "type": "string", "required": false, "description": "ISO 8601 timestamp when consents were last recorded." },
+    "workflow_enabled": { "type": "boolean", "required": false, "default": false, "description": "Whether athlete_consent_workflow entitlement is on for the tenant — enables expiry warnings." }
+  },
+  "nodes": [
+    {
+      "kind": "View",
+      "props": { "className": "flex items-center gap-1" },
+      "children": [
+        {
+          "kind": "Tooltip",
+          "props": { "content": "Photo release" },
+          "children": [
+            {
+              "kind": "Icon",
+              "propsExpr": "{ name: $params.consent_photo_release ? 'camera' : 'camera-slash', className: 'size-4 ' + ($params.consent_photo_release ? ($params.workflow_enabled && $expired($params.consent_recorded_at, 335) ? 'text-warning' : 'text-success') : 'text-danger') }"
+            }
+          ]
+        },
+        {
+          "kind": "Tooltip",
+          "props": { "content": "Medical disclosure to coaches" },
+          "children": [
+            {
+              "kind": "Icon",
+              "propsExpr": "{ name: $params.consent_medical_disclosure ? 'heart' : 'heart-slash', className: 'size-4 ' + ($params.consent_medical_disclosure ? ($params.workflow_enabled && $expired($params.consent_recorded_at, 335) ? 'text-warning' : 'text-success') : 'text-danger') }"
+            }
+          ]
+        },
+        {
+          "kind": "Tooltip",
+          "props": { "content": "Third-party sharing" },
+          "children": [
+            {
+              "kind": "Icon",
+              "propsExpr": "{ name: $params.consent_third_party ? 'share' : 'share-slash', className: 'size-4 ' + ($params.consent_third_party ? ($params.workflow_enabled && $expired($params.consent_recorded_at, 335) ? 'text-warning' : 'text-success') : 'text-danger') }"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

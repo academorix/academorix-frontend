@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/athlete/helpers",
+  "$version": 1,
+  "title": "athlete — helper functions",
+  "description": "Ergonomic helpers for accessing the active athlete from the request context, resolving age-group snapshots, walking the consent + guardian chain, and rendering medical + emergency contact with permission checks. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Sports\\Athlete\\Support",
+  "helpers": [
+    {
+      "signature": "active_athlete(): ?Athlete",
+      "purpose": "Returns the resolved Athlete for the current request. Null when no athlete context. Only /me/athletes and per-athlete sub-routes load this.",
+      "delegates_to": "Request::activeAthlete() macro"
+    },
+    {
+      "signature": "active_athlete_id(): ?string",
+      "purpose": "Returns the resolved Athlete.id without the model load.",
+      "delegates_to": "Request::activeAthleteId() macro"
+    },
+    {
+      "signature": "resolve_athlete_age_group(Athlete $athlete, ?string $sport_key = null, ?Carbon $on_date = null): ?AgeGroup",
+      "purpose": "Live resolution of the athlete's age group. Bypasses the nightly snapshot for the authoritative computation — use this in enrollment forms where staleness would be bad. Returns null when the DOB falls outside every catalog.",
+      "delegates_to": "AgeGroupSnapshotResolver::resolveFor()"
+    },
+    {
+      "signature": "athlete_is_minor(Athlete $athlete): bool",
+      "purpose": "True when age_years < config.athlete.minor_min_age (default 16). Convenience over athlete.is_minor accessor for use in policy classes."
+    },
+    {
+      "signature": "athlete_can_view_medical(User $viewer, Athlete $target): bool",
+      "purpose": "True when the viewer carries `athletes.view.medical` (any athlete) OR `athletes.view.medical.own` AND (viewer.id === target.user_id OR viewer is an active AthleteGuardian for target AND target.consent_medical_disclosure=true) OR `athletes.view.medical.coach` AND (viewer is a Coach on a Team the athlete is enrolled in AND target.consent_medical_disclosure=true). Consumed by the redactor pipeline + by SDUI display logic.",
+      "delegates_to": "MedicalDisclosureGate::canView()"
+    },
+    {
+      "signature": "athlete_can_manage_medical(User $viewer, Athlete $target): bool",
+      "purpose": "True when the viewer carries `athletes.manage.medical`. Checks include the athlete_medical_tracking entitlement (returns false when off).",
+      "delegates_to": "MedicalDisclosureGate::canManage()"
+    },
+    {
+      "signature": "athlete_can_view_emergency_contact(User $viewer, Athlete $target): bool",
+      "purpose": "True when the viewer carries `athletes.view.emergency_contact` (any) OR `.own` (self OR guardian).",
+      "delegates_to": "EmergencyContactGate::canView()"
+    },
+    {
+      "signature": "athlete_consent_expires_at(Athlete $athlete): ?Carbon",
+      "purpose": "Returns the athlete's next consent expiry (recorded_at + 365 days) when athlete_consent_workflow entitlement is on for the tenant. Null when the entitlement is off (bare-snapshot mode).",
+      "delegates_to": "AthleteConsentGate::expiresAt()"
+    },
+    {
+      "signature": "athlete_has_active_consent_for(Athlete $athlete, string $purpose): bool",
+      "purpose": "True when the athlete's consent flag for the given purpose is true AND (when workflow entitlement on) the recorded_at is < 365 days ago. `purpose` is one of `photo_release` / `medical_disclosure` / `third_party`."
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "The medical + emergency-contact gate helpers centralise the permission-checking logic so every caller (observer, controller, SDUI redactor) uses the same source of truth. Divergent checks would create audit gaps.",
+    "No helper directly reads the DB — everything routes through repositories + services. Keeps the boundary clean.",
+    "Guardian-based checks (athlete_can_view_medical for guardian scope) require the AthleteGuardian sibling module. Wave 3a: the check returns false for guardian scope until the module lands; Wave 3b: hooked."
+  ]
+}

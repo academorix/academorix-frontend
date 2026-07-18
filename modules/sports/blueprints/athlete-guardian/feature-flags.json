@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/athlete-guardian/feature-flags",
+  "$version": 1,
+  "title": "athlete-guardian — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from tier-based entitlements.",
+  "flags": [
+    {
+      "key": "athlete_guardian.create_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for guardian create routes. Off = POST returns 503."
+    },
+    {
+      "key": "athlete_guardian.verification_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = /verify + /dispute + /revoke return 503. Emergency-only during verification-workflow migrations."
+    },
+    {
+      "key": "athlete_guardian.auto_verify_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = VerifyGuardianByEmailDomainJob no-ops. Guardians stay pending until HR acts."
+    },
+    {
+      "key": "athlete_guardian.reconcile_primary_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcilePrimaryGuardianInvariantJob no-ops."
+    },
+    {
+      "key": "athlete_guardian.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeArchivedGuardiansJob no-ops."
+    }
+  ]
+}

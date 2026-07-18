@@ -1,0 +1,95 @@
+{
+  "id": "session.session-picker",
+  "title": "Session picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Searchable single-select for Sessions filtered by scoping. Renders as HeroUI `ComboBox`. Groups by status (in_progress first, then confirmed, then scheduled, then completed).",
+  "props": {
+    "name": { "type": "string", "required": true },
+    "label": { "type": "string", "default": "Session" },
+    "required": { "type": "boolean", "default": false },
+    "clearable": { "type": "boolean", "default": false },
+    "placeholder": { "type": "string", "default": "Search sessions..." },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
+    "defaultValue": { "type": "string", "default": null },
+    "teamId": { "type": "string", "default": null },
+    "seasonId": { "type": "string", "default": null },
+    "eventId": { "type": "string", "default": null },
+    "coachId": { "type": "string", "default": null },
+    "startsAtGte": { "type": "string", "default": null },
+    "startsAtLte": { "type": "string", "default": null }
+  },
+  "dataSources": [
+    {
+      "name": "sessions",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/sessions?' + qs({ 'filter[team_id]': props.teamId, 'filter[season_id]': props.seasonId, 'filter[event_id]': props.eventId, 'filter[head_coach_id]': props.coachId, 'filter[starts_at.gte]': props.startsAtGte, 'filter[starts_at.lte]': props.startsAtLte, 'filter[status]': 'scheduled,confirmed,in_progress', 'sort': '-status,starts_at', 'include': 'resource_booking' })",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": { "menuTrigger": "focus" },
+      "bindings": {
+        "props": {
+          "name": { "$ref": "props.name" },
+          "aria-label": { "$ref": "props.label" },
+          "placeholder": { "$ref": "props.placeholder" },
+          "size": { "$ref": "props.size" },
+          "clearable": { "$ref": "props.clearable" },
+          "isRequired": { "$ref": "props.required" },
+          "selectedKey": { "$ref": "props.defaultValue" }
+        }
+      },
+      "children": [
+        { "kind": "Label", "bindings": { "children": { "$ref": "props.label" } } },
+        { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "bindings": { "props": { "placeholder": { "$ref": "props.placeholder" } } } }, { "kind": "ComboBox.Trigger" }] },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "props": { "className": "max-h-96 overflow-y-auto w-96" },
+              "bindings": { "items": { "$ref": "sessions" } },
+              "itemRenderer": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.id, id: item.id, textValue: item.name }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2 py-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex flex-col flex-1 min-w-0" },
+                        "children": [
+                          {
+                            "kind": "View",
+                            "props": { "className": "flex items-center gap-1" },
+                            "children": [
+                              { "kind": "Text", "props": { "className": "font-medium truncate" }, "bindings": { "children": { "$ref": "item.name" } } },
+                              { "kind": "Widget", "props": { "id": "session.session-status-chip" }, "bindings": { "props": { "status": { "$ref": "item.status" }, "size": "xs" } } }
+                            ]
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted font-mono" },
+                            "bindings": { "children": { "$expr": "formatDateTime(item.resource_booking.starts_at) + ' · ' + item.session_type" } }
+                          }
+                        ]
+                      },
+                      { "kind": "ListBox.ItemIndicator", "props": { "className": "size-4 text-accent" } }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

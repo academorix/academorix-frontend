@@ -1,0 +1,95 @@
+{
+  "id": "session.session.create",
+  "title": "New session",
+  "version": 1,
+  "kind": "SduiScreen",
+  "resource": "session",
+  "route": "/sessions/new",
+  "description": "Multi-card create form. Booking picker + type + coaches + eligibility + curriculum. Feature-gated inputs (private_lesson type, lesson_plan_url) hidden per entitlements.",
+  "form": {
+    "endpoint": "POST /api/v1/sessions",
+    "onSuccess": { "$action": "route.push", "urlExpr": "'/sessions/' + response.data.id" }
+  },
+  "nodes": [
+    { "kind": "PageHeader", "children": [{ "kind": "PageHeader.Title", "props": { "children": "New session" } }] },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Identity & venue" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "TextField", "props": { "name": "name", "label": "Name", "isRequired": true, "maxLength": 128 } },
+            { "kind": "Widget", "props": { "id": "branch.branch-picker", "props": { "name": "branch_id", "label": "Branch", "isRequired": true } } },
+            { "kind": "Widget", "props": { "id": "facility.resource-booking-picker", "props": { "name": "resource_booking_id", "label": "Booking slot", "isRequired": true, "helpText": "Pick an available facility booking slot" } } },
+            { "kind": "TextField", "props": { "name": "sport_key", "label": "Sport (optional)", "maxLength": 32 } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Type & coaches" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "ComboBox", "props": { "name": "session_type", "label": "Session type", "isRequired": true, "options": ["practice", "lesson", "class", "private_lesson", "group_lesson", "drop_in", "workshop", "trial", "assessment", "game", "open_gym"] } },
+            { "kind": "Widget", "props": { "id": "teams.team-picker", "props": { "name": "team_id", "label": "Team (optional)", "clearable": true } } },
+            { "kind": "Widget", "props": { "id": "season.season-picker", "props": { "name": "season_id", "label": "Season (optional)", "clearable": true } } },
+            { "kind": "Widget", "props": { "id": "event.event-picker", "props": { "name": "event_id", "label": "Event (optional)", "clearable": true, "helpText": "Set when session is part of an event's schedule" } } },
+            { "kind": "Widget", "props": { "id": "coaching.coach-picker", "props": { "name": "head_coach_id", "label": "Head coach (optional)", "clearable": true } } },
+            { "kind": "Widget", "props": { "id": "coaching.coach-multi-picker", "props": { "name": "assistant_coach_ids", "label": "Assistant coaches (up to 3, optional)", "clearable": true, "maxSelections": 3 } } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Eligibility & capacity" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "NumberField", "props": { "name": "attendance_capacity", "label": "Attendance capacity (optional)", "minValue": 1 } },
+            { "kind": "NumberField", "props": { "name": "attendance_min", "label": "Attendance minimum (optional)", "minValue": 1, "helpText": "Session auto-cancels if attendance below minimum after start" } },
+            { "kind": "Widget", "props": { "id": "age-group.age-group-picker", "props": { "name": "age_group_id", "label": "Age group (optional)", "clearable": true } } },
+            { "kind": "ComboBox", "props": { "name": "gender_category", "label": "Gender category (optional)", "clearable": true, "options": ["male", "female", "mixed", "any"] } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "Card",
+      "children": [
+        { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "props": { "children": "Curriculum & equipment" } }] },
+        {
+          "kind": "Card.Content",
+          "props": { "className": "flex flex-col gap-4" },
+          "children": [
+            { "kind": "TextField", "props": { "name": "curriculum_topic", "label": "Curriculum topic (optional)", "maxLength": 256, "helpText": "e.g. Ball control drills, Freestyle stroke refinement" } },
+            {
+              "kind": "View",
+              "bindings": { "hidden": { "$expr": "!features.includes('sports_sessions.lesson_plans')" } },
+              "children": [
+                { "kind": "TextField", "props": { "name": "lesson_plan_url", "label": "Lesson plan URL (Enterprise)" } }
+              ]
+            },
+            { "kind": "TagInput", "props": { "name": "equipment_needed", "label": "Equipment needed (optional)", "maxTags": 20 } },
+            { "kind": "TextArea", "props": { "name": "description", "label": "Description (optional)", "rows": 3 } }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "FormActions",
+      "children": [
+        { "kind": "Button", "props": { "variant": "outline", "children": "Cancel" }, "bindings": { "onPress": { "$action": "route.push", "url": "/sessions" } } },
+        { "kind": "Button", "props": { "variant": "solid", "type": "submit", "children": "Create session" } }
+      ]
+    }
+  ]
+}

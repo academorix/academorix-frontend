@@ -1,0 +1,93 @@
+{
+  "id": "academorix://modules/session/health",
+  "$version": 1,
+  "title": "session — health probes",
+  "probes": [
+    {
+      "name": "session-tables-migrated",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\TablesMigratedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `sessions` + `session_attendance` tables exist with the latest schema.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "session-tenant-fk-integrity",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\TenantFkIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every sessions.tenant_id + session_attendance.tenant_id resolves to a live tenants row.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "session-resource-booking-fk-integrity",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\ResourceBookingFkIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every sessions.resource_booking_id resolves to a live resource_bookings row + the booking's tenant matches the session's tenant + the booking's facility.branch matches the session's branch.",
+      "timeoutMs": 800
+    },
+    {
+      "name": "session-attendance-count-drift",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\AttendanceCountDriftProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Denormalised checked_in_athletes_count + absent_athletes_count on sessions match the actual counts in session_attendance. Populated by ReconcileAttendanceCountsJob.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "session-slug-uniqueness",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\SlugUniquenessProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No two active sessions share (tenant_id, slug) when slug is set.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "session-booking-unique",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\BookingUniqueProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "One session per resource_booking. Verifies the partial unique index.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "session-start-heartbeat",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\StartHeartbeatProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "StartScheduledSessionsJob ran successfully within the last 30 minutes (5-min cadence + 25-min grace).",
+      "timeoutMs": 200
+    },
+    {
+      "name": "session-complete-heartbeat",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\CompleteHeartbeatProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "CompleteFinishedSessionsJob ran successfully within the last 30 minutes."
+    },
+    {
+      "name": "session-safeguarding-flag-integrity",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\SafeguardingFlagIntegrityProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Every safeguarding_incident_flag=true session has session_notes IS NOT NULL AND a matching audit_events row with critical severity. Failure indicates a broken safeguarding audit chain — critical because it's regulator-facing.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "session-purge-queue-drained",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\PurgeQueueDrainedProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No PurgeCompletedSessionsJob has been pending for > 48h."
+    },
+    {
+      "name": "session-inbound-fk-drift",
+      "class": "Academorix\\Sports\\Session\\Health\\Probes\\InboundFkDriftProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No session_attendance row references a hard-deleted session (should never happen due to CASCADE FK; probe catches raw SQL drift).",
+      "timeoutMs": 800
+    }
+  ]
+}

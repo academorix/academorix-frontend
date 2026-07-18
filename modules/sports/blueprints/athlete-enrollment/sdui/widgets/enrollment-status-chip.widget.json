@@ -1,0 +1,21 @@
+{
+  "id": "athlete_enrollment.widgets.enrollment-status-chip",
+  "title": "Enrollment status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete_enrollment.enrollment-status-chip",
+  "description": "Status chip with color variant per state. Used in enrollment list rows + athlete detail pages.",
+  "params": {
+    "status": { "type": "string", "required": true, "enum": ["submitted", "payment_pending", "consent_pending", "confirmed", "active", "completed", "withdrawn", "expelled", "expired", "waitlisted"] },
+    "size": { "type": "string", "required": false, "default": "sm" }
+  },
+  "nodes": [
+    {
+      "kind": "Chip",
+      "propsExpr": "{ size: $params.size, variant: $params.status === 'active' ? 'success' : $params.status === 'confirmed' ? 'success' : $params.status === 'completed' ? 'primary' : $params.status === 'waitlisted' || $params.status === 'payment_pending' || $params.status === 'consent_pending' ? 'warning' : $params.status === 'expelled' ? 'danger' : 'neutral', className: 'capitalize' }",
+      "children": [
+        { "kind": "Text", "propsExpr": "{ children: $params.status.replace('_', ' ') }" }
+      ]
+    }
+  ]
+}

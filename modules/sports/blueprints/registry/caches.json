@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/sports-registry/caches",
+  "$version": 1,
+  "title": "sports-registry — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["sports-registry", "sports-registry-catalog", "sports-registry-resolver"],
+  "keys": [
+    {
+      "pattern": "sports:list:platform",
+      "description": "Platform-seeded Sport list (WHERE tenant_id IS NULL AND is_active=true). Read by every tenant's merged catalog assembler. Long TTL because platform catalog changes rarely.",
+      "ttlSeconds": 86400,
+      "tags": ["sports-registry", "sports-registry-catalog"],
+      "invalidatedBy": [
+        "SportObserver.created (is_platform_seeded=true)",
+        "SportObserver.updated (is_platform_seeded=true)",
+        "SportObserver.deleted",
+        "SportCatalogSeeded",
+        "SportCatalogUpdated"
+      ]
+    },
+    {
+      "pattern": "sports:list:tenant:{tenant_id}",
+      "description": "Merged catalog for one tenant (platform-seeded rows + own customs, active only, sorted by category+sort_order). Medium TTL — invalidated on any tenant custom write.",
+      "ttlSeconds": 1800,
+      "tags": ["sports-registry", "sports-registry-catalog"],
+      "invalidatedBy": [
+        "SportObserver.created (tenant_id=X)",
+        "SportObserver.updated (tenant_id=X)",
+        "SportObserver.deleted (tenant_id=X)",
+        "SportCatalogUpdated (invalidates every tenant's cached list)"
+      ]
+    },
+    {
+      "pattern": "sports:full:{sport_id}",
+      "description": "Full Sport row (with its Disciplines + Positions eager-loaded). Consumed by the sport-detail screen + downstream Team detail views showing the sport's disciplines picker.",
+      "ttlSeconds": 3600,
+      "tags": ["sports-registry"],
+      "invalidatedBy": [
+        "SportObserver.updated (id=X)",
+        "SportObserver.deleted (id=X)",
+        "DisciplineObserver.created (sport_id=X)",
+        "DisciplineObserver.updated (sport_id=X)",
+        "DisciplineObserver.deleted (sport_id=X)"
+      ]
+    },
+    {
+      "pattern": "sports:disciplines:by_sport:{sport_id}",
+      "description": "The set of Disciplines under one Sport (active only, sorted). Consumed by the discipline picker widget + the resolver's tenant-scope check.",
+      "ttlSeconds": 3600,
+      "tags": ["sports-registry"],
+      "invalidatedBy": [
+        "DisciplineObserver.created (sport_id=X)",
+        "DisciplineObserver.updated (sport_id=X)",
+        "DisciplineObserver.deleted (sport_id=X)"
+      ]
+    },
+    {
+      "pattern": "sports:positions:by_discipline:{discipline_id}",
+      "description": "The set of Positions under one Discipline (active only, sorted).",
+      "ttlSeconds": 3600,
+      "tags": ["sports-registry"],
+      "invalidatedBy": [
+        "PositionObserver.created (discipline_id=X)",
+        "PositionObserver.updated (discipline_id=X)",
+        "PositionObserver.deleted (discipline_id=X)"
+      ]
+    },
+    {
+      "pattern": "sports:resolve:{tenant_id}:{sport_key}",
+      "description": "Cached resolver answer for a (tenant, sport_key) pair. Sport-level resolution. Long TTL because slugs are immutable.",
+      "ttlSeconds": 3600,
+      "tags": ["sports-registry", "sports-registry-resolver"],
+      "invalidatedBy": [
+        "SportObserver.updated (invalidates every tenant's resolver cache for this slug when a platform row is updated)",
+        "SportObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "sports:resolve:{tenant_id}:{sport_key}:{discipline_key}",
+      "description": "Cached resolver answer for a (sport_key, discipline_key) pair. Discipline-level resolution.",
+      "ttlSeconds": 3600,
+      "tags": ["sports-registry", "sports-registry-resolver"],
+      "invalidatedBy": [
+        "DisciplineObserver.updated (invalidates for this slug)",
+        "DisciplineObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "sports:resolve:{tenant_id}:{sport_key}:{discipline_key}:{position_key}",
+      "description": "Cached resolver answer for the full triple. Position-level resolution.",
+      "ttlSeconds": 3600,
+      "tags": ["sports-registry", "sports-registry-resolver"],
+      "invalidatedBy": [
+        "PositionObserver.updated (invalidates for this slug)",
+        "PositionObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "sports:default_catalog:v{version}",
+      "description": "The parsed `data/platform-sports-catalog.json` for a specific version. Static artifact — parsed once, cached indefinitely. Invalidated on deploy when the version suffix advances.",
+      "ttlSeconds": 604800,
+      "tags": ["sports-registry-catalog"],
+      "invalidatedBy": ["deploy artifact fingerprint change (catalog_version bumps)"]
+    },
+    {
+      "pattern": "sports:reconciler_last_run",
+      "description": "Timestamp of the last successful ReconcileSportReferencesJob run. Read by the health probe + the ops dashboard.",
+      "ttlSeconds": 172800,
+      "tags": ["sports-registry"],
+      "invalidatedBy": ["ReconcileSportReferencesJob completion"]
+    },
+    {
+      "pattern": "sports:reference_count:{sport_id}",
+      "description": "Aggregated downstream reference count for one Sport (sum across every table in `reference_tables`). Read by the deactivate-preview UI + the observer's `is_in_use` check.",
+      "ttlSeconds": 600,
+      "tags": ["sports-registry"],
+      "invalidatedBy": [
+        "downstream Wave 3 row INSERT/UPDATE/DELETE with matching sport_key"
+      ]
+    }
+  ]
+}

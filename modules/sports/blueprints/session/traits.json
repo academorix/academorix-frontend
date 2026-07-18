@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/session/traits",
+  "$version": 1,
+  "title": "session — trait composition",
+  "description": "Two owned traits — `BelongsToSession` for downstream models carrying a session_id FK (Wave 3+ attendance detail rows, ratings), and `HasSessionAttendance` for the Session model itself.",
+  "owned": [
+    {
+      "trait": "Academorix\\Sports\\Session\\Concerns\\BelongsToSession",
+      "description": "Mixed into downstream models with a session_id FK. Adds session() belongsTo relation + resolveInSession(?Session) query scope with Request::activeSession() fallback. Refuses cross-tenant FK smuggling at save time.",
+      "public": true,
+      "usedBy": [
+        "session::SessionAttendance (owned pivot)",
+        "Wave 3+ attendance / ratings modules that add per-session rows"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: BelongsToTenant -> BelongsToBranch? -> BelongsToSession.",
+        "The fillOnCreating hook is off by default — session ownership is always explicit."
+      ]
+    },
+    {
+      "trait": "Academorix\\Sports\\Session\\Concerns\\HasSessionAttendance",
+      "description": "Mixed into the Session model. Exposes attendance() hasMany + checkedInAthletes() / absentAthletes() computed relations + registerAthlete($athleteId) / checkInAthlete($athleteId) / markAbsent($athleteId) mutation helpers routed through the observer.",
+      "public": true,
+      "usedBy": ["session::Session"],
+      "conflicts_with": [],
+      "composition_notes": [
+        "This trait is ONLY for the Session model.",
+        "The mutation helpers route through the observer to preserve capacity + eligibility invariants + denormalised counter updates."
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenancy": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
+    "season": [{ "trait": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason", "reason": "Optional FK." }],
+    "event": [{ "trait": "Academorix\\Sports\\Event\\Concerns\\BelongsToEvent", "reason": "Optional FK." }],
+    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Session mutations are audit-critical; safeguarding-flagged sessions retain regulator-tier." }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+  },
+  "composition": {
+    "session": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToBranch",
+        "BelongsToSeason",
+        "BelongsToEvent",
+        "HasSessionAttendance",
+        "HasSlug",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant first. NO BelongsToOrganization — Session cascades organization through branch. NO BelongsToApplication — Sessions do NOT carry application_id."
+    },
+    "session_attendance": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToSession",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Pivot row composes BelongsToSession (owned). Does not carry Athlete trait — attendance is session-centric."
+    }
+  }
+}

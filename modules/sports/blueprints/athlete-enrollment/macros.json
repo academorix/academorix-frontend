@@ -1,0 +1,18 @@
+{
+  "id": "academorix://modules/athlete-enrollment/macros",
+  "$version": 1,
+  "title": "athlete-enrollment — published macros",
+  "description": "No dedicated request-level macros — enrollment context is composite (team + athlete + season) + resolved via route bindings.",
+  "macros": [],
+  "blueprint_macros": [
+    {
+      "name": "Blueprint::enrollmentSnapshot",
+      "signature": "Blueprint::enrollmentSnapshot(): void",
+      "adds": "Adds the shared column family for enrollment-adjacent snapshot columns: `age_group_snapshot_id` (uuid nullable + FK to age_groups) + `age_group_snapshot_at` (timestamptz nullable). Reserved for Wave 4+ Event/Session modules that need similar snapshot semantics.",
+      "columns": [
+        "age_group_snapshot_id: uuid NULL",
+        "age_group_snapshot_at: timestamptz NULL"
+      ]
+    }
+  ]
+}

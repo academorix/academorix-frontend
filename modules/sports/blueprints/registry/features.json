@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/sports-registry/features",
+  "$version": 1,
+  "title": "sports-registry — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "sports_registry.core",
+      "displayName": "Sports catalog",
+      "description": "Base capability. Every tenant reads the platform-seeded catalog (30+ sports across 10 categories). Always on across every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "sports_registry.custom_entries",
+      "displayName": "Custom sports, disciplines, positions",
+      "description": "Tenant admin can create custom Sport / Discipline / Position rows beyond the platform catalog. Enterprise-only. Backed by the `sports_registry_custom` entitlement + the `sports_registry_custom_slot` slot cap.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "sports_registry.resolver_api",
+      "displayName": "Sport-key resolver endpoint",
+      "description": "Tenant can call GET /api/v1/sports/resolve to preview whether a (sport_key, discipline_key, position_key) triple exists in the catalog. All tiers — every Wave 3 write flow uses the resolver.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "sports_registry.discipline_picker",
+      "displayName": "Discipline-level picker",
+      "description": "The tenant UI shows a discipline picker under each Sport (a football team can pick 11v11 / futsal / 5v5). All tiers.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "sports_registry.position_picker",
+      "displayName": "Position-level picker",
+      "description": "The tenant UI shows a position picker under each Discipline (an athlete enrollment can pick goalkeeper / defender / midfielder / forward). Medium+ — Small tier uses a simplified enrollment form without position slots.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "sports_registry.governing_body_display",
+      "displayName": "Governing body metadata",
+      "description": "Sport detail pages surface the governing body (FIFA / FIBA / FINA / …) with a link + logo. Enterprise-only. Medium tenants see sports without governance metadata; Enterprise tenants (typically federation-affiliated) benefit from the extra context.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "sports_registry.i18n_names",
+      "displayName": "Localised sport names",
+      "description": "Sport / Discipline / Position names surface in the caller's active locale (Arabic, French, Spanish, …). Backed by the localization module's HasTranslations trait. All tiers.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

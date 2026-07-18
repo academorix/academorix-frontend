@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/sports-registry/attributes",
+  "$version": 1,
+  "title": "sports-registry — PHP attribute contracts",
+  "description": "One attribute. `#[AsSportRegistryListener]` on a service class marks it as a subscriber to sports-registry-lifecycle events — AttributeDiscovery picks it up + wires it to the event map declared in `events.json`. No property-level attributes: registry rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
+  "namespace": "Academorix\\Sports\\Registry\\Attributes",
+  "attributes": [
+    {
+      "name": "AsSportRegistryListener",
+      "class": "Academorix\\Sports\\Registry\\Attributes\\AsSportRegistryListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`SportCreated`, `DisciplineCreated`, `SportPrefixResolutionFailed`, …) the class listens to. Empty = subscribe to every event in `Academorix\\Sports\\Registry\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see `events.json`.dispatchMode + per-event `queue`). Use to route long-running listeners onto a dedicated queue (e.g. `notifications-critical` for `SportPrefixResolutionFailed`)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Meaningful when multiple listeners subscribe to the same event and side-effect ordering matters (e.g. audit-log write before downstream cache invalidation)."
+        }
+      ],
+      "example": "#[AsSportRegistryListener(events: ['SportCatalogSeeded', 'SportCatalogUpdated'], queue: 'notifications')]\nfinal class WarmCatalogCache\n{\n    public function __invoke(SportCatalogSeeded|SportCatalogUpdated $event): void\n    {\n        // \u2026\n    }\n}"
+    }
+  ]
+}

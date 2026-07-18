@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/sports-registry/subprocessors",
+  "$version": 1,
+  "title": "sports-registry — subprocessors",
+  "description": "The sports-registry module engages ZERO third-party processors. The catalog is stored in the tenant's own database + carries only taxonomy metadata (name, slug, category, governing body). No user data ever leaves the module boundary.",
+  "subprocessors": [],
+  "notes": [
+    "The `data/platform-sports-catalog.json` file is a static shipped artifact containing only public sport identifiers (`football`, `basketball`, `swimming`, …) + their canonical disciplines + positions + public federation names (FIFA, FIBA, FINA). Safe to ship as a bundled artifact + safe to cache at every layer.",
+    "The Iconify icon identifiers in the seed file (`mdi:soccer`, `game-icons:basketball-ball`) reference public icon sets — the icons themselves are resolved by the frontend at render time via the Iconify CDN. The frontend's Iconify integration is a separate concern; this module doesn't call Iconify.",
+    "Downstream Wave 3 modules that carry sport_key (Teams, Athletes, Enrollments, …) engage their own subprocessors (Segment analytics, storage backends). Those flows never see the sports-registry module — they carry the slug as a plain string. The subprocessor concerns live in those modules' respective compliance blueprints.",
+    "No AI-driven catalog suggestions, no federation-API sync, no machine translation of names beyond the standard localization module's translator drivers (documented in localization's subprocessors)."
+  ]
+}

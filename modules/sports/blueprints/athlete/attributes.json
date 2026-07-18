@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/athlete/attributes",
+  "$version": 1,
+  "title": "athlete — PHP attribute contracts",
+  "description": "One attribute. `#[AsAthleteListener]` on a service class marks it as a subscriber to athlete-lifecycle events — AttributeDiscovery picks it up and wires it to the event map declared in `events.json`. Because AthleteMedicalUpdated is private-tier (routes on the medical-audit queue), subscribers to it MUST opt in explicitly (empty events list does NOT include it).",
+  "namespace": "Academorix\\Sports\\Athlete\\Attributes",
+  "attributes": [
+    {
+      "name": "AsAthleteListener",
+      "class": "Academorix\\Sports\\Athlete\\Attributes\\AsAthleteListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to Athlete lifecycle events (AthleteCreated / AthleteUpdated / AthleteStatusChanged / AthletePausedForSafeguarding / AthleteGraduated / AthleteWithdrawn / AthleteArchived / AthleteRestored / AthleteLinkedToUser / AthleteAgeGroupSnapshotUpdated / AthleteConsentRecorded / AthleteConsentRevoked / AthletePhotoConsentChanged / AthleteMinorTurnedAdult / AthleteEmergencyContactUpdated). NOTE: AthleteMedicalUpdated is NOT included in the default event set — subscribers must opt in explicitly via `events: ['AthleteMedicalUpdated']` because that event routes on the medical-audit queue and has private-tier payload.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`AthleteCreated`, `AthleteWithdrawn`, ...). Empty = subscribe to every `Academorix\\Sports\\Athlete\\Events\\Athlete*` event EXCEPT AthleteMedicalUpdated (which requires explicit opt-in). Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue. Cascade listeners typically override to `athlete`."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Cascade listeners (SetAgeGroupSnapshotOnAthleteCreated) declare priority 20 so they run before notification listeners."
+        }
+      ],
+      "example": "#[AsAthleteListener(events: ['AthleteArchived'], queue: 'athlete', priority: 50)]\nfinal class UnblockUserArchiveWhenLastAthleteArchived\n{\n    public function __construct(private readonly UserArchiveGate $gate) {}\n\n    public function __invoke(AthleteArchived $event): void\n    {\n        // Clears the archive-block flag when this was the user's last live athlete.\n    }\n}"
+    }
+  ]
+}

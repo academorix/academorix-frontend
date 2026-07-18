@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/event/compliance",
+  "$version": 1,
+  "title": "event — compliance evidence",
+  "description": "Event is a scheduling + commercial container. Bulk of compliance responsibility: financial-record retention (entry_fee / late_fee / prize_pool changes -> 7-year audit rows), SOC 2 CC6.3 change tracking (EventCancellationBroadcast + EventRescheduled + EventVenueChanged + EventPricingChanged + EventMinorEligibilityCorrected are the highest-severity events), and child-safeguarding regulator interest on events with minor registrants.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(b)",
+          "principle": "purpose limitation",
+          "evidence": "Event fields used only for scheduling + registration + reporting + entitlement enforcement. Never resold, never joined with external enrichment."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Archived Events retained 2555 days (7 years — financial retention floor). Financial audit rows outlive the source Event."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "Every Event mutation is Auditable. Status transitions, cancellations, pricing changes, eligibility narrowings — every one writes to `audits` with actor + timestamp + changed_fields + request_id + before/after snapshots for financial fields."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Every write behind EventPolicy. Lifecycle transitions carry distinct permissions. Sensitive post-registration mutations (dates.shift, venue.change, pricing.change, eligibility.narrow) are owner-only."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "authorisation of changes to system components",
+          "evidence": "EventCancellationBroadcast + EventRescheduled + EventVenueChanged + EventPricingChanged + EventMinorEligibilityCorrected are top audit-critical events — every fire writes to `audits` with 7-year retention + fires cannot-opt-out notifications to affected parties."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes cover FK integrity, phase-roll heartbeat, reconciliation-last-run marker, event_facilities ↔ resource_bookings drift, and per-hour phase-transition counts."
+        }
+      ]
+    },
+    "financial_regulation": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "entry-fee integrity",
+          "principle": "financial fee integrity",
+          "evidence": "Event.entry_fee_cents + late_registration_fee_cents + prize_pool_cents changes generate financial-record classified audit rows retained 7 years. Post-registration_open changes are refused without the events.pricing.change permission (owner-only) + fire EventPricingChanged with audit_severity='critical' + cannot-opt-out notification to registered participants disclosing the change + refund posture."
+        },
+        {
+          "provision": "cancellation + refund audit trail",
+          "principle": "historical financial integrity",
+          "evidence": "EventCancelled + EventCancellationBroadcast retain 7-year audit records including cancellation_reason + registered_count_at_cancel. The refund liability trail is preserved regardless of the event's row deletion (audit outlives the row)."
+        }
+      ]
+    },
+    "child_safeguarding": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "advance-notice for schedule changes on events with minors",
+          "principle": "safeguarding by design",
+          "evidence": "For any Event where the registrant pool includes minors (Wave 3+ enrollment carries the age band), EventRescheduled + EventVenueChanged + EventCancellationBroadcast + EventPricingChanged CC guardians via a mandatory cannot-opt-out channel. Regulators (US state childcare regs, UK Ofsted, EU child-protection directives) treat surprise schedule/venue/cancellation on minors' events as an audit event."
+        },
+        {
+          "provision": "eligibility narrowing post-registration",
+          "principle": "safeguarding by design",
+          "evidence": "EventMinorEligibilityCorrected fires with critical severity when narrowing min_age/max_age/age_group_ids excludes existing registrants. Excluded minor registrants + their guardians receive a cannot-opt-out notification + refund posture. The excluded_minor_count field on the audit row is regulator-facing."
+        },
+        {
+          "provision": "livestream password confidentiality on events with minors",
+          "principle": "safeguarding by design",
+          "evidence": "livestream_password is classified confidential (data-classes.json). Never rendered in any in-app UI or public wire. Delivered exclusively via secure email + push to registered participants + guardians. Prevents scraping of live footage of minors."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "§1798.105",
+          "principle": "right to delete",
+          "evidence": "Aliased to GDPR Art. 17. Event rows not directly PII; tenant erasure cascades. Individual participant deletions handled by Wave 3 athlete-enrollment — those deletions leave Event intact but remove the registration."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": false,
+      "controls": [],
+      "notes": "Event does not store payment card data. Wave 4 finance module owns invoicing per registration + integrates with the payment gateway; Event only holds fee amount + currency."
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "id": "academorix://modules/event/notifications",
+  "$version": 1,
+  "title": "event — notification classes + categories",
+  "namespace": "Academorix\\Sports\\Event\\Notifications",
+  "notifications": [
+    "EventAnnouncedNotification",
+    "EventRegistrationOpeningNotification",
+    "EventRegistrationClosingNotification",
+    "EventReminderNotification",
+    "EventCancellationBroadcastNotification",
+    "EventRescheduledNotification",
+    "EventVenueChangedNotification",
+    "EventPricingChangedNotification",
+    "EventMinorEligibilityCorrectedNotification",
+    "EventLivestreamActivatedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "event.announced",
+      "display_name": "Event announced",
+      "description": "Fires on EventAnnounced. Audience: tenant members with the appropriate visibility. Opt-in — new-event announcements are marketing-adjacent.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "marketing_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": true
+    },
+    {
+      "slug": "event.registration_opening",
+      "display_name": "Registration opening",
+      "description": "Fires T-24h + T-1h before registration_opens_at. Audience: tenant members with visibility >= tenant_only who match the event's eligibility (age range + gender). Opt-in.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "event.registration_closing",
+      "display_name": "Registration closing",
+      "description": "Fires T-48h + T-24h + T-2h before registration_closes_at. Audience: eligible tenant members who have NOT yet registered. Skipped when late window exists (T-2h is redundant with late-window UX).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "event.reminder",
+      "display_name": "Event reminder",
+      "description": "Fires T-24h + T-1h before starts_at. Audience: registered participants + coaches + guardians for minor participants. Includes venue + timezone + livestream URL when public.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "event.cancellation_broadcast",
+      "display_name": "Event cancelled",
+      "description": "Fires on EventCancellationBroadcast. Cannot opt out — a cancellation affects every registrant's calendar + refund posture. Individual email + push per registrant + guardian (not batched). Includes cancellation_reason.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "event.rescheduled",
+      "display_name": "Event rescheduled",
+      "description": "Fires on EventRescheduled. Cannot opt out. Individual email + push to registrants + coaches + guardians for minors. Includes before/after date range + venue.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "event.venue_changed",
+      "display_name": "Event venue changed",
+      "description": "Fires on EventVenueChanged (branch_id OR primary facility). Cannot opt out. Includes before/after venue + travel guidance.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "event.pricing_changed",
+      "display_name": "Event pricing changed",
+      "description": "Fires on EventPricingChanged when audit_severity='critical' (post-registration_open). Cannot opt out. Includes before/after entry_fee + refund information. Financial audit-critical — 7-year retention on the audit trail.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "event.minor_eligibility_corrected",
+      "display_name": "Event eligibility corrected",
+      "description": "Fires on EventMinorEligibilityCorrected. Sent to excluded registrants + guardians of excluded minors. Cannot opt out. Includes the new eligibility rules + refund posture. Regulatory-adjacent for child-safeguarding regulators.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "event.livestream_activated",
+      "display_name": "Event livestream ready",
+      "description": "Fires on EventLivestreamActivated. Audience: registered participants + coaches + guardians (for private-tier password delivery). Password delivered via secure email; no in-app rendering of the password. Opt-in.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    }
+  ]
+}

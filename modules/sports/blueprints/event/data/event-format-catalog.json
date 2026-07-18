@@ -1,0 +1,52 @@
+{
+  "$version": 1,
+  "title": "Event format catalog",
+  "description": "Reference table of the 9 format enum values with descriptions + which event_types they're compatible with. Loaded by the create form to filter format options based on event_type.",
+  "formats": {
+    "single_elimination": {
+      "label": "Single elimination",
+      "description": "Loser is eliminated; single-loss elimination bracket. Requires 2^N participants ideally.",
+      "compatible_event_types": ["tournament"]
+    },
+    "double_elimination": {
+      "label": "Double elimination",
+      "description": "Two-loss elimination with winners' + losers' brackets. Requires 2^N participants.",
+      "compatible_event_types": ["tournament"]
+    },
+    "round_robin": {
+      "label": "Round robin",
+      "description": "Every participant plays every other. Standings by points/wins. Doesn't scale beyond ~10 participants.",
+      "compatible_event_types": ["tournament"]
+    },
+    "group_stage": {
+      "label": "Group stage",
+      "description": "Participants divided into groups, round-robin within group, top N advance. Common World-Cup-style format.",
+      "compatible_event_types": ["tournament"]
+    },
+    "seeded_bracket": {
+      "label": "Seeded bracket",
+      "description": "Bracketed matches with seeding based on ranking. Combines with single or double elimination.",
+      "compatible_event_types": ["tournament", "match"]
+    },
+    "friendly": {
+      "label": "Friendly",
+      "description": "Non-competitive exhibition. No standings.",
+      "compatible_event_types": ["match", "showcase"]
+    },
+    "clinic": {
+      "label": "Clinic",
+      "description": "Instructor-led skills session. Attendees learn from a coach or expert.",
+      "compatible_event_types": ["workshop", "camp"]
+    },
+    "lecture": {
+      "label": "Lecture",
+      "description": "Presentation format. One-to-many talk with Q&A. Common for conferences + workshops.",
+      "compatible_event_types": ["workshop", "conference"]
+    },
+    "social_only": {
+      "label": "Social",
+      "description": "No competitive or instructional component. Community-building.",
+      "compatible_event_types": ["showcase", "social", "graduation", "awards_ceremony", "open_house"]
+    }
+  }
+}

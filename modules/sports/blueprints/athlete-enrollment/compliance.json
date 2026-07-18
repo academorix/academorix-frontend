@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/athlete-enrollment/compliance",
+  "$version": 1,
+  "title": "athlete-enrollment — compliance evidence",
+  "description": "AthleteEnrollment is safeguarding-adjacent (roster tracking) + consent-adjacent (consent snapshot at confirm) + audit-critical (atomic conversion + expulsion tracking). GDPR Art. 8, Art. 17, SOC 2 CC6.3 + CC7.2, anti-discrimination (expulsion audit).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 8",
+          "principle": "parental consent for children",
+          "evidence": "consent_snapshot captured at confirm-time preserves the guardian's consent state for the athlete at the moment enrollment became active. Regulator inquiries can inspect the historical consent for compliance."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure — with retention exception",
+          "evidence": "Terminal enrollments (completed / withdrawn / expelled) retain 7 years for season-history audits. Regulator-compliance for age-eligibility disputes + membership-record retention."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "segregation of duties",
+          "evidence": "enrollments.expel is HR + safeguarding_officer + admin + owner only — coaches cannot unilaterally expel (retaliation safeguard). enrollments.audit.atomicity restricted to compliance roles."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "ReconcileEnrollmentTeamMemberInvariantJob P1 signal — every finding investigated. `academorix.athlete_enrollment.atomicity.failures_total` should stay at 0. `academorix.athlete_enrollment.invariant.broken` should stay at 0."
+        }
+      ]
+    },
+    "anti_discrimination": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "expulsion + withdrawal audit",
+          "evidence": "Every EnrollmentExpelled + EnrollmentWithdrawn carries reason. Payload NOT exposed to tenant analytics; retained in audits + fed into platform-side compliance dashboard for pattern detection."
+        }
+      ]
+    },
+    "regulatory_records": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "season history retention",
+          "evidence": "Completed enrollments retain 7 years for age-eligibility audits (federation compliance — many governing bodies require multi-year eligibility trails to prevent age-fraud in youth divisions)."
+        }
+      ]
+    }
+  }
+}

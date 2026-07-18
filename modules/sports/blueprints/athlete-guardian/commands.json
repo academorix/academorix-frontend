@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/athlete-guardian/commands",
+  "$version": 1,
+  "title": "athlete-guardian — Artisan commands",
+  "commands": [
+    {
+      "signature": "guardian:list {--tenant=} {--athlete=} {--user=} {--verification-status=} {--is-primary}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\ListGuardiansCommand",
+      "purpose": "Table view of guardians. --athlete=<id> narrows to one athlete's roster; --user=<id> narrows to one User's guardianships."
+    },
+    {
+      "signature": "guardian:describe {guardian}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\DescribeGuardianCommand",
+      "purpose": "Verbose read of a guardian row: role flags + verification history + linked athlete + linked user."
+    },
+    {
+      "signature": "guardian:add {athlete} {user} {--relationship=} {--custody} {--pickup} {--communications} {--medical-authorisation} {--primary} {--dry-run}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\AddGuardianCommand",
+      "purpose": "Add a guardian. --dry-run validates without persisting."
+    },
+    {
+      "signature": "guardian:remove {guardian} {--reason=}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\RemoveGuardianCommand",
+      "purpose": "Soft-delete a guardian. Refused when sole guardian of a minor."
+    },
+    {
+      "signature": "guardian:set-primary {guardian}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\SetPrimaryCommand",
+      "purpose": "Atomic swap — demotes existing primary + promotes this."
+    },
+    {
+      "signature": "guardian:set-role {guardian} {--custody=} {--pickup=} {--communications=} {--medical-authorisation=}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\SetRoleCommand",
+      "purpose": "Bulk flag updates. Empty flag = no change; true/false explicit sets. Validates the medical-requires-custody invariant."
+    },
+    {
+      "signature": "guardian:set-custody {guardian} {--custody=true}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\SetCustodyCommand",
+      "purpose": "Dedicated command for legal_custody transitions (compliance-critical). Fires GuardianCustodyChanged. Auto-flips can_authorise_medical_care to false when custody flips false."
+    },
+    {
+      "signature": "guardian:verify {guardian} {--document-file-id=}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\VerifyCommand",
+      "purpose": "HR verify. --document-file-id required when athlete_guardian_verification entitlement is on."
+    },
+    {
+      "signature": "guardian:dispute {guardian} {--reason=}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\DisputeCommand",
+      "purpose": "Flag a guardian for review. Blocks consent recording."
+    },
+    {
+      "signature": "guardian:revoke {guardian} {--reason=}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\RevokeCommand",
+      "purpose": "Terminal revocation."
+    },
+    {
+      "signature": "guardian:reconcile-primary {--tenant=} {--athlete=} {--dry-run}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\ReconcilePrimaryCommand",
+      "purpose": "One-shot invocation of ReconcilePrimaryGuardianInvariantJob."
+    },
+    {
+      "signature": "guardian:audit-verification {--tenant=} {--from=} {--to=} {--output=csv}",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Console\\Commands\\AuditVerificationCommand",
+      "purpose": "Compliance-only export of verify/dispute/revoke history. Requires super_admin + two-person approval."
+    }
+  ]
+}

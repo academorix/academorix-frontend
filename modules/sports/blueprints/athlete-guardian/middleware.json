@@ -1,0 +1,29 @@
+{
+  "id": "academorix://modules/athlete-guardian/middleware",
+  "$version": 1,
+  "title": "athlete-guardian — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "athlete_guardian.enforce_verified",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Http\\Middleware\\EnforceGuardianVerified",
+      "priority": 44,
+      "description": "Refuses actions that require a verified guardianship. Applied to routes that touch a guardian who must be verified (e.g. set-primary — only verified guardians can be promoted). Returns 422 `PRIMARY_GUARDIAN_MUST_BE_VERIFIED` on unverified target. Distinct from the observer refusal — the middleware fails fast at the route boundary.",
+      "auto_applied": false,
+      "auto_applied_to": [
+        "POST /athletes/{athlete}/guardians/{guardian}/set-primary"
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::enforce_tenant_membership" },
+    { "middleware": "access::authorize" },
+    { "middleware": "scope::resolve_scope" }
+  ]
+}

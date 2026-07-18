@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/athlete/hooks",
+  "$version": 1,
+  "title": "athlete — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. Athlete does not register a bootstrapper (nothing to hydrate at tenant-boot). Registers four cascade hooks: branch-archive prevention, user-archive prevention, tenant-erasure cascade, and age-group snapshot resolution on athlete creation.",
+  "namespace": "Academorix\\Sports\\Athlete\\Hooks",
+  "hooks": [
+    {
+      "name": "PreventAthleteOrphansOnBranchArchived",
+      "class": "Academorix\\Sports\\Athlete\\Hooks\\PreventAthleteOrphansOnBranchArchived",
+      "kind": "cascade_prevention",
+      "listens_to": "branch::BranchArchived",
+      "purpose": "Refuse the archive when any Athlete row referencing the branch still has status IN ('active', 'paused'). Distinct from the FK RESTRICT (which only blocks hard-delete) — this blocks the archive transition because athletes need a target branch to continue existing. Graduated + withdrawn + archived athletes DO NOT block (they're terminal states + the audit trail preserves the branch reference).",
+      "returns": "BRANCH_HAS_ACTIVE_ATHLETES (409) with the athlete count in the error payload",
+      "priority": 30,
+      "note": "Priority 30 — runs BEFORE PreventStaffOrphansOnBranchArchived (priority higher — coach + athlete depend on the same branch) so the athlete-count message wins when both would fire. HR usually addresses staff first, then athletes."
+    },
+    {
+      "name": "PreventUserArchiveWithActiveAthlete",
+      "class": "Academorix\\Sports\\Athlete\\Hooks\\PreventUserArchiveWithActiveAthlete",
+      "kind": "cascade_prevention",
+      "listens_to": "user::UserSoftDeleted (pre-write hook)",
+      "purpose": "Refuse the User soft-delete when the User has an active (deleted_at IS NULL) linked Athlete row (user_id-based FK) OR when the User is consent_recorded_by_user_id for any active minor athlete. The archive flow must run first — Athlete.status → archived — which fires AthleteArchived → UnblockUserArchiveWhenLastAthleteArchived lifts the block. For the consent recorder case: guardian handoff to another User must complete first (a minor cannot lose their guardian without a replacement recorded).",
+      "returns": "USER_HAS_ACTIVE_ATHLETE (409) with the athlete_id + tenant_id in the error payload; USER_IS_MINOR_CONSENT_RECORDER (409) for the guardian-handoff scenario",
+      "priority": 45,
+      "note": "Priority 45 — runs AFTER PreventUserArchiveWithActiveStaff (priority 40) — staff record wins when both would fire because employment offboarding is the load-bearing first step; athlete archive typically follows staff offboarding (a coach leaves → their athletes reassign)."
+    },
+    {
+      "name": "PurgeAthleteDataForErasedTenant",
+      "class": "Academorix\\Sports\\Athlete\\Hooks\\PurgeAthleteDataForErasedTenant",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "Cascade delete via FK; writes compliance audit trail entry + emits count metrics per entity family (athletes purged, medical_history rows migrated to compliance archive, guardian rows cascade-purged via athlete-guardian module). Audit rows outlive the source rows per financial + medical retention (medical_history in particular — retained 7 years even after the tenant is erased, per legal requirement).",
+      "compliance": "GDPR Art. 17 (right to erasure) + medical-retention exception. Medical history rows are NOT purged with the tenant — they migrate to a compliance-archive table (retained in encrypted form by ops for the 7-year window, keyed to a tenant-anonymised id). Same pattern as staff_compensation_history in the staff module."
+    },
+    {
+      "name": "SetAgeGroupSnapshotOnAthleteCreated",
+      "class": "Academorix\\Sports\\Athlete\\Hooks\\SetAgeGroupSnapshotOnAthleteCreated",
+      "kind": "cascade",
+      "listens_to": "athlete::AthleteCreated",
+      "purpose": "In-band resolution of Athlete.current_age_group_id at create time. Runs AgeGroupResolver::resolveFor(athlete.dob, sport_key=null, on_date=today) + updates the row before returning the create response. Without it, athletes would appear age-group-less until the next nightly RollAthleteAgeGroupSnapshotJob pass — breaks the enrollment-form flow because the age-group filter can't match.",
+      "priority": 20,
+      "note": "Priority 20 — runs BEFORE notification listeners (priority 100 default) so the notification renderer sees the resolved age group in the payload."
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Athlete does not need a tenant-boot hydration path — every row loads on demand from the DB. The AthleteRepository + AgeGroupSnapshotResolver bindings cache lazily on first query."
+  }
+}

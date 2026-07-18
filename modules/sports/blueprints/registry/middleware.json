@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/sports-registry/middleware",
+  "$version": 1,
+  "title": "sports-registry — HTTP middleware",
+  "description": "The registry module ships ZERO middleware. Sports are reference data, not a request-scoped context axis — there is no `X-Sport-Id` header, no active-sport resolution, no per-request context. Every endpoint reads the sport_key from route parameter or request body; there is no cross-cutting middleware need. Contrast with region + branch which both ship active-resolver middleware because the caller's active region + branch legitimately vary per request. Downstream Wave 3 modules that carry sport_key on domain rows filter their queries by sport_key from the body / route param — they don't consume an active-sport context.",
+  "middleware": [],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::user.resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::user.enforce_tenant_membership" }
+  ],
+  "notes": [
+    "SportKeyResolver accepts (sport_key, discipline_key, position_key, tenant) as explicit arguments — never inferred from request state. This is deliberate: caller intent must be explicit for every catalog lookup because a wrongly-inferred tenant would silently return the wrong Sport row (a platform-seeded Sport reachable across tenants + a tenant custom shadowed by a slug collision would produce ambiguous results).",
+    "There is no `enforce_sport_active` middleware — deactivated sport_keys still resolve for historical purposes; blocking historical enrollments from loading is a downstream concern, not a request-level gate."
+  ]
+}

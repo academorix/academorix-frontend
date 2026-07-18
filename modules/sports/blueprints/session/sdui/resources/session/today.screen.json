@@ -1,0 +1,68 @@
+{
+  "id": "session.session.today",
+  "title": "Today's sessions",
+  "version": 1,
+  "kind": "SduiScreen",
+  "resource": "session",
+  "route": "/sessions/today",
+  "description": "Dashboard-style view of today's sessions. Grouped by branch. Coach sees only their assigned sessions.",
+  "dataSources": [
+    {
+      "name": "sessions",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/sessions/today?include=resource_booking,team,head_coach'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    { "kind": "PageHeader", "children": [{ "kind": "PageHeader.Title", "props": { "children": "Today" } }] },
+    {
+      "kind": "View",
+      "bindings": { "hidden": { "$expr": "sessions.length !== 0" } },
+      "children": [
+        { "kind": "Alert", "props": { "variant": "info", "title": "No sessions today", "description": "There are no sessions scheduled for today in your view." } }
+      ]
+    },
+    {
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4" },
+      "bindings": { "items": { "$expr": "groupBy(sessions, 'branch_id')" } },
+      "itemRenderer": {
+        "kind": "Card",
+        "children": [
+          { "kind": "Card.Header", "children": [{ "kind": "Card.Title", "bindings": { "children": { "$expr": "item.branch_name" } } }] },
+          {
+            "kind": "Card.Content",
+            "props": { "className": "flex flex-col gap-2" },
+            "bindings": { "items": { "$ref": "item.sessions" } },
+            "itemRenderer": {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3 p-2 border-b border-muted last:border-b-0" },
+              "children": [
+                { "kind": "Text", "props": { "className": "font-mono text-sm text-muted w-16" }, "bindings": { "children": { "$expr": "formatTime(item.resource_booking.starts_at)" } } },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex flex-col flex-1 min-w-0" },
+                  "children": [
+                    {
+                      "kind": "View",
+                      "props": { "className": "flex items-center gap-1" },
+                      "children": [
+                        { "kind": "Text", "props": { "className": "font-medium truncate" }, "bindings": { "children": { "$ref": "item.name" } } },
+                        { "kind": "Widget", "props": { "id": "session.session-status-chip" }, "bindings": { "props": { "status": { "$ref": "item.status" }, "size": "xs" } } }
+                      ]
+                    },
+                    { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "item.session_type + (item.team ? ' · ' + item.team.name : '') + (item.head_coach ? ' · ' + item.head_coach.display_name : '')" } } }
+                  ]
+                },
+                { "kind": "Widget", "props": { "id": "session.session-attendance-summary" }, "bindings": { "props": { "session": { "$ref": "item" } } } },
+                { "kind": "Button", "props": { "variant": "solid", "size": "sm", "children": "Attendance" }, "bindings": { "onPress": { "$action": "route.push", "urlExpr": "'/sessions/' + item.id + '/attendance'" } } }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

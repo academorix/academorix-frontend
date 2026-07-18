@@ -1,0 +1,125 @@
+{
+  "id": "academorix://modules/sports-registry/policies",
+  "$version": 1,
+  "title": "sports-registry — authorization policies",
+  "description": "Three policies — SportPolicy / DisciplinePolicy / PositionPolicy — one per entity. Reads are universal across every tenant role (the catalog is UI reference data). Writes are admin/owner-only + gated by the sports_registry_custom entitlement. Platform-seeded rows are strictly read-only on the tenant plane; every write attempt against them is refused by the policy layer (not just the observer).",
+  "policies": [
+    {
+      "model": "Sport",
+      "class": "Academorix\\Sports\\Registry\\Policies\\SportPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "sports.viewAny",
+          "scope": "every tenant role. Returns the MERGED catalog — platform-seeded + own tenant customs."
+        },
+        {
+          "action": "view",
+          "permission": "sports.view",
+          "scope": "single-row check. Refuses when a Sport carries a tenant_id different from the caller's active tenant (belt-and-braces against cross-tenant leakage; the query scope should already filter it out)."
+        },
+        {
+          "action": "resolve",
+          "permission": "sports.resolve",
+          "scope": "every tenant role. Read-only hypothetical resolver endpoint (sport_key → Sport row)."
+        },
+        {
+          "action": "create",
+          "permission": "sports.create",
+          "scope": "admin or owner in the active tenant. Also gated by `sports_registry_custom` entitlement — Small + Medium tiers refuse with SPORTS_REGISTRY_CUSTOM_DISABLED (402). Also gated by `sports_registry_custom_slot` — the observer decrements on create + refuses with SPORTS_REGISTRY_CUSTOM_QUOTA_EXCEEDED (402) when the slot is exhausted."
+        },
+        {
+          "action": "update",
+          "permission": "sports.update",
+          "scope": "admin or owner. Refused when the Sport is platform-seeded (tenant_id NULL) — platform rows are read-only on the tenant plane. Refused when Sport belongs to a different tenant (cross-tenant guard)."
+        },
+        {
+          "action": "deactivate",
+          "permission": "sports.deactivate",
+          "scope": "admin or owner. Refused for platform-seeded rows. Refused when active downstream references exist (SPORT_REFERENCE_IN_USE)."
+        },
+        {
+          "action": "reactivate",
+          "permission": "sports.reactivate",
+          "scope": "admin or owner. Refused for platform-seeded rows."
+        },
+        {
+          "action": "delete",
+          "permission": "sports.delete",
+          "scope": "owner only. Hard-delete on tenant customs only. Refused for platform-seeded rows (PLATFORM_ROW_HARD_DELETE_FORBIDDEN)."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.sports.viewAny",
+          "scope": "platform_admin only. Cross-tenant read."
+        },
+        {
+          "action": "platformCreate",
+          "permission": "platform.sports.create",
+          "scope": "platform_admin, product or super_admin roles. Creates a platform-seeded (tenant_id NULL) Sport visible to every tenant. Consumes no entitlement slot."
+        },
+        {
+          "action": "platformUpdate",
+          "permission": "platform.sports.update",
+          "scope": "platform_admin, product or super_admin. Update platform-seeded row fields."
+        },
+        {
+          "action": "platformDeactivate",
+          "permission": "platform.sports.deactivate",
+          "scope": "platform_admin, product or super_admin. Deactivating a platform Sport hides it from every tenant's picker."
+        },
+        {
+          "action": "platformReseed",
+          "permission": "platform.sports.reseed",
+          "scope": "super_admin only. Reseeds the entire catalog from the shipped JSON — support tooling."
+        }
+      ]
+    },
+    {
+      "model": "Discipline",
+      "class": "Academorix\\Sports\\Registry\\Policies\\DisciplinePolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "disciplines.viewAny", "scope": "every tenant role — merged catalog." },
+        { "action": "view", "permission": "disciplines.view" },
+        {
+          "action": "create",
+          "permission": "disciplines.create",
+          "scope": "admin or owner + tenant carries sports_registry_custom entitlement. Also validates the parent Sport belongs to the same tenant OR is platform-seeded (a tenant custom Discipline may hang off a platform Sport, but never off another tenant's custom Sport)."
+        },
+        {
+          "action": "update",
+          "permission": "disciplines.update",
+          "scope": "admin or owner. Refused for platform-seeded rows."
+        },
+        { "action": "deactivate", "permission": "disciplines.deactivate", "scope": "admin or owner. Refused for platform-seeded + when active Positions or downstream references exist." },
+        { "action": "reactivate", "permission": "disciplines.reactivate", "scope": "admin or owner. Refused if parent Sport is inactive." },
+        { "action": "delete", "permission": "disciplines.delete", "scope": "owner only. Hard-delete on tenant customs only." },
+        { "action": "platformViewAny", "permission": "platform.disciplines.viewAny", "scope": "platform_admin only." },
+        { "action": "platformCreate", "permission": "platform.disciplines.create", "scope": "platform_admin, product or super_admin. Creates a platform Discipline. Parent Sport must be platform-seeded too." }
+      ]
+    },
+    {
+      "model": "Position",
+      "class": "Academorix\\Sports\\Registry\\Policies\\PositionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "positions.viewAny", "scope": "every tenant role — merged catalog." },
+        { "action": "view", "permission": "positions.view" },
+        {
+          "action": "create",
+          "permission": "positions.create",
+          "scope": "admin or owner + tenant carries sports_registry_custom entitlement. Parent Discipline validation: same-tenant OR platform-seeded (cross-tenant parent Discipline is refused with CROSS_TENANT_REGISTRY_REFERENCE)."
+        },
+        {
+          "action": "update",
+          "permission": "positions.update",
+          "scope": "admin or owner. Refused for platform-seeded rows."
+        },
+        { "action": "deactivate", "permission": "positions.deactivate", "scope": "admin or owner. Refused for platform-seeded + when active downstream references exist." },
+        { "action": "reactivate", "permission": "positions.reactivate", "scope": "admin or owner. Refused if parent Discipline is inactive." },
+        { "action": "delete", "permission": "positions.delete", "scope": "owner only. Hard-delete on tenant customs only." },
+        { "action": "platformViewAny", "permission": "platform.positions.viewAny", "scope": "platform_admin only." },
+        { "action": "platformCreate", "permission": "platform.positions.create", "scope": "platform_admin, product or super_admin. Creates a platform Position." }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/athlete-guardian/analytics",
+  "$version": 1,
+  "title": "athlete-guardian — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Guardian Added",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "relationship_bucket", "has_legal_custody", "is_primary_at_create", "athlete_is_minor"]
+    },
+    {
+      "name": "Guardian Removed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "was_primary", "was_verified", "days_active_bucket"]
+    },
+    {
+      "name": "Primary Guardian Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "trigger", "days_since_prior_primary_added_bucket"]
+    },
+    {
+      "name": "Guardian Verified",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "verification_method", "days_since_added_bucket"]
+    },
+    {
+      "name": "Guardian Verification Disputed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "days_since_verified_bucket"],
+      "description": "Consent tier: essential — safeguarding signal."
+    },
+    {
+      "name": "Guardian Verification Revoked",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "was_primary", "days_since_verified_bucket"],
+      "description": "Consent tier: essential — safeguarding signal."
+    },
+    {
+      "name": "Guardian Custody Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "from_value", "to_value"],
+      "description": "Consent tier: essential — legal compliance."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry guardian names / emails / dispute reasons — only structural + timing data.",
+    "relationship_bucket buckets high-cardinality relationship enum into (parent / step_parent / grandparent / relative / legal / other) to keep label cardinality bounded."
+  ]
+}

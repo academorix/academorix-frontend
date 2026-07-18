@@ -1,0 +1,310 @@
+{
+  "id": "academorix://modules/sports-registry/events",
+  "$version": 1,
+  "title": "sports-registry — published events",
+  "namespace": "Academorix\\Sports\\Registry\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Lifecycle events for the three entities (Sport / Discipline / Position) fan out to audit + activity + downstream cache invalidation. Tenant-custom-specific events are separate signals (analytics filter on `TenantCustom*` to graph adoption). The `SportCatalogSeeded` + `SportCatalogUpdated` events mark platform-level catalog milestones. `SportPrefixResolutionFailed` is the audit-critical signal that a downstream row is referencing a sport_key that doesn't resolve — feeds the reconciler + ops dashboard.",
+  "events": [
+    {
+      "name": "SportCreated",
+      "class": "Academorix\\Sports\\Registry\\Events\\SportCreated",
+      "trigger": "Sport row created (either via platform seeder or via tenant custom POST). Fires exactly once per row. Consumers filter on `is_platform_seeded` + `tenant_id` to distinguish the two shapes.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache",
+        "notifications::MaybeDispatchTenantCustomSportCreatedNotification (only when is_platform_seeded=false)"
+      ],
+      "payload": {
+        "sport_id": "ULID (spo_*)",
+        "tenant_id": "ULID (ten_*) | null (null = platform-scoped)",
+        "name": "string",
+        "slug": "string (kebab-case)",
+        "category": "'team_sport' | 'individual_sport' | 'racquet' | 'combat' | 'aquatic' | 'winter' | 'cycling' | 'track_field' | 'fitness' | 'recreational'",
+        "governing_body": "string | null",
+        "gender_typical": "'male_only' | 'female_only' | 'mixed' | 'any'",
+        "is_platform_seeded": "boolean",
+        "is_active": "boolean",
+        "created_by": "ULID (usr_*) | null (null = platform seeder)",
+        "source": "'platform_seed' | 'admin_created' | 'tenant_custom'"
+      }
+    },
+    {
+      "name": "SportUpdated",
+      "class": "Academorix\\Sports\\Registry\\Events\\SportUpdated",
+      "trigger": "Any Sport field mutated (except is_active flip, which fires SportDeactivated / SportCreated depending on direction). Fires for renames, description edits, color / icon changes, sort_order, gender_typical, age_range_min/max, governing_body edits.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache"
+      ],
+      "payload": {
+        "sport_id": "ULID",
+        "tenant_id": "ULID | null",
+        "updated_by": "ULID",
+        "changed_fields": "string[] (e.g. ['name', 'description', 'age_range_max'])"
+      }
+    },
+    {
+      "name": "SportDeactivated",
+      "class": "Academorix\\Sports\\Registry\\Events\\SportDeactivated",
+      "trigger": "Sport is_active flipped from true → false. Historical downstream references continue to resolve; the tenant picker hides the row.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache"
+      ],
+      "payload": {
+        "sport_id": "ULID",
+        "tenant_id": "ULID | null",
+        "slug": "string",
+        "changed_by": "ULID",
+        "downstream_reference_count": "integer (count of Wave 3 rows still referencing this sport_key)"
+      }
+    },
+    {
+      "name": "DisciplineCreated",
+      "class": "Academorix\\Sports\\Registry\\Events\\DisciplineCreated",
+      "trigger": "Discipline row created. Fires once per row.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache",
+        "notifications::MaybeDispatchTenantCustomDisciplineCreatedNotification (only when is_platform_seeded=false)"
+      ],
+      "payload": {
+        "discipline_id": "ULID (dis_*)",
+        "sport_id": "ULID (spo_*)",
+        "tenant_id": "ULID | null",
+        "name": "string",
+        "slug": "string",
+        "format_type": "'team' | 'individual' | 'relay' | 'pairs' | 'squads' | null",
+        "player_count_min": "integer | null",
+        "player_count_max": "integer | null",
+        "is_platform_seeded": "boolean",
+        "is_active": "boolean",
+        "created_by": "ULID | null",
+        "source": "'platform_seed' | 'admin_created' | 'tenant_custom'"
+      }
+    },
+    {
+      "name": "DisciplineUpdated",
+      "class": "Academorix\\Sports\\Registry\\Events\\DisciplineUpdated",
+      "trigger": "Any Discipline field mutated (except is_active).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache"
+      ],
+      "payload": {
+        "discipline_id": "ULID",
+        "sport_id": "ULID",
+        "tenant_id": "ULID | null",
+        "updated_by": "ULID",
+        "changed_fields": "string[]"
+      }
+    },
+    {
+      "name": "DisciplineDeactivated",
+      "class": "Academorix\\Sports\\Registry\\Events\\DisciplineDeactivated",
+      "trigger": "Discipline is_active flipped from true → false.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache"
+      ],
+      "payload": {
+        "discipline_id": "ULID",
+        "sport_id": "ULID",
+        "tenant_id": "ULID | null",
+        "slug": "string",
+        "changed_by": "ULID",
+        "downstream_reference_count": "integer"
+      }
+    },
+    {
+      "name": "PositionCreated",
+      "class": "Academorix\\Sports\\Registry\\Events\\PositionCreated",
+      "trigger": "Position row created.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache",
+        "notifications::MaybeDispatchTenantCustomPositionCreatedNotification (only when is_platform_seeded=false)"
+      ],
+      "payload": {
+        "position_id": "ULID (pos_*)",
+        "discipline_id": "ULID (dis_*)",
+        "tenant_id": "ULID | null",
+        "name": "string",
+        "slug": "string",
+        "is_field_position": "boolean",
+        "is_offensive": "boolean | null",
+        "is_defensive": "boolean | null",
+        "is_platform_seeded": "boolean",
+        "is_active": "boolean",
+        "created_by": "ULID | null",
+        "source": "'platform_seed' | 'admin_created' | 'tenant_custom'"
+      }
+    },
+    {
+      "name": "PositionUpdated",
+      "class": "Academorix\\Sports\\Registry\\Events\\PositionUpdated",
+      "trigger": "Any Position field mutated (except is_active).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache"
+      ],
+      "payload": {
+        "position_id": "ULID",
+        "discipline_id": "ULID",
+        "tenant_id": "ULID | null",
+        "updated_by": "ULID",
+        "changed_fields": "string[]"
+      }
+    },
+    {
+      "name": "PositionDeactivated",
+      "class": "Academorix\\Sports\\Registry\\Events\\PositionDeactivated",
+      "trigger": "Position is_active flipped from true → false.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::InvalidateCatalogCache"
+      ],
+      "payload": {
+        "position_id": "ULID",
+        "discipline_id": "ULID",
+        "tenant_id": "ULID | null",
+        "slug": "string",
+        "changed_by": "ULID",
+        "downstream_reference_count": "integer"
+      }
+    },
+    {
+      "name": "TenantCustomSportCreated",
+      "class": "Academorix\\Sports\\Registry\\Events\\TenantCustomSportCreated",
+      "trigger": "A tenant created a custom Sport (is_platform_seeded=false, tenant_id NOT NULL). Fires in ADDITION to SportCreated so analytics can graph tenant-custom adoption separately from platform seeder activity. Consumed by the sports-registry-adoption dashboard.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTenantCustomSportCreatedNotification"
+      ],
+      "payload": {
+        "sport_id": "ULID",
+        "tenant_id": "ULID",
+        "slug": "string",
+        "category": "string",
+        "created_by": "ULID"
+      }
+    },
+    {
+      "name": "TenantCustomDisciplineCreated",
+      "class": "Academorix\\Sports\\Registry\\Events\\TenantCustomDisciplineCreated",
+      "trigger": "A tenant created a custom Discipline.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "discipline_id": "ULID",
+        "sport_id": "ULID",
+        "sport_is_platform_seeded": "boolean (true when hanging a custom Discipline off a platform Sport)",
+        "tenant_id": "ULID",
+        "slug": "string",
+        "created_by": "ULID"
+      }
+    },
+    {
+      "name": "TenantCustomPositionCreated",
+      "class": "Academorix\\Sports\\Registry\\Events\\TenantCustomPositionCreated",
+      "trigger": "A tenant created a custom Position.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "position_id": "ULID",
+        "discipline_id": "ULID",
+        "discipline_is_platform_seeded": "boolean (true when hanging a custom Position off a platform Discipline)",
+        "tenant_id": "ULID",
+        "slug": "string",
+        "created_by": "ULID"
+      }
+    },
+    {
+      "name": "SportCatalogSeeded",
+      "class": "Academorix\\Sports\\Registry\\Events\\SportCatalogSeeded",
+      "trigger": "SeedPlatformSportsCatalogJob completed successfully. Fires exactly once at platform first-boot when the catalog is empty; also fires on explicit reseed via `sports:registry:reseed-platform-catalog --force`.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "sports-registry::WarmCatalogCache"
+      ],
+      "payload": {
+        "sport_ids": "ULID[] (30+ platform sport IDs)",
+        "discipline_ids": "ULID[]",
+        "position_ids": "ULID[]",
+        "catalog_version": "integer (bumps when data/platform-sports-catalog.json changes materially)",
+        "seeded_by": "'platform_boot' | 'admin_reseed' | 'legacy_backfill_command'",
+        "duration_ms": "integer"
+      }
+    },
+    {
+      "name": "SportCatalogUpdated",
+      "class": "Academorix\\Sports\\Registry\\Events\\SportCatalogUpdated",
+      "trigger": "Platform admin updated the shipped catalog via a JSON edit + explicit reseed. Distinct from SportUpdated — this signals a PLATFORM-level catalog change affecting every tenant. Fires alongside the per-row SportUpdated / DisciplineUpdated / PositionUpdated events. Consumers may downstream-notify tenant admins that the platform catalog changed (e.g. new sports available).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchSportCatalogUpdatedNotificationToTenantAdmins"
+      ],
+      "payload": {
+        "catalog_version_before": "integer",
+        "catalog_version_after": "integer",
+        "added_sport_slugs": "string[]",
+        "updated_sport_slugs": "string[]",
+        "deactivated_sport_slugs": "string[]",
+        "added_discipline_slugs": "string[]",
+        "added_position_slugs": "string[]",
+        "changed_by": "ULID"
+      }
+    },
+    {
+      "name": "SportPrefixResolutionFailed",
+      "class": "Academorix\\Sports\\Registry\\Events\\SportPrefixResolutionFailed",
+      "trigger": "SportKeyResolver::resolve(...) failed to resolve a downstream sport_key / discipline_key / position_key reference. Audit-CRITICAL — this signals a dangling reference in a Wave 3 domain row. Fires per resolution failure (not batched) so the reconciler + ops dashboard get per-row detail.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — dangling-reference signal for compliance replay)",
+        "activity::WriteToActivityLog",
+        "notifications::MaybeDispatchSportPrefixResolutionFailedNotification (throttled — one notification per (tenant_id, source_table, source_row_id) per hour)"
+      ],
+      "payload": {
+        "tenant_id": "ULID | null",
+        "source_table": "string (e.g. 'teams', 'athlete_enrollments')",
+        "source_row_id": "string (the row that carries the unresolved key)",
+        "source_column": "string (e.g. 'sport_key')",
+        "unresolved_value": "string (the string value that failed to resolve)",
+        "attempted_at": "ISO 8601 timestamp",
+        "resolver_context": "'read' | 'write' | 'reconciler'"
+      }
+    }
+  ]
+}

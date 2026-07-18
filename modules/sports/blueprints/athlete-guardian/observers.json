@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/athlete-guardian/observers",
+  "$version": 1,
+  "title": "athlete-guardian — Eloquent observers",
+  "description": "One observer enforces the module's write-time invariants: one primary guardian per athlete, one guardian row per (athlete, user), cross-tenant defense-in-depth, per-tier guardian count caps, role-flag consistency (can_authorise_medical_care requires has_legal_custody), verification state-machine, auto-primary election on primary removal.",
+  "observers": [
+    {
+      "model": "AthleteGuardian",
+      "observer": "Academorix\\Sports\\AthleteGuardian\\Observers\\AthleteGuardianObserver",
+      "handles": [
+        "creating → populate ULID prefix `agu_`",
+        "creating → refuse when tenant does NOT hold `athlete_guardian.core` feature (defense-in-depth)",
+        "creating → refuse when Athlete.tenant_id != guardian.tenant_id (cross-tenant defense-in-depth)",
+        "creating → refuse when User.tenant_id != guardian.tenant_id (cross-tenant defense-in-depth on user link)",
+        "creating → refuse when parent Athlete.status IN ('withdrawn', 'archived') (returns `GUARDIAN_ATHLETE_INACTIVE` — cannot add guardian to a non-active athlete)",
+        "creating → refuse when User is not active OR is soft-deleted (returns `GUARDIAN_USER_NOT_ACTIVE`)",
+        "creating → refuse when (tenant_id, athlete_id, user_id) already has a live row via the composite unique index; return `GUARDIAN_DUPLICATE`",
+        "creating → refuse when live guardian count for this athlete would exceed the per-tier cap: Small (athlete_multi_guardian off) = 1; Medium (athlete_multi_guardian on, no unlimited entitlement) = 4; Enterprise = unlimited. Return `GUARDIAN_TIER_LIMIT_EXCEEDED`",
+        "creating → refuse when can_authorise_medical_care=true AND has_legal_custody=false (returns `GUARDIAN_MEDICAL_AUTHORISATION_REQUIRES_CUSTODY` — enforcement of the valid_guardian_role_flags rule)",
+        "creating → set is_primary=true when no other live primary exists for the athlete (auto-primary election on first-add); refuse is_primary=true when another primary exists (must use /set-primary for the atomic swap)",
+        "creating → refuse is_primary=true AND verification_status != 'pending' (primary MUST start as pending — silent-acceptance or auto-household bumps them to verified within 24h)",
+        "creating → set verification_status='pending' when unset; refuse setting anything other than pending on create (verification transitions happen post-create)",
+        "creating → set verification_method=null on create (populated on verification transition)",
+        "creating → fire GuardianAdded",
+        "creating → post-commit: dispatch VerifyGuardianByEmailDomainJob immediately (attempts auto-verify)",
+        "updating athlete_id → REFUSE (returns `GUARDIAN_ATHLETE_ID_IMMUTABLE`). A guardian belongs to one athlete forever",
+        "updating user_id → REFUSE (returns `GUARDIAN_USER_ID_IMMUTABLE`). Cannot repoint a guardian at a different User; the correct path is remove + re-add",
+        "updating tenant_id → REFUSE (cross-tenant defense-in-depth; never happens through normal flow but caught defensively)",
+        "updating relationship → fire GuardianRoleChanged",
+        "updating is_primary false → true → refuse when another active primary exists for this athlete (returns `GUARDIAN_ATHLETE_ALREADY_HAS_PRIMARY`); refuse when verification_status != 'verified' (primary MUST be verified — returns `PRIMARY_GUARDIAN_MUST_BE_VERIFIED`); fire PrimaryGuardianChanged with from_guardian_id (previous primary) + to_guardian_id (this)",
+        "updating is_primary true → false → refuse when this is the ONLY remaining primary AND the caller hasn't explicitly acknowledged the change of primary (returns `GUARDIAN_ATHLETE_WOULD_HAVE_NO_PRIMARY` — must set another guardian as primary first, OR use /set-primary route for atomic swap)",
+        "updating has_legal_custody → fire GuardianCustodyChanged; when transitioning true → false AND can_authorise_medical_care=true, ALSO auto-flip can_authorise_medical_care to false (custody is required for medical authorisation)",
+        "updating can_pickup → fire GuardianCanPickupToggled",
+        "updating can_receive_communications → fire GuardianCanReceiveCommunicationsToggled",
+        "updating can_authorise_medical_care true → true when has_legal_custody=false → REFUSE (returns `GUARDIAN_MEDICAL_AUTHORISATION_REQUIRES_CUSTODY`); fire GuardianCanAuthoriseMedicalCareToggled",
+        "updating verification_status pending → verified → set verification_method + verified_at + verified_by_user_id when method='hr_manual'; refuse when method='hr_manual' AND verification_document_file_id is unset AND athlete_guardian_verification entitlement is on (returns `GUARDIAN_VERIFICATION_DOCUMENT_REQUIRED`); fire GuardianVerified",
+        "updating verification_status verified → disputed → refuse when dispute_reason is unset (returns `GUARDIAN_DISPUTE_REASON_REQUIRED`); set dispute_recorded_at + dispute_recorded_by_user_id; fire GuardianVerificationDisputed",
+        "updating verification_status disputed → verified → clear dispute_reason + dispute_recorded_at + dispute_recorded_by_user_id; fire GuardianVerified",
+        "updating verification_status {pending, verified, disputed} → revoked → refuse when revoke_reason is unset (returns `GUARDIAN_REVOKE_REASON_REQUIRED`); set revoked_at + revoked_by_user_id; auto-flip is_primary to false + auto-elect a new primary from remaining guardians; fire GuardianVerificationRevoked + PrimaryGuardianChanged if applicable",
+        "updating verification_status revoked → anything → REFUSE (returns `GUARDIAN_REVOKE_IS_TERMINAL`). Revoked is terminal; add a fresh guardian row instead",
+        "deleting (soft-delete) → refuse when this is the ONLY active guardian for a MINOR athlete AND the athlete has no other consent path (returns `GUARDIAN_MINOR_LAST_GUARDIAN` — cannot leave a minor without any guardian; handoff to a new guardian must complete first)",
+        "deleting (soft-delete) → when the removed guardian was is_primary=true, auto-elect a new primary from the earliest-added remaining active guardian; fire PrimaryGuardianChanged",
+        "deleting (soft-delete) → fire GuardianRemoved",
+        "deleting (hard-delete) → allowed only via the CASCADE FK from athlete_id (Athlete hard-purge) OR after 7-year retention past deleted_at",
+        "post-commit invariant recheck → if this is a new primary guardian, verify the partial unique index still holds; fire diagnostic event if not (race caught by ReconcilePrimaryGuardianInvariantJob)"
+      ]
+    }
+  ]
+}

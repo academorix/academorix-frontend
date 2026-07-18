@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/session/policies",
+  "$version": 1,
+  "title": "session — authorization policies",
+  "description": "Two policies. SessionPolicy narrows by scope suffix — admin/owner see all; coaches see .own; reception sees .branch; athletes/guardians see rows where their attendance exists. SessionAttendancePolicy piggybacks on the parent session's visibility.",
+  "policies": [
+    {
+      "model": "Session",
+      "class": "Academorix\\Sports\\Session\\Policies\\SessionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "sessions.viewAny", "scope": "Row-level filter per suffix. .tenant = admin/owner, .branch = reception (branches they manage), .own = coach (assigned), athlete/guardian = attendance-derived." },
+        { "action": "view", "permission": "sessions.view", "scope": "Single-row check applying visibility filter." },
+        { "action": "viewNotes", "permission": "sessions.viewNotes", "scope": "Admin/owner/coach only. session_notes private-tier." },
+        { "action": "create", "permission": "sessions.create", "scope": "Admin/owner/coach. Gated by sports_sessions + session_slot." },
+        { "action": "update", "permission": "sessions.update", "scope": "Admin/owner update all fields. Coaches update curriculum, notes, coach_rating_input on sessions they're assigned to." },
+        { "action": "reschedule", "permission": "sessions.reschedule", "scope": "Admin/owner/coach. <24h shortNotice for coach requires additional permission." },
+        { "action": "cancel", "permission": "sessions.cancel", "scope": "Admin/owner/coach. Short-notice cancellations require sessions.cancel.short-notice (admin/owner only)." },
+        { "action": "cancelShortNotice", "permission": "sessions.cancel.short-notice", "scope": "Admin/owner only. Required for cancellations <24h before starts_at." },
+        { "action": "assignCoach", "permission": "sessions.assign_coach", "scope": "Admin/owner. Short-notice reassignments require sessions.assign_coach.short-notice (owner only)." },
+        { "action": "assignCoachShortNotice", "permission": "sessions.assign_coach.short-notice", "scope": "Owner only." },
+        { "action": "confirm", "permission": "sessions.confirm", "scope": "Admin/owner/coach." },
+        { "action": "start", "permission": "sessions.start", "scope": "Admin/owner/coach/reception." },
+        { "action": "complete", "permission": "sessions.complete", "scope": "Admin/owner/coach/reception." },
+        { "action": "delete", "permission": "sessions.delete", "scope": "Admin/owner only. Soft-delete." },
+        { "action": "archive", "permission": "sessions.archive", "scope": "Admin/owner." },
+        { "action": "restore", "permission": "sessions.restore", "scope": "Admin/owner." },
+        { "action": "flagSafeguarding", "permission": "sessions.safeguarding.flag", "scope": "Admin/owner/coach — coaches CAN flag (they observe the incident) but cannot READ across sessions (need-to-know)." },
+        { "action": "viewSafeguarding", "permission": "sessions.safeguarding.view", "scope": "Admin/owner only. Not seeded on coach." },
+        { "action": "rate", "permission": "sessions.rate", "scope": "Athlete/guardian for the athlete's attended sessions. Gated by session_coach_ratings entitlement." },
+        { "action": "platformViewAny", "permission": "platform.sessions.viewAny", "scope": "platform_admin only." },
+        { "action": "platformView", "permission": "platform.sessions.view", "scope": "platform_admin only." },
+        { "action": "platformViewSafeguarding", "permission": "platform.sessions.safeguarding.viewAny", "scope": "Platform safeguarding role only." }
+      ]
+    },
+    {
+      "model": "SessionAttendance",
+      "class": "Academorix\\Sports\\Session\\Policies\\SessionAttendancePolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "sessions.view", "scope": "Piggybacks on parent session visibility." },
+        { "action": "view", "permission": "sessions.view", "scope": "Same." },
+        { "action": "viewNotes", "permission": "sessions.attendance.viewNotes", "scope": "Admin/owner/coach only." },
+        { "action": "create", "permission": "sessions.attendance.record", "scope": "Admin/owner/coach/reception." },
+        { "action": "checkIn", "permission": "sessions.attendance.record", "scope": "Same." },
+        { "action": "markAbsent", "permission": "sessions.attendance.record", "scope": "Same." },
+        { "action": "markLate", "permission": "sessions.attendance.record", "scope": "Same." },
+        { "action": "delete", "permission": "sessions.attendance.remove", "scope": "Admin/owner only — attendance is safeguarding trail." }
+      ]
+    }
+  ]
+}

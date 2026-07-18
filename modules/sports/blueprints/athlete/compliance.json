@@ -1,0 +1,113 @@
+{
+  "id": "academorix://modules/athlete/compliance",
+  "$version": 1,
+  "title": "athlete — compliance evidence",
+  "description": "Athlete module is safeguarding + regulated_health-adjacent. Every consent record, medical mutation, safeguarding pause, and withdrawal is a compliance-relevant event. GDPR Art. 8 (parental consent for minors), GDPR Art. 9 (special-category data — health), COPPA (US minors under 13), FERPA (US school records), SOC 2 CC6.3 (segregation of duties — safeguarding_officer separate from admin for medical + pause), CC6.7 (access revocation on Archive), anti-discrimination compliance (withdrawal reasons audited for pattern detection).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Emergency contact (name + phone + relationship) and medical fields are HR + safeguarding necessity. Redacted to [REDACTED] 90 days post-archive (Athlete.deleted_at + 90 days) by PurgeArchivedAthletesJob. Employment/demographic metadata (name, DOB, dates, status) retained 7 years for legal record."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract",
+          "evidence": "The athlete relationship is contractual — the Athlete row IS the artefact of the enrollment agreement (or trial contract). The Finance module's Membership (Wave 4) supplies the consideration."
+        },
+        {
+          "article": "Art. 8",
+          "principle": "parental consent for children",
+          "evidence": "For minors (age_years < config.athlete.minor_min_age, default 16), consent MUST be recorded by a User with an active AthleteGuardian row + has_legal_custody=true. Wave 3a: soft-warn (rule fires warning); Wave 3b: hard-fail once AthleteGuardian module lands. The `athlete_consent_workflow` entitlement (Enterprise) adds the full recordable + expiring workflow with 12-month re-consent cadence."
+        },
+        {
+          "article": "Art. 9",
+          "principle": "special-category data — health",
+          "evidence": "Medical cluster (conditions / allergies / medications / notes) is regulated_health-tier under Art. 9. Three-layer gating: entitlement (opt-in per tenant), permission (athletes.manage.medical distinct from update), middleware (route-level 403 for unpermissioned callers). Writes audit-trail to a dedicated athlete_medical_history table with 7-year retention. Never surfaces in activity feed, analytics values, or realtime broadcasts."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Adult athletes see their own row via /me/athletes with full field visibility (including own medical + own emergency contact via the .own permission suffixes). Guardians see their assigned minors' rows. Downstream Wave 5 DSAR flow surfaces the full history including athlete_medical_history rows."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure — with medical-retention exception",
+          "evidence": "GDPR Art. 17(3)(b) permits retention where required by law (medical-record retention is a health-regulation + safeguarding-compliance requirement). Confidential PII (emergency_contact_*) + medical fields hard-redacted at 90-day mark post-archive; employment/demographic metadata retained 7 years; medical history retained 7 years even after tenant erasure (migrated to compliance-archive table)."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "Minor names are STRIPPED from cross-tenant platform-admin reads (support staff never see minors' names outside the tenant plane). Medical fields require three separate gating layers. Photo consent + third-party consent + medical consent are separate flags (granular consent, not blanket)."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Medical cache uses a dedicated Redis DB with allkeys-lfu eviction policy (not LRU) to prevent inadvertent re-fetches from creating audit-relevant read spikes. Medical audit stream uses a dedicated queue (`medical-audit`) with delivery-guarantee at-least-once + operator-approved workers only."
+        }
+      ]
+    },
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "verifiable parental consent for children under 13",
+          "evidence": "For US tenants (Region.country=US), athletes under 13 require consent_recorded_by_user_id with has_legal_custody=true. The AthleteGuardian module's verification_status must be `verified` (not `pending`) before consents record. Wave 3b hard-fails these checks; Wave 3a soft-warns."
+        }
+      ]
+    },
+    "ferpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "education-record privacy (US-only, when tenant business_type=school)",
+          "evidence": "Athlete profiles at school-type tenants inherit FERPA's parent-access rules — guardians see their children's records unconditionally; other guardians / peers do NOT. Enforced by the .own scope suffix + the branch narrowing."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "`athletes.manage.medical` is HR + safeguarding_officer + owner only. `athletes.pause` (safeguarding pause) is HR + branch_manager + admin + owner — coaches cannot unilaterally pause (retaliation safeguard). `platform.athletes.audit-medical` is super_admin only with two-person approval."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "access revocation SLA",
+          "evidence": "Athlete archival cascades to enrollment cancellation + team-membership removal in one transaction (with cascade=true). Full path completes within 24h SLA. Reconciler monitors + emits P1 signal for breaches."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "academorix.athlete.consent.expired_snapshot_total counter fires on the compliance dashboard when consent snapshots age past 365 days. Elevated indicates guardian outreach failure. academorix.athlete.medical_write.large_batch_total counter tracks bulk medical writes — outliers investigated for compromised HR account."
+        }
+      ]
+    },
+    "anti_discrimination": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "audit + pattern detection",
+          "evidence": "Every AthleteWithdrawn + AthletePausedForSafeguarding event carries the reason. Payload NOT exposed to tenant analytics dashboards; retained in audits + fed into the platform-side compliance dashboard for pattern detection (unusual clustering of pauses/withdrawals by protected characteristic — computed OUT of the tenant's view for regulator-compliance)."
+        }
+      ]
+    },
+    "safeguarding": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "medical clearance visibility",
+          "evidence": "Coaches see medical when the athlete's `consent_medical_disclosure` is true (via MedicalDisclosureGate). Coaches never see medical when the flag is false — the redactor pipeline strips fields for callers without `.medical.own` OR `.medical.coach` permission. This forces the tenant to design a coach-briefing workflow that respects guardian preferences."
+        },
+        {
+          "principle": "pause audit trail",
+          "evidence": "AthletePausedForSafeguarding is retained 7 years. Every pause reason is compliance-visible. Safeguarding officers can audit-export via `athletes.audit.medical` + the safeguarding.pause_audit route (Wave 4+)."
+        }
+      ]
+    }
+  }
+}

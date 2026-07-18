@@ -1,0 +1,149 @@
+{
+  "id": "athlete.resources.athlete.create",
+  "title": "Add athlete",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/athletes/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "athlete", "entity": "athlete", "action": "create" },
+  "requiresPermission": "athletes.create",
+  "dataSources": [
+    {
+      "name": "branches",
+      "kind": "http.get",
+      "url": "/api/v1/branches?filter[status]=active",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "features",
+      "kind": "http.get",
+      "url": "/api/v1/features",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-4" },
+      "actions": {
+        "onSubmit": {
+          "kind": "http.post",
+          "url": "/api/v1/athletes",
+          "body": "$form",
+          "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/athletes/' + $response.data.id" }
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Add athlete" }
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "props": { "children": "Identity" } },
+            {
+              "kind": "CardBody",
+              "props": { "className": "grid grid-cols-2 gap-4" },
+              "children": [
+                { "kind": "TextField", "props": { "name": "first_name", "label": "First name", "isRequired": true, "className": "col-span-1" } },
+                { "kind": "TextField", "props": { "name": "last_name", "label": "Last name", "isRequired": true, "className": "col-span-1" } },
+                { "kind": "TextField", "props": { "name": "middle_name", "label": "Middle name (optional)", "className": "col-span-1" } },
+                { "kind": "TextField", "props": { "name": "preferred_name", "label": "Preferred name (call-me name)", "className": "col-span-1" } },
+                { "kind": "DateField", "props": { "name": "date_of_birth", "label": "Date of birth", "isRequired": true, "className": "col-span-1", "helpText": "Immutable after create — double-check before saving." } },
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "gender", "label": "Gender", "menuTrigger": "focus", "className": "col-span-1" },
+                  "props_items": [
+                    { "id": "male", "label": "Male" },
+                    { "id": "female", "label": "Female" },
+                    { "id": "non_binary", "label": "Non-binary" },
+                    { "id": "prefer_not_to_say", "label": "Prefer not to say" },
+                    { "id": "other", "label": "Other" }
+                  ]
+                },
+                { "kind": "TextField", "props": { "name": "pronouns", "label": "Pronouns", "className": "col-span-1", "placeholder": "e.g. she/her, they/them" } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "props": { "children": "Location + account" } },
+            {
+              "kind": "CardBody",
+              "props": { "className": "grid grid-cols-2 gap-4" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "branch_id", "label": "Branch", "isRequired": true, "menuTrigger": "focus", "className": "col-span-2" },
+                  "bindings": { "items": { "$ref": "branches" } }
+                },
+                { "kind": "TextField", "props": { "name": "external_id", "label": "External CRM ID (optional)", "className": "col-span-1" } },
+                { "kind": "TextField", "props": { "name": "primary_language", "label": "Primary language (BCP-47)", "className": "col-span-1", "placeholder": "e.g. en-US, ar-EG" } },
+                { "kind": "TextField", "props": { "name": "profile_photo_url", "label": "Profile photo URL (optional)", "className": "col-span-2" } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "requiresPermission": "athletes.manage.emergency_contact",
+          "children": [
+            { "kind": "CardHeader", "props": { "children": "Emergency contact (confidential)" } },
+            {
+              "kind": "CardBody",
+              "props": { "className": "grid grid-cols-2 gap-4" },
+              "children": [
+                {
+                  "kind": "Alert",
+                  "props": { "variant": "warning", "className": "col-span-2", "title": "Confidential", "children": "Emergency contact data is CONFIDENTIAL-tier. Redacted 90 days post-archive per retention policy." }
+                },
+                { "kind": "TextField", "props": { "name": "emergency_contact_name", "label": "Contact name", "className": "col-span-1" } },
+                { "kind": "TextField", "props": { "name": "emergency_contact_phone", "label": "Contact phone (E.164)", "className": "col-span-1", "placeholder": "+15551234567" } },
+                { "kind": "TextField", "props": { "name": "emergency_contact_relationship", "label": "Relationship", "className": "col-span-1", "placeholder": "e.g. mother, father, guardian" } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "requiresPermission": "athletes.manage.consents",
+          "children": [
+            { "kind": "CardHeader", "props": { "children": "Consent snapshot" } },
+            {
+              "kind": "CardBody",
+              "props": { "className": "flex flex-col gap-3" },
+              "children": [
+                {
+                  "kind": "Alert",
+                  "props": { "variant": "info", "title": "Parental consent", "children": "For athletes under 16, consents must be recorded by an authorised legal guardian." }
+                },
+                { "kind": "Switch", "props": { "name": "consent_photo_release", "label": "Photo release — use in tenant marketing / social" } },
+                { "kind": "Switch", "props": { "name": "consent_medical_disclosure", "label": "Medical disclosure — allow coaches to see medical info" } },
+                { "kind": "Switch", "props": { "name": "consent_third_party", "label": "Third-party sharing — insurance / subprocessors" } },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "consent_recorded_by_user_id", "label": "Recorded by (User ULID)", "helpText": "For minors, must be an active guardian with legal custody." }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-end gap-3 pt-4" },
+          "children": [
+            { "kind": "Button", "props": { "variant": "neutral", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "to": "/tenant/athletes" } } },
+            { "kind": "Button", "props": { "type": "submit", "variant": "primary", "children": "Create athlete" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

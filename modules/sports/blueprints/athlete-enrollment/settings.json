@@ -1,0 +1,51 @@
+{
+  "id": "academorix://modules/athlete-enrollment/settings",
+  "$version": 1,
+  "title": "athlete-enrollment — settings",
+  "description": "Tenant-facing preferences for enrollment workflow (deadline reminders, late-registration fees, waitlist policy).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "athlete_enrollment",
+      "class": "Academorix\\Sports\\AthleteEnrollment\\Settings\\AthleteEnrollmentSettings",
+      "label": "Enrollments",
+      "description": "Tenant-wide enrollment workflow settings.",
+      "icon": "clipboard-document-list",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 47,
+      "permission": "enrollments.viewAny",
+      "sections": [
+        {
+          "label": "Deadlines",
+          "icon": "clock",
+          "sortOrder": 1,
+          "fields": [
+            { "name": "expiry_ttl_days", "controlType": "number", "label": "Enrollment expiry TTL (days past registration close)", "defaultValue": 30, "min": 1, "max": 365, "sortOrder": 1 },
+            { "name": "provisional_ttl_days", "controlType": "number", "label": "Provisional enrollment TTL (days)", "defaultValue": 14, "min": 1, "max": 90, "requiresEntitlement": "athlete_enrollment_provisional", "sortOrder": 2 },
+            { "name": "deadline_thresholds_days", "controlType": "multi-select", "label": "Deadline reminder cadence (days before close)", "defaultValue": [14, 7, 1], "options": { "30": "30 days", "14": "14 days", "7": "7 days", "3": "3 days", "1": "1 day" }, "sortOrder": 3 }
+          ]
+        },
+        {
+          "label": "Waitlist",
+          "icon": "queue-list",
+          "sortOrder": 2,
+          "requiresEntitlement": "athlete_enrollment_waitlist",
+          "fields": [
+            { "name": "auto_promote_from_waitlist", "controlType": "toggle", "label": "Automatically promote waitlisted enrollments when capacity opens", "defaultValue": true, "sortOrder": 1 }
+          ]
+        },
+        {
+          "label": "Late registration",
+          "icon": "banknotes",
+          "sortOrder": 3,
+          "fields": [
+            { "name": "allow_late_registration", "controlType": "toggle", "label": "Allow late enrollments after registration closes", "defaultValue": true, "sortOrder": 1 },
+            { "name": "late_registration_fee_cents", "controlType": "number", "label": "Late registration fee (cents)", "defaultValue": 0, "min": 0, "max": 100000, "helpText": "Additional fee applied to late enrollments. Wave 4 Finance charges this.", "sortOrder": 2 }
+          ]
+        }
+      ]
+    }
+  ]
+}

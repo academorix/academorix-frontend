@@ -1,0 +1,177 @@
+{
+  "id": "academorix://modules/sports-registry/schemas/position",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Position",
+  "description": "Sport-specific role / position within a Discipline. One Discipline hasMany Positions (football_11v11 has goalkeeper, defender, midfielder, forward). Carries `tenant_id` NULLABLE — NULL = platform-scoped, non-null = tenant custom (Enterprise). Also `discipline_id` FK — parent Discipline must be same-tenant OR platform-seeded. Slug IMMUTABLE post-create; discipline_id IMMUTABLE post-create; is_platform_seeded IMMUTABLE. NEVER application_id / region_id / branch_id / organization_id / scope_node_id / parent_id.",
+  "type": "object",
+  "x-module": "sports-registry",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "positions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pos_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Registry\\Models\\Position",
+    "interface": "Academorix\\Sports\\Registry\\Contracts\\Data\\PositionInterface",
+    "implements": ["Academorix\\Sports\\Registry\\Contracts\\Data\\PositionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasSlug",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "HasTranslations",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_active": "boolean",
+      "is_platform_seeded": "boolean",
+      "is_field_position": "boolean",
+      "is_offensive": "boolean",
+      "is_defensive": "boolean",
+      "typical_jersey_range_min": "integer",
+      "typical_jersey_range_max": "integer",
+      "sort_order": "integer",
+      "metadata": "array"
+    },
+    "appends": ["display_label", "downstream_reference_count"],
+    "observers": ["PositionObserver"],
+    "relations_note": "belongsTo disciplines::Discipline via discipline_id (RESTRICT). belongsTo tenancy::Tenant via tenant_id (CASCADE, nullable).",
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Third-level table. Unique on (discipline_id, slug) partial.",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `pos_<26 chars>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" },
+        "description": "NULL = platform-scoped. Non-null = tenant custom."
+      },
+      "discipline_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "disciplines", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" },
+        "description": "The parent Discipline. RESTRICT. IMMUTABLE post-create."
+      },
+      "name": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Display name (e.g. 'Goalkeeper', 'Center Back', 'Point Guard', 'Freestyler', 'Coach'). Localizable."
+      },
+      "slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "URL-safe identifier. Convention: prefix with the parent Sport's slug (e.g. `football_goalkeeper`, `basketball_point_guard`, `swimming_freestyler`). Regex `^[a-z][a-z0-9_]*$`. IMMUTABLE post-create."
+      },
+      "description": { "type": "text", "nullable": true, "description": "Free-form description. Localizable." },
+      "is_field_position": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "True = an on-field / on-court playing position (goalkeeper, center, freestyler). False = a bench / reserve / support role (assistant_coach, medical_staff, kit_manager). Filters the tenant picker."
+      },
+      "is_offensive": {
+        "type": "boolean",
+        "nullable": true,
+        "description": "Advisory offensive-role flag (forward, striker, point_guard). Null = neutral (midfielder). Shapes downstream lineup-preview UI."
+      },
+      "is_defensive": {
+        "type": "boolean",
+        "nullable": true,
+        "description": "Advisory defensive-role flag (goalkeeper, center_back, defender). Null = neutral. Not mutually exclusive with is_offensive (a midfielder can be tagged is_offensive=true + is_defensive=true = box-to-box)."
+      },
+      "typical_jersey_range_min": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Advisory minimum jersey number (goalkeeper = 1 in football, 30 in ice hockey). 0-999."
+      },
+      "typical_jersey_range_max": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Advisory maximum jersey number. 0-999."
+      },
+      "sort_order": { "type": "integer", "nullable": false, "default": 100 },
+      "is_active": { "type": "boolean", "nullable": false, "default": true },
+      "is_platform_seeded": { "type": "boolean", "nullable": false, "default": false, "description": "IMMUTABLE." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["discipline_id", "slug"],
+        "unique": true,
+        "name": "positions_discipline_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "slug"], "unique": false, "name": "positions_tenant_slug_idx" },
+      { "columns": ["discipline_id", "sort_order"], "unique": false, "name": "positions_picker_idx" },
+      { "columns": ["discipline_id", "is_field_position"], "unique": false, "name": "positions_field_filter_idx", "description": "Filter query for on-field vs bench pickers." },
+      { "columns": ["is_platform_seeded", "is_active"], "unique": false, "name": "positions_flags_idx" }
+    ]
+  },
+  "required": ["id", "discipline_id", "name", "slug", "is_field_position", "sort_order", "is_active", "is_platform_seeded", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pos_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "discipline_id": { "type": "string", "pattern": "^dis_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "minLength": 2, "maxLength": 64 },
+    "slug": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$" },
+    "description": { "type": ["string", "null"], "maxLength": 500 },
+    "is_field_position": { "type": "boolean" },
+    "is_offensive": { "type": ["boolean", "null"] },
+    "is_defensive": { "type": ["boolean", "null"] },
+    "typical_jersey_range_min": { "type": ["integer", "null"], "minimum": 0, "maximum": 999 },
+    "typical_jersey_range_max": { "type": ["integer", "null"], "minimum": 0, "maximum": 999 },
+    "sort_order": { "type": "integer", "minimum": 0, "maximum": 9999 },
+    "is_active": { "type": "boolean" },
+    "is_platform_seeded": { "type": "boolean" },
+    "metadata": { "type": ["object", "null"] },
+    "display_label": { "type": "string" },
+    "downstream_reference_count": { "type": "integer", "minimum": 0 },
+    "created_by": { "type": ["string", "null"] },
+    "updated_by": { "type": ["string", "null"] },
+    "deleted_by": { "type": ["string", "null"] },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["display_label", "downstream_reference_count"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`pos_<26>`)", "slug (case-insensitive within a resolved parent Discipline)"]
+  },
+  "invariants": [
+    "slug matches `^[a-z][a-z0-9_]*$` AND not in reserved list.",
+    "typical_jersey_range_min <= typical_jersey_range_max when both set; each 0..999.",
+    "discipline_id IMMUTABLE post-create.",
+    "slug + tenant_id + is_platform_seeded IMMUTABLE post-create.",
+    "Parent Discipline must be same-tenant OR platform-seeded (CROSS_TENANT_REGISTRY_REFERENCE).",
+    "Deactivation refuses when downstream references exist (POSITION_REFERENCE_IN_USE 409).",
+    "Reactivation refuses when parent Discipline is is_active=false."
+  ]
+}

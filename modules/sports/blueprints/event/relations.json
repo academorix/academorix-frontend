@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/event/relations",
+  "$version": 1,
+  "title": "event — model relationships",
+  "description": "Event sits below Tenant + Organization + optionally Branch + optionally Season. Its outbound relations reach up to those parents; its inbound relations arrive from Session (Wave 3b), teams::EventTeam (Wave 2b nullable), athlete-enrollment (Wave 3+). Every FK is same-tenant. Event NEVER carries application_id / region_id / scope_node_id.",
+  "internal": [
+    {
+      "from": "Event",
+      "kind": "hasMany",
+      "to": "EventFacility",
+      "foreignKey": "event_id",
+      "description": "Facilities attached to this event via the event_facilities pivot."
+    },
+    {
+      "from": "Event",
+      "kind": "hasOne",
+      "to": "EventFacility",
+      "foreignKey": "event_id",
+      "constraints": "WHERE is_primary=true AND deleted_at IS NULL",
+      "as": "primaryFacility",
+      "description": "The primary facility for this event."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Event",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Event",
+      "kind": "belongsTo",
+      "to": "organization::Organization",
+      "foreignKey": "organization_id",
+      "onDelete": "restrict",
+      "description": "Required. RESTRICT because archiving an org with active events must fail loudly."
+    },
+    {
+      "from": "Event",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Optional. When set, event is single-branch. RESTRICT — branch closure with active events triggers the branch-closure listener (writes warning, tenant decides how to handle)."
+    },
+    {
+      "from": "Event",
+      "kind": "belongsTo",
+      "to": "season::Season",
+      "foreignKey": "season_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Optional. Stand-alone events (awards ceremonies, camp openings not tied to a season) have season_id = NULL."
+    },
+    {
+      "from": "EventFacility",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "EventFacility",
+      "kind": "belongsTo",
+      "to": "event::Event",
+      "foreignKey": "event_id",
+      "onDelete": "cascade",
+      "description": "CASCADE — pivot lifetime bounded by the event."
+    },
+    {
+      "from": "EventFacility",
+      "kind": "belongsTo",
+      "to": "facility::Facility",
+      "foreignKey": "facility_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — cannot retire a facility with active event attachments."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream domain models compose the BelongsToEvent trait shipped here. They store the linkage as event_id.",
+    "examples": [
+      "session::Session.event_id — nullable. A session may or may not be part of an event's schedule (Wave 3b).",
+      "teams::EventTeam.event_id — nullable in Wave 2b; Wave 3 migration makes required + FK-constrained. Team's participation in an event.",
+      "athlete-enrollment::AthleteEnrollment.event_id — Wave 3+. Some enrollments target a specific event rather than a season."
+    ],
+    "onDelete": "RESTRICT by convention. EventObserver refuses to archive an Event while ANY inbound row still references it (returns EVENT_HAS_ACTIVE_REGISTRATIONS 409). The FK RESTRICT is the fallback."
+  },
+  "morphs": [],
+  "notes": [
+    "Event is NOT a scope consumer. scope_node_id on events is forbidden per tenancy-columns.md §4.",
+    "Forbidden columns per tenancy-columns.md §5: application_id (Event is NOT one of the 8 rows in §2), region_id (Events cascade through branch.region_id), scope_node_id.",
+    "Event does not carry parent_id — events are flat. A tournament with prelims + finals is TWO Events, related via the event_series metadata field OR future event_relations pivot.",
+    "The event_facilities pivot exists because ResourceBookings (facility module) already own the per-slot reservation; event_facilities is the composition contract — one row per facility per event, not per slot. The ReconcileEventFacilityBookingsJob keeps event_facilities and resource_bookings in sync."
+  ]
+}

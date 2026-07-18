@@ -1,0 +1,70 @@
+{
+  "$version": 1,
+  "title": "AthleteEnrollment lifecycle — sample scenarios",
+  "description": "Reference examples of common enrollment flows for the admin tour + playground.",
+  "samples": [
+    {
+      "name": "Straightforward paid enrollment (minor)",
+      "flow": [
+        { "status": "submitted", "at": "2026-06-01T10:00:00Z", "event": "EnrollmentSubmitted", "notes": "Parent submits via self-serve; age_group_snapshot_id resolved in-band" },
+        { "status": "payment_pending", "at": "2026-06-01T10:00:01Z", "notes": "price_amount_cents > 0 + payment_status='pending'" },
+        { "status": "consent_pending", "at": "2026-06-03T15:00:00Z", "notes": "Payment cleared via Wave 4 Finance webhook; consent still required (minor athlete without recorded consents)" },
+        { "status": "confirmed", "at": "2026-06-05T10:00:00Z", "event": "EnrollmentConfirmed", "notes": "Guardian records consents; consent_snapshot captured" },
+        { "status": "active", "at": "2026-09-01T00:00:00Z", "event": "EnrollmentActivated + EnrollmentTeamMemberCreated", "notes": "Season starts; ActivateConfirmedEnrollmentsJob activates + atomically creates TeamMember" },
+        { "status": "completed", "at": "2027-06-30T23:59:59Z", "event": "EnrollmentCompleted", "notes": "Season ends via SeasonCompleted cascade" }
+      ]
+    },
+    {
+      "name": "Trial conversion",
+      "flow": [
+        { "status": "submitted", "at": "2026-06-01T10:00:00Z", "notes": "enrollment_type='trial_converted' + source_trial_id set to the TeamTrial that converted" },
+        { "status": "confirmed", "at": "2026-06-01T10:00:01Z", "notes": "Direct-to-confirmed because trial covered payment + consent already recorded" },
+        { "status": "active", "at": "2026-06-01T10:00:02Z", "event": "EnrollmentTeamMemberCreated" }
+      ]
+    },
+    {
+      "name": "Waitlist promotion",
+      "flow": [
+        { "status": "submitted", "at": "2026-06-01T10:00:00Z", "notes": "Team at capacity" },
+        { "status": "waitlisted", "at": "2026-06-01T10:00:01Z", "event": "EnrollmentWaitlisted", "notes": "Automatic waitlist. waitlist_position = 3" },
+        { "status": "submitted", "at": "2026-06-15T14:00:00Z", "event": "EnrollmentPromotedFromWaitlist", "notes": "Slot opened via another athlete's withdrawal; PromoteWaitlistedEnrollmentsJob promoted this enrollment" },
+        { "status": "confirmed", "at": "2026-06-15T14:05:00Z", "notes": "Payment + consent already handled during waitlist period" },
+        { "status": "active", "at": "2026-09-01T00:00:00Z", "event": "EnrollmentActivated + EnrollmentTeamMemberCreated" }
+      ]
+    },
+    {
+      "name": "Provisional (Enterprise)",
+      "flow": [
+        { "status": "submitted", "at": "2026-08-25T10:00:00Z", "event": "EnrollmentProvisionalCreated", "notes": "enrollment_type='provisional'. Athlete is minor; consent snapshot missing but tenant carries athlete_enrollment_provisional entitlement" },
+        { "status": "consent_pending", "at": "2026-08-25T10:00:01Z" },
+        { "status": "confirmed", "at": "2026-09-01T09:00:00Z", "event": "EnrollmentConsentReceived + EnrollmentConfirmed", "notes": "Guardian recorded consents; enrollment auto-transitions to confirmed" },
+        { "status": "active", "at": "2026-09-01T09:00:02Z", "event": "EnrollmentTeamMemberCreated" }
+      ]
+    },
+    {
+      "name": "Withdrawal mid-season",
+      "flow": [
+        { "status": "submitted", "at": "2026-06-01T10:00:00Z" },
+        { "status": "active", "at": "2026-09-01T00:00:00Z" },
+        { "status": "withdrawn", "at": "2026-11-15T14:00:00Z", "event": "EnrollmentWithdrawn", "notes": "Parent invokes /me/enrollments/{id}/withdraw with withdrawal_reason=relocated" }
+      ]
+    },
+    {
+      "name": "Expiry (regulatory-sensitive scenarios)",
+      "flow": [
+        { "status": "submitted", "at": "2026-06-01T10:00:00Z" },
+        { "status": "payment_pending", "at": "2026-06-01T10:00:01Z" },
+        { "status": "expired", "at": "2026-08-30T06:00:00Z", "event": "EnrollmentExpired", "notes": "Season's registration_closes_at was 2026-07-31; ExpireExpiredProvisionalEnrollmentsJob transitioned to expired after 30-day TTL" }
+      ]
+    },
+    {
+      "name": "Atomicity failure (rare, P1)",
+      "flow": [
+        { "status": "confirmed", "at": "2026-09-01T00:00:00Z" },
+        { "status": "confirmed", "at": "2026-09-01T00:15:00Z", "event": "EnrollmentAtomicityFailed", "notes": "ActivateConfirmedEnrollmentsJob attempted conversion; DB deadlock rolled back. P1 signal fired. Enrollment stays in confirmed" },
+        { "status": "confirmed", "at": "2026-09-01T00:30:00Z", "notes": "Job retries" },
+        { "status": "active", "at": "2026-09-01T00:30:02Z", "event": "EnrollmentActivated + EnrollmentTeamMemberCreated", "notes": "Retry succeeded" }
+      ]
+    }
+  ]
+}

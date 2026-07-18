@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/athlete/macros",
+  "$version": 1,
+  "title": "athlete — published macros",
+  "description": "Two request-level macros that surface the resolved active athlete from the RequestContext. Only /me/athletes routes + per-athlete sub-routes (medical / emergency-contact / consents) load this.",
+  "namespace_note": "Macros extend Illuminate\\Http\\Request. Middleware-set context bleeds through the Request accessor without needing to plumb it through service constructors.",
+  "macros": [
+    {
+      "name": "Request::activeAthlete",
+      "signature": "Request::activeAthlete(): ?Athlete",
+      "adds": "A single accessor on the framework Request class that returns the resolved Athlete model (or null when no athlete context).",
+      "description": "Reads from RequestContext::athlete() set by the route-model binding in per-athlete routes. Lazy-loads the model on first access.",
+      "registered_by": "Academorix\\Sports\\Athlete\\Providers\\AthleteServiceProvider::boot()",
+      "example": "public function show(Request $request): JsonResponse\n{\n    $athlete = $request->activeAthlete();\n    if ($athlete === null) throw new NoActiveAthleteException();\n    // ...\n}"
+    },
+    {
+      "name": "Request::activeAthleteId",
+      "signature": "Request::activeAthleteId(): ?string",
+      "adds": "Convenience accessor returning just the ID.",
+      "example": "$enrollment = AthleteEnrollment::create([\n    'athlete_id' => $request->activeAthleteId(),\n    // ...\n]);"
+    }
+  ],
+  "blueprint_macros": [
+    {
+      "name": "Blueprint::athleteEnrollmentTimestamps",
+      "signature": "Blueprint::athleteEnrollmentTimestamps(): void",
+      "adds": "Adds the shared column family for athlete-lifecycle-adjacent tables: enrolled_at (datetime) + left_at (datetime, nullable). Used by future athlete_branches (Wave 3b multi-branch pivot) + attendance::AttendanceRecord (Wave 4).",
+      "columns": [
+        "enrolled_at: timestamptz NOT NULL",
+        "left_at: timestamptz NULL"
+      ]
+    },
+    {
+      "name": "Blueprint::withdrawalFields",
+      "signature": "Blueprint::withdrawalFields(): void",
+      "adds": "Adds the withdrawal-reason column family: withdrawal_reason (enum, nullable) + withdrawal_notes (text, nullable) + withdrawn_at (date, nullable) + withdrawn_by_user_id (uuid, nullable). Used by Athlete + AthleteEnrollment + any future withdrawal-tracking table.",
+      "columns": [
+        "withdrawal_reason: enum('relocated','graduated_out','lost_interest','financial','injury','disciplinary','conflict','other') NULL",
+        "withdrawal_notes: text NULL",
+        "withdrawn_at: date NULL",
+        "withdrawn_by_user_id: uuid NULL"
+      ]
+    }
+  ]
+}

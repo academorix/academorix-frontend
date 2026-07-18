@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/athlete-enrollment/notifications",
+  "$version": 1,
+  "title": "athlete-enrollment — notification classes + categories",
+  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Notifications",
+  "notifications": [
+    "EnrollmentSubmittedNotification",
+    "EnrollmentConfirmedNotification",
+    "EnrollmentActivatedNotification",
+    "EnrollmentPaymentPendingNotification",
+    "EnrollmentConsentPendingNotification",
+    "EnrollmentWaitlistedNotification",
+    "EnrollmentPromotedFromWaitlistNotification",
+    "EnrollmentWithdrawnNotification",
+    "EnrollmentExpelledNotification",
+    "EnrollmentExpiredNotification",
+    "EnrollmentDeadlineApproachingNotification",
+    "EnrollmentCompletedNotification"
+  ],
+  "categories": [
+    { "slug": "enrollment.submitted", "display_name": "Enrollment submitted", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.confirmed", "display_name": "Enrollment confirmed", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.activated", "display_name": "Enrollment activated — welcome to the team", "description": "Sent when the athlete goes live on the roster. Celebratory.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.payment_pending", "display_name": "Enrollment awaiting payment", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.consent_pending", "display_name": "Enrollment awaiting consent", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.waitlisted", "display_name": "Enrollment on waitlist", "description": "Includes waitlist position + expected wait time estimate.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.promoted_from_waitlist", "display_name": "Enrollment promoted from waitlist", "description": "Cannot-opt-out — the guardian wants to know the moment a slot opens.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.withdrawn", "display_name": "Enrollment withdrawn", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.expelled", "display_name": "Enrollment expelled", "description": "Disciplinary. Cannot-opt-out.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.expired", "display_name": "Enrollment expired", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.deadline_approaching", "display_name": "Enrollment deadline approaching", "description": "Sent at 14/7/1-day thresholds before season registration closes.", "default_channels": ["mail", "in_app"], "priority": "transactional", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true },
+    { "slug": "enrollment.completed", "display_name": "Enrollment completed — season ended", "description": "Celebratory. Sent at end-of-season.", "default_channels": ["mail", "in_app"], "priority": "informational", "consent_tier": "transactional_required", "opt_out_allowed": false, "is_system": true }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "id": "athlete_guardian.resources.athlete-guardian.list",
+  "title": "Guardians",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/athletes/{athlete_id}/guardians",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "athlete-guardian", "entity": "athlete-guardian", "action": "list" },
+  "requiresPermission": "athlete_guardians.viewAny",
+  "dataSources": [
+    {
+      "name": "athlete",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/athletes/' + $route.athlete_id",
+      "unwrap": "data"
+    },
+    {
+      "name": "guardians",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/athletes/' + $route.athlete_id + '/guardians'",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "features",
+      "kind": "http.get",
+      "url": "/api/v1/features",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Guardians for ' + $ref('athlete.display_name')" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "The parents and legal guardians responsible for this athlete." }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "user-plus",
+                "children": "Add guardian"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/athletes/' + $route.athlete_id + '/guardians/add'"
+                }
+              },
+              "bindings": {
+                "disabled": { "$expr": "!$ref('features.athlete_guardian.multi_guardian') && $ref('guardians').length >= 1" }
+              },
+              "requiresPermission": "athlete_guardians.create"
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "Minor athlete",
+            "children": "This athlete is a minor. At least one active guardian with legal custody is required for consent recording + safety escalation."
+          },
+          "bindings": { "hidden": { "$expr": "!$ref('athlete.is_minor')" } }
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Guardians table", "className": "w-full" },
+          "bindings": {
+            "rows": { "$ref": "guardians" },
+            "isLoading": { "$ref": "guardians.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "users", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No guardians yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Add the athlete's parent or legal guardian." } }
+            ]
+          },
+          "columns": [
+            {
+              "key": "guardian",
+              "label": "Guardian",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3" },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "src": { "$ref": "row.guardian_avatar_url" },
+                      "name": { "$ref": "row.guardian_display_name" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium" },
+                            "bindings": { "children": { "$ref": "row.guardian_display_name" } }
+                          },
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "xs", "variant": "primary" },
+                            "bindings": {
+                              "children": { "$children": "PRIMARY" },
+                              "hidden": { "$expr": "!row.is_primary" }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "row.relationship" } }
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "key": "verification",
+              "label": "Verification",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "athlete_guardian.verification-badge",
+                "bindings": {
+                  "verification_status": { "$ref": "row.verification_status" },
+                  "verification_method": { "$ref": "row.verification_method" },
+                  "verified_at": { "$ref": "row.verified_at" }
+                }
+              }
+            },
+            {
+              "key": "role_flags",
+              "label": "Role",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "athlete_guardian.guardian-role-flags",
+                "bindings": {
+                  "has_legal_custody": { "$ref": "row.has_legal_custody" },
+                  "can_pickup": { "$ref": "row.can_pickup" },
+                  "can_receive_communications": { "$ref": "row.can_receive_communications" },
+                  "can_authorise_medical_care": { "$ref": "row.can_authorise_medical_care" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/sports-registry/compliance",
+  "$version": 1,
+  "title": "sports-registry — compliance evidence",
+  "description": "The sports registry carries reference data (taxonomy names + slugs + governing bodies). No PII on any row. Zero third-party subprocessors. The compliance surface is narrow: mostly audit-trail integrity + data-minimisation attestation.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "The catalog stores only taxonomy metadata (name, slug, category, governing body). No user data, no athlete data, no PII of any kind. The `data/platform-sports-catalog.json` file is a static list of public sport identifiers — safe to ship as a bundled artifact."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Platform-seeded rows are permanent — but they carry no PII, so storage limitation doesn't apply to them under GDPR. Tenant customs follow the 730-day deactivation retention window (see retention.json)."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "Every Registry mutation is `Auditable`; every change writes to `audits` with actor, timestamp, changed_fields, request_id, before + after snapshots. Regular mutations retained 2 years; SportPrefixResolutionFailed events retained 7 years for compliance replay."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Every write path is behind SportPolicy / DisciplinePolicy / PositionPolicy. Platform rows are strictly read-only on the tenant plane. Custom writes are gated by both a permission (admin/owner) + an entitlement (sports_registry_custom, Enterprise-only). Cross-tenant references are refused at the observer + at the DB partial unique index layer."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "authorisation of changes to system components",
+          "evidence": "Slugs are IMMUTABLE post-create — a slug rename would silently orphan every downstream reference. is_platform_seeded is IMMUTABLE — any attempted flip is an audit-critical anomaly. tenant_id + parent references (sport_id / discipline_id) are IMMUTABLE. Every attempted violation writes to audits + fires a warn-severity SportPrefixResolutionFailed or dedicated observer refusal."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "10 health probes cover schema migration, catalog JSON parse-ability, platform catalog seeded state, tenant FK integrity, slug uniqueness, parent FK integrity, cross-tenant reference integrity (SECURITY-critical), resolver reachability, reconciler recency, drift-count bounded, purge queue drain. The DriftCountBounded probe catches downstream Wave 3 schema drift that would otherwise silently accumulate."
+        }
+      ]
+    }
+  }
+}

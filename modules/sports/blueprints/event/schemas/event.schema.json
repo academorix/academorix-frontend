@@ -1,0 +1,341 @@
+{
+  "id": "academorix://modules/event/schemas/event",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Event",
+  "description": "Sport competitive / social / educational event. Carries `tenant_id` + `organization_id` (required) + `branch_id` (nullable — nullable when the event is org-wide or multi-branch) + `season_id` (nullable — nullable for stand-alone events). NEVER carries `application_id` (cascades through tenant), NEVER `region_id`, NEVER `scope_node_id`. State machine: draft -> announced -> registration_open -> registration_closed -> in_progress -> completed/cancelled -> archived. `primary_sport_key` is nullable (multi-sport events).",
+  "type": "object",
+  "x-module": "event",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "events",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "eve_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Event\\Models\\Event",
+    "interface": "Academorix\\Sports\\Event\\Contracts\\Data\\EventInterface",
+    "implements": ["Academorix\\Sports\\Event\\Contracts\\Data\\EventInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToOrganization",
+      "BelongsToBranch",
+      "BelongsToSeason",
+      "HasSlug",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "event_type": "EventType",
+      "format": "EventFormat",
+      "visibility": "EventVisibility",
+      "status": "EventStatus",
+      "gender_category": "EventGenderCategory",
+      "starts_at": "datetime",
+      "ends_at": "datetime",
+      "registration_opens_at": "datetime",
+      "registration_closes_at": "datetime",
+      "cancelled_at": "datetime",
+      "max_participants": "integer",
+      "max_teams": "integer",
+      "min_age": "integer",
+      "max_age": "integer",
+      "entry_fee_cents": "integer",
+      "prize_pool_cents": "integer",
+      "late_registration_fee_cents": "integer",
+      "allow_late_registration": "boolean",
+      "age_group_ids": "array",
+      "sponsors": "array",
+      "metadata": "array"
+    },
+    "appends": ["is_registration_open", "current_phase", "days_until_start", "registered_count", "is_full", "is_livestreamed"],
+    "observers": ["EventObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `eve_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "organization_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "organizations", "column": "id", "onDelete": "restrict" },
+        "description": "Required. Every event belongs to an organization within the tenant. Immutable post-create."
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" },
+        "description": "Nullable = org-wide or multi-branch event (regional tournament involving multiple branches). Immutable post-create. When set, branch.organization_id MUST equal event.organization_id."
+      },
+      "season_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "seasons", "column": "id", "onDelete": "restrict" },
+        "description": "Nullable for stand-alone events (awards ceremonies, camp-openings not tied to a competitive season). When set, season.tenant_id MUST equal event.tenant_id + season scoping tuple must be compatible."
+      },
+      "primary_sport_key": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Wave 3c sports registry key. Nullable = multi-sport event. Free-text pre-Wave-3c."
+      },
+      "name": { "type": "string", "length": 128, "nullable": false },
+      "slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Unique per (tenant_id, organization_id, slug) partial WHERE deleted_at IS NULL."
+      },
+      "event_type": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: tournament / match / showcase / workshop / camp / conference / social / graduation / awards_ceremony / open_house / other."
+      },
+      "format": {
+        "type": "string",
+        "length": 24,
+        "nullable": true,
+        "description": "Enum: single_elimination / double_elimination / round_robin / group_stage / seeded_bracket / friendly / clinic / lecture / social_only. Nullable — only meaningful for competitive event_types."
+      },
+      "description": { "type": "text", "nullable": true, "description": "Public-facing rich description (Markdown). Rendered on public event pages when visibility='public'." },
+      "private_notes": { "type": "text", "nullable": true, "description": "Admin-only internal notes. Never rendered to end-users." },
+      "visibility": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'tenant_only'",
+        "description": "Enum: public / tenant_only / participants_only / private. Controls who can see this event in listings."
+      },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "Enum: draft / announced / registration_open / registration_closed / in_progress / completed / cancelled / archived. Transitions via RollEventStatusJob or explicit actions."
+      },
+      "starts_at": { "type": "timestamptz", "nullable": false },
+      "ends_at": { "type": "timestamptz", "nullable": false, "description": "Must be >= starts_at (single-instant events allowed)." },
+      "timezone": { "type": "string", "length": 64, "nullable": true, "description": "IANA timezone. Falls back to branch -> region timezone at render time." },
+      "registration_opens_at": { "type": "timestamptz", "nullable": true },
+      "registration_closes_at": { "type": "timestamptz", "nullable": true },
+      "max_participants": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Total registration cap (individual entrants). Enforced by the registration surface (Wave 3+); this module ships the column."
+      },
+      "max_teams": { "type": "integer", "nullable": true, "description": "Team registration cap." },
+      "min_age": { "type": "integer", "nullable": true, "description": "Age eligibility floor. Range 3-100." },
+      "max_age": { "type": "integer", "nullable": true, "description": "Age eligibility ceiling. Range 3-100." },
+      "age_group_ids": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of age_group ULIDs (`age_<26>`) for narrower eligibility than [min_age, max_age]. When set, only athletes matching one of these age groups are eligible."
+      },
+      "gender_category": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: male / female / mixed / any. Null = any."
+      },
+      "entry_fee_cents": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Per-participant fee (or per-team for team events). 0 = free. Wave 4 finance module invoices per registered participant / team."
+      },
+      "entry_fee_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217. Required when entry_fee_cents > 0."
+      },
+      "prize_pool_cents": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Total prize pool (for tournaments / competitive events). Informational only."
+      },
+      "prize_pool_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217. Required when prize_pool_cents > 0." },
+      "livestream_url": { "type": "string", "length": 512, "nullable": true, "description": "Public livestream link (HTTPS). Rendered when visibility='public' + event.status IN (registration_open, registration_closed, in_progress)." },
+      "livestream_password": { "type": "string", "length": 128, "nullable": true, "description": "Private-tier — never rendered on public surfaces; delivered via notification to registered participants only." },
+      "hero_image_url": { "type": "string", "length": 512, "nullable": true },
+      "registration_form_id": { "type": "string", "length": 64, "nullable": true, "description": "Future forms module reference (Wave 4+). Optional custom registration form." },
+      "allow_late_registration": { "type": "boolean", "nullable": false, "default": false },
+      "late_registration_fee_cents": { "type": "integer", "nullable": false, "default": 0 },
+      "cancellation_reason": { "type": "text", "nullable": true, "description": "Required when status transitions to cancelled." },
+      "cancelled_at": { "type": "timestamptz", "nullable": true },
+      "cancelled_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "sponsors": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of sponsor objects: { name, logo_url, tier: 'gold' | 'silver' | 'bronze' | 'partner' }. Enterprise-only via entitlement."
+      },
+      "rules_document_url": { "type": "string", "length": 512, "nullable": true, "description": "Attach event rules PDF." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "organization_id", "slug"],
+        "unique": true,
+        "name": "events_scope_slug_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One live slug per (tenant, organization)."
+      },
+      { "columns": ["tenant_id", "status"], "name": "events_status_idx" },
+      { "columns": ["tenant_id", "starts_at"], "name": "events_starts_at_idx" },
+      { "columns": ["tenant_id", "organization_id", "starts_at"], "name": "events_org_starts_at_idx" },
+      { "columns": ["tenant_id", "branch_id", "starts_at"], "name": "events_branch_starts_at_idx", "predicate": "branch_id IS NOT NULL" },
+      { "columns": ["tenant_id", "season_id"], "name": "events_season_idx", "predicate": "season_id IS NOT NULL" },
+      { "columns": ["tenant_id", "visibility", "starts_at"], "name": "events_visibility_starts_at_idx" },
+      { "columns": ["tenant_id", "primary_sport_key"], "name": "events_sport_idx", "predicate": "primary_sport_key IS NOT NULL" },
+      { "columns": ["tenant_id", "event_type", "starts_at"], "name": "events_type_starts_at_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "organization_id",
+    "name",
+    "slug",
+    "event_type",
+    "visibility",
+    "status",
+    "starts_at",
+    "ends_at",
+    "entry_fee_cents",
+    "allow_late_registration",
+    "late_registration_fee_cents",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^eve_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "organization_id": { "type": "string", "pattern": "^org_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": ["string", "null"], "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "season_id": { "type": ["string", "null"], "pattern": "^sea_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "primary_sport_key": { "type": ["string", "null"], "maxLength": 32, "pattern": "^[a-z][a-z0-9_]*$" },
+    "name": { "type": "string", "minLength": 2, "maxLength": 128 },
+    "slug": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "event_type": {
+      "type": "string",
+      "enum": ["tournament", "match", "showcase", "workshop", "camp", "conference", "social", "graduation", "awards_ceremony", "open_house", "other"]
+    },
+    "format": {
+      "type": ["string", "null"],
+      "enum": [null, "single_elimination", "double_elimination", "round_robin", "group_stage", "seeded_bracket", "friendly", "clinic", "lecture", "social_only"]
+    },
+    "description": { "type": ["string", "null"] },
+    "private_notes": { "type": ["string", "null"] },
+    "visibility": {
+      "type": "string",
+      "enum": ["public", "tenant_only", "participants_only", "private"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "announced", "registration_open", "registration_closed", "in_progress", "completed", "cancelled", "archived"]
+    },
+    "starts_at": { "type": "string", "format": "date-time" },
+    "ends_at": { "type": "string", "format": "date-time" },
+    "timezone": { "type": ["string", "null"] },
+    "registration_opens_at": { "type": ["string", "null"], "format": "date-time" },
+    "registration_closes_at": { "type": ["string", "null"], "format": "date-time" },
+    "max_participants": { "type": ["integer", "null"], "minimum": 1 },
+    "max_teams": { "type": ["integer", "null"], "minimum": 1 },
+    "min_age": { "type": ["integer", "null"], "minimum": 3, "maximum": 100 },
+    "max_age": { "type": ["integer", "null"], "minimum": 3, "maximum": 100 },
+    "age_group_ids": {
+      "type": ["array", "null"],
+      "items": { "type": "string", "pattern": "^age_[0-9A-HJKMNP-TV-Z]{26}$" }
+    },
+    "gender_category": {
+      "type": ["string", "null"],
+      "enum": [null, "male", "female", "mixed", "any"]
+    },
+    "entry_fee_cents": { "type": "integer", "minimum": 0 },
+    "entry_fee_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "prize_pool_cents": { "type": ["integer", "null"], "minimum": 0 },
+    "prize_pool_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "livestream_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "livestream_password": { "type": ["string", "null"], "maxLength": 128 },
+    "hero_image_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "registration_form_id": { "type": ["string", "null"] },
+    "allow_late_registration": { "type": "boolean" },
+    "late_registration_fee_cents": { "type": "integer", "minimum": 0 },
+    "cancellation_reason": { "type": ["string", "null"] },
+    "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancelled_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "sponsors": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "maxLength": 128 },
+          "logo_url": { "type": ["string", "null"], "format": "uri" },
+          "tier": { "type": "string", "enum": ["gold", "silver", "bronze", "partner"] }
+        }
+      }
+    },
+    "rules_document_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["is_registration_open", "current_phase", "days_until_start", "registered_count", "is_full", "is_livestreamed"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`eve_<26>`)", "slug (case-insensitive, resolved within active tenant + organization)"]
+  },
+  "x-invariants": [
+    "ends_at >= starts_at",
+    "starts_at > created_at (events must be in the future at create time)",
+    "registration_opens_at IS NULL OR registration_opens_at <= starts_at",
+    "registration_closes_at IS NULL OR registration_closes_at > registration_opens_at",
+    "registration_closes_at IS NULL OR registration_closes_at <= starts_at",
+    "allow_late_registration=true implies late_registration_fee_cents > 0",
+    "min_age IS NULL OR max_age IS NULL OR min_age <= max_age",
+    "entry_fee_cents > 0 implies entry_fee_currency IS NOT NULL",
+    "prize_pool_cents > 0 implies prize_pool_currency IS NOT NULL",
+    "branch_id IS NULL OR branch.organization_id = event.organization_id",
+    "organization_id + tenant_id IMMUTABLE post-create",
+    "branch_id IMMUTABLE post-registration_open (venue change post-registration-open fires EventVenueChanged with audit-warn)",
+    "primary_sport_key IMMUTABLE post-registration_open",
+    "visibility='public' implies status IN (announced, registration_open, registration_closed, in_progress, completed) — draft/private/cancelled/archived cannot be visibility=public",
+    "status=cancelled implies cancellation_reason IS NOT NULL AND cancelled_at IS NOT NULL",
+    "COUNT(*) FILTER (WHERE deleted_at IS NULL) unique per (tenant_id, organization_id, slug)"
+  ]
+}

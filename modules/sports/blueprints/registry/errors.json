@@ -1,0 +1,306 @@
+{
+  "id": "academorix://modules/sports-registry/errors",
+  "$version": 1,
+  "title": "sports-registry — error codes",
+  "namespace": "sports-registry",
+  "errors": [
+    {
+      "code": "SPORT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.sport_not_found"
+    },
+    {
+      "code": "DISCIPLINE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.discipline_not_found"
+    },
+    {
+      "code": "POSITION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.position_not_found"
+    },
+    {
+      "code": "SPORT_KEY_UNRESOLVED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.sport_key_unresolved",
+      "description": "SportKeyResolver::resolve(...) failed to find a Sport with the given slug for the caller's tenant (checks tenant custom + platform seeded, active + historical). Response includes the resolver's search trace."
+    },
+    {
+      "code": "DISCIPLINE_KEY_UNRESOLVED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.discipline_key_unresolved",
+      "description": "Same shape as SPORT_KEY_UNRESOLVED for the Discipline level. Frequent trigger: caller supplied a discipline_key that doesn't belong to the resolved sport (e.g. `basketball_3x3` under `football`)."
+    },
+    {
+      "code": "POSITION_KEY_UNRESOLVED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.position_key_unresolved"
+    },
+    {
+      "code": "SPORTS_REGISTRY_CUSTOM_DISABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.custom_disabled",
+      "description": "Tenant does not hold `sports_registry_custom` entitlement (Small + Medium locked). Response includes tier + upgrade path to Enterprise."
+    },
+    {
+      "code": "SPORTS_REGISTRY_CUSTOM_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.custom_quota_exceeded",
+      "description": "Reached the `sports_registry_custom_slot` per-entity-type cap. Enterprise default is unlimited so this is rare; only fires when a plan variant introduces a per-type cap. Response includes used + cap + entity type."
+    },
+    {
+      "code": "SPORT_KEY_COLLIDES_WITH_PLATFORM",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.slug_collides_with_platform",
+      "description": "Tenant attempted to create a custom Sport with a slug that matches an existing platform-seeded Sport (e.g. tenant tried to create custom slug='football'). The tenant must pick a distinct slug (typically by adding a tenant-specific prefix like 'acme_football')."
+    },
+    {
+      "code": "DISCIPLINE_KEY_COLLIDES_WITH_PLATFORM",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.discipline_slug_collides",
+      "description": "Same as SPORT_KEY_COLLIDES_WITH_PLATFORM for Discipline level."
+    },
+    {
+      "code": "POSITION_KEY_COLLIDES_WITH_PLATFORM",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.position_slug_collides",
+      "description": "Same as SPORT_KEY_COLLIDES_WITH_PLATFORM for Position level."
+    },
+    {
+      "code": "SPORT_KEY_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.sport_slug_duplicate",
+      "description": "A tenant custom Sport with the same slug already exists on this tenant (the tenant is trying to add a duplicate of their own custom, not colliding with platform). Includes the existing row's id + hints at editing vs creating."
+    },
+    {
+      "code": "DISCIPLINE_KEY_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.discipline_slug_duplicate"
+    },
+    {
+      "code": "POSITION_KEY_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.position_slug_duplicate"
+    },
+    {
+      "code": "CROSS_TENANT_REGISTRY_REFERENCE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "sports_registry.errors.cross_tenant_reference",
+      "description": "A tenant custom Discipline (or Position) references a parent row that belongs to a different tenant. Only platform-seeded parents OR the caller's own tenant customs are valid targets. Security-relevant — logged with actor + tenant + attempted parent + IP."
+    },
+    {
+      "code": "SPORT_REFERENCE_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.sport_in_use",
+      "description": "Attempted to deactivate OR hard-delete a Sport that still has downstream references (rows in tables listed in config('sports_registry.reconciler.reference_tables') carrying this sport_key). Response includes the reference count per table + suggested migration paths."
+    },
+    {
+      "code": "DISCIPLINE_REFERENCE_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.discipline_in_use"
+    },
+    {
+      "code": "POSITION_REFERENCE_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.position_in_use"
+    },
+    {
+      "code": "SPORT_HAS_ACTIVE_DISCIPLINES",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.sport_has_active_disciplines",
+      "description": "Attempted to deactivate a Sport with active Disciplines under it. Deactivate the child Disciplines first (or use --cascade flag on the CLI to sweep the tree)."
+    },
+    {
+      "code": "DISCIPLINE_HAS_ACTIVE_POSITIONS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.discipline_has_active_positions",
+      "description": "Attempted to deactivate a Discipline with active Positions under it."
+    },
+    {
+      "code": "PLATFORM_ROW_HARD_DELETE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "sports_registry.errors.platform_hard_delete_forbidden",
+      "description": "Attempted to hard-delete a platform-seeded row (is_platform_seeded=true, tenant_id NULL). Platform-seeded rows are permanent — deactivate instead. Applies to Sport / Discipline / Position uniformly."
+    },
+    {
+      "code": "SLUG_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.slug_immutable",
+      "description": "Attempted to change a slug on an existing row. Slugs are IMMUTABLE post-create because downstream Wave 3 rows carry them as strings; renaming would silently orphan every reference. To rename: create a new row with the new slug, migrate every downstream reference, then deactivate the old row."
+    },
+    {
+      "code": "IS_PLATFORM_SEEDED_IMMUTABLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "sports_registry.errors.is_platform_seeded_immutable",
+      "description": "Attempted to flip is_platform_seeded post-create. This flag is set once (by SportCatalogSeeder for platform rows, always false for tenant-authored rows) and never mutated. Any attempted flip is a system anomaly."
+    },
+    {
+      "code": "PARENT_REFERENCE_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.parent_reference_immutable",
+      "description": "Attempted to change sport_id on a Discipline OR discipline_id on a Position post-create. Parent references are immutable — moving a Discipline between Sports (or Position between Disciplines) reshapes the taxonomy. Create a new row under the new parent + deactivate the old one."
+    },
+    {
+      "code": "TENANT_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "sports_registry.errors.tenant_immutable",
+      "description": "Attempted to change tenant_id on an existing row. Security — cross-tenant migration is never allowed. Applies uniformly to Sport / Discipline / Position."
+    },
+    {
+      "code": "INVALID_SPORT_CATEGORY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.invalid_category",
+      "description": "Sport.category must be one of the enum values: team_sport, individual_sport, racquet, combat, aquatic, winter, cycling, track_field, fitness, recreational."
+    },
+    {
+      "code": "INVALID_GENDER_TYPICAL",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.invalid_gender_typical",
+      "description": "Sport.gender_typical must be one of: male_only, female_only, mixed, any."
+    },
+    {
+      "code": "INVALID_FORMAT_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.invalid_format_type",
+      "description": "Discipline.format_type must be one of: team, individual, relay, pairs, squads."
+    },
+    {
+      "code": "INVALID_AGE_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.invalid_age_range",
+      "description": "Sport.age_range_min > Sport.age_range_max, OR either value outside the platform floor (3) / ceiling (99)."
+    },
+    {
+      "code": "INVALID_PLAYER_COUNT_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.invalid_player_count_range",
+      "description": "Discipline.player_count_min > Discipline.player_count_max, OR either value outside 1 (min) / 500 (max)."
+    },
+    {
+      "code": "SLUG_RESERVED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.slug_reserved",
+      "description": "Attempted to create a row with a reserved slug ('platform', 'system', 'admin', 'seeded', 'default', 'any', 'all'). Reserved slugs are used by internal tooling."
+    },
+    {
+      "code": "SLUG_INVALID_FORMAT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.slug_invalid_format",
+      "description": "Slug does not match `^[a-z][a-z0-9_]*$` — lowercase snake_case, starts with a letter, no hyphens."
+    },
+    {
+      "code": "ICON_INVALID_FORMAT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "sports_registry.errors.icon_invalid_format",
+      "description": "Sport.icon must be a valid Iconify identifier (e.g. 'mdi:soccer', 'game-icons:basketball-ball'). Regex: `^[a-z0-9-]+:[a-z0-9-]+$`."
+    },
+    {
+      "code": "RESEED_LOCKED_IN_USE",
+      "http": 409,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "sports_registry.errors.reseed_locked_in_use",
+      "description": "Platform admin attempted to reseed while an active SeedPlatformSportsCatalogJob or ReconcileSportReferencesJob is running. Reseed refuses to overlap with either. Retry after the current job completes."
+    }
+  ]
+}

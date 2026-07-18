@@ -1,0 +1,152 @@
+{
+  "id": "academorix://modules/event/rules",
+  "$version": 1,
+  "title": "event — validation rules",
+  "description": "Custom Laravel validation rules published by EventServiceProvider::boot() for use in FormRequests + Data classes. Named after their intent so they read cleanly at composition site.",
+  "namespace": "Academorix\\Sports\\Event\\Rules",
+  "rules": [
+    {
+      "name": "valid_event_type",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventType",
+      "signature": "valid_event_type",
+      "description": "Ensures event_type is one of the enum values.",
+      "params": [],
+      "example_field_rule": "event_type: ['required', 'valid_event_type']",
+      "error_message_key": "event::validation.valid_event_type",
+      "default_message": "The :attribute must be one of: tournament, match, showcase, workshop, camp, conference, social, graduation, awards_ceremony, open_house, other."
+    },
+    {
+      "name": "valid_event_format",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventFormat",
+      "signature": "valid_event_format",
+      "description": "Ensures format (when set) is one of the enum values.",
+      "params": [],
+      "example_field_rule": "format: ['nullable', 'valid_event_format']",
+      "error_message_key": "event::validation.valid_event_format",
+      "default_message": "The :attribute must be one of: single_elimination, double_elimination, round_robin, group_stage, seeded_bracket, friendly, clinic, lecture, social_only."
+    },
+    {
+      "name": "valid_event_date_range",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventDateRange",
+      "signature": "valid_event_date_range:min_minutes,max_days",
+      "description": "Ensures ends_at >= starts_at with optional minimum duration in minutes and maximum span in days. Field-level (class-level) rule.",
+      "params": [
+        { "name": "min_minutes", "type": "int", "default": 0, "description": "Minimum event duration in minutes (0 = single-instant events allowed)." },
+        { "name": "max_days", "type": "int", "default": 60, "description": "Maximum event span in days (default 60 = long camp/festival upper bound)." }
+      ],
+      "example_field_rule": "rule('valid_event_date_range:0,60')",
+      "error_message_key": "event::validation.valid_event_date_range",
+      "default_message": "The event's date range must be between :min_minutes minutes and :max_days days."
+    },
+    {
+      "name": "valid_event_registration_window",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventRegistrationWindow",
+      "signature": "valid_event_registration_window",
+      "description": "Composite rule ensuring registration_opens_at < registration_closes_at <= starts_at when set. Field-level (class-level).",
+      "params": [],
+      "example_field_rule": "rule('valid_event_registration_window')",
+      "error_message_key": "event::validation.valid_event_registration_window",
+      "default_message": "The registration window is invalid: opens must precede closes, and closes must land at or before starts_at."
+    },
+    {
+      "name": "valid_event_age_range",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventAgeRange",
+      "signature": "valid_event_age_range",
+      "description": "Ensures min_age (when set) <= max_age (when set) and both fall in [3, 100]. Field-level.",
+      "params": [],
+      "example_field_rule": "rule('valid_event_age_range')",
+      "error_message_key": "event::validation.valid_event_age_range",
+      "default_message": "The age range is invalid: min_age must be <= max_age and both must be between 3 and 100."
+    },
+    {
+      "name": "valid_gender_category",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidGenderCategory",
+      "signature": "valid_gender_category",
+      "description": "Ensures gender_category is one of male / female / mixed / any (or null).",
+      "params": [],
+      "example_field_rule": "gender_category: ['nullable', 'valid_gender_category']",
+      "error_message_key": "event::validation.valid_gender_category",
+      "default_message": "The :attribute must be one of: male, female, mixed, any."
+    },
+    {
+      "name": "valid_visibility_value",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidVisibilityValue",
+      "signature": "valid_visibility_value",
+      "description": "Ensures visibility is one of public / tenant_only / participants_only / private.",
+      "params": [],
+      "example_field_rule": "visibility: ['required', 'valid_visibility_value']",
+      "error_message_key": "event::validation.valid_visibility_value",
+      "default_message": "The :attribute must be one of: public, tenant_only, participants_only, private."
+    },
+    {
+      "name": "valid_entry_fee",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidEntryFee",
+      "signature": "valid_entry_fee",
+      "description": "Ensures entry_fee_cents >= 0 and when > 0, entry_fee_currency IS NOT NULL. When allow_late_registration=true, late_registration_fee_cents > 0. Field-level.",
+      "params": [],
+      "example_field_rule": "rule('valid_entry_fee')",
+      "error_message_key": "event::validation.valid_entry_fee",
+      "default_message": "Entry fee configuration is invalid: paid events require a currency; late-registration requires a positive fee."
+    },
+    {
+      "name": "valid_prize_pool",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidPrizePool",
+      "signature": "valid_prize_pool",
+      "description": "Ensures prize_pool_cents (when set) >= 0 and prize_pool_currency IS NOT NULL. Field-level.",
+      "params": [],
+      "example_field_rule": "rule('valid_prize_pool')",
+      "error_message_key": "event::validation.valid_prize_pool",
+      "default_message": "The prize pool configuration is invalid: a prize pool requires a currency."
+    },
+    {
+      "name": "valid_sponsors_json",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidSponsorsJson",
+      "signature": "valid_sponsors_json",
+      "description": "Validates sponsors JSONB array shape: each entry has name (required, string <=128), optional logo_url (URL), tier (enum gold/silver/bronze/partner).",
+      "params": [],
+      "example_field_rule": "sponsors: ['nullable', 'valid_sponsors_json']",
+      "error_message_key": "event::validation.valid_sponsors_json",
+      "default_message": "The sponsors array is malformed."
+    },
+    {
+      "name": "valid_livestream_url",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidLivestreamUrl",
+      "signature": "valid_livestream_url",
+      "description": "Ensures livestream_url is a valid HTTPS URL <=512 chars (HTTPS-only to prevent leaks).",
+      "params": [],
+      "example_field_rule": "livestream_url: ['nullable', 'valid_livestream_url']",
+      "error_message_key": "event::validation.valid_livestream_url",
+      "default_message": "The :attribute must be a valid HTTPS URL."
+    },
+    {
+      "name": "valid_event_facility_purpose",
+      "class": "Academorix\\Sports\\Event\\Rules\\ValidEventFacilityPurpose",
+      "signature": "valid_event_facility_purpose",
+      "description": "Ensures purpose is one of competition / warm_up / registration / spectator / vip.",
+      "params": [],
+      "example_field_rule": "purpose: ['required', 'valid_event_facility_purpose']",
+      "error_message_key": "event::validation.valid_event_facility_purpose",
+      "default_message": "The :attribute must be one of: competition, warm_up, registration, spectator, vip."
+    },
+    {
+      "name": "one_primary_facility_per_event",
+      "class": "Academorix\\Sports\\Event\\Rules\\OnePrimaryFacilityPerEvent",
+      "signature": "one_primary_facility_per_event",
+      "description": "Ensures setting is_primary=true on this row will not create a second primary in the same event (the observer auto-demotes; this rule surfaces the form-level warning).",
+      "params": [],
+      "example_field_rule": "is_primary: ['boolean', 'one_primary_facility_per_event']",
+      "error_message_key": "event::validation.one_primary_facility_per_event",
+      "default_message": "Another facility in this event is already marked primary. Setting this row primary will demote the other automatically."
+    },
+    {
+      "name": "event_facility_within_branch",
+      "class": "Academorix\\Sports\\Event\\Rules\\EventFacilityWithinBranch",
+      "signature": "event_facility_within_branch",
+      "description": "Ensures the facility.branch.organization_id matches event.organization_id (a facility must belong to the event's organization). When event.branch_id IS NOT NULL, facility.branch_id must equal event.branch_id.",
+      "params": [],
+      "example_field_rule": "rule('event_facility_within_branch')",
+      "error_message_key": "event::validation.event_facility_within_branch",
+      "default_message": "The facility must belong to the event's organization (and, when the event pins a branch, to the same branch)."
+    }
+  ]
+}

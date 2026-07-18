@@ -1,0 +1,103 @@
+{
+  "$version": 1,
+  "title": "Event type catalog",
+  "description": "Reference table of the 11 event_type enum values with typical durations + compatible formats + notes on which tenant business_types most commonly use each. Loaded by EventProvisioner + rendered on the create form.",
+  "types": {
+    "tournament": {
+      "label": "Tournament",
+      "typical_duration_hours": 8,
+      "typical_duration_days": 3,
+      "compatible_formats": ["single_elimination", "double_elimination", "round_robin", "group_stage", "seeded_bracket"],
+      "business_types": ["sports_academy", "federation", "club"],
+      "description": "Competitive multi-round tournament. Teams or individuals compete for placement + prize pool."
+    },
+    "match": {
+      "label": "Match / Game",
+      "typical_duration_hours": 2,
+      "typical_duration_days": 0,
+      "compatible_formats": ["friendly", "seeded_bracket"],
+      "business_types": ["sports_academy", "club", "school"],
+      "description": "Single competitive fixture between two teams / individuals."
+    },
+    "showcase": {
+      "label": "Showcase",
+      "typical_duration_hours": 4,
+      "typical_duration_days": 0,
+      "compatible_formats": ["friendly", "social_only"],
+      "business_types": ["sports_academy", "school"],
+      "description": "Non-competitive display for scouts / recruiters / parents."
+    },
+    "workshop": {
+      "label": "Workshop",
+      "typical_duration_hours": 3,
+      "typical_duration_days": 0,
+      "compatible_formats": ["clinic", "lecture"],
+      "business_types": ["sports_academy", "sports_center", "gym", "federation"],
+      "description": "Skill-focused instructional session. Usually one instructor + N attendees."
+    },
+    "camp": {
+      "label": "Camp",
+      "typical_duration_hours": 6,
+      "typical_duration_days": 5,
+      "compatible_formats": ["clinic"],
+      "business_types": ["sports_academy", "school", "club"],
+      "description": "Multi-day intensive program. Summer / winter camps."
+    },
+    "conference": {
+      "label": "Conference",
+      "typical_duration_hours": 8,
+      "typical_duration_days": 2,
+      "compatible_formats": ["lecture", "social_only"],
+      "business_types": ["federation", "sports_academy"],
+      "description": "Professional / educational conference with multiple sessions."
+    },
+    "social": {
+      "label": "Social event",
+      "typical_duration_hours": 3,
+      "typical_duration_days": 0,
+      "compatible_formats": ["social_only"],
+      "business_types": ["sports_academy", "club", "sports_center", "gym"],
+      "description": "Community-building event. BBQs, mixers, team dinners."
+    },
+    "graduation": {
+      "label": "Graduation",
+      "typical_duration_hours": 2,
+      "typical_duration_days": 0,
+      "compatible_formats": ["social_only"],
+      "business_types": ["sports_academy", "school"],
+      "description": "End-of-season / end-of-program ceremony recognizing athlete achievements."
+    },
+    "awards_ceremony": {
+      "label": "Awards ceremony",
+      "typical_duration_hours": 3,
+      "typical_duration_days": 0,
+      "compatible_formats": ["social_only"],
+      "business_types": ["sports_academy", "federation", "club"],
+      "description": "Formal recognition event with awards presentation."
+    },
+    "open_house": {
+      "label": "Open house",
+      "typical_duration_hours": 4,
+      "typical_duration_days": 0,
+      "compatible_formats": ["social_only"],
+      "business_types": ["sports_academy", "sports_center", "gym", "school"],
+      "description": "Prospective-family showcase. Introduces the tenant to potential new registrants."
+    },
+    "other": {
+      "label": "Other",
+      "typical_duration_hours": null,
+      "typical_duration_days": null,
+      "compatible_formats": [],
+      "business_types": ["sports_academy", "sports_center", "school", "gym", "federation", "club"],
+      "description": "Tenant-defined event type. Use only when standard types don't fit."
+    }
+  },
+  "business_type_defaults": {
+    "sports_academy": "workshop",
+    "sports_center": "workshop",
+    "school": "match",
+    "gym": "workshop",
+    "federation": "tournament",
+    "club": "match"
+  }
+}

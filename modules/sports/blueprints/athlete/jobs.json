@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/athlete/jobs",
+  "$version": 1,
+  "title": "athlete — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\RollAthleteAgeGroupSnapshotJob",
+      "queue": "athlete",
+      "purpose": "Nightly sweep of every active + paused Athlete. Recomputes Athlete.current_age_group_id via AgeGroupResolver::resolveFor(dob, sport_key=null, on_date=today). Fires AthleteAgeGroupSnapshotUpdated per athlete whose snapshot flipped. Powers the 'birthday drift' cascade — when a child crosses an age-group boundary (e.g. U10 → U12), the snapshot updates + notifications fire to guardians + downstream enrollments soft-warn.",
+      "steps": [
+        "SELECT id, tenant_id, date_of_birth, current_age_group_id FROM athletes WHERE status IN ('active','paused') AND deleted_at IS NULL",
+        "For each athlete (batched 500 rows):",
+        "  new_group_id = AgeGroupResolver::resolveFor(athlete.date_of_birth, sport_key=null, on_date=today, tenant_id=athlete.tenant_id)",
+        "  If new_group_id != current_age_group_id: UPDATE athletes SET current_age_group_id=new_group_id, current_age_group_snapshot_at=now() WHERE id=?; fire AthleteAgeGroupSnapshotUpdated",
+        "Emit metric academorix.athlete.age_group_snapshot.updates_total per tenant",
+        "Emit metric academorix.athlete.age_group_snapshot.unresolved_total when the resolver returned null (DOB outside every catalog)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2,
+      "batch_size": 500
+    },
+    {
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\CheckAthleteMinorTurnedAdultJob",
+      "queue": "athlete",
+      "purpose": "Daily sweep for athletes whose DOB matches today - config.athlete.minor_min_age (default 16) OR today - 18 (legal-adult boundary). Fires AthleteMinorTurnedAdult per athlete + drives the re-consent flow (their prior consents by a guardian expire; new consents required from the adult athlete themselves).",
+      "steps": [
+        "SELECT id, tenant_id, date_of_birth, user_id FROM athletes WHERE status IN ('active','paused') AND date_of_birth IN (today - 16 years, today - 18 years) AND deleted_at IS NULL",
+        "For each: fire AthleteMinorTurnedAdult with boundary_crossed = 'minor_min_age' or 'legal_adult_18' based on DOB delta",
+        "For boundary_crossed='legal_adult_18' AND consent_recorded_by_user_id is not the athlete's OWN user_id: set a metadata flag `consent_re_record_required=true` (surfaced on the athlete detail SDUI as a callout banner)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\ReconcileAthleteConsentsJob",
+      "queue": "athlete",
+      "purpose": "Daily sweep for athletes whose consent_recorded_at is past the 12-month re-consent cadence (only fires when the tenant carries `athlete_consent_workflow` entitlement). Dispatches AthleteConsentExpiringNotification at 30, 14, 7-day pre-expiry thresholds. When consent_recorded_at is more than 365 days old + no reminders acted upon, the athlete row is flagged consent-expired (metadata.consent_expired_at set) — downstream photo-consent-required flows refuse until re-consent.",
+      "steps": [
+        "SELECT id, tenant_id, consent_recorded_at FROM athletes JOIN tenants ON tenants.id=athletes.tenant_id WHERE tenants.entitlements->>'athlete_consent_workflow' = '1' AND athletes.consent_recorded_at IS NOT NULL AND athletes.consent_recorded_at < today() - 335 days AND athletes.status IN ('active', 'paused') AND athletes.deleted_at IS NULL",
+        "For each: days_remaining = 365 - (today - consent_recorded_at); dispatch reminder at [30, 14, 7]-day thresholds (dedup per (athlete_id, threshold))",
+        "For athletes past 365 days AND with no consent_recorded_at update in the last 90 days: set metadata.consent_expired_at = now(); fire diagnostic event ConsentSnapshotExpired"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\PurgeArchivedAthletesJob",
+      "queue": "athlete",
+      "purpose": "Daily sweep of archived Athlete rows. Phase 1 — 90-day PII redaction (emergency_contact_* + medical_* fields redacted to '[REDACTED]' while preserving the rest for legal-record retention). Phase 2 — 7-year hard-purge for rows with no downstream references. Phase 3 — cleanup of orphaned athlete_medical_history rows past their independent 7-year retention.",
+      "steps": [
+        "Phase 1 — 90-day PII redaction:",
+        "  SELECT id FROM athletes WHERE status='archived' AND deleted_at < today() - 90 days AND (emergency_contact_name IS NOT NULL AND emergency_contact_name != '[REDACTED]') LIMIT 2000",
+        "  For each: UPDATE athletes SET emergency_contact_name='[REDACTED]', emergency_contact_phone='[REDACTED]', emergency_contact_relationship='[REDACTED]', medical_conditions='[REDACTED]', medical_allergies='[REDACTED]', medical_medications='[REDACTED]', medical_notes='[REDACTED]'; fire a compliance audit row",
+        "Phase 2 — 7-year hard-purge:",
+        "  SELECT id FROM athletes WHERE status='archived' AND deleted_at < now() - interval '7 years' LIMIT 500",
+        "  For each: attempt hard delete; catch FK RESTRICT (Enrollment not yet purged, Membership still referencing) + record as 'retention_blocked'",
+        "Phase 3 — medical_history purge:",
+        "  DELETE FROM athlete_medical_history WHERE created_at < now() - interval '7 years' RETURNING id",
+        "  Compliance-archive: for each deleted history row, an anonymised copy migrates to the ops-owned compliance archive table"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Athlete\\Jobs\\AutoLinkAthleteToUserOnEmailMatchJob",
+      "queue": "athlete",
+      "purpose": "Automation for adult self-service signups. Sweeps unlinked Athlete rows (user_id IS NULL) where the athlete's contact email (metadata.email_hint) matches a live User.email in the same tenant AND the athlete's age_years >= config.athlete.minor_min_age (default 16). Auto-links + fires AthleteLinkedToUser. Skipped for minors — their user linkage requires explicit guardian action.",
+      "steps": [
+        "SELECT a.id AS athlete_id, u.id AS user_id FROM athletes a JOIN users u ON u.tenant_id=a.tenant_id AND u.email=a.metadata->>'email_hint' WHERE a.user_id IS NULL AND age_years(a.date_of_birth) >= config('athlete.minor_min_age', 16) AND a.status='active' AND a.deleted_at IS NULL AND u.deleted_at IS NULL LIMIT 1000",
+        "For each match: attempt update; catch composite-unique constraint (user already has another live athlete row) and record as 'link_blocked'; fire AthleteLinkedToUser with trigger='self_serve_signup'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2,
+      "note": "Runs hourly rather than nightly because signups are user-visible — the linkage should complete within an hour of the user creating their account."
+    }
+  ]
+}

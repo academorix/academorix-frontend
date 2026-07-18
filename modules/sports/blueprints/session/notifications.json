@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/session/notifications",
+  "$version": 1,
+  "title": "session — notification classes + categories",
+  "namespace": "Academorix\\Sports\\Session\\Notifications",
+  "notifications": [
+    "SessionScheduledNotification",
+    "SessionRescheduledNotification",
+    "SessionCancelledNotification",
+    "SessionReminderNotification",
+    "SessionCoachAssignedNotification",
+    "SessionCoachReassignedNotification",
+    "SessionCurriculumUpdatedNotification",
+    "SessionRatingRequestNotification",
+    "SessionSafeguardingIncidentNotification"
+  ],
+  "categories": [
+    {
+      "slug": "session.scheduled",
+      "display_name": "Session scheduled",
+      "description": "Fires on SessionScheduled. Audience: registered athletes + head coach. Opt-in.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "session.rescheduled",
+      "display_name": "Session rescheduled",
+      "description": "Fires on SessionRescheduled. Cannot opt out. Audience: registered athletes + coach + guardians for minors.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "session.cancelled",
+      "display_name": "Session cancelled",
+      "description": "Fires on SessionCancelled. Cannot opt out. Audience: registered athletes + coach + guardians for minors. Includes cancellation_reason + refund/reschedule guidance.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "session.reminder",
+      "display_name": "Session reminder",
+      "description": "Fires T-24h + T-1h before starts_at. Audience: registered athletes + coach + guardians. Includes facility + equipment_needed.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "session.coach_assigned",
+      "display_name": "You're on a session",
+      "description": "Fires on SessionCoachAssigned. Audience: the newly-assigned coach. Includes session detail + curriculum topic.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "session.coach_reassigned",
+      "display_name": "Session coach reassigned",
+      "description": "Fires on SessionCoachReassigned. Cannot opt out when notice_hours_before_start < 24 AND minors registered. Audience: registered athletes + guardians. Includes the new coach's name + short bio.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "session.curriculum_updated",
+      "display_name": "Curriculum updated",
+      "description": "Fires on SessionCurriculumTopicUpdated. Opt-in. Audience: registered athletes.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": true
+    },
+    {
+      "slug": "session.rating_request",
+      "display_name": "Rate your session",
+      "description": "Fires on SessionCompleted (after 1h grace to let attendees process the session). Opt-in. Audience: registered athletes + guardians. Gated by session_coach_ratings entitlement.",
+      "default_channels": ["in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "session.safeguarding_incident",
+      "display_name": "Safeguarding incident flagged",
+      "description": "Fires on SessionMinorSafeguardingIncident. TOP-SEVERITY, cannot opt out. Audience: tenant owner + admin + designated safeguarding officer(s). Includes session detail + session_notes narrative. Regulator-facing — the notification itself becomes evidence.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

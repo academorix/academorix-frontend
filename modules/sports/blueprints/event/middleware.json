@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/event/middleware",
+  "$version": 1,
+  "title": "event — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "event.resolve_active",
+      "class": "Academorix\\Sports\\Event\\Http\\Middleware\\ResolveActiveEvent",
+      "priority": 55,
+      "description": "Resolves the caller's active Event when a route depends on one. Reads `X-Event-Id` header when the caller's active tenant has a matching Event on that slug or ULID AND the Event is not archived. Sets `Request::activeEvent()` + writes to `RequestContext.event_id` slot. Runs AFTER `season.resolve_active`.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"],
+      "responses": [
+        {
+          "condition": "X-Event-Id header points at an Event in a different tenant",
+          "http": 403,
+          "code": "EVENT_CROSS_TENANT",
+          "audit_severity": "warn",
+          "description": "Security-relevant. Logged with tenant + user + attempted event + IP."
+        },
+        {
+          "condition": "X-Event-Id header points at an archived Event",
+          "http": 410,
+          "code": "EVENT_ARCHIVED",
+          "audit_severity": "info"
+        },
+        {
+          "condition": "No X-Event-Id header",
+          "http": 200,
+          "code": null,
+          "audit_severity": "none",
+          "description": "Middleware sets Request::activeEvent() = null and lets the request proceed. Route-level logic decides whether an active event is required."
+        }
+      ]
+    },
+    {
+      "alias": "event.enforce_registration_open",
+      "class": "Academorix\\Sports\\Event\\Http\\Middleware\\EnforceRegistrationOpen",
+      "priority": 60,
+      "description": "Guards registration-adjacent write routes (Wave 3+ athlete-enrollment for events surface). Refuses when Event.status is not in a registration-accepting state. Not auto-applied — Wave 3 enrollment routes attach it explicitly.",
+      "auto_applied": false,
+      "responses": [
+        {
+          "condition": "Request::activeEvent() is null AND route requires one",
+          "http": 424,
+          "code": "EVENT_NO_ACTIVE_EVENT",
+          "audit_severity": "info"
+        },
+        {
+          "condition": "Event.status NOT IN ('registration_open')",
+          "http": 409,
+          "code": "EVENT_REGISTRATION_NOT_OPEN",
+          "audit_severity": "info",
+          "description": "Response includes registration_opens_at + registration_closes_at as hints."
+        },
+        {
+          "condition": "now() > event.registration_closes_at AND (allow_late_registration=false OR the cooling-off cache marker is present)",
+          "http": 409,
+          "code": "EVENT_REGISTRATION_CLOSED",
+          "audit_severity": "info"
+        },
+        {
+          "condition": "In late window AND caller lacks `events.enroll.late` permission",
+          "http": 403,
+          "code": "EVENT_LATE_REGISTRATION_REQUIRES_PERMISSION",
+          "audit_severity": "info"
+        }
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::user.resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::user.enforce_tenant_membership" },
+    { "middleware": "entitlements::entitlement.enforce" },
+    { "middleware": "season::season.resolve_active" }
+  ]
+}

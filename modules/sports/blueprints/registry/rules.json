@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/sports-registry/rules",
+  "$version": 1,
+  "title": "sports-registry — validation rules",
+  "description": "Eight custom Laravel validation rules published by RegistryServiceProvider::boot() so any FormRequest / Data class can validate registry-adjacent fields. Named after their intent so they read cleanly at the composition site.",
+  "namespace": "Academorix\\Sports\\Registry\\Rules",
+  "rules": [
+    {
+      "name": "valid_sport_key",
+      "class": "Academorix\\Sports\\Registry\\Rules\\ValidSportKey",
+      "signature": "valid_sport_key",
+      "description": "Syntactic check ONLY — ensures the value matches `^[a-z][a-z0-9_]*$` (lowercase snake_case, starts with letter, no hyphens). Does NOT verify the slug exists in the catalog (use `sport_key_registered` for that). Applied on POST forms + downstream Wave 3 modules' write paths.",
+      "params": [],
+      "example_field_rule": "sport_key: ['nullable', 'valid_sport_key']",
+      "error_message_key": "sports_registry::validation.valid_sport_key",
+      "default_message": "The :attribute must be a valid sport key (lowercase, snake_case, starts with a letter)."
+    },
+    {
+      "name": "valid_discipline_key",
+      "class": "Academorix\\Sports\\Registry\\Rules\\ValidDisciplineKey",
+      "signature": "valid_discipline_key",
+      "description": "Syntactic check for discipline slugs. Same regex as valid_sport_key but returns a discipline-scoped error message.",
+      "params": [],
+      "example_field_rule": "discipline_key: ['nullable', 'valid_discipline_key']"
+    },
+    {
+      "name": "valid_position_key",
+      "class": "Academorix\\Sports\\Registry\\Rules\\ValidPositionKey",
+      "signature": "valid_position_key",
+      "description": "Syntactic check for position slugs.",
+      "params": [],
+      "example_field_rule": "position_key: ['nullable', 'valid_position_key']"
+    },
+    {
+      "name": "valid_hex_color",
+      "class": "Academorix\\Sports\\Registry\\Rules\\ValidHexColor",
+      "signature": "valid_hex_color",
+      "description": "Ensures the value is a well-formed CSS hex color literal — either 3-digit shorthand (#RGB) or 6-digit full (#RRGGBB). Case-insensitive. Rejects the 8-digit ARGB form (alpha channel not used in the sports catalog visualisation).",
+      "params": [],
+      "example_field_rule": "primary_color: ['nullable', 'valid_hex_color']",
+      "error_message_key": "sports_registry::validation.valid_hex_color",
+      "default_message": "The :attribute must be a valid hex color (#RGB or #RRGGBB)."
+    },
+    {
+      "name": "valid_iconify_identifier",
+      "class": "Academorix\\Sports\\Registry\\Rules\\ValidIconifyIdentifier",
+      "signature": "valid_iconify_identifier",
+      "description": "Ensures the value matches an Iconify icon identifier pattern (`{set}:{name}`). Regex: `^[a-z0-9-]+:[a-z0-9-]+$`. Examples: `mdi:soccer`, `game-icons:basketball-ball`, `heroicons:academic-cap`. Does NOT verify the icon actually exists in the Iconify registry — that's the frontend's rendering-time concern.",
+      "params": [],
+      "example_field_rule": "icon: ['nullable', 'valid_iconify_identifier']",
+      "error_message_key": "sports_registry::validation.valid_iconify_identifier",
+      "default_message": "The :attribute must be a valid Iconify identifier (e.g. `mdi:soccer`)."
+    },
+    {
+      "name": "sport_key_registered",
+      "class": "Academorix\\Sports\\Registry\\Rules\\SportKeyRegistered",
+      "signature": "sport_key_registered[:scope]",
+      "description": "Verifies that the sport_key exists in the tenant's merged catalog (platform-seeded + own tenant customs). Delegates to SportKeyResolver::resolve(). Default scope: `active` (rejects deactivated slugs). `historical` scope also accepts deactivated slugs (used when validating historical enrollment writes that reference an old sport_key).",
+      "params": [
+        { "name": "scope", "type": "'active' | 'historical'", "default": "active", "description": "active = must be is_active=true; historical = accepts deactivated as well." }
+      ],
+      "example_field_rule": "sport_key: ['required', 'valid_sport_key', 'sport_key_registered']",
+      "error_message_key": "sports_registry::validation.sport_key_registered",
+      "default_message": "The :attribute must be a registered sport key on this tenant."
+    },
+    {
+      "name": "discipline_belongs_to_sport",
+      "class": "Academorix\\Sports\\Registry\\Rules\\DisciplineBelongsToSport",
+      "signature": "discipline_belongs_to_sport:sport_key_field",
+      "description": "Cross-field validator. Ensures the discipline_key is a real Discipline slug belonging to the Sport identified by the sport_key_field (e.g. `discipline_key=basketball_5v5` under `sport_key=basketball` — valid; `discipline_key=basketball_5v5` under `sport_key=football` — invalid).",
+      "params": [
+        { "name": "sport_key_field", "type": "string", "default": "sport_key", "description": "Field name on the Data object holding the parent sport_key." }
+      ],
+      "example_field_rule": "discipline_key: ['nullable', 'valid_discipline_key', 'discipline_belongs_to_sport:sport_key']",
+      "error_message_key": "sports_registry::validation.discipline_belongs_to_sport",
+      "default_message": "The :attribute must be a discipline of the selected sport."
+    },
+    {
+      "name": "position_belongs_to_discipline",
+      "class": "Academorix\\Sports\\Registry\\Rules\\PositionBelongsToDiscipline",
+      "signature": "position_belongs_to_discipline:discipline_key_field",
+      "description": "Cross-field validator. Ensures the position_key is a real Position slug belonging to the Discipline identified by the discipline_key_field.",
+      "params": [
+        { "name": "discipline_key_field", "type": "string", "default": "discipline_key" }
+      ],
+      "example_field_rule": "position_key: ['nullable', 'valid_position_key', 'position_belongs_to_discipline:discipline_key']"
+    }
+  ]
+}

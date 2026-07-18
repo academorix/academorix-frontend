@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/sports-registry/schedule",
+  "$version": 1,
+  "title": "sports-registry — scheduled tasks",
+  "entries": [
+    {
+      "name": "sports-registry-reconcile-references",
+      "command": "sports:registry:reconcile-references",
+      "cron": "15 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 04:15 UTC. Scans every table in `config('sports_registry.reconciler.reference_tables')` for dangling sport_key / discipline_key / position_key references. Reports drift + fires SportPrefixResolutionFailed per unresolved row. Feeds `academorix.sports_registry.reference_drift.count` gauge."
+    },
+    {
+      "name": "sports-registry-purge-archived",
+      "command": "queue:work --queue=low --once --job=PurgeArchivedRegistryRowsJob",
+      "cron": "30 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05:30 UTC. Hard-delete tenant custom rows past their 730-day deactivation retention window IF zero downstream references remain. Platform-seeded rows are never touched."
+    },
+    {
+      "name": "sports-registry-metrics-snapshot",
+      "command": "sports:registry:metrics:snapshot",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly. Compute `academorix.sports_registry.active.count` per (entity_kind, is_platform_seeded) + `academorix.sports_registry.per_tenant_custom.count` histogram + `academorix.sports_registry.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
+    },
+    {
+      "name": "sports-registry-cache-warm-catalog",
+      "command": "sports:registry:cache:warm-catalog",
+      "cron": "0 6 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 06:00 UTC. Re-populates `sports:list:platform` + top-N `sports:full:{id}` cache keys. Cheap idempotent task — mostly a safety net in case a Redis flush wiped the caches overnight."
+    },
+    {
+      "name": "sports-registry-drift-alert-summary",
+      "command": "sports:registry:drift:daily-summary",
+      "cron": "0 9 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 09:00 UTC. Aggregates the SportPrefixResolutionFailed events from the last 24h into a single ops summary email — batches individual per-row notifications so ops doesn't get flooded. Sends only when count > 0."
+    }
+  ]
+}

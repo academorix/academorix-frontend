@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/athlete/caches",
+  "$version": 1,
+  "title": "athlete — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["athlete", "athlete.medical", "athlete.age_group", "athlete.consent", "athlete.by_user"],
+  "keys": [
+    {
+      "pattern": "ath:roster:{tenant_id}:{branch_id}",
+      "description": "Per-branch active athlete roster. Read by SDUI list screens + the branch manager's dashboard.",
+      "ttlSeconds": 300,
+      "tags": ["athlete", "tenant"],
+      "invalidatedBy": ["AthleteObserver.created", "AthleteObserver.updated (status changes)", "AthleteObserver.deleted"]
+    },
+    {
+      "pattern": "ath:roster:{tenant_id}",
+      "description": "Cross-branch tenant-wide roster for HR dashboards.",
+      "ttlSeconds": 600,
+      "tags": ["athlete", "tenant"],
+      "invalidatedBy": ["AthleteObserver.*"]
+    },
+    {
+      "pattern": "ath:by_age_group:{tenant_id}:{age_group_id}",
+      "description": "Athletes currently snapshotted into an age group. Feeds team-invite forms + enrollment eligibility widgets.",
+      "ttlSeconds": 600,
+      "tags": ["athlete", "athlete.age_group"],
+      "invalidatedBy": ["AthleteAgeGroupSnapshotUpdated"]
+    },
+    {
+      "pattern": "ath:by_user:{user_id}",
+      "description": "The Athletes for a User across every tenant. Used by the `/me/athletes` endpoint to render the caller's 'my kids' + self-view surface. Feeds guardian dashboards.",
+      "ttlSeconds": 300,
+      "tags": ["athlete", "athlete.by_user"],
+      "invalidatedBy": ["AthleteObserver.created", "AthleteLinkedToUser", "AthleteObserver.deleted", "athlete-guardian::GuardianAdded (Wave 3a sibling)", "athlete-guardian::GuardianRemoved"]
+    },
+    {
+      "pattern": "ath:consent_expiring:{tenant_id}",
+      "description": "Athletes whose consent_recorded_at is within 30 days of expiry (only when athlete_consent_workflow entitlement on). Feeds the tenant admin's compliance dashboard.",
+      "ttlSeconds": 3600,
+      "tags": ["athlete", "athlete.consent"],
+      "invalidatedBy": ["AthleteConsentRecorded", "AthleteConsentRevoked", "ReconcileAthleteConsentsJob"]
+    },
+    {
+      "pattern": "ath:paused:{tenant_id}",
+      "description": "Athletes currently in status=paused. Feeds the safeguarding officer's dashboard.",
+      "ttlSeconds": 600,
+      "tags": ["athlete", "athlete.safeguarding"],
+      "invalidatedBy": ["AthletePausedForSafeguarding", "AthleteReturnedFromPause"]
+    },
+    {
+      "pattern": "ath:medical_snapshot:{athlete_id}",
+      "description": "The current medical cluster values. Cached at the ATHLETE level (not the caller level) — the redactor pipeline applies AT egress based on caller permissions, so the underlying cached value is the raw payload. Consumers reading this cache MUST apply the redactor.",
+      "ttlSeconds": 600,
+      "tags": ["athlete", "athlete.medical"],
+      "invalidatedBy": ["AthleteMedicalUpdated"],
+      "notes": "Sensitive-tier cache — Redis eviction policy allkeys-lru is inappropriate; use allkeys-lfu with a dedicated Redis DB for medical caches so LRU pressure elsewhere doesn't evict + re-fetch (each re-fetch is an audit-relevant read)."
+    },
+    {
+      "pattern": "ath:age_group_snapshot:{athlete_id}",
+      "description": "The nightly age-group snapshot for an athlete. Read-hot by enrollment forms + roster previews.",
+      "ttlSeconds": 3600,
+      "tags": ["athlete", "athlete.age_group"],
+      "invalidatedBy": ["AthleteAgeGroupSnapshotUpdated", "RollAthleteAgeGroupSnapshotJob"]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/session/entitlements",
+  "$version": 1,
+  "title": "session — declared entitlements",
+  "description": "Five entitlement keys. `sports_sessions` is the boolean master gate. `session_slot` caps sessions per week per tenant. `session_private_lessons` gates the private_lesson session_type (Medium+). `session_coach_ratings` gates coach_rating_input + AggregateCoachRatingsJob (Medium+). `session_lesson_plans` gates lesson_plan_url + curriculum_topic beyond a small character limit (Enterprise).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "sports_sessions",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. All tiers get sessions — a sports academy without sessions is a directory, not a service. Tier limits apply via session_slot. Off = the whole module is invisible.",
+      "enforcedBy": [
+        "session.enforce_entitlement middleware on every /api/v1/sessions + /api/v1/sessions/{session}/* route",
+        "SessionObserver.creating refuses when the gate is closed (SESSION_FEATURE_NOT_ENTITLED, 402)",
+        "SDUI resource surfaces hidden when features array does not include 'sports_sessions.core'"
+      ]
+    },
+    {
+      "key": "session_slot",
+      "kind": "slot",
+      "unit": "sessions per week",
+      "defaultsByPlan": { "small": 20, "medium": 200, "enterprise": null },
+      "description": "How many Sessions a tenant can have in one calendar week. Small: 20 (basic academy — ~4 team practices + a few private lessons per week). Medium: 200 (multi-branch tenant). Enterprise: unlimited. Consumed on Session create; the accounting window is the ISO calendar week containing session.starts_at. Cancelled sessions still count against their week.",
+      "enforcedBy": [
+        "SessionObserver.creating consumes 1 unit via EntitlementGate::consume('session_slot', { week: iso_week_of_starts_at })",
+        "SessionObserver.deleted (hard-delete only — post-retention) releases the slot"
+      ]
+    },
+    {
+      "key": "session_private_lessons",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables session_type='private_lesson' and 'group_lesson'. Medium + Enterprise. Small tenants can create practice / class / drop_in / workshop / trial / assessment / game / open_gym but not the coach-billed lesson types.",
+      "enforcedBy": [
+        "SessionObserver.creating refuses when session_type IN ('private_lesson', 'group_lesson') AND gate is closed (SESSION_PRIVATE_LESSONS_NOT_ENTITLED, 402)",
+        "SDUI create screen filters the session_type options"
+      ]
+    },
+    {
+      "key": "session_coach_ratings",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables coach_rating_input on Session + the SessionRatingRequestNotification + AggregateSessionRatingsJob rating aggregation into Coach.rating (Wave 2b). Medium + Enterprise. Small tier gets sessions but no ratings.",
+      "enforcedBy": [
+        "SessionObserver.creating/saving refuses coach_rating_input IS NOT NULL when gate closed (SESSION_COACH_RATINGS_NOT_ENTITLED, 402)",
+        "AggregateSessionRatingsJob skips tenants without the gate",
+        "SDUI ratings surfaces hidden when features array does not include 'sports_sessions.coach_ratings'"
+      ]
+    },
+    {
+      "key": "session_lesson_plans",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enables lesson_plan_url column + curriculum_topic beyond 64 chars. Enterprise-only — full lesson-planning is a coaching-org feature.",
+      "enforcedBy": [
+        "SessionObserver.creating/saving refuses lesson_plan_url IS NOT NULL when gate closed (SESSION_LESSON_PLANS_NOT_ENTITLED, 402)",
+        "SessionObserver.creating/saving refuses curriculum_topic > 64 chars when gate closed",
+        "SDUI create + edit screens hide the lesson plan fields when features array does not include 'sports_sessions.lesson_plans'"
+      ]
+    }
+  ]
+}

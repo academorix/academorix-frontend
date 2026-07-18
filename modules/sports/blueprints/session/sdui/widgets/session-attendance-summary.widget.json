@@ -1,0 +1,29 @@
+{
+  "id": "session.session-attendance-summary",
+  "title": "Session attendance summary",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Inline chip showing 'X/Y checked in' where X = checked_in_athletes_count, Y = attendance_capacity (or registered_count if no capacity set). Variant: success when X >= attendance_min, warning when X < min, danger when X = 0 post-start.",
+  "props": {
+    "session": { "type": "object", "required": true, "description": "The session row." },
+    "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "props.session.checked_in_athletes_count === 0 && ['in_progress', 'completed'].includes(props.session.status) ? 'danger' : (props.session.attendance_min && props.session.checked_in_athletes_count < props.session.attendance_min ? 'warning' : 'success')"
+          },
+          "leadingIcon": "user-group-outline",
+          "children": {
+            "$expr": "props.session.checked_in_athletes_count + '/' + (props.session.attendance_capacity || props.session.registered_count || '?')"
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "id": "event.event-facility-preview",
+  "title": "Event facility preview",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "HeroUI `Card` showing the event's primary facility + attached-facility count. Clicking 'Manage' opens the facilities screen for the event. Renders 'No facility attached' when facility_count=0 (allowed for virtual awards / outdoor camp openings).",
+  "props": {
+    "eventId": { "type": "string", "required": true }
+  },
+  "dataSources": [
+    {
+      "name": "facilities",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/events/' + props.eventId + '/facilities?include=facility'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Card",
+      "props": { "className": "w-full" },
+      "children": [
+        {
+          "kind": "Card.Header",
+          "children": [
+            { "kind": "Card.Title", "props": { "children": "Facilities" } },
+            {
+              "kind": "Button",
+              "props": { "variant": "flat", "size": "sm", "children": "Manage" },
+              "bindings": {
+                "onPress": { "$action": "route.push", "urlExpr": "'/events/' + props.eventId + '/facilities'" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card.Content",
+          "children": [
+            {
+              "kind": "View",
+              "bindings": { "hidden": { "$expr": "facilities.length > 0" } },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-muted italic", "children": "No facility attached." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "bindings": { "hidden": { "$expr": "facilities.length === 0" } },
+              "props": { "className": "flex flex-col gap-2" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-medium" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "(facilities.find(f => f.is_primary) || {}).facility?.name || '(no primary)'"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "facilities.length === 1 ? '1 facility attached' : facilities.length + ' facilities attached'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "athlete.widgets.minor-badge",
+  "title": "Minor badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete.minor-badge",
+  "description": "Compact 'MINOR' chip rendered anywhere an athlete surface appears, reminding coaches + reception staff of the safeguarding tier. Uses safeguarding-yellow variant with shield-check icon. Automatically applied by the athlete-list DataGrid + the athlete-picker options + the athlete detail header when is_minor=true.",
+  "params": {
+    "size": { "type": "string", "required": false, "default": "xs", "enum": ["xs", "sm", "md"] },
+    "showLabel": { "type": "boolean", "required": false, "default": true, "description": "When false, renders just the shield icon in the yellow variant." }
+  },
+  "nodes": [
+    {
+      "kind": "Chip",
+      "propsExpr": "{ variant: 'warning', size: $params.size, className: 'shrink-0' }",
+      "children": [
+        {
+          "kind": "Icon",
+          "props": { "name": "shield-check", "className": "size-3 mr-1" }
+        },
+        {
+          "kind": "Text",
+          "propsExpr": "{ children: 'MINOR', className: 'text-xs font-medium', hidden: !$params.showLabel }"
+        }
+      ]
+    }
+  ]
+}

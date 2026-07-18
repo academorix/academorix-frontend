@@ -1,0 +1,467 @@
+{
+  "id": "academorix://modules/event/events",
+  "$version": 1,
+  "title": "event — published events",
+  "namespace": "Academorix\\Sports\\Event\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Lifecycle events fan out to notifications + activity + audit. Financial-relevant events (EventPricingChanged after registration_open) additionally feed the audit stream with 7-year retention because post-registration price shifts create refund liability. EventMinorEligibilityCorrected is critical-severity because narrowing min/max age post-registration excludes existing registrants (same refund-liability shape). EventCancellationBroadcast is the highest-severity operational event — cannot-opt-out notification to every registered participant.",
+  "events": [
+    {
+      "name": "EventCreated",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCreated",
+      "trigger": "EventProvisioner completed a successful create. Fires exactly once per `events.id`.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID (eve_*)",
+        "tenant_id": "ULID (ten_*)",
+        "organization_id": "ULID (org_*)",
+        "branch_id": "ULID (brn_*) | null",
+        "season_id": "ULID (sea_*) | null",
+        "name": "string",
+        "slug": "string",
+        "event_type": "string (tournament / match / showcase / workshop / camp / conference / social / graduation / awards_ceremony / open_house / other)",
+        "starts_at": "ISO 8601",
+        "ends_at": "ISO 8601",
+        "visibility": "string",
+        "status": "string",
+        "primary_sport_key": "string | null",
+        "created_by": "ULID (usr_*) | null"
+      }
+    },
+    {
+      "name": "EventUpdated",
+      "class": "Academorix\\Sports\\Event\\Events\\EventUpdated",
+      "trigger": "Any Event scalar field mutated except the specific-transition fields (status, visibility, starts_at, ends_at, branch_id, entry_fee_cents, min_age, max_age, age_group_ids). Umbrella event for renames, description edits, hero_image_url changes, sort tweaks.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "EventStatusChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventStatusChanged",
+      "trigger": "Event.status transitioned to any new value. A superset event; the specific-state events below (EventAnnounced, EventRegistrationOpened, ...) fire alongside for the routing case that cares.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "from_status": "string",
+        "to_status": "string",
+        "changed_by": "ULID | null",
+        "trigger": "'automated_phase_roll' | 'manual_admin' | 'automated_expire'",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "EventAnnounced",
+      "class": "Academorix\\Sports\\Event\\Events\\EventAnnounced",
+      "trigger": "Event.status transitioned draft -> announced. First point at which the event is visible on public/tenant surfaces. Fires alongside EventStatusChanged.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventAnnouncedNotification (opt-in to tenant members)"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "announced_at": "ISO 8601",
+        "visibility": "string",
+        "trigger": "'manual_admin'"
+      }
+    },
+    {
+      "name": "EventRegistrationOpened",
+      "class": "Academorix\\Sports\\Event\\Events\\EventRegistrationOpened",
+      "trigger": "Event.status transitioned to registration_open. Automated (RollEventStatusJob when now() reaches registration_opens_at) OR manual admin.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventRegistrationOpeningNotification"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "opened_at": "ISO 8601",
+        "registration_closes_at": "ISO 8601 | null",
+        "trigger": "'automated_phase_roll' | 'manual_admin'"
+      }
+    },
+    {
+      "name": "EventRegistrationClosed",
+      "class": "Academorix\\Sports\\Event\\Events\\EventRegistrationClosed",
+      "trigger": "Event.status transitioned registration_open -> registration_closed. Automated (ExpireExpiredEventRegistrationsJob) OR manual. Late-registration window is independent — see allow_late_registration flag.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "closed_at": "ISO 8601",
+        "registered_count_snapshot": "integer",
+        "trigger": "'automated_phase_roll' | 'manual_admin'"
+      }
+    },
+    {
+      "name": "EventStarted",
+      "class": "Academorix\\Sports\\Event\\Events\\EventStarted",
+      "trigger": "Event.status transitioned to in_progress. Fires from RollEventStatusJob at starts_at OR manual admin start.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventReminderNotification (at T-0 as a start confirmation)"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "started_at": "ISO 8601",
+        "trigger": "'automated_phase_roll' | 'manual_admin'"
+      }
+    },
+    {
+      "name": "EventCompleted",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCompleted",
+      "trigger": "Event.status transitioned in_progress -> completed. Fires from RollEventStatusJob at ends_at + 1h grace OR manual admin.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "completed_at": "ISO 8601",
+        "final_registered_count": "integer",
+        "trigger": "'automated_phase_roll' | 'manual_admin'"
+      }
+    },
+    {
+      "name": "EventCancelled",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCancelled",
+      "trigger": "Event.status transitioned to cancelled (from any pre-completed state). Requires cancellation_reason. Cannot be reversed except by restore-to-draft flow.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — refund + registrant records outlive event)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "cancelled_at": "ISO 8601",
+        "cancelled_by": "ULID",
+        "cancellation_reason": "string",
+        "registered_count_at_cancel": "integer",
+        "audit_severity": "warn"
+      }
+    },
+    {
+      "name": "EventRescheduled",
+      "class": "Academorix\\Sports\\Event\\Events\\EventRescheduled",
+      "trigger": "Event.starts_at OR Event.ends_at changed on an announced-or-later event. AUDIT-WARN: affects every registered participant's calendar.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventRescheduledNotification (cannot-opt-out to registered)"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "shifted_by": "ULID",
+        "before": { "starts_at": "ISO 8601", "ends_at": "ISO 8601" },
+        "after": { "starts_at": "ISO 8601", "ends_at": "ISO 8601" },
+        "affected_registration_count": "integer",
+        "audit_severity": "warn"
+      }
+    },
+    {
+      "name": "EventVenueChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventVenueChanged",
+      "trigger": "Event.branch_id OR primary facility changed post-registration_open. AUDIT-WARN — participants planned around the venue.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventVenueChangedNotification (cannot-opt-out to registered)"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "before": { "branch_id": "ULID | null", "primary_facility_id": "ULID | null" },
+        "after": { "branch_id": "ULID | null", "primary_facility_id": "ULID | null" },
+        "changed_by": "ULID",
+        "affected_registration_count": "integer",
+        "audit_severity": "warn"
+      }
+    },
+    {
+      "name": "EventCapacityChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCapacityChanged",
+      "trigger": "Event.max_participants OR max_teams changed. Informational; the enrollment surface enforces the cap.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "before": { "max_participants": "integer | null", "max_teams": "integer | null" },
+        "after": { "max_participants": "integer | null", "max_teams": "integer | null" },
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "EventPricingChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventPricingChanged",
+      "trigger": "Event.entry_fee_cents, entry_fee_currency, late_registration_fee_cents, OR prize_pool_cents changed. AUDIT-CRITICAL when Event.status IN (registration_open, registration_closed, in_progress) — post-registration price shifts create refund liability; every fire retained 7 years.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventPricingChangedNotification (cannot-opt-out to registered when audit_severity=critical)"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_by": "ULID",
+        "before": {
+          "entry_fee_cents": "integer",
+          "entry_fee_currency": "string | null",
+          "late_registration_fee_cents": "integer",
+          "prize_pool_cents": "integer | null"
+        },
+        "after": {
+          "entry_fee_cents": "integer",
+          "entry_fee_currency": "string | null",
+          "late_registration_fee_cents": "integer",
+          "prize_pool_cents": "integer | null"
+        },
+        "audit_severity": "'info' | 'warn' | 'critical' (critical when Event was already accepting registrations)"
+      }
+    },
+    {
+      "name": "EventMinorEligibilityCorrected",
+      "class": "Academorix\\Sports\\Event\\Events\\EventMinorEligibilityCorrected",
+      "trigger": "Event.min_age, max_age, OR age_group_ids narrowed after registrations opened. AUDIT-CRITICAL when the narrowing excludes existing registrants — same refund-liability shape as EventPricingChanged.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years, critical severity)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventMinorEligibilityCorrectedNotification (cannot-opt-out to excluded registrants + guardians of excluded minors)"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_by": "ULID",
+        "before": {
+          "min_age": "integer | null",
+          "max_age": "integer | null",
+          "age_group_ids": "string[] | null"
+        },
+        "after": {
+          "min_age": "integer | null",
+          "max_age": "integer | null",
+          "age_group_ids": "string[] | null"
+        },
+        "excluded_registration_count": "integer",
+        "excluded_minor_count": "integer",
+        "audit_severity": "critical"
+      }
+    },
+    {
+      "name": "EventArchived",
+      "class": "Academorix\\Sports\\Event\\Events\\EventArchived",
+      "trigger": "Event.status transitioned completed -> archived OR cancelled -> archived. Soft-delete; the row is hidden from tenant selectors + registration flows but readable via `?include_archived=true`.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "archived_at": "ISO 8601",
+        "archived_by": "ULID",
+        "reason": "string | null",
+        "hard_delete_scheduled_for": "ISO 8601"
+      }
+    },
+    {
+      "name": "EventRestored",
+      "class": "Academorix\\Sports\\Event\\Events\\EventRestored",
+      "trigger": "Archived -> completed OR archived -> cancelled (whichever it was prior to archive). Only within the retention window (default 2555 days = 7 years).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "restored_at": "ISO 8601",
+        "restored_by": "ULID",
+        "days_archived": "integer"
+      }
+    },
+    {
+      "name": "EventPublished",
+      "class": "Academorix\\Sports\\Event\\Events\\EventPublished",
+      "trigger": "Event.visibility transitioned to 'public' from any non-public value. Event now appears on public listings + search.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidatePublicEventListings"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "published_at": "ISO 8601",
+        "published_by": "ULID",
+        "previous_visibility": "string"
+      }
+    },
+    {
+      "name": "EventUnpublished",
+      "class": "Academorix\\Sports\\Event\\Events\\EventUnpublished",
+      "trigger": "Event.visibility transitioned from 'public' to any non-public value. Event no longer appears on public listings.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidatePublicEventListings"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "unpublished_at": "ISO 8601",
+        "unpublished_by": "ULID",
+        "new_visibility": "string"
+      }
+    },
+    {
+      "name": "EventFacilityAdded",
+      "class": "Academorix\\Sports\\Event\\Events\\EventFacilityAdded",
+      "trigger": "A new event_facilities row created. Fires per attachment.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "event_facility_id": "ULID (efc_*)",
+        "tenant_id": "ULID",
+        "facility_id": "ULID (fac_*)",
+        "purpose": "string",
+        "is_primary": "boolean",
+        "added_by": "ULID"
+      }
+    },
+    {
+      "name": "EventFacilityRemoved",
+      "class": "Academorix\\Sports\\Event\\Events\\EventFacilityRemoved",
+      "trigger": "An event_facilities row soft-deleted. Fires per detachment. Refused via observer when the event is in_progress + the row is primary + no other facility can replace it.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "event_facility_id": "ULID",
+        "tenant_id": "ULID",
+        "facility_id": "ULID",
+        "was_primary": "boolean",
+        "removed_by": "ULID"
+      }
+    },
+    {
+      "name": "EventPrimaryFacilityChanged",
+      "class": "Academorix\\Sports\\Event\\Events\\EventPrimaryFacilityChanged",
+      "trigger": "The is_primary flag flipped on any event_facilities row. Auto-demote of the previous primary happens in the same transaction.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "previous_primary_facility_id": "ULID | null",
+        "new_primary_facility_id": "ULID",
+        "changed_by": "ULID"
+      }
+    },
+    {
+      "name": "EventCancellationBroadcast",
+      "class": "Academorix\\Sports\\Event\\Events\\EventCancellationBroadcast",
+      "trigger": "Fires alongside EventCancelled to trigger the cannot-opt-out notification fan-out to every registered participant + coach. Separated from EventCancelled because notification consumers subscribe to THIS event (event lifecycle) while audit consumers subscribe to EventCancelled (state transition).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchEventCancellationBroadcastNotification (cannot-opt-out; individual email + push per registrant + guardian)"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "cancelled_at": "ISO 8601",
+        "cancellation_reason": "string",
+        "recipients_count_estimate": "integer",
+        "audit_severity": "warn"
+      }
+    },
+    {
+      "name": "EventReminderScheduled",
+      "class": "Academorix\\Sports\\Event\\Events\\EventReminderScheduled",
+      "trigger": "Fires when NotifyEventReminderJob queues a T-24h / T-1h reminder for an event. Informational — feeds ops dashboards for reminder-cadence health.",
+      "queue": "low",
+      "consumers": [
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "reminder_window": "'T-24h' | 'T-1h'",
+        "recipients_count_estimate": "integer"
+      }
+    },
+    {
+      "name": "EventLivestreamActivated",
+      "class": "Academorix\\Sports\\Event\\Events\\EventLivestreamActivated",
+      "trigger": "Event.livestream_url set for the first time OR livestream_password rotated. Fires the notification to registered participants (private-tier password delivery).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchEventLivestreamActivatedNotification (to registered participants — password delivery via secure email)"
+      ],
+      "payload": {
+        "event_id": "ULID",
+        "tenant_id": "ULID",
+        "activated_at": "ISO 8601",
+        "is_password_protected": "boolean",
+        "activated_by": "ULID"
+      }
+    }
+  ]
+}

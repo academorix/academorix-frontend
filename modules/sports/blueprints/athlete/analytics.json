@@ -1,0 +1,85 @@
+{
+  "id": "academorix://modules/athlete/analytics",
+  "$version": 1,
+  "title": "athlete — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Athlete Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "age_bucket", "is_minor", "has_user_at_create", "source"],
+      "description": "age_bucket is pre-computed (under_10 / 10_to_14 / 15_to_17 / 18_to_25 / 26_plus) to avoid high-cardinality DOB / age labels."
+    },
+    {
+      "name": "Athlete Status Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "from_status", "to_status", "was_minor"]
+    },
+    {
+      "name": "Athlete Paused For Safeguarding",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "branch_id", "was_minor", "duration_bucket"],
+      "description": "Consent tier: essential — safeguarding pause frequency is a compliance signal. Never carries the paused_reason string."
+    },
+    {
+      "name": "Athlete Graduated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "days_of_membership_bucket", "age_bucket_at_graduation"]
+    },
+    {
+      "name": "Athlete Withdrawn",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "branch_id", "withdrawal_reason", "days_of_membership_bucket", "was_guardian_initiated"]
+    },
+    {
+      "name": "Athlete Medical Updated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "changed_fields_count"],
+      "description": "PRIVATE-TIER analytics — payload NEVER carries the medical values. Only the FACT that a change happened + which fields. Consent tier: essential (medical-change frequency is a safeguarding signal that cannot be opted out)."
+    },
+    {
+      "name": "Athlete Consent Recorded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "consent_photo_release", "consent_medical_disclosure", "consent_third_party", "was_by_guardian"]
+    },
+    {
+      "name": "Athlete Consent Revoked",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "revoked_consent", "was_by_guardian"],
+      "description": "Consent tier: essential (compliance signal)."
+    },
+    {
+      "name": "Athlete Age Group Snapshot Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "from_age_bucket", "to_age_bucket", "trigger"]
+    },
+    {
+      "name": "Athlete Linked To User",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "trigger", "was_minor_at_link"]
+    },
+    {
+      "name": "Athlete Minor Turned Adult",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "boundary_crossed", "consent_re_record_required"]
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw medical_* values — the Athlete Medical Updated event uses only fact-of-change + field count. Prevents accidental exposure via the analytics sink.",
+    "athlete_id + user_id are hashed (SHA-256) at emit-time when the consent tier is 'functional' or higher — first-party operational analytics per notifications::consent-tiers.json. Never sent as raw ULIDs.",
+    "The 'essential' consent tier for Athlete Paused For Safeguarding + Athlete Medical Updated + Athlete Consent Revoked is deliberate — compliance signals cannot be opted out. Applies platform-side observability, not tenant-visible dashboards.",
+    "For minors, the tenant_id + branch_id remain in the payload but NO athlete-identifying fields (age_bucket is coarse; no first_name / last_name / DOB / user_id). Aligns with regulated_minor tier."
+  ]
+}

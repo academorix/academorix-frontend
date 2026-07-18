@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/athlete-guardian/entitlements",
+  "$version": 1,
+  "title": "athlete-guardian — declared entitlements",
+  "description": "Two entitlement keys. `athlete_multi_guardian` gates multi-guardian per athlete (Small tier locks to 1; Medium+ unlocks split-family support). `athlete_guardian_verification` gates the HR-verified workflow with signed-document upload (Enterprise-only).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "athlete_multi_guardian",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables >1 guardian per athlete for split-family scenarios. When off (Small default), the observer refuses AthleteGuardian.creating when another live guardian exists for the same (tenant, athlete). Medium tenants get up to 4 guardians per athlete; Enterprise unlimited. Rationale: Small tier is designed for small academies where single-parent households are the norm; split-family multi-guardian support adds meaningful UI complexity (whose email to CC, whose consent counts) that Small tenants don't need.",
+      "enforcedBy": [
+        "AthleteGuardianObserver.creating refuses when live guardian count would exceed the per-tier cap: Small=1, Medium=4, Enterprise=unlimited",
+        "SDUI 'Add guardian' button hidden when features array does not include 'athlete_guardian.multi_guardian' + already has one guardian",
+        "PrimaryGuardianResolver treats the single guardian on Small as always primary (skips is_primary check)"
+      ]
+    },
+    {
+      "key": "athlete_guardian_verification",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables the HR-verified workflow: new guardian rows land in verification_status='pending'; the auto-verify job attempts same-household detection first; when that fails, HR must upload a signed document (via storage::File) + invoke /verify to promote to verified. When off (Small + Medium), the auto-verify job runs but its fallback is silent-acceptance (24h TTL → verified without HR action). Enterprise adds the mandatory HR step + audit-ready document retention.",
+      "enforcedBy": [
+        "AthleteGuardianObserver.updating on verification: when gate is on AND method='hr_manual', verification_document_file_id MUST be set (returns GUARDIAN_VERIFICATION_DOCUMENT_REQUIRED)",
+        "VerifyGuardianByEmailDomainJob: when gate off, fallback is silent-acceptance after 24h; when gate on, fallback is 'stays pending until HR acts'",
+        "GuardianController@verify refuses when gate is off (returns GUARDIAN_VERIFICATION_WORKFLOW_NOT_ENABLED — verification is silent-only on non-Enterprise)",
+        "SDUI HR-verify button + upload-document modal hidden when features array does not include 'athlete_guardian.verification_workflow'"
+      ]
+    }
+  ]
+}

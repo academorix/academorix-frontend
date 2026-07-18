@@ -1,0 +1,135 @@
+{
+  "id": "academorix://modules/sports-registry/metrics",
+  "$version": 1,
+  "title": "sports-registry — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.sports_registry",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["entity_kind", "category", "gender_typical", "is_platform_seeded", "outcome", "source", "resolver_context"],
+    "forbiddenAsLabels": ["sport_id", "discipline_id", "position_id", "tenant_id", "slug"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.sports_registry.created.total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": ["entity_kind", "is_platform_seeded", "source"],
+      "description": "entity_kind: sport / discipline / position. source: platform_seed / admin_created / tenant_custom."
+    },
+    {
+      "name": "academorix.sports_registry.updated.total",
+      "kind": "counter",
+      "unit": "changes",
+      "labels": ["entity_kind", "is_platform_seeded"]
+    },
+    {
+      "name": "academorix.sports_registry.deactivated.total",
+      "kind": "counter",
+      "unit": "deactivations",
+      "labels": ["entity_kind", "is_platform_seeded", "outcome"],
+      "description": "outcome: success / refused_in_use / refused_platform_row / refused_has_children."
+    },
+    {
+      "name": "academorix.sports_registry.active.count",
+      "kind": "gauge",
+      "unit": "rows",
+      "labels": ["entity_kind", "is_platform_seeded"],
+      "description": "Point-in-time count. Populated hourly by the metrics-snapshot task. Baseline for platform-seeded Sport: >= 30."
+    },
+    {
+      "name": "academorix.sports_registry.per_tenant_custom.count",
+      "kind": "gauge",
+      "unit": "rows",
+      "labels": ["entity_kind"],
+      "description": "Global histogram of customs-per-tenant. Feeds the sports-registry-adoption dashboard. Most tenants have 0 customs; Enterprise power users may have 20+."
+    },
+    {
+      "name": "academorix.sports_registry.custom_disabled_refusals.total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["tier"],
+      "description": "How often SPORTS_REGISTRY_CUSTOM_DISABLED fires. Feeds the Medium → Enterprise upsell funnel."
+    },
+    {
+      "name": "academorix.sports_registry.quota_exceeded.total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["entity_kind", "tier"],
+      "description": "How often the sports_registry_custom_slot cap is hit."
+    },
+    {
+      "name": "academorix.sports_registry.slug_collision.total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["entity_kind", "collision_kind"],
+      "description": "collision_kind: platform_shadow (tenant tried to shadow platform slug) / duplicate_same_tenant. Signals tenant naming friction."
+    },
+    {
+      "name": "academorix.sports_registry.resolver.total",
+      "kind": "counter",
+      "unit": "resolutions",
+      "labels": ["outcome", "level", "cache_status"],
+      "description": "outcome: matched / unresolved. level: sport / sport_discipline / triple. cache_status: hit / miss. Sampled per config('sports_registry.telemetry.resolver_sample_ratio')."
+    },
+    {
+      "name": "academorix.sports_registry.resolver.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [0.5, 2, 10, 50, 200],
+      "labels": ["cache_status", "level"],
+      "description": "SportKeyResolver latency. P99 target < 10ms cold, < 2ms warm."
+    },
+    {
+      "name": "academorix.sports_registry.seed.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [500, 2000, 10000, 30000, 120000],
+      "labels": ["source"],
+      "description": "SeedPlatformSportsCatalogJob end-to-end latency. source: platform_boot / admin_reseed / legacy_backfill_command. First-boot: <30s target for the 400+ row catalog."
+    },
+    {
+      "name": "academorix.sports_registry.reconciler.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1000, 10000, 60000, 300000],
+      "labels": [],
+      "description": "ReconcileSportReferencesJob end-to-end latency. Grows with the number of Wave 3 rows scanned; benchmark to keep the run under 30 min even at 1M+ enrollments."
+    },
+    {
+      "name": "academorix.sports_registry.reference_drift.count",
+      "kind": "gauge",
+      "unit": "rows",
+      "labels": ["source_table", "kind"],
+      "description": "Count of unresolved (sport_key / discipline_key / position_key) references detected by the reconciler. Ideally always 0; a non-zero value pages ops."
+    },
+    {
+      "name": "academorix.sports_registry.reference_drift.total",
+      "kind": "counter",
+      "unit": "resolutions_failed",
+      "labels": ["source_table", "kind", "resolver_context"],
+      "description": "Cumulative count of SportPrefixResolutionFailed events. Includes runtime failures (resolver_context=read / write) + reconciler-detected failures."
+    },
+    {
+      "name": "academorix.sports_registry.downgrade_drift.count",
+      "kind": "gauge",
+      "unit": "tenants",
+      "labels": [],
+      "description": "Count of tenants that have downgraded off Enterprise + still have active tenant custom Registry rows. Feeds the FlagCustomsRetainedOnDowngrade listener signal."
+    },
+    {
+      "name": "academorix.sports_registry.purge_pending.count",
+      "kind": "gauge",
+      "unit": "rows",
+      "labels": ["entity_kind"],
+      "description": "Deactivated tenant customs past their 730-day retention window that haven't been hard-deleted yet (either because they have references or because the purge queue is stuck). Feeds the `sports-registry-purge-queue-drained` health probe."
+    },
+    {
+      "name": "academorix.sports_registry.orphan_check.total",
+      "kind": "counter",
+      "unit": "checks",
+      "labels": ["outcome"],
+      "description": "outcome: clean / orphans_found. Fires from PreventCustomRegistryOrphansOnTenantErased at tenant erasure time. `orphans_found > 0` signals cross-tenant FK drift — audit-critical."
+    }
+  ]
+}

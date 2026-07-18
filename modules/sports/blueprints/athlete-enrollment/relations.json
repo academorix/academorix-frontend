@@ -1,0 +1,115 @@
+{
+  "id": "academorix://modules/athlete-enrollment/relations",
+  "$version": 1,
+  "title": "athlete-enrollment — model relationships",
+  "description": "One owned entity: AthleteEnrollment. Belongs to 5 aggregates directly (Tenant + Branch + Team + Athlete + Season) + references AgeGroup (snapshot) + TeamMember (atomic conversion) + TeamTrial (trial conversion). All RESTRICT outbound except tenant (CASCADE) + age_group + team_member + source_trial (SET NULL — snapshot/reference semantics). Cascades organization + region through branch. No `application_id` / `organization_id` / `region_id` / `scope_node_id` — forbidden columns.",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "Denormalised from athlete.branch_id for indexed filtering. RESTRICT. IMMUTABLE post-create."
+    },
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "teams::Team",
+      "foreignKey": "team_id",
+      "onDelete": "restrict",
+      "description": "The team the athlete is enrolled in. RESTRICT — teams cannot be archived while active enrollments reference them. Enforced by PreventEnrollmentOrphansOnTeamArchived hook."
+    },
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "athlete::Athlete",
+      "foreignKey": "athlete_id",
+      "onDelete": "restrict",
+      "description": "The enrolled athlete. RESTRICT — athletes cannot be archived while active enrollments reference them. Enforced by PreventEnrollmentOrphansOnAthleteArchived hook. IMMUTABLE post-create."
+    },
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "season::Season",
+      "foreignKey": "season_id",
+      "onDelete": "restrict",
+      "description": "The season this enrollment applies to. RESTRICT. IMMUTABLE post-create."
+    },
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "age-group::AgeGroup",
+      "foreignKey": "age_group_snapshot_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "SNAPSHOT of athlete.current_age_group_id at EnrollmentSubmitted time. IMMUTABLE for the enrollment's lifetime — birthday drift + AgeGroup catalog changes do NOT reshape it. SET NULL when the AgeGroup is deleted (the enrollment remains valid; the snapshot survives as a historical marker until nulled)."
+    },
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "teams::TeamMember",
+      "foreignKey": "team_member_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The TeamMember row created atomically when status → active. Null until activation. SET NULL when the TeamMember is soft-deleted (usually because the athlete left the team mid-season — the enrollment already transitioned to withdrawn/expelled in that flow, so this is a redundant cleanup)."
+    },
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "teams::TeamTrial",
+      "foreignKey": "source_trial_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Set when enrollment_type='trial_converted'. References the TeamTrial that converted to this enrollment. SET NULL preserves the enrollment when the trial is later hard-deleted."
+    },
+    {
+      "from": "AthleteEnrollment",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "withdrawn_by_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "The User who initiated the withdrawal/expulsion."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream Wave 3+ modules attach:",
+    "examples": [
+      "attendance::AttendanceRecord (Wave 4+) — enrollment_id references AthleteEnrollment.id for per-session attendance tracking",
+      "finance::Membership (Wave 4+) — enrollment_id references for the money side (parent pays for athlete's enrollment)",
+      "event::EventParticipant (Wave 3+) — references enrollment for the tie between team-event registration + athlete-team enrollment"
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing athlete_enrollments.id — Enrollment cascade-checks live in AthleteEnrollmentObserver.saving."
+  },
+  "morphs": [],
+  "accessor_chain": {
+    "description": "The AthleteEnrollment model delegates presentation accessors to its aggregates.",
+    "AthleteEnrollment": {
+      "athlete_display_name": "athlete->display_name",
+      "team_display_name": "team->name",
+      "season_display_name": "season->name",
+      "age_group_display_name": "age_group_snapshot->display_label",
+      "primary_guardian": "athlete->primaryGuardian() (via AthleteGuardian sibling module)",
+      "days_since_submission": "computed floor((now - created_at) / 86400)",
+      "is_active": "status IN ('active')",
+      "requires_payment": "status IN ('submitted', 'payment_pending') AND price_amount_cents > 0 AND payment_status IN ('none', 'pending', 'partial')",
+      "requires_consent": "athlete->is_minor AND (consent_snapshot IS NULL OR consent_snapshot lacks required flags)"
+    }
+  },
+  "notes": [
+    "AthleteEnrollment carries `application_id` INDIRECTLY via its Tenant.",
+    "Cascades organization + region through branch → organization/region.",
+    "team_id + athlete_id + season_id + branch_id + tenant_id are IMMUTABLE post-create. Re-pointing is an audit-trail launder.",
+    "age_group_snapshot_id is IMMUTABLE post-create — SNAPSHOT semantics. Birthday drift + AgeGroup catalog changes DO NOT reshape it.",
+    "team_member_id is populated ATOMICALLY on status → active. Direct writes outside the atomic conversion coordinator are refused."
+  ]
+}

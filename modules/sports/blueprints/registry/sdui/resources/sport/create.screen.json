@@ -1,0 +1,121 @@
+{
+  "id": "sports-registry.resources.sport.create",
+  "title": "Create sport",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/sports/create",
+  "host": "tenant",
+  "audience": "sanctum",
+  "resource": { "module": "sports-registry", "entity": "sport", "action": "create" },
+  "requiresPermission": "sports.create",
+  "requiresEntitlement": "sports_registry_custom",
+  "notes": [
+    "Enterprise-only. Small + Medium tiers get redirected back to the list with the upgrade prompt visible.",
+    "Slug is REQUIRED + IMMUTABLE — downstream Wave 3 rows will carry it as a string. The picker validates the slug against the reserved list + the platform + tenant slug collision check via a client-side lookup + a server-side observer refusal.",
+    "The is_platform_seeded field is NEVER exposed here — tenant callers can only create is_platform_seeded=false rows (the observer forces it)."
+  ],
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl" },
+      "actions": {
+        "onSubmit": {
+          "kind": "http.post",
+          "url": "/api/v1/sports",
+          "bodyExpr": "form",
+          "onSuccess": { "kind": "navigate", "to": "/settings/sports/{{data.id}}" }
+        }
+      },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Create custom sport" } },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Identity" } }] },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-4" },
+              "children": [
+                { "kind": "TextField", "props": { "name": "name", "label": "Name", "required": true, "helpText": "Display name shown in pickers and enrollment forms." } },
+                { "kind": "TextField", "props": { "name": "slug", "label": "Slug", "required": true, "helpText": "Lowercase snake_case. Immutable after creation. Cannot match a platform sport slug.", "placeholder": "e.g. acme_kabaddi" } },
+                {
+                  "kind": "Select",
+                  "props": { "name": "category", "label": "Category", "required": true, "placeholder": "Pick a category" },
+                  "options": [
+                    { "key": "team_sport", "label": "Team sports" },
+                    { "key": "individual_sport", "label": "Individual sports" },
+                    { "key": "racquet", "label": "Racquet" },
+                    { "key": "combat", "label": "Combat" },
+                    { "key": "aquatic", "label": "Aquatic" },
+                    { "key": "winter", "label": "Winter" },
+                    { "key": "cycling", "label": "Cycling" },
+                    { "key": "track_field", "label": "Track and field" },
+                    { "key": "fitness", "label": "Fitness" },
+                    { "key": "recreational", "label": "Recreational" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Metadata" } }] },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-4" },
+              "children": [
+                { "kind": "TextArea", "props": { "name": "description", "label": "Description", "helpText": "Free-form; shown in the sport detail view." } },
+                { "kind": "TextField", "props": { "name": "governing_body", "label": "Governing body", "helpText": "Official body — FIFA, FIBA, FINA, your national federation, etc." } },
+                {
+                  "kind": "Select",
+                  "props": { "name": "gender_typical", "label": "Gender profile", "defaultValue": "any" },
+                  "options": [
+                    { "key": "any", "label": "Any" },
+                    { "key": "male_only", "label": "Male-only" },
+                    { "key": "female_only", "label": "Female-only" },
+                    { "key": "mixed", "label": "Mixed" }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-4" },
+                  "children": [
+                    { "kind": "NumberField", "props": { "name": "age_range_min", "label": "Minimum age", "min": 3, "max": 99 } },
+                    { "kind": "NumberField", "props": { "name": "age_range_max", "label": "Maximum age", "min": 3, "max": 99 } }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Presentation" } }] },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-4" },
+              "children": [
+                { "kind": "ColorField", "props": { "name": "primary_color", "label": "Primary color", "helpText": "Hex code — used for the sport chip in the tenant UI." } },
+                { "kind": "TextField", "props": { "name": "icon", "label": "Icon", "helpText": "Iconify identifier — e.g. mdi:soccer, game-icons:basketball-ball.", "placeholder": "mdi:trophy" } },
+                { "kind": "NumberField", "props": { "name": "sort_order", "label": "Sort order", "defaultValue": 500, "min": 0, "max": 9999, "helpText": "Lower renders first in pickers." } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-end gap-2" },
+          "children": [
+            { "kind": "Button", "props": { "variant": "ghost", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "to": "/settings/sports" } } },
+            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "children": "Create sport" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

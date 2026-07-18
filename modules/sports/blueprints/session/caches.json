@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/session/caches",
+  "$version": 1,
+  "title": "session — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["session", "session-today", "session-attendance"],
+  "keys": [
+    {
+      "pattern": "ses:today:{tenant_id}",
+      "description": "Sessions with starts_at in today's local calendar day. Home-page endpoint. 60-second TTL.",
+      "ttlSeconds": 60,
+      "tags": ["session", "session-today"],
+      "invalidatedBy": [
+        "SessionObserver.created",
+        "SessionObserver.updated (resource_booking_id / status touched)",
+        "SessionObserver.deleted",
+        "StartScheduledSessionsJob per-row transition",
+        "CompleteFinishedSessionsJob per-row transition"
+      ]
+    },
+    {
+      "pattern": "ses:upcoming:{tenant_id}:{coach_id?}",
+      "description": "Sessions in the next 7 days, optionally filtered by coach. Consumed by coach-facing UI.",
+      "ttlSeconds": 120,
+      "tags": ["session"],
+      "invalidatedBy": [
+        "SessionObserver.created",
+        "SessionObserver.updated",
+        "SessionObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "ses:full:{session_id}",
+      "description": "Full session row with attendance + coach eager-loaded.",
+      "ttlSeconds": 60,
+      "tags": ["session"],
+      "invalidatedBy": [
+        "SessionObserver.updated",
+        "SessionObserver.deleted",
+        "SessionAttendanceObserver.created",
+        "SessionAttendanceObserver.updated",
+        "SessionAttendanceObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "ses:coach:{coach_id}",
+      "description": "Coach's upcoming session list. Consumed by coach-facing UI.",
+      "ttlSeconds": 300,
+      "tags": ["session"],
+      "invalidatedBy": [
+        "SessionObserver.updated (head_coach_id / assistant_coach_ids touched)",
+        "SessionObserver.created",
+        "SessionObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "ses:attendance:{session_id}",
+      "description": "Attendance list for one session. High-frequency read during check-in flow.",
+      "ttlSeconds": 15,
+      "tags": ["session", "session-attendance"],
+      "invalidatedBy": [
+        "SessionAttendanceObserver.created",
+        "SessionAttendanceObserver.updated",
+        "SessionAttendanceObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "ses:phase:{session_id}",
+      "description": "Cached phase evaluation for a session. Short TTL because phase transitions at minute boundaries via automated jobs.",
+      "ttlSeconds": 30,
+      "tags": ["session"],
+      "invalidatedBy": [
+        "SessionObserver.updated (status touched)",
+        "StartScheduledSessionsJob per-row",
+        "CompleteFinishedSessionsJob per-row",
+        "CancelUnderMinimumSessionsJob per-row"
+      ]
+    },
+    {
+      "pattern": "ses:reminder:{session_id}:{window}",
+      "description": "Dedupe marker for NotifySessionReminderJob (window: T-24h / T-1h).",
+      "ttlSeconds": 3600,
+      "tags": ["session"],
+      "invalidatedBy": ["NotifySessionReminderJob completion for window"]
+    },
+    {
+      "pattern": "ses:athlete_history:{athlete_id}",
+      "description": "Athlete's attendance history. Consumed by athlete-detail screens + coach-view of an athlete.",
+      "ttlSeconds": 300,
+      "tags": ["session", "session-attendance"],
+      "invalidatedBy": [
+        "SessionAttendanceObserver.created (matches athlete_id)",
+        "SessionAttendanceObserver.updated",
+        "SessionAttendanceObserver.deleted"
+      ]
+    }
+  ]
+}

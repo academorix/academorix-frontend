@@ -1,0 +1,214 @@
+{
+  "id": "academorix://modules/event/routes",
+  "$version": 1,
+  "title": "event — HTTP routes",
+  "description": "Tenant-facing event CRUD + lifecycle actions (announce / open+close registration / start / complete / cancel / archive / restore / publish / unpublish) + facility attach/detach + livestream endpoints. Platform-admin cross-tenant read + force-cancel. Every tenant route carries `entitlement.enforce:sports_events` at minimum.",
+  "groups": [
+    {
+      "name": "tenant-events",
+      "prefix": "/api/v1/events",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "resolve.application",
+        "user.resolve_active_tenant",
+        "tenant.resolve",
+        "user.enforce_tenant_membership",
+        "entitlement.enforce:sports_events",
+        "event.resolve_active",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Admin-facing Event CRUD scoped to the active tenant. Read permissions filter by visibility per-role. Write permissions gated by events.create / update / delete + specific lifecycle permissions.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@index",
+          "permission": "events.viewAny",
+          "description": "filter[status], filter[event_type], filter[format], filter[visibility], filter[organization_id], filter[branch_id], filter[season_id], filter[primary_sport_key], filter[starts_at.gte], filter[starts_at.lte], filter[has_livestream], filter[has_prize_pool], filter[gender_category], filter[age_range.min], filter[age_range.max], sort[]=starts_at,ends_at,name,created_at,registration_opens_at, include=organization,branch,season,facilities,primary_facility,registered_count. Default sort: starts_at asc. include_archived=true opts into archived rows (admin/owner only)."
+        },
+        {
+          "method": "GET",
+          "path": "/upcoming",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\UpcomingEventController@index",
+          "permission": "events.viewAny",
+          "description": "The high-traffic endpoint the tenant homepage + dashboard widget calls. Returns events with status IN (announced, registration_open, registration_closed, in_progress) AND starts_at >= now() ORDER BY starts_at ASC LIMIT 20. Cached per (tenant, organization?, branch?) with 60-second TTL. Filtered by visibility for the caller's role."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@store",
+          "permission": "events.create",
+          "description": "Admin-triggered creation. Body: EventCreateData — name (required), organization_id (required), starts_at (required), ends_at (required), event_type (required), branch_id (nullable), season_id (nullable), primary_sport_key (nullable), format (nullable), description, private_notes, visibility (defaults tenant_only), timezone, registration_opens_at, registration_closes_at, max_participants, max_teams, min_age, max_age, age_group_ids, gender_category, entry_fee_cents, entry_fee_currency, prize_pool_cents (entitlement-gated), prize_pool_currency, livestream_url (entitlement-gated), livestream_password, hero_image_url, allow_late_registration, late_registration_fee_cents, sponsors (entitlement-gated), rules_document_url. Consumes 1 event_slot per overlapping calendar year."
+        },
+        {
+          "method": "GET",
+          "path": "/{event}",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@show",
+          "permission": "events.view",
+          "description": "Full Event row. include=organization,branch,season,facilities,primary_facility,registered_count,registration_window,sponsors."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{event}",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@update",
+          "permission": "events.update",
+          "description": "Update mutable fields. Body: EventUpdateData — name, slug, description, private_notes, event_type (pre-announced only), format, visibility (entitlement-gated for public), timezone, registration_opens_at, registration_closes_at, max_participants, max_teams, min_age, max_age (narrowing post-registration_open requires events.eligibility.narrow), age_group_ids, gender_category, entry_fee_cents (post-registration_open requires events.pricing.change), entry_fee_currency, prize_pool_cents, livestream_url, livestream_password, hero_image_url, allow_late_registration, late_registration_fee_cents, sponsors, rules_document_url. Immutable-post-create: tenant_id, organization_id. branch_id + primary_sport_key immutable post-registration_open (venue change goes through events.venue.change). starts_at + ends_at mutable post-announced only with events.dates.shift."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{event}",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@destroy",
+          "permission": "events.delete",
+          "description": "Soft-delete (archive path). Requires Event.status IN ('completed', 'cancelled') first. Hard-delete via PurgeArchivedEventsJob after retention window."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/announce",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@announce",
+          "permission": "events.announce",
+          "description": "Manual transition draft -> announced. Body: { reason? }. Fires EventAnnounced."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/open-registration",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@openRegistration",
+          "permission": "events.open_registration",
+          "description": "Manual transition announced -> registration_open. Refused when now() < registration_opens_at UNLESS caller carries events.registration.open-early. Fires EventRegistrationOpened."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/close-registration",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@closeRegistration",
+          "permission": "events.close_registration",
+          "description": "Manual transition registration_open -> registration_closed. Fires EventRegistrationClosed."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/start",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@start",
+          "permission": "events.start",
+          "description": "Manual transition (registration_closed OR announced) -> in_progress. Fires EventStarted."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/complete",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@complete",
+          "permission": "events.complete",
+          "description": "Manual transition in_progress -> completed. Fires EventCompleted."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/cancel",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@cancel",
+          "permission": "events.cancel",
+          "description": "Manual transition (any pre-completed state) -> cancelled. Body: { cancellation_reason: string (REQUIRED) }. Fires EventCancelled + EventCancellationBroadcast (cannot-opt-out notification to every registered participant + guardian for minors)."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/archive",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@archive",
+          "permission": "events.archive",
+          "description": "Manual transition (completed OR cancelled) -> archived. Body: { reason? }. Fires EventArchived."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/restore",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@restore",
+          "permission": "events.restore",
+          "description": "Archived -> completed/cancelled (whichever it was). Only within retention window (default 2555 days = 7 years). Fires EventRestored."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/publish",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@publish",
+          "permission": "events.publish",
+          "description": "Set visibility='public'. Gated by event_public_visibility entitlement. Fires EventPublished."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/unpublish",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventController@unpublish",
+          "permission": "events.unpublish",
+          "description": "Set visibility to a non-public value (default tenant_only). Body: { visibility? }. Fires EventUnpublished."
+        },
+        {
+          "method": "GET",
+          "path": "/{event}/facilities",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventFacilityController@index",
+          "permission": "events.view",
+          "description": "List event_facilities for this event. include=facility."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/facilities",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventFacilityController@store",
+          "permission": "events.facilities.attach",
+          "description": "Attach a facility. Body: EventFacilityCreateData — facility_id (required), purpose (default competition), is_primary (default false — first attachment auto-primary), sort_order, notes. Multi-facility gated by event_multi_facility entitlement."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{event}/facilities/{eventFacility}",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventFacilityController@destroy",
+          "permission": "events.facilities.detach",
+          "description": "Detach a facility (soft-delete). Refused when the event is in_progress AND the row is primary AND no other facility can replace it. Fires EventFacilityRemoved."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/facilities/{eventFacility}/set-primary",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\EventFacilityController@setPrimary",
+          "permission": "events.facilities.set_primary",
+          "description": "Flip is_primary=true (auto-demotes the previous primary). Fires EventPrimaryFacilityChanged + EventVenueChanged when the event is post-registration_open."
+        },
+        {
+          "method": "GET",
+          "path": "/{event}/livestream",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Tenant\\LivestreamController@show",
+          "permission": "events.view",
+          "description": "Livestream_url + is_password_protected. Password NEVER included in the response — delivered to registered participants via secure email. Gated by event_livestream entitlement + row-level visibility per caller's role."
+        }
+      ]
+    },
+    {
+      "name": "platform-events",
+      "prefix": "/api/v1/platform/events",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant read + force-cancel. Writes stay on the tenant surface (platform ops must impersonate to write).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Platform\\EventController@index",
+          "permission": "platform.events.viewAny",
+          "description": "Cross-tenant filterable list. filter[tenant_id], filter[status], filter[event_type], filter[starts_at.gte], filter[starts_at.lte]."
+        },
+        {
+          "method": "GET",
+          "path": "/{event}",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Platform\\EventController@show",
+          "permission": "platform.events.view",
+          "description": "Single-event cross-tenant read with full metadata + facilities + registered_count."
+        },
+        {
+          "method": "POST",
+          "path": "/{event}/force-cancel",
+          "controller": "Academorix\\Sports\\Event\\Http\\Controllers\\Platform\\EventController@forceCancel",
+          "permission": "platform.events.force_cancel",
+          "description": "Force-cancel escape hatch. Two-person path (super_admin approval required per action-level middleware). Body: { cancellation_reason: string (REQUIRED), incident_id: string (REQUIRED) }. Fires EventCancelled + EventCancellationBroadcast + a platform-support audit row with incident_id + operator + approver."
+        }
+      ]
+    }
+  ]
+}

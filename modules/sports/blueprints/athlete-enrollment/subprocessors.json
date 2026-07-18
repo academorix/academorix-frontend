@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/athlete-enrollment/subprocessors",
+  "$version": 1,
+  "title": "athlete-enrollment — subprocessors",
+  "description": "The AthleteEnrollment module engages ZERO third-party subprocessors — every state transition is first-party. Downstream: notifications, storage (Wave 4+), finance (Wave 4+ for payment status).",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    { "module": "notifications", "reference": "notifications::subprocessors.json", "used_for": "Dispatching enrollment lifecycle notifications." },
+    { "module": "finance", "reference": "finance::subprocessors.json (Wave 4+)", "used_for": "Payment collection integration for enrollment fees." }
+  ],
+  "notes": [
+    "GDPR Art. 30 requires this record even when empty."
+  ]
+}

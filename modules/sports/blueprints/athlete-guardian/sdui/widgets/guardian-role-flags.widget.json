@@ -1,0 +1,62 @@
+{
+  "id": "athlete_guardian.widgets.guardian-role-flags",
+  "title": "Guardian role flags",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete_guardian.guardian-role-flags",
+  "description": "Compact chip strip showing the four role flags as icons: custody (scales icon), pickup (car icon), communications (mail icon), medical (heart icon). Green icon = flag true; grey icon = false. Rendered inline in guardian lists + pickers.",
+  "params": {
+    "has_legal_custody": { "type": "boolean", "required": true },
+    "can_pickup": { "type": "boolean", "required": true },
+    "can_receive_communications": { "type": "boolean", "required": true },
+    "can_authorise_medical_care": { "type": "boolean", "required": true }
+  },
+  "nodes": [
+    {
+      "kind": "View",
+      "props": { "className": "flex items-center gap-1" },
+      "children": [
+        {
+          "kind": "Tooltip",
+          "props": { "content": "Legal custody" },
+          "children": [
+            {
+              "kind": "Icon",
+              "propsExpr": "{ name: 'scales', className: 'size-3 ' + ($params.has_legal_custody ? 'text-success' : 'text-muted opacity-40') }"
+            }
+          ]
+        },
+        {
+          "kind": "Tooltip",
+          "props": { "content": "Can pickup" },
+          "children": [
+            {
+              "kind": "Icon",
+              "propsExpr": "{ name: 'truck', className: 'size-3 ' + ($params.can_pickup ? 'text-success' : 'text-muted opacity-40') }"
+            }
+          ]
+        },
+        {
+          "kind": "Tooltip",
+          "props": { "content": "Receives communications" },
+          "children": [
+            {
+              "kind": "Icon",
+              "propsExpr": "{ name: 'envelope', className: 'size-3 ' + ($params.can_receive_communications ? 'text-success' : 'text-muted opacity-40') }"
+            }
+          ]
+        },
+        {
+          "kind": "Tooltip",
+          "props": { "content": "Can authorise medical care" },
+          "children": [
+            {
+              "kind": "Icon",
+              "propsExpr": "{ name: 'heart', className: 'size-3 ' + ($params.can_authorise_medical_care ? 'text-danger' : 'text-muted opacity-40') }"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

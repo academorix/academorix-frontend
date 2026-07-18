@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/event/health",
+  "$version": 1,
+  "title": "event — health probes",
+  "probes": [
+    {
+      "name": "event-tables-migrated",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\TablesMigratedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `events` + `event_facilities` tables exist with the latest schema.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "event-tenant-fk-integrity",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\TenantFkIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every events.tenant_id + event_facilities.tenant_id resolves to a live tenants row.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "event-organization-fk-integrity",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\OrganizationFkIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every events.organization_id resolves to a live organizations row.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "event-primary-facility-invariant",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\PrimaryFacilityInvariantProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every event with active event_facilities rows has EXACTLY one is_primary=true. Backed by partial unique index; probe catches drift from bulk imports.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "event-slug-uniqueness",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\SlugUniquenessProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No two active events share (tenant_id, organization_id, slug). Verifies the partial unique index is healthy.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "event-date-consistency",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\DateConsistencyProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "For every event: ends_at >= starts_at; when set, registration_opens_at <= registration_closes_at <= starts_at. Catches raw-SQL drift.",
+      "timeoutMs": 800
+    },
+    {
+      "name": "event-phase-roll-heartbeat",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\PhaseRollHeartbeatProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "RollEventStatusJob ran successfully within the last 90 minutes.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "event-facility-booking-drift",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\FacilityBookingDriftProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every active event_facilities row has a matching resource_booking spanning the event window. Populated by ReconcileEventFacilityBookingsJob. Reports drifted rows.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "event-purge-queue-drained",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\PurgeQueueDrainedProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No PurgeArchivedEventsJob has been pending for > 48h."
+    },
+    {
+      "name": "event-inbound-fk-drift",
+      "class": "Academorix\\Sports\\Event\\Health\\Probes\\InboundFkDriftProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No Session / EventTeam / AthleteEnrollment row references a hard-deleted Event.",
+      "timeoutMs": 800
+    }
+  ]
+}

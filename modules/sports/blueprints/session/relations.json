@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/session/relations",
+  "$version": 1,
+  "title": "session — model relationships",
+  "description": "Session sits below Tenant + Branch. Composes resource_booking (facility module). Optional FKs to Team, Season, Event, Coach, Staff. Inbound from SessionAttendance (owned). NEVER carries application_id / organization_id / region_id / scope_node_id.",
+  "internal": [
+    {
+      "from": "Session",
+      "kind": "hasMany",
+      "to": "SessionAttendance",
+      "foreignKey": "session_id",
+      "description": "Attendance rows for this session."
+    }
+  ],
+  "outbound": [
+    { "from": "Session", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "tenant_id", "onDelete": "cascade" },
+    { "from": "Session", "kind": "belongsTo", "to": "branch::Branch", "foreignKey": "branch_id", "onDelete": "restrict" },
+    { "from": "Session", "kind": "belongsTo", "to": "facility::ResourceBooking", "foreignKey": "resource_booking_id", "onDelete": "restrict", "description": "The physical slot. Session inherits starts_at/ends_at from here." },
+    { "from": "Session", "kind": "belongsTo", "to": "teams::Team", "foreignKey": "team_id", "nullable": true, "onDelete": "restrict", "description": "Nullable = standalone session." },
+    { "from": "Session", "kind": "belongsTo", "to": "season::Season", "foreignKey": "season_id", "nullable": true, "onDelete": "restrict" },
+    { "from": "Session", "kind": "belongsTo", "to": "event::Event", "foreignKey": "event_id", "nullable": true, "onDelete": "restrict" },
+    { "from": "Session", "kind": "belongsTo", "to": "coaching::Coach", "foreignKey": "head_coach_id", "nullable": true, "onDelete": "restrict", "description": "Head coach. RESTRICT — coach can't be deleted while assigned; deactivation cascades via listener." },
+    { "from": "Session", "kind": "belongsTo", "to": "staff::Staff", "foreignKey": "supervising_staff_id", "nullable": true, "onDelete": "restrict" },
+    { "from": "Session", "kind": "belongsTo", "to": "age-group::AgeGroup", "foreignKey": "age_group_id", "nullable": true, "onDelete": "restrict" },
+    { "from": "SessionAttendance", "kind": "belongsTo", "to": "tenancy::Tenant", "foreignKey": "tenant_id", "onDelete": "cascade" },
+    { "from": "SessionAttendance", "kind": "belongsTo", "to": "session::Session", "foreignKey": "session_id", "onDelete": "cascade" },
+    { "from": "SessionAttendance", "kind": "belongsTo", "to": "athlete::Athlete", "foreignKey": "athlete_id", "onDelete": "restrict" },
+    { "from": "SessionAttendance", "kind": "belongsTo", "to": "athlete-enrollment::AthleteEnrollment", "foreignKey": "athlete_enrollment_id", "nullable": true, "onDelete": "set null", "description": "SET NULL so attendance record survives enrollment deletion (safeguarding + financial retention)." }
+  ],
+  "inbound": {
+    "description": "Wave 3+ modules may add per-session rows (session-ratings, session-recap, etc.) via BelongsToSession trait.",
+    "examples": [
+      "Wave 3+ ratings module — individual rating rows per (session_id, rater_user_id).",
+      "Wave 3+ session-recap module — coach post-session structured recap."
+    ],
+    "onDelete": "RESTRICT by convention. SessionObserver refuses to hard-delete a session with active inbound rows."
+  },
+  "morphs": [],
+  "notes": [
+    "Session's starts_at + ends_at are DERIVED from resource_booking — never stored on Session directly. The reschedule path swaps resource_booking_id.",
+    "Session does NOT participate in scope substrate (`scope_node_id` forbidden per tenancy-columns.md §4).",
+    "Coach ratings feed the Coach.rating aggregator (Wave 2b coaching module) via SessionRatingAggregated event.",
+    "Safeguarding-flagged sessions have extended retention (indefinite by default) — regulator-facing incident trail."
+  ]
+}

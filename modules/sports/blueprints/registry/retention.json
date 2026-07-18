@@ -1,0 +1,101 @@
+{
+  "id": "academorix://modules/sports-registry/retention",
+  "$version": 1,
+  "title": "sports-registry — retention windows",
+  "description": "Two shapes of retention. Platform-seeded rows are PERMANENT — they never hard-delete (only deactivate). Tenant custom rows follow the standard soft-delete → archived → hard-delete lifecycle. Audit rows survive their source row for compliance replay: 2 years for regular mutations, 7 years for SportPrefixResolutionFailed events (dangling-reference signal).",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) (storage limitation)",
+    "SOC 2 CC7.2 (system monitoring — reconciler audit trail)",
+    "gdpr Art. 5(1)(c) (data minimisation — the registry stores taxonomy only, not user data)"
+  ],
+  "retention": [
+    {
+      "entity": "Sport (platform-seeded, is_platform_seeded=true)",
+      "hot": { "days": "PERMANENT" },
+      "cold": {
+        "state": "deactivated (is_active=false); hidden from tenant picker; still resolves via SportKeyResolver for historical references",
+        "days": "PERMANENT"
+      },
+      "purge": {
+        "trigger": "NEVER",
+        "action": "no-op",
+        "note": "Platform-seeded rows are the taxonomy contract. Even deactivated + zero downstream references, they survive indefinitely. Rationale: platform history is an operational property — someone somewhere may still be reading an old audit log or historical enrollment that references a deactivated slug. Hard-deleting would introduce ambiguity where a resolver call returns SPORT_KEY_UNRESOLVED for a slug that legitimately existed at write time."
+      }
+    },
+    {
+      "entity": "Sport (tenant custom, is_platform_seeded=false, tenant_id NOT NULL)",
+      "hot": { "days": "while deleted_at IS NULL AND is_active=true" },
+      "cold": {
+        "state": "is_active=false OR deleted_at IS NOT NULL; hidden from tenant picker; still resolves via SportKeyResolver for historical references",
+        "days": "sports_registry.retention.custom_deactivated_days (default 730 — 2 years)"
+      },
+      "purge": {
+        "trigger": "is_active=false AND updated_at + custom_deactivated_days past AND no downstream reference remains",
+        "action": "hard delete",
+        "job": "PurgeArchivedRegistryRowsJob",
+        "cascades": [],
+        "note": "If any downstream row (Team, AthleteEnrollment, etc. listed in the reconciler config) still references this Sport's slug, the job SKIPS the row + logs the pending purge. Explicit `sports:registry:deactivate --force-hard-delete` bypasses the retention window (support tooling; requires ops sign-off) but never applies to platform-seeded rows."
+      }
+    },
+    {
+      "entity": "Discipline (platform-seeded)",
+      "hot": { "days": "PERMANENT" },
+      "cold": { "state": "deactivated (is_active=false)", "days": "PERMANENT" },
+      "purge": { "trigger": "NEVER", "action": "no-op" }
+    },
+    {
+      "entity": "Discipline (tenant custom)",
+      "hot": { "days": "while deleted_at IS NULL AND is_active=true" },
+      "cold": {
+        "state": "is_active=false OR deleted_at IS NOT NULL",
+        "days": "sports_registry.retention.custom_deactivated_days (default 730)"
+      },
+      "purge": { "trigger": "deactivation window past + no references", "action": "hard delete", "job": "PurgeArchivedRegistryRowsJob" }
+    },
+    {
+      "entity": "Position (platform-seeded)",
+      "hot": { "days": "PERMANENT" },
+      "cold": { "state": "deactivated", "days": "PERMANENT" },
+      "purge": { "trigger": "NEVER", "action": "no-op" }
+    },
+    {
+      "entity": "Position (tenant custom)",
+      "hot": { "days": "while deleted_at IS NULL AND is_active=true" },
+      "cold": {
+        "state": "is_active=false OR deleted_at IS NOT NULL",
+        "days": "sports_registry.retention.custom_deactivated_days (default 730)"
+      },
+      "purge": { "trigger": "deactivation window past + no references", "action": "hard delete", "job": "PurgeArchivedRegistryRowsJob" }
+    },
+    {
+      "entity": "audits (SportPrefixResolutionFailed)",
+      "hot": { "days": "2555 (7 years)" },
+      "purge": {
+        "trigger": "audit-module retention policy",
+        "action": "hard purge",
+        "note": "Elevated retention because these audit rows are the compliance-replay signal for downstream Wave 3 data integrity. A tenant asking 'why was athlete X's enrollment shown as unresolvable' should be able to reconstruct the sport_key state from these rows regardless of what happened to the Sport row itself."
+      }
+    },
+    {
+      "entity": "audits (other Registry mutations)",
+      "hot": { "days": "730 (2 years)" },
+      "purge": { "trigger": "audit-module retention policy", "action": "hard purge" }
+    },
+    {
+      "entity": "activity_log (Registry lifecycle events)",
+      "hot": { "days": "90 (tenant retention_days, per hierarchy.md §7 tier matrix)" },
+      "purge": { "trigger": "activity-module retention policy", "action": "hard purge" }
+    },
+    {
+      "entity": "cache keys (sports:*)",
+      "hot": { "days": "seconds — TTL-driven" },
+      "purge": { "trigger": "TTL expiry OR invalidation on Registry mutation", "action": "Redis EXPIRE" }
+    }
+  ],
+  "notes": [
+    "Platform-seeded row permanence is deliberate. A tenant with a 5-year-old enrollment that references `sport_key='football'` should still resolve even if the platform later decided to split football into 'soccer' and 'american_football'. The old slug remains active (deactivated but resolvable) forever.",
+    "The 730-day (2-year) custom-deactivation retention is optimised for tenant custom safety — a customer who deactivated a custom sport by mistake has 2 years to restore it before the hard-delete window opens. Enterprise tenants may extend via a support-ticket config override.",
+    "PurgeArchivedRegistryRowsJob runs WEEKLY (not daily) because the workload is trivial — most tenants never deactivate customs, and customs never quite make the FK-clear + retention-past bar together. Weekly is enough.",
+    "Deleting an entire tenant cascades platform-seeded rows unchanged (they carry tenant_id NULL) + custom rows via FK CASCADE. The PreventCustomRegistryOrphansOnTenantErased hook writes a diagnostic before the cascade fires; nothing to prevent (custom rows can't be referenced from outside the tenant)."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/athlete-enrollment/helpers",
+  "$version": 1,
+  "title": "athlete-enrollment — helper functions",
+  "namespace": "Academorix\\Sports\\AthleteEnrollment\\Support",
+  "helpers": [
+    { "signature": "current_enrollments_for_athlete(Athlete $athlete): Collection<AthleteEnrollment>", "purpose": "Returns active + confirmed enrollments for an athlete.", "delegates_to": "AthleteEnrollmentRepository::currentForAthlete()" },
+    { "signature": "team_active_roster(Team $team, Season $season): Collection<AthleteEnrollment>", "purpose": "Returns the active roster for a team + season.", "delegates_to": "AthleteEnrollmentRepository::teamRoster()" },
+    { "signature": "team_waitlist(Team $team, Season $season): Collection<AthleteEnrollment>", "purpose": "Returns the waitlist for a team + season, ordered by waitlist_position.", "delegates_to": "AthleteEnrollmentRepository::teamWaitlist()" },
+    { "signature": "team_has_capacity(Team $team, Season $season): bool", "purpose": "True when the team has fewer active enrollments than team.capacity.", "delegates_to": "TeamCapacityResolver::hasCapacity()" },
+    { "signature": "waitlist_position_for_new_submission(Team $team, Season $season): int", "purpose": "Returns the next waitlist position for a fresh submission when the team is at capacity.", "delegates_to": "WaitlistPositionResolver::nextPosition()" },
+    { "signature": "enrollment_requires_consent(AthleteEnrollment $enrollment): bool", "purpose": "True when the enrollment is for a minor athlete AND consent_snapshot is missing OR consent flags are not aligned with tenant's required set." },
+    { "signature": "enrollment_requires_payment(AthleteEnrollment $enrollment): bool", "purpose": "True when price_amount_cents > 0 AND payment_status IN ('none', 'pending', 'partial')." }
+  ]
+}

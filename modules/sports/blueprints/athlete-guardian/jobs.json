@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/athlete-guardian/jobs",
+  "$version": 1,
+  "title": "athlete-guardian — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\AthleteGuardian\\Jobs\\VerifyGuardianByEmailDomainJob",
+      "queue": "athlete-guardian",
+      "purpose": "Dispatched on GuardianAdded. Attempts auto-verification via same-household email domain match. When the guardian's User.email domain matches another verified guardian's User.email domain OR the tenant's staff-domain allow-list, transitions verification_status pending → verified with verification_method='auto_household'. When the tenant doesn't carry athlete_guardian_verification entitlement AND 24 hours have passed since GuardianAdded, transitions pending → verified with verification_method='silent_acceptance'. When athlete_guardian_verification is on, the job STAYS in pending after the 24h window — HR must invoke /verify manually.",
+      "steps": [
+        "Load the guardian + its user + its athlete + all other verified guardians for the athlete",
+        "Extract guardian's User.email domain (after @)",
+        "For each other verified guardian: check if their User.email domain matches — if yes, transition to verified with method='auto_household'",
+        "Check tenant staff-domain allow-list (config('athlete_guardian.verification.trusted_domains', []) + tenant metadata) — if matches, transition to verified with method='auto_household'",
+        "Wait 24h + re-dispatch self:",
+        "  If tenant carries athlete_guardian_verification entitlement: stay pending (HR must act)",
+        "  Else: transition to verified with method='silent_acceptance'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\AthleteGuardian\\Jobs\\ReconcilePrimaryGuardianInvariantJob",
+      "queue": "athlete-guardian",
+      "purpose": "Nightly sweep. Verifies EXACTLY one is_primary=true guardian per athlete (or zero when NO guardians exist). Fires a P1 diagnostic event when the invariant is violated (multiple primaries per athlete, OR a primary with verification_status != 'verified').",
+      "steps": [
+        "SELECT athlete_id, COUNT(*) FROM athlete_guardians WHERE is_primary=true AND deleted_at IS NULL GROUP BY athlete_id HAVING COUNT(*) > 1",
+        "For each violating athlete: fire a diagnostic event `PrimaryGuardianInvariantViolated` + emit metric academorix.athlete_guardian.primary.invariant_violations",
+        "SELECT athlete_id FROM athlete_guardians WHERE is_primary=true AND verification_status != 'verified' AND deleted_at IS NULL",
+        "For each: same signal (unverified primary — likely a race the observer should have prevented)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\AthleteGuardian\\Jobs\\PurgeArchivedGuardiansJob",
+      "queue": "athlete-guardian",
+      "purpose": "Daily sweep of soft-deleted (deleted_at set) AND revoked (verification_status=revoked) guardians past their 7-year retention window. Hard-deletes rows with no active downstream references.",
+      "steps": [
+        "SELECT id FROM athlete_guardians WHERE (deleted_at < now() - interval '7 years' OR (verification_status='revoked' AND revoked_at < now() - interval '7 years')) LIMIT 500",
+        "For each: attempt hard delete; catch FK constraints + record 'retention_blocked'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    }
+  ]
+}

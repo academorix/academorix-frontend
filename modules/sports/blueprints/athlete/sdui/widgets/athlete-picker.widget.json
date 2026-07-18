@@ -1,0 +1,108 @@
+{
+  "id": "athlete.widgets.athlete-picker",
+  "title": "Athlete picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "athlete.athlete-picker",
+  "description": "Searchable single-select for picking an Athlete. Uses HeroUI ComboBox per ui-components.md rule (never Select). Options grouped by branch. Filters to `filter[status]=active` by default. Consumed by AthleteEnrollment create form + Team roster form + Event registration form. Renders the minor-badge subscript when the athlete is a minor.",
+  "params": {
+    "name": { "type": "string", "required": true, "description": "Form field name." },
+    "label": { "type": "string", "required": false, "default": "Athlete", "description": "Label above the picker." },
+    "isRequired": { "type": "boolean", "required": false, "default": false },
+    "branch_id_filter": { "type": "string", "required": false, "description": "Narrow to a single branch — passed as filter[branch_id]." },
+    "age_group_filter": { "type": "string", "required": false, "description": "Narrow to a single age group — passed as filter[current_age_group_id]. Useful in enrollment flow where the team's age group constrains eligible athletes." },
+    "include_paused": { "type": "boolean", "required": false, "default": false, "description": "Include paused athletes. Default false — most forms want active only." }
+  },
+  "dataSources": [
+    {
+      "name": "athletes",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/athletes?filter[status]=' + ($params.include_paused ? 'active,paused' : 'active') + ($params.branch_id_filter ? '&filter[branch_id]=' + $params.branch_id_filter : '') + ($params.age_group_filter ? '&filter[current_age_group_id]=' + $params.age_group_filter : '')",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "kind": "ComboBox",
+      "props": {
+        "name": { "$param": "name" },
+        "label": { "$param": "label" },
+        "isRequired": { "$param": "isRequired" },
+        "menuTrigger": "focus"
+      },
+      "children": [
+        {
+          "kind": "Label",
+          "propsExpr": "{ children: $params.label }"
+        },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            { "kind": "Input", "props": { "placeholder": "Search athlete..." } },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "bindings": { "items": { "$ref": "athletes" } },
+              "children": [
+                {
+                  "kind": "ListBox.Item",
+                  "propsExpr": "{ id: $item.id, textValue: $item.display_name + ' (' + $item.branch_id + ')' }",
+                  "children": [
+                    {
+                      "kind": "View",
+                      "props": { "className": "flex items-center gap-2 py-1" },
+                      "children": [
+                        {
+                          "kind": "Avatar",
+                          "props": { "size": "xs" },
+                          "bindings": {
+                            "src": { "$expr": "$item.consent_photo_release ? $item.profile_photo_url : null" },
+                            "name": { "$ref": "$item.display_name" }
+                          }
+                        },
+                        {
+                          "kind": "View",
+                          "children": [
+                            {
+                              "kind": "View",
+                              "props": { "className": "flex items-center gap-2" },
+                              "children": [
+                                {
+                                  "kind": "Text",
+                                  "props": { "className": "text-sm" },
+                                  "bindings": { "children": { "$ref": "$item.display_name" } }
+                                },
+                                {
+                                  "kind": "Widget",
+                                  "widget": "athlete.minor-badge",
+                                  "props": { "size": "xs" },
+                                  "bindings": { "hidden": { "$expr": "!$item.is_minor" } }
+                                }
+                              ]
+                            },
+                            {
+                              "kind": "Text",
+                              "props": { "className": "text-xs text-muted" },
+                              "bindings": { "children": { "$expr": "$item.age_years + ' years'" } }
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    { "kind": "ListBox.ItemIndicator" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

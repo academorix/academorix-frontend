@@ -1,0 +1,27 @@
+{
+  "id": "academorix://modules/athlete-guardian/permissions",
+  "$version": 1,
+  "title": "athlete-guardian — permissions",
+  "seeder": "Academorix\\Sports\\AthleteGuardian\\Database\\Seeders\\AthleteGuardianPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences. Tenant plane (sanctum) — Guardian CRUD by admin / owner / hr / reception, self-service via .own scope for guardians managing their own guardianships. Platform plane (platform_admin) — cross-tenant read + verification audit for compliance ops.",
+  "permissions": [
+    { "name": "athlete_guardians.viewAny", "guard": "sanctum", "seededOn": ["hr", "coach", "reception", "branch_manager", "admin", "owner"] },
+    { "name": "athlete_guardians.viewAny.own", "guard": "sanctum", "description": "Guardian-scoped listing — narrows to rows where user_id = current_user_id.", "seededOn": ["guardian", "athlete"] },
+    { "name": "athlete_guardians.view", "guard": "sanctum", "seededOn": ["hr", "coach", "reception", "branch_manager", "admin", "owner"] },
+    { "name": "athlete_guardians.view.own", "guard": "sanctum", "description": "Self-view for the guardian on their own row, OR guardian viewing another guardian on the same athlete (co-parent visibility).", "seededOn": ["guardian", "athlete"] },
+    { "name": "athlete_guardians.create", "guard": "sanctum", "description": "Add a new guardian. Fires GuardianAdded + dispatches VerifyGuardianByEmailDomainJob. Refuses when the tier limit is exceeded.", "seededOn": ["hr", "reception", "branch_manager", "admin", "owner"] },
+    { "name": "athlete_guardians.update", "guard": "sanctum", "description": "Update role flags + relationship + notes. is_primary + verification transitions use dedicated permissions below.", "seededOn": ["hr", "branch_manager", "admin", "owner"] },
+    { "name": "athlete_guardians.update.own", "guard": "sanctum", "description": "Guardians update their own role-flag preferences (can_receive_communications, can_pickup, can_authorise_medical_care — subject to has_legal_custody). Relationship, has_legal_custody, and is_primary are admin-only.", "seededOn": ["guardian"] },
+    { "name": "athlete_guardians.delete", "guard": "sanctum", "description": "Soft-delete a guardian. Refused when the guardian is the sole active guardian for a minor athlete.", "seededOn": ["hr", "admin", "owner"] },
+    { "name": "athlete_guardians.set-primary", "guard": "sanctum", "description": "Atomic promote-and-demote of the primary guardian. Same permission covers both directions.", "seededOn": ["hr", "admin", "owner"] },
+    { "name": "athlete_guardians.verify", "guard": "sanctum", "description": "HR verify action. Requires athlete_guardian_verification entitlement (Enterprise) for the endpoint to be enabled. Transitions pending/disputed → verified with document upload.", "seededOn": ["hr", "safeguarding_officer", "owner"] },
+    { "name": "athlete_guardians.dispute", "guard": "sanctum", "description": "Flag a verified guardian for review. Blocks consent recording until resolved.", "seededOn": ["hr", "safeguarding_officer", "owner"] },
+    { "name": "athlete_guardians.revoke", "guard": "sanctum", "description": "Terminal revocation. Requires reason. Auto-flips is_primary + auto-elects a new primary.", "seededOn": ["hr", "safeguarding_officer", "admin", "owner"] },
+    { "name": "athlete_guardians.audit.verification", "guard": "sanctum", "description": "Compliance export — the tenant's guardian verification audit trail.", "seededOn": ["hr", "safeguarding_officer", "owner"] },
+
+    { "name": "platform.athlete_guardians.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
+    { "name": "platform.athlete_guardians.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
+    { "name": "platform.athlete_guardians.audit-verification", "guard": "platform_admin", "description": "Support-tooling verification audit. Super_admin only with two-person approval.", "seededOn": ["super_admin"] }
+  ]
+}

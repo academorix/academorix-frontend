@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/sports-registry/feature-flags",
+  "$version": 1,
+  "title": "sports-registry — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "sports_registry.crud_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for tenant-plane writes. Off = every POST/PATCH/DELETE on /api/v1/sports (and disciplines, positions) returns 503. Emergency-only. Reads always continue."
+    },
+    {
+      "key": "sports_registry.custom_creates_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Independent of the `sports_registry_custom` entitlement — this flag globally kills tenant custom creates even for tenants that hold the entitlement. Off = POST refuses with 503. Used during migrations that intentionally freeze the catalog + reshape the underlying schema."
+    },
+    {
+      "key": "sports_registry.reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileSportReferencesJob no-ops. Used during scheduled Wave 3 migrations that intentionally leave downstream rows in temporary drift while a bulk sport_key rename runs."
+    },
+    {
+      "key": "sports_registry.purge_execution",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeArchivedRegistryRowsJob no-ops. Deactivated customs sit past their 730-day retention window. Rare — used during legal holds when custom-sport evidence must be preserved."
+    },
+    {
+      "key": "sports_registry.deactivate_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = every /api/v1/sports/{sport}/deactivate + reactivate route refuses with 503. Applied uniformly across sports, disciplines, positions. Used during safeguarding-audit windows when deactivations must not shift while investigators reconstruct the catalog state."
+    },
+    {
+      "key": "sports_registry.reseed_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /api/v1/platform/sports/reseed returns 503 + the on-boot listener no-ops. Used to freeze the platform catalog during a coordinated fleet-wide rollout (e.g. adding 10 new sports across all tenants simultaneously requires a coordinated cache invalidation)."
+    },
+    {
+      "key": "sports_registry.resolver_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GET /api/v1/sports/resolve returns 503. Downstream Wave 3 write paths that call the resolver in-process still work (the resolver's write-path calls bypass this flag) but the HTTP surface is closed. Used when a resolver bug produces wrong answers + the read path is frozen while a fix is deployed."
+    },
+    {
+      "key": "sports_registry.async_seed",
+      "kind": "kill-switch",
+      "default": "off",
+      "description": "Off (default) = SeedPlatformSportsCatalogJob runs SYNCHRONOUSLY at boot. On = dispatched to a queue. Default off because catalog absence would break every Wave 3 write; sync boot guarantees the catalog is present before any request lands. On is safe only in dev/staging where a brief catalog-less window is acceptable."
+    }
+  ]
+}

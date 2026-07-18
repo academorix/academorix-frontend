@@ -1,0 +1,33 @@
+{
+  "id": "session.session-safeguarding-flag",
+  "title": "Session safeguarding flag",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Warning chip rendered when a session has safeguarding_incident_flag=true. Rendered ONLY to callers with sessions.safeguarding.view permission — hidden entirely from coach/reception/athlete/guardian roles. Regulator-facing indicator; clicking opens the safeguarding detail modal (admin/owner + platform safeguarding role only).",
+  "props": {
+    "session": { "type": "object", "required": true },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "hidden": {
+          "$expr": "!props.session.safeguarding_incident_flag || !caller.can('sessions.safeguarding.view')"
+        },
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": "danger",
+          "leadingIcon": "shield-exclamation-outline",
+          "children": "Safeguarding flagged",
+          "onPress": {
+            "$action": "modal.open",
+            "modalId": "session.safeguarding-detail",
+            "propsExpr": "{ sessionId: props.session.id }"
+          }
+        }
+      }
+    }
+  ]
+}

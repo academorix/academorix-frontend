@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/event/listeners",
+  "$version": 1,
+  "title": "event — subscribed events",
+  "listeners": [
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Sports\\Event\\Listeners\\PreventEventOrphansOnTenantErased",
+      "queue": null,
+      "purpose": "Verifies no orphan inbound refs remain before the tenant cascade drops the events. See hooks.json — same class is also registered as a tenancy hook (whichever runs first wins the idempotency check)."
+    },
+    {
+      "event": "facility::FacilityRetired",
+      "listener": "Academorix\\Sports\\Event\\Listeners\\CascadeEventFacilitiesOnFacilityRetired",
+      "queue": "sports",
+      "purpose": "Soft-deletes event_facilities rows referencing the retired facility. Notifies affected event admins."
+    },
+    {
+      "event": "facility::FacilityBlackoutAdded",
+      "listener": "Academorix\\Sports\\Event\\Listeners\\FlagEventsAffectedByBlackout",
+      "queue": "sports",
+      "purpose": "When a facility adds a blackout window, scan active event_facilities rows referencing that facility + check whether the event's [starts_at, ends_at] overlaps the blackout. When overlap detected, emit a warning via activity log + notify the event admin (opt-in) so they can reschedule or reassign facility."
+    },
+    {
+      "event": "branch::BranchClosed",
+      "listener": "Academorix\\Sports\\Event\\Listeners\\HandleBranchClosureOnBranchScopedEvents",
+      "queue": "low",
+      "purpose": "Finds active events scoped to the closing branch (branch_id + implicitly via facilities). Writes an audit warning + notifies the event admin. Does NOT auto-cancel — the tenant decides whether to reschedule or relocate."
+    },
+    {
+      "event": "season::SeasonArchived",
+      "listener": "Academorix\\Sports\\Event\\Listeners\\FlagEventsOnArchivedSeason",
+      "queue": "low",
+      "purpose": "When a season is archived, scan events with season_id pointing at it that are still in pre-completed states. Emit a warning — the event should either be re-scoped to another season or completed/cancelled. Does not auto-detach the season."
+    },
+    {
+      "event": "entitlements::EntitlementDowngrade",
+      "listener": "Academorix\\Sports\\Event\\Listeners\\FlagEventFeatureDriftOnDowngrade",
+      "queue": "low",
+      "purpose": "When a tenant downgrades + loses event_public_visibility / event_livestream / event_prize_pool / event_multi_facility / event_sponsors, scan existing events that use the now-lost feature + surface the drift in the tenant admin UI. Does NOT auto-strip the feature (would corrupt data)."
+    },
+    {
+      "event": "audit::AuditFlushed",
+      "listener": "Academorix\\Sports\\Event\\Listeners\\CacheReconciliationLastRun",
+      "queue": null,
+      "purpose": "Fires when ReconcileEventFacilityBookingsJob completes. Caches the timestamp in `evt:reconciler_last_run` for the health probe + ops dashboard."
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/athlete-guardian/broadcasts",
+  "$version": 1,
+  "title": "athlete-guardian — realtime broadcast channels",
+  "description": "Three broadcast channel families: tenant-level for HR + safeguarding dashboards, athlete-level for co-guardians watching a shared roster, user-level for guardians tracking their own guardianship changes.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.guardians",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Broadcasts\\TenantGuardiansChannel",
+      "description": "Tenant-wide guardian lifecycle stream. Sink for HR + safeguarding dashboards.",
+      "authorization": "sanctum::authed AND tenant_matches AND permission `athlete_guardians.viewAny`",
+      "events": [
+        "GuardianAdded",
+        "GuardianRemoved",
+        "PrimaryGuardianChanged",
+        "GuardianVerified",
+        "GuardianVerificationDisputed",
+        "GuardianVerificationRevoked",
+        "GuardianCustodyChanged"
+      ],
+      "throttle": "30 events/minute per channel",
+      "notes": "Guardian names redacted for minor athletes on this channel."
+    },
+    {
+      "name": "athlete.{athleteId}.guardians",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Broadcasts\\AthleteGuardiansChannel",
+      "description": "Per-athlete guardian activity. Powers the co-guardian roster view.",
+      "authorization": "sanctum::authed AND (permission `athlete_guardians.view` scoped to athlete OR active guardian for this athlete)",
+      "events": [
+        "GuardianAdded",
+        "GuardianRemoved",
+        "PrimaryGuardianChanged",
+        "GuardianCanPickupToggled",
+        "GuardianCanAuthoriseMedicalCareToggled"
+      ],
+      "throttle": "20 events/minute per channel"
+    },
+    {
+      "name": "user.{userId}.guardianships",
+      "class": "Academorix\\Sports\\AthleteGuardian\\Broadcasts\\UserGuardianshipsChannel",
+      "description": "Per-user guardianship stream — powers the /me/guardianships live widget.",
+      "authorization": "sanctum::authed AND user_matches",
+      "events": [
+        "GuardianAdded (where user_id = userId)",
+        "GuardianRemoved (where user_id = userId)",
+        "PrimaryGuardianChanged (where new primary user_id = userId OR prior primary user_id = userId)",
+        "GuardianVerified (where user_id = userId)",
+        "GuardianVerificationDisputed (where user_id = userId)"
+      ],
+      "throttle": "10 events/minute per channel"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/session/compliance",
+  "$version": 1,
+  "title": "session — compliance evidence",
+  "description": "Session is the highest-risk module in the sports tier from a compliance standpoint — it captures minors' physical attendance + coach identity + safeguarding narratives. Regulatory framework: US state childcare regs, UK Ofsted, EU GDPR + child-protection directives, and jurisdiction-specific safeguarding retention (e.g. UK IICSA — indefinite for suspected abuse).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(b)",
+          "principle": "purpose limitation",
+          "evidence": "Session fields used only for scheduling + attendance + coaching + safeguarding. Never resold. Session_notes never surface on public/participant wire."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "SessionAttendance records the minimum for safeguarding: presence timestamp + status + optional narrative. Does NOT record biometric attendance, photos, or geo-position."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Standard sessions retained 2555 days (7 years — financial + coaching records). Safeguarding-flagged sessions retained INDEFINITELY (until manual regulator-cleared purge). Retention split lives in `retention.json` + config `session.retention.safeguarding_extends_indefinitely`."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "Every mutation Auditable. Critical events (safeguarding flag, coach reassign <24h with minors present, cancellation, rescheduling) retain 7 years minimum + regulator-tier retention when applicable."
+        }
+      ]
+    },
+    "child_safeguarding": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "attendance records for minors",
+          "principle": "safeguarding by design",
+          "evidence": "Every check-in / mark-absent / mark-late for a minor participant writes to `session_attendance` + `audits`. Post-session records are IMMUTABLE from the public API (no PATCH endpoint on attendance) — corrections happen via a soft-delete + recreate path with audit trail. The chain-of-custody survives 7 years minimum."
+        },
+        {
+          "provision": "coach identity continuity for minors",
+          "principle": "safeguarding by design",
+          "evidence": "SessionCoachReassigned <24h before start on a session with minors registered is audit_severity='critical' + fires a cannot-opt-out notification to guardians with the new coach's identity. Regulator-adjacent — parents relying on a specific coach identity for safeguarding reasons deserve advance notice."
+        },
+        {
+          "provision": "incident narratives",
+          "principle": "safeguarding by design",
+          "evidence": "SessionMinorSafeguardingIncident fires when safeguarding_incident_flag=true AND minor participants present. Requires session_notes narrative. Retention indefinite by default. Notification chain to tenant owner + admin + designated safeguarding officer — the notification itself becomes evidence. Regulator queries (via platform.sessions.safeguarding.viewAny) audited on every read."
+        },
+        {
+          "provision": "coach same-tenant hard boundary",
+          "principle": "safeguarding by design",
+          "evidence": "SessionObserver refuses cross-tenant coach assignment (SESSION_COACH_TENANT_MISMATCH — 422 warn). A coach at Tenant A cannot be inadvertently assigned to Tenant B's session with minors — every tenant isolates their safeguarding perimeter."
+        },
+        {
+          "provision": "attendance minor's guardian notification chain",
+          "principle": "safeguarding by design",
+          "evidence": "SessionCancelled + SessionRescheduled + SessionCoachReassigned cannot-opt-out notifications CC guardians when the registered athlete is a minor (Wave 3+ athlete-enrollment carries the age band + guardian relations)."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        { "criterion": "CC6.1", "principle": "logical access controls", "evidence": "SessionPolicy narrows read/write per role. Coaches see .own; reception .branch; athletes/guardians attendance-derived. Session_notes coach+admin only. Safeguarding read is admin/owner only (coaches can FLAG but cannot READ across sessions — need-to-know)." },
+        { "criterion": "CC6.3", "principle": "authorisation of changes", "evidence": "Post-scheduled + post-confirmed guardrails: session_type / team_id immutable; head_coach reassign <24h requires special permission; cancel <24h requires special permission. Every fire writes to audits." },
+        { "criterion": "CC7.2", "principle": "system monitoring", "evidence": "Health probes cover FK integrity + attendance-count consistency + safeguarding-flag write path + phase-roll heartbeat." }
+      ]
+    },
+    "financial_regulation": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "private-lesson invoicing integrity",
+          "principle": "financial fee integrity",
+          "evidence": "session_type='private_lesson' + 'group_lesson' drives per-lesson invoicing (Wave 4 finance). cancellation_notice_at feeds refund policy — <24h cancellations may be non-refundable. Both fields retain 7-year audit."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "§1798.105",
+          "principle": "right to delete",
+          "evidence": "Aliased to GDPR Art. 17. Attendance records for minors are subject to retention exceptions per child-safeguarding regulations — deletion requests on minor's attendance require guardian consent + tenant safeguarding officer approval + regulator notification."
+        }
+      ]
+    }
+  }
+}
