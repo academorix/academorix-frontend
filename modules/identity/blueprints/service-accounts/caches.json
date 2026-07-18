@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/service-accounts/caches",
+  "$version": 1,
+  "title": "service-accounts \u2014 cache keys + tags",
+  "driver": "redis",
+  "description": "SA caches are aggressively short-TTL. Secrets NEVER cached. State (is_enabled, expires_at, signer_kid) is cached for <= 60 seconds so a disable / rotation / expiry propagates fast across the fleet. Rate-limit buckets are per-SA + per-IP with sliding-window semantics. IP + user-agent fingerprint tuples cached rolling 30 days for anomaly detection.",
+  "ownedTags": ["service-account"],
+  "keys": [
+    {
+      "pattern": "svc:lookup:id:{service_account_id}",
+      "description": "Cached ServiceAccount row (redacted \u2014 no secret_hash). Read by every request through service_account.verify_jwt. Very short TTL so a disable / rotation propagates fast.",
+      "ttlSeconds": 30,
+      "tags": ["service-account"],
+      "invalidatedBy": [
+        "ServiceAccountObserver.updated (any dirty field)",
+        "ServiceAccountObserver.deleted",
+        "explicit invalidate from service-account:rotate + service-account:disable + service-account:delete"
+      ]
+    },
+    {
+      "pattern": "svc:signer_kid:{kid}",
+      "description": "Cached list of SA ids that share this kid (populated on first hit). Enables efficient batch-revocation when a kid is burned. TTL matches svc:lookup:id.",
+      "ttlSeconds": 30,
+      "tags": ["service-account"],
+      "invalidatedBy": ["signer_kid change on any SA sharing the kid"]
+    },
+    {
+      "pattern": "svc:jwt_deny:{jti}",
+      "description": "JWT deny-list. Populated by admin actions (revoke a specific in-flight JWT) OR by SA disable events (all outstanding JWTs' jti are added). TTL matches the JWT's remaining `exp`.",
+      "ttlSeconds": 300,
+      "tags": ["service-account"],
+      "notes": "Composed with auth::JwtDenyList \u2014 the storage layer is shared. The service_account.verify_jwt middleware consults this cache after signature verification but before SA lookup."
+    },
+    {
+      "pattern": "svc:exchange_rate_limit:sa:{service_account_id}",
+      "description": "Per-SA rate limit on the token-exchange endpoint. 5 attempts per minute per SA-ID.",
+      "ttlSeconds": 60,
+      "tags": ["service-account"]
+    },
+    {
+      "pattern": "svc:exchange_rate_limit:ip:{ip_prefix_24}",
+      "description": "Per-IP rate limit on the token-exchange endpoint. 20 attempts per minute per /24. Prevents credential-stuffing attacks across the SA namespace.",
+      "ttlSeconds": 60,
+      "tags": ["service-account"]
+    },
+    {
+      "pattern": "svc:fingerprint:{service_account_id}",
+      "description": "Rolling 30-day set of (ip_prefix_24, user_agent_hash) tuples observed for this SA. Populated by service_account.audit middleware. Consumed by ServiceAccountFingerprinter to detect novel tuples during rate-spike events.",
+      "ttlSeconds": 2592000,
+      "tags": ["service-account"],
+      "notes": "Uses Redis SortedSet with the observation timestamp as the score \u2014 O(log N) insert + O(log N + M) trim to the 30-day window."
+    },
+    {
+      "pattern": "svc:baseline_rate:{service_account_id}",
+      "description": "Rolling per-hour request-rate baseline for this SA. Feeds the ServiceAccountFingerprinter's rate-spike detection. Populated by the audit middleware; refreshed via exponential-decay averaging.",
+      "ttlSeconds": 86400,
+      "tags": ["service-account"]
+    },
+    {
+      "pattern": "svc:last_used:{service_account_id}",
+      "description": "Coalesced buffer for last_used_at + last_used_ip writes. Populated by the audit middleware; flushed to Postgres by UpdateLastUsedTimestampJob every 30 seconds. Reduces write pressure on the SA table under high-volume machine traffic.",
+      "ttlSeconds": 60,
+      "tags": ["service-account"]
+    },
+    {
+      "pattern": "svc:active_count:total",
+      "description": "Denormalised gauge feeding the `academorix.service_account.active_count` metric. Refreshed by a scheduled task every 60s.",
+      "ttlSeconds": 90,
+      "tags": ["service-account"]
+    },
+    {
+      "pattern": "svc:rotation_due_count:total",
+      "description": "Denormalised gauge for SAs within the 14-day rotation-due window. Refreshed hourly by the NotifyRotationDueJob's pre-scan phase.",
+      "ttlSeconds": 3900,
+      "tags": ["service-account"]
+    },
+    {
+      "pattern": "svc:dormant_count:total",
+      "description": "Denormalised gauge for SAs whose last_used_at is older than the dormant threshold. Refreshed weekly by DetectDormantServiceAccountJob.",
+      "ttlSeconds": 604800,
+      "tags": ["service-account"]
+    }
+  ],
+  "never_cached": [
+    "ServiceAccount.secret_hash",
+    "ServiceAccount plaintext exchange secret",
+    "JWT plaintext / decoded payload beyond the jti",
+    "jwt_signing_keys.secret_material (the HS256 shared secret; owned + cached by identity/auth's own key cache)"
+  ]
+}

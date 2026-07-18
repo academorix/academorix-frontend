@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/identity/caches",
+  "$version": 1,
+  "title": "identity \u2014 cache keys + tags",
+  "driver": "redis",
+  "description": "Identity caches are AGGRESSIVELY short-TTL. Credentials MUST NOT be cached (safety); lookups by ID / email are cached for < 60 seconds so a password change / lockout / erasure propagates fast. Every cache key is namespaced by tenant scope where applicable \u2014 EXCEPT the Identity itself, which is global and cross-tenant.",
+  "ownedTags": ["identity"],
+  "keys": [
+    {
+      "pattern": "idn:lookup:email:{email_hash}",
+      "description": "Identity ID resolved from email (via SHA-256 hash of normalised email, NEVER the plaintext). Read by every login attempt. Very short TTL so a soft-delete propagates within one minute.",
+      "ttlSeconds": 30,
+      "tags": ["identity"],
+      "invalidatedBy": ["IdentityObserver.creating", "IdentityObserver.updating (email dirty)", "IdentityObserver.deleting"]
+    },
+    {
+      "pattern": "idn:lookup:id:{identity_id}",
+      "description": "Cached Identity row (redacted \u2014 no password_hash, no mfa_secret_encrypted). Speed lookups from downstream User rows that need the shared credentials shape.",
+      "ttlSeconds": 60,
+      "tags": ["identity"],
+      "invalidatedBy": ["IdentityObserver.updated", "IdentityObserver.deleted"]
+    },
+    {
+      "pattern": "idn:mfa_challenge:{challenge_id}",
+      "description": "In-flight MFA challenge state (created by identity/auth's MfaChallengeAction). 5-minute TTL and hard-consumed on verify. Stored in Redis (not the DB) so a spike in challenge throughput doesn't hit Postgres.",
+      "ttlSeconds": 300,
+      "tags": ["identity"],
+      "invalidatedBy": ["explicit consume by identity/auth::VerifyMfaChallengeAction"]
+    },
+    {
+      "pattern": "idn:rate_limit_login:ip:{ip_hash}",
+      "description": "Per-IP login attempt counter for identity.rate_limit_login middleware. 15-minute sliding window.",
+      "ttlSeconds": 900,
+      "tags": ["identity"],
+      "invalidatedBy": ["successful login clears the (ip, email) tuple"]
+    },
+    {
+      "pattern": "idn:rate_limit_login:email:{email_hash}",
+      "description": "Per-email login attempt counter. 1-hour sliding window.",
+      "ttlSeconds": 3600,
+      "tags": ["identity"]
+    },
+    {
+      "pattern": "idn:hibp_prefix:{sha1_prefix}",
+      "description": "24-hour cache of the HIBP response for a specific 5-character SHA-1 prefix. Survives HIBP outages + reduces outbound-call volume by an order of magnitude.",
+      "ttlSeconds": 86400,
+      "tags": ["identity"]
+    },
+    {
+      "pattern": "idn:kms_data_key:current",
+      "description": "Current KMS-generated data key (encrypted-form + plaintext-form) held in-memory for MFA-secret encryption. Rotated at process start OR after 1000 uses OR every 15 minutes.",
+      "ttlSeconds": 900,
+      "tags": ["identity"],
+      "notes": "This is a MEMORY-ONLY cache \u2014 NEVER persisted to Redis. Listed here for documentation only."
+    },
+    {
+      "pattern": "idn:active_lockouts:count",
+      "description": "Denormalised gauge feeding the `academorix.identity.active_lockouts` metric. Refreshed by a scheduled task every 60s.",
+      "ttlSeconds": 90,
+      "tags": ["identity"]
+    }
+  ],
+  "never_cached": [
+    "Identity.password_hash",
+    "Identity.mfa_secret_encrypted (plaintext form)",
+    "Identity.mfa_recovery_codes_hashed (individual codes)",
+    "Identity.email_verification_token_hash",
+    "auth::PasswordResetToken.token_hash",
+    "auth::EmailVerificationToken.token_hash"
+  ]
+}

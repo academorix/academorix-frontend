@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/user/health",
+  "$version": 1,
+  "title": "user \u2014 health probes",
+  "probes": [
+    {
+      "name": "user-tables-migrated",
+      "class": "Academorix\\User\\Health\\Probes\\TablesMigratedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `users`, `profiles`, and `tenant_members` tables exist + carry the latest schema version. Failure indicates a missed migration.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "user-identity-fk-integrity",
+      "class": "Academorix\\User\\Health\\Probes\\IdentityFkIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every `users.identity_id` resolves to a live `identities` row. Failure indicates orphaned rows after an out-of-band identity purge.",
+      "timeoutMs": 500,
+      "reference": "The FK is onDelete=restrict so the DB should never permit orphans; this probe catches direct SQL manipulation."
+    },
+    {
+      "name": "user-profile-1to1-integrity",
+      "class": "Academorix\\User\\Health\\Probes\\ProfileOneToOneIntegrityProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No `users.profile_id` is null. No two Users share a `profile_id`. Runs a limited-cost query with a covering index scan.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "user-default-tenant-invariant",
+      "class": "Academorix\\User\\Health\\Probes\\DefaultTenantInvariantProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Every User with at least one TenantMember has EXACTLY ONE row with `is_default = true`. Failure is a data-quality signal; the observer + partial unique index normally prevents this state.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "user-purge-queue-drained",
+      "class": "Academorix\\User\\Health\\Probes\\PurgeQueueDrainedProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "No `PurgeErasedUsersJob` has been pending for > 24h. Catches GDPR-relevant queue stalls that could push a soft-deleted row past its legal retention limit.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "user-sanctum-tokens-reachable",
+      "class": "Academorix\\User\\Health\\Probes\\SanctumTokensReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "The `personal_access_tokens` table is queryable + the Sanctum guard resolves cleanly. Non-critical because a broken Sanctum path is caught at auth-time regardless.",
+      "timeoutMs": 300
+    }
+  ]
+}

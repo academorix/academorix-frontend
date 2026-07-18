@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/service-accounts/broadcasts",
+  "$version": 1,
+  "title": "service-accounts \u2014 broadcast channels",
+  "description": "service-accounts publishes NO broadcast channels. The module is internal-only \u2014 every state change is either (a) a fire-and-forget event consumed by server-side modules or (b) a mail / Slack notification routed through the notifications module.",
+  "channels": [],
+  "rationale": [
+    "Real-time notification of SA disable / rotate / suspicious-activity events would be a valid use case for the ops dashboard, but that's a platform-admin observability concern \u2014 the correct pattern is polling the audit endpoint on the platform-admin dashboard OR subscribing to a platform-wide `platform.ops` channel owned by observability, not a per-module channel.",
+    "Service accounts have no interactive session and no browser context, so there is nothing to push TO. Machines poll the exchange endpoint for new JWTs on their own schedule.",
+    "Cross-tab session-revocation is not applicable \u2014 SAs don't hold sessions."
+  ]
+}

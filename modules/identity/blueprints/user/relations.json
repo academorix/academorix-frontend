@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/user/relations",
+  "$version": 1,
+  "title": "user \u2014 model relationships",
+  "description": "User is the aggregate root. Profile is a 1:1 satellite (owns_one). TenantMember is a many-to-many pivot between User and Tenant. Every FK is enforced at the DB layer; onDelete policy per row balances audit-preserving RESTRICT (to identities + applications + profiles) with tenant-scoped CASCADE (to tenants + roles + users when the parent goes away).",
+  "internal": [
+    {
+      "from": "User",
+      "kind": "hasOne",
+      "to": "Profile",
+      "foreignKey": "profile_id",
+      "localKey": "profile_id",
+      "onDelete": "restrict",
+      "description": "1:1 PII satellite. RESTRICT so a Profile is never orphaned by a hasty User delete \u2014 the profile cleanup path is CleanupOrphanedProfilesJob after a hard-delete grace period."
+    },
+    {
+      "from": "Profile",
+      "kind": "hasOne",
+      "to": "User",
+      "foreignKey": "profile_id",
+      "description": "Inverse. `Profile::user()` returns the User row that references it via `users.profile_id`. Loose coupling \u2014 a Profile can exist briefly without a User during provisioning (created first, User then references it)."
+    },
+    {
+      "from": "User",
+      "kind": "hasMany",
+      "to": "TenantMember",
+      "foreignKey": "user_id",
+      "onDelete": "cascade",
+      "description": "Every membership the User holds. Hard-delete of a User cascades their TenantMember rows so pivot rows never survive their principal."
+    },
+    {
+      "from": "TenantMember",
+      "kind": "belongsTo",
+      "to": "User",
+      "foreignKey": "user_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "User",
+      "kind": "belongsTo",
+      "to": "User",
+      "foreignKey": "invited_by",
+      "localKey": "id",
+      "targetOnRelation": "TenantMember",
+      "description": "`TenantMember::invitedBy()` \u2014 the User who created this membership (null for system-provisioned rows, e.g. tenant owner seeded on TenantProvisioned)."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "User",
+      "kind": "belongsTo",
+      "to": "identity::Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "restrict",
+      "description": "The global credential this User projects. RESTRICT so an Identity delete requires every projection to be soft-deleted first (GDPR erasure workflow \u2014 see `PurgeErasedUsersJob`)."
+    },
+    {
+      "from": "User",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict",
+      "description": "The Application this User is scoped to. RESTRICT so decommissioning an Application requires all Users to be re-provisioned or erased first."
+    },
+    {
+      "from": "User",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Home tenant. CASCADE aligns with tenancy's TenantErased contract: erasing a Tenant erases the tenant-scoped Users belonging to it. Multi-tenant Users survive via their remaining TenantMember rows \u2014 the `home` tenant_id migrates to another membership on erasure (see TenantMemberObserver.tenantErased)."
+    },
+    {
+      "from": "User",
+      "kind": "belongsTo",
+      "to": "access::Role",
+      "foreignKey": "default_role_id",
+      "onDelete": "set null",
+      "nullable": true,
+      "description": "First-seen role for new-user routing. SET NULL on role delete so a role rename / retire doesn't cascade-delete User rows."
+    },
+    {
+      "from": "TenantMember",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "The Tenant this membership belongs to. Cascade with the tenant."
+    },
+    {
+      "from": "TenantMember",
+      "kind": "belongsTo",
+      "to": "access::Role",
+      "foreignKey": "role_id",
+      "onDelete": "restrict",
+      "description": "The role the User carries in this Tenant. RESTRICT so a role delete cannot silently downgrade every membership \u2014 the platform admin has to reassign first."
+    }
+  ],
+  "inbound": {
+    "description": "Domain models with a per-user ownership key compose the `BelongsToUser` trait shipped here. They store the linkage as `user_id` FK (nullable for domain rows that predate their principal, e.g. athletes without logins).",
+    "examples": [
+      "sports::Athlete.user_id \u2014 nullable, populated only when the athlete has a login (teens + adults).",
+      "sports::Coach.user_id \u2014 required.",
+      "staff::Staff.user_id \u2014 required.",
+      "ai::ChatSession.user_id \u2014 required."
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing users.id so a User erasure requires domain-side cleanup first (the `user:erase` command orchestrates the cascade explicitly per module)."
+  },
+  "accessor_chain": {
+    "description": "Callers rarely touch identity or profile directly \u2014 the User model surfaces the joined shape via accessors so the API contract stays flat.",
+    "User": {
+      "email": "identity->email",
+      "email_verified_at": "identity->email_verified_at",
+      "mfa_enabled": "identity->mfa_secret_encrypted !== null",
+      "full_name": "profile->first_name + ' ' + profile->last_name",
+      "display_name": "profile->display_name ?? profile->first_name",
+      "avatar_url": "profile->avatar_url",
+      "locale": "profile->locale ?? user->preferred_locale ?? tenant->default_locale",
+      "timezone": "profile->timezone ?? tenant->default_timezone"
+    },
+    "TenantMember": {
+      "user_email": "user->identity->email",
+      "user_display_name": "user->profile->display_name",
+      "role_name": "role->name",
+      "tenant_name": "tenant->name"
+    }
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "id": "academorix://modules/platform-user/schemas/platform-profile",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PlatformProfile",
+  "description": "1:1 PII satellite of PlatformUser. Split from `platform_users` so encrypted-backup workflows can target PII independently. Carries first + last name (HR-controlled, not self-editable), display_name (self-editable), avatar_url, phone_e164 (required \u2014 on-call rotations dial this number), Slack + GitHub handles (nullable, internal comms + audit correlation), IANA timezone. Every column except display_name + avatar_url + slack_handle + github_handle is required.",
+  "type": "object",
+  "x-module": "platform-user",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "platform_profiles",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "plp_",
+    "incrementing": false,
+    "model": "Academorix\\PlatformUser\\Models\\PlatformProfile",
+    "interface": "Academorix\\PlatformUser\\Contracts\\Data\\PlatformProfileInterface",
+    "implements": ["Academorix\\PlatformUser\\Contracts\\Data\\PlatformProfileInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "HasAudit",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "phone_e164": "E164Phone",
+      "timezone": "IanaTimezone",
+      "metadata": "array"
+    },
+    "appends": ["full_name", "initials", "internal_handle", "phone_e164_masked"],
+    "observers": ["PlatformProfileObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `plp_<26 chars>`."
+      },
+      "first_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "HR-controlled. Not editable via /platform-profiles/me self-service."
+      },
+      "last_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "HR-controlled. Not editable via /platform-profiles/me self-service."
+      },
+      "display_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Self-editable. When null, `full_name` computed accessor returns first_name + ' ' + last_name."
+      },
+      "avatar_url": {
+        "type": "text",
+        "nullable": true,
+        "description": "S3 URL of the current avatar. On update, PlatformProfileObserver schedules a delayed PruneOldAvatarJob (24h grace window)."
+      },
+      "phone_e164": {
+        "type": "string",
+        "length": 20,
+        "nullable": false,
+        "description": "E.164 format. Required because on-call rotations dial this number for escalation. Validated by `valid_e164_phone` rule."
+      },
+      "slack_handle": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Slack tenant handle (without leading @). Internal comms."
+      },
+      "github_handle": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "GitHub username. Audit correlation for engineering staff (matches commit author to platform user)."
+      },
+      "timezone": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "IANA identifier (e.g. `America/New_York`, `Europe/London`). Validated by `valid_iana_timezone` rule. Drives the on-call rotation's local-time display."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform-ops notes bag."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["last_name", "first_name"],
+        "unique": false,
+        "name": "platform_profiles_name_idx",
+        "description": "Search acceleration for the platform-admin list surface."
+      },
+      {
+        "columns": ["slack_handle"],
+        "unique": false,
+        "name": "platform_profiles_slack_idx",
+        "predicate": "slack_handle IS NOT NULL",
+        "description": "Reverse lookup: given a Slack handle from an inbound webhook, resolve the PlatformUser (e.g. for slash-command permission checks)."
+      },
+      {
+        "columns": ["github_handle"],
+        "unique": false,
+        "name": "platform_profiles_github_idx",
+        "predicate": "github_handle IS NOT NULL",
+        "description": "Reverse lookup: given a GitHub username from a commit-author webhook, resolve the PlatformUser."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "first_name",
+    "last_name",
+    "phone_e164",
+    "timezone",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^plp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "first_name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "last_name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "display_name": { "type": ["string", "null"], "maxLength": 128 },
+    "avatar_url": { "type": ["string", "null"] },
+    "phone_e164": {
+      "type": "string",
+      "pattern": "^\\+[1-9]\\d{1,14}$",
+      "description": "E.164 format: leading +, country code, subscriber number, up to 15 digits total."
+    },
+    "slack_handle": { "type": ["string", "null"], "maxLength": 64 },
+    "github_handle": { "type": ["string", "null"], "maxLength": 64 },
+    "timezone": {
+      "type": "string",
+      "description": "Validated at runtime against DateTimeZone::listIdentifiers() by the `valid_iana_timezone` rule."
+    },
+    "metadata": { "type": ["object", "null"] },
+    "full_name": {
+      "type": "string",
+      "description": "Computed. display_name when set, else first_name + ' ' + last_name."
+    },
+    "initials": {
+      "type": "string",
+      "description": "Computed. First letter of first_name + first letter of last_name."
+    },
+    "internal_handle": {
+      "type": "string",
+      "description": "Computed. slack_handle when set, else github_handle when set, else first_name."
+    },
+    "phone_e164_masked": {
+      "type": "string",
+      "description": "Computed. phone_e164 with middle digits replaced by \u2022 unless caller has `platform.platform_profiles.view.pii`."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["full_name", "initials", "internal_handle", "phone_e164_masked"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`plp_<26>`)"],
+    "note": "Rarely used directly; the primary access path is /platform-profiles/me on the caller's own profile."
+  }
+}

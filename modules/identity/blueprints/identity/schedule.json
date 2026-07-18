@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/identity/schedule",
+  "$version": 1,
+  "title": "identity \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "identity-auto-unlock-expired",
+      "command": "queue:dispatch AutoUnlockExpiredLockoutsJob",
+      "cron": "* * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: clear `locked_until` on identities whose lockout expired. Fires IdentityUnlocked(trigger=auto_expiry). Small batch (500 rows) so a heavy backlog can't monopolise the queue."
+    },
+    {
+      "name": "identity-purge-expired-tokens",
+      "command": "queue:dispatch PurgeExpiredResetTokensJob",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: hard-delete PasswordResetToken + EmailVerificationToken rows past TTL. Batched 1000 rows per invocation; recurses until fewer than 1000 remain."
+    },
+    {
+      "name": "identity-purge-soft-deleted",
+      "command": "queue:dispatch PurgeSoftDeletedIdentitiesJob",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:00 UTC: hard-delete identities whose `deleted_at + erasure_hold_days < now()` AND have no remaining inbound rows. Compliance-critical \u2014 late execution risks breaching the GDPR erasure obligation."
+    },
+    {
+      "name": "identity-active-lockouts-gauge",
+      "command": "metrics:emit identity.active_lockouts",
+      "cron": "* * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: emit the `academorix.identity.active_lockouts` gauge for dashboarding."
+    },
+    {
+      "name": "identity-unverified-gauge",
+      "command": "metrics:emit identity.unverified_identities",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: emit the `academorix.identity.unverified_identities` gauge."
+    }
+  ]
+}

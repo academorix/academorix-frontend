@@ -1,0 +1,138 @@
+{
+  "id": "academorix://modules/mfa/policies",
+  "$version": 1,
+  "title": "mfa — authorization policies",
+  "description": "Two policies. MfaPolicy governs the self-service surface — viewing / enrolling / disabling one's own MFA methods. Every write is additionally gated by `mfa.require_recent_challenge` middleware so a stolen session cookie can't disable MFA without proving fresh possession of the primary factor. WebauthnCredentialPolicy governs the per-credential CRUD on registered hardware keys — same principle: caller must own the Identity that owns the credential. Platform-admin abilities (force-disable, regenerate-codes for a user) are on MfaPolicy too, gated behind the `platform_admin` guard.",
+  "policies": [
+    {
+      "model": "Mfa (virtual — represents the caller's own MFA posture, not a persisted row)",
+      "class": "Academorix\\Mfa\\Policies\\MfaPolicy",
+      "guard": "sanctum + platform_admin (dual-guard — see boundary_note)",
+      "abilities": [
+        {
+          "action": "viewOwn",
+          "permission": "mfa.viewOwn",
+          "guard": "sanctum",
+          "scope": "Caller reads their own MFA posture (methods enrolled, recovery codes remaining). Always allowed for the resolved caller — the permission exists so a UI can render / hide the MFA panel."
+        },
+        {
+          "action": "enrollTotp",
+          "permission": "mfa.enrollTotp",
+          "guard": "sanctum",
+          "scope": "Caller enrolls a TOTP secret on their own Identity. Additionally gated by the `mfa_totp` entitlement + `mfa.enrollment_enabled` feature flag.",
+          "requires_recent_challenge": false,
+          "reason": "First-time enrollment cannot require a challenge — that would be a chicken-and-egg problem."
+        },
+        {
+          "action": "disableTotp",
+          "permission": "mfa.disableTotp",
+          "guard": "sanctum",
+          "scope": "Caller disables the TOTP factor on their own Identity.",
+          "requires_recent_challenge": true,
+          "recent_challenge_window": "5 minutes"
+        },
+        {
+          "action": "registerWebauthn",
+          "permission": "mfa.registerWebauthn",
+          "guard": "sanctum",
+          "scope": "Caller registers a new WebAuthn credential. Additionally gated by the `mfa_webauthn` entitlement.",
+          "requires_recent_challenge": "conditional",
+          "condition_note": "Requires a recent challenge ONLY if the Identity already has one MFA factor enrolled. First-time WebAuthn registration on an Identity with no other MFA has no prior factor to challenge against — treat as first-time enrollment."
+        },
+        {
+          "action": "manageWebauthn",
+          "permission": "mfa.manageWebauthn",
+          "guard": "sanctum",
+          "scope": "Caller renames / disables / deletes their own WebAuthn credentials. Enforced via WebauthnCredentialPolicy below (relationship-scoped)."
+        },
+        {
+          "action": "regenerateRecoveryCodes",
+          "permission": "mfa.regenerateRecoveryCodes",
+          "guard": "sanctum",
+          "scope": "Caller regenerates their recovery-code set — old set purged, new set emitted once.",
+          "requires_recent_challenge": true,
+          "recent_challenge_window": "5 minutes"
+        },
+        {
+          "action": "downloadRecoveryCodes",
+          "permission": "mfa.downloadRecoveryCodes",
+          "guard": "sanctum",
+          "scope": "Caller re-downloads their current recovery-code set. Audit-logged as a data-egress event.",
+          "requires_recent_challenge": true,
+          "recent_challenge_window": "5 minutes",
+          "audit_severity": "warn"
+        },
+        {
+          "action": "platformViewMethods",
+          "permission": "platform.mfa.methods.view",
+          "guard": "platform_admin",
+          "scope": "Platform support views a user's MFA posture. Redacted response — no credential_id_b64url, no plaintext, no bytea public keys."
+        },
+        {
+          "action": "platformForceDisable",
+          "permission": "platform.mfa.force_disable",
+          "guard": "platform_admin",
+          "scope": "Platform-security force-disables MFA for a user during account-recovery flows. Cascades: TOTP secret nulled, every WebAuthn credential disabled + retention-purged after 90 days. Fires MfaDisabled(trigger=admin_action). Requires justification; audit-logged as critical.",
+          "audit_severity": "critical"
+        },
+        {
+          "action": "platformRegenerateRecoveryCodes",
+          "permission": "platform.mfa.regenerate_recovery_codes",
+          "guard": "platform_admin",
+          "scope": "Platform support regenerates recovery codes for a user + emails them the new codes. Used when a user has lost their MFA device AND their recovery-code storage. Audit-logged as warn.",
+          "audit_severity": "warn"
+        }
+      ]
+    },
+    {
+      "model": "WebauthnCredential",
+      "class": "Academorix\\Mfa\\Policies\\WebauthnCredentialPolicy",
+      "guard": "sanctum + platform_admin",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "mfa.webauthn_credentials.viewAny",
+          "guard": "sanctum",
+          "scope": "Caller lists their own registered credentials (`identity_id = current_identity.id`)."
+        },
+        {
+          "action": "view",
+          "permission": "mfa.webauthn_credentials.view",
+          "guard": "sanctum",
+          "scope": "Caller reads ONE of their own credentials (relationship-checked in the policy before the field-level authorization)."
+        },
+        {
+          "action": "update",
+          "permission": "mfa.webauthn_credentials.update",
+          "guard": "sanctum",
+          "scope": "Caller renames or disables their own credential. Delete is a separate ability (below).",
+          "requires_recent_challenge": true,
+          "recent_challenge_window": "5 minutes"
+        },
+        {
+          "action": "delete",
+          "permission": "mfa.webauthn_credentials.delete",
+          "guard": "sanctum",
+          "scope": "Caller hard-deletes their own credential BEFORE the 90-day retention window. Fires WebauthnCredentialDeleted(trigger=user_action).",
+          "requires_recent_challenge": true,
+          "recent_challenge_window": "5 minutes"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.mfa.webauthn_credentials.viewAny",
+          "guard": "platform_admin",
+          "scope": "Platform support lists a user's registered credentials for audit / debugging."
+        },
+        {
+          "action": "platformDisable",
+          "permission": "platform.mfa.webauthn_credentials.disable",
+          "guard": "platform_admin",
+          "scope": "Platform-security disables a credential during an incident (e.g. reported stolen laptop). Cascade fires WebauthnCredentialDisabled(reason=admin_force_disable). Audit-critical."
+        }
+      ]
+    }
+  ],
+  "boundary_note": "This policy family spans BOTH guards — MfaPolicy carries `viewOwn`/`enrollTotp`/`disableTotp`/etc. on the `sanctum` guard AND `platformForceDisable`/`platformRegenerateRecoveryCodes` on the `platform_admin` guard. Guard-namespace isolation lives at the permission-string level (`mfa.*` vs `platform.mfa.*`) — a `sanctum` role never grants a `platform.mfa.*` permission (see identity/access's `GuardMismatch` (422) at write time). The dual-guard nature is unavoidable because MFA is the ONE substrate every principal class touches; tenant users manage their own MFA, and platform staff manage recovery paths across every tenant.",
+  "recent_challenge_gate": "The `mfa.require_recent_challenge` middleware (see middleware.json) reads the caller's session for a `last_mfa_challenge_at` timestamp. Actions marked `requires_recent_challenge: true` refuse when `now() - last_mfa_challenge_at > 5 minutes` with error `MFA_CHALLENGE_TOO_STALE` (403). The caller is redirected to a step-up challenge flow, verifies fresh, retries the original request. This closes the 'stolen session' attack — even with a valid Sanctum PAT, disabling MFA or regenerating codes requires proving current possession of the primary factor.",
+  "first_time_enrollment_note": "Actions marked `requires_recent_challenge: 'conditional'` handle the special first-time-enrollment case: an Identity with zero MFA factors cannot produce a challenge (there's nothing to challenge against). The middleware evaluates `Identity.mfa_enabled` on the caller and only enforces recent-challenge when true. First-time enrollment is subject only to the `identity/auth`-owned session-freshness rule (default 15 minutes since last password prompt) — see identity/auth's step-up-authentication design."
+}

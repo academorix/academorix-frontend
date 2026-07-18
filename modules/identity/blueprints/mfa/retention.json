@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/mfa/retention",
+  "$version": 1,
+  "title": "mfa — retention windows",
+  "description": "MFA retention is compliance-driven, not product-driven. Disabled WebAuthn credentials retain for 90 days (audit-trail hold). MFA challenges are ephemeral (5-minute TTL, hard-purged on expiry). Successful challenges leave activity_log entries for compliance correlation. Failed challenges retain for 90 days to support suspicious-activity forensics. Enrollment previews are strictly ephemeral (5-minute Redis TTL, no durable trail).",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) (storage limitation) — no MFA material outlives the audit window",
+    "gdpr Art. 17 (right to erasure) — WebauthnCredential.identity_id CASCADE guarantees credential erasure follows identity erasure",
+    "nist 800-63B § 4.4.1 (authenticator lifecycle) — disabled authenticators retained for audit but not usable",
+    "soc2 CC7.2 (system monitoring) — failed-challenge retention feeds the anomaly-detection window",
+    "iso 27001 A.5.16 (identity management) — full lifecycle audit-log preserved"
+  ],
+  "retention": [
+    {
+      "entity": "WebauthnCredential (active — disabled_at IS NULL)",
+      "hot": { "days": "while the referring Identity is active" },
+      "purge": {
+        "trigger": "user deletes via DELETE /me/mfa/webauthn/credentials/{id} OR identity/identity's cascade on Identity hard-delete",
+        "action": "hard delete via FK cascade",
+        "notes": "Deleting an active credential fires WebauthnCredentialDeleted(trigger=user_action|identity_erasure_cascade). If this is the caller's last MFA factor, MfaDisabled fires as a follow-on."
+      }
+    },
+    {
+      "entity": "WebauthnCredential (disabled — disabled_at IS NOT NULL)",
+      "hot": { "days": "config('mfa.webauthn.retention_days_after_disable'), default 90" },
+      "purge": {
+        "trigger": "disabled_at + retention_days < now()",
+        "action": "hard delete",
+        "job": "CleanupDisabledWebauthnCredentialsJob (daily 05:00 UTC)",
+        "notes": "Fires WebauthnCredentialDeleted(trigger=retention_purge). The 90-day window supports the auditor's 'was credential X active on date T' question."
+      }
+    },
+    {
+      "entity": "MFA challenge (auth_mfa_challenges row — owned by identity/auth)",
+      "hot": { "minutes": "5 (TTL from creation)" },
+      "purge": {
+        "trigger": "expires_at < now() OR consumed on successful verify OR invalidated on max_attempts",
+        "action": "hard delete",
+        "notes": "Ephemeral by design. No audit trail on the challenge row itself — the MfaChallengeSucceeded / MfaChallengeFailed events carry the audit signal into the activity_log."
+      }
+    },
+    {
+      "entity": "MFA enrolment preview (Redis, mfa:enroll:preview:*)",
+      "hot": { "minutes": "config('mfa.totp.preview_ttl_seconds') / 60, default 5" },
+      "purge": {
+        "trigger": "TTL elapsed OR round-2 confirm consumed the envelope OR PurgeUnconfirmedEnrollmentsJob evicted",
+        "action": "Redis TTL / DEL",
+        "notes": "Ephemeral by design. The plaintext TOTP secret exists ONLY in this envelope during the 5-minute confirmation window; expiry destroys it."
+      }
+    },
+    {
+      "entity": "WebAuthn registration challenge (Redis, mfa:webauthn:register:challenge:*)",
+      "hot": { "minutes": "5" },
+      "purge": {
+        "trigger": "TTL elapsed OR round-2 register consumed the challenge OR PurgeUnconfirmedEnrollmentsJob evicted",
+        "action": "Redis TTL / DEL"
+      }
+    },
+    {
+      "entity": "MfaChallengeSucceeded event (activity_log entry)",
+      "hot": { "days": "30 (hot) → 365 (audit-log archive)" },
+      "purge": {
+        "trigger": "activity_log's per-tenant retention policy (identity/user + observability modules own the retention)",
+        "action": "archive → cold-store → hard delete per tenant tier",
+        "notes": "The MFA challenge outcome is part of the tenant's audit trail. This module does not own the retention curve — activity_log does — but declaring the reference here documents the flow."
+      }
+    },
+    {
+      "entity": "MfaChallengeFailed event (activity_log entry)",
+      "hot": { "days": "90 (hot) — longer than success for forensic reasons" },
+      "purge": {
+        "trigger": "activity_log's retention policy",
+        "action": "archive → cold-store → hard delete",
+        "notes": "Failed challenges are retained longer because they feed the MfaSuspiciousActivityDetector's rolling window. The detector reads the last 15 minutes; retention beyond that is for post-incident forensics."
+      }
+    },
+    {
+      "entity": "MFA recovery codes (JSONB on Identity — owned by identity/identity)",
+      "hot": { "days": "until consumed OR regenerated" },
+      "purge": {
+        "trigger": "user regenerates OR consumes individually OR disables MFA OR Identity is hard-deleted",
+        "action": "overwrite JSONB with new hashes / remove individual entry / set to NULL / delete via cascade",
+        "notes": "Individual codes are single-use: once consumed, they're removed from the JSONB array in the same transaction. The whole array is regenerated as one atomic replace."
+      }
+    }
+  ],
+  "hold_period_extensions": {
+    "description": "The disabled-credential retention window (default 90 days) can be extended per Identity by compliance officers when a specific credential is under legal investigation. Extension is stored as a per-credential metadata flag (`credential_retention_hold_until`) that overrides the default. CleanupDisabledWebauthnCredentialsJob honours the per-credential override.",
+    "how_to_extend": "Via the `mfa:describe-method` CLI with `--set-hold-until=<date>` (planned CLI extension — not shipped in Day 1 blueprint).",
+    "audit_trail": "Every extension is written to the compliance-audit log with the compliance officer as actor + free-form justification."
+  }
+}

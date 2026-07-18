@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/mfa/rules",
+  "$version": 1,
+  "title": "mfa — validation rules",
+  "description": "Custom Laravel validation rules published by MfaServiceProvider::boot() so any FormRequest / Data class can validate MFA-related input. Every rule operates on scalar input (strings).",
+  "namespace": "Academorix\\Mfa\\Rules",
+  "rules": [
+    {
+      "name": "valid_totp_code",
+      "class": "Academorix\\Mfa\\Rules\\ValidTotpCode",
+      "signature": "valid_totp_code",
+      "description": "Format validation for a TOTP code. Enforces exactly config('mfa.totp.digits') decimal digits (default 6). Does NOT verify the code against a stored secret — that's the TotpChallenger's job at verification time. Rule-only + format-only. Refuses non-digits, leading whitespace, or trailing whitespace so timing-consistent responses can happen without a first pass leaking format-vs-semantic failure via error text.",
+      "params": [],
+      "example_field_rule": "totp_code: [required, string, valid_totp_code]",
+      "error_message_key": "mfa::validation.valid_totp_code",
+      "default_message": "The :attribute must be a :digits-digit numeric code.",
+      "consumes": ["config('mfa.totp.digits')"]
+    },
+    {
+      "name": "valid_recovery_code_format",
+      "class": "Academorix\\Mfa\\Rules\\ValidRecoveryCodeFormat",
+      "signature": "valid_recovery_code_format",
+      "description": "Format validation for a recovery code. Enforces exactly config('mfa.recovery_codes.length') characters from the Crockford base32 alphabet (default 10 chars, 0-9 + A-Z minus I/L/O/U). Strips the group separator (`-` at `format_group_size` intervals) before validation so users can copy-paste the formatted or unformatted version. Does NOT verify against the Identity's hashed codes — that's the RecoveryCodeChallenger's job (via identity/identity's valid_recovery_code rule which performs the constant-time bcrypt compare + atomic consumption).",
+      "params": [],
+      "example_field_rule": "recovery_code: [required, string, valid_recovery_code_format]",
+      "error_message_key": "mfa::validation.valid_recovery_code_format",
+      "default_message": "The :attribute must be a :length-character recovery code (use only 0-9 and A-Z, excluding I/L/O/U).",
+      "consumes": [
+        "config('mfa.recovery_codes.length')",
+        "config('mfa.recovery_codes.alphabet')",
+        "config('mfa.recovery_codes.format_group_size')"
+      ]
+    },
+    {
+      "name": "valid_webauthn_credential_id",
+      "class": "Academorix\\Mfa\\Rules\\ValidWebauthnCredentialId",
+      "signature": "valid_webauthn_credential_id",
+      "description": "Format validation for a base64url-encoded WebAuthn credential ID. Enforces the base64url alphabet (0-9, A-Z, a-z, -, _) + a length range consistent with W3C spec (16-1024 bytes decoded → roughly 22-1366 base64url characters). Refuses padding characters (`=`) which are optional in base64url. Does NOT verify the credential exists in webauthn_credentials — that's the WebauthnAssertionVerifier's job.",
+      "params": [],
+      "example_field_rule": "credential_id: [required, string, valid_webauthn_credential_id]",
+      "error_message_key": "mfa::validation.valid_webauthn_credential_id",
+      "default_message": "The :attribute must be a valid base64url-encoded credential identifier."
+    },
+    {
+      "name": "valid_device_name",
+      "class": "Academorix\\Mfa\\Rules\\ValidDeviceName",
+      "signature": "valid_device_name",
+      "description": "Format validation for a user-provided device_name on WebauthnCredential registration / rename. Enforces 1-60 characters, no leading/trailing whitespace, no control characters. Allows emoji + non-Latin scripts so users can name their device in native language (e.g. `iPhone الخاص بي`, `私のパソコン`).",
+      "params": [],
+      "example_field_rule": "device_name: [required, string, valid_device_name]",
+      "error_message_key": "mfa::validation.valid_device_name",
+      "default_message": "The :attribute must be a printable name between 1 and 60 characters (no control characters, no leading/trailing whitespace)."
+    }
+  ],
+  "usage_from_data_class": "Data classes composed with `ConfirmTotpEnrollmentInput`, `VerifyChallengeInput`, `WebauthnRegisterInput`, `RenameWebauthnCredentialInput` automatically wire the rules via #[Validation] attribute on each property; consumers rarely reference the rules by name.",
+  "timing_note": "Every rule refuses on FORMAT first, then defers to a semantic verifier (TotpChallenger, RecoveryCodeChallenger, WebauthnAssertionVerifier) that runs a constant-time comparison. This split matters — semantic verifiers MUST take the same wall-clock time on success and failure regardless of the underlying reason (mismatched code vs unknown Identity vs revoked credential). Format failures happen too early to be a timing signal on their own."
+}

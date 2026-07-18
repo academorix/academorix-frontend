@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/platform-user/policies",
+  "$version": 1,
+  "title": "platform-user \u2014 authorization policies",
+  "description": "Two policies. Both are gated EXCLUSIVELY behind the `platform_admin` guard \u2014 the tenant-audience `sanctum` guard NEVER interacts with PlatformUser or PlatformProfile rows. `PlatformUserPolicy` gates the CRUD + lifecycle transitions (view, hire, suspend, restore, offboard). `PlatformProfilePolicy` gates the PII satellite (self-service `me` endpoints + admin views). Every policy ability that mutates state OR unmutes PII writes a fresh audit row (meta-audit) with the caller's actor id + the specific ability invoked \u2014 SOC2 CC6.1 evidence for who saw what.",
+  "policies": [
+    {
+      "model": "PlatformUser",
+      "class": "Academorix\\PlatformUser\\Policies\\PlatformUserPolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "platform.platform_users.viewAny",
+          "scope": "Any Academorix staffer with the ops or product baseline role can list. Redacted list (email hash-fingerprint + display_name + department; no PII).",
+          "seededOn": ["super_admin", "ops", "product", "security"]
+        },
+        {
+          "action": "view",
+          "permission": "platform.platform_users.view",
+          "scope": "Same audience as viewAny. Redacted detail view. See `viewPii` and `viewHrContext` for the unmute abilities.",
+          "seededOn": ["super_admin", "ops", "product", "security"]
+        },
+        {
+          "action": "viewPii",
+          "permission": "platform.platform_users.view.pii",
+          "scope": "Security + HR only. Unmutes email + phone + Slack/GitHub handles on the response. Never unmutes credential fields (those live on Identity and are regulated_secret).",
+          "audit_severity": "warn",
+          "seededOn": ["security", "hr"]
+        },
+        {
+          "action": "viewHrContext",
+          "permission": "platform.platform_users.view.hr_context",
+          "scope": "HR only. Unmutes offboarding_reason + suspension_reason (free-form justification text). Distinct from viewPii \u2014 HR context is separately gated because it may include HR-sensitive language beyond mere PII.",
+          "audit_severity": "warn",
+          "seededOn": ["hr", "legal"]
+        },
+        {
+          "action": "create",
+          "permission": "platform.platform_users.hire",
+          "scope": "super_admin + hr only. Actor must hold this permission to invoke the `platform-user:hire` command or POST /platform-users. Enforces MFA-on-identity gate at policy-time (returns 403 with `IDENTITY_MFA_REQUIRED` if the target identity has no MFA).",
+          "audit_severity": "warn",
+          "seededOn": ["super_admin", "hr"]
+        },
+        {
+          "action": "update",
+          "permission": "platform.platform_users.update",
+          "scope": "super_admin can update any row. hr can update employment-metadata columns only (department, employment_type, job_title, manager_id, hire_date). Everyone else can update only their own PlatformProfile via the me endpoints.",
+          "seededOn": ["super_admin", "hr"]
+        },
+        {
+          "action": "suspend",
+          "permission": "platform.platform_users.suspend",
+          "scope": "Security + super_admin only. Requires a reason (min 20 chars).",
+          "audit_severity": "warn",
+          "seededOn": ["super_admin", "security"]
+        },
+        {
+          "action": "restore",
+          "permission": "platform.platform_users.restore",
+          "scope": "Same actors as `suspend` \u2014 must be equal or higher privilege to reverse a suspend.",
+          "audit_severity": "warn",
+          "seededOn": ["super_admin", "security"]
+        },
+        {
+          "action": "offboard",
+          "permission": "platform.platform_users.offboard",
+          "scope": "super_admin + hr only. Terminal. Requires reason (min 20 chars) + optional effective_at. Refuses when the target has direct reports (must be reassigned first).",
+          "audit_severity": "critical",
+          "seededOn": ["super_admin", "hr"]
+        },
+        {
+          "action": "reassignManager",
+          "permission": "platform.platform_users.reassign_manager",
+          "scope": "super_admin + hr only. Enforces `manager_belongs_to_platform` rule.",
+          "seededOn": ["super_admin", "hr"]
+        },
+        {
+          "action": "viewAuditTrail",
+          "permission": "platform.platform_users.view.audit_trail",
+          "scope": "Compliance + super_admin only. Returns a 90-day rolling window of audit + activity rows keyed by this PlatformUser as actor.",
+          "audit_severity": "info",
+          "seededOn": ["super_admin", "compliance", "dpo"]
+        }
+      ]
+    },
+    {
+      "model": "PlatformProfile",
+      "class": "Academorix\\PlatformUser\\Policies\\PlatformProfilePolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "viewSelf",
+          "permission": "platform.platform_profiles.view.self",
+          "scope": "Every active PlatformUser \u2014 seeded on every platform_admin role by default. Reads own PlatformProfile row via /platform-profiles/me.",
+          "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance", "dpo", "engineering", "support", "sales", "finance", "legal"]
+        },
+        {
+          "action": "updateSelf",
+          "permission": "platform.platform_profiles.update.self",
+          "scope": "Every active PlatformUser writes own profile fields (display_name, avatar_url, phone_e164, slack_handle, github_handle, timezone). first_name / last_name are HR-controlled and NOT editable via self-service.",
+          "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance", "dpo", "engineering", "support", "sales", "finance", "legal"]
+        },
+        {
+          "action": "viewPii",
+          "permission": "platform.platform_profiles.view.pii",
+          "scope": "Security + HR only. Unmutes phone_e164, slack_handle, github_handle on other PlatformUsers' profiles.",
+          "audit_severity": "warn",
+          "seededOn": ["security", "hr"]
+        },
+        {
+          "action": "viewOnCallPhone",
+          "permission": "platform.on_call.view",
+          "scope": "The on-call escalation resolver requires unredacted phone_e164 for the resolved shift. This ability unmutes phone_e164 ONLY on the on-call endpoint (not the general viewPii).",
+          "seededOn": ["super_admin", "ops", "security", "on_call_router_service_account"]
+        }
+      ]
+    }
+  ],
+  "boundary_note": "These policies apply EXCLUSIVELY to the `platform_admin` guard. Under the `sanctum` guard, PlatformUser + PlatformProfile rows are never first-class resources \u2014 a tenant caller cannot list, show, or mutate them. Any tenant-audience code that reaches an authorization refusal here has taken a wrong path (it should be routed through `access/delegation` action DTOs instead). Guard boundary is enforced at the auth-service action layer, not by these policies.",
+  "least_privilege_note": "New PlatformUser hires land with NO roles seeded (see permissions.json). The `platform.platform_profiles.view.self` + `.update.self` abilities are the ONLY ones that a freshly-hired PlatformUser holds \u2014 they can read + write their own profile only, until a super_admin grants additional roles. This is the CORE least-privilege posture of the platform plane."
+}

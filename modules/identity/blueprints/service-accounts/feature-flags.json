@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/service-accounts/feature-flags",
+  "$version": 1,
+  "title": "service-accounts \u2014 kill switches + progressive-rollout flags",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "service_accounts.provisioning_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for new-SA creation. Off = the platform-admin surface refuses POST with 503. Ops-only \u2014 used during migration windows OR active-incident lockdown."
+    },
+    {
+      "key": "service_accounts.token_exchange_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the token-exchange endpoint. Off = every exchange refuses with 503 SERVICE_UNAVAILABLE. Existing JWTs signed before the flip continue to verify until natural expiry \u2014 the flip breaks re-issuance, not existing traffic. Reserved for KMS or auth-module incidents."
+    },
+    {
+      "key": "service_accounts.jwt_verification_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = service_account.verify_jwt middleware ALWAYS passes. RESERVED for catastrophic incident recovery only \u2014 flipping this off means every SA JWT is trusted without signature verification. Requires two-person sign-off + writes a compliance-critical audit entry."
+    },
+    {
+      "key": "service_accounts.rotation_notifications_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = NotifyRotationDueJob is a no-op. Reserved for platform-wide notification pauses (e.g. an incident on the mail relay)."
+    },
+    {
+      "key": "service_accounts.dormant_detection_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = DetectDormantServiceAccountJob is a no-op. Reserved for post-migration windows where dormant SAs are expected to spike (bulk-provisioned test fleet)."
+    },
+    {
+      "key": "service_accounts.suspicious_activity_detection_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ServiceAccountFingerprinter continues to record observations but never dispatches SuspiciousServiceAccountActivityNotification. Used when the notification is generating false positives (e.g. new deployment IP subnet not yet added to the baseline)."
+    },
+    {
+      "key": "service_accounts.enforce_ip_allowlist",
+      "kind": "kill-switch",
+      "default": "off",
+      "description": "Off = `service_accounts_ip_allowlist` entitlement is honoured in metadata but NOT enforced at request time. Flip ON when Wave 1b's audit-middleware upgrade lands. Documented in Wave 1a with `default: off` so the enterprise-tier entitlement is available for planning without breaking pre-Wave 1b tests."
+    },
+    {
+      "key": "service_accounts.progressive_rate_limit",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = token-exchange rate-limit stays at base thresholds regardless of consecutive failures. Used for chaos testing OR when investigating a rate-limit-related regression."
+    },
+    {
+      "key": "service_accounts.audit_middleware_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = service_account.audit middleware is a no-op. RESERVED for emergencies where audit-log writes are overwhelming the DB. Flipping this off breaches SOC 2 CC6.1; requires compliance sign-off + a paired ticket to restore."
+    }
+  ]
+}

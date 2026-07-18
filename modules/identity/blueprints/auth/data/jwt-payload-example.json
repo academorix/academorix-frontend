@@ -1,0 +1,116 @@
+{
+  "$version": 1,
+  "title": "JWT payload \u2014 real-world examples",
+  "description": "Illustrative decoded payloads for the three JWT purpose classes. Every payload is HS256-signed via JwtSigner; downstream services verify the signature + `iss`/`aud`/`exp`/`iat` + deny-list + `app` claim (against their configured Application). These examples show the full field set; production payloads never include commented-out fields.",
+  "example_user_session": {
+    "note": "Standard tenant-user session JWT issued during a request that needs to propagate context to a downstream service. Purpose = user_session.",
+    "iss": "https://identity.academorix.com",
+    "aud": ["sports.academorix.com"],
+    "sub": "usr_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+    "app": "app_sports",
+    "tid": "tnt_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+    "sco": {
+      "org_id": "org_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+      "region_id": "rgn_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+      "branch_id": "brn_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+      "team_ids": ["tm_01H..."]
+    },
+    "roles": ["coach"],
+    "permissions": [
+      "athletes.view.branch",
+      "sessions.view.branch",
+      "sessions.create.own",
+      "attendance.record.team",
+      "profile.view.own",
+      "profile.update.own"
+    ],
+    "kid": "identity-2026-07-1",
+    "iat": 1735689600,
+    "exp": 1735690500,
+    "jti": "550e8400-e29b-41d4-a716-446655440000",
+    "purpose": "user_session"
+  },
+  "example_platform_admin": {
+    "note": "Platform-admin session JWT. tid is null (cross-tenant), sco is empty (cross-organizational). Higher-privilege permissions like platform.identity.viewAny.",
+    "iss": "https://identity.academorix.com",
+    "aud": ["identity.academorix.com"],
+    "sub": "plu_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+    "app": "app_platform",
+    "tid": null,
+    "sco": {},
+    "roles": ["security"],
+    "permissions": [
+      "platform.identity.viewAny",
+      "platform.identity.view.pii",
+      "platform.auth.sessions.viewAny",
+      "platform.auth.jwt_keys.viewAny"
+    ],
+    "kid": "identity-2026-07-global-1",
+    "iat": 1735689600,
+    "exp": 1735690500,
+    "jti": "660e8400-e29b-41d4-a716-446655440001",
+    "purpose": "user_session"
+  },
+  "example_service_account": {
+    "note": "Machine-to-machine JWT for a service account (e.g. ai-service calling identity-service for user lookup). Purpose = service_account. Longer TTL (up to auth.jwt.extended_ttl_seconds for enterprise integrations).",
+    "iss": "https://identity.academorix.com",
+    "aud": ["identity.academorix.com", "sports.academorix.com"],
+    "sub": "svc_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+    "app": "app_sports",
+    "tid": null,
+    "sco": {},
+    "roles": ["service_account:ai_service_reader"],
+    "permissions": [
+      "users.view.tenant",
+      "profiles.view.tenant",
+      "athletes.view.tenant"
+    ],
+    "kid": "identity-2026-07-1",
+    "iat": 1735689600,
+    "exp": 1735692600,
+    "jti": "770e8400-e29b-41d4-a716-446655440002",
+    "purpose": "service_account"
+  },
+  "example_impersonation": {
+    "note": "Impersonation JWT \u2014 platform staff acting as a tenant User. purpose=impersonation. sub is the TARGET User's id (not the impersonator's); an additional `impersonator` claim identifies who's actually behind the request for audit purposes. Downstream services can identify impersonation by purpose and audit accordingly.",
+    "iss": "https://identity.academorix.com",
+    "aud": ["sports.academorix.com"],
+    "sub": "usr_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+    "app": "app_sports",
+    "tid": "tnt_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+    "sco": {
+      "org_id": "org_01H...",
+      "branch_id": "brn_01H..."
+    },
+    "roles": ["owner"],
+    "permissions": ["athletes.viewAny.tenant", "athletes.updateAny.tenant"],
+    "kid": "identity-2026-07-1",
+    "iat": 1735689600,
+    "exp": 1735691400,
+    "jti": "880e8400-e29b-41d4-a716-446655440003",
+    "purpose": "impersonation",
+    "impersonator": {
+      "platform_user_id": "plu_01H...",
+      "department": "support",
+      "reason": "Support ticket #78901 \u2014 user reports inability to update athlete profile"
+    }
+  },
+  "signature_verification_algorithm": {
+    "description": "How a downstream service verifies an incoming JWT.",
+    "steps": [
+      "1. Split the JWT on `.` \u2192 [header, payload, signature].",
+      "2. base64url-decode the header \u2014 verify alg='HS256' + read kid.",
+      "3. Look up the kid in the local JWKS cache (refreshed periodically from /.well-known/jwks.json).",
+      "4. Compute HS256(secret_from_jwks, header + '.' + payload).",
+      "5. Constant-time compare with the signature bytes. Mismatch \u2192 401 JWT_INVALID.",
+      "6. base64url-decode the payload.",
+      "7. Verify iss matches auth.jwt.issuer (identity.academorix.com).",
+      "8. Verify current hostname is in aud[].",
+      "9. Verify exp > now() - auth.jwt.clock_skew_seconds. Expired \u2192 401 JWT_INVALID.",
+      "10. Verify iat < now() + auth.jwt.clock_skew_seconds. Future-dated \u2192 401 JWT_INVALID.",
+      "11. Verify payload.app === config('app.slug'). Mismatch \u2192 403 JWT_APPLICATION_MISMATCH.",
+      "12. Verify jti NOT in local deny-list cache (refreshed via pubsub on JwtRevoked events + 15-minute TTL). Present \u2192 403 JWT_DENIED.",
+      "13. Trust the payload. Populate the request auth context with sub, roles, permissions."
+    ]
+  }
+}

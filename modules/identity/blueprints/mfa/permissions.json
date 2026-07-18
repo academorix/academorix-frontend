@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/mfa/permissions",
+  "$version": 1,
+  "title": "mfa — permissions",
+  "seeder": "Academorix\\Mfa\\Database\\Seeders\\MfaPermissionSeeder",
+  "isSystem": true,
+  "description": "Two permission namespaces: `mfa.*` on the `sanctum` guard for tenant users managing their own MFA, and `platform.mfa.*` on the `platform_admin` guard for support + emergency operations. Guard-namespace isolation is enforced at the RBAC layer — a `sanctum` role can never grant a `platform.mfa.*` permission (identity/access's GuardMismatch 422).",
+  "permissions": [
+    {
+      "name": "mfa.viewOwn",
+      "guard": "sanctum",
+      "description": "View own MFA posture. Baseline permission required to render the /me/mfa panel.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.enrollTotp",
+      "guard": "sanctum",
+      "description": "Enrol a TOTP secret on own Identity.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.disableTotp",
+      "guard": "sanctum",
+      "description": "Disable the TOTP factor on own Identity. Gated by `mfa.require_recent_challenge` middleware.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.registerWebauthn",
+      "guard": "sanctum",
+      "description": "Register a new WebAuthn credential on own Identity.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.manageWebauthn",
+      "guard": "sanctum",
+      "description": "Umbrella permission covering the caller's own WebAuthn credential CRUD (rename / disable / delete). Actual enforcement is delegated per-credential via WebauthnCredentialPolicy (which reads `mfa.webauthn_credentials.update` / `.delete`). Seeded alongside so a role that carries this umbrella permission automatically inherits every child.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.webauthn_credentials.viewAny",
+      "guard": "sanctum",
+      "description": "List own registered WebAuthn credentials.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.webauthn_credentials.view",
+      "guard": "sanctum",
+      "description": "View one of own registered WebAuthn credentials.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.webauthn_credentials.update",
+      "guard": "sanctum",
+      "description": "Rename or disable one of own registered WebAuthn credentials. Gated by `mfa.require_recent_challenge`.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.webauthn_credentials.delete",
+      "guard": "sanctum",
+      "description": "Hard-delete one of own registered WebAuthn credentials. Gated by `mfa.require_recent_challenge`.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.regenerateRecoveryCodes",
+      "guard": "sanctum",
+      "description": "Regenerate own recovery-code set. Gated by `mfa.require_recent_challenge`.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.downloadRecoveryCodes",
+      "guard": "sanctum",
+      "description": "Re-download current recovery-code plaintext. Audit-logged as data-egress. Gated by `mfa.require_recent_challenge`.",
+      "seededOn": ["member", "admin", "owner", "billing_manager"]
+    },
+    {
+      "name": "mfa.policy.manage",
+      "guard": "sanctum",
+      "description": "Manage tenant-level MFA policy settings (required_for_roles, grace_days, step-up TTL, WebAuthn policy). Admin + owner only.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.mfa.methods.view",
+      "guard": "platform_admin",
+      "description": "View a user's MFA posture across every Application via the shared Identity. Redacted response.",
+      "seededOn": ["super_admin", "security", "support"]
+    },
+    {
+      "name": "platform.mfa.force_disable",
+      "guard": "platform_admin",
+      "description": "Emergency force-disable MFA for a user. Audit-critical. Requires justification.",
+      "seededOn": ["super_admin", "security"]
+    },
+    {
+      "name": "platform.mfa.regenerate_recovery_codes",
+      "guard": "platform_admin",
+      "description": "Regenerate recovery codes on behalf of a user + email them. Audit-warn.",
+      "seededOn": ["super_admin", "security", "support"]
+    },
+    {
+      "name": "platform.mfa.webauthn_credentials.viewAny",
+      "guard": "platform_admin",
+      "description": "List a user's registered WebAuthn credentials for audit or incident-response.",
+      "seededOn": ["super_admin", "security", "support"]
+    },
+    {
+      "name": "platform.mfa.webauthn_credentials.disable",
+      "guard": "platform_admin",
+      "description": "Disable one of a user's WebAuthn credentials during an incident (reported stolen laptop). Audit-critical.",
+      "seededOn": ["super_admin", "security"]
+    }
+  ]
+}

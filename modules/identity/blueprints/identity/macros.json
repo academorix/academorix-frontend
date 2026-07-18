@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/identity/macros",
+  "$version": 1,
+  "title": "identity \u2014 published macros",
+  "description": "Two macros. `Str::password_strength` scores a plaintext password against the current policy without persisting anything (useful for the SPA's live strength indicator). `Blueprint::identity_fields` is the migration shorthand for the credential + audit columns that every Identity-shaped table carries.",
+  "namespace_note": "Blueprint macros extend `Illuminate\\Database\\Schema\\Blueprint`. Str macros extend `Illuminate\\Support\\Str`. Both are Laravel core classes.",
+  "macros": [
+    {
+      "name": "Str::password_strength",
+      "signature": "Str::password_strength(string $password, ?string $identityId = null): PasswordStrength",
+      "returns": {
+        "score": "int (0\u2013100)",
+        "band": "'weak' | 'fair' | 'strong' | 'excellent'",
+        "failed_requirements": "array<string> (e.g. ['min_length', 'require_uppercase'])",
+        "breach_count": "int | null (only set when breach check ran; null on offline mode)"
+      },
+      "description": "Score-without-side-effects. Consumers: (a) SPA password field renders a live strength indicator; (b) admin tooling grades an existing hash's likely-strength retrospectively; (c) breach-alert workflows re-check periodically. Does NOT hash the password \u2014 works on plaintext only. If `$identityId` is passed AND config('identity.password.history_size') > 0, also checks against the identity's password history and adds `in_password_history` to failed_requirements.",
+      "example": "$strength = Str::password_strength($request->password);\n// PasswordStrength(score: 82, band: 'strong', failed_requirements: [], breach_count: 0)"
+    },
+    {
+      "name": "Blueprint::identity_fields",
+      "signature": "Blueprint::identity_fields(): void",
+      "adds": {
+        "columns": [
+          {
+            "name": "email",
+            "type": "citext",
+            "nullable": false,
+            "description": "PostgreSQL CITEXT for case-insensitive UNIQUE. On non-Postgres engines the macro falls back to `string` + a functional index on `LOWER(email)`."
+          },
+          {
+            "name": "password_hash",
+            "type": "text",
+            "nullable": false,
+            "description": "Argon2id or bcrypt (see config('identity.password.hasher'))."
+          },
+          {
+            "name": "mfa_secret_encrypted",
+            "type": "text",
+            "nullable": true,
+            "description": "KMS-envelope-encrypted TOTP secret. Never plaintext at rest."
+          },
+          {
+            "name": "mfa_recovery_codes_hashed",
+            "type": "jsonb",
+            "nullable": true,
+            "default": "NULL",
+            "description": "Array of bcrypt-hashed recovery codes. NULL = MFA not enrolled OR no codes issued."
+          },
+          {
+            "name": "email_verified_at",
+            "type": "timestamptz",
+            "nullable": true
+          },
+          {
+            "name": "email_verification_token_hash",
+            "type": "text",
+            "nullable": true,
+            "description": "SHA-256 hash of the outstanding verification token (plaintext never stored)."
+          },
+          {
+            "name": "email_verification_expires_at",
+            "type": "timestamptz",
+            "nullable": true
+          },
+          {
+            "name": "password_history_hashed",
+            "type": "jsonb",
+            "nullable": false,
+            "default": "'[]'::jsonb",
+            "description": "Rolling window of prior password hashes; oldest evicted at write time to respect history_size."
+          },
+          {
+            "name": "password_changed_at",
+            "type": "timestamptz",
+            "nullable": false,
+            "default": "now()"
+          },
+          {
+            "name": "last_login_at",
+            "type": "timestamptz",
+            "nullable": true
+          },
+          {
+            "name": "last_failed_at",
+            "type": "timestamptz",
+            "nullable": true
+          },
+          {
+            "name": "locked_until",
+            "type": "timestamptz",
+            "nullable": true
+          },
+          {
+            "name": "failed_attempts_count",
+            "type": "integer",
+            "nullable": false,
+            "default": 0
+          },
+          {
+            "name": "dob",
+            "type": "date",
+            "nullable": true,
+            "description": "For age-gate policy. Nullable because a platform-provisioned Identity (SSO test tenant) may lack dob \u2014 compliance-floor evaluation treats null as `undetermined = refuse`."
+          }
+        ],
+        "indexes": [
+          {
+            "columns": ["email"],
+            "unique": true,
+            "predicate": "deleted_at IS NULL",
+            "description": "Partial unique index so soft-deleted identities can be replaced by fresh sign-ups on the same email during the GDPR hold-period. (Debatable \u2014 configurable via `identity.retention.replace_erased_identities`; default true.)"
+          },
+          {
+            "columns": ["locked_until"],
+            "unique": false,
+            "predicate": "locked_until IS NOT NULL",
+            "description": "Speeds up AutoUnlockExpiredLockoutsJob's scan."
+          }
+        ]
+      },
+      "description": "Idempotent migration shorthand. Adds the credential + audit columns that appear on every Identity-shaped table. Should be called ONCE per table \u2014 second call fails with a clear duplicate-column error.",
+      "boot_order_note": "Registered by `IdentityServiceProvider::boot()`. Because module priority is 15 (below Wave 2+ modules), every downstream migration that would use this macro (e.g. `platform_users` in user module priority 18) sees it available.",
+      "usage_example": "Schema::create('identities', function (Blueprint $t) {\n    $t->ulidPrefixed('id', 'idn');\n    $t->identity_fields();\n    $t->timestamps();\n    $t->softDeletes();\n    $t->userstamps();\n});"
+    }
+  ],
+  "registered_by": "Academorix\\Identity\\Providers\\IdentityServiceProvider::boot()"
+}

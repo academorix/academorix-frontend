@@ -1,0 +1,204 @@
+{
+  "id": "academorix://modules/mfa/settings",
+  "$version": 1,
+  "title": "mfa — settings",
+  "description": "Tenant-facing MFA policy settings. Two groups: tenant-level MFA policy (which roles require MFA, grace period, step-up strictness) + per-user MFA preferences (preferred method, low-recovery-codes threshold override). Only tenant admins with the `mfa.policy.manage` permission can modify the tenant-level group.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "namespace_registration": {
+    "namespace": "mfa",
+    "consumer": "Academorix\\Mfa\\Providers\\MfaServiceProvider",
+    "defaultValueFactory": "Delegates to config('mfa.*') when the tenant hasn't overridden. Ensures the effective value falls back to the config layer if no tenant-specific row exists.",
+    "validator": "Enforces the compliance-floor rules — tenant settings can only TIGHTEN mfa.required_for_roles (add more roles, never remove any); tenant settings can only SHORTEN mfa.grace_days_after_enrollment; tenant settings can only SHORTEN mfa.step_up.sensitive_action_ttl_minutes."
+  },
+  "groups": [
+    {
+      "key": "mfa",
+      "class": "Academorix\\Mfa\\Settings\\MfaSettings",
+      "label": "Two-factor authentication",
+      "description": "Tenant-wide MFA policy. Compliance floor: the tenant can only TIGHTEN these values, never loosen below the platform floor.",
+      "icon": "shield-check",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 20,
+      "permission": "mfa.policy.manage",
+      "sections": [
+        {
+          "label": "Required roles",
+          "description": "Users holding any listed role must have MFA enrolled. Grace period gives newly-elevated users time to enrol before enforcement.",
+          "icon": "user-group",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "additional_required_roles",
+              "controlType": "multiselect",
+              "label": "Additional roles requiring MFA",
+              "helpText": "Platform floor: owner, admin, billing_manager, super_admin (always required). Add more roles here to widen enforcement.",
+              "optionsSource": "roles.tenant",
+              "sortOrder": 1
+            },
+            {
+              "name": "grace_days_after_enrollment",
+              "controlType": "number",
+              "label": "Grace period (days)",
+              "defaultValue": 7,
+              "min": 0,
+              "max": 7,
+              "helpText": "How long a newly-elevated user has to enrol MFA before enforcement. Platform max: 7 days. Set to 0 for immediate enforcement.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Step-up verification",
+          "description": "Require a fresh MFA challenge before sensitive actions.",
+          "icon": "lock-closed",
+          "sortOrder": 2,
+          "requiresEntitlement": "mfa_step_up",
+          "fields": [
+            {
+              "name": "step_up_enabled",
+              "controlType": "toggle",
+              "label": "Enable step-up verification",
+              "defaultValue": false,
+              "sortOrder": 1
+            },
+            {
+              "name": "step_up_ttl_minutes",
+              "controlType": "select",
+              "label": "Freshness window",
+              "defaultValue": 5,
+              "options": {
+                "1": "1 minute (most strict)",
+                "5": "5 minutes (recommended)",
+                "15": "15 minutes",
+                "30": "30 minutes"
+              },
+              "helpText": "How long after an MFA challenge a sensitive action is allowed without re-challenging.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "WebAuthn policy",
+          "description": "Fine-tune the WebAuthn behaviour for your tenant.",
+          "icon": "key",
+          "sortOrder": 3,
+          "requiresEntitlement": "mfa_webauthn",
+          "fields": [
+            {
+              "name": "webauthn_user_verification",
+              "controlType": "select",
+              "label": "User-verification policy",
+              "defaultValue": "preferred",
+              "options": {
+                "required": "Required (single-step MFA — passkey-first)",
+                "preferred": "Preferred (recommended)",
+                "discouraged": "Discouraged (classic one-tap)"
+              },
+              "helpText": "Whether the authenticator MUST verify the user (PIN, biometric). Required makes WebAuthn a full MFA on its own.",
+              "sortOrder": 1
+            },
+            {
+              "name": "webauthn_require_resident_key",
+              "controlType": "toggle",
+              "label": "Require passkey-style credentials (resident keys)",
+              "defaultValue": false,
+              "helpText": "On = only passkeys accepted (no classic YubiKeys). Off = accept both roaming keys and passkeys.",
+              "sortOrder": 2
+            },
+            {
+              "name": "webauthn_max_credentials",
+              "controlType": "number",
+              "label": "Maximum credentials per user",
+              "defaultValue": 10,
+              "min": 1,
+              "max": 10,
+              "helpText": "Platform max: 10. Free tier caps at 1 (upgrade to team+ for multiple).",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Recovery codes",
+          "icon": "key",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "recovery_codes_low_water_threshold",
+              "controlType": "number",
+              "label": "Low-code alert threshold",
+              "defaultValue": 3,
+              "min": 1,
+              "max": 10,
+              "helpText": "Send a reminder when a user's remaining recovery-code count falls below this value.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell-alert",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "notify_suspicious_activity",
+              "controlType": "toggle",
+              "label": "Send suspicious-activity alerts",
+              "defaultValue": true,
+              "helpText": "Emails users when their MFA sees rapid failed challenges from novel IPs.",
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_low_recovery_codes",
+              "controlType": "toggle",
+              "label": "Send low-recovery-codes reminders",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "mfa_user",
+      "class": "Academorix\\Mfa\\Settings\\MfaUserSettings",
+      "label": "My two-factor preferences",
+      "description": "Per-user MFA preferences.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 10,
+      "sections": [
+        {
+          "label": "Preferred method",
+          "icon": "shield-check",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "preferred_challenge_method",
+              "controlType": "select",
+              "label": "Preferred challenge method at login",
+              "helpText": "When you have multiple factors enrolled, which one to prompt for first.",
+              "options": {
+                "webauthn": "Passkey / hardware key (fastest)",
+                "totp": "Authenticator app",
+                "recovery_code": "Recovery code (fallback only)"
+              },
+              "defaultValue": "webauthn",
+              "sortOrder": 1
+            },
+            {
+              "name": "hide_recovery_codes_reminder",
+              "controlType": "toggle",
+              "label": "Hide low-recovery-codes reminders",
+              "defaultValue": false,
+              "helpText": "Suppress the periodic nudge to regenerate. You'll still see the in-app dot when only a few codes remain.",
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/auth/schemas/auth-jwt-signing-key",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "JwtSigningKey",
+  "description": "HS256 signing key with per-Application binding + rotation. secret_encrypted is KMS-envelope-encrypted; the plaintext HS256 shared secret is NEVER persisted to Postgres and NEVER cached in Redis (memory-only per-process for 60 seconds max). Old keys marked retired_at=now() stay verify-capable through the auth.jwt.rotation_grace_period_days window + 180-day forensic tail before hard delete.",
+  "type": "object",
+  "x-module": "auth",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "auth_jwt_signing_keys",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "ajk_",
+    "incrementing": false,
+    "model": "Academorix\\Auth\\Models\\JwtSigningKey",
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "issued_at": "datetime",
+      "rotated_at": "datetime",
+      "retired_at": "datetime",
+      "is_active": "boolean"
+    },
+    "appends": ["is_signing_capable", "is_verify_only"],
+    "hidden": ["secret_encrypted"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "kid": { "type": "string", "nullable": false, "description": "Key ID exposed via JWKS. Format: `<issuer>-<year>-<month>-<index>`, e.g. `identity-2026-07-1`. UNIQUE." },
+      "application_id": { "type": "string", "length": 30, "nullable": true, "description": "FK to applications.id ON DELETE RESTRICT. NULL = global signing key (used for platform-plane JWTs)." },
+      "algorithm": { "type": "string", "nullable": false, "default": "HS256", "description": "Wave 1a: HS256 only. Wave 1c will add RS256, ES256." },
+      "secret_encrypted": { "type": "text", "nullable": false, "description": "KMS-envelope-encrypted HS256 shared secret. Base64-encoded. NEVER decrypted to a persistent variable \u2014 stack-scoped per signing call." },
+      "is_active": { "type": "boolean", "nullable": false, "default": false, "description": "Only ONE key per (application_id, is_active=true) is signing-capable at a time. Verify-capability extends to retired keys within the grace window." },
+      "issued_at": { "type": "timestamptz", "nullable": false, "default": "now()" },
+      "rotated_at": { "type": "timestamptz", "nullable": true, "description": "Set when a new active key supersedes this one. Rotation cadence: monthly per RotateJwtSigningKeyJob." },
+      "retired_at": { "type": "timestamptz", "nullable": true, "description": "After this timestamp the key is only used for verification. Cleared 180 days later." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["kid"], "unique": true, "name": "auth_jwt_signing_keys_kid_unique" },
+      {
+        "columns": ["application_id"],
+        "unique": true,
+        "predicate": "is_active = true AND retired_at IS NULL",
+        "name": "auth_jwt_signing_keys_one_active_per_app"
+      },
+      { "columns": ["retired_at"], "unique": false, "predicate": "retired_at IS NOT NULL", "name": "auth_jwt_signing_keys_retired_idx" }
+    ]
+  },
+  "required": ["id", "kid", "algorithm", "secret_encrypted", "is_active", "issued_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ajk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kid": { "type": "string" },
+    "application_id": { "type": ["string", "null"] },
+    "algorithm": { "type": "string", "enum": ["HS256"] },
+    "is_active": { "type": "boolean" },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "rotated_at": { "type": ["string", "null"], "format": "date-time" },
+    "retired_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_signing_capable": { "type": "boolean" },
+    "is_verify_only": { "type": "boolean" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "note": "Platform-admin plane surface (GET /platform/jwt-signing-keys). Wire projection returns { id, kid, application_id, algorithm, is_active, issued_at, rotated_at, retired_at, is_signing_capable, is_verify_only }. secret_encrypted NEVER returned.",
+    "never_projected": ["secret_encrypted"]
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "id": "academorix://modules/service-accounts/data-classes",
+  "$version": 1,
+  "title": "service-accounts \u2014 field classification",
+  "description": "Every credential column is `regulated_secret` (never returned on wire, never logged, never emitted to metrics). Operator-facing metadata (name, description) is `internal`. Machine-context fields (IP, user_agent) are `confidential`. Redactor rules always apply. No PII: SAs have no email, no dob, no phone. See compliance.json for SOC 2 + NIST + OWASP + PCI-DSS mapping.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [],
+    "internal": [
+      "ServiceAccount.id",
+      "ServiceAccount.application_id",
+      "ServiceAccount.tenant_id",
+      "ServiceAccount.name",
+      "ServiceAccount.description",
+      "ServiceAccount.is_enabled",
+      "ServiceAccount.signer_kid",
+      "ServiceAccount.status",
+      "ServiceAccount.expires_at",
+      "ServiceAccount.secret_rotated_at",
+      "ServiceAccount.last_used_at",
+      "ServiceAccount.created_at",
+      "ServiceAccount.updated_at",
+      "ServiceAccount.deleted_at"
+    ],
+    "confidential": [
+      "ServiceAccount.last_used_ip"
+    ],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "regulated_secret": [
+      "ServiceAccount.secret_hash",
+      "Plaintext exchange secret (returned ONCE at creation + rotation, then irretrievable)",
+      "JWT plaintext (issued via token-exchange, never persisted to this module's tables)"
+    ],
+    "audit_log": [
+      "ServiceAccount.is_enabled",
+      "ServiceAccount.signer_kid",
+      "ServiceAccount.secret_rotated_at",
+      "ServiceAccount.expires_at",
+      "ServiceAccount.deleted_at",
+      "ServiceAccount.secret_hash (existence only \u2014 never value)"
+    ]
+  },
+  "wire_projection": {
+    "description": "SA rows are NEVER exposed to tenant-facing routes. Only platform-admin surfaces read them. Wire projection is a redacted `ServiceAccountAdminData` DTO. Every field marked `[NEVER RETURNED]` is stripped at the serialization layer regardless of the caller's permissions.",
+    "tenant_wire_shape": "N/A \u2014 tenant plane does not expose SA rows.",
+    "platform_admin_wire_shape": {
+      "id": "ServiceAccount.id (ULID `svc_...`)",
+      "application_id": "ULID",
+      "application_slug": "computed \u2014 joined from applications.slug",
+      "tenant_id": "ULID | null",
+      "tenant_slug": "computed \u2014 joined from tenants.slug when tenant_id is non-null",
+      "name": "string",
+      "description": "string | null",
+      "is_enabled": "boolean",
+      "signer_kid": "string (kid identifier; not the key material itself)",
+      "status": "'pending' | 'active' | 'disabled' | 'expired'",
+      "expires_at": "timestamp | null",
+      "secret_rotated_at": "timestamp | null",
+      "last_used_at": "timestamp | null",
+      "last_used_ip": "string (IPv4/IPv6, unredacted for platform-admin surfaces)",
+      "days_since_last_used": "computed integer | null",
+      "days_until_expiry": "computed integer | null",
+      "is_expiring_soon": "computed boolean \u2014 days_until_expiry <= rotation.warning_days_before_expiry",
+      "is_dormant": "computed boolean \u2014 days_since_last_used > security.dormant_threshold_days",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    },
+    "creation_wire_shape": {
+      "description": "The ServiceAccountCreatedResponse shape returned by POST /platform/service-accounts + POST /platform/service-accounts/{id}/rotate-secret. The `secret` field is present ONLY in this response \u2014 subsequent reads NEVER return it.",
+      "data": {
+        "id": "ULID",
+        "application_id": "ULID",
+        "tenant_id": "ULID | null",
+        "name": "string",
+        "signer_kid": "string",
+        "expires_at": "timestamp",
+        "secret": "string (plaintext exchange secret; base64-encoded 32 random bytes; ONE-TIME-VIEW ONLY)",
+        "created_at": "timestamp"
+      }
+    },
+    "never_returned": [
+      "ServiceAccount.secret_hash (regulated_secret)",
+      "JWT signing key material (owned by auth::jwt_signing_keys; retrieved by signer_kid but the value itself is never surfaced)",
+      "Historical secret hashes (not stored \u2014 rotation overwrites the previous hash; there is no reuse-prevention history)"
+    ]
+  },
+  "input_dtos": [
+    {
+      "class": "Academorix\\ServiceAccount\\Data\\CreateServiceAccountInput",
+      "shape": {
+        "application_id": "ULID (required, immutable)",
+        "tenant_id": "ULID | null (optional; must match application_id)",
+        "name": "string (validated: valid_service_account_name, unique per application_id)",
+        "description": "string | null (max 1000 chars)",
+        "signer_kid": "string | null (optional; when null, provisioner generates a fresh kid via auth module)",
+        "ttl_days": "int | null (optional; default = service-accounts.rotation.default_secret_ttl_days)",
+        "metadata": "object | null (free-form ops notes; enterprise IP-allowlist arrays go here)"
+      },
+      "validation_gate": "Before creation, ServiceAccountObserver.creating refuses when: (a) application_id doesn't exist, (b) tenant_id (if non-null) belongs to a different application_id, (c) name is not unique within the application, (d) signer_kid (if provided) doesn't exist in auth::jwt_signing_keys or is disabled."
+    },
+    {
+      "class": "Academorix\\ServiceAccount\\Data\\UpdateServiceAccountInput",
+      "shape": {
+        "name": "string | null (validated: valid_service_account_name)",
+        "description": "string | null",
+        "is_enabled": "boolean | null",
+        "expires_at": "timestamp | null (may extend the current expires_at; may NOT shorten below now())",
+        "metadata": "object | null"
+      },
+      "validation_gate": "PATCH refuses to mutate application_id, tenant_id, or signer_kid. Attempting any of the three raises 422 SERVICE_ACCOUNT_IMMUTABLE_FIELD."
+    },
+    {
+      "class": "Academorix\\ServiceAccount\\Data\\TokenExchangeInput",
+      "shape": {
+        "service_account_id": "ULID (required)",
+        "secret": "string (required; the plaintext rotation secret returned at create/rotate)",
+        "requested_scope": "object | null",
+        "requested_scope.aud": "string | null (target service audience; falls back to SA metadata default)",
+        "requested_scope.ttl_seconds": "int | null (bounded by service-accounts.jwt.min_ttl_seconds + max_ttl_seconds)"
+      },
+      "validation_gate": "Rate-limit checked BEFORE input parsing (per-SA + per-IP-/24). Hash::check runs constant-time bcrypt comparison. Unknown SA + wrong secret both return the same INVALID_SERVICE_ACCOUNT_CREDENTIALS payload."
+    },
+    {
+      "class": "Academorix\\ServiceAccount\\Data\\IssueTestJwtInput",
+      "shape": {
+        "aud": "string | null (target audience; falls back to SA metadata default)",
+        "ttl_seconds": "int | null (bounded; default 300)"
+      },
+      "validation_gate": "The permission platform.service_accounts.issue_test_jwt is required. TTL bounds enforced by min/max config; exceeding max raises 422 SERVICE_ACCOUNT_TTL_EXCEEDS_MAX."
+    }
+  ],
+  "output_dtos": [
+    {
+      "class": "Academorix\\ServiceAccount\\Data\\ServiceAccountAdminData",
+      "purpose": "Platform-admin listing + detail surface. See wire_projection.platform_admin_wire_shape above. Excludes secret_hash + secret plaintext."
+    },
+    {
+      "class": "Academorix\\ServiceAccount\\Data\\ServiceAccountCreatedResponse",
+      "purpose": "Wraps ServiceAccountAdminData + adds the one-time-view plaintext `secret` field. Returned by POST /platform/service-accounts + POST /platform/service-accounts/{id}/rotate-secret."
+    },
+    {
+      "class": "Academorix\\ServiceAccount\\Data\\TokenExchangeResponse",
+      "shape": {
+        "token": "string (encoded HS256 JWT)",
+        "expires_in": "int (seconds until JWT `exp`)",
+        "token_type": "'Bearer'"
+      },
+      "purpose": "Response body for the token-exchange endpoint."
+    },
+    {
+      "class": "Academorix\\ServiceAccount\\Data\\ServiceAccountUsageReportData",
+      "purpose": "Response body for GET /platform/service-accounts/{id}/audit-usage + the `service-account:audit-usage` command. Includes histogram, distinct IP-/24 count, jti-reuse detections, distinct audiences, top 100 audit-log entries in the window."
+    }
+  ],
+  "notes": [
+    "SAs have NO PII. No email, no name of a human, no dob, no phone, no address. This is by construction \u2014 SAs are machines, not people.",
+    "The `last_used_ip` column IS logged unredacted to platform-admin surfaces because operator triage of anomalies genuinely needs it (IP correlation to known deployment subnets). It's classified `confidential` (not `restricted`) because there's no natural person the IP identifies \u2014 it's a machine's egress address.",
+    "There is deliberately NO password-history column. SA secrets rotate to fresh cryptographically-random values; reuse prevention is not a realistic threat (nobody memorises SA secrets)."
+  ]
+}

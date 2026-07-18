@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/service-accounts/traits",
+  "$version": 1,
+  "title": "service-accounts \u2014 trait composition",
+  "description": "One owned trait. `IsServiceAccount` is a marker composed by the ServiceAccount model itself. Ships no accessor / mutator / scope of its own \u2014 those live on the model directly \u2014 but participates in reflection-based tooling (audit redactors, seeders, factories) that need to enumerate every SA-shaped row without hard-coding the class. NO BelongsToTenant (service accounts OPTIONALLY carry tenant_id but the global scope is deliberately absent \u2014 platform-admin surfaces need to see cross-tenant SAs). NO HasCredentialLifecycle (the Identity substrate's lifecycle is human-centric; SAs have their own SecretRotator-driven flow instead).",
+  "owned": [
+    {
+      "trait": "Academorix\\ServiceAccount\\Concerns\\IsServiceAccount",
+      "description": "Marker trait composed by the ServiceAccount model. Provides the shared shape identifier for reflection-based tooling. Adds no accessor / mutator / scope of its own \u2014 accessors live directly on the model. Used by ServiceAccountFingerprinter to identify SA-shaped principals at the audit middleware layer.",
+      "public": true,
+      "usedBy": ["service-accounts::ServiceAccount"],
+      "underlying_package": null,
+      "wraps": null,
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "SAs retain a retention hold (default 90 days after deleted_at) before hard delete so downstream compliance queries can still resolve historical audit trails."
+      },
+      { "trait": "Illuminate\\Notifications\\Notifiable", "reason": "SA is never a mail-notification recipient itself, but Notifiable is composed so downstream modules can route notifications ABOUT the SA (dispatched to Application owners) via the standard framework primitives." }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\HasAudit" }
+    ]
+  },
+  "composition": {
+    "service_account": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "Notifiable",
+        "IsServiceAccount",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "HasAudit",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "NO BelongsToTenant \u2014 while `tenant_id` is populated on tenant-scoped SAs, the trait's global scope is deliberately absent because platform-admin surfaces need to enumerate cross-tenant SAs. Tenant-scope filtering, when needed, is explicit at the query builder.",
+        "NO HasCredentialLifecycle \u2014 the trait's methods (verifyPassword, lock, enrollMfa, ...) are human-centric. SAs have their own SecretRotator-driven flow that lives on `SecretRotator` service, not on the model.",
+        "NO IsPlatformUser \u2014 an SA is a distinct principal class from PlatformUser. They both authenticate to the platform_admin guard, but they're separate models with separate lifecycles.",
+        "The order matters: `IsServiceAccount` runs BEFORE `HasCredentialLifecycle`-like helpers so the marker trait's static hooks fire before any downstream trait's booted() wiring. Because we don't compose HasCredentialLifecycle, this is a defensive ordering rule for future-added traits.",
+        "`HasActivityLog` + `HasAudit` compose so SA mutations flow through the compliance timeline. PII fields are trivial to redact here because there are no PII fields \u2014 SAs have no name of a human, no email, no phone."
+      ]
+    }
+  }
+}

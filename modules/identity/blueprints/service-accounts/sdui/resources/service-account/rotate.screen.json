@@ -1,0 +1,150 @@
+{
+  "id": "service-accounts.resources.service-account.rotate",
+  "title": "Rotate service account secret",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/service-accounts/{id}/rotate",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "service-accounts", "entity": "service-account", "action": "rotate" },
+  "requiresPermission": "platform.service_accounts.rotate",
+  "notes": [
+    "Rotation flow. Requires reason (min 20 chars). On successful POST, the response includes the plaintext new secret ONCE \u2014 same SecretDisplayModal pattern as create. Explicitly reminds the operator that existing JWTs signed BEFORE the rotation remain valid until natural exp \u2014 hard revocation requires kid burn via the auth module."
+  ],
+  "dataSources": [
+    {
+      "name": "serviceAccount",
+      "kind": "http.get",
+      "url": "/api/v1/platform/service-accounts/{id}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-xl mx-auto flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "Breadcrumb",
+          "children": [
+            { "kind": "BreadcrumbItem", "props": { "to": "/platform/service-accounts", "children": "Service accounts" } },
+            {
+              "kind": "BreadcrumbItem",
+              "propsExpr": "{ to: '/platform/service-accounts/' + serviceAccount.id, children: serviceAccount.name }"
+            },
+            { "kind": "BreadcrumbItem", "props": { "children": "Rotate" } }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Rotate secret"
+          }
+        },
+        {
+          "kind": "Callout",
+          "props": {
+            "variant": "warning",
+            "title": "Existing JWTs remain valid",
+            "children": "Rotation invalidates the exchange-endpoint secret \u2014 new token-exchange calls with the old secret refuse. Existing JWTs signed BEFORE this moment stay valid until their natural exp (default 5 minutes). To hard-revoke every outstanding JWT, coordinate a kid burn with the auth module."
+          }
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "props": { "children": "Current state" } },
+            {
+              "kind": "CardContent",
+              "props": { "className": "grid grid-cols-2 gap-3 text-sm" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Name" } },
+                { "kind": "Text", "bindings": { "children": { "$ref": "serviceAccount.name" } } },
+                { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Kid" } },
+                { "kind": "Text", "props": { "className": "font-mono text-xs" }, "bindings": { "children": { "$ref": "serviceAccount.signer_kid" } } },
+                { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Current expiry" } },
+                { "kind": "Text", "bindings": { "children": { "$ref": "serviceAccount.expires_at" } } },
+                { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Days since last rotation" } },
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "serviceAccount.days_since_rotation != null ? serviceAccount.days_since_rotation + ' days' : 'Never rotated'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "action": {
+              "kind": "http.post",
+              "url": "/api/v1/platform/service-accounts/{id}/rotate-secret",
+              "onSuccess": {
+                "kind": "modal.open",
+                "modal": "sa-created-secret-display",
+                "propsExpr": "{ secret: response.data.secret, service_account_id: response.data.id, name: response.data.name, expires_at: response.data.expires_at, mode: 'rotation' }"
+              }
+            }
+          },
+          "children": [
+            {
+              "kind": "NumberField",
+              "props": {
+                "name": "ttl_days",
+                "label": "New TTL (days)",
+                "min": 7,
+                "max": 365,
+                "default": 90,
+                "description": "How long the new secret is valid. Defaults to the module rotation cadence."
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "name": "reason",
+                "label": "Reason (for audit log)",
+                "required": true,
+                "rows": 2,
+                "minLength": 20,
+                "description": "Required. Free-form justification (\u201cScheduled 90d rotation\u201d / \u201cIncident response SEC-042\u201d / etc.)."
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/platform/service-accounts/' + serviceAccount.id" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "type": "submit",
+                    "variant": "warning",
+                    "leadingIcon": "refresh",
+                    "children": "Rotate secret"
+                  },
+                  "actions": {
+                    "confirm": {
+                      "title": "Rotate secret?",
+                      "description": "The current exchange secret is invalidated immediately. Existing JWTs remain valid until natural exp. The new plaintext secret is returned ONCE and cannot be retrieved later.",
+                      "confirmLabel": "Rotate"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

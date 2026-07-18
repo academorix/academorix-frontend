@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/mfa/sdui/widgets/mfa-status-chip",
+  "$version": 1,
+  "kind": "widget",
+  "name": "mfa-status-chip",
+  "description": "Small status chip rendered next to a User's name in admin lists. Colour-coded by MFA posture. Data-driven from MfaMethodsSummary + a policy-evaluation flag.",
+  "props": {
+    "user_id": {
+      "type": "string",
+      "description": "The User whose MFA posture is being summarised."
+    },
+    "inline": {
+      "type": "boolean",
+      "default": true,
+      "description": "Inline mode = compact chip beside text; block mode = full status card."
+    }
+  },
+  "data_source": {
+    "kind": "resource",
+    "endpoint": "GET /api/v1/platform/mfa/methods/{user_id}",
+    "cache_ttl_seconds": 60,
+    "requires_permission": "platform.mfa.methods.view"
+  },
+  "renders": {
+    "kind": "chip",
+    "variant_map": {
+      "active": {
+        "colour": "success",
+        "icon": "shield-check",
+        "label": "MFA active"
+      },
+      "required_missing": {
+        "colour": "danger",
+        "icon": "shield-exclamation",
+        "label": "MFA required — not enrolled"
+      },
+      "grace_period": {
+        "colour": "warning",
+        "icon": "clock",
+        "label": "MFA in grace period"
+      },
+      "disabled": {
+        "colour": "muted",
+        "icon": "no-symbol",
+        "label": "MFA disabled"
+      }
+    },
+    "variant_resolver": {
+      "kind": "conditional",
+      "rules": [
+        {
+          "when": "response.role_requires_mfa AND NOT response.mfa_enabled AND response.grace_period_expired",
+          "variant": "required_missing"
+        },
+        {
+          "when": "response.role_requires_mfa AND NOT response.mfa_enabled AND NOT response.grace_period_expired",
+          "variant": "grace_period"
+        },
+        {
+          "when": "response.mfa_enabled",
+          "variant": "active"
+        },
+        {
+          "when": "NOT response.mfa_enabled",
+          "variant": "disabled"
+        }
+      ]
+    }
+  }
+}

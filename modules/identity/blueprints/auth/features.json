@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/auth/features",
+  "$version": 1,
+  "title": "auth \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features"
+  },
+  "description": "Auth-facing feature keys surfaced in the /auth/me bootstrap payload. The SPA reads these to decide which UI flows to render (cross-app switcher, session-management screen, MFA-enrol wizard entry, impersonation banner).",
+  "features": [
+    {
+      "key": "auth.core",
+      "displayName": "Authentication service",
+      "description": "Base auth capability. Always on. Presence indicates auth-service is reachable.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "auth.session_management",
+      "displayName": "Session management",
+      "description": "Self-service listing + revocation of one's own sessions (GET/DELETE /auth/sessions). Always on.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "auth.refresh_rotation",
+      "displayName": "Refresh token rotation",
+      "description": "Rotation-with-reuse-detection on every refresh. Composite of the refresh_token_rotation entitlement. Silent gate.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "auth.cross_app_sso",
+      "displayName": "Cross-Application SSO",
+      "description": "Grant-based cross-Application session issuance. When on, the SPA renders an Application switcher; when off, the switcher is hidden (Free tier).",
+      "defaultEnabled": false,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "auth.extended_session_ttl",
+      "displayName": "Extended session lifetime",
+      "description": "PAT lifetime extended to auth.session.extended_ttl_days. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "auth.new_device_notifications",
+      "displayName": "New device sign-in alerts",
+      "description": "Email + in-app alerts on novel-device logins. Team+ tier.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "auth.new_location_notifications",
+      "displayName": "New location sign-in alerts",
+      "description": "Email alerts on novel-GeoIP-location logins. Composite gate: new_device_notifications entitlement AND the User has opted in.",
+      "defaultEnabled": true,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "auth.impersonation_active",
+      "displayName": "Impersonation session active",
+      "description": "Runtime flag \u2014 present in /auth/me ONLY when a platform-staff impersonation session is currently active on the caller's User. When present, the SPA renders a persistent banner.",
+      "defaultEnabled": false,
+      "planTiers": ["free", "team", "business", "enterprise"],
+      "notes": "This key is dynamic \u2014 evaluated at each /auth/me call. Absent when no active impersonation session; present + `active=true` when one exists."
+    },
+    {
+      "key": "auth.mfa_available",
+      "displayName": "MFA available",
+      "description": "Composite of the identity.mfa feature key (from identity substrate) + auth's session-lifecycle wiring. Signals the SPA that MFA-enrol screens are reachable."
+    }
+  ]
+}

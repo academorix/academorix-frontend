@@ -1,0 +1,138 @@
+{
+  "id": "platform-user.resources.platform-profile.me",
+  "title": "My profile",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/me",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "platform-user", "entity": "platform-profile", "action": "me" },
+  "requiresPermission": "platform.platform_profiles.view.self",
+  "notes": [
+    "Self-service surface. Every active PlatformUser holds the required permission via the baseline platform_admin roles. first_name + last_name are HR-controlled and rendered read-only; changes go through HR via a separate request."
+  ],
+  "dataSources": [
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/v1/platform/platform-profiles/me",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "My profile" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Update your display name, avatar, phone, and internal handles. Legal-name changes go through HR."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": { "className": "flex flex-col gap-4" },
+          "actions": {
+            "onSubmit": {
+              "kind": "http.patch",
+              "url": "/api/v1/platform/platform-profiles/me",
+              "toast_on_success": "Profile updated"
+            }
+          },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "grid grid-cols-2 gap-4" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": { "name": "first_name", "label": "First name", "readOnly": true, "helpText": "HR-controlled" },
+                  "bindings": { "value": { "$ref": "me.first_name" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "last_name", "label": "Last name", "readOnly": true, "helpText": "HR-controlled" },
+                  "bindings": { "value": { "$ref": "me.last_name" } }
+                }
+              ]
+            },
+            {
+              "kind": "TextField",
+              "props": { "name": "display_name", "label": "Display name", "placeholder": "Optional" },
+              "bindings": { "value": { "$ref": "me.display_name" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "name": "phone_e164",
+                "label": "Phone",
+                "type": "tel",
+                "helpText": "E.164 format (e.g. +14155552671). Used for on-call escalation."
+              },
+              "bindings": { "value": { "$ref": "me.phone_e164" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "name": "slack_handle",
+                "label": "Slack handle",
+                "placeholder": "Optional",
+                "leadingText": "@"
+              },
+              "bindings": { "value": { "$ref": "me.slack_handle" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "name": "github_handle",
+                "label": "GitHub handle",
+                "placeholder": "Optional",
+                "leadingText": "@",
+                "helpText": "Enables commit-author correlation on the audit trail."
+              },
+              "bindings": { "value": { "$ref": "me.github_handle" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "timezone", "label": "Timezone", "placeholder": "Select a timezone" },
+              "bindings": { "value": { "$ref": "me.timezone" } },
+              "optionsSource": "timezones"
+            },
+            {
+              "kind": "AvatarUpload",
+              "props": { "name": "avatar_url", "label": "Avatar", "maxSizeKb": 2048 },
+              "bindings": { "value": { "$ref": "me.avatar_url" } }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "type": "button", "children": "Reset" },
+                  "actions": { "onPress": { "kind": "form.reset" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "type": "submit", "children": "Save" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

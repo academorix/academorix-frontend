@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/user/jobs",
+  "$version": 1,
+  "title": "user \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\User\\Jobs\\ProvisionUserJob",
+      "queue": "notifications",
+      "purpose": "Async provisioning path used when invitation acceptance triggers user creation from a background worker (e.g. a mail bounce retry, a delayed SSO grant exchange). Wraps the synchronous `ProvisionUser` action so the same code path runs whether invoked from an HTTP request or a queue worker.",
+      "steps": [
+        "Resolve the Identity by email (create it if missing \u2014 the invitation flow may bring a brand-new identity).",
+        "Resolve the Application from the invitation.",
+        "Resolve the Tenant from the invitation.",
+        "Invoke UserProvisioner \u2192 create Profile \u2192 create User \u2192 create default TenantMember with the invitation's role \u2192 fire UserProvisioned event.",
+        "Dispatch email-verification challenge if the Identity's email is not yet verified.",
+        "Mark the invitation as accepted (`access::Invitation.accepted_at = now()`)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(identity_email, application_id, tenant_id)",
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\User\\Jobs\\UpdateLastActiveJob",
+      "queue": "low",
+      "purpose": "Batched update of `tenant_members.last_active_at`. Every authenticated request stamps the current timestamp into an in-memory buffer; this job flushes the buffer to the DB every minute so the DB doesn't take a row lock per request.",
+      "steps": [
+        "Read the in-memory buffer keyed by (membership_id \u2192 latest_timestamp).",
+        "UPSERT `tenant_members.last_active_at` = MAX(current, buffered) in a single batched statement.",
+        "Clear the buffer."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "tries": 1,
+      "note": "Fire-and-forget. If a batch fails, next dispatch picks up the buffer + a couple of minutes of activity is lost \u2014 acceptable for a `last_active_at` display field."
+    },
+    {
+      "class": "Academorix\\User\\Jobs\\CleanupOrphanedProfilesJob",
+      "queue": "low",
+      "purpose": "Deletes Profile rows that have no User referencing them AND are older than `user.privacy.orphaned_profile_ttl_hours` (default 24 hours). Orphans occur when provisioning creates a Profile then fails to link the User \u2014 rare but possible under a partial rollback.",
+      "steps": [
+        "SELECT profile.id FROM profiles LEFT JOIN users ON users.profile_id = profiles.id WHERE users.id IS NULL AND profiles.created_at < NOW() - INTERVAL '24 hours'.",
+        "For each: hard-delete the Profile row + fire an internal telemetry counter."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\User\\Jobs\\PurgeErasedUsersJob",
+      "queue": "low",
+      "purpose": "GDPR Art. 17 finalisation. Hard-deletes soft-deleted User rows past the erasure hold window (default 30 days per `user.privacy.erasure_hold_days`). Cascade deletes their Profile + TenantMember rows; fires UserHardDeleted.",
+      "steps": [
+        "SELECT id FROM users WHERE deleted_at < NOW() - INTERVAL 'user.privacy.erasure_hold_days days'.",
+        "For each: DELETE FROM users WHERE id = ? \u2014 the FK cascade takes care of tenant_members; the Profile is hard-deleted separately (RESTRICT FK).",
+        "Hard-delete Profile row (SoftDeletes trait forced() with a hasNoDependents check).",
+        "Fire UserHardDeleted event so audit + activity write the compliance record.",
+        "The Identity row is NOT touched here \u2014 an Identity outlives its Users. Identity erasure lives in `identity::PurgeErasedIdentitiesJob` and requires zero User rows to remain across every Application."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    }
+  ]
+}

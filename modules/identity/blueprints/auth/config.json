@@ -1,0 +1,262 @@
+{
+  "id": "academorix://modules/auth/config",
+  "$version": 1,
+  "title": "auth \u2014 developer configuration",
+  "configFile": "config/auth.php",
+  "envPrefix": "AUTH_",
+  "description": "Full authentication policy \u2014 principal age gates, password policy composition, session lifecycle, lockout thresholds, JWT signing + rotation, cross-app SSO. Read alongside `config/identity.php` (owned by the identity substrate); this file OVERLAYS identity's config with auth-flow-specific keys. When a key exists in both, `auth.*` wins on the auth-flow path (which is the tenant-configurable surface); `identity.*` is the substrate default.",
+  "sections": {
+    "principal": {
+      "description": "Age + verification requirements on the principal being authenticated. Enforced by CompliantAgePolicy at every registration + email-change flow.",
+      "keys": [
+        {
+          "path": "auth.principal.min_age",
+          "type": "int",
+          "env": "AUTH_MIN_PRINCIPAL_AGE",
+          "default": 13,
+          "description": "Framework default minimum age. CompliantAgePolicy computes MAX(compliance_floor, this_value) so tenant settings + regime overrides can only TIGHTEN. Default 13 aligns with the US COPPA floor."
+        },
+        {
+          "path": "auth.principal.require_guardian_approval_below",
+          "type": "int",
+          "default": 16,
+          "description": "Minors between this age and adult transition age (18 default) can register but require guardian approval. Consumed by domain policy (sports/athletes/AthleteRegistrationPolicy in Wave 7)."
+        },
+        {
+          "path": "auth.principal.require_email_verification",
+          "type": "bool",
+          "default": true,
+          "description": "Block session issuance until Identity.email_verified_at is populated. Off = accept unverified identities (rare)."
+        }
+      ]
+    },
+    "password": {
+      "description": "Password policy for the auth-flow endpoints. Composes identity's `strong_password` rule (which owns min-length + complexity + breach check + history). Auth-specific extension keys live here.",
+      "keys": [
+        {
+          "path": "auth.password.rehash_on_verify",
+          "type": "bool",
+          "default": true,
+          "description": "When identity.password.hasher upgrades (e.g. bcrypt \u2192 argon2id) OR cost parameters change, LoginAction rehashes the plaintext under the new params inside the same verify transaction. Off = keep old hashes; only new sets migrate."
+        },
+        {
+          "path": "auth.password.force_change_on_admin_reset",
+          "type": "bool",
+          "default": true,
+          "description": "When platform admin uses `identity:force-password-reset`, the target Identity is flagged so the NEXT login prompts a password change before issuing a full session."
+        }
+      ]
+    },
+    "session": {
+      "description": "Sanctum PAT lifecycle + refresh rotation.",
+      "keys": [
+        {
+          "path": "auth.session.idle_ttl_minutes",
+          "type": "int",
+          "default": 480,
+          "description": "Idle lifetime \u2014 revoke sessions that haven't touched `last_used_at` within this window. Default 8 hours."
+        },
+        {
+          "path": "auth.session.absolute_ttl_hours",
+          "type": "int",
+          "default": 168,
+          "description": "Absolute lifetime \u2014 revoke sessions this many hours after issue regardless of activity. Default 7 days. Sanctum PATs get `expires_at` set to (now + this)."
+        },
+        {
+          "path": "auth.session.refresh_ttl_days",
+          "type": "int",
+          "default": 30,
+          "description": "Refresh-token lifetime. Default 30 days. Rotated on every use \u2014 the family_id tracks the chain."
+        },
+        {
+          "path": "auth.session.new_device_lookback_days",
+          "type": "int",
+          "default": 30,
+          "description": "How far back to look for a matching device fingerprint before flagging a login as `new device`."
+        },
+        {
+          "path": "auth.session.detect_new_device",
+          "type": "bool",
+          "env": "AUTH_DETECT_NEW_DEVICE",
+          "default": true,
+          "description": "Master toggle for the new-device notification flow. Off = auth.detect_new_device middleware is a no-op."
+        },
+        {
+          "path": "auth.session.extended_ttl_days",
+          "type": "int",
+          "default": 90,
+          "description": "Absolute lifetime when the tenant holds the `sanctum_pat_extended_ttl` entitlement (Enterprise). Overrides absolute_ttl_hours when entitled."
+        }
+      ]
+    },
+    "lockout": {
+      "description": "Per-endpoint rate limiting. Complements the identity substrate's per-Identity lockout (managed by identity.check_lockout middleware).",
+      "keys": [
+        {
+          "path": "auth.lockout.login_per_ip_max",
+          "type": "int",
+          "default": 5,
+          "description": "Max login attempts per IP over the window."
+        },
+        {
+          "path": "auth.lockout.login_per_ip_window_minutes",
+          "type": "int",
+          "default": 15
+        },
+        {
+          "path": "auth.lockout.login_per_email_max",
+          "type": "int",
+          "default": 10
+        },
+        {
+          "path": "auth.lockout.login_per_email_window_minutes",
+          "type": "int",
+          "default": 60
+        },
+        {
+          "path": "auth.lockout.password_reset_per_hour",
+          "type": "int",
+          "default": 5,
+          "description": "Per-email rate limit on the forgot-password endpoint. Rejected requests STILL return 200 for enumeration safety."
+        }
+      ]
+    },
+    "mfa": {
+      "description": "MFA challenge dispatch policy. TOTP + WebAuthn verification themselves are owned by `identity/mfa`.",
+      "keys": [
+        {
+          "path": "auth.mfa.challenge_ttl_minutes",
+          "type": "int",
+          "default": 5,
+          "description": "How long an issued MFA challenge remains verifiable."
+        },
+        {
+          "path": "auth.mfa.max_attempts_per_challenge",
+          "type": "int",
+          "default": 3,
+          "description": "Terminal after this many failures. Fires MfaChallengeFailed(is_terminal=true) + hard-deletes the challenge; the caller must restart from /auth/login."
+        },
+        {
+          "path": "auth.mfa.remember_device_days",
+          "type": "int",
+          "default": 30,
+          "description": "How long a successfully-verified device fingerprint is exempt from MFA re-challenge. 0 = re-challenge on every login."
+        }
+      ]
+    },
+    "jwt": {
+      "description": "Inter-service JWT contract. HS256 in Wave 1a; RS256/ES256 deferred to Wave 1c per design.md \u00a712.",
+      "keys": [
+        {
+          "path": "auth.jwt.algorithm",
+          "type": "string",
+          "default": "HS256",
+          "enum": ["HS256"],
+          "description": "Wave 1a only supports HS256. Wave 1c will add RS256, ES256."
+        },
+        {
+          "path": "auth.jwt.issuer",
+          "type": "string",
+          "env": "AUTH_JWT_ISSUER",
+          "default": "https://identity.academorix.com",
+          "description": "`iss` claim on every JWT. Downstream verifiers check this."
+        },
+        {
+          "path": "auth.jwt.ttl_seconds",
+          "type": "int",
+          "default": 900,
+          "description": "Access-token JWT lifetime. Default 15 minutes."
+        },
+        {
+          "path": "auth.jwt.extended_ttl_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "Applied when the tenant holds `jwt_extended_expiry` entitlement (Enterprise). Overrides ttl_seconds."
+        },
+        {
+          "path": "auth.jwt.clock_skew_seconds",
+          "type": "int",
+          "default": 30,
+          "description": "Downstream verifiers permit +/- this many seconds of clock drift."
+        },
+        {
+          "path": "auth.jwt.rotation_grace_period_days",
+          "type": "int",
+          "default": 7,
+          "description": "How long a retired signing key remains verify-capable (via JWKS publication) after rotation. Any JWT issued under the previous key must expire naturally within this window."
+        },
+        {
+          "path": "auth.jwt.deny_list_check",
+          "type": "bool",
+          "default": true,
+          "description": "Whether the auth.jwt_verify middleware consults auth_jwt_deny_list. Off = trust natural expiry only (never in production)."
+        },
+        {
+          "path": "auth.jwt.jwks_cache_control",
+          "type": "string",
+          "default": "public, max-age=3600, immutable",
+          "description": "Cache-Control header on GET /.well-known/jwks.json. Aggressive because downstream verifiers cache aggressively; rotation windows are longer than the cache TTL."
+        }
+      ]
+    },
+    "cross_app_sso": {
+      "description": "Grant-based cross-Application SSO. Requires cross_app_sso entitlement.",
+      "keys": [
+        {
+          "path": "auth.cross_app_sso.enabled",
+          "type": "bool",
+          "env": "AUTH_CROSS_APP_SSO",
+          "default": false,
+          "description": "Master toggle. Off = /auth/cross-app/* endpoints return 503. On + entitlement present = enabled per tenant."
+        },
+        {
+          "path": "auth.cross_app_sso.grant_ttl_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "Grant TTL. Short window \u2014 grants are one-time-use redemption tokens, not sessions."
+        },
+        {
+          "path": "auth.cross_app_sso.allow_new_user_provisioning",
+          "type": "bool",
+          "default": false,
+          "description": "When the target Application doesn't have a User row for this Identity, ALLOW auto-provisioning during exchange (rare \u2014 default off; when off, the exchange returns 404 and the SPA routes to the target Application's onboarding flow)."
+        }
+      ]
+    },
+    "impersonation": {
+      "description": "Platform-staff impersonation policy. Composes with `access/delegation` (Wave 1b) for session storage.",
+      "keys": [
+        {
+          "path": "auth.impersonation.max_session_ttl_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "Hard cap on any impersonation session. Sessions extend at their own TTL until this cap."
+        },
+        {
+          "path": "auth.impersonation.require_reason",
+          "type": "bool",
+          "default": true,
+          "description": "Refuses impersonation start without a --reason flag (audit-critical)."
+        },
+        {
+          "path": "auth.impersonation.notify_impersonated_user",
+          "type": "bool",
+          "default": true,
+          "description": "Dispatches ImpersonationSessionActiveNotification to the target User. Default on \u2014 the impersonated user has a legal right to know."
+        }
+      ]
+    },
+    "commands": {
+      "description": "Console-command safety guards.",
+      "keys": [
+        {
+          "path": "auth.commands.require_reason",
+          "type": "bool",
+          "env": "AUTH_COMMANDS_REQUIRE_REASON",
+          "default": true,
+          "description": "Every mutating Artisan command in this module requires --reason=<text> (audit-logged). Off in dev; on in staging + prod."
+        }
+      ]
+    }
+  }
+}

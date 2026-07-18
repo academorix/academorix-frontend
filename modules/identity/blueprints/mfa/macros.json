@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/mfa/macros",
+  "$version": 1,
+  "title": "mfa — published macros",
+  "description": "MFA ships no macros. Migration shapes for the webauthn_credentials table live in a standard migration file (not shortcut'd via a Blueprint macro) because the table is authored ONCE at module inception; a paired macro would provide no reuse leverage. Similarly no Str macro exists — there is no plaintext concept the app needs to interrogate outside of the challenger services.",
+  "namespace_note": "This file exists to make the empty-macros stance explicit. Any future macro (e.g. `Blueprint::mfa_challenge_fields` if identity/auth's challenge table gains reusable shape across mfa/webauthn/mfa/totp) lands here.",
+  "macros": [],
+  "registered_by": "n/a",
+  "rationale": [
+    "The webauthn_credentials table is standalone — no other module reuses the exact column set. A macro that's used once is anti-pattern.",
+    "There is no plaintext concept comparable to identity's `Str::password_strength` — TOTP codes are opaque, WebAuthn assertions are opaque bytes, recovery codes are randomly generated and never user-authored. Users don't 'evaluate' MFA input the way they evaluate password strength; they either possess the second factor or they don't.",
+    "If a future feature (e.g. `identity/auth::PasswordResetToken`-style short-TTL rows) creates a shape reused across mfa + auth, the paired macro lives HERE (as `Blueprint::mfa_challenge_fields`) or on identity/auth depending on which module owns the aggregate."
+  ]
+}

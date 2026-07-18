@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/identity/observers",
+  "$version": 1,
+  "title": "identity \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "Identity",
+      "observer": "Academorix\\Identity\\Observers\\IdentityObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `idn_`",
+        "creating \u2192 normalise email via CITEXT (Postgres does this at DB level; the observer additionally lowercases + trims for consistency)",
+        "creating \u2192 refuse when email already exists (UNIQUE constraint would catch it too \u2014 the observer surfaces a clean `IDENTITY_EMAIL_TAKEN` error before the DB round-trip)",
+        "creating \u2192 gate on CompliantAgePolicy \u2014 refuse when dob resolves the applicant below the effective compliance floor (COPPA / GDPR per-country)",
+        "creating \u2192 initialise password_history_hashed to [] (empty JSONB array) so the rolling-window check has a starting point",
+        "creating \u2192 initialise failed_attempts_count to 0",
+        "creating \u2192 stamp password_changed_at with now() so the age-based rotation policy has a baseline",
+        "creating \u2192 fire IdentityRegistered",
+        "updating (email dirty) \u2192 refuse when the new email exists on another Identity; NULL email_verified_at + email_verification_token_hash to force re-verification; issue a fresh EmailVerificationToken via auth::EmailVerificationTokenIssuer",
+        "updating (password_hash dirty) \u2192 push the OLD hash onto password_history_hashed (trim to config('identity.password.history_size')); stamp password_changed_at; fire PasswordChanged with the resolved trigger",
+        "updating (mfa_secret_encrypted transition NULL \u2192 non-null) \u2192 refuse when no matching TOTP confirmation code proved possession in the same request; fire MfaEnrolled",
+        "updating (mfa_secret_encrypted transition non-null \u2192 NULL) \u2192 purge mfa_recovery_codes_hashed in the same transaction; fire MfaDisabled",
+        "updating (locked_until transition NULL \u2192 non-null) \u2192 fire IdentityLocked with computed lockout_number",
+        "updating (locked_until transition non-null \u2192 NULL) \u2192 fire IdentityUnlocked with trigger resolved from the update context (auto_expiry vs admin_action)",
+        "updating (email_verified_at transition NULL \u2192 non-null) \u2192 fire IdentityEmailVerified",
+        "deleting (soft) \u2192 emit `academorix.identity.erasure.soft_delete` metric; fire IdentityErased(erasure_phase='soft_delete'); write compliance-audit entry with the actor + reason",
+        "restoring \u2192 refuse when hold-period has elapsed (must-be-hard-deleted by then); clear deleted_at; write audit entry",
+        "forceDeleted \u2192 fire IdentityErased(erasure_phase='hard_delete') AFTER the row is actually gone (via afterCommit)"
+      ]
+    }
+  ],
+  "notes": [
+    "The observer is registered by IdentityServiceProvider::boot(). It runs BEFORE HasActivityLog + HasAudit hooks so audit trails see the fully-normalised row.",
+    "Every `refuse` case throws a subclass of `Academorix\\Identity\\Exceptions\\IdentityViolationException` \u2014 mapped to the errors in `errors.json`.",
+    "The `updating (password_hash dirty)` branch is idempotent: pushing the same hash twice within the same transaction is a no-op (the hash lookup dedupes)."
+  ]
+}

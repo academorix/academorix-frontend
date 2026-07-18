@@ -1,0 +1,213 @@
+{
+  "id": "platform-user.resources.platform-user.list",
+  "title": "Platform staff",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/platform-users",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "platform-user", "entity": "platform-user", "action": "list" },
+  "requiresPermission": "platform.platform_users.viewAny",
+  "notes": [
+    "Wire URL stays `/platform/platform-users` for consistency with the module.json.hosts.platform-admin.routes prefix. PII fields render redacted; a `Show PII` chip on the row triggers a signed unmute request that writes a meta-audit entry."
+  ],
+  "dataSources": [
+    {
+      "name": "platformUsers",
+      "kind": "http.get",
+      "url": "/api/v1/platform/platform-users",
+      "unwrap": "data"
+    },
+    {
+      "name": "onCallNow",
+      "kind": "http.get",
+      "url": "/api/v1/platform/platform-users/on-call/current",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Platform staff"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Academorix employees on the platform_admin guard. Cross-tenant, cross-application. Freshly-hired staff land with least-privilege \u2014 grant additional roles from the detail view."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Hire staff" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/platform/platform-users/hire" } },
+              "requiresPermission": "platform.platform_users.hire"
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Name or email", "name": "q" }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "department", "placeholder": "All departments", "clearable": true },
+              "options": [
+                { "key": "ops", "label": "Operations" },
+                { "key": "product", "label": "Product" },
+                { "key": "engineering", "label": "Engineering" },
+                { "key": "support", "label": "Support" },
+                { "key": "sales", "label": "Sales" },
+                { "key": "finance", "label": "Finance" },
+                { "key": "legal", "label": "Legal" },
+                { "key": "security", "label": "Security" },
+                { "key": "dpo", "label": "Data Protection Office" },
+                { "key": "hr", "label": "Human Resources" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "status", "placeholder": "All statuses", "clearable": true },
+              "options": [
+                { "key": "pending", "label": "Pending" },
+                { "key": "active", "label": "Active" },
+                { "key": "suspended", "label": "Suspended" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "employment_type", "placeholder": "All employment types", "clearable": true },
+              "options": [
+                { "key": "full_time", "label": "Full-time" },
+                { "key": "part_time", "label": "Part-time" },
+                { "key": "contractor", "label": "Contractor" },
+                { "key": "temporary", "label": "Temporary" }
+              ]
+            },
+            { "kind": "Toggle", "props": { "name": "include_offboarded", "label": "Include offboarded" } }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "avatar",
+              "header": "",
+              "cell": {
+                "kind": "Widget",
+                "widget": "platform-user.platform-user-avatar",
+                "propsExpr": "{ platformUserId: row.id, size: 'sm' }"
+              }
+            },
+            {
+              "key": "display_name",
+              "header": "Name",
+              "cell": {
+                "kind": "Link",
+                "propsExpr": "{ to: '/platform/platform-users/' + row.id, children: row.profile.display_name || (row.profile.first_name + ' ' + row.profile.last_name) }"
+              }
+            },
+            {
+              "key": "job_title",
+              "header": "Title",
+              "note": "Free-form; nullable."
+            },
+            {
+              "key": "department",
+              "header": "Department",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "neutral" },
+                "bindings": {
+                  "children": {
+                    "$expr": "({ ops: 'Ops', product: 'Product', engineering: 'Engineering', support: 'Support', sales: 'Sales', finance: 'Finance', legal: 'Legal', security: 'Security', dpo: 'DPO', hr: 'HR' }[row.department])"
+                  }
+                }
+              }
+            },
+            {
+              "key": "status",
+              "header": "Status",
+              "cell": {
+                "kind": "Widget",
+                "widget": "platform-user.platform-user-status-chip",
+                "propsExpr": "{ status: row.status, size: 'xs' }"
+              }
+            },
+            {
+              "key": "employment_type",
+              "header": "Type",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs uppercase text-muted" },
+                "bindings": {
+                  "children": {
+                    "$expr": "({ full_time: 'Full-time', part_time: 'Part-time', contractor: 'Contractor', temporary: 'Temporary' }[row.employment_type])"
+                  }
+                }
+              }
+            },
+            {
+              "key": "hire_date",
+              "header": "Hired",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs" },
+                "bindings": { "children": { "$expr": "row.hire_date + ' (' + row.tenure_days + 'd)'" } }
+              }
+            },
+            {
+              "key": "mfa_enabled",
+              "header": "MFA",
+              "cell": {
+                "kind": "Icon",
+                "propsExpr": "{ name: row.mfa_enabled ? 'shield-check' : 'shield-exclamation', className: row.mfa_enabled ? 'text-success' : 'text-danger' }"
+              }
+            },
+            {
+              "key": "on_call",
+              "header": "On-call",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs" },
+                "bindings": {
+                  "hidden": {
+                    "$expr": "onCallNow?.current_shift?.platform_user_id !== row.id"
+                  },
+                  "props": {
+                    "variant": "warning",
+                    "leadingIcon": "bell-alert",
+                    "children": "On-call"
+                  }
+                }
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "platformUsers" } }
+        }
+      ]
+    }
+  ]
+}

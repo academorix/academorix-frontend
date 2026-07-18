@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/identity/policies",
+  "$version": 1,
+  "title": "identity \u2014 authorization policies",
+  "description": "Only ONE policy exists: `IdentityPolicy`. Every ability is gated behind the `platform_admin` guard \u2014 the tenant-audience `sanctum` guard NEVER interacts with Identity rows directly. Tenant callers reach Identity substrate only via auth-service actions (login, MFA challenge, password reset) which route through domain-layer authorization, not this policy.",
+  "policies": [
+    {
+      "model": "Identity",
+      "class": "Academorix\\Identity\\Policies\\IdentityPolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "platform.identity.viewAny",
+          "scope": "Platform ops. Redacted list (email hash-fingerprint + metadata; no PII)."
+        },
+        {
+          "action": "view",
+          "permission": "platform.identity.view",
+          "scope": "Platform ops. Redacted detail. See `viewPii` for the PII unmute."
+        },
+        {
+          "action": "viewPii",
+          "permission": "platform.identity.view.pii",
+          "scope": "Platform-security only. Unmutes email + dob on the response. Never unmutes regulated_secret fields. Every read of a PII-unmuted response writes an audit entry keyed to the actor.",
+          "audit_severity": "warn"
+        },
+        {
+          "action": "unlock",
+          "permission": "platform.identity.unlock",
+          "scope": "Platform support. Clears `locked_until` + resets `failed_attempts_count`. Fires IdentityUnlocked(trigger=admin_action)."
+        },
+        {
+          "action": "forcePasswordReset",
+          "permission": "platform.identity.force_password_reset",
+          "scope": "Platform-security. Sets a system-generated ephemeral password + revokes all sessions + emails a reset link. Requires justification (audit-logged)."
+        },
+        {
+          "action": "rotateMfaSecret",
+          "permission": "platform.identity.rotate_mfa_secret",
+          "scope": "Platform-security only. Regenerates the KMS-wrapped MFA secret without exposing plaintext. Used during KMS key rotation events."
+        },
+        {
+          "action": "erase",
+          "permission": "platform.identity.erase",
+          "scope": "Compliance officer only. Soft-deletes the Identity (starts the GDPR hold-period). Actual hard delete is automated via PurgeSoftDeletedIdentitiesJob.",
+          "audit_severity": "critical"
+        },
+        {
+          "action": "restore",
+          "permission": "platform.identity.restore",
+          "scope": "Compliance officer only. Reverses an in-flight soft-delete (before the hold-period elapsed). Cannot restore a hard-deleted row.",
+          "audit_severity": "warn"
+        }
+      ]
+    }
+  ],
+  "boundary_note": "This policy applies EXCLUSIVELY to the `platform_admin` guard. Under the `sanctum` guard, the Identity row is never a first-class resource \u2014 tenant callers cannot list, show, or mutate Identity directly. Any tenant-audience code that receives an authorization refusal here has taken a wrong path; it should be routed through `identity/auth` actions instead. Guard boundary is enforced at the auth-service action layer, not by this policy."
+}

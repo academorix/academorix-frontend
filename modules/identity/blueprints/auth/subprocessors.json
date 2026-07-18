@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/auth/subprocessors",
+  "$version": 1,
+  "title": "auth \u2014 subprocessors",
+  "description": "Auth invokes two kinds of subprocessors. KMS providers for JWT signing key envelope-encryption (invoked on every sign / verify \u2014 the KMS-decrypted plaintext is in-memory-only). GeoIP provider for the new-location detection listener (invoked on every login for the geolocation_hint used in notification payloads).",
+  "subprocessors": [
+    {
+      "name": "AWS KMS",
+      "role": "encryption_at_rest",
+      "purpose": "Envelope encryption of JwtSigningKey.secret_encrypted. Every JWT signing operation KMS-decrypts the row's ciphertext under the current data key into a stack-scoped variable; never held in a process-scoped cache.",
+      "data_processed": [
+        "AES-256 data-key ciphertexts",
+        "no plaintext signing secrets",
+        "no user identifiers"
+      ],
+      "location": "customer's AWS region (default us-east-1; configurable per deployment)",
+      "legal_basis": "contract",
+      "dpa_url": "https://aws.amazon.com/agreement/",
+      "cardholder_data_exposure": "none",
+      "when_engaged": "auth.jwt.algorithm = 'HS256' AND signing key uses KMS backend",
+      "notes": "Same KMS backend as identity/mfa_secret_encrypted for operational simplicity. Wave 1c may switch to per-Application KMS keys for tenant-isolation guarantees."
+    },
+    {
+      "name": "HashiCorp Vault",
+      "role": "encryption_at_rest",
+      "purpose": "Envelope-encryption alternative to KMS for on-prem deployments. Same operational contract.",
+      "data_processed": ["AES-256 data-key ciphertexts", "no plaintext signing secrets"],
+      "location": "customer-managed (self-hosted)",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.hashicorp.com/data-processing-addendum"
+    },
+    {
+      "name": "MaxMind GeoIP2",
+      "role": "geolocation",
+      "purpose": "Resolve request IPs to (city, country) for the LoginFromNewLocationNotification's geolocation_hint. Never used for authorization decisions \u2014 only for user-facing notification copy.",
+      "data_processed": [
+        "IP address (transient; discarded after resolution)",
+        "no user identifiers"
+      ],
+      "location": "MaxMind on-premises DB shipped with the service (no outbound call to MaxMind's servers at request time)",
+      "legal_basis": "legitimate interest (security notification)",
+      "dpa_url": "https://www.maxmind.com/en/company/legal-information",
+      "cardholder_data_exposure": "none",
+      "when_engaged": "auth.session.detect_new_device=true AND auth.new_location_login category is on for the User",
+      "notes": "The GeoIP database is licensed + updated weekly. IP-to-location resolution happens LOCALLY (no outbound call at request time), so this is a subprocessor of the DATABASE, not the RUNTIME. Notifications carry only city+country; the raw IP never appears in the notification body."
+    }
+  ],
+  "not_a_subprocessor": [
+    "firebase/php-jwt \u2014 in-process library, no data leaves the app",
+    "laravel/sanctum \u2014 same",
+    "OpenTelemetry / metrics collector \u2014 receives aggregate metrics only (no identifiers)",
+    "Email delivery (SES / Postmark / SMTP relay) \u2014 handled by notifications module; auth doesn't maintain its own delivery pipeline",
+    "haveibeenpwned \u2014 owned by identity substrate's strong_password rule; auth composes but doesn't invoke directly"
+  ]
+}

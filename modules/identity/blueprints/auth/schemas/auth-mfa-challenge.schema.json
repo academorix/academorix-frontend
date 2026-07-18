@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/auth/schemas/auth-mfa-challenge",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MfaChallenge",
+  "description": "Pending MFA challenge \u2014 an in-progress login waiting for TOTP / WebAuthn / recovery-code verification. 5-minute TTL. Carries the pending-login context (application_id, tenant_id, requested_scope) so the login flow can resume post-verification without re-collecting inputs.",
+  "type": "object",
+  "x-module": "auth",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "auth_mfa_challenges",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "amc_",
+    "incrementing": false,
+    "model": "Academorix\\Auth\\Models\\MfaChallenge",
+    "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasMetadata", "Filterable"],
+    "casts": {
+      "context": "array",
+      "expires_at": "datetime",
+      "consumed_at": "datetime"
+    },
+    "appends": ["is_expired", "is_consumed", "attempts_remaining"],
+    "hidden": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "identity_id": { "type": "string", "length": 30, "nullable": false, "description": "FK to identities.id ON DELETE CASCADE." },
+      "challenge_type": { "type": "string", "nullable": false, "description": "'totp' | 'webauthn' | 'recovery_code'" },
+      "context": { "type": "jsonb", "nullable": false, "description": "Snapshot of the pending-login state: { application_id, tenant_id, requested_scope, device_fingerprint }. Resumed by MfaVerifyAction on successful verify." },
+      "attempts_count": { "type": "integer", "nullable": false, "default": 0 },
+      "expires_at": { "type": "timestamptz", "nullable": false },
+      "consumed_at": { "type": "timestamptz", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["identity_id"], "unique": false, "name": "auth_mfa_challenges_identity_idx" },
+      { "columns": ["expires_at"], "unique": false, "predicate": "consumed_at IS NULL", "name": "auth_mfa_challenges_active_expiry_idx" }
+    ]
+  },
+  "required": ["id", "identity_id", "challenge_type", "context", "attempts_count", "expires_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^amc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "identity_id": { "type": "string", "pattern": "^idn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "challenge_type": { "type": "string", "enum": ["totp", "webauthn", "recovery_code"] },
+    "context": {
+      "type": "object",
+      "properties": {
+        "application_id": { "type": "string" },
+        "tenant_id": { "type": ["string", "null"] },
+        "requested_scope": { "type": ["object", "null"] },
+        "device_fingerprint": { "type": ["string", "null"] }
+      },
+      "required": ["application_id"],
+      "additionalProperties": true
+    },
+    "attempts_count": { "type": "integer", "minimum": 0 },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "consumed_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_expired": { "type": "boolean" },
+    "is_consumed": { "type": "boolean" },
+    "attempts_remaining": { "type": "integer", "description": "config('auth.mfa.max_attempts_per_challenge') - attempts_count." }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "note": "Wire-visible via the MfaChallengeResult shape returned with HTTP 202 from /auth/login. Only { challenge_id, challenge_type, expires_at, attempts_remaining } are returned; the internal context is NEVER wire-projected.",
+    "never_projected": ["context", "identity_id"]
+  }
+}

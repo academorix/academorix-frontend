@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/identity/jobs",
+  "$version": 1,
+  "title": "identity \u2014 background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Identity\\Jobs\\PurgeExpiredResetTokensJob",
+      "queue": "notifications",
+      "purpose": "Hard-delete PasswordResetToken + EmailVerificationToken rows past their TTL. Reset tokens live 15 minutes; verification tokens live 24 hours. Batched 1000 rows per invocation to keep the transaction small.",
+      "steps": [
+        "SELECT id FROM password_reset_tokens WHERE expires_at < now() LIMIT 1000.",
+        "DELETE the batch inside a transaction.",
+        "SELECT id FROM email_verification_tokens WHERE expires_at < now() LIMIT 1000.",
+        "DELETE the batch inside a transaction.",
+        "Emit `academorix.identity.tokens.purged` metric (labels: token_type, count).",
+        "Recurse if either batch was 1000 rows (until fewer than 1000 rows returned)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(class-name only, singleton)",
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "timeout": 120
+    },
+    {
+      "class": "Academorix\\Identity\\Jobs\\AutoUnlockExpiredLockoutsJob",
+      "queue": "notifications",
+      "purpose": "Clear `locked_until` on Identity rows where `locked_until < now()`. Fires `IdentityUnlocked` (trigger=`auto_expiry`) per row. Resets `failed_attempts_count` to 0.",
+      "steps": [
+        "SELECT id FROM identities WHERE locked_until IS NOT NULL AND locked_until < now() LIMIT 500.",
+        "For each: UPDATE identities SET locked_until = NULL, failed_attempts_count = 0.",
+        "Fire IdentityUnlocked event per row (batched dispatch through the event bus).",
+        "Emit `academorix.identity.locks.auto_cleared` metric."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 120,
+      "uniqueVia": "(class-name only, singleton)",
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "timeout": 120
+    },
+    {
+      "class": "Academorix\\Identity\\Jobs\\PurgeSoftDeletedIdentitiesJob",
+      "queue": "notifications-critical",
+      "purpose": "Hard-delete Identity rows whose `deleted_at` is older than the GDPR erasure hold-period (default 30 days, configurable via `identity.retention.erasure_hold_days`). Cascades to inbound FKs (user::User, user::PlatformUser \u2014 both onDelete=restrict, so this job first refuses when downstream rows remain and logs a compliance alert). Fires `IdentityErased` with `erasure_phase='hard_delete'`.",
+      "steps": [
+        "SELECT id FROM identities WHERE deleted_at IS NOT NULL AND deleted_at + (config('identity.retention.erasure_hold_days') || ' days')::interval < now() LIMIT 100.",
+        "For each: check for remaining inbound rows on users / platform_users / mfa_challenges / password_reset_tokens / email_verification_tokens.",
+        "If ANY inbound row remains: skip + emit `academorix.identity.erasure.blocked` warning metric + write compliance-alert audit entry.",
+        "Otherwise: DELETE the row, fire IdentityErased(erasure_phase='hard_delete'), emit `academorix.identity.erasure.completed` metric."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(class-name only, singleton)",
+      "tries": 2,
+      "backoff": [300, 1800],
+      "timeout": 300
+    }
+  ]
+}

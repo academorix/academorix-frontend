@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/auth/schedule",
+  "$version": 1,
+  "title": "auth \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "auth-purge-mfa-challenges",
+      "command": "queue:dispatch PurgeExpiredMfaChallengesJob",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: hard-delete MFA challenges past their 1h purge window. Short cadence because challenges have short TTL + high volume."
+    },
+    {
+      "name": "auth-purge-reset-tokens",
+      "command": "queue:dispatch PurgeExpiredResetTokensJob",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: hard-delete password reset tokens past their 24h purge window."
+    },
+    {
+      "name": "auth-purge-cross-app-grants",
+      "command": "queue:dispatch PurgeExpiredCrossAppGrantsJob",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 minutes: hard-delete cross-app grants past their 24h purge window. Fires CrossAppGrantExpired for unconsumed rows."
+    },
+    {
+      "name": "auth-purge-refresh-tokens",
+      "command": "queue:dispatch PurgeExpiredRefreshTokensJob",
+      "cron": "0 */30 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 30 minutes: hard-delete refresh tokens past their 90-day purge window. Batched 5000 rows per invocation."
+    },
+    {
+      "name": "auth-purge-verification-tokens",
+      "command": "queue:dispatch PurgeExpiredVerificationTokensJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:00 UTC: hard-delete email verification tokens past their 30-day purge window."
+    },
+    {
+      "name": "auth-purge-jwt-deny-list",
+      "command": "queue:dispatch PurgeExpiredJwtDenyListJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:00 UTC: hard-delete JWT deny-list entries whose underlying JWT has expired naturally."
+    },
+    {
+      "name": "auth-rotate-jwt-keys",
+      "command": "queue:dispatch RotateJwtSigningKeyJob",
+      "cron": "0 4 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly on the 1st at 04:00 UTC: rotate signing keys whose (rotated_at + 30 days) < now(). New key active immediately; old key retired but verify-capable for auth.jwt.rotation_grace_period_days."
+    },
+    {
+      "name": "auth-active-sessions-gauge",
+      "command": "metrics:emit auth.active_sessions",
+      "cron": "* * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: emit the `academorix.auth.active_sessions` gauge."
+    },
+    {
+      "name": "auth-active-refresh-tokens-gauge",
+      "command": "metrics:emit auth.active_refresh_tokens",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: emit the `academorix.auth.active_refresh_tokens` gauge."
+    },
+    {
+      "name": "auth-deny-list-size-gauge",
+      "command": "metrics:emit auth.jwt_deny_list_size",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: emit the `academorix.auth.jwt_deny_list_size` gauge."
+    },
+    {
+      "name": "auth-impersonation-active-gauge",
+      "command": "metrics:emit auth.impersonation_active_gauge",
+      "cron": "* * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: emit the impersonation-active gauge. Non-zero on evening / weekend hours triggers ops investigation."
+    }
+  ]
+}

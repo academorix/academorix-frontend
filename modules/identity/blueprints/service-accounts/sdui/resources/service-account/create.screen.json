@@ -1,0 +1,164 @@
+{
+  "id": "service-accounts.resources.service-account.create",
+  "title": "Provision service account",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/service-accounts/create",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "service-accounts", "entity": "service-account", "action": "create" },
+  "requiresPermission": "platform.service_accounts.create",
+  "notes": [
+    "Provisioning form. Composes CreateServiceAccountInput. On successful POST, the response includes the plaintext exchange secret ONCE \u2014 the client-side handler opens the SecretDisplayModal which renders the secret with a copy-to-clipboard control and requires an explicit `I've stored this securely` acknowledgement before dismissing. Never navigates away with the secret still visible."
+  ],
+  "dataSources": [
+    {
+      "name": "applications",
+      "kind": "http.get",
+      "url": "/api/v1/platform/applications",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "Breadcrumb",
+          "children": [
+            { "kind": "BreadcrumbItem", "props": { "to": "/platform/service-accounts", "children": "Service accounts" } },
+            { "kind": "BreadcrumbItem", "props": { "children": "Provision" } }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Provision service account"
+          }
+        },
+        {
+          "kind": "Callout",
+          "props": {
+            "variant": "info",
+            "title": "Store the secret immediately",
+            "children": "After you submit, the plaintext exchange secret appears ONCE. Store it in Doppler or your secrets manager before dismissing the confirmation dialog \u2014 it is NOT retrievable after that."
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "action": {
+              "kind": "http.post",
+              "url": "/api/v1/platform/service-accounts",
+              "onSuccess": {
+                "kind": "modal.open",
+                "modal": "sa-created-secret-display",
+                "propsExpr": "{ secret: response.data.secret, service_account_id: response.data.id, name: response.data.name, expires_at: response.data.expires_at }"
+              }
+            }
+          },
+          "children": [
+            {
+              "kind": "Select",
+              "props": {
+                "name": "application_id",
+                "label": "Application",
+                "required": true,
+                "description": "Immutable after creation. Cross-application SAs are not permitted \u2014 use one SA per Application."
+              },
+              "bindings": {
+                "options": {
+                  "$expr": "applications.map(a => ({ key: a.id, label: a.slug + ' \u2014 ' + a.name }))"
+                }
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "name": "tenant_id",
+                "label": "Tenant scope (optional)",
+                "clearable": true,
+                "description": "When populated, the SA is scoped to this tenant. Must belong to the selected Application. Leave empty for platform-plane SAs (cross-tenant integrations \u2014 requires the `service_accounts_platform_plane` entitlement)."
+              },
+              "dataSource": {
+                "kind": "http.get",
+                "urlExpr": "'/api/v1/platform/applications/' + form.application_id + '/tenants'",
+                "unwrap": "data"
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "name": "name",
+                "label": "Name",
+                "required": true,
+                "description": "Unique per Application. 3-128 chars, lowercase alphanumeric with hyphens or underscores.",
+                "placeholder": "e.g. webhook-signer-braintree"
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "name": "description",
+                "label": "Description (optional)",
+                "rows": 3,
+                "description": "Operator-facing purpose. Free-form; visible on the show screen + audit reports."
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "name": "signer_kid",
+                "label": "Signer kid (optional)",
+                "description": "Leave empty to provision a fresh kid via the auth module. Specify an existing kid to share with other SAs in this Application.",
+                "placeholder": "identity-2026-01 (leave empty for fresh)"
+              }
+            },
+            {
+              "kind": "NumberField",
+              "props": {
+                "name": "ttl_days",
+                "label": "TTL (days)",
+                "min": 7,
+                "max": 365,
+                "default": 90,
+                "description": "How long the secret is valid. Rotation-due notification fires 14 days before expiry."
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "name": "reason",
+                "label": "Reason (for audit log)",
+                "required": true,
+                "rows": 2,
+                "description": "Free-form justification captured on the audit row. Required in staging + prod.",
+                "minLength": 20
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "ghost", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/platform/service-accounts" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "type": "submit", "variant": "primary", "leadingIcon": "check", "children": "Provision" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,377 @@
+{
+  "id": "academorix://modules/auth/events",
+  "$version": 1,
+  "title": "auth \u2014 published events",
+  "namespace": "Academorix\\Auth\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every auth-lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects. Payloads carry `user_id` / `identity_id` / `token_id` only \u2014 downstream services that need email / roles / permissions re-fetch through IdentityRepository or UserRepository so redaction rules apply consistently. High-severity events (RefreshTokenReuseDetected, JwtRevoked, ImpersonationStarted) fire on `notifications-critical` so ops paging pipelines catch them.",
+  "events": [
+    {
+      "name": "UserLoggedIn",
+      "class": "Academorix\\Auth\\Events\\UserLoggedIn",
+      "trigger": "Successful password + optional MFA verification \u2192 Sanctum PAT issued. Fires exactly once per interactive login (never on refresh, never on cross-app grant exchange).",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitLoginSuccessMetric",
+        "analytics::TrackLogin",
+        "auth::MaybeDispatchNewDeviceNotification",
+        "auth::UpdateUserLastLoginAt"
+      ],
+      "payload": {
+        "user_id": "ULID (`usr_...` OR `plu_...`)",
+        "identity_id": "ULID",
+        "guard": "'sanctum' | 'platform_admin'",
+        "application_id": "ULID | null (null for platform_admin)",
+        "tenant_id": "ULID | null (null for platform_admin)",
+        "token_id": "integer (Sanctum PAT id)",
+        "mfa_verified": "boolean",
+        "device_fingerprint": "string (SHA-256; empty when detection is off)",
+        "logged_in_at": "ISO-8601 timestamp",
+        "request_ip_hash": "string (SHA-256 of IP; plaintext never emitted)"
+      }
+    },
+    {
+      "name": "UserLoggedOut",
+      "class": "Academorix\\Auth\\Events\\UserLoggedOut",
+      "trigger": "POST /auth/logout OR platform equivalent. Sanctum PAT revoked + paired refresh token consumed in the same transaction.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitLogoutMetric"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "identity_id": "ULID",
+        "guard": "'sanctum' | 'platform_admin'",
+        "token_id": "integer",
+        "trigger": "'self_service' | 'idle_timeout' | 'admin_revocation'",
+        "logged_out_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "SessionRevoked",
+      "class": "Academorix\\Auth\\Events\\SessionRevoked",
+      "trigger": "A single PAT was revoked (via HasSessionRevocation trait, direct API call, or platform-admin action). Distinguished from UserLoggedOut because it does NOT require the user to be the actor.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitSessionRevokedMetric"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "token_id": "integer",
+        "reason": "'password_changed' | 'user_suspended' | 'user_disabled' | 'admin_revocation' | 'idle_timeout' | 'refresh_reuse'",
+        "actor_id": "ULID | null (null = system revocation)",
+        "revoked_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "AllSessionsRevoked",
+      "class": "Academorix\\Auth\\Events\\AllSessionsRevoked",
+      "trigger": "Bulk revocation \u2014 every active PAT for a User (or every User referencing an Identity in the cross-Application PasswordChanged case). Fires ONCE with the count; per-token SessionRevoked NOT fired for the bulk case.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitBulkSessionRevocationMetric"
+      ],
+      "payload": {
+        "user_id": "ULID | null (null when the bulk was cross-Application on an Identity)",
+        "identity_id": "ULID | null (non-null on cross-Application bulk)",
+        "tokens_revoked_count": "integer",
+        "reason": "'password_changed' | 'identity_erased' | 'breach_detected' | 'admin_bulk_revoke'",
+        "actor_id": "ULID | null",
+        "revoked_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "RefreshTokenRotated",
+      "class": "Academorix\\Auth\\Events\\RefreshTokenRotated",
+      "trigger": "Refresh token exchanged for a new PAT + new refresh token. Old refresh consumed + new one issued inside the family_id chain.",
+      "queue": null,
+      "consumers": ["observability::EmitRefreshRotationMetric"],
+      "payload": {
+        "user_id": "ULID",
+        "family_id": "ULID",
+        "old_refresh_id": "ULID",
+        "new_refresh_id": "ULID",
+        "new_token_id": "integer",
+        "rotated_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "RefreshTokenReuseDetected",
+      "class": "Academorix\\Auth\\Events\\RefreshTokenReuseDetected",
+      "trigger": "An already-consumed refresh token was presented again \u2014 canonical BCP defense signal from RFC draft-ietf-oauth-security-topics. The reuse indicates an attacker has captured a token; every PAT + refresh token in the family is invalidated + every session for the User revoked as a breach response.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "auth::LockdownOnBreachDetected",
+        "notifications::DispatchBreachAlertNotification",
+        "activity::WriteToActivityLog",
+        "observability::EmitBreachSignalMetric"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "family_id": "ULID",
+        "presented_refresh_id": "ULID (the already-consumed token that was replayed)",
+        "detected_at": "ISO-8601 timestamp",
+        "request_ip_hash": "string",
+        "user_agent_hash": "string"
+      }
+    },
+    {
+      "name": "PasswordResetInitiated",
+      "class": "Academorix\\Auth\\Events\\PasswordResetInitiated",
+      "trigger": "POST /auth/password/forgot passed rate-limit + resolved a real Identity. NEVER fired when email is unknown (enumeration safety). This is the AUTH surface's version of identity::PasswordResetRequested \u2014 fires alongside identity's event, since auth OWNS the endpoint.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchPasswordResetLinkNotification"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "reset_token_id": "ULID",
+        "token_expires_at": "ISO-8601 timestamp",
+        "request_ip_hash": "string",
+        "user_agent_hash": "string"
+      }
+    },
+    {
+      "name": "PasswordResetCompleted",
+      "class": "Academorix\\Auth\\Events\\PasswordResetCompleted",
+      "trigger": "PasswordReset token exchanged for a new password. Token consumed atomically + all sessions revoked in the same transaction.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitPasswordResetCompletedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "reset_token_id": "ULID",
+        "completed_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "EmailVerificationRequested",
+      "class": "Academorix\\Auth\\Events\\EmailVerificationRequested",
+      "trigger": "New EmailVerification token issued (registration OR email-change flow OR explicit resend). Debounced 60s per identity_id.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchEmailVerificationLinkNotification"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "verification_token_id": "ULID",
+        "token_expires_at": "ISO-8601 timestamp",
+        "reason": "'registration' | 'email_change' | 'resend'"
+      }
+    },
+    {
+      "name": "EmailVerificationCompleted",
+      "class": "Academorix\\Auth\\Events\\EmailVerificationCompleted",
+      "trigger": "EmailVerification token exchanged for identity.email_verified_at = now(). Token consumed atomically. Fires alongside identity::IdentityEmailVerified \u2014 auth OWNS the endpoint, identity OWNS the substrate mutation.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "verification_token_id": "ULID",
+        "completed_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "CrossAppGrantIssued",
+      "class": "Academorix\\Auth\\Events\\CrossAppGrantIssued",
+      "trigger": "POST /auth/cross-app/grant succeeded \u2014 short-lived (300s) grant token issued to the caller for exchange on the target Application.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitCrossAppGrantIssuedMetric",
+        "analytics::TrackCrossAppSsoStart"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "grant_id": "ULID",
+        "source_application_id": "ULID",
+        "target_application_id": "ULID",
+        "issued_at": "ISO-8601 timestamp",
+        "expires_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "CrossAppGrantExchanged",
+      "class": "Academorix\\Auth\\Events\\CrossAppGrantExchanged",
+      "trigger": "POST /auth/cross-app/exchange consumed a valid grant \u2192 target-Application PAT issued. Grant marked consumed atomically.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitCrossAppGrantExchangedMetric",
+        "analytics::TrackCrossAppSsoComplete"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "grant_id": "ULID",
+        "target_user_id": "ULID (the User row resolved on the target Application)",
+        "target_application_id": "ULID",
+        "new_token_id": "integer",
+        "exchanged_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "CrossAppGrantExpired",
+      "class": "Academorix\\Auth\\Events\\CrossAppGrantExpired",
+      "trigger": "Grant was NOT exchanged before expires_at. Fired by PurgeExpiredCrossAppGrantsJob when it hard-deletes an unconsumed row.",
+      "queue": "notifications",
+      "consumers": [
+        "observability::EmitCrossAppGrantExpiredMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "grant_id": "ULID",
+        "target_application_id": "ULID",
+        "expired_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "MfaChallengeIssued",
+      "class": "Academorix\\Auth\\Events\\MfaChallengeIssued",
+      "trigger": "Login flow detected MFA is enrolled \u2192 dispatched MFA challenge (returns 202 with challenge_id). The pending-login context (application_id, tenant_id, requested_scope) is snapshotted into the challenge row's metadata.",
+      "queue": null,
+      "consumers": ["observability::EmitMfaChallengeIssuedMetric"],
+      "payload": {
+        "identity_id": "ULID",
+        "challenge_id": "ULID",
+        "challenge_type": "'totp' | 'webauthn' | 'recovery_code'",
+        "expires_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "MfaChallengeCompleted",
+      "class": "Academorix\\Auth\\Events\\MfaChallengeCompleted",
+      "trigger": "MFA challenge verified successfully. Challenge consumed atomically \u2192 Sanctum PAT issued.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitMfaChallengeCompletedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "challenge_id": "ULID",
+        "challenge_type": "'totp' | 'webauthn' | 'recovery_code'",
+        "attempts_taken": "integer (1\u20133)",
+        "completed_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "MfaChallengeFailed",
+      "class": "Academorix\\Auth\\Events\\MfaChallengeFailed",
+      "trigger": "MFA verification failed \u2014 wrong code / expired / already consumed. Third failure hard-deletes the challenge; the login flow restarts from step 1.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitMfaChallengeFailedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "challenge_id": "ULID",
+        "challenge_type": "string",
+        "attempts_count": "integer",
+        "is_terminal": "boolean (true = 3rd failure, challenge deleted)",
+        "failed_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ImpersonationStarted",
+      "class": "Academorix\\Auth\\Events\\ImpersonationStarted",
+      "trigger": "Platform staff invoked POST /platform/auth/impersonate/start with valid target + reason. `platform.impersonate` entitlement checked; delegation session recorded in `access/delegation` (Wave 1b module).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchImpersonationSessionActiveNotification",
+        "activity::WriteToActivityLog",
+        "compliance::RecordImpersonationSession",
+        "observability::EmitImpersonationStartedMetric"
+      ],
+      "payload": {
+        "impersonator_platform_user_id": "ULID (`plu_...`)",
+        "target_user_id": "ULID (`usr_...` \u2014 the tenant User being impersonated)",
+        "target_application_id": "ULID",
+        "target_tenant_id": "ULID",
+        "reason": "string (mandatory free-form justification)",
+        "started_at": "ISO-8601 timestamp",
+        "session_ttl_seconds": "integer"
+      }
+    },
+    {
+      "name": "ImpersonationEnded",
+      "class": "Academorix\\Auth\\Events\\ImpersonationEnded",
+      "trigger": "POST /platform/auth/impersonate/end OR TTL expiry OR explicit revocation. Impersonation PAT revoked.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "compliance::CloseImpersonationSession",
+        "observability::EmitImpersonationEndedMetric"
+      ],
+      "payload": {
+        "impersonator_platform_user_id": "ULID",
+        "target_user_id": "ULID",
+        "duration_seconds": "integer",
+        "trigger": "'self_service' | 'ttl_expired' | 'admin_revocation'",
+        "ended_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "JwtSigningKeyRotated",
+      "class": "Academorix\\Auth\\Events\\JwtSigningKeyRotated",
+      "trigger": "New JwtSigningKey row inserted with is_active=true; previous key marked retired_at=now() (kept for verification during rotation window).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitJwtKeyRotatedMetric"
+      ],
+      "payload": {
+        "new_key_id": "ULID",
+        "new_kid": "string",
+        "retired_key_id": "ULID | null",
+        "retired_kid": "string | null",
+        "application_id": "ULID | null (null = global key)",
+        "rotated_at": "ISO-8601 timestamp",
+        "actor_id": "ULID | null (null = scheduled rotation)"
+      }
+    },
+    {
+      "name": "JwtRevoked",
+      "class": "Academorix\\Auth\\Events\\JwtRevoked",
+      "trigger": "Specific `jti` added to the deny list \u2014 revoke a JWT immediately, before natural expiry. Used on password-change, user-suspend, breach response.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitJwtRevokedMetric"
+      ],
+      "payload": {
+        "jti": "UUID",
+        "reason": "'password_change' | 'user_suspended' | 'manual_revocation' | 'breach_response'",
+        "actor_id": "ULID | null",
+        "revoked_at": "ISO-8601 timestamp",
+        "natural_expiry": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "LoginFromNewDeviceDetected",
+      "class": "Academorix\\Auth\\Events\\LoginFromNewDeviceDetected",
+      "trigger": "DeviceFingerprinter reported the login's device fingerprint has not been seen for this User in the last `auth.session.new_device_lookback_days` (default 30).",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchLoginFromNewDeviceNotification",
+        "activity::WriteToActivityLog",
+        "analytics::TrackNewDeviceLogin"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "identity_id": "ULID",
+        "device_fingerprint": "string",
+        "geolocation_hint": "string | null (city, country \u2014 GeoIP best-effort)",
+        "detected_at": "ISO-8601 timestamp"
+      }
+    }
+  ]
+}

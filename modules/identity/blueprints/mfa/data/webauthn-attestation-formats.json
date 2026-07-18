@@ -1,0 +1,65 @@
+{
+  "$version": 1,
+  "title": "WebAuthn attestation formats — reference data",
+  "description": "The six attestation formats supported by the WebAuthn spec + this module. Each format identifies the shape of the attestation statement the authenticator emits at registration. The `WebauthnAttestationVerifier` dispatches to a format-specific verifier based on this value. Documented here for reviewer convenience — the actual implementation lives in `web-auth/webauthn-lib`.",
+  "formats": [
+    {
+      "name": "packed",
+      "description": "The most common attestation format in the modern ecosystem — used by YubiKeys, Google Titan, and many mobile authenticators. Contains a signature over the authenticator data + client-data-hash, optionally with an X.509 certificate chain.",
+      "authenticators": ["YubiKey 5 / 5C / 5C NFC / Bio", "Google Titan Security Key", "Feitian ePass FIDO", "SoloKeys"],
+      "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\PackedAttestationStatementSupport)",
+      "aaguid_reported": "yes (identifies the model)",
+      "certificate_chain_verifiable": "yes",
+      "notes": "Packed attestation with `x5c` (certificate chain) is the fullest form. Packed without `x5c` (self attestation) is also valid but provides less information about the authenticator model."
+    },
+    {
+      "name": "fido-u2f",
+      "description": "Legacy attestation format used by the original U2F protocol (pre-WebAuthn). Uses an ECDSA P-256 signature over the authenticator data + a fixed AAGUID (`00000000-0000-0000-0000-000000000000`) for all U2F keys.",
+      "authenticators": ["Original YubiKey NEO / 4 (in U2F mode)", "old Google Titan"],
+      "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\FidoU2FAttestationStatementSupport)",
+      "aaguid_reported": "always all-zeros — the U2F protocol predates AAGUID",
+      "certificate_chain_verifiable": "yes",
+      "notes": "Backwards-compatible with U2F-only devices. Not emitted by modern (post-2020) authenticators."
+    },
+    {
+      "name": "android-key",
+      "description": "Attestation format emitted by Android's hardware-backed KeyStore (StrongBox on Pixel 3+ / Samsung Knox / etc.). Uses an ECDSA P-256 signature + Google's Android Attestation extension in the X.509 certificate chain.",
+      "authenticators": ["Android biometric (Pixel + Samsung + OnePlus + ...)"],
+      "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\AndroidKeyAttestationStatementSupport)",
+      "aaguid_reported": "yes",
+      "certificate_chain_verifiable": "yes (chain roots at Google's Attestation Root CA)",
+      "notes": "The attestation extension can be parsed to reveal whether the key is stored in TEE / StrongBox — used for tenants with stricter hardware requirements."
+    },
+    {
+      "name": "apple",
+      "description": "Attestation format emitted by Apple's platform authenticators (Touch ID / Face ID / Apple Watch double-click). Uses an ECDSA P-256 signature + Apple's attestation extension.",
+      "authenticators": ["iOS Touch ID / Face ID (Safari + Chrome + Firefox on iOS)", "macOS Touch ID", "watchOS double-click"],
+      "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\AppleAttestationStatementSupport)",
+      "aaguid_reported": "yes (identifies iCloud-Keychain-synced vs device-bound)",
+      "certificate_chain_verifiable": "yes (chain roots at Apple's WebAuthn Root CA)",
+      "notes": "Apple's attestation is 'anonymous' by design — it identifies that the key is genuinely from an Apple device but doesn't identify the individual device."
+    },
+    {
+      "name": "tpm",
+      "description": "Attestation format emitted by Windows Hello + other TPM-backed authenticators. Uses an RSA / ECDSA signature + the TPM's endorsement key certificate.",
+      "authenticators": ["Windows Hello (with a TPM 2.0)", "any TPM-backed WebAuthn implementation"],
+      "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\TPMAttestationStatementSupport)",
+      "aaguid_reported": "yes",
+      "certificate_chain_verifiable": "yes (chain roots at the TPM vendor's Endorsement CA — Intel / Infineon / NXP / etc.)",
+      "notes": "TPM attestation carries the most detailed device-model information of any format but also the most complex verification chain."
+    },
+    {
+      "name": "none",
+      "description": "No attestation. The authenticator emits only the public key + credential ID. Privacy-preserving: does not identify the device model. Recommended by W3C for most consumer applications.",
+      "authenticators": ["Any authenticator when config('mfa.webauthn.attestation_conveyance')='none' (our default)", "synced passkeys (iCloud Keychain / Google Password Manager) — these ALWAYS emit 'none' because syncing across devices makes device attestation meaningless"],
+      "verifier_module": "web-auth/webauthn-lib (Webauthn\\AttestationStatement\\NoneAttestationStatementSupport — pass-through)",
+      "aaguid_reported": "no (all-zeros)",
+      "certificate_chain_verifiable": "n/a",
+      "notes": "Our default configuration (`attestation_conveyance='none'`) requests this format from every authenticator — we don't need attestation for consumer accounts. Tenants with FIDO MDS compliance mandates set `attestation_conveyance='direct'` to force a real attestation format."
+    }
+  ],
+  "notes": [
+    "The `mfa.webauthn.attestation_conveyance` config knob controls which format authenticators emit. Setting it to `none` (our default) is privacy-preserving; setting it to `direct` forces a real attestation for enterprise auditors.",
+    "The `aaguid` column on WebauthnCredential stores whatever the authenticator reported at registration — null when attestation_conveyance='none' + the authenticator withheld the AAGUID (allowed by spec for passkeys)."
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/mfa/sdui/widgets/recovery-codes-reveal",
+  "$version": 1,
+  "kind": "widget",
+  "name": "recovery-codes-reveal",
+  "description": "One-shot reveal of the plaintext recovery codes. Renders the code grid + copy-all + download-as-txt CTAs. Client-side timer hides the codes after `auto_hide_seconds` seconds of no interaction to reduce shoulder-surfing risk. Renders `Cache-Control: no-store` on the embedding page.",
+  "props": {
+    "data": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "The 10 plaintext codes to render."
+    },
+    "instructions": {
+      "type": "string",
+      "description": "Instruction text shown above the code grid."
+    },
+    "auto_hide_seconds": {
+      "type": "integer",
+      "default": 60,
+      "description": "After N seconds of no interaction, hide the codes behind a 'show' button. Reduces shoulder-surfing risk if the user forgot the modal open."
+    }
+  },
+  "renders": {
+    "kind": "container",
+    "cache_control_hint": "no-store",
+    "children": [
+      {
+        "kind": "notice",
+        "severity": "warning",
+        "message": "{{props.instructions}}"
+      },
+      {
+        "kind": "code-grid",
+        "columns": 2,
+        "data": "{{props.data}}",
+        "format": "group_by_5_with_hyphen",
+        "monospace": true,
+        "selectable": true
+      },
+      {
+        "kind": "auto-hide-timer",
+        "seconds": "{{props.auto_hide_seconds}}",
+        "on_expire": "collapse_grid_show_reveal_button"
+      },
+      {
+        "kind": "action-bar",
+        "actions": [
+          {
+            "label": "Copy all",
+            "kind": "copy-to-clipboard",
+            "icon": "clipboard",
+            "clipboard_value": "{{props.data | join:'\n'}}"
+          },
+          {
+            "label": "Download as .txt",
+            "kind": "download",
+            "icon": "arrow-down-tray",
+            "filename": "academorix-recovery-codes.txt",
+            "content_type": "text/plain",
+            "body": "Academorix recovery codes\n\nEach code is one-time-use. Save this file somewhere safe.\n\n{{props.data | join:'\n'}}"
+          },
+          {
+            "label": "Print",
+            "kind": "print",
+            "icon": "printer"
+          }
+        ]
+      }
+    ]
+  },
+  "audit_note": "This widget only renders — it does NOT fetch the codes from the server. The parent screen fetched the codes; this widget displays them. That separation is critical: the widget can be embedded in multiple screens without duplicating the audit-egress signal."
+}

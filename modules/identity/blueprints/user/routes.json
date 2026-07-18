@@ -1,0 +1,235 @@
+{
+  "id": "academorix://modules/user/routes",
+  "$version": 1,
+  "title": "user \u2014 HTTP routes",
+  "description": "Tenant-facing user CRUD, self-service /me endpoints, and multi-tenant switching + platform-admin cross-tenant read.",
+  "groups": [
+    {
+      "name": "tenant-users",
+      "prefix": "/api/v1/users",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "resolve.application",
+        "user.resolve_active_tenant",
+        "tenant.resolve",
+        "user.enforce_tenant_membership",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Admin-facing user CRUD scoped to the active tenant. Every scope-suffixed permission (`.tenant`, `.branch`, `.own`) is resolved by ScopeSuffixResolver at query build time.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@index",
+          "permission": "users.viewAny",
+          "description": "filter[status], filter[role_id], filter[email_contains], filter[created_after], sort[]=last_login_at, include=profile,memberships"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@store",
+          "permission": "users.create",
+          "description": "Admin-triggered creation. Body: { email, first_name, last_name, role_slug, send_invitation }. Consumes user_slot entitlement."
+        },
+        {
+          "method": "GET",
+          "path": "/{user}",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@show",
+          "permission": "users.view"
+        },
+        {
+          "method": "PATCH",
+          "path": "/{user}",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@update",
+          "permission": "users.update",
+          "description": "Body: { status, default_role_id, preferred_locale }. Profile-side fields go via `PATCH /me/profile` (self) or `PATCH /users/{user}/profile` (admin, gated on profile.update.pii)."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{user}",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@destroy",
+          "permission": "users.delete",
+          "description": "Soft-delete. Hard-delete via `POST /{user}/erase` (see below)."
+        },
+        {
+          "method": "POST",
+          "path": "/{user}/suspend",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@suspend",
+          "permission": "users.suspend",
+          "description": "Body: { reason, reactivate_at }."
+        },
+        {
+          "method": "POST",
+          "path": "/{user}/restore",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@restore",
+          "permission": "users.restore",
+          "description": "Restore within the erasure hold window."
+        },
+        {
+          "method": "POST",
+          "path": "/{user}/erase",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserController@erase",
+          "permission": "users.erase",
+          "description": "GDPR Art. 17 erasure. Soft-deletes + schedules PurgeErasedUsersJob."
+        }
+      ]
+    },
+    {
+      "name": "tenant-me",
+      "prefix": "/api/v1/me",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "resolve.application",
+        "user.resolve_active_tenant",
+        "tenant.resolve",
+        "throttle:foundation-me",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Self-service surface for the authenticated User. No admin permission checks \u2014 authorization is `subject === auth()->id()`.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MeController@show",
+          "permission": null,
+          "description": "The bootstrap manifest. Payload: identity, user (this tenant + application), profile, roles, permissions, features, terminology, active_tenant, available_tenants."
+        },
+        {
+          "method": "PATCH",
+          "path": "/",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MeController@update",
+          "permission": null,
+          "description": "Self-update. Allowed fields: preferred_locale. Everything Profile-shaped goes via `/me/profile`."
+        },
+        {
+          "method": "GET",
+          "path": "/profile",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyProfileController@show",
+          "permission": null,
+          "description": "The caller's own Profile. PII cluster returned unredacted (subject reads their own data)."
+        },
+        {
+          "method": "PATCH",
+          "path": "/profile",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyProfileController@update",
+          "permission": null,
+          "description": "Body: any of { first_name, last_name, display_name, phone_e164, locale, timezone }. DOB is admin-only \u2014 subjects cannot self-mutate their birth date."
+        },
+        {
+          "method": "POST",
+          "path": "/avatar",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyProfileController@uploadAvatar",
+          "permission": null,
+          "description": "Multipart upload. Gated by `avatar_upload` entitlement + tier size cap."
+        },
+        {
+          "method": "DELETE",
+          "path": "/avatar",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyProfileController@resetAvatar",
+          "permission": null,
+          "description": "Clears avatar_url. Fires AvatarUpdated. Old S3 object pruned after the 24h grace window by `media::PruneOldAvatar`."
+        },
+        {
+          "method": "GET",
+          "path": "/tenants",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyTenantsController@index",
+          "permission": null,
+          "description": "Every TenantMember row the caller holds within the current Application. Includes tenant name, role, is_default, is_staff_only."
+        },
+        {
+          "method": "POST",
+          "path": "/tenants/{tenant}/switch",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\MyTenantsController@switch",
+          "permission": null,
+          "description": "Switch active tenant for THIS session. Refused when the caller has no TenantMember row on the target."
+        }
+      ]
+    },
+    {
+      "name": "tenant-users-memberships",
+      "prefix": "/api/v1/users/{user}/tenants",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "resolve.application",
+        "user.resolve_active_tenant",
+        "tenant.resolve",
+        "user.enforce_tenant_membership",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Admin management of a specific User's multi-tenant memberships.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@index",
+          "permission": "tenant_members.viewAny"
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@store",
+          "permission": "tenant_members.manage",
+          "description": "Body: { tenant_id, role_id, is_default, is_staff_only }. Refused when the target tenant's application_id differs from the User's."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{tenant}",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@update",
+          "permission": "tenant_members.manage",
+          "description": "Body: { role_id, is_default, is_staff_only }."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{tenant}",
+          "controller": "Academorix\\User\\Http\\Controllers\\Tenant\\UserMembershipsController@destroy",
+          "permission": "tenant_members.manage",
+          "description": "Refused when the target is the User's default AND they have no other memberships."
+        }
+      ]
+    },
+    {
+      "name": "platform-users",
+      "prefix": "/api/v1/platform/users",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant read for support tooling. Writes stay on the tenant surface \u2014 platform ops must impersonate an admin (via `access::delegation` in Wave 1b) to write.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\User\\Http\\Controllers\\Platform\\UserController@index",
+          "permission": "platform.users.viewAny",
+          "description": "Cross-tenant filterable list. filter[email_exact], filter[identity_id], filter[application_id], filter[tenant_id], filter[status]."
+        },
+        {
+          "method": "GET",
+          "path": "/{user}",
+          "controller": "Academorix\\User\\Http\\Controllers\\Platform\\UserController@show",
+          "permission": "platform.users.view",
+          "description": "Single-user cross-tenant read. Profile returned redacted unless the operator carries platform.profile.view.pii."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "id": "academorix://modules/service-accounts/events",
+  "$version": 1,
+  "title": "service-accounts \u2014 published events",
+  "namespace": "Academorix\\ServiceAccount\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every SA lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects (readonly class + readonly properties) \u2014 immutable by construction. Payloads carry `service_account_id` only; downstream services that need name/kid/tenant re-fetch through ServiceAccountRepository so redaction rules apply consistently.",
+  "events": [
+    {
+      "name": "ServiceAccountCreated",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountCreated",
+      "trigger": "New ServiceAccount row inserted, first secret hashed, initial expires_at set. Fires exactly once per SA, ever.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchServiceAccountCreatedNotification",
+        "activity::WriteToActivityLog",
+        "observability::EmitServiceAccountCreatedMetric",
+        "analytics::TrackServiceAccountCreated"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "tenant_id": "ULID | null",
+        "expires_at": "ISO-8601 timestamp",
+        "signer_kid": "string",
+        "actor_platform_user_id": "ULID (the platform_admin who provisioned the SA)",
+        "created_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ServiceAccountEnabled",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountEnabled",
+      "trigger": "is_enabled transitioned from false to true. Fires only for genuine re-enables \u2014 the initial creation fires ServiceAccountCreated, not this.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitServiceAccountEnabledMetric",
+        "cache::InvalidateServiceAccountLookup"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "actor_platform_user_id": "ULID",
+        "disabled_duration_days": "integer (days between last disable and this enable)",
+        "enabled_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ServiceAccountDisabled",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountDisabled",
+      "trigger": "is_enabled transitioned from true to false. Also fires as part of the ServiceAccountExpired + delete flows (each of those fires two events: the domain-specific one AND this).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "cache::InvalidateServiceAccountLookup",
+        "activity::WriteToActivityLog",
+        "observability::EmitServiceAccountDisabledMetric",
+        "analytics::TrackServiceAccountDisabled"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "trigger": "'manual' | 'expired' | 'dormant' | 'suspicious_activity' | 'incident'",
+        "actor_platform_user_id": "ULID | null (null for scheduled/automated triggers)",
+        "disabled_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ServiceAccountDeleted",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountDeleted",
+      "trigger": "Soft-delete (deleted_at set) OR hard-delete (PurgeExpiredServiceAccountsJob past-hold pass). Two dispatches per full-erasure lifecycle.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "cache::InvalidateServiceAccountLookup",
+        "activity::WriteToActivityLog",
+        "compliance::RecordServiceAccountDeletion",
+        "observability::EmitServiceAccountDeletedMetric",
+        "analytics::TrackServiceAccountDeleted"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "erasure_phase": "'soft_delete' | 'hard_delete'",
+        "actor_platform_user_id": "ULID | null",
+        "reason": "string | null (soft-delete captures the operator reason; hard-delete is null)",
+        "deleted_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ServiceAccountSecretRotated",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountSecretRotated",
+      "trigger": "secret_hash mutated. Also updates secret_rotated_at + expires_at in the same transaction. Fires whether the trigger was manual (operator ran service-account:rotate) or scheduled (future RotateServiceAccountSecretJob).",
+      "queue": "notifications",
+      "consumers": [
+        "cache::InvalidateServiceAccountLookup",
+        "activity::WriteToActivityLog",
+        "observability::EmitServiceAccountRotatedMetric",
+        "analytics::TrackServiceAccountSecretRotated"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "trigger": "'manual' | 'scheduled' | 'incident' | 'expired_grace'",
+        "actor_platform_user_id": "ULID | null",
+        "days_since_last_rotation": "integer",
+        "old_expires_at": "ISO-8601 timestamp",
+        "new_expires_at": "ISO-8601 timestamp",
+        "rotated_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ServiceAccountSecretRotationScheduled",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountSecretRotationScheduled",
+      "trigger": "NotifyRotationDueJob detected an SA whose expires_at falls inside the warning window (default 14d). Fires once per SA per week the SA is inside the window \u2014 debounced so the notification volume matches the weekly job cadence.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchServiceAccountSecretRotationDueNotification",
+        "activity::WriteToActivityLog",
+        "analytics::TrackServiceAccountRotationDueNotified"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "days_until_expiry": "integer",
+        "expires_at": "ISO-8601 timestamp",
+        "notified_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ServiceAccountJwtIssued",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountJwtIssued",
+      "trigger": "Token-exchange OR test-JWT issuance path. Payload captures the JWT's public metadata (jti, iat, exp, aud) NEVER the encoded token itself.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitServiceAccountJwtIssuedMetric",
+        "analytics::TrackServiceAccountJwtIssued (sampled 1/100)"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "kid": "string",
+        "aud": "string",
+        "issued_ttl_seconds": "integer",
+        "jti": "UUID (the JWT's jti claim)",
+        "trigger": "'exchange' | 'test'",
+        "issued_at": "ISO-8601 timestamp"
+      },
+      "notes": "This event fires on EVERY JWT issuance \u2014 potentially hundreds per second under peak machine traffic. The `queue` is `notifications` but the consumers are cheap (activity + metric); analytics is sampled to keep Segment ingestion manageable."
+    },
+    {
+      "name": "ServiceAccountUsageDetected",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountUsageDetected",
+      "trigger": "The FIRST request after a > `security.dormant_threshold_days` (default 30) silence. Distinct from the periodic Dormant Detected \u2014 this signals a wake-up which is compromise-adjacent. Debounced so subsequent requests within the same 24h window do NOT re-fire.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchServiceAccountUsageDetectedNotification",
+        "activity::WriteToActivityLog",
+        "observability::EmitServiceAccountUsageAfterDormancyMetric",
+        "analytics::TrackServiceAccountUsageDetectedAfterDormancy"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "days_since_last_use": "integer",
+        "request_ip_prefix_24": "string",
+        "user_agent_hash": "string (SHA-256 of full UA truncated to 8 chars for label cardinality)",
+        "detected_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "ServiceAccountExpired",
+      "class": "Academorix\\ServiceAccount\\Events\\ServiceAccountExpired",
+      "trigger": "PurgeExpiredServiceAccountsJob detected an SA past expires_at + grace_days_after_expiry with no rotation. The job soft-disables the SA in the same transaction; this event fires after commit.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchServiceAccountExpiredNotification",
+        "activity::WriteToActivityLog",
+        "observability::EmitServiceAccountExpiredMetric",
+        "analytics::TrackServiceAccountExpired"
+      ],
+      "payload": {
+        "service_account_id": "ULID",
+        "application_id": "ULID",
+        "expires_at": "ISO-8601 timestamp (past)",
+        "days_past_expiry": "integer",
+        "days_since_last_use": "integer | null",
+        "detected_at": "ISO-8601 timestamp"
+      }
+    }
+  ]
+}

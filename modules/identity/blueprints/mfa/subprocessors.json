@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/mfa/subprocessors",
+  "$version": 1,
+  "title": "mfa — subprocessors",
+  "description": "MFA has NO subprocessors of its own — every third-party integration required for MFA is transitively via identity/identity (KMS / Vault for secret encryption) or via the browser + user's authenticator (for WebAuthn attestation, which is an on-device operation). The WebAuthn spec is designed so that no subprocessor sees the private key — all cryptography is authenticator-local.",
+  "subprocessors": [],
+  "transitive_subprocessors": [
+    {
+      "name": "AWS KMS / HashiCorp Vault",
+      "role": "encryption_at_rest",
+      "purpose": "TOTP secret envelope encryption. Delegated to identity/identity's MfaSecretEncryptor — see identity/subprocessors.json for the full contract.",
+      "when_engaged": "Every TOTP enrolment confirmation + every TOTP challenge verification (transparent decrypt).",
+      "notes": "MFA never invokes KMS / Vault directly; it goes through identity/identity's MfaSecretEncryptor service which owns the credential + endpoint."
+    }
+  ],
+  "on_device_operations": [
+    {
+      "name": "WebAuthn authenticator (device-local)",
+      "role": "cryptographic_signing_and_key_storage",
+      "purpose": "Private-key storage + assertion signing lives on the user's authenticator device (Touch ID's Secure Enclave, Windows Hello's TPM, a YubiKey, Android's StrongBox). The private key NEVER leaves the device — the WebAuthn spec is designed so that even the browser can't extract it.",
+      "data_processed": [
+        "Challenge nonce (random bytes we sent) is signed inside the authenticator",
+        "Signature comes back to us"
+      ],
+      "location": "user's physical device (phone, laptop, hardware key)",
+      "legal_basis": "not a subprocessor — the user's own device is not third-party processing",
+      "notes": "The WebAuthn spec is intentionally designed to avoid any 'authenticator vendor as subprocessor' relationship. Apple / Microsoft / Google / Yubico do not receive our authentication challenges; the user's local authenticator does."
+    }
+  ],
+  "not_a_subprocessor": [
+    "google2fa (RFC 6238 TOTP library) — in-process library, no data leaves the app",
+    "web-auth/webauthn-lib (WebAuthn attestation + assertion verifier) — in-process library, no data leaves the app",
+    "Argon2id / bcrypt (recovery-code hashing) — in-process; delegated to identity/identity's CredentialHasher",
+    "OpenTelemetry / metrics collector — receives aggregate metrics only (no identifiers, no credential material — per metrics.json)"
+  ],
+  "notes": [
+    "The WebAuthn design specifically avoids the biggest MFA subprocessor risk of the previous decade: SMS-based OTP. We do NOT ship SMS-based MFA and have no intention to — the industry consensus post-NIST-800-63B is that SMS is unfit for MFA due to SIM-swap attacks + carrier compromise. WebAuthn passkeys + TOTP + hardware keys are our answer.",
+    "The FIDO Alliance Metadata Service (MDS) is a public read-only registry of authenticator metadata (AAGUID → model, security certifications). If a tenant enables `mfa.webauthn.attestation_conveyance='direct'` + config('mfa.webauthn.require_mds_verified'), the app fetches MDS entries at authenticator-registration time to verify the AAGUID is on the certified list. MDS is a subprocessor for the specific tenants who opt in — it receives (aggregated) fetch counts of MDS metadata but no per-user data. Not enabled by default in Wave 1a."
+  ]
+}

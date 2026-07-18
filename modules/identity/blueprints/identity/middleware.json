@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/identity/middleware",
+  "$version": 1,
+  "title": "identity \u2014 HTTP middleware",
+  "description": "Two middleware. Both are AUTH-INFRASTRUCTURE middleware \u2014 mounted by the `identity/auth` module on the login + password-reset + MFA-challenge endpoints (which this module does not directly own). They are declared here because they enforce Identity-row-level rules (lockout state, per-IP login velocity) that only the `identity` module has ownership of.",
+  "middleware": [
+    {
+      "alias": "identity.rate_limit_login",
+      "class": "Academorix\\Identity\\Http\\Middleware\\RateLimitLogin",
+      "priority": 8,
+      "description": "Aggressive per-IP + per-email rate limit on login attempts. 5 attempts per 15 minutes per IP; 10 attempts per hour per email. Uses laravel/framework's RateLimiter with a separate bucket per (ip, email). Returns 429 with Retry-After header on exceed. Runs BEFORE Sanctum's guard resolution so authenticated users are still bounded.",
+      "auto_applied": false,
+      "consumed_by": [
+        "identity/auth: POST /api/v1/auth/login",
+        "identity/auth: POST /api/v1/auth/password/forgot",
+        "identity/auth: POST /api/v1/auth/mfa/verify"
+      ]
+    },
+    {
+      "alias": "identity.check_lockout",
+      "class": "Academorix\\Identity\\Http\\Middleware\\CheckLockout",
+      "priority": 9,
+      "description": "Resolves the Identity from the request email + rejects with 423 (Locked) if `locked_until > now()`. Response body includes the unlock timestamp so the SPA can render a countdown. Runs AFTER `identity.rate_limit_login` (which bounds by request velocity) but BEFORE the password-check action (so a locked identity never has its hash compared \u2014 timing-consistent regardless of lockout state).",
+      "auto_applied": false,
+      "consumed_by": [
+        "identity/auth: POST /api/v1/auth/login",
+        "identity/auth: POST /api/v1/auth/mfa/verify"
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    {
+      "middleware": "throttle:foundation-base",
+      "notes": "Global request-throttle applies alongside; the identity rate limits are ON TOP for the sensitive endpoints."
+    }
+  ],
+  "response_shape_on_reject": {
+    "identity.rate_limit_login": {
+      "status": 429,
+      "body": {
+        "message": "Too many login attempts. Try again later.",
+        "retry_after_seconds": "integer",
+        "meta": { "throttle_bucket": "'ip' | 'email'" }
+      },
+      "headers": { "Retry-After": "integer seconds" }
+    },
+    "identity.check_lockout": {
+      "status": 423,
+      "body": {
+        "message": "Account is locked. Reset your password to unlock.",
+        "code": "IDENTITY_LOCKED",
+        "locked_until": "ISO-8601 timestamp",
+        "unlock_url": "/api/v1/auth/password/forgot"
+      }
+    }
+  }
+}

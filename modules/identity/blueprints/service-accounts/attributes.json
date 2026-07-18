@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/service-accounts/attributes",
+  "$version": 1,
+  "title": "service-accounts \u2014 PHP attribute contracts",
+  "description": "One attribute. #[AsServiceAccountListener] marks a class as a subscriber to service-account lifecycle events (created, rotated, expired, dormant, disabled, suspicious). Discovered at boot by the ServiceAccountServiceProvider so services under `auth/`, `notifications/`, `activity/`, and `observability/` can react without explicit event bindings.",
+  "namespace": "Academorix\\ServiceAccount\\Attributes",
+  "attributes": [
+    {
+      "name": "AsServiceAccountListener",
+      "class": "Academorix\\ServiceAccount\\Attributes\\AsServiceAccountListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Which service-account events this class reacts to. Wildcard `*` = every event under `Academorix\\ServiceAccount\\Events\\*`. Specific list e.g. `['ServiceAccountSecretRotated', 'ServiceAccountExpired']` subscribes to those only. Validated against the events map at boot; typos abort application boot with a clear error naming the unknown event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": "notifications",
+          "description": "Queue name for asynchronous dispatch. Set to `null` for synchronous listeners (rare \u2014 reserve for observability tap-outs where the listener writes a metric on the hot path). Common values: `notifications` (default \u2014 mail + Slack channels), `notifications-critical` (P0 events like SuspiciousServiceAccountActivityNotification), `audit` (write-heavy compliance streams)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Listener execution order. Lower values run first. Use for cases where one listener's side-effect must precede another (e.g. `InvalidateJwtKidCacheListener` before `DispatchServiceAccountDisabledNotification` \u2014 the cache flush must run first so the next incoming request sees the fresh state). Framework default listeners occupy 1\u201399; user-defined listeners default to 100."
+        }
+      ],
+      "example": "#[AsServiceAccountListener(events: ['ServiceAccountSecretRotated'], queue: 'notifications', priority: 10)]\nfinal class InvalidateJwtSigningKeyCache\n{\n    public function handle(ServiceAccountSecretRotated $event): void\n    {\n        // ...\n    }\n}"
+    }
+  ]
+}

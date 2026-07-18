@@ -1,0 +1,30 @@
+{
+  "id": "academorix://modules/user/middleware",
+  "$version": 1,
+  "title": "user \u2014 HTTP middleware",
+  "middleware": [
+    {
+      "alias": "user.resolve_active_tenant",
+      "class": "Academorix\\User\\Http\\Middleware\\ResolveActiveTenant",
+      "priority": 20,
+      "description": "Resolves the caller's active TenantMember for THIS request. Reads (in order): (1) `X-Tenant-Id` header when the caller has a TenantMember on that tenant; (2) `session.active_tenant_id` when a User previously switched via `/me/tenants/{tenant}/switch`; (3) the User's TenantMember where `is_default = true`. Sets `Request::activeTenantId()` + writes to the `RequestContext.tenant_id` slot that downstream middleware (tenancy::tenant.resolve) reads. Runs AFTER `auth:sanctum` (needs the User) but BEFORE `tenant.resolve` (feeds it).",
+      "auto_applied": true,
+      "auto_applied_to": ["api"]
+    },
+    {
+      "alias": "user.enforce_tenant_membership",
+      "class": "Academorix\\User\\Http\\Middleware\\EnforceTenantMembership",
+      "priority": 21,
+      "description": "Refuses the request with 403 `tenant_membership_required` when the resolved tenant_id (from tenant.resolve) does NOT match a TenantMember row for the authenticated User. Guards against forged `X-Tenant-Id` headers + membership drift within a session. Runs AFTER `tenant.resolve` (needs the tenant_id) but BEFORE any domain policy check.",
+      "auto_applied": true,
+      "auto_applied_to": ["api"]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "auth:sanctum" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "tenancy::tenant.resolve" }
+  ]
+}

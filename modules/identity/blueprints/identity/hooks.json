@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/identity/hooks",
+  "$version": 1,
+  "title": "identity \u2014 tenancy hooks",
+  "description": "Identity has NO tenancy hooks. The module is GLOBAL by design \u2014 there is no `tenant_id` on the `identities` table, and no `TenantProvisioned` / `TenantErased` action mutates the Identity substrate directly. Downstream cascade (e.g. TenantErased \u2192 UserErased \u2192 optional IdentityMarkedForErasure) is handled by the listener chain in listeners.json, not by tenancy hooks.",
+  "hooks": [],
+  "rationale": [
+    "Tenancy hooks are for state that must materialise on tenant provisioning (default rows, seed data, per-tenant tables). Identity is a shared table with no per-tenant state \u2014 no provisioning is required when a new tenant appears.",
+    "Similarly, TenantErased does not directly touch identities. It cascades through Users (which ARE tenant-scoped): erasing a Tenant erases its Users, and if a User was the last inbound row for an Identity AND the compliance flag is set, `MaybeMarkIdentityForErasure` (a listener) picks up the signal.",
+    "Explicitly declaring `hooks: []` is a design invariant \u2014 any PR that adds a tenancy hook here is a mistake that mis-scopes the module."
+  ]
+}

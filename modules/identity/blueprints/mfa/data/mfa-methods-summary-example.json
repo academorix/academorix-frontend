@@ -1,0 +1,61 @@
+{
+  "$version": 1,
+  "title": "MfaMethodsSummary — response shape samples",
+  "description": "Illustrative response shapes for GET /api/v1/me/mfa. Real values are ULIDs / timestamps / integers — the samples fix the shape. This is the primary summary DTO that drives every SPA rendering decision on the MFA panel.",
+  "example_fully_enrolled": {
+    "note": "Response shape when the caller has TOTP + multiple WebAuthn credentials + full recovery codes.",
+    "totp_enrolled": true,
+    "totp_enrolled_at": "2026-06-01T09:12:00Z",
+    "webauthn_credentials_count": 3,
+    "recovery_codes_remaining": 10,
+    "recovery_codes_low": false,
+    "step_up_required_for": []
+  },
+  "example_totp_only": {
+    "note": "Response shape when the caller has TOTP but no WebAuthn credentials.",
+    "totp_enrolled": true,
+    "totp_enrolled_at": "2026-04-15T14:30:00Z",
+    "webauthn_credentials_count": 0,
+    "recovery_codes_remaining": 8,
+    "recovery_codes_low": false,
+    "step_up_required_for": []
+  },
+  "example_low_codes": {
+    "note": "Response shape when the caller has been consuming recovery codes and is now at the low-water threshold.",
+    "totp_enrolled": true,
+    "totp_enrolled_at": "2026-04-15T14:30:00Z",
+    "webauthn_credentials_count": 1,
+    "recovery_codes_remaining": 2,
+    "recovery_codes_low": true,
+    "step_up_required_for": []
+  },
+  "example_step_up_stale": {
+    "note": "Response shape when the caller's last MFA challenge is stale + they hold entitlements to step-up-gated actions.",
+    "totp_enrolled": true,
+    "totp_enrolled_at": "2026-04-15T14:30:00Z",
+    "webauthn_credentials_count": 2,
+    "recovery_codes_remaining": 7,
+    "recovery_codes_low": false,
+    "step_up_required_for": [
+      "auth.change_password",
+      "mfa.disable_totp",
+      "mfa.regenerate_recovery_codes",
+      "mfa.webauthn_credentials.delete"
+    ]
+  },
+  "example_not_enrolled": {
+    "note": "Response shape when the caller has zero MFA factors. The `step_up_required_for` array is empty because step-up is undefined without a primary factor. The SPA should render the enrolment CTA prominently.",
+    "totp_enrolled": false,
+    "totp_enrolled_at": null,
+    "webauthn_credentials_count": 0,
+    "recovery_codes_remaining": 0,
+    "recovery_codes_low": false,
+    "step_up_required_for": []
+  },
+  "notes": [
+    "The endpoint is idempotent + cache-friendly (private, max-age=30 — matches the mfa:posture cache TTL). Repeated calls in the same request return the cached response.",
+    "`recovery_codes_low` is a boolean derived at response-projection time from `recovery_codes_remaining < config('mfa.recovery_codes.low_water_threshold')` — it exists so the SPA doesn't need to know the threshold value.",
+    "`step_up_required_for` is populated by evaluating the caller's entitlements against `config('mfa.step_up.gated_actions')` — an entitled action appears in the array only when the last MFA challenge is older than `mfa.step_up.sensitive_action_ttl_minutes`.",
+    "None of these fields carry credential material — the endpoint is safe under the tenant's default (non-PII-elevated) permission set."
+  ]
+}

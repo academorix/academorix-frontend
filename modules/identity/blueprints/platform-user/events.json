@@ -1,0 +1,168 @@
+{
+  "id": "academorix://modules/platform-user/events",
+  "$version": 1,
+  "title": "platform-user \u2014 published events",
+  "namespace": "Academorix\\PlatformUser\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every platform-user lifecycle event fires after DB commit so downstream listeners never see uncommitted state. Payloads are readonly value objects (readonly class + readonly properties) \u2014 immutable by construction so listeners cannot mutate the shape another listener depends on. Payloads carry `platform_user_id` only; downstream services that need PII (email, phone, department) re-fetch through PlatformUserRepository so redaction rules apply consistently. The `notifications-critical` queue is used for offboarding-related events which MUST NOT queue behind a backlog (the 24h SLA depends on prompt processing).",
+  "events": [
+    {
+      "name": "PlatformUserHired",
+      "class": "Academorix\\PlatformUser\\Events\\PlatformUserHired",
+      "trigger": "New PlatformUser row inserted after passing the HirePlatformUserInput safety gates (MFA enrolled on Identity, unique identity_id). Fires exactly once per PlatformUser, ever.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchPlatformUserHiredNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitPlatformUserHiredMetric",
+        "analytics::TrackPlatformUserHired"
+      ],
+      "payload": {
+        "platform_user_id": "ULID",
+        "identity_id": "ULID",
+        "department": "string (enum value)",
+        "employment_type": "string (enum value)",
+        "hire_date": "ISO-8601 date",
+        "manager_id": "ULID | null",
+        "actor_id": "ULID (the super_admin invoking the hire)",
+        "hired_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "PlatformUserActivated",
+      "class": "Academorix\\PlatformUser\\Events\\PlatformUserActivated",
+      "trigger": "PlatformUser.status transitioned from `pending` to `active` (usually via the onboarding checklist completing) OR from `suspended` back to `active` via `restore`.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitPlatformUserActivatedMetric"
+      ],
+      "payload": {
+        "platform_user_id": "ULID",
+        "previous_status": "'pending' | 'suspended'",
+        "activated_at": "ISO-8601 timestamp",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "PlatformUserSuspended",
+      "class": "Academorix\\PlatformUser\\Events\\PlatformUserSuspended",
+      "trigger": "PlatformUser.status transitioned from `active` to `suspended`. Temporary state \u2014 for investigations, leaves of absence, or reversible policy violations. Distinct from `offboarded` (terminal).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchPlatformUserSuspendedNotification",
+        "auth::RevokeAllActivePlatformSessions",
+        "access::PausePlatformImpersonationSessions",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitPlatformUserSuspendedMetric"
+      ],
+      "payload": {
+        "platform_user_id": "ULID",
+        "reason": "string (max 1000 chars; captured at suspend time)",
+        "suspended_at": "ISO-8601 timestamp",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "PlatformUserRestored",
+      "class": "Academorix\\PlatformUser\\Events\\PlatformUserRestored",
+      "trigger": "PlatformUser.status transitioned from `suspended` back to `active`. Idempotent \u2014 restoring an already-active row is a no-op that emits no event.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchPlatformUserRestoredNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitPlatformUserRestoredMetric"
+      ],
+      "payload": {
+        "platform_user_id": "ULID",
+        "previous_reason": "string (max 1000; the reason that suspended them)",
+        "restored_at": "ISO-8601 timestamp",
+        "actor_id": "ULID"
+      }
+    },
+    {
+      "name": "PlatformUserOffboarded",
+      "class": "Academorix\\PlatformUser\\Events\\PlatformUserOffboarded",
+      "trigger": "PlatformUser.status transitioned to `offboarded` (terminal). offboarded_at populated. Dispatches RevokePlatformUserAccessJob synchronously in the same request-cycle so the 24h SLA is measured from event emission.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "platform-user::DispatchRevokePlatformUserAccessJob",
+        "notifications::DispatchPlatformUserOffboardingScheduledNotification",
+        "auth::RevokeAllActivePlatformSessions",
+        "access::TerminateActivePlatformImpersonationSessions",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitPlatformUserOffboardedMetric",
+        "analytics::TrackPlatformUserOffboarded"
+      ],
+      "payload": {
+        "platform_user_id": "ULID",
+        "previous_status": "'pending' | 'active' | 'suspended'",
+        "reason": "string (required, 20\u20131000 chars)",
+        "effective_at": "ISO-8601 timestamp (may be future-dated up to 30 days)",
+        "offboarded_at": "ISO-8601 timestamp (of the state transition)",
+        "actor_id": "ULID (the super_admin invoking the offboard)"
+      }
+    },
+    {
+      "name": "PlatformProfileUpdated",
+      "class": "Academorix\\PlatformUser\\Events\\PlatformProfileUpdated",
+      "trigger": "One or more columns on the PlatformProfile row mutated. Fires once per save regardless of the number of changed columns. Includes the changed field names so listeners can filter (e.g. `avatar_updated` listener only reacts when `avatar_url` is in the changed set).",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitPlatformProfileUpdatedMetric"
+      ],
+      "payload": {
+        "platform_user_id": "ULID",
+        "platform_profile_id": "ULID",
+        "changed_fields": "string[] (subset of: first_name, last_name, display_name, avatar_url, phone_e164, slack_handle, github_handle, timezone)",
+        "updated_at": "ISO-8601 timestamp",
+        "actor_id": "ULID (the PlatformUser themselves for self-service, OR the super_admin for admin-driven writes)"
+      }
+    },
+    {
+      "name": "PlatformUserManagerReassigned",
+      "class": "Academorix\\PlatformUser\\Events\\PlatformUserManagerReassigned",
+      "trigger": "PlatformUser.manager_id mutated from a non-null value to a different non-null value, or to null (orphaning to top-of-tree), or from null to a non-null value (adopting into a chain).",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchPlatformUserManagerReassignedNotification",
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitPlatformUserManagerReassignedMetric"
+      ],
+      "payload": {
+        "platform_user_id": "ULID",
+        "previous_manager_id": "ULID | null",
+        "new_manager_id": "ULID | null",
+        "reassigned_at": "ISO-8601 timestamp",
+        "actor_id": "ULID (usually a super_admin during a re-org)"
+      }
+    },
+    {
+      "name": "PlatformUserDepartmentChanged",
+      "class": "Academorix\\PlatformUser\\Events\\PlatformUserDepartmentChanged",
+      "trigger": "PlatformUser.department mutated. Emitted separately from the generic profile update so downstream services with per-department routing (Slack channel selection, on-call rotation membership) can react cleanly.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "audit::WriteAuditRow",
+        "observability::EmitPlatformUserDepartmentChangedMetric",
+        "analytics::TrackPlatformUserDepartmentChanged"
+      ],
+      "payload": {
+        "platform_user_id": "ULID",
+        "previous_department": "string (enum value)",
+        "new_department": "string (enum value)",
+        "changed_at": "ISO-8601 timestamp",
+        "actor_id": "ULID"
+      }
+    }
+  ]
+}

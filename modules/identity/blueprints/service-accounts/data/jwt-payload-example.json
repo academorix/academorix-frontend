@@ -1,0 +1,82 @@
+{
+  "$version": 1,
+  "title": "Sample HS256 JWT payloads issued to service accounts",
+  "description": "Reference decoded JWT payloads. The encoded token is `<base64url(header)>.<base64url(payload)>.<base64url(signature)>` where the signature is HMAC-SHA256(base64url(header) + '.' + base64url(payload), <secret_material of the kid>). Payload shape matches design.md \u00a78.2.",
+  "example_platform_scoped_jwt": {
+    "note": "JWT issued to a platform-plane SA. `tid` claim is ABSENT (not null) because the SA has no tenant scope.",
+    "header": {
+      "alg": "HS256",
+      "typ": "JWT",
+      "kid": "identity-2026-01"
+    },
+    "payload": {
+      "iss": "https://identity.academorix.com",
+      "aud": ["observability-service"],
+      "sub": "svc_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+      "app": "sports",
+      "iat": 1735689600,
+      "exp": 1735689900,
+      "jti": "01H2K3M4N5P6Q7R8S9TAVBWCXDT"
+    },
+    "decoded_notes": [
+      "`sub` is the service_account_id (ULID) \u2014 downstream services confirm this against the X-Service-Account-Id header.",
+      "`app` = the Application slug (not the ULID) so downstream services can string-compare against config('app.slug').",
+      "`tid` is absent \u2014 platform-plane SAs have no tenant scope.",
+      "`aud` names the intended receiving service; verifiers refuse the token if their config('app.audience') isn't in the array.",
+      "`jti` is a fresh UUID per issuance; the audit-log correlation + JWT deny-list are keyed by this value.",
+      "TTL: exp - iat = 300 seconds (default from service-accounts.jwt.ttl_seconds)."
+    ]
+  },
+  "example_tenant_scoped_jwt": {
+    "note": "JWT issued to a tenant-scoped SA. `tid` claim is populated.",
+    "header": {
+      "alg": "HS256",
+      "typ": "JWT",
+      "kid": "app-sports-2026-01"
+    },
+    "payload": {
+      "iss": "https://identity.academorix.com",
+      "aud": ["braintree-webhook-listener"],
+      "sub": "svc_01H2K3M4N5P6Q7R8S9TAVBWCXDZ",
+      "app": "sports",
+      "tid": "tnt_01H2K3M4N5P6Q7R8S9TAVBWCXDB",
+      "iat": 1735689610,
+      "exp": 1735689910,
+      "jti": "01H2K3M4N5P6Q7R8S9TAVBWCXDU"
+    },
+    "decoded_notes": [
+      "`tid` = tenant_id (ULID). Downstream services confirm this against the routed tenant context (`X-Tenant-Id` header OR subdomain-resolved tenant).",
+      "The kid `app-sports-2026-01` is namespaced with the application slug for operator triage \u2014 opt-in via config('service-accounts.kid.include_application_prefix', true).",
+      "`aud` names the specific receiving service that processes Braintree webhooks."
+    ]
+  },
+  "example_test_jwt": {
+    "note": "Test JWT issued via `service-account:test-jwt` command or POST /platform/service-accounts/{id}/issue-jwt. Payload shape is identical to the exchange-endpoint issuance; the ServiceAccountJwtIssued event fires with trigger='test' so metrics distinguish this from production traffic.",
+    "header": {
+      "alg": "HS256",
+      "typ": "JWT",
+      "kid": "identity-2026-01"
+    },
+    "payload": {
+      "iss": "https://identity.academorix.com",
+      "aud": ["sports-service"],
+      "sub": "svc_01H2K3M4N5P6Q7R8S9TAVBWCXDY",
+      "app": "sports",
+      "iat": 1735690000,
+      "exp": 1735690060,
+      "jti": "01H2K3M4N5P6Q7R8S9TAVBWCXDV"
+    },
+    "decoded_notes": [
+      "TTL: 60 seconds \u2014 test JWTs default to a short window to bound blast radius if the token leaks in a screenshot / terminal history.",
+      "Otherwise indistinguishable from a production issuance \u2014 downstream services process it the same way. The DISTINGUISHING marker is in the ServiceAccountJwtIssued event's `trigger` field, not on the JWT itself."
+    ]
+  },
+  "invariants": [
+    "`alg` is ALWAYS HS256 in Wave 1a. Wave 1c may introduce RS256 alongside; downstream verifiers select the algorithm from the kid's `algorithm` column, not from the JWT header (JWT-header-alg is checked only for equality with the kid's algorithm to prevent alg-confusion attacks).",
+    "`iss` is ALWAYS the identity-service canonical URL. Downstream verifiers reject any other issuer.",
+    "`sub` is a service_account_id (ULID `svc_...`), NEVER a user_id (`usr_...`) or platform_user_id (`plu_...`). SA JWTs never impersonate a human.",
+    "`app` is present on EVERY SA JWT. Downstream verifiers reject when `app` != their `config('app.slug')`.",
+    "`tid` is present ONLY when the SA is tenant-scoped. Presence is exclusive-or with the SA's `tenant_id IS NULL` state \u2014 issuance never mixes them.",
+    "`jti` is UNIQUE per issuance. Even if a caller replays the same exchange within the same second, a fresh jti is generated."
+  ]
+}

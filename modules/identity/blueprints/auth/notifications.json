@@ -1,0 +1,214 @@
+{
+  "id": "academorix://modules/auth/notifications",
+  "$version": 1,
+  "title": "auth \u2014 notification classes + categories",
+  "namespace": "Academorix\\Auth\\Notifications",
+  "description": "Seven notifications. Two are transactional-required (password-reset-link, email-verification-link). Five are informational-security (login-from-new-device, login-from-new-location, password-changed-from-new-device, impersonation-session-active, mfa-enrolled-confirmation) with default-on opt-in.",
+  "notifications": [
+    "PasswordResetLinkNotification",
+    "EmailVerificationLinkNotification",
+    "LoginFromNewDeviceNotification",
+    "LoginFromNewLocationNotification",
+    "PasswordChangedFromNewDeviceNotification",
+    "ImpersonationSessionActiveNotification",
+    "MfaEnrolledConfirmationNotification"
+  ],
+  "notification_definitions": [
+    {
+      "class": "PasswordResetLinkNotification",
+      "category_slug": "auth.password_reset_link",
+      "channels": ["mail"],
+      "queue": "notifications",
+      "subject_template": "auth::mail.password_reset_link.subject",
+      "body_template_path": "auth::mail.password_reset_link.body",
+      "default_subject_en": "Reset your Academorix password",
+      "trigger_event": "PasswordResetInitiated",
+      "payload_bindings": {
+        "reset_url": "string (signed URL, 15min TTL)",
+        "expires_at": "ISO-8601 timestamp",
+        "request_ip_geolocation": "string (city, country \u2014 GeoIP best-effort, empty on unresolved)"
+      },
+      "notes": "Fires alongside identity::PasswordResetNotification. Auth's version carries the signed URL (auth-service HTTP surface owns URL generation); identity's version is a semantic dupe kept for module-boundary clarity. During code implementation, decide which one is canonical and remove the duplicate \u2014 for the blueprint they're both listed."
+    },
+    {
+      "class": "EmailVerificationLinkNotification",
+      "category_slug": "auth.email_verification_link",
+      "channels": ["mail"],
+      "queue": "notifications",
+      "subject_template": "auth::mail.email_verification_link.subject",
+      "body_template_path": "auth::mail.email_verification_link.body",
+      "default_subject_en": "Verify your Academorix email",
+      "trigger_event": "EmailVerificationRequested",
+      "payload_bindings": {
+        "verification_url": "string (signed URL, 24h TTL)",
+        "expires_at": "ISO-8601 timestamp",
+        "reason": "'registration' | 'email_change' | 'resend'"
+      },
+      "notes": "Same duplicate-fires pattern as password reset."
+    },
+    {
+      "class": "LoginFromNewDeviceNotification",
+      "category_slug": "auth.new_device_login",
+      "channels": ["mail", "in_app"],
+      "queue": "notifications",
+      "subject_template": "auth::mail.new_device_login.subject",
+      "body_template_path": "auth::mail.new_device_login.body",
+      "default_subject_en": "New device sign-in on your Academorix account",
+      "trigger_event": "LoginFromNewDeviceDetected",
+      "payload_bindings": {
+        "device_fingerprint_short": "string (first 8 chars of the SHA-256)",
+        "geolocation_hint": "string | null",
+        "logged_in_at": "ISO-8601 timestamp",
+        "review_sessions_url": "string (deep link to /auth/sessions on the SPA)"
+      },
+      "notes": "Opt-in per new_device_notifications entitlement. Default channels include in_app so an authenticated caller sees a banner immediately."
+    },
+    {
+      "class": "LoginFromNewLocationNotification",
+      "category_slug": "auth.new_location_login",
+      "channels": ["mail"],
+      "queue": "notifications",
+      "subject_template": "auth::mail.new_location_login.subject",
+      "body_template_path": "auth::mail.new_location_login.body",
+      "default_subject_en": "Unusual sign-in location on your Academorix account",
+      "trigger_event": "UserLoggedIn",
+      "payload_bindings": {
+        "geolocation_hint": "string",
+        "previous_location": "string | null (last-known city, country)",
+        "logged_in_at": "ISO-8601 timestamp",
+        "review_sessions_url": "string"
+      },
+      "notes": "Dispatched by a listener when the login's GeoIP resolves to a city not seen in the last 30 days for this User. Suppressed if LoginFromNewDeviceNotification also fires (single notification per login, not two)."
+    },
+    {
+      "class": "PasswordChangedFromNewDeviceNotification",
+      "category_slug": "auth.password_changed_new_device",
+      "channels": ["mail"],
+      "queue": "notifications-critical",
+      "subject_template": "auth::mail.password_changed_new_device.subject",
+      "body_template_path": "auth::mail.password_changed_new_device.body",
+      "default_subject_en": "Your password was changed from a new device",
+      "trigger_event": "PasswordResetCompleted",
+      "payload_bindings": {
+        "device_fingerprint_short": "string",
+        "geolocation_hint": "string | null",
+        "changed_at": "ISO-8601 timestamp",
+        "revoke_all_sessions_url": "string (deep link to /auth/logout-all-devices)"
+      },
+      "notes": "Fires when a password reset OR change originates from a device fingerprint not seen in the last 30 days. Higher-severity variant of identity::PasswordChangedConfirmationNotification."
+    },
+    {
+      "class": "ImpersonationSessionActiveNotification",
+      "category_slug": "auth.impersonation_active",
+      "channels": ["mail", "in_app"],
+      "queue": "notifications-critical",
+      "subject_template": "auth::mail.impersonation_active.subject",
+      "body_template_path": "auth::mail.impersonation_active.body",
+      "default_subject_en": "Academorix support is currently signed in to your account",
+      "trigger_event": "ImpersonationStarted",
+      "payload_bindings": {
+        "impersonator_display_name": "string",
+        "impersonator_department": "string",
+        "reason": "string",
+        "started_at": "ISO-8601 timestamp",
+        "session_expires_at": "ISO-8601 timestamp"
+      },
+      "notes": "The impersonated User has a legal right to know. Cannot be opted out (transactional-required). Also renders as an in-app banner throughout the impersonation session."
+    },
+    {
+      "class": "MfaEnrolledConfirmationNotification",
+      "category_slug": "auth.mfa_enrolled",
+      "channels": ["mail"],
+      "queue": "notifications",
+      "subject_template": "auth::mail.mfa_enrolled.subject",
+      "body_template_path": "auth::mail.mfa_enrolled.body",
+      "default_subject_en": "Two-factor authentication is now enabled on your Academorix account",
+      "trigger_event": "identity::MfaEnrolled",
+      "payload_bindings": {
+        "enrolled_at": "ISO-8601 timestamp",
+        "recovery_codes_count": "integer",
+        "review_url": "string (deep link to the SPA's security-settings page)"
+      },
+      "notes": "Non-actionable confirmation. Signals the account holder that MFA is now protecting them."
+    }
+  ],
+  "categories": [
+    {
+      "slug": "auth.password_reset_link",
+      "display_name": "Password reset link",
+      "description": "Time-limited reset URL. Distinct from identity's password-reset category (which is the semantic event); this is the auth-issued link.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "auth.email_verification_link",
+      "display_name": "Email verification link",
+      "description": "Time-limited verification URL.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "auth.new_device_login",
+      "display_name": "New device sign-in",
+      "description": "Alert when a login originates from a device fingerprint not seen in the last 30 days.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "auth.new_location_login",
+      "display_name": "New location sign-in",
+      "description": "Alert when a login's GeoIP resolves to a city not seen in the last 30 days.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "auth.password_changed_new_device",
+      "display_name": "Password changed from a new device",
+      "description": "Higher-severity variant of the standard password-changed confirmation. Includes revoke-all-sessions deep link.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "auth.impersonation_active",
+      "display_name": "Impersonation session active",
+      "description": "Alert to the impersonated User while a platform-staff impersonation session is active. Cannot be opted out (legal right to know).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "auth.mfa_enrolled",
+      "display_name": "MFA enrolled confirmation",
+      "description": "Confirms two-factor was successfully enabled.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    }
+  ]
+}

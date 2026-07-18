@@ -1,0 +1,170 @@
+{
+  "id": "academorix://modules/service-accounts/notifications",
+  "$version": 1,
+  "title": "service-accounts \u2014 notification classes + categories",
+  "namespace": "Academorix\\ServiceAccount\\Notifications",
+  "description": "Five notifications. All are transactional-required with no tenant opt-out \u2014 SA lifecycle events are security-critical operational signals, not marketing content. Recipients are ALWAYS PlatformUsers (Application owners + security-mailing-list); SAs themselves have no inbox.",
+  "notifications": [
+    "ServiceAccountCreatedNotification",
+    "ServiceAccountSecretRotationDueNotification",
+    "ServiceAccountExpiredNotification",
+    "ServiceAccountDormantNotification",
+    "SuspiciousServiceAccountActivityNotification"
+  ],
+  "notification_definitions": [
+    {
+      "class": "ServiceAccountCreatedNotification",
+      "category_slug": "service-accounts.created",
+      "channels": ["mail", "slack"],
+      "queue": "notifications",
+      "subject_template": "service-accounts::mail.service_account_created.subject",
+      "body_template_path": "service-accounts::mail.service_account_created.body",
+      "default_subject_en": "A new service account has been created",
+      "trigger_event": "ServiceAccountCreated",
+      "payload_bindings": {
+        "service_account_id": "ULID",
+        "service_account_name": "string",
+        "application_slug": "string",
+        "tenant_slug": "string | null",
+        "expires_at": "ISO-8601 timestamp",
+        "actor_display_name": "string (the platform_admin who provisioned)"
+      },
+      "notes": "Dispatched to every platform_admin scoped to the SA's application_id, plus (when the SA is tenant-scoped) any tenant admin subscribed to the SA-created notification. Body includes rotation-due date + the plaintext secret is NEVER included \u2014 the operator receives it inline in the API response only."
+    },
+    {
+      "class": "ServiceAccountSecretRotationDueNotification",
+      "category_slug": "service-accounts.rotation_due",
+      "channels": ["mail", "slack"],
+      "queue": "notifications",
+      "subject_template": "service-accounts::mail.rotation_due.subject",
+      "body_template_path": "service-accounts::mail.rotation_due.body",
+      "default_subject_en": "Rotate {{service_account_name}} within {{days_until_expiry}} days",
+      "trigger_event": "ServiceAccountSecretRotationScheduled",
+      "payload_bindings": {
+        "service_account_id": "ULID",
+        "service_account_name": "string",
+        "application_slug": "string",
+        "days_until_expiry": "integer",
+        "expires_at": "ISO-8601 timestamp",
+        "rotate_url": "string (deep-link to the rotation endpoint on the platform-admin surface)"
+      },
+      "notes": "Fires weekly for every SA inside the 14-day warning window. Includes CTA to run `service-account:rotate` OR click through to the rotation endpoint."
+    },
+    {
+      "class": "ServiceAccountExpiredNotification",
+      "category_slug": "service-accounts.expired",
+      "channels": ["mail", "slack"],
+      "queue": "notifications-critical",
+      "subject_template": "service-accounts::mail.expired.subject",
+      "body_template_path": "service-accounts::mail.expired.body",
+      "default_subject_en": "Service account {{service_account_name}} has expired and been disabled",
+      "trigger_event": "ServiceAccountExpired",
+      "payload_bindings": {
+        "service_account_id": "ULID",
+        "service_account_name": "string",
+        "application_slug": "string",
+        "days_past_expiry": "integer",
+        "days_since_last_use": "integer | null",
+        "unlock_url": "string (deep-link to rotate + re-enable)"
+      },
+      "notes": "Sent to Application owners + security-mailing-list. Non-actionable in the sense that the SA is already disabled; actionable in the sense that ops should rotate + re-enable if the SA is still needed."
+    },
+    {
+      "class": "ServiceAccountDormantNotification",
+      "category_slug": "service-accounts.dormant",
+      "channels": ["mail", "slack"],
+      "queue": "notifications",
+      "subject_template": "service-accounts::mail.dormant.subject",
+      "body_template_path": "service-accounts::mail.dormant.body",
+      "default_subject_en": "Service account {{service_account_name}} has been dormant for {{days_since_last_use}} days",
+      "trigger_event": "(dispatched directly by DetectDormantServiceAccountJob \u2014 no event)",
+      "payload_bindings": {
+        "service_account_id": "ULID",
+        "service_account_name": "string",
+        "application_slug": "string",
+        "days_since_last_use": "integer",
+        "review_url": "string (deep-link to describe endpoint)"
+      },
+      "notes": "Weekly digest. Body suggests triage: (1) confirm the SA is still needed \u2014 record why, (2) disable if not needed. Ops that ignore the notification for two consecutive weeks triggers escalation to security."
+    },
+    {
+      "class": "SuspiciousServiceAccountActivityNotification",
+      "category_slug": "service-accounts.suspicious_activity",
+      "channels": ["mail", "slack"],
+      "queue": "notifications-critical",
+      "subject_template": "service-accounts::mail.suspicious_activity.subject",
+      "body_template_path": "service-accounts::mail.suspicious_activity.body",
+      "default_subject_en": "Suspicious activity on service account {{service_account_name}}",
+      "trigger_event": "(dispatched by service_account.audit middleware via ServiceAccountFingerprinter)",
+      "payload_bindings": {
+        "service_account_id": "ULID",
+        "service_account_name": "string",
+        "application_slug": "string",
+        "signal_type": "'rate_spike_novel_ip' | 'rate_spike_novel_ua' | 'high_failure_rate' | 'cross_kid_signature_reuse'",
+        "request_ip_prefix_24": "string",
+        "rate_spike_ratio": "float",
+        "baseline_rate_per_hour": "float",
+        "current_rate_per_hour": "float",
+        "review_url": "string"
+      },
+      "notes": "Dispatched to Application owners + security-mailing-list. Informational, not blocking \u2014 the request has already been served. Ops confirms legitimate deployment change (add tuple to allowlist) OR rotates the secret if compromise suspected."
+    }
+  ],
+  "categories": [
+    {
+      "slug": "service-accounts.created",
+      "display_name": "Service account created",
+      "description": "New machine credential provisioned.",
+      "default_channels": ["mail", "slack"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "service-accounts.rotation_due",
+      "display_name": "Rotation due",
+      "description": "SA secret approaching expiry \u2014 rotation required within the warning window.",
+      "default_channels": ["mail", "slack"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "service-accounts.expired",
+      "display_name": "SA expired",
+      "description": "expires_at + grace period elapsed \u2014 SA soft-disabled.",
+      "default_channels": ["mail", "slack"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "service-accounts.dormant",
+      "display_name": "Dormant credential detected",
+      "description": "SA has been unused for > 30 days.",
+      "default_channels": ["mail", "slack"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "service-accounts.suspicious_activity",
+      "display_name": "Suspicious service account activity",
+      "description": "Fingerprinter caught novel-tuple + rate-spike signal.",
+      "default_channels": ["mail", "slack"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    }
+  ]
+}

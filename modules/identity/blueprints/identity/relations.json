@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/identity/relations",
+  "$version": 1,
+  "title": "identity \u2014 model relationships",
+  "description": "Identity is a GLOBAL root aggregate \u2014 it has NO outbound FKs. Application, Tenant, and User all reference Identity, never the reverse. Inbound FKs from `user::User`, `user::PlatformUser`, `mfa::MfaChallenge`, `auth::PasswordResetToken`, and `auth::EmailVerificationToken`. This module ships the Identity model only; the inbound-FK models are owned by the referencing modules and shown here for context.",
+  "internal": [
+    {
+      "from": "Identity",
+      "kind": "hasMany",
+      "to": "PasswordHistoryEntry",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "Password history is stored inline as a JSONB column (`password_history_hashed`) on `identities`, not as a separate table. This entry is retained in the blueprint for documentation clarity \u2014 in practice consumers read the JSONB blob via the `password_history` accessor on the Identity model."
+    }
+  ],
+  "outbound": {
+    "description": "Identity has zero outbound FKs. It NEVER references Application, Tenant, or User. Downstream aggregation lives on the referencing tables (`users.identity_id`, `platform_users.identity_id`) so the Identity row stays cross-Application by construction. This is the load-bearing invariant of design.md D1 \u2014 breaking it collapses the identity/user split."
+  },
+  "inbound": [
+    {
+      "from": "user::User",
+      "kind": "belongsTo",
+      "to": "Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "restrict",
+      "description": "Per-Application projection of an Identity. UNIQUE(identity_id, application_id) enforces one User per Identity per Application. Restrict on delete so a soft-deleted Identity keeps its User rows for GDPR hold-period audit."
+    },
+    {
+      "from": "user::PlatformUser",
+      "kind": "belongsTo",
+      "to": "Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "restrict",
+      "description": "Cross-tenant, cross-application platform-admin projection. Same Identity substrate as tenant Users; the platform_admin guard boundary lives on the PlatformUser row."
+    },
+    {
+      "from": "mfa::MfaChallenge",
+      "kind": "belongsTo",
+      "to": "Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "Short-lived (3-attempt / 5-minute TTL) MFA verification challenge. Cascade on hard delete once the identity row is genuinely purged past the GDPR hold-period."
+    },
+    {
+      "from": "auth::PasswordResetToken",
+      "kind": "belongsTo",
+      "to": "Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "Short-lived (15-minute TTL) reset token. One-time-use, cascade-purged on identity hard delete."
+    },
+    {
+      "from": "auth::EmailVerificationToken",
+      "kind": "belongsTo",
+      "to": "Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "24-hour TTL verification token issued at registration + on email change."
+    }
+  ],
+  "accessor_chain": {
+    "description": "Identity exposes computed accessors that downstream code reads instead of touching JSONB columns directly.",
+    "Identity": {
+      "mfa_enabled": "mfa_secret_encrypted IS NOT NULL",
+      "email_verified": "email_verified_at IS NOT NULL",
+      "is_locked": "locked_until IS NOT NULL AND locked_until > now()",
+      "recovery_codes_remaining": "count of non-consumed entries in mfa_recovery_codes_hashed JSONB",
+      "password_age_days": "(now() - password_changed_at) / 86400",
+      "password_history": "decoded array of prior bcrypt/argon2id hashes for reuse-prevention checks"
+    }
+  }
+}

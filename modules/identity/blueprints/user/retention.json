@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/user/retention",
+  "$version": 1,
+  "title": "user \u2014 retention windows",
+  "description": "User + Profile follow a two-stage lifecycle: soft-delete moves the row into a hold window; hard-delete purges after the window expires. TenantMember follows the parent User. The compliance floor for the hold window is set by GDPR Art. 5(1)(e) storage limitation \u2014 default 30 days, tenant may extend up to 90 days.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) (storage limitation)",
+    "gdpr Art. 17 (right to erasure)",
+    "coppa \u00a7312.6 (parental deletion right)",
+    "ccpa \u00a71798.105 (right to delete)"
+  ],
+  "retention": [
+    {
+      "entity": "User",
+      "hot": { "days": "while active" },
+      "cold": {
+        "days": "user.privacy.erasure_hold_days (default 30, up to 90 per tenant setting)",
+        "state": "soft-deleted (deleted_at set); hidden from every non-admin query; readable by admins via `?include_trashed=true`"
+      },
+      "purge": {
+        "trigger": "deleted_at + user.privacy.erasure_hold_days past",
+        "action": "hard delete",
+        "job": "PurgeErasedUsersJob",
+        "cascades": ["TenantMember (FK CASCADE)", "Profile (via post-purge Profile hard-delete step)"]
+      }
+    },
+    {
+      "entity": "Profile",
+      "hot": { "days": "while User exists" },
+      "cold": { "days": "0 \u2014 Profile lives with its User" },
+      "purge": {
+        "trigger": "User hard-delete OR orphaned > user.privacy.orphaned_profile_ttl_hours (default 24h)",
+        "action": "hard delete",
+        "job": "CleanupOrphanedProfilesJob (orphans) OR PurgeErasedUsersJob (User-linked)"
+      }
+    },
+    {
+      "entity": "TenantMember",
+      "hot": { "days": "while active" },
+      "cold": {
+        "days": 30,
+        "state": "soft-deleted; admin can restore within the window."
+      },
+      "purge": {
+        "trigger": "deleted_at + 30 days past OR parent User hard-delete OR parent Tenant erasure",
+        "action": "hard delete",
+        "cascades": []
+      }
+    },
+    {
+      "entity": "audits (from Auditable trait)",
+      "hot": { "days": "365 (default retention)" },
+      "cold": { "days": "up to 7 years per compliance tier" },
+      "purge": {
+        "trigger": "audit-module retention policy",
+        "action": "audit rows OUTLIVE their User \u2014 that's the compliance signal. Retention is set by `audit::config.retention_days` per tier, clamped up by the compliance floor."
+      }
+    },
+    {
+      "entity": "activity_log (from HasActivityLog trait)",
+      "hot": { "days": "90 (tenant retention_days, per hierarchy.md §7 tier matrix)" },
+      "purge": {
+        "trigger": "activity-module retention policy",
+        "action": "hard purge"
+      }
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/identity/entitlements",
+  "$version": 1,
+  "title": "identity \u2014 declared entitlements",
+  "description": "Five entitlement keys. TOTP + recovery codes are baseline (every tier). WebAuthn, password breach check, and password history are medium+ tier features. Entitlements are enforced by `identity/auth` (which owns the endpoints) but declared here because they are properties of the credential substrate.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "mfa_totp",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 1, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "TOTP (RFC 6238) MFA enrolment. Baseline across every plan tier \u2014 this is the industry-standard second factor and the security floor Academorix enforces."
+    },
+    {
+      "key": "mfa_webauthn",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "WebAuthn (FIDO2) second factor. Requires HTTPS + browser support; harder to bootstrap in dev. Free tier gated off to keep the fallback surface simple; team+ can enrol hardware keys."
+    },
+    {
+      "key": "mfa_recovery_codes",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 1, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "Recovery-code fallback for MFA. Always on \u2014 without it, losing the primary factor locks the identity out. Ten codes generated at enrolment; regenerable on demand."
+    },
+    {
+      "key": "password_breach_check",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "haveibeenpwned k-anonymity check on every password set / reset. Free tier gated off to avoid an outbound-API dependency on shoestring deployments; every paid tier ships the check on."
+    },
+    {
+      "key": "password_history",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "Rolling-window password reuse prevention. Free tier only enforces the current password (no history); team+ enforces `identity.password.history_size` (default 5)."
+    }
+  ]
+}

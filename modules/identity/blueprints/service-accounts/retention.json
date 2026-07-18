@@ -1,0 +1,100 @@
+{
+  "id": "academorix://modules/service-accounts/retention",
+  "$version": 1,
+  "title": "service-accounts \u2014 retention windows",
+  "description": "SA retention is compliance-driven, not product-driven. Soft-deleted SAs carry a 90-day retention hold before hard delete (SOC 2 audit-evidence window; longer than typical human-actor retention because inter-service audit correlation extends further). JWT audit logs live 365 days hot + 7 years cold. Secret hashes are overwritten on rotation (no history). last_used_at + last_used_ip retained for the SA's lifetime.",
+  "compliance_regimes_referenced": [
+    "soc2 CC6.7 (prompt access removal) \u2014 SAs disabled + soft-deleted within the operator's action; hard delete within 90d + retention-hold-days",
+    "soc2 CC7.2 (system monitoring) \u2014 dormant SA detection weekly; suspicious-activity fingerprint retained rolling 30d",
+    "nist SP 800-131A \u2014 signer_kid material owned by auth module; rotation logs retained per that module's policy",
+    "owasp asvs v6 \u2014 credential-lifecycle audit trail retained via activity_log + audit_log tables"
+  ],
+  "retention": [
+    {
+      "entity": "ServiceAccount (active, not soft-deleted)",
+      "hot": { "days": "while is_enabled = true AND (expires_at IS NULL OR expires_at > now())" },
+      "purge": {
+        "trigger": "explicit soft-delete via `service-account:delete` OR /platform/service-accounts DELETE endpoint OR auto-expiry via PurgeExpiredServiceAccountsJob",
+        "action": "soft-delete (deleted_at + is_enabled=false); keeps secret_hash + metadata for retention hold",
+        "notes": "Row is NEVER hard-deleted while inbound activity_log or audit rows would lose their reference; hard delete replaces user_id/user_type with `[REDACTED-SERVICE-ACCOUNT]` on referencing audit rows."
+      }
+    },
+    {
+      "entity": "ServiceAccount (soft-deleted)",
+      "hot": { "days": "config('service-accounts.rotation.retention_hold_days'), default 90" },
+      "purge": {
+        "trigger": "deleted_at + retention_hold_days < now()",
+        "action": "hard delete",
+        "job": "PurgeExpiredServiceAccountsJob (runs daily at 04:00 UTC)"
+      }
+    },
+    {
+      "entity": "ServiceAccount (expired, not manually deleted)",
+      "hot": { "days": "expires_at + service-accounts.rotation.grace_days_after_expiry (default 7)" },
+      "purge": {
+        "trigger": "expires_at + grace_days_after_expiry < now() AND is_enabled = true",
+        "action": "soft-disable (is_enabled=false); fires ServiceAccountExpired; then follows the soft-deleted retention flow",
+        "job": "PurgeExpiredServiceAccountsJob"
+      }
+    },
+    {
+      "entity": "ServiceAccount secret_hash",
+      "hot": { "days": "until rotation OR SA hard-delete" },
+      "purge": {
+        "trigger": "any secret rotation OR SA hard-delete",
+        "action": "overwrite in-place on rotation; hard-delete removes the row entirely",
+        "notes": "There is NO password-history retention. SA secrets are randomly generated + rotated frequently; reuse prevention is not a realistic threat."
+      }
+    },
+    {
+      "entity": "last_used_at + last_used_ip (on ServiceAccount)",
+      "hot": { "days": "while the SA row lives" },
+      "purge": {
+        "trigger": "SA hard-delete",
+        "action": "vanishes with the row",
+        "notes": "During the lifetime of the SA, last_used_at is continuously overwritten with the most recent request timestamp \u2014 there is no historical usage log at the row level. Historical usage lives in activity_log rows (with their own retention)."
+      }
+    },
+    {
+      "entity": "activity_log rows (service_account.request.audit + jwt_verified)",
+      "hot": { "days": 365 },
+      "purge": {
+        "trigger": "created_at + 365 days < now()",
+        "action": "move to cold storage (S3 + parquet); retain 7 years total (SOC 2 evidence window)",
+        "job": "activity module owns the retention pipeline; this module only writes"
+      }
+    },
+    {
+      "entity": "audit rows (owen-it/laravel-auditing)",
+      "hot": { "days": 365 },
+      "purge": {
+        "trigger": "created_at + 365 days < now()",
+        "action": "move to cold storage; retain 7 years total",
+        "notes": "SA-referencing audit rows have their user_id anonymised to `[REDACTED-SERVICE-ACCOUNT]` when the SA is hard-deleted; audit content is preserved for compliance evidence."
+      }
+    },
+    {
+      "entity": "fingerprint cache tuples (svc:fingerprint:{id})",
+      "hot": { "days": 30 },
+      "purge": {
+        "trigger": "tuple observation older than 30 days OR cache eviction",
+        "action": "trim from the SortedSet on next insert",
+        "notes": "Rolling window \u2014 the SortedSet's score is the observation timestamp, so trimming to the last 30 days is O(log N)."
+      }
+    },
+    {
+      "entity": "svc:jwt_deny:{jti} (JWT deny-list)",
+      "hot": { "days": "matches the JWT's remaining exp \u2014 at most jwt.max_ttl_seconds" },
+      "purge": {
+        "trigger": "TTL expiration on the cache key",
+        "action": "cache-native TTL cleanup; no scheduled job needed",
+        "notes": "The deny-list entry outlives the JWT's exp by AT MOST clock-skew tolerance; after that, the JWT would be rejected on exp check regardless."
+      }
+    }
+  ],
+  "hold_period_extensions": {
+    "description": "The retention hold can be extended (never shortened below the default) by compliance officers when a legal-hold applies to the SA's audit trail. Extension is stored as a per-SA metadata flag (`retention_hold_extended_until`) that overrides the config default. PurgeExpiredServiceAccountsJob honours the per-SA override.",
+    "how_to_extend": "Via `service-account:describe {id} --set-hold-until=<date>` (proposed CLI extension, deferred to Wave 1b)",
+    "audit_trail": "Every extension is written to the compliance-audit log with the compliance officer as actor + free-form justification."
+  }
+}

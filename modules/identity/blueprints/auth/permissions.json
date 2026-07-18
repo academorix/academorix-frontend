@@ -1,0 +1,119 @@
+{
+  "id": "academorix://modules/auth/permissions",
+  "$version": 1,
+  "title": "auth \u2014 permissions",
+  "seeder": "Academorix\\Auth\\Database\\Seeders\\AuthPermissionSeeder",
+  "isSystem": true,
+  "description": "Permissions on the auth surface split by guard. Tenant-plane permissions (guard: sanctum) gate the self-service session-management surface (view own sessions, revoke own sessions, issue cross-app grants). Platform-plane permissions (guard: platform_admin) gate the identity CRUD + JWT-key management + impersonation. NEVER cross the guard boundary.",
+  "permissions": [
+    {
+      "name": "sessions.viewAny.own",
+      "guard": "sanctum",
+      "description": "List the caller's own active sessions across their Applications.",
+      "seededOn": ["owner", "admin", "coach", "staff", "athlete", "parent"]
+    },
+    {
+      "name": "sessions.revoke.own",
+      "guard": "sanctum",
+      "description": "Revoke a specific session (by PAT id) belonging to the caller.",
+      "seededOn": ["owner", "admin", "coach", "staff", "athlete", "parent"]
+    },
+    {
+      "name": "sessions.cross_app_grant",
+      "guard": "sanctum",
+      "description": "Issue a cross-Application SSO grant on the caller's behalf. Refused if the caller lacks a User row on the target Application. Requires cross_app_sso entitlement.",
+      "seededOn": ["owner", "admin", "coach", "staff", "athlete", "parent"]
+    },
+    {
+      "name": "platform.auth.impersonate",
+      "guard": "platform_admin",
+      "description": "Start / end impersonation of a tenant User. Requires impersonation entitlement. Every use audit-logged with reason.",
+      "seededOn": ["support", "security"],
+      "audit_severity": "critical"
+    },
+    {
+      "name": "platform.auth.jwt_keys.viewAny",
+      "guard": "platform_admin",
+      "description": "List JWT signing keys. Redacted \u2014 secret_encrypted never returned.",
+      "seededOn": ["security", "super_admin"]
+    },
+    {
+      "name": "platform.auth.jwt_keys.view",
+      "guard": "platform_admin",
+      "description": "Show one JWT signing key row (redacted).",
+      "seededOn": ["security", "super_admin"]
+    },
+    {
+      "name": "platform.auth.jwt_keys.rotate",
+      "guard": "platform_admin",
+      "description": "Rotate to a new kid. Old key marked retired_at=now(); still verify-capable through the rotation grace window.",
+      "seededOn": ["security"],
+      "audit_severity": "critical"
+    },
+    {
+      "name": "platform.auth.jwt.revoke",
+      "guard": "platform_admin",
+      "description": "Add jti to the deny list \u2014 immediate revocation before natural expiry. Used for breach response.",
+      "seededOn": ["security"],
+      "audit_severity": "critical"
+    },
+    {
+      "name": "platform.auth.sessions.viewAny",
+      "guard": "platform_admin",
+      "description": "List active sessions across the platform. Redacted \u2014 no PAT plaintext.",
+      "seededOn": ["security", "support"]
+    },
+    {
+      "name": "platform.auth.sessions.revoke",
+      "guard": "platform_admin",
+      "description": "Revoke a specific session (any User). Used for support-driven session cleanup.",
+      "seededOn": ["security", "support"],
+      "audit_severity": "warn"
+    },
+    {
+      "name": "platform.auth.sessions.revoke_all",
+      "guard": "platform_admin",
+      "description": "Bulk-revoke every active session for a given User or Identity. Used for breach response.",
+      "seededOn": ["security"],
+      "audit_severity": "critical"
+    },
+    {
+      "name": "platform.identity.viewAny",
+      "guard": "platform_admin",
+      "description": "List identities. Reference to the identity substrate's permission (seeded here since auth OWNS the HTTP route). Redacted by default.",
+      "seededOn": ["super_admin", "security", "compliance"]
+    },
+    {
+      "name": "platform.identity.view",
+      "guard": "platform_admin",
+      "description": "Show one identity (redacted).",
+      "seededOn": ["super_admin", "security", "compliance", "support"]
+    },
+    {
+      "name": "platform.identity.view.pii",
+      "guard": "platform_admin",
+      "description": "Unmute email + dob on identity detail. Every use writes an audit-log entry.",
+      "seededOn": ["compliance", "security"],
+      "audit_severity": "warn"
+    },
+    {
+      "name": "platform.identity.unlock",
+      "guard": "platform_admin",
+      "description": "Clear locked_until on an identity.",
+      "seededOn": ["super_admin", "security", "support"]
+    },
+    {
+      "name": "platform.identity.force_password_reset",
+      "guard": "platform_admin",
+      "description": "Invalidate current password + revoke sessions + issue fresh reset token.",
+      "seededOn": ["super_admin", "security"]
+    },
+    {
+      "name": "platform.identity.erase",
+      "guard": "platform_admin",
+      "description": "Soft-delete identity (start GDPR hold-period).",
+      "seededOn": ["compliance"],
+      "audit_severity": "critical"
+    }
+  ]
+}

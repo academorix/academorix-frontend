@@ -1,0 +1,174 @@
+{
+  "$version": 1,
+  "title": "Login flow \u2014 request / response samples",
+  "description": "Illustrative wire shapes for the four login flow branches: (1) plain success \u2014 no MFA enrolled; (2) MFA challenge issued; (3) MFA verified \u2014 session issued; (4) failed. Every credential-sensitive field is shown as-if-populated but callers should treat these values as opaque bearers. Real production requests use real secrets; these are shape references only.",
+  "flow_1_plain_success": {
+    "description": "Login without MFA enrolled. LoginAction returns 200 with LoginResult immediately.",
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "headers": {
+        "X-Application-Id": "app_sports",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "alice@example.com",
+        "password": "correct-horse-battery-staple-42",
+        "device_fingerprint": "abc123def456..."
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "token": "42|abcdef0123456789abcdef0123456789abcdef01",
+          "refresh_token": "atr_01H2K3M4N5P6Q7R8S9TAVBWCXDY.opaque40byteopaque40byteopaque40byteopaqxxxx",
+          "expires_at": "2026-07-22T14:23:19Z",
+          "refresh_expires_at": "2026-08-14T14:23:19Z",
+          "user": {
+            "id": "usr_01H...",
+            "email": "alice@example.com",
+            "profile": {
+              "display_name": "Alice",
+              "avatar_url": "https://cdn.academorix.com/avatars/alice.jpg"
+            },
+            "roles": ["owner"],
+            "permissions_count": 42
+          },
+          "requires_mfa": false
+        }
+      }
+    }
+  },
+  "flow_2_mfa_challenge_issued": {
+    "description": "Login when MFA is enrolled. LoginAction verifies password, then returns 202 with MfaChallengeResult instead of a session.",
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "headers": {
+        "X-Application-Id": "app_sports",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "email": "alice@example.com",
+        "password": "correct-horse-battery-staple-42"
+      }
+    },
+    "response": {
+      "status": 202,
+      "body": {
+        "data": {
+          "challenge_id": "amc_01H...",
+          "challenge_type": "totp",
+          "expires_at": "2026-07-15T14:28:19Z",
+          "attempts_remaining": 3
+        }
+      }
+    }
+  },
+  "flow_3_mfa_verified_session_issued": {
+    "description": "Followup to flow 2 \u2014 client submits TOTP code, receives session.",
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/auth/mfa/verify",
+      "headers": {
+        "X-Application-Id": "app_sports",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "challenge_id": "amc_01H...",
+        "code": "123456"
+      }
+    },
+    "response": {
+      "status": 200,
+      "body": {
+        "data": {
+          "token": "43|xyzuvw...",
+          "refresh_token": "atr_01H2K3M4N5P6Q7R8S9TAVBWCXDZ.opaque...",
+          "expires_at": "2026-07-22T14:24:33Z",
+          "refresh_expires_at": "2026-08-14T14:24:33Z",
+          "user": {
+            "id": "usr_01H...",
+            "email": "alice@example.com"
+          }
+        }
+      }
+    }
+  },
+  "flow_4_failed": {
+    "description": "Wrong password. Enumeration-safe \u2014 same response for unknown email, wrong password, disabled identity, unverified email.",
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "headers": {
+        "X-Application-Id": "app_sports"
+      },
+      "body": {
+        "email": "alice@example.com",
+        "password": "wrong-password"
+      }
+    },
+    "response": {
+      "status": 401,
+      "body": {
+        "message": "The credentials provided are invalid.",
+        "code": "AUTH_FAILED"
+      }
+    }
+  },
+  "flow_5_locked": {
+    "description": "Account is locked (identity.check_lockout middleware refused). Response includes unlock_url for the reset flow.",
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "headers": {
+        "X-Application-Id": "app_sports"
+      },
+      "body": {
+        "email": "alice@example.com",
+        "password": "any-password"
+      }
+    },
+    "response": {
+      "status": 423,
+      "body": {
+        "message": "Account is locked. Reset your password to unlock.",
+        "code": "IDENTITY_LOCKED",
+        "locked_until": "2026-07-15T14:38:19Z",
+        "unlock_url": "/api/v1/auth/password/forgot"
+      }
+    }
+  },
+  "flow_6_rate_limited": {
+    "description": "Too many attempts. Retry-After header set.",
+    "request": {
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "headers": {
+        "X-Application-Id": "app_sports"
+      },
+      "body": {
+        "email": "alice@example.com",
+        "password": "any-password"
+      }
+    },
+    "response": {
+      "status": 429,
+      "headers": {
+        "Retry-After": "300"
+      },
+      "body": {
+        "message": "Too many login attempts. Try again later.",
+        "code": "RATE_LIMITED_LOGIN",
+        "retry_after_seconds": 300,
+        "meta": { "throttle_bucket": "email" }
+      }
+    }
+  },
+  "invariants": [
+    "Every enumeration-safe path (AUTH_FAILED) returns the SAME body shape regardless of whether the email is unknown, the password wrong, or the identity soft-deleted / disabled. The response CANNOT be distinguished by shape / status / timing.",
+    "Constant-time login: LoginAction's duration histogram (academorix.auth.login_duration_ms) shows unknown_email + password_mismatch + soft_deleted all fall in the same P95 bucket range. The check_lockout middleware runs BEFORE password comparison to preserve this property.",
+    "The plaintext token + refresh_token are shown ONCE \u2014 subsequent responses (refresh, session-list) never return the plaintexts again."
+  ]
+}

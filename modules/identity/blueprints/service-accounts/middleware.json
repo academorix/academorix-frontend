@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/service-accounts/middleware",
+  "$version": 1,
+  "title": "service-accounts \u2014 HTTP middleware",
+  "description": "Three middlewares. `service_account.audit` is auto-applied to every SA-authenticated route and heavy-audits the request. `service_account.verify_jwt` verifies the incoming HS256 JWT (composes auth::JwtVerifier + SA state checks). `service_account.enforce_scope` enforces that JWT claims match request-context headers. All three are AUTH-INFRASTRUCTURE middlewares \u2014 mounted downstream in every service that trusts SA JWTs.",
+  "middleware": [
+    {
+      "alias": "service_account.audit",
+      "class": "Academorix\\ServiceAccount\\Http\\Middleware\\ServiceAccountAudit",
+      "priority": 12,
+      "description": "Heavy-audit stamping for every request authenticated by an SA JWT. Writes: (a) `service_account.request.audit` activity_log row (method, path, status, service_account_id, application_id, tenant_id, ip_prefix_24, user_agent, correlation_id, duration_ms), (b) `service_account.jwt_verified` activity_log row keyed by jti, (c) records the fingerprint observation via ServiceAccountFingerprinter for anomaly detection, (d) coalesces last_used_at + last_used_ip writes into the `svc:last_used:{id}` cache buffer. Runs AFTER `service_account.verify_jwt` (needs the verified SA in context).",
+      "auto_applied": true,
+      "auto_applied_on": [
+        "Every route on tenant + platform-admin surfaces that accepts SA JWT authentication (composed via the `auth:service_account` guard alias which downstream services define in `identity/auth`)."
+      ],
+      "consumed_by": [
+        "every downstream service that trusts SA JWTs (sports-service, marketplace-service, ai-service, observability-service, ...)"
+      ]
+    },
+    {
+      "alias": "service_account.verify_jwt",
+      "class": "Academorix\\ServiceAccount\\Http\\Middleware\\VerifyServiceAccountJwt",
+      "priority": 10,
+      "description": "Extracts the `Authorization: Bearer <jwt>` header, decodes + verifies the signature via auth::JwtVerifier (keyed by the JWT's `kid` claim), then loads the SA row via `X-Service-Account-Id` header (or the `sub` claim if header absent). Confirms: is_enabled=true, expires_at IS NULL OR > now(), signer_kid matches JWT header kid, `iss` + `aud` + `exp` pass verification. Populates RequestContext with the resolved ServiceAccount + parsed claims. On failure returns 401 with generic SERVICE_ACCOUNT_JWT_INVALID payload (no enumeration signal).",
+      "auto_applied": true,
+      "auto_applied_on": [
+        "Every route composing the `auth:service_account` guard alias."
+      ],
+      "consumed_by": [
+        "every downstream service that trusts SA JWTs"
+      ]
+    },
+    {
+      "alias": "service_account.enforce_scope",
+      "class": "Academorix\\ServiceAccount\\Http\\Middleware\\EnforceServiceAccountScope",
+      "priority": 11,
+      "description": "Confirms request-context headers match JWT claims. Rejects with 403 APPLICATION_MISMATCH when JWT `app` != request's resolved application context. Rejects with 403 TENANT_MISMATCH when JWT `tid` is populated AND != request's resolved tenant context. Rejects with 403 SERVICE_ACCOUNT_IP_NOT_ALLOWED when the SA has an IP allowlist in metadata AND the source IP isn't allowed (enterprise entitlement + Wave 1b enforcement). Runs AFTER `service_account.verify_jwt` (needs the JWT claims) and AFTER `application::ResolveApplication` (needs the request-context application).",
+      "auto_applied": true,
+      "auto_applied_on": [
+        "Every route composing the `auth:service_account` guard alias."
+      ],
+      "consumed_by": [
+        "every downstream service that trusts SA JWTs"
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::ResolveApplication (before service_account.enforce_scope)" },
+    {
+      "middleware": "throttle:foundation-base",
+      "notes": "Global request-throttle applies alongside; the SA-specific rate limit at the token-exchange endpoint is ON TOP for the credential-swap route."
+    }
+  ],
+  "response_shape_on_reject": {
+    "service_account.verify_jwt": {
+      "status": 401,
+      "body": {
+        "message": "The provided credentials are invalid.",
+        "code": "SERVICE_ACCOUNT_JWT_INVALID"
+      },
+      "headers": {
+        "WWW-Authenticate": "Bearer error=\"invalid_token\""
+      }
+    },
+    "service_account.enforce_scope": {
+      "status": 403,
+      "body": {
+        "message": "Application or tenant scope mismatch.",
+        "code": "APPLICATION_MISMATCH | TENANT_MISMATCH | SERVICE_ACCOUNT_IP_NOT_ALLOWED"
+      }
+    }
+  }
+}

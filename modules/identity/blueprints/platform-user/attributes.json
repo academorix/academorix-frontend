@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/platform-user/attributes",
+  "$version": 1,
+  "title": "platform-user \u2014 PHP attribute contracts",
+  "description": "One attribute. `#[AsPlatformUserListener]` marks a class as a subscriber to PlatformUser-lifecycle events (hired, activated, suspended, offboarded, restored, manager-reassigned, department-changed, profile-updated). Discovered at boot by `PlatformUserServiceProvider` so internal services under `access/rbac`, `access/delegation`, `notifications`, `observability`, and the future on-call `escalation` module react without hard-coded event bindings.",
+  "namespace": "Academorix\\PlatformUser\\Attributes",
+  "attributes": [
+    {
+      "name": "AsPlatformUserListener",
+      "class": "Academorix\\PlatformUser\\Attributes\\AsPlatformUserListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Which PlatformUser events this class reacts to. Wildcard `*` = every event under `Academorix\\PlatformUser\\Events\\*`. Specific list e.g. `['PlatformUserHired', 'PlatformUserOffboarded']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": "notifications",
+          "description": "Queue name for asynchronous dispatch. Set to `null` for synchronous listeners (rare \u2014 reserve for audit tap-outs that MUST land in the same request cycle). Common values: `notifications` (default), `notifications-critical` (offboarding + suspension events which must not queue behind a backlog), `audit` (write-heavy compliance streams)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Listener execution order. Lower values run first. Reserve 1\u201399 for framework-owned listeners (audit stamping, session revocation) that MUST run before user-defined listeners. Example: `RevokeTokensOnOffboard` runs at priority=10 so audit rows land first, and mail notifications run at 100 so revocation is already visible in the audit trail when they fire."
+        },
+        {
+          "name": "requires_platform_permission",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional permission gate on the `platform_admin` guard. When set, the listener refuses to run if the triggering actor lacks the permission. Used by the `platform-user:audit-report` command's downstream listeners so a super_admin's report generation does not leak into a broader distribution list."
+        }
+      ],
+      "example": "#[AsPlatformUserListener(events: ['PlatformUserOffboarded'], queue: 'notifications-critical', priority: 10)]\nfinal class RevokePlatformTokensOnOffboard\n{\n    public function handle(PlatformUserOffboarded $event): void\n    {\n        // ... dispatch RevokePlatformUserAccessJob\n    }\n}"
+    }
+  ]
+}

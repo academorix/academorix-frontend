@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/auth/feature-flags",
+  "$version": 1,
+  "title": "auth \u2014 kill switches + progressive-rollout flags",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "auth.login_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = every login endpoint refuses with 503. Used for planned maintenance windows."
+    },
+    {
+      "key": "auth.registration_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /auth/register refuses with 503. Existing sessions continue; new-user provisioning halted."
+    },
+    {
+      "key": "auth.mfa_challenge_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = LoginAction never issues an MFA challenge. Sanctum PAT issued as if MFA weren't enrolled. RESERVED for catastrophic MFA-secret-KMS outage \u2014 two-person sign-off required to flip."
+    },
+    {
+      "key": "auth.refresh_reuse_detection",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = refresh reuse is a soft warning instead of a hard revocation. Used for chaos testing / when investigating false-positive reuse signals (e.g. mobile client that stores tokens in two places)."
+    },
+    {
+      "key": "auth.cross_app_sso_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = /auth/cross-app/* endpoints return 503. Existing exchanges succeed; new grants refused."
+    },
+    {
+      "key": "auth.impersonation_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = /platform/auth/impersonate/* refuses with 503. Ops incident-response tool \u2014 flipped off when we suspect a compromise of platform-admin credentials."
+    },
+    {
+      "key": "auth.jwt_deny_list_check",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = auth.jwt_verify middleware skips the deny-list check. Never used in production."
+    },
+    {
+      "key": "auth.jwt_rotation_automatic",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the monthly RotateJwtSigningKeyJob is a no-op. Reserved for maintenance windows where key rotation must be manual."
+    },
+    {
+      "key": "auth.new_device_detection",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = auth.detect_new_device middleware no-ops. Reserved for shared-IP environments (CGNAT deployments) generating too many false positives."
+    },
+    {
+      "key": "auth.password_change_forces_session_revocation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PasswordChanged does NOT trigger cross-Application session revocation. Reserved for framework rollback \u2014 the invariant is documented in design.md \u00a78. Never flip in production."
+    },
+    {
+      "key": "auth.session_scope_enforcement",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = auth.enforce_session_scope middleware skips the Application-scope check. Reserved for incident response during Application migrations."
+    },
+    {
+      "key": "auth.registration_via_generic_policy",
+      "kind": "progressive-rollout",
+      "default": "on",
+      "description": "Rollout gate for GenericRegistrationPolicy vs (future) DomainSpecificRegistrationPolicy overrides. Off for a tenant = falls back to a synchronous manual-approval flow instead of policy-based decision."
+    }
+  ]
+}

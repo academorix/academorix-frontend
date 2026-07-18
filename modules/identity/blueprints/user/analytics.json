@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/user/analytics",
+  "$version": 1,
+  "title": "user \u2014 product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "User Provisioned",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "application_id", "source", "role_slug"],
+      "description": "New User account created. `source` explains the entry point."
+    },
+    {
+      "name": "User Activated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "user_id", "days_pending"],
+      "description": "User transitioned from pending to active."
+    },
+    {
+      "name": "User Suspended",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "user_id", "reason_kind"],
+      "description": "reason_kind: manual / auto_inactive / policy_violation / compliance. Free-form reason text is NOT included \u2014 confidential-tier."
+    },
+    {
+      "name": "Profile Updated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "user_id", "changed_fields_count", "self_update"],
+      "description": "`changed_fields_count` only \u2014 the actual field names would leak intent (e.g. someone updating phone_e164 is a security-relevant signal)."
+    },
+    {
+      "name": "Avatar Uploaded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "user_id", "size_kb"]
+    },
+    {
+      "name": "Active Tenant Switched",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "user_id", "from_tenant_id"],
+      "description": "The full multi-tenant journey. Feeds the tenant-switcher usage dashboard."
+    },
+    {
+      "name": "Preferred Locale Changed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "user_id", "from_locale", "to_locale"],
+      "description": "User changed their preferred locale via /me."
+    },
+    {
+      "name": "User Bulk Invite Started",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "row_count", "role_slug"],
+      "description": "CSV bulk-invite kicked off. Feeds the tenant-onboarding funnel."
+    },
+    {
+      "name": "User Bulk Invite Completed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "row_count", "accepted_count", "failed_count", "duration_ms"]
+    }
+  ],
+  "notes": [
+    "The subject User's `email` is never a Segment property \u2014 it's PII. `user_id` (ULID) is the anonymised identifier.",
+    "`identify` calls happen at auth-time, not in this module. This module only ships `track` events."
+  ]
+}

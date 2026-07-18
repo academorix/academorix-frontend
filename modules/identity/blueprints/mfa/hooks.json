@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/mfa/hooks",
+  "$version": 1,
+  "title": "mfa — tenancy hooks",
+  "description": "MFA has NO tenancy hooks. The module is GLOBAL by design — WebauthnCredential is owned by the Identity (which is global, not tenant-scoped), and no per-tenant state materialises on tenant provisioning. Downstream cascade (e.g. TenantErased → UserErased → identity/user cascade → optional identity/identity → mfa cascade) flows through the listener chain in listeners.json, not through tenancy hooks.",
+  "hooks": [],
+  "rationale": [
+    "Tenancy hooks are for state that must materialise on tenant provisioning (default rows, seed data, per-tenant tables). MFA is a shared substrate with no per-tenant table — no provisioning is required when a new tenant appears.",
+    "TenantErased does not directly touch webauthn_credentials — the table is not tenant-scoped. When a Tenant is being erased, the erasure cascade runs through Users (which ARE tenant-scoped): each erased User cascades to its Identity (only if that Identity has no other referring Users, per identity/identity's MaybeMarkIdentityForErasure listener), and only THEN do MFA credentials cascade via the mfa module's CascadeMfaForTenantErasure listener.",
+    "Explicitly declaring `hooks: []` is a design invariant — any PR that adds a tenancy hook here is a mistake that mis-scopes the module."
+  ]
+}

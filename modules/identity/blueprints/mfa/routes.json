@@ -1,0 +1,221 @@
+{
+  "id": "academorix://modules/mfa/routes",
+  "$version": 1,
+  "title": "mfa — HTTP routes",
+  "description": "Tenant-facing MFA self-service surface + platform-admin recovery + support endpoints. Every tenant-audience route is under /api/v1/me/mfa; every platform-admin route is under /api/v1/platform/mfa. Login-time MFA challenge issuance / verification lives in identity/auth (POST /api/v1/auth/mfa/verify) — this module owns the STEADY-STATE self-service surface (list, enroll, manage, regenerate) plus the mid-session step-up verify (POST /api/v1/me/mfa/challenge/{id}/verify) that gates sensitive actions after the initial login.",
+  "groups": [
+    {
+      "name": "tenant-mfa-summary",
+      "prefix": "/api/v1/me/mfa",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Caller's own MFA posture.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\MfaController@show",
+          "permission": "mfa.viewOwn",
+          "description": "Returns MfaMethodsSummary DTO — which methods enrolled, recovery-codes remaining, step-up requirements."
+        }
+      ]
+    },
+    {
+      "name": "tenant-totp",
+      "prefix": "/api/v1/me/mfa/totp",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope",
+        "entitlement.enforce:mfa_totp"
+      ],
+      "hosts": ["tenant"],
+      "description": "TOTP enrolment + management.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/enroll/preview",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\TotpController@preview",
+          "permission": "mfa.enrollTotp",
+          "description": "Round 1. Generates a fresh TOTP secret (base32 + otpauth:// URI for QR rendering), holds in Redis for 5 minutes. Emits MfaEnrollmentPreviewIssued."
+        },
+        {
+          "method": "POST",
+          "path": "/enroll",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\TotpController@confirm",
+          "permission": "mfa.enrollTotp",
+          "description": "Round 2. Consumes the preview + confirms the TOTP code proves possession, persists ciphertext to Identity.mfa_secret_encrypted, generates recovery codes. Emits MfaEnrollmentConfirmed + identity::MfaEnrolled. Response includes the RecoveryCodesDownload DTO (plaintext codes shown ONCE)."
+        },
+        {
+          "method": "DELETE",
+          "path": "/",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\TotpController@disable",
+          "permission": "mfa.disableTotp",
+          "middleware_extra": ["mfa.require_recent_challenge"],
+          "description": "Disable TOTP factor. Requires a fresh MFA challenge (recovery code OR WebAuthn OR TOTP itself). Emits MfaDisabled if this was the last MFA factor."
+        }
+      ]
+    },
+    {
+      "name": "tenant-webauthn",
+      "prefix": "/api/v1/me/mfa/webauthn",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope",
+        "entitlement.enforce:mfa_webauthn"
+      ],
+      "hosts": ["tenant"],
+      "description": "WebAuthn credential enrolment + management.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/register/options",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\WebauthnController@registerOptions",
+          "permission": "mfa.registerWebauthn",
+          "description": "Round 1. Returns WebauthnRegisterOptions DTO for navigator.credentials.create(). Holds the challenge in Redis for 5 minutes."
+        },
+        {
+          "method": "POST",
+          "path": "/register",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\WebauthnController@register",
+          "permission": "mfa.registerWebauthn",
+          "description": "Round 2. Verifies the attestation response, inserts WebauthnCredential row. Emits WebauthnCredentialRegistered."
+        },
+        {
+          "method": "GET",
+          "path": "/credentials",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\WebauthnController@indexCredentials",
+          "permission": "mfa.webauthn_credentials.viewAny",
+          "description": "List caller's registered credentials. filter[include_disabled] toggles disabled_at IS NULL."
+        },
+        {
+          "method": "PATCH",
+          "path": "/credentials/{credential}",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\WebauthnController@updateCredential",
+          "permission": "mfa.webauthn_credentials.update",
+          "middleware_extra": ["mfa.require_recent_challenge"],
+          "description": "Rename or disable a credential. Body: { device_name?, disabled_at? }. disabled_at: 'now' | 'null' (setting null on a disabled credential is refused by the observer). Emits WebauthnCredentialRenamed OR WebauthnCredentialDisabled."
+        },
+        {
+          "method": "DELETE",
+          "path": "/credentials/{credential}",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\WebauthnController@destroyCredential",
+          "permission": "mfa.webauthn_credentials.delete",
+          "middleware_extra": ["mfa.require_recent_challenge"],
+          "description": "Hard-delete a credential immediately (bypasses the 90-day retention purge). Emits WebauthnCredentialDeleted(trigger=user_action). If this was the caller's last MFA factor, emits MfaDisabled."
+        }
+      ]
+    },
+    {
+      "name": "tenant-recovery-codes",
+      "prefix": "/api/v1/me/mfa/recovery-codes",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Recovery-code management.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/regenerate",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\RecoveryCodesController@regenerate",
+          "permission": "mfa.regenerateRecoveryCodes",
+          "middleware_extra": ["mfa.require_recent_challenge"],
+          "description": "Discard the current recovery-code set + generate a fresh set. Emits MfaRecoveryCodesRegenerated + identity::RecoveryCodesRegenerated. Response includes RecoveryCodesDownload DTO."
+        },
+        {
+          "method": "POST",
+          "path": "/download",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\RecoveryCodesController@download",
+          "permission": "mfa.downloadRecoveryCodes",
+          "middleware_extra": ["mfa.require_recent_challenge"],
+          "description": "Emit the CURRENT unconsumed recovery codes ONE MORE TIME. Audit-logged as data-egress. Response includes RecoveryCodesDownload DTO. Different from regenerate — download does NOT invalidate the current codes."
+        }
+      ]
+    },
+    {
+      "name": "tenant-mfa-challenge",
+      "prefix": "/api/v1/me/mfa/challenge",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Mid-session step-up challenge verification. Note: challenge INITIATION lives on identity/auth (POST /api/v1/auth/mfa/challenge/initiate); this module owns only the VERIFY step.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/{challenge_id}/verify",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Tenant\\ChallengeController@verify",
+          "permission": "mfa.viewOwn",
+          "description": "Submit a code / assertion / recovery code for a challenge. Consumes the challenge atomically on success; sets session's last_mfa_challenge_at + mfa_challenge_completed_at. Body: VerifyChallengeInput. Response: success + updated MfaMethodsSummary. Fires MfaChallengeSucceeded OR MfaChallengeFailed."
+        }
+      ]
+    },
+    {
+      "name": "platform-mfa",
+      "prefix": "/api/v1/platform/mfa",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Platform-admin support + recovery surface. Every write is audit-critical.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/methods/{user}",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Platform\\MfaController@methods",
+          "permission": "platform.mfa.methods.view",
+          "description": "Show MFA posture for one User (across every Application via the shared Identity). Redacted response — no plaintext, no bytea, no credential_id_b64url."
+        },
+        {
+          "method": "POST",
+          "path": "/force-disable/{user}",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Platform\\MfaController@forceDisable",
+          "permission": "platform.mfa.force_disable",
+          "description": "Emergency disable — TOTP nulled + every active WebauthnCredential disabled. Body: { reason: string, notify_user: bool }. Fires MfaDisabled(trigger=admin_action). Audit-critical."
+        },
+        {
+          "method": "POST",
+          "path": "/regenerate-recovery-codes/{user}",
+          "controller": "Academorix\\Mfa\\Http\\Controllers\\Platform\\MfaController@regenerateRecoveryCodes",
+          "permission": "platform.mfa.regenerate_recovery_codes",
+          "description": "Regenerate + email new recovery codes to the User. Body: { reason: string }. Fires MfaRecoveryCodesRegenerated. Plaintext codes are NEVER returned in the HTTP response — they go by email only, to remove the operator's browser-history as an attack surface. Audit-warn."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/auth/schemas/jwks-response",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "JwksResponse",
+  "description": "The JWKS payload served at GET /.well-known/jwks.json. Contains every active + retired-but-not-yet-expired signing key. Downstream verifiers cache aggressively per Cache-Control: public, max-age=3600, immutable.",
+  "type": "object",
+  "x-module": "auth",
+  "properties": {
+    "keys": {
+      "type": "array",
+      "description": "Array of signing-key entries. Rotation windows produce two entries (the previous key + the new key) for auth.jwt.rotation_grace_period_days.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kty": {
+            "type": "string",
+            "enum": ["oct"],
+            "description": "Key type. `oct` for symmetric-key algorithms (HS256). Wave 1c will add `RSA` (RS256) and `EC` (ES256)."
+          },
+          "kid": {
+            "type": "string",
+            "description": "Key ID. Verifiers match against the JWT header's `kid`.",
+            "example": "identity-2026-07-1"
+          },
+          "alg": {
+            "type": "string",
+            "enum": ["HS256"],
+            "description": "Signature algorithm. Wave 1a: HS256 only."
+          },
+          "k": {
+            "type": "string",
+            "description": "Base64url-encoded shared secret. SAFE on a public endpoint ONLY when identity-service + verifiers communicate over a private network (design.md \u00a78.3 caveat). Wave 1c upgrades to asymmetric keys so this field carries only the public component."
+          },
+          "use": {
+            "type": "string",
+            "enum": ["sig"],
+            "description": "Key usage. Always `sig` for our use case."
+          }
+        },
+        "required": ["kty", "kid", "alg", "k", "use"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["keys"],
+  "additionalProperties": false,
+  "x-http": {
+    "endpoint": "GET /.well-known/jwks.json",
+    "response_headers": {
+      "Content-Type": "application/jwk-set+json",
+      "Cache-Control": "public, max-age=3600, immutable",
+      "Vary": "Accept-Encoding"
+    },
+    "cache_notes": "The Cache-Control is aggressive because rotation windows are longer than the cache TTL. Verifiers that see a JWT with a kid they don't recognise refresh the JWKS on demand (cache-busting via a query string or a soft revalidation)."
+  }
+}

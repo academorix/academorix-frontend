@@ -1,0 +1,130 @@
+{
+  "id": "academorix://modules/platform-user/compliance",
+  "$version": 1,
+  "title": "platform-user \u2014 compliance evidence",
+  "description": "SOC 2 HEAVY. This module is the substrate for every internal-workforce control that a Type II attestation covers \u2014 CC6.1 logical access, CC6.7 encryption + credential mgmt, CC7.2 change monitoring, CC7.3 incident response, CC8.1 change management. Every state transition on a PlatformUser writes an audit row; every PII access writes a meta-audit row; every offboarding is measured against a 24h access-removal SLA. Distinct from the tenant plane's compliance surface (which is GDPR-heavy) \u2014 platform staff are Academorix's own employees, so tenant-facing GDPR articles like Art. 17 (right to erasure) do NOT govern PlatformUser rows.",
+  "regimes": {
+    "soc2_type2": {
+      "applicable": true,
+      "primary_regime": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access",
+          "evidence": "Every route on the platform_admin guard is permission-gated via PlatformUserPolicy + PlatformProfilePolicy. Every PII-unmute ability (viewPii, viewHrContext, viewOnCallPhone) writes an audit meta-row. Freshly-hired PlatformUsers land with least-privilege \u2014 only `platform.platform_profiles.view.self` + `.update.self` \u2014 additional roles granted post-hire by super_admin, itself audit-logged."
+        },
+        {
+          "criterion": "CC6.2",
+          "principle": "user access provisioning",
+          "evidence": "`platform-user:hire` command + `POST /platform-users` route enforce the MFA-on-Identity gate + a super_admin actor + a documented reason. Rejects a hire whose Identity has NULL mfa_secret_encrypted \u2014 platform staff MUST be MFA-enrolled before receiving platform_admin credentials."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "user access modification",
+          "evidence": "PlatformUserManagerReassigned + PlatformUserDepartmentChanged + role assignment events all fire on afterCommit + write audit rows. The `platform-user:audit-report` command aggregates all modifications for a compliance-review pass."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "access removal",
+          "evidence": "24h SLA on RevokePlatformUserAccessJob. Access revocation covers Sanctum PATs (via personal_access_tokens delete), JWTs (via jti deny-list cache), active impersonation sessions (via TerminateImpersonation), and on-call rotation membership (via OnCallResolver::unregister). PagerDuty alerts fire at 12h (half-SLA)."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "`platform.audit` middleware writes an audit row for EVERY platform-plane request that mutates state, tagged with a correlation_id shared across the request lifecycle. Read-only requests write a lighter activity_log row when they touch PII (via `platform_user.pii_access.total` metric)."
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "incident response",
+          "evidence": "PlatformUserSuspended is a synchronous access-pause primitive used during Sev-1 security incidents. On-call rotation resolver (backed by PagerDuty) routes escalations to the currently-on-duty PlatformUser. The `platform.security_review` entitlement gates access to session-revocation-across-the-fleet."
+        },
+        {
+          "criterion": "CC7.5",
+          "principle": "recovery from disruption",
+          "evidence": "PlatformUserRestored reverses a suspend. Retention-hold window (90 days) allows an accidentally-offboarded PlatformUser to be manually restored via a super_admin's compliance-officer-signed request."
+        },
+        {
+          "criterion": "CC8.1",
+          "principle": "change management",
+          "evidence": "Every platform-plane audit row is retained in HOT storage for 365 days (config('platform-user.audit.retention_hot_days')) \u2014 the SOC 2 attestation window. Post-hot, rotates to cold via audit::RotateAuditColdStorageJob for 7y retention."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.5.15",
+          "principle": "access control",
+          "evidence": "PlatformUserPolicy + PlatformProfilePolicy define the ability catalogue. Grants are per-user via `platform_role_assignments` + `platform_entitlement_grants` (both Wave 1b)."
+        },
+        {
+          "annex": "A.5.16",
+          "principle": "identity management",
+          "evidence": "PlatformUser is a projection of Identity into the staff plane \u2014 the identity_id FK is the SINGLE root of trust. MFA enrolment gate at hire time + runtime middleware enforcement together guarantee no non-MFA platform_admin sessions."
+        },
+        {
+          "annex": "A.6.6",
+          "principle": "confidentiality / non-disclosure",
+          "evidence": "PII on PlatformProfile is redacted by default; unmute abilities (viewPii, viewHrContext) each write a meta-audit row. The offboarding_reason field is redacted even for super_admin (visible only under `viewHrContext` which is HR + legal only)."
+        },
+        {
+          "annex": "A.8.24",
+          "principle": "cryptography use",
+          "evidence": "Credentials + MFA secrets live on Identity (KMS-encrypted). PlatformUser stores no credential material of its own. See identity::compliance for the KMS envelope-encryption evidence."
+        },
+        {
+          "annex": "A.12.4",
+          "principle": "logging + monitoring",
+          "evidence": "`platform.audit` middleware. See CC7.2 evidence above."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "scope_note": "PlatformUser + PlatformProfile rows carry PII (name, phone, email via Identity), so GDPR data-processing principles apply \u2014 but Academorix is the DATA CONTROLLER for its own employee records, and processing basis is the employment contract (Art. 6(1)(b)). Data-subject rights apply, though Art. 17 (erasure) is bounded by the audit-retention obligations under Art. 30.",
+      "controls": [
+        {
+          "article": "Art. 5(1)(f)",
+          "principle": "integrity + confidentiality",
+          "evidence": "PII on PlatformProfile classified `restricted` (data-classes.json). Redactor rules apply unless the caller carries the explicit view.pii permission. Every unmute writes a meta-audit row."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "processing basis (contract)",
+          "evidence": "Every PlatformUser row is created under the employment contract with the referenced Identity's real human. Consent framework does not apply to internal-workforce processing."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure (bounded)",
+          "evidence": "PurgeOffboardedPlatformUsersJob hard-deletes the row after the 90-day retention hold. Audit rows referencing the ex-PlatformUser survive with an anonymised actor placeholder (SOC 2 evidence retention prevails over erasure for the employment record). Compliance officer + DPO co-sign any manual pre-90-day purge (rare)."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing",
+          "evidence": "audit-heavy trail (see CC7.2). PlatformUser mutations are the internal-workforce records-of-processing evidence for the Academorix DPO."
+        }
+      ]
+    },
+    "hr_compliance": {
+      "applicable": true,
+      "scope_note": "Regional labour-law compliance (EEOC in the US, GDPR-adjacent in the EU) governs employment-record retention + access. This module surfaces the hooks; the retention policy is jurisdiction-dependent + set per Academorix workplace, not per PlatformUser.",
+      "controls": [
+        {
+          "principle": "employment record retention",
+          "evidence": "The 90-day retention hold + subsequent hard delete of the PlatformUser row is compatible with the 3-year US EEOC record-retention floor because the AUDIT trail (which lives on the audit module) persists 7y. HR gets a redacted export via `platform-user:audit-report --format=pdf` before hard-delete for their own separate archive."
+        },
+        {
+          "principle": "co-signer requirement for high-privilege revocations",
+          "evidence": "`platform.security_review` entitlement grants require a co-signer from the security department. Documented via requires_co_signer=true on the entitlement definition."
+        }
+      ]
+    }
+  },
+  "regime_tier_summary": {
+    "primary": "soc2_type2",
+    "secondary": ["iso_27001"],
+    "tertiary": ["gdpr", "hr_compliance"],
+    "note": "SOC 2 Type II is the load-bearing framework here \u2014 the module is designed around its criteria. ISO 27001 controls are naturally covered as a consequence. GDPR + HR-compliance apply narrowly (PII handling + employment-record retention)."
+  }
+}

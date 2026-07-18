@@ -1,0 +1,140 @@
+{
+  "id": "academorix://modules/platform-user/routes",
+  "$version": 1,
+  "title": "platform-user \u2014 HTTP routes",
+  "description": "Nine routes, ALL on the platform_admin guard, ALL under the `/api/v1/platform/` prefix. There is NO tenant-facing surface \u2014 tenant Users cannot see platform staff. Every route runs `platform.audit` + `platform.mfa_required` middleware (auto-applied). Every route requires the caller to hold a specific `platform.platform_users.*` permission \u2014 least-privilege by design: a freshly-hired platform staff without additional roles can reach ONLY the `/platform-profiles/me` endpoints.",
+  "groups": [
+    {
+      "name": "platform-users-crud",
+      "prefix": "/api/v1/platform/platform-users",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "platform.mfa_required",
+        "platform.audit",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Primary CRUD surface for Academorix staff management. super_admin + hr scope for writes; ops + product + security can read.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformUserController@index",
+          "permission": "platform.platform_users.viewAny",
+          "description": "List. Filters: filter[department], filter[status], filter[employment_type], filter[manager_id]. Search: q (matches display_name + email fingerprint when caller has viewPii). Default sort: hire_date desc. Excludes offboarded rows unless include_offboarded=true."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformUserController@store",
+          "permission": "platform.platform_users.hire",
+          "description": "Hire a new PlatformUser from an existing Identity. Body: HirePlatformUserInput. Fires PlatformUserHired on success. Refuses with 422 `IDENTITY_MFA_REQUIRED` when the target Identity has NULL mfa_secret_encrypted."
+        },
+        {
+          "method": "GET",
+          "path": "/{platformUser}",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformUserController@show",
+          "permission": "platform.platform_users.view",
+          "description": "Detail view. Includes profile satellite (PII gated), manager reference, direct reports count, current on-call shift if in rotation. Redacted per PII permission gate."
+        },
+        {
+          "method": "PATCH",
+          "path": "/{platformUser}",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformUserController@update",
+          "permission": "platform.platform_users.update",
+          "description": "Update employment metadata (department, employment_type, job_title, manager_id, hire_date). Refuses status transitions here \u2014 those go through the dedicated /suspend, /restore, /offboard endpoints so the state-machine gates run cleanly."
+        },
+        {
+          "method": "POST",
+          "path": "/{platformUser}/suspend",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformUserSuspendController@__invoke",
+          "permission": "platform.platform_users.suspend",
+          "description": "Temporary suspension. Body: { reason: string (min 20 chars) }. Fires PlatformUserSuspended. Revokes all active platform_admin PATs for this user + pauses (does not terminate) any active impersonation sessions."
+        },
+        {
+          "method": "POST",
+          "path": "/{platformUser}/restore",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformUserRestoreController@__invoke",
+          "permission": "platform.platform_users.restore",
+          "description": "Reverse a suspend. Body: { note?: string }. Refuses when status != 'suspended'. Fires PlatformUserRestored + PlatformUserActivated. Paused impersonation sessions do NOT auto-resume \u2014 must be explicitly re-started."
+        },
+        {
+          "method": "POST",
+          "path": "/{platformUser}/offboard",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformUserOffboardController@__invoke",
+          "permission": "platform.platform_users.offboard",
+          "description": "Terminal offboarding. Body: OffboardPlatformUserInput. Refuses when the target has direct reports (must be reassigned first via /reassign-manager). Fires PlatformUserOffboarded which dispatches RevokePlatformUserAccessJob to notifications-critical. Starts the 90-day retention hold clock."
+        },
+        {
+          "method": "GET",
+          "path": "/{platformUser}/audit-trail",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformUserAuditTrailController@__invoke",
+          "permission": "platform.platform_users.view.audit_trail",
+          "description": "90-day audit summary for this PlatformUser as actor. Query params: from, to, format (json | csv). Response: PlatformUserAuditReportData. Every invocation itself writes an audit row so 'who viewed whose trail' is auditable."
+        }
+      ]
+    },
+    {
+      "name": "platform-profiles-me",
+      "prefix": "/api/v1/platform/platform-profiles",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "platform.mfa_required",
+        "platform.audit",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Self-service surface every PlatformUser reaches to read + write their own profile. Only two abilities involved: view.self + update.self, seeded on every platform_admin baseline role.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/me",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformProfileMeController@show",
+          "permission": "platform.platform_profiles.view.self",
+          "description": "Read own PlatformProfile row. Always unredacted for the caller (they own the row)."
+        },
+        {
+          "method": "PATCH",
+          "path": "/me",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\PlatformProfileMeController@update",
+          "permission": "platform.platform_profiles.update.self",
+          "description": "Update own profile fields. Body: UpdatePlatformProfileInput. first_name + last_name are HR-controlled and rejected on self-service (caller must ask HR to update via /platform-users/{id})."
+        }
+      ]
+    },
+    {
+      "name": "platform-users-on-call",
+      "prefix": "/api/v1/platform/platform-users/on-call",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "platform.mfa_required",
+        "platform.audit",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "On-call rotation resolver. Consumed by internal escalation tooling + the ops dashboard.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/current",
+          "controller": "Academorix\\PlatformUser\\Http\\Controllers\\Platform\\OnCallController@current",
+          "permission": "platform.on_call.view",
+          "description": "Resolve current on-call staff via OnCallResolver. Response: PlatformUserOnCallResolutionData with unredacted phone_e164 (permission gate specifically for on-call escalation)."
+        }
+      ]
+    }
+  ],
+  "boundary_note": "There is deliberately no /api/v1/platform-users route on the tenant plane. Tenant users cannot list, view, or interact with platform staff. The ONE legitimate bridge is the future `access/delegation` module (Wave 1b) which exposes impersonation-session start-points on both planes (a super_admin starts an impersonation from the platform plane; the tenant plane sees an audit-log entry naming the impersonator via a derived DTO that reveals only the display_name)."
+}

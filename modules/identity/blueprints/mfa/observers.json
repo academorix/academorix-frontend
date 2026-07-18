@@ -1,0 +1,43 @@
+{
+  "id": "academorix://modules/mfa/observers",
+  "$version": 1,
+  "title": "mfa — Eloquent observers",
+  "observers": [
+    {
+      "model": "WebauthnCredential",
+      "observer": "Academorix\\Mfa\\Observers\\WebauthnCredentialObserver",
+      "handles": [
+        "creating → populate ULID prefix `wac_`",
+        "creating → refuse when config('mfa.webauthn.enabled') is false OR the `mfa_webauthn` entitlement is not held by the referring User's tenant",
+        "creating → refuse when the credential_id already exists on ANY row (globally unique bytea column; duplicate registration is a compliance signal that either the browser or the authenticator is misbehaving)",
+        "creating → normalise transports to lowercase (some authenticators return `USB`/`NFC`; W3C spec is lowercase)",
+        "creating → verify sign_count is non-negative (some authenticators start at 0, some at 1; either is fine, but negative is a spec violation)",
+        "creating → default device_name when the caller submitted an empty string: `<attestation_format>·<is_platform_authenticator ? 'platform' : 'roaming'>` (e.g. `packed·roaming`) so a user who accepts the default sees SOMETHING descriptive",
+        "creating → fire WebauthnCredentialRegistered",
+        "updating (sign_count dirty) → refuse when the new value is LESS THAN OR EQUAL TO the current value (monotonic invariant — a backward-going counter is a REPLAY ATTACK signal, per WebAuthn spec §5.1.3 step 21). Emits a WebauthnCredentialDeleted with reason='sign_count_replay' + writes a critical compliance-audit entry",
+        "updating (device_name dirty) → fire WebauthnCredentialRenamed with the from/to names",
+        "updating (disabled_at transition NULL → non-null) → fire WebauthnCredentialDisabled",
+        "updating (disabled_at transition non-null → NULL) → refuse (re-enabling a disabled credential is not supported — user must delete + re-register so a fresh attestation is captured; prevents disabled-then-restored credentials from bypassing the retention purge)",
+        "deleting → fire WebauthnCredentialDeleted with trigger='user_action' if the caller is the credential owner, else 'admin_action'",
+        "deleted (after commit) → invalidate the cached credential list for the Identity (see caches.json)"
+      ]
+    },
+    {
+      "model": "MfaChallenge (proxy — the row is owned by identity/auth's auth_mfa_challenges table; this observer runs on the model class this module exposes over the shared table)",
+      "observer": "Academorix\\Mfa\\Observers\\MfaChallengeObserver",
+      "handles": [
+        "created → fire MfaChallengeIssued",
+        "updating (attempts_remaining dirty AND decreasing) → fire MfaChallengeFailed with the reason resolved from the update context (code_mismatch / assertion_signature_invalid / sign_count_replay / recovery_code_invalid)",
+        "updating (attempts_remaining just reached 0) → fire MfaChallengeFailed with reason='attempts_exhausted' + emit the `academorix.mfa.challenge` counter with outcome=attempts_exhausted",
+        "updating (state transitions to 'succeeded') → fire MfaChallengeSucceeded",
+        "updating (state transitions to 'expired') → NO event (the 5-minute TTL elapsing without action is not a security event — the caller simply abandoned the flow; only recorded as a metric increment)",
+        "deleted → NO event (challenges are transient; hard-delete on TTL is the norm and does not warrant a lifecycle event)"
+      ]
+    }
+  ],
+  "notes": [
+    "The observer is registered by MfaServiceProvider::boot(). It runs BEFORE HasActivityLog + HasAudit hooks so audit trails see the fully-normalised row.",
+    "Every `refuse` case throws a subclass of `Academorix\\Mfa\\Exceptions\\MfaViolationException` — mapped to the errors in `errors.json`. In particular, `sign_count` monotonic invariant violations throw `SignCountReplayException` which the observer catches, records a critical audit entry, then re-throws so the request fails hard (never silently accepts a replayed assertion).",
+    "The sign_count check is the primary WebAuthn security invariant this module enforces (beyond the assertion signature itself). It protects against cloned authenticators — if two authenticators claim to be the same credential_id, one of them WILL emit a stale sign_count, and this observer refuses the assertion + deletes the credential so subsequent attempts must re-register."
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "id": "academorix://modules/mfa/analytics",
+  "$version": 1,
+  "title": "mfa — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "description": "Product-analytics events for the MFA surface. Distinct from OpenTelemetry metrics: analytics feed product+growth dashboards (segmented by identity fingerprint under 'functional' consent tier), while metrics feed operational dashboards (aggregate-only). No PII on any event.",
+  "events": [
+    {
+      "name": "MFA Enrollment Preview Started",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "method",
+        "elapsed_since_registration_days"
+      ],
+      "description": "Round 1 of enrolment. method=totp|webauthn. Drives the enrolment-funnel dashboard (preview → confirm conversion rate)."
+    },
+    {
+      "name": "MFA Enrollment Completed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "method",
+        "elapsed_from_preview_ms",
+        "elapsed_since_registration_days"
+      ],
+      "description": "Round 2 succeeded. Drives the enrolment-funnel completion rate + time-to-enroll dashboards."
+    },
+    {
+      "name": "MFA Enrollment Abandoned",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "method",
+        "reason"
+      ],
+      "description": "Round 2 failed OR the preview expired. reason=confirmation_code_invalid|preview_expired|preview_missing|attestation_verification_failed|duplicate_credential. Signals friction in the enrolment UX."
+    },
+    {
+      "name": "MFA Challenge Attempted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "method",
+        "outcome",
+        "duration_ms",
+        "context"
+      ],
+      "description": "One challenge verification. outcome=verified|invalid|expired. context=login|step_up (distinguishes initial-login MFA from mid-session step-up)."
+    },
+    {
+      "name": "MFA Recovery Code Consumed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "remaining_count"
+      ],
+      "description": "User fell back to a recovery code. Signals primary-factor loss OR credential migration event."
+    },
+    {
+      "name": "MFA Recovery Codes Regenerated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "trigger"
+      ],
+      "description": "trigger=self_service|admin_action."
+    },
+    {
+      "name": "WebAuthn Credential Registered",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "attestation_format",
+        "is_platform_authenticator",
+        "is_synced_passkey",
+        "credential_count_after"
+      ],
+      "description": "New credential registered. credential_count_after = the total active credentials for this Identity after the registration. Drives the multi-device-adoption dashboard."
+    },
+    {
+      "name": "WebAuthn Credential Removed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "trigger",
+        "credential_count_after",
+        "elapsed_since_registered_days"
+      ],
+      "description": "trigger=user_action|admin_action|retention_purge. Drives the credential-lifetime distribution."
+    },
+    {
+      "name": "MFA Disabled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "trigger"
+      ],
+      "description": "trigger=self_service|admin_action|account_recovery|identity_erasure."
+    },
+    {
+      "name": "MFA Step-Up Prompted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": [
+        "identity_fingerprint",
+        "action_id"
+      ],
+      "description": "mfa.require_recent_challenge middleware rejected a sensitive action. action_id = the target the caller was trying to invoke. Signals sensitive-action volume for the CX team."
+    }
+  ],
+  "notes": [
+    "`identity_fingerprint` is a SHA-256 of the identity_id, NOT the identity_id itself. Segments the event by Identity without exposing the underlying ULID to downstream analytics tooling.",
+    "None of these events carry email, dob, IP, user-agent, device_name, credential_id, or public-key material. If a downstream dashboard needs enrolment breakdown by geography, resolve country_code at the collector layer (before persisting) and pass ONLY the country_code."
+  ]
+}

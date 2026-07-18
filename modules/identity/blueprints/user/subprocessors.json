@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/user/subprocessors",
+  "$version": 1,
+  "title": "user \u2014 subprocessors",
+  "description": "The user module itself does not engage third-party processors directly \u2014 every field is stored in the tenant's own database. Adjacent processors that carry User-scoped data are engaged by sibling modules. This blueprint documents them for the compliance ledger.",
+  "subprocessors": [
+    {
+      "name": "AWS S3",
+      "role": "avatar_storage",
+      "purpose": "Persist `Profile.avatar_url` uploads. One object per avatar, keyed by profile_id + upload nonce.",
+      "data_processed": [
+        "Uploaded image bytes",
+        "Profile ULID (in the object key)",
+        "Content-Type header"
+      ],
+      "location": "customer's AWS region (tenant-selectable at provisioning; defaults to the tenant's region.data_residency_zone)",
+      "legal_basis": "contract",
+      "dpa_url": "https://aws.amazon.com/agreement/",
+      "cardholder_data_exposure": "none",
+      "engaged_by": "shared::media (avatar upload pipeline)",
+      "when_engaged": "user.profile.allow_avatar_upload = true AND caller successfully calls POST /me/avatar"
+    },
+    {
+      "name": "Postmark",
+      "role": "transactional_email",
+      "purpose": "Delivery of `UserProvisionedNotification` + `UserSuspendedNotification` + `UserAddedToTenantNotification` + `UserRemovedFromTenantNotification`.",
+      "data_processed": [
+        "Recipient email address (from identity->email)",
+        "Recipient display name (from profile->display_name)",
+        "Template variables (tenant name, actor name, reactivation date)"
+      ],
+      "location": "US (Postmark default)",
+      "legal_basis": "contract",
+      "dpa_url": "https://postmarkapp.com/dpa",
+      "cardholder_data_exposure": "none",
+      "engaged_by": "notifications module (mail channel)",
+      "when_engaged": "any lifecycle notification with mail in its channel list"
+    },
+    {
+      "name": "Twilio",
+      "role": "sms",
+      "purpose": "Optional SMS notification when the tenant's notifications config routes user-lifecycle events to the `sms` channel. Rare \u2014 most tenants keep this off.",
+      "data_processed": [
+        "Recipient phone_e164 (from profile->phone_e164)",
+        "Notification body text"
+      ],
+      "location": "US (Twilio default; EU-region routing available)",
+      "legal_basis": "contract + tenant opt-in",
+      "dpa_url": "https://www.twilio.com/legal/data-protection-addendum",
+      "cardholder_data_exposure": "none",
+      "engaged_by": "notifications module (sms channel)",
+      "when_engaged": "notification category default_channels contains 'sms' AND profile->phone_e164 is set"
+    }
+  ],
+  "notes": [
+    "AWS S3 avatar bytes are subject to EU data residency when the tenant's region is EU \u2014 the media module reads `region.data_residency_zone` at bucket resolution time.",
+    "The user module does NOT engage OpenAI / Google / DeepL / any translation provider directly \u2014 Profile.locale is a string tag, never machine-translated. Localised UI strings routed through localization::TranslatorDriverManager reference translation subprocessors under that module's ledger.",
+    "Postmark + Twilio DPAs are signed by the platform (Academorix). Tenant-level opt-out is available for `functional_optional` notifications only; `transactional_required` notifications cannot be opted out of per GDPR Art. 6(1)(b) (contract performance)."
+  ]
+}

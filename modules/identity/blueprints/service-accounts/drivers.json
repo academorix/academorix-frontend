@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/service-accounts/drivers",
+  "$version": 1,
+  "title": "service-accounts \u2014 driver specifications",
+  "description": "Two driver contracts. `SecretRotator` wraps password-style bcrypt hashing for the rotation secret (single driver \u2014 bcrypt; alternative drivers reserved for future argon2id migration). `ServiceAccountJwtIssuer` bridges to the auth module's JwtSigner \u2014 there is no local JWT-driver family; this module NEVER signs JWTs directly.",
+  "contracts": [
+    {
+      "interface": "Academorix\\ServiceAccount\\Contracts\\SecretRotatorInterface",
+      "methods": [
+        {
+          "signature": "generate(int $lengthBytes = 32): string",
+          "returns": "Cryptographically random plaintext secret (base64-encoded). Default 32 random bytes = 256 bits of entropy."
+        },
+        {
+          "signature": "hash(string $plaintext): string",
+          "returns": "Bcrypt hash at cost 12. Same algorithm as Laravel Hash::make with rounds=12."
+        },
+        {
+          "signature": "verify(string $plaintext, string $hash): bool",
+          "returns": "Constant-time comparison. Delegates to Laravel Hash::check. Never leaks per-input timing."
+        },
+        {
+          "signature": "needsRehash(string $hash): bool",
+          "returns": "True when the hash cost is below the current `service-accounts.security.hash_cost` config value. Enables gradual cost migration without breaking existing rows."
+        }
+      ]
+    },
+    {
+      "interface": "Academorix\\ServiceAccount\\Contracts\\ServiceAccountJwtIssuerInterface",
+      "methods": [
+        {
+          "signature": "issue(ServiceAccount $sa, IssueScope $scope): IssuedToken",
+          "returns": "IssuedToken { token: string, expires_at: DateTimeImmutable, jti: string }. Composes claims: sub = $sa->id, app = $sa->application_id (slug form), tid = $sa->tenant_id (when non-null), aud = $scope->aud (or SA default), iat + exp, jti (fresh UUID). Signs via auth::JwtSigner::forKid($sa->signer_kid). Fires ServiceAccountJwtIssued event."
+        },
+        {
+          "signature": "verify(string $token): VerifiedTokenClaims",
+          "returns": "Decoded + verified claims. Delegates to auth::JwtVerifier for signature + iss + aud + exp, then confirms the SA row is enabled + not expired. Refuses on any inconsistency."
+        }
+      ]
+    },
+    {
+      "interface": "Academorix\\ServiceAccount\\Contracts\\DormantAccountDetectorInterface",
+      "methods": [
+        {
+          "signature": "detect(?string $applicationId = null): Collection<ServiceAccount>",
+          "returns": "Collection of SAs whose last_used_at is older than `service-accounts.security.dormant_threshold_days`. Scopes to one application when applicationId is provided; otherwise iterates every application."
+        }
+      ]
+    },
+    {
+      "interface": "Academorix\\ServiceAccount\\Contracts\\ServiceAccountFingerprinterInterface",
+      "methods": [
+        {
+          "signature": "recordObservation(string $saId, string $ipPrefix24, string $userAgentHash): FingerprintDelta",
+          "returns": "FingerprintDelta { is_novel_tuple: bool, current_rate: float, baseline_rate: float, rate_spike_ratio: float }. Populates the rolling 30-day fingerprint cache; computes the delta for the audit middleware to decide whether to dispatch SuspiciousServiceAccountActivityNotification."
+        },
+        {
+          "signature": "isKnownTuple(string $saId, string $ipPrefix24, string $userAgentHash): bool",
+          "returns": "Whether the tuple has been observed in the rolling 30-day window."
+        }
+      ]
+    }
+  ],
+  "secret_rotator_drivers": [
+    {
+      "name": "bcrypt",
+      "class": "Academorix\\ServiceAccount\\Drivers\\BcryptSecretRotator",
+      "underlying_package": "laravel/framework Hash::driver('bcrypt')",
+      "strengths": [
+        "Battle-tested; deterministic; ships with every PHP install",
+        "Cost knob (rounds=12) tunable per environment",
+        "Sufficient for machine-credential storage where memory-hardness isn't critical (SA secrets rotate frequently + are randomly generated, so GPU attacks against a stolen hash are less impactful than password-hash breaches)"
+      ],
+      "weaknesses": [
+        "Not memory-hard (unlike argon2id which we DO use for Identity password hashes)"
+      ],
+      "config_prefix": "service-accounts.security.bcrypt",
+      "config_keys": {
+        "cost": {
+          "path": "service-accounts.security.bcrypt.cost",
+          "default": 12,
+          "description": "Bcrypt rounds. 12 = ~250ms per hash on modern hardware \u2014 acceptable on the exchange-endpoint hot path with a rate limit of 5 requests per minute per SA."
+        }
+      }
+    }
+  ],
+  "jwt_issuer_drivers": [
+    {
+      "name": "hs256-via-auth",
+      "class": "Academorix\\ServiceAccount\\Drivers\\Hs256AuthBridgeJwtIssuer",
+      "underlying_package": "Academorix\\Auth\\Services\\JwtSigner (owned by identity/auth) + firebase/php-jwt (owned by auth transitively)",
+      "strengths": [
+        "Reuses the audited signing routine \u2014 no local re-implementation of JWT signing",
+        "Kid rotation + revocation live entirely in the auth module; this module ships only the FK",
+        "When Wave 1c adds RS256 alongside HS256, no changes here \u2014 the auth module's JwtSigner picks the algorithm from the kid's `algorithm` column"
+      ],
+      "weaknesses": [
+        "Introduces a runtime dependency on the identity/auth module. `identity/service-accounts` module priority (24) must sit above `identity/auth` (25) so the SA row exists before auth wires up the signer \u2014 but auth calls into this module only when a request presents a SA JWT, which is post-boot."
+      ],
+      "config_prefix": "service-accounts.jwt"
+    }
+  ]
+}

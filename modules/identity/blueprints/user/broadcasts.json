@@ -1,0 +1,11 @@
+{
+  "id": "academorix://modules/user/broadcasts",
+  "$version": 1,
+  "title": "user \u2014 realtime broadcasts",
+  "description": "The user module does NOT broadcast on realtime channels directly. User + Profile + TenantMember mutations fire domain events (see `events.json`) which downstream modules (notifications, activity) may republish over their own broadcast channels \u2014 but this module ships zero channels of its own. Broadcast surfaces belong to the domain that owns the read side (notifications inbox, activity feed), not the write side.",
+  "channels": [],
+  "notes": [
+    "If the SPA needs live updates when a User is added to a Tenant, it subscribes to `tenant.{id}.membership_changes` \u2014 that channel is owned by the tenancy module, not this one.",
+    "If a User sees their own /me update in real time, it subscribes to `user.{id}.self_changes` \u2014 owned by the notifications module's in-app channel."
+  ]
+}

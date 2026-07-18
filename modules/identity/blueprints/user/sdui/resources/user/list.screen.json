@@ -1,0 +1,253 @@
+{
+  "id": "user.resources.user.list",
+  "title": "Users",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/users",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "user", "entity": "user", "action": "list" },
+  "requiresPermission": "users.viewAny",
+  "notes": [
+    "Column set is scoped by the caller's `profile.view.pii` state. Without the permission, the name column shows display_name only + the phone column is hidden.",
+    "Sort defaults: last_login_at desc. Search matches on identity email + profile.display_name + profile.first_name + profile.last_name (redactor honours the caller's PII permission on the searchable columns)."
+  ],
+  "dataSources": [
+    {
+      "name": "users",
+      "kind": "http.get",
+      "url": "/api/v1/users?include=profile,memberships,memberships.role&sort=-last_login_at",
+      "unwrap": "data"
+    },
+    {
+      "name": "roles",
+      "kind": "http.get",
+      "url": "/api/v1/roles?filter[guard]=sanctum",
+      "unwrap": "data"
+    },
+    {
+      "name": "entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/user_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Users" }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Members of this tenant and their roles."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": {
+                    "cap": { "$ref": "entitlement.value_cap" },
+                    "used": { "$ref": "entitlement.value_used" },
+                    "size": "sm"
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "leadingIcon": "user-plus",
+                    "children": "Invite user"
+                  },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/users/create" } },
+                  "bindings": { "disabled": { "$ref": "entitlement.is_exceeded" } },
+                  "requiresPermission": "users.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Search by name or email", "name": "q" }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "status", "placeholder": "All statuses", "clearable": true },
+              "options": [
+                { "key": "pending", "label": "Pending" },
+                { "key": "active", "label": "Active" },
+                { "key": "suspended", "label": "Suspended" },
+                { "key": "disabled", "label": "Disabled" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "role_id", "placeholder": "All roles", "clearable": true },
+              "bindings": { "options": { "$ref": "roles" } },
+              "optionsMap": { "key": "id", "label": "name" }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "avatar",
+              "header": "",
+              "cell": {
+                "kind": "Avatar",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "src": { "$ref": "row.avatar_url" },
+                  "fallbackText": { "$ref": "row.display_name" }
+                }
+              }
+            },
+            {
+              "key": "display_name",
+              "header": "Name",
+              "cell": {
+                "kind": "Link",
+                "propsExpr": "{ to: '/tenant/users/' + row.id, children: row.full_name || row.display_name, className: 'font-medium' }"
+              }
+            },
+            {
+              "key": "email",
+              "header": "Email",
+              "cell": { "kind": "Text", "bindings": { "children": { "$ref": "row.email" } } },
+              "note": "Read from user->identity->email. Never redacted \u2014 admins with users.viewAny already have PII adjacency."
+            },
+            {
+              "key": "status",
+              "header": "Status",
+              "cell": {
+                "kind": "Widget",
+                "widget": "user.user-status-chip",
+                "propsExpr": "{ status: row.status, size: 'xs' }"
+              }
+            },
+            {
+              "key": "role",
+              "header": "Role",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "neutral" },
+                "bindings": { "children": { "$ref": "row.default_role_name" } }
+              }
+            },
+            {
+              "key": "last_login_at",
+              "header": "Last active",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": {
+                  "children": { "$expr": "row.last_login_at ? formatRelative(row.last_login_at) : 'Never'" }
+                }
+              }
+            },
+            {
+              "key": "actions",
+              "header": "",
+              "cell": {
+                "kind": "Menu",
+                "trigger": {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "isIconOnly": true,
+                    "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                  }
+                },
+                "items": [
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "View" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/users/' + row.id"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Edit" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/users/' + row.id + '/edit'"
+                      }
+                    },
+                    "requiresPermission": "users.update"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Suspend" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'active'" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/users/' + row.id + '/suspend'",
+                        "confirm": "Suspend this user? They will be signed out and cannot log in until reactivated."
+                      }
+                    },
+                    "requiresPermission": "users.suspend"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Restore" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'suspended'" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/users/' + row.id + '/restore'"
+                      }
+                    },
+                    "requiresPermission": "users.restore"
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Erase (GDPR)", "className": "text-danger" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/users/' + row.id + '/erase'",
+                        "confirm": "GDPR erasure will hard-delete this user after a 30-day hold. Continue?"
+                      }
+                    },
+                    "requiresPermission": "users.erase"
+                  }
+                ]
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "users" } }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "user.me-card",
+  "title": "Me card",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Header card summarising the authenticated User. Consumed by the top navigation bar's popover trigger. Compact layout: avatar + display_name + role-in-active-tenant + a link to `/settings/profile`.",
+  "props": {
+    "layout": { "type": "string", "default": "compact", "enum": ["compact", "expanded"] },
+    "showRole": { "type": "boolean", "default": true },
+    "showEmail": { "type": "boolean", "default": false, "description": "Off by default \u2014 email is PII; only show on the /me expanded surface where the subject reads their own record." }
+  },
+  "dataSources": [
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/v1/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-3" },
+      "children": [
+        {
+          "kind": "Avatar",
+          "bindings": {
+            "props": {
+              "size": { "$expr": "props.layout === 'expanded' ? 'lg' : 'md'" },
+              "src": { "$ref": "me.profile.avatar_url" },
+              "fallbackText": { "$ref": "me.profile.display_name" }
+            }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "className": "font-semibold" },
+              "bindings": { "children": { "$ref": "me.profile.display_name" } }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted" },
+              "bindings": {
+                "hidden": { "$expr": "!props.showEmail" },
+                "children": { "$ref": "me.email" }
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs text-muted" },
+              "bindings": {
+                "hidden": { "$expr": "!props.showRole" },
+                "children": { "$expr": "me.active_role_name + ' \u00b7 ' + me.active_tenant_name" }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "id": "academorix://modules/identity/config",
+  "$version": 1,
+  "title": "identity \u2014 developer configuration",
+  "configFile": "config/identity.php",
+  "envPrefix": "IDENTITY_",
+  "description": "Subset of the identity-tier config relevant to the `identity` module itself. Auth-specific keys (session TTL, JWT signing, cross-app SSO grant TTL) live in `identity/auth/config/auth.php`. MFA-specific keys (TOTP period, WebAuthn attestation) live in `identity/mfa/config/mfa.php`. See design.md \u00a76.",
+  "sections": {
+    "password": {
+      "description": "Password policy \u2014 enforced by the `strong_password` validation rule at every write. Tenant admins can tighten via settings but the compliance floor is the config default.",
+      "keys": [
+        {
+          "path": "identity.password.min_length",
+          "type": "int",
+          "env": "IDENTITY_PASSWORD_MIN_LENGTH",
+          "default": 12,
+          "description": "Minimum character count. NIST 800-63B recommends \u2265 8; we default to 12 for defence-in-depth."
+        },
+        {
+          "path": "identity.password.require_uppercase",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "path": "identity.password.require_lowercase",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "path": "identity.password.require_number",
+          "type": "bool",
+          "default": true
+        },
+        {
+          "path": "identity.password.require_symbol",
+          "type": "bool",
+          "default": false,
+          "description": "Off by default \u2014 NIST 800-63B explicitly advises against mandatory symbols on the theory they push users toward predictable patterns. Tenants that need it for a compliance regime can flip it on."
+        },
+        {
+          "path": "identity.password.breach_check_enabled",
+          "type": "bool",
+          "env": "IDENTITY_PASSWORD_BREACH_CHECK",
+          "default": true,
+          "description": "Check every password against haveibeenpwned's k-anonymity API before accepting it. Off = no external call."
+        },
+        {
+          "path": "identity.password.breach_check_threshold",
+          "type": "int",
+          "default": 1,
+          "description": "Reject passwords seen in >=N public breaches. Default 1 = reject anything ever seen. Loosen (e.g. 100) for tenant environments with older users who resist strong-password requirements."
+        },
+        {
+          "path": "identity.password.history_size",
+          "type": "int",
+          "default": 5,
+          "description": "Rolling window \u2014 password can't match any of the last N hashes. Enforced by the `not_in_password_history` rule."
+        },
+        {
+          "path": "identity.password.hasher",
+          "type": "string",
+          "default": "argon2id",
+          "enum": ["argon2id", "bcrypt"],
+          "description": "argon2id preferred. bcrypt fallback for environments without libsodium. Configured on the Hash facade at boot."
+        },
+        {
+          "path": "identity.password.argon2id.memory",
+          "type": "int",
+          "default": 65536,
+          "description": "Argon2id memory cost in KiB. Default = 64 MiB. Higher = more resistant to GPU cracking; lower = faster hash."
+        },
+        {
+          "path": "identity.password.argon2id.time",
+          "type": "int",
+          "default": 4,
+          "description": "Argon2id iteration count."
+        },
+        {
+          "path": "identity.password.argon2id.threads",
+          "type": "int",
+          "default": 1,
+          "description": "Argon2id parallelism factor. Keep at 1 on cloud runtimes with shared CPU."
+        },
+        {
+          "path": "identity.password.max_age_days",
+          "type": "int | null",
+          "default": null,
+          "description": "Force rotation after N days. Null = never force. NIST 800-63B advises against mandatory rotation \u2014 default null. Set to 90/180/365 only when a compliance regime requires."
+        }
+      ]
+    },
+    "lockout": {
+      "description": "Failed-login lockout policy. Progressive backoff punishes repeated attackers without permanently locking out legitimate users.",
+      "keys": [
+        {
+          "path": "identity.lockout.max_failed_attempts",
+          "type": "int",
+          "env": "IDENTITY_LOCKOUT_MAX_ATTEMPTS",
+          "default": 5,
+          "description": "Number of failures before locking. Counter resets on successful login."
+        },
+        {
+          "path": "identity.lockout.window_minutes",
+          "type": "int",
+          "default": 15,
+          "description": "Sliding window over which failed_attempts_count accumulates."
+        },
+        {
+          "path": "identity.lockout.base_lockout_minutes",
+          "type": "int",
+          "default": 15,
+          "description": "Initial lockout duration."
+        },
+        {
+          "path": "identity.lockout.progressive_backoff",
+          "type": "bool",
+          "default": true,
+          "description": "Double the lockout duration on each subsequent lockout within a 1-hour window. 15min \u2192 30min \u2192 60min \u2192 120min (capped)."
+        },
+        {
+          "path": "identity.lockout.max_lockout_minutes",
+          "type": "int",
+          "default": 720,
+          "description": "Cap on lockout duration. Default 12 hours."
+        }
+      ]
+    },
+    "email_verification": {
+      "description": "Email-ownership verification lifecycle.",
+      "keys": [
+        {
+          "path": "identity.email_verification.required",
+          "type": "bool",
+          "default": true,
+          "description": "Whether new identities MUST verify email before their Users become active. False = accept unverified identities (rare \u2014 usually only for admin-provisioned identities)."
+        },
+        {
+          "path": "identity.email_verification.token_ttl_hours",
+          "type": "int",
+          "default": 24
+        },
+        {
+          "path": "identity.email_verification.resend_debounce_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "Rate-limit on the resend endpoint."
+        }
+      ]
+    },
+    "password_reset": {
+      "description": "Password-reset flow.",
+      "keys": [
+        {
+          "path": "identity.password_reset.token_ttl_minutes",
+          "type": "int",
+          "default": 15
+        },
+        {
+          "path": "identity.password_reset.request_rate_limit_per_hour",
+          "type": "int",
+          "default": 5,
+          "description": "Per-email rate limit on the forgot-password endpoint. Rejected requests still return 200 (enumeration safety)."
+        }
+      ]
+    },
+    "mfa_secret": {
+      "description": "KMS envelope-encryption settings for Identity.mfa_secret_encrypted. Configuring here \u2014 not in the mfa module \u2014 because the encryption is a property of the Identity storage substrate.",
+      "keys": [
+        {
+          "path": "identity.mfa_secret.encryptor",
+          "type": "string",
+          "default": "kms",
+          "enum": ["kms", "vault", "local"],
+          "description": "Which encryption backend the MfaSecretEncryptor uses. 'kms' = AWS KMS (production); 'vault' = HashiCorp Vault; 'local' = local key (dev-only)."
+        },
+        {
+          "path": "identity.mfa_secret.kms.key_id",
+          "type": "string",
+          "env": "IDENTITY_MFA_KMS_KEY_ID",
+          "description": "KMS key ARN or alias. E.g. `alias/academorix/identity-mfa`."
+        },
+        {
+          "path": "identity.mfa_secret.kms.region",
+          "type": "string",
+          "env": "AWS_REGION",
+          "default": "us-east-1"
+        },
+        {
+          "path": "identity.mfa_secret.vault.mount_path",
+          "type": "string",
+          "default": "secret/identity/mfa"
+        },
+        {
+          "path": "identity.mfa_secret.local.key_file",
+          "type": "string",
+          "default": "storage/keys/mfa.key",
+          "description": "Dev-only. Never used in production."
+        }
+      ]
+    },
+    "retention": {
+      "description": "GDPR erasure hold-period + token TTLs.",
+      "keys": [
+        {
+          "path": "identity.retention.erasure_hold_days",
+          "type": "int",
+          "default": 30,
+          "description": "How long a soft-deleted Identity is retained before hard delete. GDPR-compliant erasure requires prompt action (30 days is a common industry standard); a compliance officer can extend via settings up to 90 days for pending disputes."
+        }
+      ]
+    },
+    "commands": {
+      "description": "Console-command safety guards.",
+      "keys": [
+        {
+          "path": "identity.commands.require_reason",
+          "type": "bool",
+          "env": "IDENTITY_COMMANDS_REQUIRE_REASON",
+          "default": true,
+          "description": "When true, every mutating Artisan command must be invoked with --reason=<text> (audit-logged). Off in dev; on in staging + prod."
+        }
+      ]
+    }
+  }
+}

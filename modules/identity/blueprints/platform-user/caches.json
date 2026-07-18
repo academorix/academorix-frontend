@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/platform-user/caches",
+  "$version": 1,
+  "title": "platform-user \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["platform-user", "on-call", "platform-org-chart"],
+  "keys": [
+    {
+      "pattern": "platform-user:on-call:current:{department?}",
+      "description": "OnCallResolver::current() cache. Short TTL so a rotation change (someone offboarded mid-shift, PagerDuty updated its schedule) propagates within a minute. `department` is optional \u2014 omitted key resolves the platform-wide current shift.",
+      "ttlSeconds": 60,
+      "tags": ["platform-user", "on-call"],
+      "invalidatedBy": [
+        "PlatformUserObserver.updating (when on_call_rotation_key changed OR status changed)",
+        "PlatformUserObserver.deleted (soft OR hard)",
+        "Scheduled command `on-call:refresh` every 60s"
+      ]
+    },
+    {
+      "pattern": "platform-user:on-call:next:{department?}",
+      "description": "OnCallResolver::next() cache. Same shape as current shift but looks up the upcoming shift start.",
+      "ttlSeconds": 60,
+      "tags": ["platform-user", "on-call"],
+      "invalidatedBy": ["same as current"]
+    },
+    {
+      "pattern": "platform-user:reports:{platform_user_id}",
+      "description": "Cached list of direct reports (compact references) for a given manager. Read on the platform-admin detail view. Invalidated on any PlatformUserManagerReassigned targeting this user OR any of their reports.",
+      "ttlSeconds": 300,
+      "tags": ["platform-user", "platform-org-chart"],
+      "invalidatedBy": [
+        "PlatformUserObserver.updating (when manager_id changed)",
+        "PlatformUserObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "platform-user:manager-chain:{platform_user_id}",
+      "description": "Materialised chain of managers for cycle detection + depth-cap enforcement in the observer's manager-reassignment gate.",
+      "ttlSeconds": 300,
+      "tags": ["platform-user", "platform-org-chart"],
+      "invalidatedBy": [
+        "PlatformUserObserver.updating (when manager_id changed on this row OR any ancestor)"
+      ]
+    },
+    {
+      "pattern": "platform-user:mfa-coverage-ratio",
+      "description": "Cached result of the MfaCoverageProbe. Sampled every 5 minutes so a bad probe response does not stall readiness checks.",
+      "ttlSeconds": 300,
+      "tags": ["platform-user"]
+    },
+    {
+      "pattern": "platform-user:active-count:{department?}",
+      "description": "Active PlatformUser headcount by department. Feeds the `academorix.platform_user.active.count` metric + the ops dashboard.",
+      "ttlSeconds": 3600,
+      "tags": ["platform-user"],
+      "invalidatedBy": [
+        "PlatformUserObserver.created",
+        "PlatformUserObserver.updating (when status changed OR department changed)",
+        "PlatformUserObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "platform-user:pending-onboarding-checklist:{platform_user_id}",
+      "description": "Onboarding checklist state for a pending PlatformUser. Cleared when the checklist reports complete OR the PlatformUser transitions out of `pending`.",
+      "ttlSeconds": 3600,
+      "tags": ["platform-user"],
+      "invalidatedBy": ["PlatformUserObserver.updating (when status changed from pending)"]
+    },
+    {
+      "pattern": "platform-user:offboarding-sla-tracker:{platform_user_id}",
+      "description": "Tracks time-since-PlatformUserOffboarded for the SLA probe. Cleared when RevokePlatformUserAccessJob completes.",
+      "ttlSeconds": 86400,
+      "tags": ["platform-user"],
+      "invalidatedBy": ["RevokePlatformUserAccessJob completion metric emission"]
+    }
+  ],
+  "notes": [
+    "The on-call cache TTL is deliberately short (60s) despite the ops-critical use case \u2014 rotation changes must be visible quickly so a page does not go to an offboarded staffer.",
+    "The org-chart cache invalidation is CASCADED via tag purge: reassigning A\u2019s manager purges both `platform-user:manager-chain:A` AND the reports cache of A's old + new managers.",
+    "There is deliberately NO cache of the PII-unmuted response \u2014 every viewPii call re-fetches so the meta-audit row is written on every access.",
+    "The `platform-user:mfa-coverage-ratio` cache is READ ONLY by the MfaCoverageProbe. It never affects the runtime request path (the `platform.mfa_required` middleware reads the live Identity row on every request)."
+  ]
+}

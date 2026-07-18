@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/mfa/attributes",
+  "$version": 1,
+  "title": "mfa — PHP attribute contracts",
+  "description": "One attribute. #[AsMfaListener] marks a class as a subscriber to MFA challenge + enrolment + credential lifecycle events (challenge issued, challenge succeeded, challenge failed, enrolment confirmed, credential registered, recovery-code consumed). Discovered at boot by the MfaServiceProvider so services under `notifications/`, `activity/`, `observability/`, and any tenant-defined listener can react without explicit event bindings.",
+  "namespace": "Academorix\\Mfa\\Attributes",
+  "attributes": [
+    {
+      "name": "AsMfaListener",
+      "class": "Academorix\\Mfa\\Attributes\\AsMfaListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Which MFA events this class reacts to. Wildcard `*` = every event under `Academorix\\Mfa\\Events\\*`. Specific list e.g. `['MfaChallengeFailed', 'MfaRecoveryCodeConsumed']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": "notifications",
+          "description": "Queue name for asynchronous dispatch. Set to `null` for synchronous listeners (rare — reserve for observability tap-outs where the challenge outcome must have propagated before the response returns). Common values: `notifications` (default, mail/push channels), `notifications-critical` (P0 events like MfaChallengeSuspiciousActivityNotification or WebauthnCredentialDeleted), `audit` (write-heavy compliance streams)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Listener execution order. Lower values run first. Use for cases where one listener's side-effect must precede another (e.g. `RevokeChallengeOnFailure` before `NotifySuspiciousActivity`). Framework default listeners occupy 1–99; user-defined listeners default to 100."
+        },
+        {
+          "name": "guards",
+          "type": "array<string> | null",
+          "default": null,
+          "description": "Optional guard filter. When set, the listener only fires when the resolved Identity's caller principal matches one of the named guards (`sanctum` / `platform_admin`). Null = no guard filter. Useful when a listener should react to tenant challenges but not platform-admin re-verifications, or vice versa."
+        }
+      ],
+      "example": "#[AsMfaListener(events: ['MfaChallengeFailed', 'MfaChallengeSucceeded'], queue: 'notifications-critical', priority: 10)]\nfinal class DispatchSuspiciousActivityNotification\n{\n    public function handle(MfaChallengeFailed|MfaChallengeSucceeded $event): void\n    {\n        // ...\n    }\n}"
+    }
+  ]
+}

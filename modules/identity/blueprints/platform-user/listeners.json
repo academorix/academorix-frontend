@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/platform-user/listeners",
+  "$version": 1,
+  "title": "platform-user \u2014 subscribed events",
+  "description": "Listeners this module registers against events published by other modules AND its own events. Every listener is discovered at boot via #[AsPlatformUserListener] where applicable, OR via the standard Laravel EventServiceProvider mapping for cross-module subscriptions.",
+  "listeners": [
+    {
+      "event": "identity::IdentityErased",
+      "listener": "Academorix\\PlatformUser\\Listeners\\CascadePlatformUserErasureOnIdentityErasure",
+      "queue": "notifications-critical",
+      "purpose": "When an Identity is soft-deleted (GDPR erasure hold started) AND a linked PlatformUser row exists AND that PlatformUser is not already offboarded, dispatch a synthetic offboarding lifecycle: fire PlatformUserOffboarded(trigger=identity_erased). Ensures a compliance-officer's identity-erasure request cascades to the staff plane cleanly. When the Identity's soft delete is hard-committed 30 days later (identity retention hold), the PlatformUser row has ALREADY been in retention hold and is 30 days into its own 90-day hold \u2014 the two schedules run concurrently."
+    },
+    {
+      "event": "identity::MfaDisabled",
+      "listener": "Academorix\\PlatformUser\\Listeners\\AlertOnPlatformUserMfaDisabled",
+      "queue": "notifications-critical",
+      "purpose": "When an Identity linked to a PlatformUser disables MFA, immediately: (1) write an audit row with severity=critical, (2) emit a `platform_user.mfa_coverage_ratio` gauge update, (3) dispatch a Slack notification to the security channel. Does NOT auto-suspend the PlatformUser \u2014 the `platform.mfa_required` middleware will refuse subsequent requests, and security decides whether to formally suspend."
+    },
+    {
+      "event": "identity::PasswordChanged",
+      "listener": "Academorix\\PlatformUser\\Listeners\\RevokePlatformSessionsOnPasswordChange",
+      "queue": "notifications-critical",
+      "purpose": "When a linked Identity's password changes, revoke every Sanctum PAT on the platform_admin guard for the associated PlatformUser (defence in depth beyond the identity module's own session revocation). Ensures a compromised password does not leak an unclosed platform-admin session."
+    },
+    {
+      "event": "platform-user::PlatformUserOffboarded",
+      "listener": "Academorix\\PlatformUser\\Listeners\\DispatchRevokePlatformUserAccessJob",
+      "queue": null,
+      "purpose": "Synchronous dispatcher \u2014 pushes RevokePlatformUserAccessJob to the notifications-critical queue in the same request cycle so the 24h SLA clock starts immediately. Cannot itself be queued (a queue backlog would defeat the SLA measurement)."
+    },
+    {
+      "event": "platform-user::PlatformUserOffboarded",
+      "listener": "Academorix\\PlatformUser\\Listeners\\NotifyManagerOnOffboarding",
+      "queue": "notifications",
+      "purpose": "Sends PlatformUserOffboardingScheduledNotification to the offboarded staffer's manager + the ops distribution list + security. Includes the ACL-inventory report link (what tenants + tools this PlatformUser had access to)."
+    },
+    {
+      "event": "platform-user::PlatformUserHired",
+      "listener": "Academorix\\PlatformUser\\Listeners\\WelcomeNewPlatformStaffer",
+      "queue": "notifications",
+      "purpose": "Sends PlatformUserHiredNotification. Includes onboarding-checklist link + department Slack channel invite + first-day agenda link."
+    },
+    {
+      "event": "platform-user::PlatformUserSuspended",
+      "listener": "Academorix\\PlatformUser\\Listeners\\PausePlatformImpersonationSessionsOnSuspend",
+      "queue": "notifications-critical",
+      "purpose": "For every active impersonation session where this PlatformUser is the impersonator, transition ended_at=NULL, paused_at=NOW() (Wave 1b impersonation table shape) \u2014 pauses but does NOT terminate the session. On PlatformUserRestored, sessions must be manually resumed by the impersonator (does NOT auto-resume; defence against a rushed restore leaking access)."
+    },
+    {
+      "event": "platform-user::PlatformUserManagerReassigned",
+      "listener": "Academorix\\PlatformUser\\Listeners\\InvalidateOrgChartCache",
+      "queue": null,
+      "purpose": "Purge the `platform-org-chart` cache tag (`platform-user:reports:*`, `platform-user:manager-chain:*`) so subsequent reads pick up the new topology. Synchronous so subsequent requests in the same batch see fresh data."
+    },
+    {
+      "event": "auth::PlatformSessionIssued (Wave 1a, identity/auth module)",
+      "listener": "Academorix\\PlatformUser\\Listeners\\UpdatePlatformUserLastActive",
+      "queue": null,
+      "purpose": "On every fresh platform_admin login, update the `Identity.last_login_at` (indirectly via the identity module's own listener). Does NOT stamp `PlatformUser.last_login_at` \u2014 that column does not exist on platform_users; the identity.last_login_at is the source of truth. Optional debouncing to batch writes across 5-minute windows."
+    },
+    {
+      "event": "audit::AuditRecorded (filtered to platform-plane rows)",
+      "listener": "Academorix\\PlatformUser\\Listeners\\CorrelatePlatformAuditRow",
+      "queue": "audit",
+      "purpose": "When an audit row is written on the platform plane, propagate the correlation_id from the request context. Cheap listener \u2014 a single UPDATE to set correlation_id on the audit row. Enables the `platform-user:audit-report` command to group related rows by correlation id."
+    }
+  ]
+}

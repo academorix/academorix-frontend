@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/auth/entitlements",
+  "$version": 1,
+  "title": "auth \u2014 declared entitlements",
+  "description": "Six entitlement keys. Refresh-token rotation is hard-required always but the flag exists for framework rollback capability. Extended-TTL sessions + JWT extended-expiry are Enterprise-tier. Cross-app SSO is medium+. Impersonation is Academorix-internal only. New-device notifications are opt-in medium+.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "sanctum_pat_extended_ttl",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 0, "business": 0, "enterprise": 1 },
+      "description": "Extend Sanctum PAT absolute lifetime beyond the framework default (168 hours) up to auth.session.extended_ttl_days (default 90 days). Only Enterprise tier."
+    },
+    {
+      "key": "refresh_token_rotation",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 1, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "Hard-required always. Documented as an entitlement so a framework-level rollback flag exists for the (rare) case where a rotation regression forces us to disable rotation across all tenants without a code rollback."
+    },
+    {
+      "key": "cross_app_sso",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "Grant-based cross-Application SSO. Team+ tier. Requires auth.cross_app_sso.enabled=true globally."
+    },
+    {
+      "key": "impersonation",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 1, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "Academorix-internal capability \u2014 authorises platform staff to impersonate a tenant User. Present on every plan tier because it's a SUPPORT capability, not a customer-facing feature. Every tenant can be impersonated by support with valid reason (subject to auth.impersonation.notify_impersonated_user=true)."
+    },
+    {
+      "key": "new_device_notifications",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "Opt-in per-User security alerts on novel-device / novel-location logins. Team+ tier. Users on Free plans can still enable it via a per-User setting, but the entitlement gate blocks it by default."
+    },
+    {
+      "key": "jwt_extended_expiry",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 0, "business": 0, "enterprise": 1 },
+      "description": "Extend inter-service JWT lifetime beyond the framework default (900s) up to auth.jwt.extended_ttl_seconds (default 3600s). Enterprise-only, typically negotiated for enterprise-integration partners with slow token-refresh loops."
+    }
+  ]
+}

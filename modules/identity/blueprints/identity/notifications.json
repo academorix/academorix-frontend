@@ -1,0 +1,154 @@
+{
+  "id": "academorix://modules/identity/notifications",
+  "$version": 1,
+  "title": "identity \u2014 notification classes + categories",
+  "namespace": "Academorix\\Identity\\Notifications",
+  "description": "Five notifications. Two are transactional (email-verification, password-reset) with no opt-out; three are informational-security (password-changed, account-locked, suspicious-login) with default-on opt-in. All notifications render through the localized template pipeline \u2014 subject + body support {{placeholders}} resolved at dispatch time.",
+  "notifications": [
+    "EmailVerificationNotification",
+    "PasswordResetNotification",
+    "PasswordChangedConfirmationNotification",
+    "AccountLockedNotification",
+    "SuspiciousLoginNotification"
+  ],
+  "notification_definitions": [
+    {
+      "class": "EmailVerificationNotification",
+      "category_slug": "identity.email_verification",
+      "channels": ["mail"],
+      "queue": "notifications",
+      "subject_template": "identity::mail.email_verification.subject",
+      "body_template_path": "identity::mail.email_verification.body",
+      "default_subject_en": "Verify your Academorix email",
+      "trigger_event": "IdentityEmailVerificationRequested",
+      "payload_bindings": {
+        "verification_url": "string (signed URL, 24h TTL)",
+        "expires_at": "ISO-8601 timestamp"
+      },
+      "notes": "Also dispatched on resend (rate-limited to 1 request per 60s per identity_id)."
+    },
+    {
+      "class": "PasswordResetNotification",
+      "category_slug": "identity.password_reset",
+      "channels": ["mail"],
+      "queue": "notifications",
+      "subject_template": "identity::mail.password_reset.subject",
+      "body_template_path": "identity::mail.password_reset.body",
+      "default_subject_en": "Reset your Academorix password",
+      "trigger_event": "PasswordResetRequested",
+      "payload_bindings": {
+        "reset_url": "string (signed URL, 15min TTL)",
+        "expires_at": "ISO-8601 timestamp",
+        "request_ip": "string (rendered as geolocation on the mail template when GeoIP resolves)"
+      },
+      "notes": "Always sent when the email resolves to a real Identity. Enumerate-safety layer at the endpoint returns 200 regardless \u2014 the caller can't distinguish."
+    },
+    {
+      "class": "PasswordChangedConfirmationNotification",
+      "category_slug": "identity.password_changed",
+      "channels": ["mail", "in_app"],
+      "queue": "notifications",
+      "subject_template": "identity::mail.password_changed.subject",
+      "body_template_path": "identity::mail.password_changed.body",
+      "default_subject_en": "Your Academorix password was changed",
+      "trigger_event": "PasswordChanged",
+      "payload_bindings": {
+        "changed_at": "ISO-8601 timestamp",
+        "trigger": "'voluntary' | 'forced_reset' | 'admin_reset' | 'breach_detected'",
+        "request_ip": "string"
+      },
+      "notes": "Fires unconditionally on every password change. NON-actionable notification \u2014 informs the account holder that a change occurred so they can escalate to support if unfamiliar."
+    },
+    {
+      "class": "AccountLockedNotification",
+      "category_slug": "identity.account_locked",
+      "channels": ["mail"],
+      "queue": "notifications-critical",
+      "subject_template": "identity::mail.account_locked.subject",
+      "body_template_path": "identity::mail.account_locked.body",
+      "default_subject_en": "Your Academorix account has been locked",
+      "trigger_event": "IdentityLocked",
+      "payload_bindings": {
+        "locked_until": "ISO-8601 timestamp",
+        "failed_attempts_count": "integer",
+        "request_ip": "string",
+        "unlock_url": "string (reset password + unlock combined flow)"
+      },
+      "notes": "Sent to the identity holder AND (if lockout number \u2265 3) to platform-security via the security-mailing-list channel."
+    },
+    {
+      "class": "SuspiciousLoginNotification",
+      "category_slug": "identity.suspicious_login",
+      "channels": ["mail"],
+      "queue": "notifications-critical",
+      "subject_template": "identity::mail.suspicious_login.subject",
+      "body_template_path": "identity::mail.suspicious_login.body",
+      "default_subject_en": "Unusual sign-in activity on your Academorix account",
+      "trigger_event": "IdentityLocked",
+      "payload_bindings": {
+        "request_ip": "string",
+        "user_agent": "string",
+        "geolocation": "string (city, country \u2014 GeoIP-resolved, best-effort)",
+        "unlock_url": "string"
+      },
+      "notes": "Dispatched by a listener when the lockout occurs from a request-IP that hasn't been seen for this Identity in the last 30 days AND the failed_attempts_count crossed the threshold in under 60 seconds (velocity + novelty signal)."
+    }
+  ],
+  "categories": [
+    {
+      "slug": "identity.email_verification",
+      "display_name": "Email verification",
+      "description": "Confirms ownership of the email address at registration or on email change.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "identity.password_reset",
+      "display_name": "Password reset",
+      "description": "Time-limited reset link. Not the reset confirmation.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "identity.password_changed",
+      "display_name": "Password changed confirmation",
+      "description": "Informs the account holder every time their password mutates. Non-actionable; escalation link included if the change is unfamiliar.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "identity.account_locked",
+      "display_name": "Account locked",
+      "description": "Progressive-backoff lockout notification. Includes the unlock path (password reset).",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "default_opt_in": true,
+      "is_system": true
+    },
+    {
+      "slug": "identity.suspicious_login",
+      "display_name": "Suspicious login activity",
+      "description": "Novel-IP + high-velocity failure signal. Prompts the user to reset password if unfamiliar.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true
+    }
+  ]
+}

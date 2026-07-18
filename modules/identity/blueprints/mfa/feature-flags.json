@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/mfa/feature-flags",
+  "$version": 1,
+  "title": "mfa — kill switches + progressive-rollout flags",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "mfa.enrollment_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = every enrolment endpoint (TOTP preview + confirm, WebAuthn register options + register) refuses with 503. Existing enrolled Identities continue to verify. Reserved for the rare 'we're recovering from an encryption incident and can't accept new secrets right now' event."
+    },
+    {
+      "key": "mfa.totp_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = TOTP endpoints refuse. Existing TOTP-enrolled Identities can still verify. Used for TOTP-specific incident recovery (e.g. a bug in google2fa forces a fleet-wide TOTP pause)."
+    },
+    {
+      "key": "mfa.webauthn_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = WebAuthn endpoints refuse. Existing WebAuthn-enrolled Identities can still assert. Redundant with config('mfa.webauthn.enabled') — the config is compile-time / boot-time; this flag is runtime, evaluated on every request."
+    },
+    {
+      "key": "mfa.verification_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MFA verification always passes. RESERVED for CATASTROPHIC incident recovery only. Requires two-person sign-off to flip. Sets a metric that alerts platform-security immediately."
+    },
+    {
+      "key": "mfa.suspicious_activity_detection",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MfaSuspiciousActivityDetector no-ops. Used when the detector is generating false positives (e.g. a shared-IP CGNAT deployment or a legitimate credential-migration wave)."
+    },
+    {
+      "key": "mfa.suspicious_activity_notification",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MfaChallengeSuspiciousActivityNotification suppressed while the underlying detection continues firing (metrics + audit). Splits the notification-noise problem from the detection problem."
+    },
+    {
+      "key": "mfa.recovery_codes_low_notification",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = LowRecoveryCodesRemainingNotification suppressed. Used when we're spamming users during a fleet-wide code-regeneration event."
+    },
+    {
+      "key": "mfa.step_up_enforcement",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `mfa.require_recent_challenge` middleware degrades to pass-through. Existing session-level enforcement via `mfa.require_challenge_complete` still applies. Used when we're troubleshooting a step-up loop bug + can't fix it before the next release."
+    },
+    {
+      "key": "mfa.progressive_rollout_webauthn_passkeys",
+      "kind": "progressive-rollout",
+      "default": "off",
+      "description": "When on, WebAuthn registration prefers `require_resident_key: true` + `user_verification: required` — encouraging passkey-style single-step MFA. Progressive rollout so we can validate the passkey UX per-tenant before flipping globally."
+    },
+    {
+      "key": "mfa.disable_via_recovery_code",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = disabling TOTP via a recovery-code fallback is refused. Users must first re-enrol a fresh recovery method (WebAuthn) OR contact support to force-disable. Reserved for a tenant that requires exactly one factor at all times."
+    },
+    {
+      "key": "mfa.sign_count_replay_hard_delete",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "On = when sign_count replay is detected, the WebauthnCredential is auto-deleted (WebauthnCredentialDeleted event + fresh registration required). Off = the credential is instead auto-disabled (retained for the retention window) — used when a fleet of TPMs is misbehaving and we don't want to force everyone to re-register."
+    }
+  ]
+}

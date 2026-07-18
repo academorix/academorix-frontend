@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/mfa/schemas/recovery-codes-download",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "RecoveryCodesDownload",
+  "description": "DTO returned by POST /api/v1/me/mfa/recovery-codes/regenerate (fresh set) OR POST /api/v1/me/mfa/recovery-codes/download (re-emit current set). Emits plaintext recovery codes ONCE. Not persisted anywhere retrievable — the caller must save the codes client-side or they are lost. Regeneration purges the previous bcrypt-hashed array + writes 10 fresh hashes; download re-emits the CURRENT unconsumed set without invalidating anything.",
+  "type": "object",
+  "x-module": "mfa",
+  "x-storage": {
+    "layer": "wire-only",
+    "backend": "n/a",
+    "note": "The plaintext codes are generated in-memory during the request, emitted in the response, and NEVER cached / logged / persisted. Only the bcrypt hashes are persisted on the Identity row (owned by identity/identity)."
+  },
+  "properties": {
+    "codes": {
+      "type": "array",
+      "description": "Array of 10 plaintext recovery codes. Each code is 10 characters from a Crockford base32 alphabet (0-9 + A-Z minus I / L / O / U). Approximately 50 bits of entropy per code. Rendered client-side as either a raw grid or with the group separator (`-` every 5 characters) for readability. The separator is presentational only — the server strips it before hash / compare.",
+      "items": {
+        "type": "string",
+        "pattern": "^[0-9A-HJKMNP-TV-Z]{10}$",
+        "x-classification": "regulated_secret"
+      },
+      "minItems": 10,
+      "maxItems": 10
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the code array was generated (or last regenerated). For a download response, this is the timestamp of the last regenerate — the codes may have been generated hours or days ago; download just re-emits the current set."
+    },
+    "expires_at": {
+      "type": "null",
+      "description": "Always null. Recovery codes never expire — regeneration is the only invalidation path. Included in the schema explicitly to signal the invariant."
+    },
+    "trigger": {
+      "type": "string",
+      "enum": ["regenerate", "download"],
+      "description": "Which endpoint produced this response. Downstream analytics + audit distinguish the two — a regenerate is a rare-but-normal event; a download is a data-egress event that is audit-logged with warn severity."
+    },
+    "regenerate_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "Signed URL back to POST /me/mfa/recovery-codes/regenerate. Included so a client that receives the download response with a low code count can offer a one-click regenerate CTA. Signed with a 5-minute expiry so the URL can't be scraped from logs + replayed."
+    }
+  },
+  "required": ["codes", "generated_at", "expires_at", "trigger"],
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "cache_control": "no-store",
+    "cache_control_reason": "Response carries plaintext secrets. Explicit `Cache-Control: no-store, private, max-age=0` header + `Pragma: no-cache` header for legacy proxies.",
+    "logged_fields": ["generated_at", "trigger", "regenerate_url"],
+    "never_logged": ["codes"]
+  },
+  "invariants": [
+    "The plaintext codes exist in the caller's browser (rendered in the response body) + the server's memory during the request. They exist NOWHERE ELSE. The Identity row stores only bcrypt hashes.",
+    "Consuming a code (via POST /me/mfa/challenge/{id}/verify with method=recovery_code) removes the matching hash from the Identity's JSONB array in the same transaction as the login. Once removed, the plaintext code is unusable — subsequent submissions return CHALLENGE_INVALID_RECOVERY_CODE.",
+    "The download endpoint (as distinct from regenerate) returns the CURRENT unconsumed set — codes that have already been consumed do NOT appear. If the array is empty (all consumed), download returns MFA_RECOVERY_CODES_EMPTY (409) + instructs the caller to regenerate.",
+    "Both endpoints require a recent MFA challenge (`mfa.require_recent_challenge` middleware). A stolen session cookie cannot download the codes without proving current possession of the primary factor.",
+    "Regeneration is an atomic operation — the old array is purged and the fresh array is written in the same transaction. There is no observable state where the caller's Identity has zero codes as an intermediate."
+  ]
+}

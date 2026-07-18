@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/service-accounts/rules",
+  "$version": 1,
+  "title": "service-accounts \u2014 validation rules",
+  "description": "Two custom validation rules published by ServiceAccountServiceProvider::boot(). Both operate on scalar string input; both are stateless. Consumers wire them via #[Validation] attribute on Data-class properties.",
+  "namespace": "Academorix\\ServiceAccount\\Rules",
+  "rules": [
+    {
+      "name": "valid_service_account_name",
+      "class": "Academorix\\ServiceAccount\\Rules\\ValidServiceAccountName",
+      "signature": "valid_service_account_name:<application_id>",
+      "description": "Enforces the naming policy from `service-accounts.naming.*` config: max length (default 128), regex pattern (default `^[a-z0-9][a-z0-9_-]*[a-z0-9]$`), uniqueness within the SA's `application_id` (scoped by the passed argument). Rejects whitespace, uppercase, Unicode, and punctuation to keep names URL-safe + shell-safe.",
+      "params": [
+        {
+          "name": "application_id",
+          "type": "ULID",
+          "description": "The application_id under which the name must be unique. Passed at validation time from the request context (never trusted from user input)."
+        }
+      ],
+      "example_field_rule": "name: [required, string, valid_service_account_name:%application_id%]",
+      "error_message_key": "service-accounts::validation.valid_service_account_name",
+      "default_message": "The :attribute must be lowercase alphanumeric with hyphens or underscores, 3-128 characters, and unique within the application.",
+      "consumes": [
+        "config('service-accounts.naming.max_length')",
+        "config('service-accounts.naming.allow_pattern')"
+      ]
+    },
+    {
+      "name": "valid_kid_format",
+      "class": "Academorix\\ServiceAccount\\Rules\\ValidKidFormat",
+      "signature": "valid_kid_format",
+      "description": "Validates the shape of a `signer_kid` string against `service-accounts.kid.format` config. Default `uuid` = UUIDv4 (with optional application prefix when `include_application_prefix=true`); `opaque` = exactly 32 lowercase alphanumeric chars. Additionally verifies existence + enablement via a fresh query against `auth::jwt_signing_keys` (this is where the runtime FK check happens \u2014 the schema does not enforce it).",
+      "params": [],
+      "example_field_rule": "signer_kid: [nullable, string, valid_kid_format]",
+      "error_message_key": "service-accounts::validation.valid_kid_format",
+      "default_message": "The :attribute must reference an existing, enabled signing key.",
+      "consumes": [
+        "config('service-accounts.kid.format')",
+        "config('service-accounts.kid.include_application_prefix')"
+      ]
+    }
+  ],
+  "usage_from_data_class": "Data classes composed with `CreateServiceAccountInput`, `UpdateServiceAccountInput` automatically wire these rules via the #[Validation] attribute on each property; consumers rarely reference the rules by name."
+}

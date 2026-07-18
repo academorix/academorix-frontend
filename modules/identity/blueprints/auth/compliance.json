@@ -1,0 +1,161 @@
+{
+  "id": "academorix://modules/auth/compliance",
+  "$version": 1,
+  "title": "auth \u2014 compliance evidence",
+  "description": "Auth is the enforcement layer for every authentication + session-management compliance obligation. NIST 800-63B (authentication), OWASP ASVS V3 (session management), OAuth 2.0 draft-ietf-oauth-security-topics (refresh rotation), GDPR + CCPA (session log retention + right-to-erasure cascade), SOC 2 (audit trail on every login/logout), COPPA (age-gate composition with the identity substrate). Every enforceable rule is codified as CODE + AUDIT.",
+  "regimes": {
+    "nist_800_63b": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "AAL2 authenticator strength",
+          "evidence": "Password (memorized secret) + TOTP or WebAuthn (single-factor OTP or single-factor cryptographic device). Enforced by auth flow: LoginAction issues MFA challenge when identity.mfa_secret_encrypted IS NOT NULL; the second factor MUST complete before Sanctum PAT issues."
+        },
+        {
+          "principle": "\u00a7 5.2.2 replay resistance",
+          "evidence": "MFA challenges are single-use \u2014 consumed_at set atomically on successful verify. TOTP verifier accepts current window + \u00b130s drift; wider drift refused."
+        },
+        {
+          "principle": "\u00a7 5.2.5 verifier compromise resistance",
+          "evidence": "TOTP secret KMS-encrypted at rest (via identity substrate). WebAuthn attestation stored per FIDO2 spec; challenges live 5 minutes max."
+        },
+        {
+          "principle": "\u00a7 4.2 memorized secret lifecycle",
+          "evidence": "Password_history retained as bcrypt/argon2id hashes only (identity substrate). No plaintext ever persisted."
+        },
+        {
+          "principle": "\u00a7 7.2 session management",
+          "evidence": "Absolute + idle lifetimes per auth.session.*_ttl. Rotation on every refresh (auth.session.refresh_ttl_days). Deny-list on immediate revocation."
+        }
+      ]
+    },
+    "owasp_asvs_v3": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "V3.2.1",
+          "principle": "session generation",
+          "evidence": "Sanctum PATs use 40-byte random secrets; refresh tokens use 40-byte random secrets. Both hashed SHA-256 at rest. Cryptographically random."
+        },
+        {
+          "criterion": "V3.2.3",
+          "principle": "session id storage",
+          "evidence": "Only SHA-256 hashes persisted \u2014 secret plaintext returned once at issue-time only."
+        },
+        {
+          "criterion": "V3.3.1",
+          "principle": "session rotation on privilege escalation",
+          "evidence": "Password change fires PasswordChanged \u2192 revoke all sessions. MFA enrol/disable revokes sessions. User suspend/disable revokes sessions."
+        },
+        {
+          "criterion": "V3.5.1",
+          "principle": "session termination on logout",
+          "evidence": "POST /auth/logout revokes PAT + paired refresh token in the same transaction."
+        },
+        {
+          "criterion": "V3.7.1",
+          "principle": "absolute session lifetime",
+          "evidence": "auth.session.absolute_ttl_hours enforced as PAT.expires_at."
+        }
+      ]
+    },
+    "oauth_security_topics": {
+      "applicable": true,
+      "controls": [
+        {
+          "reference": "draft-ietf-oauth-security-topics \u00a7 4.13",
+          "principle": "refresh token rotation with reuse detection",
+          "evidence": "Every refresh use consumes the old token (consumed_at set) + issues a new token in the same family_id. Re-presenting a consumed token is a REPLAY \u2014 fires RefreshTokenReuseDetected \u2192 invalidates the family + revokes every active PAT for the User. Canonical BCP defense."
+        },
+        {
+          "reference": "\u00a7 4.14",
+          "principle": "refresh token binding",
+          "evidence": "Refresh tokens are polymorphically bound to a specific tokenable (User OR PlatformUser). Cross-User refresh replay is impossible."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Every token table has explicit retention (retention.json). Refresh tokens: 90 days. Password resets: 24h. Verifications: 30 days. MFA challenges: 1h. Cross-app grants: 24h. JWT deny list: natural expiry. Signing keys: 180 days after retirement."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "Every auth-owned table cascades on identity_id delete. Full-Identity erasure (via identity/auth's DELETE /platform/identities/{id}) fires IdentityErased \u2192 auth listeners revoke all sessions + purge all tokens for the Identity."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "IP addresses + user agents stored as SHA-256 hashes. Token secrets SHA-256 hashed at rest. JWT signing keys KMS-envelope-encrypted."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Rate limiting on every login endpoint. Progressive lockout via identity substrate. New-device notification. Refresh reuse detection. Every login/logout audit-logged."
+        },
+        {
+          "article": "Art. 33",
+          "principle": "breach notification",
+          "evidence": "RefreshTokenReuseDetected fires at critical severity + triggers ops paging. Suspicious-login-detection listener chain publishes an audit-log entry ops security ingests."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "right to know",
+          "evidence": "Session listing via GET /auth/sessions returns SessionSummaryData per active session \u2014 fulfills 'what sessions am I authenticated to' the DSAR requires."
+        },
+        {
+          "principle": "right to delete",
+          "evidence": "Same as GDPR Art. 17 path. Cascades through identity_id."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Two guards enforced (sanctum, platform_admin). Guard boundary rejected at auth-service action layer. Every login audited."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "user access provisioning",
+          "evidence": "Registration flow gates on CompliantAgePolicy + RegistrationPolicy. Cross-app SSO requires an existing target-Application User row (no auto-provisioning by default)."
+        },
+        {
+          "criterion": "CC6.6",
+          "principle": "protection against external threats",
+          "evidence": "Rate limiting + progressive lockout + suspicious-login detection + strict CORS + refresh-reuse detection."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict physical + logical access to authenticator content",
+          "evidence": "Signing keys KMS-envelope-encrypted. TOTP secrets KMS-envelope-encrypted. Recovery codes bcrypt-hashed. Never plaintext at rest."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Auth-specific health probes (auth-jwt-signing-key-reachable, auth-refresh-purge-scheduler-alive, auth-jwt-rotation-current) + metrics feed operational monitoring."
+        }
+      ]
+    },
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "16 CFR \u00a7 312.5",
+          "principle": "verifiable parental consent for under-13s",
+          "evidence": "RegisterAction composes CompliantAgePolicy (owned by this module) which resolves the effective floor from compliance.coppa.age_threshold. RegistrationPolicyInterface's default (GenericRegistrationPolicy) refuses; sports/athletes' AthleteRegistrationPolicy (Wave 7) routes to parent-consent workflow."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/mfa/sdui/resources/webauthn-credential/list",
+  "$version": 1,
+  "kind": "screen",
+  "route": "/platform/mfa/webauthn-credentials/{user}",
+  "title": "Registered credentials",
+  "description": "Platform-admin surface for viewing a user's registered WebAuthn credentials. Redacted read-only list — no credential_id_b64url, no public_key. AAGUID + full transports gated behind `platform.mfa.methods.view.pii`.",
+  "permission": "platform.mfa.webauthn_credentials.viewAny",
+  "guard": "platform_admin",
+  "data_source": {
+    "kind": "resource",
+    "resource": "webauthn-credential",
+    "endpoint": "GET /api/v1/platform/mfa/methods/{user}/webauthn-credentials",
+    "cache_ttl_seconds": 30
+  },
+  "layout": {
+    "type": "table",
+    "columns": [
+      {
+        "id": "device_name",
+        "label": "Device",
+        "sortable": true,
+        "widget": "text-with-icon",
+        "icon_field": "computed.device_icon_name"
+      },
+      {
+        "id": "attestation_format",
+        "label": "Format",
+        "sortable": false,
+        "widget": "chip",
+        "chip_variant_map": {
+          "packed": "default",
+          "fido-u2f": "warning",
+          "android-key": "default",
+          "apple": "default",
+          "tpm": "default",
+          "none": "muted"
+        }
+      },
+      {
+        "id": "aaguid",
+        "label": "Authenticator model",
+        "sortable": false,
+        "widget": "text",
+        "requires_permission": "platform.mfa.methods.view.pii",
+        "audit_severity": "warn"
+      },
+      {
+        "id": "is_synced_passkey",
+        "label": "Synced",
+        "widget": "boolean-check"
+      },
+      {
+        "id": "sign_count",
+        "label": "Assertions",
+        "widget": "number"
+      },
+      {
+        "id": "last_used_at",
+        "label": "Last used",
+        "widget": "relative-time"
+      },
+      {
+        "id": "disabled_at",
+        "label": "Status",
+        "widget": "status-chip",
+        "compute_status": "disabled_at IS NULL ? 'active' : 'disabled'"
+      }
+    ],
+    "filters": [
+      {
+        "name": "include_disabled",
+        "control_type": "toggle",
+        "label": "Show disabled",
+        "default": false
+      }
+    ],
+    "empty_state": {
+      "title": "No credentials registered",
+      "body": "This user has not registered any WebAuthn credentials."
+    },
+    "row_actions": [
+      {
+        "label": "Disable",
+        "kind": "danger",
+        "endpoint": "PATCH /api/v1/platform/mfa/webauthn-credentials/{id}",
+        "body": { "disabled_at": "now", "reason": "{{prompt.reason}}" },
+        "requires_permission": "platform.mfa.webauthn_credentials.disable",
+        "requires_reason": true,
+        "audit_severity": "critical",
+        "confirm": {
+          "title": "Disable this credential?",
+          "body": "The user won't be able to sign in with this device until it's re-enabled. Audit-logged with your Identity + reason."
+        }
+      }
+    ]
+  }
+}

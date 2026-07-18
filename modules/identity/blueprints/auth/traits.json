@@ -1,0 +1,147 @@
+{
+  "id": "academorix://modules/auth/traits",
+  "$version": 1,
+  "title": "auth \u2014 trait composition",
+  "description": "Two owned traits. `HasScopeSuffixResolution` is a marker on services that resolve `.own` / `.tenant` / `.branch` / `.team` / `.child` / `.any` permission suffixes into query filters. `HasSessionRevocation` is a composable helper for models whose state change must revoke every active PAT for the referring User (e.g. User suspension, role revocation, permission changes with security implications).",
+  "owned": [
+    {
+      "trait": "Academorix\\Auth\\Concerns\\HasScopeSuffixResolution",
+      "description": "Marker trait composed by every service that consults `ScopeSuffixResolver` at query-build time. Adds no accessor / mutator / scope of its own \u2014 signals reflection-based tooling (integration tests, static analysis) that the class MUST NOT bypass the resolver. Every base repository in `framework/crud` implicitly composes this via its abstract parent.",
+      "public": true,
+      "usedBy": [
+        "framework/crud::AbstractRepository (implicit)",
+        "auth::ResolveScopeForUserAction"
+      ],
+      "underlying_package": null,
+      "wraps": null,
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Auth\\Concerns\\HasSessionRevocation",
+      "description": "Composable helper for models that must revoke every active PAT for the referring User(s) when their state mutates. Ships: `->revokeAllSessions(SessionRevocationReason $reason)`, `->revokeSessionsForApplication(string $applicationId, SessionRevocationReason $reason)`. Each method is idempotent, transactional, and fires `AllSessionsRevoked` (bulk) OR `SessionRevoked` (single) after commit. Typical consumers: `user::User` (on suspended \u2192 revoke sessions), `access::Role` (on role deleted \u2014 revoke sessions for holders), `access::Permission` (rare \u2014 on manual permission removal).",
+      "public": true,
+      "usedBy": [
+        "user::User (on suspended / disabled)",
+        "user::PlatformUser (on suspended)",
+        "access::Role (on system revocation \u2014 rare)",
+        "auth::internal use for cross-Application PasswordChanged fan-out"
+      ],
+      "underlying_package": "laravel/sanctum",
+      "wraps": "Wraps Sanctum's `->tokens()->delete()` in an idempotent domain operation that fires SessionRevoked events per token so downstream listeners (activity, notifications, observability) all see the revocation.",
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Refresh tokens, password resets, verifications keep a bounded soft-delete window for audit trails; hard-delete is scheduled per retention.json."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+  },
+  "composition": {
+    "auth_refresh_tokens": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "NO BelongsToTenant \u2014 refresh tokens reference User / PlatformUser polymorphically; tenant / application scope flows through the tokenable.",
+        "The soft-delete substrate keeps the row 30 days after consumption/revocation for audit; hard-deleted by PurgeExpiredRefreshTokensJob."
+      ]
+    },
+    "auth_password_resets": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable"
+      ],
+      "notes": [
+        "NO SoftDeletes \u2014 password reset tokens are HARD-deleted 24h after consume/expiry (no audit value).",
+        "NO BelongsToTenant \u2014 references identity_id directly."
+      ]
+    },
+    "auth_email_verifications": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable"
+      ],
+      "notes": [
+        "Same shape as password resets \u2014 hard-deleted 30 days after consume/expiry."
+      ]
+    },
+    "auth_mfa_challenges": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasUserstamps",
+        "HasMetadata",
+        "Filterable"
+      ],
+      "notes": [
+        "NO SoftDeletes \u2014 challenges are ephemeral (5-min TTL); hard-deleted 1h after consume/expiry.",
+        "HasMetadata carries the pending-login context (application_id, tenant_id, requested_scope) so the login flow can resume after verification."
+      ]
+    },
+    "auth_cross_app_grants": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable"
+      ],
+      "notes": [
+        "300-second TTL. Hard-deleted 24h after consume/expiry. HasActivityLog because grant issuance + exchange are audit-critical (they bridge Applications).",
+        "NO BelongsToTenant \u2014 references identity_id + source/target application_ids directly."
+      ]
+    },
+    "auth_jwt_deny_list": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasActivityLog",
+        "Filterable"
+      ],
+      "notes": [
+        "Deny-list entries live until the underlying JWT's natural `exp` passes \u2014 no need to keep them longer (verifiers reject expired JWTs on their own).",
+        "HasActivityLog because manual denies are compliance-audited."
+      ]
+    },
+    "auth_jwt_signing_keys": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "Retired signing keys kept 180 days after `retired_at` (still needed for verification during rotation windows).",
+        "`secret_encrypted` is KMS-envelope-encrypted at rest \u2014 the plaintext HS256 secret NEVER touches Postgres."
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/user/rules",
+  "$version": 1,
+  "title": "user \u2014 validation rules",
+  "description": "Four custom Laravel validation rules published by UserServiceProvider::boot() so any FormRequest / Data class can validate profile-adjacent fields. Composes the compliance floor for `age_meets_min` \u2014 the tenant setting is clamped up to the region's COPPA / GDPR minimum before comparison.",
+  "namespace": "Academorix\\User\\Rules",
+  "rules": [
+    {
+      "name": "valid_e164_phone",
+      "class": "Academorix\\User\\Rules\\ValidE164Phone",
+      "signature": "valid_e164_phone",
+      "description": "Ensures the value is a valid E.164 international phone number. Accepts `+` prefix + 1\u201315 digits, no separators. Delegates to `giggsey/libphonenumber-for-php` for the country-aware parse + validate step.",
+      "params": [],
+      "example_field_rule": "phone_e164: ['nullable', 'valid_e164_phone']",
+      "error_message_key": "user::validation.valid_e164_phone",
+      "default_message": "The :attribute must be a valid international phone number in E.164 format (e.g. +14155552671)."
+    },
+    {
+      "name": "valid_iana_timezone",
+      "class": "Academorix\\User\\Rules\\ValidIanaTimezone",
+      "signature": "valid_iana_timezone",
+      "description": "Ensures the value is a member of PHP's `\\DateTimeZone::listIdentifiers()` \u2014 the full IANA tz database. Rejects deprecated aliases (e.g. `US/Pacific`) in strict mode.",
+      "params": [{ "name": "strict", "type": "bool", "default": true, "description": "When true, deprecated IANA aliases are rejected." }],
+      "example_field_rule": "timezone: ['required', 'valid_iana_timezone']",
+      "error_message_key": "user::validation.valid_iana_timezone",
+      "default_message": "The :attribute must be a valid IANA timezone (e.g. America/New_York, Europe/London, Asia/Tokyo)."
+    },
+    {
+      "name": "valid_bcp47_locale",
+      "class": "Academorix\\User\\Rules\\ValidBcp47Locale",
+      "signature": "valid_bcp47_locale[:tenant_enabled_only]",
+      "description": "Ensures the value is a syntactically valid BCP-47 language tag AND (in the default `tenant_enabled_only` mode) resolves to a `TenantLocale where is_enabled=true` on the caller's tenant. Pass `any` to accept any BCP-47 tag from the platform catalogue.",
+      "params": [{ "name": "scope", "type": "'tenant_enabled_only' | 'any'", "default": "tenant_enabled_only" }],
+      "example_field_rule": "preferred_locale: ['nullable', 'valid_bcp47_locale']",
+      "error_message_key": "user::validation.valid_bcp47_locale",
+      "default_message": "The :attribute must be a language enabled for this tenant."
+    },
+    {
+      "name": "age_meets_min",
+      "class": "Academorix\\User\\Rules\\AgeMeetsMin",
+      "signature": "age_meets_min[:override]",
+      "description": "Compares the value (interpreted as a date-of-birth) against the effective compliance minimum age resolved by `auth::CompliantAgePolicy::resolveEffectiveMinimum($region)`. The `override` argument names a tenant setting whose value is clamped UP by the compliance floor \u2014 tenants may raise the minimum but never lower it. Rejects when the DOB puts the subject under the resolved floor.",
+      "params": [
+        {
+          "name": "override_setting",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional dotted setting path (e.g. `athletes.portal.min_login_age`). When set, the rule reads the tenant setting AND clamps to at least the compliance floor before comparing."
+        }
+      ],
+      "example_field_rule": "dob: ['required', 'date', 'age_meets_min']",
+      "override_example": "dob: ['required', 'date', 'age_meets_min:athletes.portal.min_login_age']",
+      "error_message_key": "user::validation.age_meets_min",
+      "default_message": "The :attribute puts the subject under the minimum age of :min for this jurisdiction.",
+      "compliance_note": "Delegates to `auth::CompliantAgePolicy` which factors COPPA (US, floor 13) + GDPR per-country (13\u201316 depending on country) + FERPA (US, educational records opt-in). Every rejection is written to `audits` with severity=info."
+    }
+  ]
+}

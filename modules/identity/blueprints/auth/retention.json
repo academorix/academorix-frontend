@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/auth/retention",
+  "$version": 1,
+  "title": "auth \u2014 retention windows",
+  "description": "Auth's token tables all have short, compliance-driven retention. Refresh tokens retain 90 days post-consumption for audit; password resets + verifications are purged aggressively (no audit value beyond the immediate flow); MFA challenges are ephemeral. JWT signing keys retire but stay verify-capable for 180 days after retirement. JWT deny-list rows self-expire at the underlying JWT's natural exp.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) (storage limitation) + Art. 17 (right to erasure) \u2014 all tokens cascade on Identity erasure",
+    "ccpa \u00a7 1798.105 (right to delete) \u2014 same cascade",
+    "oauth 2.0 draft-ietf-oauth-security-topics \u00a7 4.13 (refresh rotation) \u2014 90-day retention supports post-breach forensics",
+    "nist 800-63B \u00a7 7.2 (session management) \u2014 absolute session lifetime enforced by expires_at + purge cadence",
+    "soc 2 CC7.3 (system operations) \u2014 audit trails retained per audit module's config, not this module"
+  ],
+  "retention": [
+    {
+      "entity": "PersonalAccessToken (sanctum)",
+      "hot": { "days": "while revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now())" },
+      "purge": {
+        "trigger": "revoked_at OR expires_at older than 90 days",
+        "action": "hard delete via SanctumPurgeExpiredTokensJob (owned by sanctum, scheduled by our schedule.json)",
+        "notes": "Retained 90 days post-revocation for audit trace. Beyond 90 days the audit-log module holds the login/logout audit rows; the token row itself is redundant."
+      }
+    },
+    {
+      "entity": "RefreshToken (auth_refresh_tokens)",
+      "hot": { "days": "config('auth.session.refresh_ttl_days'), default 30" },
+      "purge": {
+        "trigger": "consumed_at OR revoked_at OR expires_at older than 90 days",
+        "action": "hard delete via PurgeExpiredRefreshTokensJob (runs every 30 minutes)",
+        "notes": "90-day tail supports refresh-reuse-detected forensics. Older rows have no audit value."
+      }
+    },
+    {
+      "entity": "PasswordReset (auth_password_resets)",
+      "hot": { "days": "15 minutes (config('auth.password_reset.ttl_minutes'))" },
+      "purge": {
+        "trigger": "consumed_at OR expires_at older than 24 hours",
+        "action": "hard delete via PurgeExpiredResetTokensJob (runs every 5 minutes)",
+        "notes": "24h tail is for immediate post-consumption trace only; longer is unnecessary."
+      }
+    },
+    {
+      "entity": "EmailVerification (auth_email_verifications)",
+      "hot": { "days": "24 hours (config('auth.email_verification.ttl_hours'))" },
+      "purge": {
+        "trigger": "consumed_at OR expires_at older than 30 days",
+        "action": "hard delete via PurgeExpiredVerificationTokensJob (runs daily)",
+        "notes": "30-day tail supports account-creation-audit trace; longer is unnecessary."
+      }
+    },
+    {
+      "entity": "MfaChallenge (auth_mfa_challenges)",
+      "hot": { "days": "5 minutes (config('auth.mfa.challenge_ttl_minutes'))" },
+      "purge": {
+        "trigger": "consumed_at OR expires_at older than 1 hour",
+        "action": "hard delete via PurgeExpiredMfaChallengesJob (runs every 5 minutes)",
+        "notes": "1h tail is for challenge-flow-debug trace only."
+      }
+    },
+    {
+      "entity": "CrossAppGrant (auth_cross_app_grants)",
+      "hot": { "days": "5 minutes (config('auth.cross_app_sso.grant_ttl_seconds'))" },
+      "purge": {
+        "trigger": "consumed_at OR expires_at older than 24 hours",
+        "action": "hard delete via PurgeExpiredCrossAppGrantsJob (runs every 15 minutes)",
+        "notes": "24h tail supports cross-app SSO analytics + debug."
+      }
+    },
+    {
+      "entity": "JwtDenyListEntry (auth_jwt_deny_list)",
+      "hot": { "days": "until the underlying JWT's natural expires_at passes" },
+      "purge": {
+        "trigger": "expires_at (matching original JWT exp) < now()",
+        "action": "hard delete via PurgeExpiredJwtDenyListJob (runs daily)",
+        "notes": "After natural expiry, downstream verifiers reject the JWT on their own; the deny-list entry is redundant."
+      }
+    },
+    {
+      "entity": "JwtSigningKey (auth_jwt_signing_keys)",
+      "hot": { "days": "while is_active=true OR retired_at + 180 days > now()" },
+      "purge": {
+        "trigger": "retired_at + 180 days < now()",
+        "action": "hard delete via RotateJwtSigningKeyJob (which also handles retirement + purge)",
+        "notes": "Retired keys stay verify-capable for 180 days (auth.jwt.rotation_grace_period_days determines the JWKS publication window; the 180-day purge floor is an additional forensic tail)."
+      }
+    }
+  ],
+  "cascade_on_identity_erasure": {
+    "description": "When identity/auth's DELETE /platform/identities/{id} fires IdentityErased(erasure_phase='soft_delete'), auth listeners react:",
+    "steps": [
+      "auth::RevokeAllActiveSessionsListener \u2192 revokes every PAT + refresh token for every User referencing the Identity",
+      "auth_password_resets cascade via FK onDelete=cascade when the Identity hard-deletes",
+      "auth_email_verifications cascade via FK onDelete=cascade",
+      "auth_mfa_challenges cascade via FK onDelete=cascade",
+      "auth_cross_app_grants cascade via FK onDelete=cascade"
+    ]
+  }
+}

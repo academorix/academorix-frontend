@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/user/notifications",
+  "$version": 1,
+  "title": "user \u2014 notification classes + categories",
+  "namespace": "Academorix\\User\\Notifications",
+  "notifications": [
+    "UserProvisionedNotification",
+    "UserSuspendedNotification",
+    "UserAddedToTenantNotification",
+    "UserRemovedFromTenantNotification",
+    "ProfileUpdatedConfirmationNotification"
+  ],
+  "categories": [
+    {
+      "slug": "user.provisioned",
+      "display_name": "Welcome",
+      "description": "Sent to the new User the moment their account is provisioned. Includes email verification link when the underlying Identity is not yet verified.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "user.suspended",
+      "display_name": "Account suspended",
+      "description": "Sent when an admin suspends the User's access. Includes reason (redacted for the subject if the note is internal-only) and reactivation timeline when set.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "user.added_to_tenant",
+      "display_name": "Added to tenant",
+      "description": "Sent when a User is granted membership in an additional Tenant within the same Application. Distinct from the initial provisioning notification.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "user.removed_from_tenant",
+      "display_name": "Removed from tenant",
+      "description": "Sent when a User's TenantMember is removed. Includes the tenant's name and the actor who performed the removal.",
+      "default_channels": ["mail"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "user.profile_updated",
+      "display_name": "Profile updated",
+      "description": "Optional confirmation email sent to the User when their Profile is updated. Off by default \u2014 tenant admins can flip it on to catch account-takeover attempts.",
+      "default_channels": ["mail"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": true
+    }
+  ]
+}

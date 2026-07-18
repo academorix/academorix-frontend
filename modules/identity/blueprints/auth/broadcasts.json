@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/auth/broadcasts",
+  "$version": 1,
+  "title": "auth \u2014 broadcast channels",
+  "description": "Auth publishes NO broadcast channels. Every auth-lifecycle event is either fire-and-forget or routed through notifications / activity / audit. Real-time push of session-revocation to open browser tabs would be nice-to-have but the correct pattern is: session revocation invalidates the PAT \u2192 the SPA's next request returns 401 \u2014 no broadcast required.",
+  "channels": [],
+  "rationale": [
+    "Real-time notification of password changes / lockouts to open browser sessions is a valid UX, but the correct pattern is session revocation (PAT invalidation), NOT a broadcast channel. When a session is revoked, the SPA's next request returns 401 and reloads the login screen \u2014 no push required.",
+    "Cross-tab session-revocation coordination (log out one tab, all tabs know) is a browser-side concern. The auth service surfaces the 401; the SPA's local session-manager listens for it and broadcasts to sibling tabs via BroadcastChannel.",
+    "Real-time MFA challenge push (`Approve login on your phone?`) is an identity/mfa concern once WebAuthn conditional UI + push-based mobile MFA ship. That's Wave 2, not this module."
+  ]
+}

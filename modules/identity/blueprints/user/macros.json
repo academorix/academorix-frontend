@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/user/macros",
+  "$version": 1,
+  "title": "user \u2014 published macros",
+  "description": "No Blueprint macros. The user module does NOT publish schema-level composition helpers \u2014 tenant / user FKs are added via the tenancy `Blueprint::tenantable()` macro (from tenancy module) and per-model composition. Two runtime macros are published on `Illuminate\\Http\\Request` for `me`-flavoured helpers on inbound requests.",
+  "namespace_note": "Runtime macros extend `Illuminate\\Http\\Request`. Registered by `UserServiceProvider::boot()` during framework boot.",
+  "macros": [
+    {
+      "name": "Request::me",
+      "signature": "Request::me(): ?User",
+      "description": "Fluent alias for `$request->user('sanctum')`. Returns the authenticated Sanctum principal cast to `Academorix\\User\\Models\\User` (via container binding) or null.",
+      "usage_example": "$user = $request->me();\nif ($user === null) throw new Unauthenticated();"
+    },
+    {
+      "name": "Request::activeTenantId",
+      "signature": "Request::activeTenantId(): ?string",
+      "description": "Returns the tenant ULID the caller is operating in for THIS request. Resolves in order: (1) the `X-Tenant-Id` header if the caller is a member; (2) the User's TenantMember row where `is_default = true`; (3) null if no default is set. The middleware `user.resolve_active_tenant` sets this once per request \u2014 the macro reads from the resolved value.",
+      "usage_example": "$tenantId = $request->activeTenantId();\nif ($tenantId === null) throw new NoActiveTenant();"
+    }
+  ],
+  "registered_by": "Academorix\\User\\Providers\\UserServiceProvider::boot()",
+  "registration_order": "Registered during the standard boot phase. Depends on tenancy having booted first so the User model's `BelongsToTenant` scope is already registered when the macros run \u2014 tenancy priority (14) < user priority (18) so ordering is safe by construction."
+}

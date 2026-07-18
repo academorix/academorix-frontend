@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/identity/traits",
+  "$version": 1,
+  "title": "identity \u2014 trait composition",
+  "description": "Two owned traits. `IsIdentity` is a marker composed by the Identity model itself and any future variant (e.g. a shadow Identity used during merge flows). `HasCredentialLifecycle` provides the composable audit/reset/lockout methods that both `Identity` and the downstream principals which reuse Identity substrate (`PlatformUser`) need. NO BelongsToTenant \u2014 Identity is global by design.",
+  "owned": [
+    {
+      "trait": "Academorix\\Identity\\Concerns\\IsIdentity",
+      "description": "Marker trait composed by the Identity model. Provides the shared shape identifier for reflection-based tooling (audit redactors, seeders, factories) that need to enumerate every Identity-shaped row without hard-coding the class. Adds no accessor / mutator / scope of its own \u2014 those live on HasCredentialLifecycle.",
+      "public": true,
+      "usedBy": ["identity::Identity"],
+      "underlying_package": null,
+      "wraps": null,
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Identity\\Concerns\\HasCredentialLifecycle",
+      "description": "Composable audit/reset/lockout methods for principals whose credentials live on the `identities` table. Ships: `->verifyPassword($plain)`, `->markLoginSuccess()`, `->markLoginFailure()`, `->lock($minutes = null)`, `->unlock()`, `->enrollMfa($secret)`, `->disableMfa()`, `->regenerateRecoveryCodes()`, `->consumeRecoveryCode($code)`, `->recordPasswordChange($newHash)`, `->requiresEmailVerification()`. Each method wraps the operation in a transaction, fires the matching event, and writes to the audit trail via `HasActivityLog` when composed alongside it.",
+      "public": true,
+      "usedBy": ["identity::Identity"],
+      "underlying_package": "laravel/framework (Hash + Password facades)",
+      "wraps": "The trait DELEGATES to Laravel's Hash + Password facades for credential operations but wraps them in idempotent domain operations (progressive lockout, breach-check integration, history maintenance). We do not reimplement password hashing \u2014 we compose it.",
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Identity retains a GDPR erasure hold-period (default 30 days after deleted_at) before hard delete so downstream compliance queries can still resolve historical audit trails."
+      },
+      { "trait": "Illuminate\\Notifications\\Notifiable" },
+      { "trait": "Illuminate\\Auth\\Passwords\\CanResetPassword" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+  },
+  "composition": {
+    "identity": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "Notifiable",
+        "CanResetPassword",
+        "IsIdentity",
+        "HasCredentialLifecycle",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "NO BelongsToTenant \u2014 Identity is global (design.md D1).",
+        "NO application-scope trait \u2014 Identity spans every Application via the identity_id FK on `users` / `platform_users`.",
+        "The order matters: `IsIdentity` must precede `HasCredentialLifecycle` so the marker trait's static hooks run before the lifecycle trait's booted() observer wiring.",
+        "`HasActivityLog` writes to the shared `activity_log` table so identity mutations show up in the compliance timeline; PII fields are redacted at the audit layer (see data-classes.json)."
+      ]
+    }
+  }
+}

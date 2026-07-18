@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/platform-user/entitlements",
+  "$version": 1,
+  "title": "platform-user \u2014 internal capability flags",
+  "description": "These are NOT tenant-facing entitlements \u2014 they are Academorix-internal capability flags that a super_admin toggles per PlatformUser to grant elevated permissions. Distinct from RBAC roles (which grant broad ability sets); entitlements are individual per-staffer capability gates that require explicit approval (usually via a separate ticket + super_admin signoff). Each entitlement grant is audit-logged with the granting actor + reason.",
+  "kinds": [{ "kind": "boolean" }],
+  "reference": {
+    "publishedBy": "access/rbac (entitlements substrate reused; the entitlements table itself is owned by that module)",
+    "scoped_to": "platform_admin guard only \u2014 tenant plane is a separate entitlements namespace"
+  },
+  "entitlements": [
+    {
+      "key": "platform.impersonate",
+      "kind": "boolean",
+      "description": "Grants the holder the ability to start impersonation sessions against tenant Users (via the Wave 1b `access/delegation` module). Every impersonation start writes an audit row + an impersonation_sessions row + fires a `PlatformImpersonationStarted` event. This entitlement is granted per-PlatformUser (not per-role) so revocation is granular \u2014 a rogue actor cannot inherit impersonation from a role assignment.",
+      "grantedBy": "super_admin only",
+      "audit_severity": "critical",
+      "requires_reason": true,
+      "typical_grantees": ["support agents on the platinum-support tier", "security incident responders"]
+    },
+    {
+      "key": "platform.audit_read",
+      "kind": "boolean",
+      "description": "Grants the holder read access to the full cross-tenant audit trail (via /api/v1/platform/audits, owned by the audit module). Distinct from `platform.platform_users.view.audit_trail` \u2014 that latter is scoped to a specific PlatformUser's own actions. This entitlement is the broad compliance-review capability.",
+      "grantedBy": "super_admin + dpo",
+      "audit_severity": "warn",
+      "requires_reason": true,
+      "typical_grantees": ["dpo staff", "compliance auditors", "external SOC 2 assessors (via a time-bounded PlatformUser row)"]
+    },
+    {
+      "key": "platform.tenant_admin",
+      "kind": "boolean",
+      "description": "Grants the holder the ability to perform admin actions on any tenant (change tenant status, disable a tenant, force-purge tenant data on request). Cross-tenant by construction. Every action writes both a platform-plane audit row AND a tenant-plane audit row (dual-writes so both the tenant DPO + the Academorix compliance officer see the same action).",
+      "grantedBy": "super_admin only",
+      "audit_severity": "critical",
+      "requires_reason": true,
+      "typical_grantees": ["support agents handling data-subject-access-requests", "compliance officers"]
+    },
+    {
+      "key": "platform.security_review",
+      "kind": "boolean",
+      "description": "Grants the holder access to security-sensitive tools (session revocation across the fleet, tenant PIN reset for locked-out admin scenarios, KMS key rotation triggers). This is the highest-privilege entitlement; a grant is a compliance-relevant event that pages the DPO within 24h.",
+      "grantedBy": "super_admin only, with a co-signer from the security department",
+      "audit_severity": "critical",
+      "requires_reason": true,
+      "requires_co_signer": true,
+      "typical_grantees": ["security engineers", "on-call incident responders during a Sev-1"]
+    }
+  ],
+  "grant_shape": {
+    "description": "Each entitlement grant writes a row to `platform_entitlement_grants` (owned by access/rbac, Wave 1b). The row records: platform_user_id, entitlement_key, granted_by_platform_user_id, reason, granted_at, expires_at (optional, for time-bounded grants), revoked_at (for revocation tracking). Grants are checked at request time in the controller layer via `EntitlementGate::allows($platformUser, 'platform.impersonate')`.",
+    "expiry": "Grants may be time-bounded via expires_at. On expiry, EntitlementGate returns false + a scheduled command fires PlatformEntitlementExpired to notify the grantee + the granting super_admin."
+  },
+  "notes": [
+    "These are ORTHOGONAL to spatie-permission roles. A PlatformUser has role assignments (e.g. `ops` role = ops-baseline permissions) AND separately holds zero or more entitlements. The two layers compose \u2014 an `ops` PlatformUser without `platform.impersonate` cannot start an impersonation even if their role's default permission set included it.",
+    "Never grant these entitlements on a role \u2014 role-level grants are broadcast and lose the per-staffer audit trail. Always grant per-user.",
+    "For time-bounded grants (e.g. an external SOC 2 assessor gets `platform.audit_read` for the audit window), set expires_at explicitly + verify via the `platform-user:audit-report` command that no post-window access occurred."
+  ]
+}

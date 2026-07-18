@@ -1,0 +1,265 @@
+{
+  "id": "academorix://modules/platform-user/schemas/platform-user",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PlatformUser",
+  "description": "Academorix-staff principal. Cross-tenant, cross-application. Sits on the `platform_admin` guard. Reuses the `identity/identity` substrate for credentials via `identity_id` FK. UNIQUE(identity_id) enforces one PlatformUser per Identity. NEVER carries `tenant_id` or `application_id` \u2014 cross-plane by construction (see design.md \u00a74.3 + tenancy-columns.md \u00a72 exception).",
+  "type": "object",
+  "x-module": "platform-user",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Foundation\\Auth\\User",
+    "table": "platform_users",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "plu_",
+    "incrementing": false,
+    "model": "Academorix\\PlatformUser\\Models\\PlatformUser",
+    "interface": "Academorix\\PlatformUser\\Contracts\\Data\\PlatformUserInterface",
+    "implements": ["Academorix\\PlatformUser\\Contracts\\Data\\PlatformUserInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "Notifiable",
+      "HasApiTokens",
+      "IsPlatformUser",
+      "HasEmploymentLifecycle",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "HasAudit",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "PlatformUserStatus",
+      "hire_date": "date",
+      "offboarded_at": "immutable_datetime",
+      "department": "PlatformDepartment",
+      "employment_type": "EmploymentType",
+      "metadata": "array"
+    },
+    "appends": [
+      "email",
+      "email_verified",
+      "mfa_enabled",
+      "is_active",
+      "is_offboarded",
+      "tenure_days",
+      "reports_count",
+      "on_call_at"
+    ],
+    "guard": "platform_admin",
+    "observers": ["PlatformUserObserver"],
+    "hidden": ["identity_id", "profile_id"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `plu_<26 chars>`."
+      },
+      "identity_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "identities", "column": "id", "onDelete": "restrict" },
+        "description": "FK to the global credential record. UNIQUE (one PlatformUser per Identity). RESTRICT on delete so an Identity soft-delete does not orphan a PlatformUser row."
+      },
+      "profile_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "platform_profiles", "column": "id", "onDelete": "restrict" },
+        "description": "FK to the 1:1 PII satellite. UNIQUE (a profile is bound to exactly one PlatformUser). RESTRICT on delete so a profile purge cannot orphan the parent row."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "pending",
+        "enum": ["pending", "active", "suspended", "offboarded"],
+        "description": "Employment lifecycle state."
+      },
+      "hire_date": {
+        "type": "date",
+        "nullable": false,
+        "description": "Required at creation time. Cannot be in the future (observer refuses)."
+      },
+      "offboarded_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Populated on status\u2192offboarded. May be future-dated up to 30 days for planned offboardings."
+      },
+      "offboarding_reason": {
+        "type": "text",
+        "nullable": true,
+        "description": "Required on offboard (min 20 chars, max 1000). HR-context field \u2014 redacted unless caller has `platform.platform_users.view.hr_context`."
+      },
+      "department": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum from data/departments.json: ops / product / engineering / support / sales / finance / legal / security / dpo / hr."
+      },
+      "employment_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "full_time",
+        "description": "Enum from data/employment-types.json: full_time / part_time / contractor / temporary."
+      },
+      "job_title": {
+        "type": "string",
+        "length": 128,
+        "nullable": true
+      },
+      "manager_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "platform_users", "column": "id", "onDelete": "set null" },
+        "description": "Self-referential org chart. Nullable for top-of-tree PlatformUsers. Cycle detection + depth cap enforced in the observer."
+      },
+      "on_call_rotation_key": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Opaque identifier for the on-call backend. PagerDuty schedule id when backend=pagerduty; internal rotation-entry id when backend=internal. Non-null signals rotation membership; OnCallResolver reads this on every resolution."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform-ops notes bag (from HasMetadata). Internal-tier \u2014 never stores tenant/user data."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["identity_id"],
+        "unique": true,
+        "name": "platform_users_identity_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One PlatformUser per Identity (excluding soft-deleted so a re-hire can reuse the identity after the retention hold hard-deletes the prior row)."
+      },
+      {
+        "columns": ["profile_id"],
+        "unique": true,
+        "name": "platform_users_profile_unique",
+        "description": "1:1 with PlatformProfile."
+      },
+      {
+        "columns": ["status", "department"],
+        "unique": false,
+        "name": "platform_users_status_department_idx",
+        "description": "Filter acceleration for the list surface + the `active_headcount` metric."
+      },
+      {
+        "columns": ["manager_id"],
+        "unique": false,
+        "name": "platform_users_manager_idx",
+        "description": "Reverse-relation acceleration for `directReports()`."
+      },
+      {
+        "columns": ["on_call_rotation_key"],
+        "unique": false,
+        "name": "platform_users_on_call_idx",
+        "predicate": "on_call_rotation_key IS NOT NULL",
+        "description": "Partial index for OnCallResolver's rotation-membership lookup."
+      },
+      {
+        "columns": ["status", "deleted_at"],
+        "unique": false,
+        "name": "platform_users_retention_scan_idx",
+        "predicate": "status = 'offboarded' AND deleted_at IS NOT NULL",
+        "description": "Scan predicate for PurgeOffboardedPlatformUsersJob."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "identity_id",
+    "profile_id",
+    "status",
+    "hire_date",
+    "department",
+    "employment_type",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^plu_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "identity_id": { "type": "string", "pattern": "^idn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "profile_id": { "type": "string", "pattern": "^plp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["pending", "active", "suspended", "offboarded"] },
+    "hire_date": { "type": "string", "format": "date" },
+    "offboarded_at": { "type": ["string", "null"], "format": "date-time" },
+    "offboarding_reason": { "type": ["string", "null"], "minLength": 20, "maxLength": 1000 },
+    "department": {
+      "type": "string",
+      "enum": ["ops", "product", "engineering", "support", "sales", "finance", "legal", "security", "dpo", "hr"]
+    },
+    "employment_type": {
+      "type": "string",
+      "enum": ["full_time", "part_time", "contractor", "temporary"]
+    },
+    "job_title": { "type": ["string", "null"], "maxLength": 128 },
+    "manager_id": { "type": ["string", "null"], "pattern": "^plu_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "on_call_rotation_key": { "type": ["string", "null"], "maxLength": 128 },
+    "metadata": { "type": ["object", "null"] },
+    "email": {
+      "type": "string",
+      "description": "Computed. Chains to identities.email. REDACTED unless caller has `platform.platform_users.view.pii`."
+    },
+    "email_verified": {
+      "type": "boolean",
+      "description": "Computed. identities.email_verified_at IS NOT NULL."
+    },
+    "mfa_enabled": {
+      "type": "boolean",
+      "description": "Computed. identities.mfa_secret_encrypted IS NOT NULL."
+    },
+    "is_active": { "type": "boolean", "description": "Computed. status = 'active'." },
+    "is_offboarded": { "type": "boolean" },
+    "tenure_days": {
+      "type": "integer",
+      "description": "Computed. Days since hire_date."
+    },
+    "reports_count": {
+      "type": "integer",
+      "description": "Computed. Count of active/suspended direct reports."
+    },
+    "on_call_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Computed. Timestamp of next on-call shift start; null when not in rotation."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["identity_id", "profile_id"],
+    "computed": ["email", "email_verified", "mfa_enabled", "is_active", "is_offboarded", "tenure_days", "reports_count", "on_call_at"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`plu_<26>`)"]
+  }
+}

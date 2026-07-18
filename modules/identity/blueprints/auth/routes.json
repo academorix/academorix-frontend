@@ -1,0 +1,416 @@
+{
+  "id": "academorix://modules/auth/routes",
+  "$version": 1,
+  "title": "auth \u2014 HTTP routes",
+  "description": "The full authentication protocol surface across three planes. Tenant plane (`sanctum` guard, per-Application) owns the interactive session lifecycle. Platform plane (`platform_admin` guard, cross-application) owns Academorix-staff auth + identity CRUD + JWT-key management. Public plane owns the JWKS endpoint + health probe. Every mutating endpoint is idempotent under retry OR explicitly one-time-consume-atomic (registration, reset, verify, cross-app exchange).",
+  "groups": [
+    {
+      "name": "tenant-auth-unauthenticated",
+      "prefix": "/api/v1/auth",
+      "middleware": [
+        "request.id",
+        "auth.cors_strict",
+        "versioning.resolve",
+        "application.resolve",
+        "throttle:foundation-base",
+        "auth.rate_limit_login",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant plane, unauthenticated. Every endpoint below is a session-establishing OR session-not-required flow (register, forgot password, MFA challenge verify, cross-app exchange).",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/register",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\RegisterController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\RegisterAction",
+          "permission": null,
+          "middleware_add": ["identity.check_lockout"],
+          "description": "Register new Identity + provision User for the resolved Application. Body: RegisterInput. Response: 201 with LoginResult OR 202 with MfaChallengeResult when the tenant enforces MFA at registration."
+        },
+        {
+          "method": "POST",
+          "path": "/login",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\LoginController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\LoginAction",
+          "permission": null,
+          "middleware_add": ["identity.check_lockout"],
+          "description": "Authenticate against Identity + resolve User per X-Application-Id + issue PAT (200 + LoginResult) OR MFA challenge (202 + MfaChallengeResult)."
+        },
+        {
+          "method": "POST",
+          "path": "/mfa/verify",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\MfaVerifyController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\MfaVerifyAction",
+          "permission": null,
+          "middleware_add": ["identity.check_lockout"],
+          "description": "Verify MFA response. Body: MfaVerifyInput. Response: 200 + LoginResult."
+        },
+        {
+          "method": "POST",
+          "path": "/password/forgot",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\ForgotPasswordController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\ForgotPasswordAction",
+          "permission": null,
+          "description": "Issue password reset token. ALWAYS returns 200 (enumeration safety) \u2014 caller can't distinguish known-email from unknown-email."
+        },
+        {
+          "method": "POST",
+          "path": "/password/reset",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\ResetPasswordController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\ResetPasswordAction",
+          "permission": null,
+          "description": "Complete password reset. Token consumed atomically + all sessions revoked. Response: 200 + LoginResult (fresh session issued)."
+        },
+        {
+          "method": "POST",
+          "path": "/email/request-verification",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\RequestEmailVerificationController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\RequestEmailVerificationAction",
+          "permission": null,
+          "description": "Issue email verification token. Debounced 60s per identity."
+        },
+        {
+          "method": "POST",
+          "path": "/email/verify",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\VerifyEmailController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\VerifyEmailAction",
+          "permission": null,
+          "description": "Consume email verification token. Idempotent \u2014 already-verified identities return success."
+        },
+        {
+          "method": "POST",
+          "path": "/cross-app/exchange",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\ExchangeCrossAppGrantController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\ExchangeCrossAppGrantAction",
+          "permission": null,
+          "middleware_add": ["entitlement.enforce:cross_app_sso"],
+          "description": "Exchange a cross-app grant for target-Application PAT. Grant consumed atomically. Response: 200 + CrossAppGrantExchangeResult."
+        }
+      ]
+    },
+    {
+      "name": "tenant-auth-authenticated",
+      "prefix": "/api/v1/auth",
+      "middleware": [
+        "request.id",
+        "auth.cors_strict",
+        "versioning.resolve",
+        "application.resolve",
+        "auth:sanctum",
+        "auth.enforce_session_scope",
+        "tenant.resolve",
+        "throttle:foundation-base",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Tenant plane, authenticated. Requires a valid Sanctum PAT + matching X-Application-Id scope.",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/refresh",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\RefreshController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\RefreshAction",
+          "permission": null,
+          "description": "Rotate refresh token + issue new PAT. Reuse-detected refresh triggers RefreshTokenReuseDetected + full session revocation."
+        },
+        {
+          "method": "POST",
+          "path": "/logout",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\LogoutController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\LogoutAction",
+          "permission": null,
+          "description": "Revoke the current PAT + paired refresh. Response 204."
+        },
+        {
+          "method": "POST",
+          "path": "/logout-all-devices",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\LogoutAllDevicesController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\LogoutAllDevicesAction",
+          "permission": null,
+          "description": "Revoke every active PAT for the current User. Response 204."
+        },
+        {
+          "method": "POST",
+          "path": "/password/change",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\ChangePasswordController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\ChangePasswordAction",
+          "permission": null,
+          "description": "Authenticated password change. Requires current_password verification. Revokes all sessions except this one; caller receives fresh PAT in response."
+        },
+        {
+          "method": "POST",
+          "path": "/cross-app/grant",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\IssueCrossAppGrantController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\IssueCrossAppGrantAction",
+          "permission": "sessions.cross_app_grant",
+          "middleware_add": ["entitlement.enforce:cross_app_sso"],
+          "description": "Issue short-lived grant for target Application. Response: 200 + CrossAppGrantResult."
+        },
+        {
+          "method": "GET",
+          "path": "/me",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\MeController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\GetCurrentUserAction",
+          "permission": null,
+          "description": "Current session's User + Profile + roles + permissions (compact array from Sanctum PAT abilities)."
+        },
+        {
+          "method": "GET",
+          "path": "/sessions",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\SessionsController@index",
+          "permission": "sessions.viewAny.own",
+          "description": "List active sessions for the current User. Response: SessionSummaryData[]."
+        },
+        {
+          "method": "DELETE",
+          "path": "/sessions/{session}",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Tenant\\SessionsController@destroy",
+          "permission": "sessions.revoke.own",
+          "description": "Revoke a specific session (by PAT id). Fires SessionRevoked(reason=self_service)."
+        }
+      ]
+    },
+    {
+      "name": "platform-auth-unauthenticated",
+      "prefix": "/api/v1/platform/auth",
+      "middleware": [
+        "request.id",
+        "auth.cors_strict",
+        "versioning.resolve",
+        "platform.domain",
+        "throttle:foundation-platform",
+        "auth.rate_limit_login",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Platform plane, unauthenticated. No X-Application-Id header (platform staff are cross-Application).",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/login",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\LoginController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\LoginAction",
+          "permission": null,
+          "middleware_add": ["identity.check_lockout"],
+          "description": "Authenticate PlatformUser \u2014 same LoginAction, different guard resolution."
+        },
+        {
+          "method": "POST",
+          "path": "/mfa/verify",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\MfaVerifyController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\MfaVerifyAction",
+          "permission": null,
+          "description": "Verify MFA on platform login."
+        },
+        {
+          "method": "POST",
+          "path": "/password/forgot",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\ForgotPasswordController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\ForgotPasswordAction",
+          "permission": null,
+          "description": "Issue reset token for PlatformUser. Same enumeration-safety guarantees."
+        },
+        {
+          "method": "POST",
+          "path": "/password/reset",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\ResetPasswordController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\ResetPasswordAction",
+          "permission": null
+        }
+      ]
+    },
+    {
+      "name": "platform-auth-authenticated",
+      "prefix": "/api/v1/platform/auth",
+      "middleware": [
+        "request.id",
+        "auth.cors_strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/refresh",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\RefreshController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\RefreshAction",
+          "permission": null
+        },
+        {
+          "method": "POST",
+          "path": "/logout",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\LogoutController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\LogoutAction",
+          "permission": null
+        },
+        {
+          "method": "POST",
+          "path": "/impersonate/start",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\ImpersonateStartController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\ImpersonateStartAction",
+          "permission": "platform.auth.impersonate",
+          "middleware_add": ["entitlement.enforce:impersonation"],
+          "description": "Start impersonation. Body: ImpersonateStartInput. Response: 200 with a short-lived impersonation PAT."
+        },
+        {
+          "method": "POST",
+          "path": "/impersonate/end",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\ImpersonateEndController@__invoke",
+          "permission": "platform.auth.impersonate",
+          "description": "Terminate current impersonation session. Response 204."
+        }
+      ]
+    },
+    {
+      "name": "platform-identities",
+      "prefix": "/api/v1/platform/identities",
+      "middleware": [
+        "request.id",
+        "auth.cors_strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Platform-admin identity CRUD \u2014 the tenant surface for the identity substrate (which itself owns no routes). Every write here fires an identity-substrate event.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\IdentitiesController@index",
+          "permission": "platform.identity.viewAny",
+          "description": "List identities. Redacted \u2014 email fingerprint + metadata only. Filter[locked], filter[unverified], filter[erased] supported."
+        },
+        {
+          "method": "GET",
+          "path": "/{identity}",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\IdentitiesController@show",
+          "permission": "platform.identity.view",
+          "description": "Show identity detail. Redacted by default; ?reveal_pii=true requires platform.identity.view.pii permission + writes an audit-log entry."
+        },
+        {
+          "method": "POST",
+          "path": "/{identity}/unlock",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\IdentitiesController@unlock",
+          "action": "Academorix\\Identity\\Actions\\UnlockIdentityAction",
+          "permission": "platform.identity.unlock",
+          "description": "Clear locked_until + reset failed_attempts_count. Body: { reason: string }."
+        },
+        {
+          "method": "POST",
+          "path": "/{identity}/force-password-reset",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\IdentitiesController@forcePasswordReset",
+          "action": "Academorix\\Identity\\Actions\\ForcePasswordResetAction",
+          "permission": "platform.identity.force_password_reset",
+          "description": "Invalidate current password + revoke sessions + issue fresh reset token."
+        },
+        {
+          "method": "DELETE",
+          "path": "/{identity}",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\IdentitiesController@erase",
+          "action": "Academorix\\Identity\\Actions\\EraseIdentityAction",
+          "permission": "platform.identity.erase",
+          "description": "Compliance-driven erasure. Soft-deletes; hard-delete is scheduled per identity/retention.json."
+        }
+      ]
+    },
+    {
+      "name": "platform-jwt-management",
+      "prefix": "/api/v1/platform/jwt-signing-keys",
+      "middleware": [
+        "request.id",
+        "auth.cors_strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\JwtSigningKeysController@index",
+          "permission": "platform.auth.jwt_keys.viewAny",
+          "description": "List signing keys. Redacted \u2014 secret_encrypted NEVER returned."
+        },
+        {
+          "method": "POST",
+          "path": "/rotate",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\JwtSigningKeysController@rotate",
+          "action": "Academorix\\Auth\\Actions\\RotateJwtSigningKeyAction",
+          "permission": "platform.auth.jwt_keys.rotate",
+          "description": "Rotate to new kid. Old key marked retired_at=now(); still verify-capable for auth.jwt.rotation_grace_period_days."
+        }
+      ]
+    },
+    {
+      "name": "platform-jwt-deny-list",
+      "prefix": "/api/v1/platform/jwt-deny-list",
+      "middleware": [
+        "request.id",
+        "auth.cors_strict",
+        "versioning.resolve",
+        "platform.domain",
+        "auth:platform_admin",
+        "throttle:foundation-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Platform\\JwtDenyListController@store",
+          "action": "Academorix\\Auth\\Actions\\RevokeJwtAction",
+          "permission": "platform.auth.jwt.revoke",
+          "description": "Add jti to deny list. Body: { jti, reason, natural_expiry }."
+        }
+      ]
+    },
+    {
+      "name": "public-jwks",
+      "prefix": "/.well-known",
+      "middleware": [
+        "request.id",
+        "auth.cors_strict",
+        "throttle:foundation-public"
+      ],
+      "hosts": ["tenant", "platform-admin", "public"],
+      "description": "Public JWKS endpoint. No auth. Aggressive Cache-Control for downstream verifier caches.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/jwks.json",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Public\\JwksController@__invoke",
+          "action": "Academorix\\Auth\\Actions\\PublishJwksAction",
+          "permission": null,
+          "description": "Return JWKS payload with every active + not-yet-expired retired key. Response headers: Content-Type: application/jwk-set+json; Cache-Control per auth.jwt.jwks_cache_control."
+        }
+      ]
+    },
+    {
+      "name": "public-health",
+      "prefix": "/api/health",
+      "middleware": ["request.id", "throttle:foundation-public"],
+      "hosts": ["public"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/auth",
+          "controller": "Academorix\\Auth\\Http\\Controllers\\Public\\AuthHealthController@__invoke",
+          "permission": null,
+          "description": "Auth-service health probe. Response: { db, redis, jwt_signing_key_reachable, jwks_response_cacheable }. Uses `readiness` probe set only \u2014 the `startup` set is checked once at boot."
+        }
+      ]
+    }
+  ]
+}

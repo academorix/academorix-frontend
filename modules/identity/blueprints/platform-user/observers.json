@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/platform-user/observers",
+  "$version": 1,
+  "title": "platform-user \u2014 Eloquent observers",
+  "description": "Two observers. `PlatformUserObserver` gates status transitions via a hand-rolled state machine, fires the lifecycle events, invalidates the on-call resolver cache, and enforces the MFA-on-hire gate. `PlatformProfileObserver` handles media pruning (avatar removal when avatar_url is nulled or replaced) + fires PlatformProfileUpdated with the exact set of changed fields.",
+  "observers": [
+    {
+      "model": "PlatformUser",
+      "observer": "Academorix\\PlatformUser\\Observers\\PlatformUserObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `plu_`",
+        "creating \u2192 refuse when the referenced Identity has NULL mfa_secret_encrypted AND config('platform-user.mfa.require_on_hire')=true (default). Throws `IDENTITY_MFA_REQUIRED`. This is the enrolment gate for the platform_admin guard \u2014 tenant Users can login without MFA, platform staff cannot.",
+        "creating \u2192 refuse when another platform_users row already references the same identity_id (defensive check beyond the UNIQUE constraint \u2014 preferred error shape).",
+        "creating \u2192 refuse when manager_id resolves to a row that is NOT `active` (cannot report to a suspended/offboarded manager).",
+        "creating \u2192 set status=`pending` as the default; explicit callers pass `active` via HirePlatformUserInput when hiring an already-onboarded employee (rare \u2014 usually onboarding checklist completion promotes pending\u2192active).",
+        "creating \u2192 stamp created_by from the request-context actor.",
+        "created \u2192 fire PlatformUserHired event (afterCommit).",
+        "updating (status transition attempted) \u2192 validate transition against the state machine: pending\u2192active, active\u2192suspended, suspended\u2192active, {pending|active|suspended}\u2192offboarded. Any other transition throws `EmploymentLifecycleTransitionRefused`.",
+        "updating (status\u2192active from pending) \u2192 fire PlatformUserActivated(previous_status=pending) on afterCommit.",
+        "updating (status\u2192active from suspended) \u2192 fire PlatformUserActivated(previous_status=suspended) AND PlatformUserRestored on afterCommit \u2014 both events dispatch so listeners keyed on either name react.",
+        "updating (status\u2192suspended) \u2192 refuse when the row has active impersonation sessions (access::PlatformImpersonationSession where ended_at IS NULL) \u2014 must terminate them first via the delegation module.",
+        "updating (status\u2192suspended) \u2192 refuse when reason is missing or < 20 chars. Fire PlatformUserSuspended on afterCommit.",
+        "updating (status\u2192offboarded) \u2192 refuse when the row has direct reports (manager_id IS <this.id> on any active/suspended platform_users row) \u2014 must reassign first.",
+        "updating (status\u2192offboarded) \u2192 populate offboarded_at = NOW() (or effective_at when future-dated); soft-delete the row (deleted_at = offboarded_at) so the retention hold timer starts.",
+        "updating (status\u2192offboarded) \u2192 fire PlatformUserOffboarded on afterCommit, which dispatches RevokePlatformUserAccessJob to notifications-critical.",
+        "updating (department mutated) \u2192 fire PlatformUserDepartmentChanged on afterCommit.",
+        "updating (manager_id mutated) \u2192 fire PlatformUserManagerReassigned on afterCommit; refuse cycles (cannot reassign to a manager whose chain of managers eventually points back to this row).",
+        "updating (on_call_rotation_key mutated) \u2192 invalidate the on-call resolver cache tag `platform-user:on-call:current` so the next resolution re-queries.",
+        "deleted \u2192 no-op (soft delete is orchestrated in the offboard flow; unsoftDelete is a manual super_admin override that fires PlatformUserRestored).",
+        "forceDeleted \u2192 no-op (hard delete is orchestrated by PurgeOffboardedPlatformUsersJob, which also purges the PlatformProfile in the same transaction)."
+      ]
+    },
+    {
+      "model": "PlatformProfile",
+      "observer": "Academorix\\PlatformUser\\Observers\\PlatformProfileObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `plp_`",
+        "creating \u2192 stamp created_by from the request-context actor",
+        "creating \u2192 validate phone_e164 via `valid_e164_phone` rule (defensive \u2014 the DTO validation should have caught this)",
+        "creating \u2192 validate timezone via `valid_iana_timezone` rule (defensive)",
+        "updating (avatar_url mutated to a different value) \u2192 schedule PruneOldAvatarJob to hard-delete the previous S3 object (via the platform-media transport) 24h after the change (allows accidental-rollback within the day)",
+        "updating (avatar_url set to null from a previous value) \u2192 schedule PruneOldAvatarJob immediately (explicit avatar removal signals intent).",
+        "updated \u2192 fire PlatformProfileUpdated on afterCommit with `changed_fields` populated from the dirty attributes set (subset of first_name, last_name, display_name, avatar_url, phone_e164, slack_handle, github_handle, timezone).",
+        "deleting \u2192 refuse when the parent PlatformUser row still exists AND is NOT hard-deleted (PlatformProfile is 1:1 with PlatformUser \u2014 orphaning is a bug). This defends against direct PlatformProfile deletes; the correct path is hard-deleting PlatformUser which cascades to PlatformProfile via PurgeOffboardedPlatformUsersJob's transaction."
+      ]
+    }
+  ]
+}

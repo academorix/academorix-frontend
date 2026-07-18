@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/mfa/schedule",
+  "$version": 1,
+  "title": "mfa — scheduled tasks",
+  "entries": [
+    {
+      "name": "mfa-purge-unconfirmed-enrollments",
+      "command": "queue:dispatch PurgeUnconfirmedEnrollmentsJob",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: evict expired enrolment-preview envelopes from Redis. Complements the natural Redis TTL — the TTL guarantees deletion but this job additionally fires the MfaEnrollmentFailed(reason=preview_expired) event so metrics + audit see the abandonment."
+    },
+    {
+      "name": "mfa-notify-low-recovery-codes",
+      "command": "queue:dispatch NotifyLowRecoveryCodesJob",
+      "cron": "0 9 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly at 09:00 UTC: dispatch LowRecoveryCodesRemainingNotification to Identities with fewer than the low-water threshold codes remaining who haven't been notified in the last 30 days."
+    },
+    {
+      "name": "mfa-cleanup-disabled-webauthn-credentials",
+      "command": "queue:dispatch CleanupDisabledWebauthnCredentialsJob",
+      "cron": "0 5 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily at 05:00 UTC: hard-delete WebauthnCredential rows whose disabled_at + retention_days_after_disable < now(). Scheduled an hour after identity/identity's PurgeSoftDeletedIdentitiesJob (04:00 UTC) so any cascade-purged credentials from erasure have flushed first."
+    },
+    {
+      "name": "mfa-active-webauthn-credentials-gauge",
+      "command": "metrics:emit mfa.webauthn.credentials_active",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: emit the count of active WebauthnCredentials for the dashboard."
+    },
+    {
+      "name": "mfa-identities-with-mfa-gauge",
+      "command": "metrics:emit mfa.identities_with_mfa",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: emit fleet-wide MFA-adoption gauge."
+    },
+    {
+      "name": "mfa-recovery-codes-distribution-gauge",
+      "command": "metrics:emit mfa.recovery_codes.remaining_distribution",
+      "cron": "*/1 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: emit the histogram of recovery-code counts across MFA-enrolled Identities. Enables alert on left-tail growth."
+    },
+    {
+      "name": "mfa-identities-required-but-missing-gauge",
+      "command": "metrics:emit mfa.identities_required_but_missing",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: emit the compliance-violation count (Identities holding required-for-roles roles but without MFA past grace)."
+    },
+    {
+      "name": "mfa-suspicious-activity-scheduler-heartbeat",
+      "command": "metrics:emit mfa.suspicious_activity.heartbeat",
+      "cron": "*/1 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: emit a heartbeat so `mfa-suspicious-activity-scheduler-alive` health probe can detect stalls."
+    }
+  ]
+}

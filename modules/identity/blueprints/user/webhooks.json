@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/user/webhooks",
+  "$version": 1,
+  "title": "user \u2014 outbound webhooks",
+  "description": "Tenant admins can subscribe to user-lifecycle events via the webhook module (shared/webhooks, Wave 4). This blueprint declares the event types this module publishes. Payload shapes mirror the corresponding entries in `events.json` \u2014 the webhook module wraps them in the standard envelope.",
+  "reference": {
+    "publishedBy": "webhooks",
+    "resolvedBy": "GET /api/v1/webhooks/event-types"
+  },
+  "event_types": [
+    {
+      "type": "user.provisioned",
+      "description": "New User created. Payload mirrors UserProvisioned event.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.activated",
+      "description": "User transitioned to active.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.suspended",
+      "description": "User transitioned to suspended.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.restored",
+      "description": "Soft-deleted User was restored.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.deleted",
+      "description": "User soft-deleted (start of the erasure hold window). Does NOT fire on hard-delete \u2014 by then the caller's contract is void.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.profile_updated",
+      "description": "Profile mutated. Payload excludes the PII cluster \u2014 only `changed_fields` names are exposed to the webhook consumer.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.avatar_updated",
+      "description": "Avatar changed. Payload includes new avatar_url + old avatar_url (pre-prune).",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.linked_to_tenant",
+      "description": "TenantMember row created.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.removed_from_tenant",
+      "description": "TenantMember row removed.",
+      "since_version": "1.0.0"
+    },
+    {
+      "type": "user.role_changed",
+      "description": "TenantMember.role_id updated.",
+      "since_version": "1.0.0"
+    }
+  ],
+  "notes": [
+    "Every payload is signed with the tenant's webhook secret (HMAC-SHA256) per the shared webhook contract.",
+    "Payloads NEVER include the full Profile PII cluster. Consumers who need to sync Profile data must re-fetch via the tenant-facing API on receipt of the webhook."
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "id": "academorix://modules/service-accounts/metrics",
+  "$version": 1,
+  "title": "service-accounts \u2014 OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.service_account",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["application_id", "trigger", "outcome", "signal_type"],
+    "forbiddenAsLabels": ["service_account_id", "signer_kid", "tenant_id (full ULID)", "ip", "user_agent"],
+    "note": "service_account_id, signer_kid, and tenant_id as full ULIDs are cardinality bombs \u2014 tens of thousands of SAs across every tenant. Use aggregated dimensions (application_id, trigger, outcome) instead. IP + user_agent belong in audit logs, never on metric labels."
+  },
+  "metrics": [
+    {
+      "name": "academorix.service_account.created",
+      "kind": "counter",
+      "unit": "service_accounts",
+      "labels": ["application_id", "tenant_scoped"],
+      "description": "Fired on ServiceAccountCreated. tenant_scoped = true|false (whether tenant_id is populated)."
+    },
+    {
+      "name": "academorix.service_account.enabled",
+      "kind": "counter",
+      "unit": "toggles",
+      "labels": ["application_id"],
+      "description": "Fired on ServiceAccountEnabled."
+    },
+    {
+      "name": "academorix.service_account.disabled",
+      "kind": "counter",
+      "unit": "toggles",
+      "labels": ["application_id", "trigger"],
+      "description": "Fired on ServiceAccountDisabled. trigger = manual|expired|dormant|suspicious_activity|incident."
+    },
+    {
+      "name": "academorix.service_account.deleted",
+      "kind": "counter",
+      "unit": "service_accounts",
+      "labels": ["application_id", "erasure_phase"],
+      "description": "Fired on ServiceAccountDeleted. erasure_phase = soft_delete|hard_delete."
+    },
+    {
+      "name": "academorix.service_account.rotated",
+      "kind": "counter",
+      "unit": "rotations",
+      "labels": ["application_id", "trigger"],
+      "description": "Fired on ServiceAccountSecretRotated. trigger = manual|scheduled|incident|expired_grace."
+    },
+    {
+      "name": "academorix.service_account.rotation.warned",
+      "kind": "counter",
+      "unit": "notifications",
+      "labels": ["application_id"],
+      "description": "NotifyRotationDueJob dispatched a rotation-due notification for an SA."
+    },
+    {
+      "name": "academorix.service_account.expired",
+      "kind": "counter",
+      "unit": "service_accounts",
+      "labels": ["application_id"],
+      "description": "PurgeExpiredServiceAccountsJob detected an SA past grace + soft-disabled it."
+    },
+    {
+      "name": "academorix.service_account.retention.purged",
+      "kind": "counter",
+      "unit": "service_accounts",
+      "labels": ["application_id"],
+      "description": "PurgeExpiredServiceAccountsJob hard-deleted a soft-deleted SA past retention hold."
+    },
+    {
+      "name": "academorix.service_account.jwt.issued",
+      "kind": "counter",
+      "unit": "tokens",
+      "labels": ["application_id", "trigger", "outcome"],
+      "description": "Token-exchange OR test-issue path. trigger = exchange|test. outcome = success|rate_limited|invalid_credentials|disabled|expired|kid_invalid."
+    },
+    {
+      "name": "academorix.service_account.jwt.issue_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [10, 50, 100, 250, 500, 1000, 2500],
+      "labels": ["application_id", "outcome"],
+      "description": "Wall-clock of the token-exchange endpoint. Successful bcrypt::check is the main contributor (target P95 < 500ms). Failure timing MUST fall in the same bucket as success to preserve constant-time comparison at the endpoint level."
+    },
+    {
+      "name": "academorix.service_account.jwt.verify",
+      "kind": "counter",
+      "unit": "verifications",
+      "labels": ["application_id", "outcome"],
+      "description": "service_account.verify_jwt middleware invocations. outcome = success|signature_invalid|kid_invalid|kid_disabled|jti_deny_listed|iss_mismatch|aud_mismatch|exp_elapsed|sa_disabled|sa_expired|app_mismatch|tid_mismatch."
+    },
+    {
+      "name": "academorix.service_account.jwt.verify_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 10, 25, 50, 100, 250],
+      "labels": ["application_id", "outcome"],
+      "description": "Wall-clock of service_account.verify_jwt middleware. Target P95 < 25ms (JWT verify is cheap; DB round-trip to load the SA row is the tail)."
+    },
+    {
+      "name": "academorix.service_account.dormant.detected",
+      "kind": "counter",
+      "unit": "service_accounts",
+      "labels": ["application_id"],
+      "description": "DetectDormantServiceAccountJob flagged an SA. Per-application counter."
+    },
+    {
+      "name": "academorix.service_account.usage_detected_after_dormancy",
+      "kind": "counter",
+      "unit": "wake_ups",
+      "labels": ["application_id"],
+      "description": "First-request-after-dormancy detection. Security-relevant signal."
+    },
+    {
+      "name": "academorix.service_account.suspicious_activity",
+      "kind": "counter",
+      "unit": "signals",
+      "labels": ["application_id", "signal_type"],
+      "description": "signal_type = rate_spike_novel_ip|rate_spike_novel_ua|high_failure_rate|cross_kid_signature_reuse."
+    },
+    {
+      "name": "academorix.service_account.exchange_rate_limited",
+      "kind": "counter",
+      "unit": "rejections",
+      "labels": ["throttle_bucket"],
+      "description": "Token-exchange endpoint rate-limit rejections. throttle_bucket = sa_id|ip_prefix_24."
+    },
+    {
+      "name": "academorix.service_account.kid_rotation.propagated",
+      "kind": "counter",
+      "unit": "rotations",
+      "labels": ["application_id", "mode"],
+      "description": "auth::JwtSigningKeyRotated propagated through the module. mode = in_place|renamed."
+    },
+    {
+      "name": "academorix.service_account.kid_burned.alerted",
+      "kind": "counter",
+      "unit": "alerts",
+      "labels": ["application_id"],
+      "description": "auth::JwtSigningKeyDisabled affected N SAs. Emitted once per (kid, affected_sa) pair."
+    },
+    {
+      "name": "academorix.service_account.last_used.flush",
+      "kind": "histogram",
+      "unit": "rows_per_batch",
+      "buckets": [1, 5, 20, 100, 500, 2000],
+      "labels": [],
+      "description": "UpdateLastUsedTimestampJob flush batch size. Tail growth signals accumulating write pressure."
+    },
+    {
+      "name": "academorix.service_account.request.audit",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["application_id", "outcome"],
+      "description": "service_account.audit middleware invocations. outcome = success|error|rate_limited|verification_failed."
+    },
+    {
+      "name": "academorix.service_account.active_count",
+      "kind": "gauge",
+      "unit": "service_accounts",
+      "labels": [],
+      "description": "Count of rows where is_enabled = true AND deleted_at IS NULL AND (expires_at IS NULL OR expires_at > now()). Emitted every 60s."
+    },
+    {
+      "name": "academorix.service_account.rotation_due_count",
+      "kind": "gauge",
+      "unit": "service_accounts",
+      "labels": [],
+      "description": "Count of active SAs whose expires_at falls inside the warning window. Emitted hourly."
+    },
+    {
+      "name": "academorix.service_account.dormant_count",
+      "kind": "gauge",
+      "unit": "service_accounts",
+      "labels": [],
+      "description": "Count of active SAs whose last_used_at is older than the dormant threshold. Emitted weekly."
+    },
+    {
+      "name": "academorix.service_account.expired_count",
+      "kind": "gauge",
+      "unit": "service_accounts",
+      "labels": [],
+      "description": "Count of SAs still enabled but past expires_at (pre-purge). Emitted every 5 minutes."
+    }
+  ]
+}

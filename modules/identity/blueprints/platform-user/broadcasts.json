@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/platform-user/broadcasts",
+  "$version": 1,
+  "title": "platform-user \u2014 broadcast channels",
+  "description": "This module publishes NO broadcast channels. Platform-plane events reach subscribers via the standard event bus + queue \u2014 there is no WebSocket-fed live-update surface unique to platform-user. The ops dashboard reads via HTTP polling (30s cadence) on the `/platform-users` + `/platform-users/on-call/current` endpoints. When Wave 1b `access/delegation` lands, it may add a `platform.impersonation.{platform_user_id}` channel for real-time impersonation notification \u2014 that will live in the delegation module's blueprint, not here. This file exists for uniform module shape.",
+  "driver": "reverb",
+  "channels": [],
+  "notes": [
+    "Foundation owns the ONE platform-wide broadcast channel (`platform.health`) for cross-module health snapshots \u2014 platform-user emits health probe results via that channel, not its own.",
+    "Notification-side transports (mail, in-app, Slack, PagerDuty) do NOT go through Reverb \u2014 those are queue-backed transport plugins registered by the notifications modules."
+  ]
+}

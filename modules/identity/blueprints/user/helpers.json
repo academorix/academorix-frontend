@@ -1,0 +1,52 @@
+{
+  "id": "academorix://modules/user/helpers",
+  "$version": 1,
+  "title": "user \u2014 helper functions",
+  "description": "Two published helpers for common /me-flavoured lookups from any layer (controller, action, listener, blade template, artisan command).",
+  "namespace": "Academorix\\User\\Support",
+  "helpers": [
+    {
+      "signature": "me(): ?User",
+      "purpose": "Returns the authenticated Sanctum principal cast to `Academorix\\User\\Models\\User`. Null when the caller is unauthenticated or auth'd via a different guard (platform_admin, bearer).",
+      "behaviours": [
+        "Equivalent to `auth('sanctum')->user()` but typed to the User class the container binds.",
+        "Never throws \u2014 returns null in every unauthenticated case."
+      ],
+      "flow": "1) Read the auth manager. 2) Resolve the sanctum guard. 3) Return the guard's `user()` value cast to Academorix\\User\\Models\\User."
+    },
+    {
+      "signature": "active_tenant_id(): ?string",
+      "purpose": "Returns the tenant ULID resolved by the `user.resolve_active_tenant` middleware for THIS request. Null when no active tenant could be resolved.",
+      "behaviours": [
+        "Reads from the `RequestContext.tenant_id` slot the middleware writes.",
+        "Never queries the DB \u2014 the middleware already resolved the value."
+      ]
+    },
+    {
+      "signature": "user_owns(mixed $row): bool",
+      "purpose": "Returns true when the given row is owned by the current authenticated User (`row.user_id === me()->id`). Used by services to short-circuit permission checks before hitting the base repository.",
+      "behaviours": [
+        "Accepts an Eloquent model, a data DTO, or a raw stdClass row.",
+        "Reads `user_id` from any of those shapes.",
+        "Returns false when the row has no `user_id` attribute or when there's no authenticated User."
+      ]
+    }
+  ],
+  "notes": [
+    "Every helper here is a thin wrapper. Prefer container-injected services (`UserRepository`, `TenantMemberRepository`) for anything more complex \u2014 helpers are a convenience for readable one-liners in view + controller code."
+  ],
+  "examples": [
+    {
+      "title": "Read the authenticated User",
+      "code": "$user = me();\nif ($user === null) throw new Unauthenticated();"
+    },
+    {
+      "title": "Guard a controller by ownership",
+      "code": "abort_unless(user_owns($athlete), 403);"
+    },
+    {
+      "title": "Read the resolved tenant",
+      "code": "$tenantId = active_tenant_id() ?? throw new NoActiveTenant();"
+    }
+  ]
+}

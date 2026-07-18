@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/user/traits",
+  "$version": 1,
+  "title": "user \u2014 trait composition",
+  "description": "Three owned traits. `BelongsToUser` pairs a domain model with a User FK + auto-fills `user_id` on save. `HasProfile` gives services the accessor chain into the Profile satellite without wide model exposure. `IsUserOwnable` is a marker interface + tiny helper that the `.own` scope resolver consults when narrowing queries by `user_id = current_user_id`.",
+  "owned": [
+    {
+      "trait": "Academorix\\User\\Concerns\\BelongsToUser",
+      "description": "Mixed into any domain model that carries a User FK. Adds the `user()` belongsTo relation, the global scope filter used by the base repository, and a `booted()` hook that fills `user_id = auth()->id()` on `creating` when the field is null AND the current request has an authenticated User principal. Order-sensitive when composed with `BelongsToTenant` \u2014 tenant MUST come first so the scope chain observes the tenant context in this trait's `booted()` hook.",
+      "public": true,
+      "usedBy": [
+        "sports::Athlete (via user_id nullable \u2014 minors have no login)",
+        "sports::Coach",
+        "staff::Staff",
+        "ai::ChatSession",
+        "ai::AiDraft (author)"
+      ],
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\User\\Concerns\\HasProfile",
+      "description": "Exposes `profile()` hasOne + a set of accessors that pull from the Profile satellite (`full_name`, `display_name`, `avatar_url`, `locale`, `timezone`, `dob`) with fallbacks to identity + tenant defaults. Composed by the User model. Callers that only need to read profile fields go through the accessors on User rather than joining Profile directly \u2014 that keeps the PII cluster behind one redactor boundary.",
+      "public": true,
+      "usedBy": ["User"],
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\User\\Concerns\\IsUserOwnable",
+      "description": "Marker interface + one helper: `scopeOwnedBy(User $user)` on the composing model, applying `WHERE user_id = $user->id`. Consumed by the `ScopeSuffixResolver` when a caller's permission carries the `.own` suffix. The trait doesn't need `booted()` \u2014 it's a query-time helper; the actual filter is applied by the base repository, not the model.",
+      "public": true,
+      "usedBy": [
+        "sports::Athlete",
+        "sports::Coach",
+        "staff::Staff",
+        "notifications::NotificationPreference"
+      ],
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" },
+      { "trait": "Laravel\\Sanctum\\HasApiTokens", "reason": "User is the Sanctum-authenticated principal." },
+      { "trait": "Illuminate\\Notifications\\Notifiable", "reason": "User receives lifecycle notifications via mail + in_app channels." },
+      { "trait": "Illuminate\\Auth\\MustVerifyEmail", "reason": "Delegates to identity->email_verified_at \u2014 User row is verified when its Identity is verified." }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "User + Profile mutations write to the `audits` table (compliance signal)." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "User lifecycle events also feed the product-facing activity feed." }
+    ]
+  },
+  "composition": {
+    "user": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasProfile",
+        "HasApiTokens",
+        "Notifiable",
+        "MustVerifyEmail",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant MUST precede HasProfile so accessors observe the tenant scope. HasApiTokens comes before Notifiable because Sanctum registers its own auth guard on boot."
+    },
+    "profile": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "PII cluster \u2014 Auditable writes every mutation to the compliance audit trail. NO HasActivityLog because Profile updates are already logged on the User's activity stream via the ProfileUpdated event."
+    },
+    "tenant_member": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Pivot rows are auditable + activity-logged because role changes are compliance-relevant. SoftDeletes so we can restore an accidentally-removed membership within the retention window."
+    }
+  }
+}

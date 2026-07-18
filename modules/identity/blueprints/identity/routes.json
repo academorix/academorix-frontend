@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/identity/routes",
+  "$version": 1,
+  "title": "identity \u2014 HTTP routes",
+  "description": "This module publishes NO HTTP routes. Every authentication endpoint (login, refresh, logout, password reset, email verification, MFA challenge, cross-app SSO grant) lives in the `identity/auth` module which composes over this substrate. See design.md \u00a77 for the full HTTP contract.",
+  "groups": [],
+  "rationale": [
+    "The `identity` module is the SECURITY SUBSTRATE. Exposing HTTP routes on it would blur the boundary between the credential-storage layer and the authentication protocol.",
+    "Every operation on an Identity row transits through auth-service actions: LoginAction / ChallengeMfaAction / RequestPasswordResetAction / CompletePasswordResetAction / VerifyEmailAction / ResendEmailVerificationAction / RegisterAction. Those actions live in `identity/auth`.",
+    "Platform-admin CRUD on the Identity row (list / describe / unlock / force-reset / erase) is exposed through Artisan commands (see commands.json). The platform-admin HTTP surface \u2014 `/api/v1/platform/identities/*` \u2014 also lives in `identity/auth` where the routing + guard wiring belongs."
+  ],
+  "consumed_by_downstream_modules": {
+    "identity/auth": [
+      "POST /api/v1/auth/login",
+      "POST /api/v1/auth/register",
+      "POST /api/v1/auth/refresh",
+      "POST /api/v1/auth/logout",
+      "POST /api/v1/auth/mfa/verify",
+      "POST /api/v1/auth/mfa/enroll",
+      "DELETE /api/v1/auth/mfa",
+      "POST /api/v1/auth/mfa/recovery-codes/regenerate",
+      "POST /api/v1/auth/mfa/recovery-codes/consume",
+      "POST /api/v1/auth/password/forgot",
+      "POST /api/v1/auth/password/reset",
+      "POST /api/v1/auth/password/change",
+      "POST /api/v1/auth/email/verify",
+      "POST /api/v1/auth/email/resend-verification",
+      "POST /api/v1/auth/cross-app/grant",
+      "POST /api/v1/auth/cross-app/exchange"
+    ],
+    "identity/auth (platform-admin)": [
+      "GET /api/v1/platform/identities",
+      "GET /api/v1/platform/identities/{identity}",
+      "POST /api/v1/platform/identities/{identity}/unlock",
+      "POST /api/v1/platform/identities/{identity}/force-password-reset",
+      "DELETE /api/v1/platform/identities/{identity} (erasure)"
+    ]
+  }
+}

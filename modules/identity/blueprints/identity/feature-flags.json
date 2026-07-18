@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/identity/feature-flags",
+  "$version": 1,
+  "title": "identity \u2014 kill switches + progressive-rollout flags",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "identity.registration_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = new-identity creation refuses with 503. Ops-only \u2014 used during migration windows."
+    },
+    {
+      "key": "identity.breach_check_via_hibp",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = strong_password rule skips the HIBP call. Falls back to policy-only. Toggle off during HIBP outages or when running in air-gapped environments."
+    },
+    {
+      "key": "identity.mfa_enrolment_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MFA enrolment refuses with 503. Existing enrolments continue to verify. Reserved for KMS incident-response."
+    },
+    {
+      "key": "identity.mfa_verification_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MFA verification always passes. RESERVED for catastrophic incident recovery only. Requires two-person sign-off to flip."
+    },
+    {
+      "key": "identity.progressive_lockout",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = lockout duration stays at base_lockout_minutes regardless of consecutive lockouts. Used for chaos testing."
+    },
+    {
+      "key": "identity.argon2id_hasher",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = falls back to bcrypt hasher. Used when investigating an argon2id CPU-cost regression in a specific runtime."
+    },
+    {
+      "key": "identity.suspicious_login_detection",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = SuspiciousLoginNotification listener no-ops. Used when the notification is generating false positives (e.g. shared-IP CGNAT deployments)."
+    },
+    {
+      "key": "identity.auto_email_verification_gate",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = unverified identities can still authenticate. Reserved for admin-provisioned identities in test environments."
+    }
+  ]
+}

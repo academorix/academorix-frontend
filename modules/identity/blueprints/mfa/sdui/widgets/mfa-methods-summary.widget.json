@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/mfa/sdui/widgets/mfa-methods-summary",
+  "$version": 1,
+  "kind": "widget",
+  "name": "mfa-methods-summary",
+  "description": "Top-of-panel summary card. Shows TOTP badge, WebAuthn credential count, recovery-codes-remaining ring chart. Data-driven from MfaMethodsSummary DTO.",
+  "props": {
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "Compact mode = single-line summary; full = grid layout with visual accents."
+    }
+  },
+  "data_source": {
+    "kind": "resource",
+    "endpoint": "GET /api/v1/me/mfa"
+  },
+  "renders": {
+    "kind": "grid",
+    "layout": "3-columns",
+    "cells": [
+      {
+        "id": "totp",
+        "kind": "stat",
+        "icon": "device-phone-mobile",
+        "label": "Authenticator app",
+        "value": "{{response.totp_enrolled ? 'Active' : 'Not enrolled'}}",
+        "severity": "{{response.totp_enrolled ? 'success' : 'muted'}}"
+      },
+      {
+        "id": "webauthn",
+        "kind": "stat",
+        "icon": "key",
+        "label": "Passkeys + hardware keys",
+        "value": "{{response.webauthn_credentials_count}}",
+        "severity": "{{response.webauthn_credentials_count > 0 ? 'success' : 'muted'}}"
+      },
+      {
+        "id": "recovery_codes",
+        "kind": "stat",
+        "icon": "clipboard-document-list",
+        "label": "Recovery codes remaining",
+        "value": "{{response.recovery_codes_remaining}}",
+        "severity": "{{response.recovery_codes_low ? 'warning' : response.recovery_codes_remaining > 0 ? 'success' : 'muted'}}"
+      }
+    ],
+    "footer": {
+      "condition": "response.step_up_required_for.length > 0",
+      "widget": "notice",
+      "severity": "info",
+      "message": "You'll be prompted to verify your identity before sensitive changes on this page."
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/identity/permissions",
+  "$version": 1,
+  "title": "identity \u2014 permissions",
+  "seeder": "Academorix\\Identity\\Database\\Seeders\\IdentityPermissionSeeder",
+  "isSystem": true,
+  "description": "Every permission on this table is scoped to the `platform_admin` guard. The tenant-audience `sanctum` guard NEVER interacts with Identity rows directly. See policies.json for the enforcement layer + boundary_note.",
+  "permissions": [
+    {
+      "name": "platform.identity.viewAny",
+      "guard": "platform_admin",
+      "description": "List identities (redacted \u2014 email fingerprint + metadata only).",
+      "seededOn": ["super_admin", "security", "compliance"]
+    },
+    {
+      "name": "platform.identity.view",
+      "guard": "platform_admin",
+      "description": "Show one identity (redacted). See `platform.identity.view.pii` to unmute.",
+      "seededOn": ["super_admin", "security", "compliance", "support"]
+    },
+    {
+      "name": "platform.identity.view.pii",
+      "guard": "platform_admin",
+      "description": "Unmute email + dob on identity detail. NEVER unmutes regulated_secret fields. Every use of this permission writes an audit-log entry with the actor + reason. Provisioned narrowly \u2014 typically only compliance + security.",
+      "seededOn": ["compliance", "security"]
+    },
+    {
+      "name": "platform.identity.unlock",
+      "guard": "platform_admin",
+      "description": "Clear locked_until on an identity. Fires IdentityUnlocked(trigger=admin_action).",
+      "seededOn": ["super_admin", "security", "support"]
+    },
+    {
+      "name": "platform.identity.force_password_reset",
+      "guard": "platform_admin",
+      "description": "Invalidate the current password + revoke sessions + issue a fresh reset token.",
+      "seededOn": ["super_admin", "security"]
+    },
+    {
+      "name": "platform.identity.rotate_mfa_secret",
+      "guard": "platform_admin",
+      "description": "Re-encrypt Identity.mfa_secret_encrypted under a fresh KMS data key. Used during key rotation.",
+      "seededOn": ["security"]
+    },
+    {
+      "name": "platform.identity.erase",
+      "guard": "platform_admin",
+      "description": "Soft-delete an identity (start GDPR hold-period). Compliance-officer scope; audit-critical.",
+      "seededOn": ["compliance"]
+    },
+    {
+      "name": "platform.identity.restore",
+      "guard": "platform_admin",
+      "description": "Reverse an in-flight soft-delete before the hold-period elapses.",
+      "seededOn": ["compliance"]
+    }
+  ]
+}

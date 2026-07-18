@@ -1,0 +1,169 @@
+{
+  "id": "academorix://modules/platform-user/errors",
+  "$version": 1,
+  "title": "platform-user \u2014 error codes",
+  "namespace": "platform-user",
+  "errors": [
+    {
+      "code": "PLATFORM_USER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.platform_user_not_found",
+      "description": "PlatformUser id was not resolved (does not exist, or soft-deleted past the retention hold + hard-deleted)."
+    },
+    {
+      "code": "PLATFORM_PROFILE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.platform_profile_not_found"
+    },
+    {
+      "code": "IDENTITY_MFA_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "platform-user.errors.identity_mfa_required",
+      "description": "The referenced Identity has NULL mfa_secret_encrypted. Platform staff MUST be MFA-enrolled before receiving platform_admin credentials. Fix: instruct the target Identity to enrol MFA via the identity-service self-service flow, then retry the hire."
+    },
+    {
+      "code": "IDENTITY_NOT_VERIFIED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "platform-user.errors.identity_not_verified",
+      "description": "The referenced Identity has NULL email_verified_at. Platform staff MUST have verified email before hire."
+    },
+    {
+      "code": "IDENTITY_ALREADY_LINKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "platform-user.errors.identity_already_linked",
+      "description": "Another platform_users row already references the same identity_id (UNIQUE constraint violation). An Identity can back at most ONE PlatformUser. If this Identity is a re-hire, un-purge or manually restore the prior PlatformUser row rather than creating a new one."
+    },
+    {
+      "code": "EMPLOYMENT_LIFECYCLE_TRANSITION_REFUSED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.employment_lifecycle_transition_refused",
+      "description": "State-machine violation. Valid transitions: pending\u2192active, active\u2192suspended, suspended\u2192active, {pending|active|suspended}\u2192offboarded. Any other attempt (e.g. offboarded\u2192active) refuses with this error + names the current status + attempted target status in the error detail."
+    },
+    {
+      "code": "SUSPENSION_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.suspension_reason_required",
+      "description": "POST /suspend was called without a reason, or with a reason under 20 chars. Suspensions require documented justification."
+    },
+    {
+      "code": "OFFBOARDING_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.offboarding_reason_required",
+      "description": "POST /offboard was called without a reason, or with a reason outside 20\u20131000 chars."
+    },
+    {
+      "code": "MANAGER_HAS_REPORTS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.manager_has_reports",
+      "description": "Attempted to offboard a PlatformUser who is a manager (manager_id on other active/suspended rows points at them). Reassign the reports via `platform-user:reassign-manager` first, then re-attempt the offboard."
+    },
+    {
+      "code": "MANAGER_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.manager_invalid",
+      "description": "The proposed manager_id points at a soft-deleted or offboarded PlatformUser. Choose an active or suspended manager."
+    },
+    {
+      "code": "MANAGER_SELF_REFERENCE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.manager_self_reference",
+      "description": "A PlatformUser cannot manage themselves (unless the `allow_self` bootstrap flag is passed to `manager_belongs_to_platform`, reserved for founder-only edge cases)."
+    },
+    {
+      "code": "MANAGER_CYCLE_DETECTED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "platform-user.errors.manager_cycle_detected",
+      "description": "The proposed manager chain would create a cycle (A\u2192B\u2192C\u2192A). Reject at write time to protect the org-chart accessor."
+    },
+    {
+      "code": "PLATFORM_MFA_REQUIRED",
+      "http": 401,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "platform-user.errors.platform_mfa_required",
+      "description": "Request refused by the `platform.mfa_required` middleware. The PlatformUser's Identity has since disabled MFA. Re-enrol MFA via identity-service, then re-authenticate."
+    },
+    {
+      "code": "ACCESS_REVOCATION_INCOMPLETE",
+      "http": 409,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "platform-user.errors.access_revocation_incomplete",
+      "description": "PurgeOffboardedPlatformUsersJob refused to hard-delete because RevokePlatformUserAccessJob has not completed successfully. Ops investigation required. Retryable after ops fixes the revocation failure."
+    },
+    {
+      "code": "RETENTION_HOLD_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.retention_hold_active",
+      "description": "Attempted to hard-delete a PlatformUser row still inside the 90-day retention hold. Wait for the hold to expire, or if compliance signs off on early purge, use the manual `platform-user:early-purge` command (super_admin + compliance co-sign required)."
+    },
+    {
+      "code": "ON_CALL_RESOLVER_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "platform-user.errors.on_call_resolver_unavailable",
+      "description": "OnCallResolver timed out (both PagerDuty AND internal fallback failed to respond in time). Retryable. Escalation tooling should fall back to Slack broadcast to the department channel."
+    },
+    {
+      "code": "PLATFORM_USER_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.platform_user_reason_required",
+      "description": "A mutating command was invoked without --reason=<text> when `platform-user.commands.require_reason` is on (staging + prod default)."
+    },
+    {
+      "code": "ORG_CHART_DEPTH_EXCEEDED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "platform-user.errors.org_chart_depth_exceeded",
+      "description": "The proposed manager assignment would push the org-chart chain past `platform-user.org_chart.max_depth` (default 8). Flatten the chain before retrying."
+    }
+  ]
+}

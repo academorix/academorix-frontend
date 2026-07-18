@@ -1,0 +1,170 @@
+{
+  "id": "academorix://modules/identity/errors",
+  "$version": 1,
+  "title": "identity \u2014 error codes",
+  "namespace": "identity",
+  "errors": [
+    {
+      "code": "IDENTITY_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.identity_not_found",
+      "description": "Platform-admin surface reference to a non-existent Identity. NEVER surfaces to tenant callers \u2014 tenant-audience errors for missing identities are always folded into the generic `AUTH_FAILED` response (enumeration safety)."
+    },
+    {
+      "code": "IDENTITY_EMAIL_TAKEN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.email_taken",
+      "description": "Registration or email-change attempt collided with an existing (non-erased) identity."
+    },
+    {
+      "code": "IDENTITY_MINOR_UNDER_FLOOR",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "identity.errors.minor_under_floor",
+      "description": "CompliantAgePolicy refused the Identity creation because dob resolves the applicant below the effective compliance floor (COPPA 13 in US; GDPR 13\u201316 per EU country). Response includes the applicable floor + region so downstream flows can route to the parent-consent workflow."
+    },
+    {
+      "code": "IDENTITY_LOCKED",
+      "http": 423,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.locked",
+      "description": "identity.check_lockout middleware refused. Response includes locked_until timestamp + unlock URL (password-reset flow)."
+    },
+    {
+      "code": "IDENTITY_EMAIL_UNVERIFIED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.email_unverified",
+      "description": "Email verification required but not completed. Response includes resend URL."
+    },
+    {
+      "code": "IDENTITY_ERASED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "identity.errors.erased",
+      "description": "Identity is soft-deleted (in the GDPR hold-period). Any login attempt against an erased identity should be routed to the generic AUTH_FAILED response for enumeration safety."
+    },
+    {
+      "code": "PASSWORD_WEAK",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.password_weak",
+      "description": "strong_password rule failed. Response body includes an array of `failed_requirements` so the SPA can highlight which policy element the caller violated."
+    },
+    {
+      "code": "PASSWORD_BREACHED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "identity.errors.password_breached",
+      "description": "haveibeenpwned reported the password in \u2265 breach_check_threshold public data breaches. Response includes an actionable hint but NEVER the actual breach count (that stays in audit)."
+    },
+    {
+      "code": "PASSWORD_IN_HISTORY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.password_in_history",
+      "description": "not_in_password_history rule failed. Response includes the configured history_size so the caller can understand why."
+    },
+    {
+      "code": "PASSWORD_RESET_TOKEN_INVALID",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "identity.errors.password_reset_token_invalid",
+      "description": "Reset token unknown, expired, or already consumed. Same error for all three cases (no info leak about token existence)."
+    },
+    {
+      "code": "EMAIL_VERIFICATION_TOKEN_INVALID",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.email_verification_token_invalid",
+      "description": "Verification token unknown, expired, or the identity is already verified. Idempotent \u2014 re-verifying a verified identity returns success (not this error)."
+    },
+    {
+      "code": "MFA_SECRET_KMS_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "identity.errors.mfa_secret_kms_unavailable",
+      "description": "MfaSecretEncryptor backend unreachable. Retryable at the caller; ops alerted on the metric side."
+    },
+    {
+      "code": "MFA_ENROLMENT_DENIED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.mfa_enrolment_denied",
+      "description": "Entitlement gate refused (mfa_totp / mfa_webauthn not entitled) OR feature flag `identity.mfa_enrolment_enabled` is off."
+    },
+    {
+      "code": "MFA_TOTP_CONFIRMATION_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.mfa_totp_confirmation_invalid",
+      "description": "Enrolment step: the submitted TOTP code did not match. Enrolment attempt discarded; caller may retry with a fresh code."
+    },
+    {
+      "code": "RECOVERY_CODE_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "identity.errors.recovery_code_invalid",
+      "description": "valid_recovery_code rule failed. Same message for wrong code / already-consumed code / no MFA enrolled."
+    },
+    {
+      "code": "RATE_LIMITED_LOGIN",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "identity.errors.rate_limited_login",
+      "description": "identity.rate_limit_login middleware refused. Response includes Retry-After header + the throttle bucket (`ip` / `email`) so the SPA can render a proportional message."
+    },
+    {
+      "code": "IDENTITY_ERASURE_BLOCKED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "identity.errors.erasure_blocked",
+      "description": "Hard-delete attempt refused because an inbound User / PlatformUser row still references the Identity. Downstream cascade should have run first; investigate."
+    },
+    {
+      "code": "IDENTITY_HOLD_EXTENDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "identity.errors.hold_extended",
+      "description": "Restore-erased-identity refused because the hold-period has been extended by compliance."
+    }
+  ]
+}

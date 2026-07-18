@@ -1,0 +1,72 @@
+{
+  "id": "platform-user.platform-user-avatar",
+  "title": "Platform user avatar",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact avatar-with-tooltip. Renders the PlatformProfile avatar_url with a fallback initials shape when avatar is null. Tooltip on hover shows display_name + department + on-call chip when applicable. Consumed in audit-trail rows, direct-reports lists, on-call rotation displays.",
+  "props": {
+    "platformUserId": { "type": "string", "required": true },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showTooltip": { "type": "boolean", "default": true }
+  },
+  "dataSources": [
+    {
+      "name": "platformUser",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/platform/platform-users/' + props.platformUserId",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Tooltip",
+      "bindings": { "hidden": { "$expr": "!props.showTooltip" } },
+      "content": {
+        "kind": "View",
+        "props": { "className": "flex flex-col gap-1 p-2" },
+        "children": [
+          {
+            "kind": "Text",
+            "props": { "className": "font-medium" },
+            "bindings": {
+              "children": {
+                "$expr": "platformUser.profile.display_name || (platformUser.profile.first_name + ' ' + platformUser.profile.last_name)"
+              }
+            }
+          },
+          {
+            "kind": "Text",
+            "props": { "className": "text-xs text-muted" },
+            "bindings": {
+              "children": {
+                "$expr": "platformUser.job_title ? (platformUser.job_title + ' \u00b7 ' + platformUser.department) : platformUser.department"
+              }
+            }
+          },
+          {
+            "kind": "Widget",
+            "widget": "platform-user.platform-user-status-chip",
+            "propsExpr": "{ status: platformUser.status, size: 'xs' }"
+          }
+        ]
+      },
+      "children": [
+        {
+          "kind": "Avatar",
+          "bindings": {
+            "props": {
+              "size": { "$ref": "props.size" },
+              "src": { "$ref": "platformUser.profile.avatar_url" },
+              "fallback": { "$ref": "platformUser.profile.initials" },
+              "alt": {
+                "$expr": "platformUser.profile.display_name || (platformUser.profile.first_name + ' ' + platformUser.profile.last_name)"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

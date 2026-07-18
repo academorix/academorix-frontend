@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/auth/settings",
+  "$version": 1,
+  "title": "auth \u2014 settings",
+  "description": "Auth exposes tenant-configurable settings for password policy, session lifetime, MFA-required roles, cross-app SSO enablement, new-device notification defaults. Every group registers under the `auth` namespace with `academorix/settings`. Compliance floors (COPPA / GDPR / NIST 800-63B) enforce hard clamps \u2014 tenant settings can only TIGHTEN, never loosen.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "namespace_registration": {
+    "namespace": "auth",
+    "consumer": "Academorix\\Auth\\Providers\\AuthServiceProvider",
+    "defaultValueFactory": "Delegates to config('auth.*') when the tenant hasn't overridden. Ensures the effective value falls back to the config layer.",
+    "validator": "Enforces compliance floors on password + session + lockout settings. Refuses writes that would reduce policy below NIST 800-63B / OWASP ASVS baselines."
+  },
+  "groups": [
+    {
+      "slug": "auth.password",
+      "display_name": "Password policy",
+      "description": "Tenant-configurable password requirements. Composes with the framework defaults \u2014 tenant can only TIGHTEN.",
+      "keys": [
+        {
+          "key": "auth.password.min_length",
+          "type": "int",
+          "default_source": "config('identity.password.min_length'), default 12",
+          "min": 12,
+          "max": 128,
+          "description": "Tenant can increase up to 128; never below the framework floor of 12."
+        },
+        {
+          "key": "auth.password.max_age_days",
+          "type": "int | null",
+          "default_source": "config('identity.password.max_age_days'), default null (no forced rotation)",
+          "min": 30,
+          "max": 365,
+          "description": "Force rotation after N days. Null = never force. NIST 800-63B advises against; enable only for compliance regimes that require."
+        }
+      ]
+    },
+    {
+      "slug": "auth.session",
+      "display_name": "Session lifetime",
+      "description": "Session TTL policy.",
+      "keys": [
+        {
+          "key": "auth.session.idle_ttl_minutes",
+          "type": "int",
+          "default_source": "config('auth.session.idle_ttl_minutes'), default 480",
+          "min": 15,
+          "max": 1440,
+          "description": "Idle logout timeout."
+        },
+        {
+          "key": "auth.session.absolute_ttl_hours",
+          "type": "int",
+          "default_source": "config('auth.session.absolute_ttl_hours'), default 168",
+          "min": 1,
+          "max": 720,
+          "description": "Absolute session lifetime. Clamped to auth.session.extended_ttl_days when the tenant holds sanctum_pat_extended_ttl entitlement."
+        }
+      ]
+    },
+    {
+      "slug": "auth.mfa",
+      "display_name": "MFA policy",
+      "description": "MFA requirements per role.",
+      "keys": [
+        {
+          "key": "auth.mfa.required_for_roles",
+          "type": "array<string>",
+          "default_source": "config('mfa.required_for_roles'), default ['owner', 'admin', 'billing_manager', 'super_admin']",
+          "description": "Roles for which MFA enrolment is REQUIRED. Users assigned these roles must enrol MFA within auth.mfa.grace_days_after_enrollment or be blocked from login."
+        },
+        {
+          "key": "auth.mfa.grace_days_after_enrollment",
+          "type": "int",
+          "default_source": "config('mfa.grace_days_after_enrollment'), default 7"
+        },
+        {
+          "key": "auth.mfa.remember_device_days",
+          "type": "int",
+          "default_source": "config('auth.mfa.remember_device_days'), default 30",
+          "min": 0,
+          "max": 90,
+          "description": "How long a successfully-verified device fingerprint is exempt from MFA re-challenge. 0 = re-challenge on every login."
+        }
+      ]
+    },
+    {
+      "slug": "auth.cross_app_sso",
+      "display_name": "Cross-Application SSO",
+      "description": "Enable / disable grant-based cross-Application session issuance per tenant. Requires cross_app_sso entitlement.",
+      "keys": [
+        {
+          "key": "auth.cross_app_sso.enabled_per_tenant",
+          "type": "bool",
+          "default_source": "config('auth.cross_app_sso.enabled') \u2014 default false",
+          "description": "Tenant-level override. Off = the tenant's Users cannot issue cross-app grants even if the global flag is on."
+        }
+      ]
+    },
+    {
+      "slug": "auth.notifications",
+      "display_name": "Security notifications",
+      "description": "Tenant-level defaults for new-device / new-location / impersonation notifications.",
+      "keys": [
+        {
+          "key": "auth.notifications.new_device_default_on",
+          "type": "bool",
+          "default_source": "true"
+        },
+        {
+          "key": "auth.notifications.new_location_default_on",
+          "type": "bool",
+          "default_source": "true"
+        },
+        {
+          "key": "auth.notifications.impersonation_active_forced_on",
+          "type": "bool",
+          "default_source": "true",
+          "description": "Cannot be turned off \u2014 the impersonated User has a legal right to know. Documented here for tenant admin visibility."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Compliance-critical clamps: min_length cannot go below 12 (NIST 800-63B recommendation). max_age_days cannot be forced below 30 (NIST advises against forced rotation entirely; if enabled, the shortest reasonable cadence is 30 days).",
+    "Per-User settings (individual preferences on new-device notifications, for instance) live in `user::user_preferences`, not here. This module owns the TENANT-level policy defaults."
+  ]
+}

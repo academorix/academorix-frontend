@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/mfa/middleware",
+  "$version": 1,
+  "title": "mfa — HTTP middleware",
+  "description": "Two middleware. Both operate on the caller's authenticated session (post-Sanctum-resolution) and inspect the Identity's MFA posture + the session's step-up state. Neither is auto-applied globally — they mount on specific routes / actions via the #[UsesMiddleware] attribute on the action class OR via the `mfa.*` alias in route definitions.",
+  "middleware": [
+    {
+      "alias": "mfa.require_challenge_complete",
+      "class": "Academorix\\Mfa\\Http\\Middleware\\RequireChallengeComplete",
+      "priority": 40,
+      "description": "Enforces that the caller has completed an MFA challenge IN THE CURRENT SESSION when their resolved Identity is one that has MFA enrolled AND holds a role in `config('mfa.required_for_roles')`. Rejects with 403 `MFA_CHALLENGE_REQUIRED` when the session's `mfa_challenge_completed_at` is missing OR older than the session's TTL. The rejection payload includes the initiation URL for a step-up challenge (POST /api/v1/auth/mfa/challenge/initiate) so the SPA can transparently prompt for the second factor. This closes the 'session cookie with expired MFA state' gap.",
+      "auto_applied": false,
+      "auto_applied_to": [],
+      "consumed_by": [
+        "Every tenant-audience route where the caller's Identity has MFA enrolled AND holds a required-for-roles role — enforced globally on the /api/v1/* group by identity/auth's route configuration once the identity is resolved."
+      ],
+      "flow": [
+        "1. Resolve Identity from the Sanctum PAT (falls to identity/auth's ResolveIdentity middleware which runs at priority 25).",
+        "2. Check config('mfa.required_for_roles') against the User's roles (via the auth::HasRoles trait). If none match, PASS.",
+        "3. Check `Identity.mfa_enabled` (accessor). If false AND the User is inside the grace_days_after_enrollment window, PASS. If false AND outside the grace window, REJECT with MFA_ENROLMENT_REQUIRED (redirect to /me/mfa/totp/enroll/preview).",
+        "4. Read the session's `mfa_challenge_completed_at`. If null OR older than the session-TTL boundary, REJECT with MFA_CHALLENGE_REQUIRED + include the initiation URL.",
+        "5. PASS."
+      ]
+    },
+    {
+      "alias": "mfa.require_recent_challenge",
+      "class": "Academorix\\Mfa\\Http\\Middleware\\RequireRecentChallenge",
+      "priority": 42,
+      "description": "Enforces that the caller completed an MFA challenge WITHIN THE LAST `config('mfa.step_up.sensitive_action_ttl_minutes')` (default 5). Used for sensitive-write actions (password change, MFA disable, recovery-code regen, credential delete). Rejects with 403 `MFA_CHALLENGE_TOO_STALE` and includes a step-up-challenge URL. The middleware runs AFTER `mfa.require_challenge_complete` (which handles the session-level enforcement) — same-session recentness is a tighter check.",
+      "auto_applied": false,
+      "auto_applied_to": [],
+      "consumed_by": [
+        "identity/auth: POST /api/v1/auth/password/change",
+        "identity/auth: POST /api/v1/auth/mfa/rotate-secret",
+        "mfa: DELETE /api/v1/me/mfa/totp",
+        "mfa: POST /api/v1/me/mfa/recovery-codes/regenerate",
+        "mfa: POST /api/v1/me/mfa/recovery-codes/download",
+        "mfa: PATCH /api/v1/me/mfa/webauthn/credentials/{id}",
+        "mfa: DELETE /api/v1/me/mfa/webauthn/credentials/{id}",
+        "identity/user: DELETE /api/v1/me (self-erasure)"
+      ],
+      "flow": [
+        "1. Resolve Identity from the Sanctum PAT.",
+        "2. Read `Identity.mfa_enabled`. If false, PASS (no MFA to challenge against — the recent-challenge concept is undefined).",
+        "3. Read the session's `last_mfa_challenge_at`. If null OR `now() - last_mfa_challenge_at > step_up.sensitive_action_ttl_minutes`, REJECT with MFA_CHALLENGE_TOO_STALE.",
+        "4. PASS."
+      ]
+    }
+  ],
+  "consumed": [
+    {
+      "middleware": "identity::identity.rate_limit_login",
+      "notes": "Not consumed directly — but the challenge-initiation endpoint (POST /auth/mfa/challenge/initiate) IS protected by this rate limiter, which is why a repeated step-up prompt cannot be used as a login-brute-force vector."
+    },
+    {
+      "middleware": "auth::ResolveIdentity",
+      "notes": "Priority 25. Runs before both mfa middleware so they see the resolved Identity."
+    },
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "throttle:foundation-base" }
+  ],
+  "response_shape_on_reject": {
+    "mfa.require_challenge_complete": {
+      "status": 403,
+      "body": {
+        "message": "Multi-factor authentication is required to continue.",
+        "code": "MFA_CHALLENGE_REQUIRED",
+        "initiate_url": "/api/v1/auth/mfa/challenge/initiate",
+        "hint": "POST to initiate_url to receive a challenge_id, then submit the code to POST /api/v1/me/mfa/challenge/{challenge_id}/verify."
+      }
+    },
+    "mfa.require_recent_challenge": {
+      "status": 403,
+      "body": {
+        "message": "Please verify your identity to continue.",
+        "code": "MFA_CHALLENGE_TOO_STALE",
+        "last_challenge_at": "ISO-8601 timestamp | null",
+        "step_up_url": "/api/v1/auth/mfa/challenge/initiate",
+        "action_id": "the #[UsesTrait(HasMfa)] action ID the caller was trying to invoke",
+        "hint": "Complete a fresh challenge and re-submit the original request within :ttl_minutes minutes."
+      }
+    }
+  },
+  "session_state_note": "The session stores two MFA-related timestamps: `mfa_challenge_completed_at` (any successful challenge in the current session) and `last_mfa_challenge_at` (the MOST RECENT successful challenge, used by `mfa.require_recent_challenge`). Both are set atomically by identity/auth's `VerifyMfaChallengeAction` on success. Session revocation (e.g. via identity's `PasswordChanged` listener) implicitly clears both because the session itself is destroyed."
+}

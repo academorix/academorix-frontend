@@ -1,0 +1,233 @@
+{
+  "id": "academorix://modules/auth/errors",
+  "$version": 1,
+  "title": "auth \u2014 error codes",
+  "namespace": "auth",
+  "errors": [
+    {
+      "code": "AUTH_FAILED",
+      "http": 401,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.auth_failed",
+      "description": "Generic authentication failure. Same response for unknown email, wrong password, disabled Identity, soft-deleted Identity, unverified email when required. Enumeration-safe by construction."
+    },
+    {
+      "code": "APPLICATION_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.application_mismatch",
+      "description": "Session's Application scope doesn't match the current request's X-Application-Id. Fired by auth.enforce_session_scope middleware."
+    },
+    {
+      "code": "MFA_REQUIRED",
+      "http": 202,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.mfa_required",
+      "description": "Not an error per se \u2014 the login flow returns 202 with MfaChallengeResult when MFA is enrolled. The SPA transitions to the challenge-verify screen with the challenge_id."
+    },
+    {
+      "code": "MFA_INVALID",
+      "http": 422,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.mfa_invalid",
+      "description": "MFA code verification failed. Response includes attempts_remaining; caller can retry until auth.mfa.max_attempts_per_challenge."
+    },
+    {
+      "code": "MFA_CHALLENGE_EXPIRED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.mfa_challenge_expired",
+      "description": "The challenge_id no longer resolves (expired or already consumed). Caller must restart from /auth/login."
+    },
+    {
+      "code": "REFRESH_TOKEN_INVALID",
+      "http": 401,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.refresh_token_invalid",
+      "description": "Refresh token unknown, expired, or revoked. Same message for all three cases (no info leak)."
+    },
+    {
+      "code": "REFRESH_TOKEN_REUSE_DETECTED",
+      "http": 401,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "auth.errors.refresh_token_reuse_detected",
+      "description": "Refresh token was already consumed. This is a breach signal \u2014 the family is invalidated + every session for the User revoked. Response is deliberately opaque to the client (same shape as REFRESH_TOKEN_INVALID) but the SERVER logs the reuse-detection at critical severity + fires RefreshTokenReuseDetected."
+    },
+    {
+      "code": "JWT_INVALID",
+      "http": 401,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.jwt_invalid",
+      "description": "JWT signature invalid, expired, or malformed. Downstream services see this."
+    },
+    {
+      "code": "JWT_DENIED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.jwt_denied",
+      "description": "JWT is on the deny list. Distinct from JWT_INVALID because the signature verified \u2014 the caller was authorised, then explicitly revoked."
+    },
+    {
+      "code": "JWT_APPLICATION_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "auth.errors.jwt_application_mismatch",
+      "description": "JWT's `app` claim doesn't match the receiving service's configured Application. This is a cross-Application forgery attempt \u2014 log with critical severity."
+    },
+    {
+      "code": "PASSWORD_RESET_TOKEN_INVALID",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.password_reset_token_invalid",
+      "description": "Reset token unknown, expired, or already consumed. Same error for all three (no info leak)."
+    },
+    {
+      "code": "EMAIL_VERIFICATION_TOKEN_INVALID",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.email_verification_token_invalid",
+      "description": "Verification token unknown or expired. Idempotent \u2014 already-consumed for already-verified Identity returns success."
+    },
+    {
+      "code": "CROSS_APP_GRANT_INVALID",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.cross_app_grant_invalid",
+      "description": "Grant token unknown, expired, or already consumed. Same error for all three."
+    },
+    {
+      "code": "CROSS_APP_GRANT_APPLICATION_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.cross_app_grant_application_mismatch",
+      "description": "Grant was issued for a different target Application than the current request's X-Application-Id."
+    },
+    {
+      "code": "CROSS_APP_USER_NOT_PROVISIONED",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.cross_app_user_not_provisioned",
+      "description": "Caller lacks a User row on the requested target Application. SPA routes to the target Application's onboarding flow."
+    },
+    {
+      "code": "SESSION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.session_not_found",
+      "description": "Session lookup by id refused \u2014 either the id doesn't exist OR the caller doesn't own the session."
+    },
+    {
+      "code": "SESSION_REVOKE_CURRENT_REFUSED",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.session_revoke_current_refused",
+      "description": "DELETE /auth/sessions/{session} refuses to revoke the session that IS the current request's Sanctum PAT. Caller must use /auth/logout instead."
+    },
+    {
+      "code": "IMPERSONATION_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.impersonation_reason_required",
+      "description": "POST /platform/auth/impersonate/start refused without a --reason (auth.impersonation.require_reason=true)."
+    },
+    {
+      "code": "IMPERSONATION_ENTITLEMENT_MISSING",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.impersonation_entitlement_missing",
+      "description": "Target tenant doesn't hold the `impersonation` entitlement. Refused."
+    },
+    {
+      "code": "JWT_SIGNING_KEY_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "auth.errors.jwt_signing_key_unavailable",
+      "description": "No active signing key found for the requested Application. Ops alerted."
+    },
+    {
+      "code": "JWT_KMS_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "auth.errors.jwt_kms_unavailable",
+      "description": "JwtSigner couldn't decrypt the signing key ciphertext (KMS unreachable). Ops alerted."
+    },
+    {
+      "code": "CORS_ORIGIN_REFUSED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.cors_origin_refused",
+      "description": "auth.cors_strict middleware refused. Origin not in the Application's whitelist."
+    },
+    {
+      "code": "REGISTRATION_REQUIRES_INVITATION",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.registration_requires_invitation",
+      "description": "Tenant has user.registration.requires_invitation=true; self-registration refused."
+    },
+    {
+      "code": "REGISTRATION_REQUIRES_GUARDIAN_CONSENT",
+      "http": 202,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "auth.errors.registration_requires_guardian_consent",
+      "description": "Applicant is a minor per CompliantAgePolicy AND requires guardian approval. Registration is queued pending parent-consent workflow (Wave 7 sports/athletes)."
+    },
+    {
+      "code": "RATE_LIMITED_LOGIN",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "auth.errors.rate_limited_login",
+      "description": "auth.rate_limit_login middleware refused. Retry-After header set."
+    }
+  ]
+}

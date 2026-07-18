@@ -1,0 +1,242 @@
+{
+  "id": "academorix://modules/user/events",
+  "$version": 1,
+  "title": "user \u2014 published events",
+  "namespace": "Academorix\\User\\Events",
+  "dispatchMode": "afterCommit",
+  "events": [
+    {
+      "name": "UserProvisioned",
+      "class": "Academorix\\User\\Events\\UserProvisioned",
+      "trigger": "ProvisionUser action completed. Fires exactly once per (identity_id, application_id, tenant_id) triple.",
+      "queue": "notifications",
+      "consumers": [
+        "user::AssignInitialRole",
+        "user::SeedDefaultTenantMembership",
+        "notifications::DispatchUserProvisionedNotification",
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "access::SeedDefaultPermissions",
+        "auth::MaybeIssueEmailVerification"
+      ],
+      "payload": {
+        "user_id": "ULID (usr_*)",
+        "identity_id": "ULID (idn_*)",
+        "application_id": "ULID (app_*)",
+        "tenant_id": "ULID (ten_*)",
+        "profile_id": "ULID (prf_*)",
+        "initial_role_id": "ULID (rol_*) | null",
+        "provisioned_by": "ULID (usr_*) | null (null = self-registration / system)",
+        "source": "'invitation' | 'self_registration' | 'admin_created' | 'sso_grant' | 'import'"
+      }
+    },
+    {
+      "name": "UserActivated",
+      "class": "Academorix\\User\\Events\\UserActivated",
+      "trigger": "User.status transitioned pending \u2192 active (post-email-verification OR admin activation).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchWelcomeEmail"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "activated_by": "ULID | null (null = self-activation via email verification)",
+        "previous_status": "'pending' | 'suspended'"
+      }
+    },
+    {
+      "name": "UserSuspended",
+      "class": "Academorix\\User\\Events\\UserSuspended",
+      "trigger": "User.status transitioned active \u2192 suspended. Also invalidates every Sanctum PAT + JWT refresh token attached to this User.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "auth::RevokeAllTokens",
+        "notifications::DispatchUserSuspendedNotification"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "suspended_by": "ULID",
+        "reason": "string | null (free-form ops note; internal-tier)",
+        "reactivation_scheduled_for": "ISO 8601 timestamp | null (null = indefinite)"
+      }
+    },
+    {
+      "name": "UserRestored",
+      "class": "Academorix\\User\\Events\\UserRestored",
+      "trigger": "Soft-deleted User row restored within the erasure hold window (default 30 days).",
+      "queue": "notifications",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "restored_by": "ULID",
+        "was_deleted_at": "ISO 8601 timestamp",
+        "days_in_hold": "integer"
+      }
+    },
+    {
+      "name": "UserSoftDeleted",
+      "class": "Academorix\\User\\Events\\UserSoftDeleted",
+      "trigger": "User.deleted_at set (soft delete). Distinct from UserHardDeleted \u2014 the row survives in the hold window.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "auth::RevokeAllTokens"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "deleted_by": "ULID",
+        "erasure_hold_ends_at": "ISO 8601 timestamp"
+      }
+    },
+    {
+      "name": "UserHardDeleted",
+      "class": "Academorix\\User\\Events\\UserHardDeleted",
+      "trigger": "PurgeErasedUsersJob removed the row after the hold window. Cascade delete of TenantMember rows completes atomically before dispatch.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years \u2014 the audit outlives the row)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "user_id": "ULID (the row is gone; the ULID is preserved in the audit trail)",
+        "tenant_id": "ULID",
+        "identity_id": "ULID (Identity may live on \u2014 other Users per Application)",
+        "profile_id": "ULID"
+      }
+    },
+    {
+      "name": "ProfileUpdated",
+      "class": "Academorix\\User\\Events\\ProfileUpdated",
+      "trigger": "Any Profile field mutated (except avatar_url \u2014 that fires AvatarUpdated).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::MaybeDispatchProfileUpdatedConfirmation (opt-in on `notify_profile_updated` preference)"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "profile_id": "ULID",
+        "tenant_id": "ULID",
+        "updated_by": "ULID (may equal user_id for self-update)",
+        "changed_fields": "string[] (e.g. ['first_name', 'phone_e164'])"
+      }
+    },
+    {
+      "name": "AvatarUpdated",
+      "class": "Academorix\\User\\Events\\AvatarUpdated",
+      "trigger": "Profile.avatar_url set OR cleared. Fired independently of ProfileUpdated because avatar changes trigger a media-pruning listener.",
+      "queue": "notifications",
+      "consumers": [
+        "media::PruneOldAvatar (deletes the previous S3 object after 24h grace window)",
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "profile_id": "ULID",
+        "tenant_id": "ULID",
+        "old_avatar_url": "string | null",
+        "new_avatar_url": "string | null",
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "UserLinkedToTenant",
+      "class": "Academorix\\User\\Events\\UserLinkedToTenant",
+      "trigger": "TenantMember row created (user joined an additional Tenant within the same Application).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchUserAddedToTenantNotification"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID (the newly-linked tenant)",
+        "membership_id": "ULID (tmb_*)",
+        "role_id": "ULID",
+        "invited_by": "ULID | null (null = auto-provisioned on tenant creation)",
+        "is_default": "boolean"
+      }
+    },
+    {
+      "name": "UserRemovedFromTenant",
+      "class": "Academorix\\User\\Events\\UserRemovedFromTenant",
+      "trigger": "TenantMember row soft-deleted OR hard-deleted. Sanctum PATs scoped to that (User, Tenant) pair are revoked in-process.",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "auth::RevokeTokensScopedToMembership",
+        "notifications::DispatchUserRemovedFromTenantNotification"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "membership_id": "ULID",
+        "removed_by": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "UserSwitchedActiveTenant",
+      "class": "Academorix\\User\\Events\\UserSwitchedActiveTenant",
+      "trigger": "User called POST /me/tenants/{tenant}/switch. Session state updated; next API call carries the new tenant in `X-Tenant-Id`.",
+      "queue": null,
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "user_id": "ULID",
+        "from_tenant_id": "ULID",
+        "to_tenant_id": "ULID",
+        "session_id": "string (Sanctum PAT id)"
+      }
+    },
+    {
+      "name": "UserPreferredLocaleChanged",
+      "class": "Academorix\\User\\Events\\UserPreferredLocaleChanged",
+      "trigger": "User.preferred_locale updated. Distinct from ProfileUpdated because Profile.locale is a separate override.",
+      "queue": "notifications",
+      "consumers": [
+        "localization::HandleUserLocaleChange (fires localization::LocaleChanged)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "from_locale": "string | null",
+        "to_locale": "string"
+      }
+    },
+    {
+      "name": "TenantMembershipRoleChanged",
+      "class": "Academorix\\User\\Events\\TenantMembershipRoleChanged",
+      "trigger": "TenantMember.role_id updated (admin promoted / demoted a member).",
+      "queue": "notifications",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "access::InvalidatePermissionCache",
+        "notifications::MaybeDispatchRoleChangedNotification"
+      ],
+      "payload": {
+        "user_id": "ULID",
+        "tenant_id": "ULID",
+        "membership_id": "ULID",
+        "from_role_id": "ULID",
+        "to_role_id": "ULID",
+        "changed_by": "ULID",
+        "is_promotion": "boolean (role hierarchy comparison; null when roles are peers)"
+      }
+    }
+  ]
+}

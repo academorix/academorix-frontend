@@ -1,0 +1,197 @@
+{
+  "id": "academorix://modules/service-accounts/errors",
+  "$version": 1,
+  "title": "service-accounts \u2014 error codes",
+  "namespace": "service-accounts",
+  "errors": [
+    {
+      "code": "SERVICE_ACCOUNT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.service_account_not_found",
+      "description": "Platform-admin surface reference to a non-existent SA. Never surfaces to token-exchange callers \u2014 those errors are always folded into the generic INVALID_SERVICE_ACCOUNT_CREDENTIALS response (enumeration safety)."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_NAME_TAKEN",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.name_taken",
+      "description": "Creation attempt collided with an existing non-deleted SA on the same `application_id`."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_APPLICATION_NOT_FOUND",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.application_not_found",
+      "description": "The `application_id` in the create payload does not exist or is disabled."
+    },
+    {
+      "code": "APPLICATION_MISMATCH_ON_TENANT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.application_mismatch_on_tenant",
+      "description": "The proposed `tenant_id` belongs to an application other than the SA's `application_id`. Cross-application tenant scope is forbidden."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_IMMUTABLE_FIELD",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.immutable_field",
+      "description": "PATCH attempted to change `application_id`, `tenant_id`, or `signer_kid`. Response body names the offending field(s)."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_DISABLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.disabled",
+      "description": "The SA's `is_enabled = false`. Runtime rejection at service_account.verify_jwt or the token-exchange endpoint. NEVER surfaced to the machine caller \u2014 folded into the generic 401 to preserve enumeration safety."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_SECRET_EXPIRED",
+      "http": 401,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.secret_expired",
+      "description": "The SA's `expires_at < now()` with no rotation. Token-exchange refuses; existing JWTs signed before expiry remain valid until natural exp. Response body folded into generic INVALID_SERVICE_ACCOUNT_CREDENTIALS for enumeration safety."
+    },
+    {
+      "code": "INVALID_SERVICE_ACCOUNT_CREDENTIALS",
+      "http": 401,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.invalid_credentials",
+      "description": "Generic token-exchange failure: unknown SA-ID, wrong secret, disabled SA, expired secret \u2014 all four cases return this single payload with no distinguishing signal. Audit-log entry captures the specific reason for triage."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_JWT_INVALID",
+      "http": 401,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.jwt_invalid",
+      "description": "Runtime JWT rejection at service_account.verify_jwt. Any of: signature mismatch, unknown kid, kid disabled, jti in deny-list, `iss`/`aud` mismatch, exp elapsed, iat too far in future. Same generic error regardless of which check failed (enumeration safety); the audit log captures which check failed for triage."
+    },
+    {
+      "code": "APPLICATION_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.application_mismatch",
+      "description": "JWT's `app` claim does not match the receiving service's `config('app.slug')`. Downstream service rejection; the request never reaches business logic."
+    },
+    {
+      "code": "TENANT_MISMATCH",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.tenant_mismatch",
+      "description": "JWT's `tid` claim does not match the request's `X-Tenant-Id` header (or the routed tenant context)."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_IP_NOT_ALLOWED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "service-accounts.errors.ip_not_allowed",
+      "description": "Enterprise-only. When `service_accounts_ip_allowlist` entitlement is active AND the SA has a non-empty allowlist in metadata, requests from non-allowlisted source IPs refuse with 403. Deferred to Wave 1b enforcement; the error code is reserved here for wire stability."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_TTL_EXCEEDS_MAX",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.ttl_exceeds_max",
+      "description": "Token-exchange or IssueTestJwtInput requested a TTL above `service-accounts.jwt.max_ttl_seconds` (default 3600). Enterprise callers with `service_accounts_extended_ttl` entitlement bypass this."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_TTL_BELOW_MIN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.ttl_below_min",
+      "description": "Token-exchange or IssueTestJwtInput requested a TTL below `service-accounts.jwt.min_ttl_seconds` (default 60). Prevents caller-driven exchange-endpoint pressure via near-zero TTLs."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.rate_limited",
+      "description": "Token-exchange endpoint refused by rate-limit middleware. 5/min per SA-ID OR 20/min per source /24. Response includes Retry-After header. Sustained spikes fire SuspiciousServiceAccountActivityNotification via the fingerprinter."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_NAME_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.name_invalid",
+      "description": "Naming rule `valid_service_account_name` refused: too long, invalid characters, missing alphanumeric bookends."
+    },
+    {
+      "code": "SIGNER_KID_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.signer_kid_invalid",
+      "description": "The proposed `signer_kid` does not exist in `auth::jwt_signing_keys` OR is disabled. Callers who don't specify a kid at creation get a fresh kid provisioned; explicit-kid callers must reference an active row."
+    },
+    {
+      "code": "SIGNER_KID_APPLICATION_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.signer_kid_application_mismatch",
+      "description": "The proposed `signer_kid` is bound to an application other than the SA's `application_id`. Kids are optionally application-scoped in the auth module; SAs must reference a kid within their own application."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_ENTITLEMENT_MISSING",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "service-accounts.errors.entitlement_missing",
+      "description": "Requested capability requires a paid-plan entitlement. Response body names the missing key (`service_accounts_platform_plane`, `service_accounts_ip_allowlist`, `service_accounts_extended_ttl`)."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.reason_required",
+      "description": "Mutating command invoked without --reason=<text> while `service-accounts.commands.require_reason` is on."
+    },
+    {
+      "code": "SERVICE_ACCOUNT_RETENTION_HOLD_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "service-accounts.errors.retention_hold_active",
+      "description": "Attempted to hard-delete an SA still inside the retention hold. Wait for the hold to expire OR use `service-account:early-purge` (super_admin + compliance co-sign, deferred CLI extension)."
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/auth/observers",
+  "$version": 1,
+  "title": "auth \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "RefreshToken",
+      "observer": "Academorix\\Auth\\Observers\\RefreshTokenObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `atr_`",
+        "creating \u2192 assign family_id (either explicit from a rotation OR fresh UUID for a first-in-chain refresh)",
+        "creating \u2192 hash the plaintext secret via SHA-256 into token_hash; NEVER persist plaintext",
+        "creating \u2192 stamp issued_at + expires_at (now() + config('auth.session.refresh_ttl_days'))",
+        "creating \u2192 hash IP + user_agent via SHA-256 into ip_address_hash + user_agent_hash (plaintext never stored)",
+        "updating (consumed_at transition NULL \u2192 non-null) \u2192 refuse if row already has consumed_at set (that's the reuse-detection case; the RefreshAction path fires RefreshTokenReuseDetected + invalidates the family + returns 401 \u2014 the observer here is a defense-in-depth line that would catch a direct-DB write bug)",
+        "updating (consumed_at) \u2192 fire RefreshTokenRotated when the caller has already inserted the successor row in the same family (else this is a lone consume with no rotation, e.g. logout)",
+        "updating (revoked_at transition NULL \u2192 non-null) \u2192 fire SessionRevoked with the resolved reason from the row's metadata (set by the RevokeSessionAction)",
+        "deleting \u2192 refuse hard-delete when the row is still active (would break audit trail); soft-delete is fine",
+        "restoring \u2192 refuse (revoked refresh tokens must never be restored)"
+      ],
+      "notes": [
+        "The reuse-detection PATH is: RefreshAction receives a token, hashes it, looks up the row. If consumed_at IS NOT NULL, the request is a REPLAY \u2014 fire RefreshTokenReuseDetected + LockdownOnBreachDetected listener chain. This observer's `refuse if already consumed` branch is defensive \u2014 it catches the (rare) case where a caller bypasses RefreshAction and tries to UPDATE consumed_at directly.",
+        "family_id assignment: RefreshAction sets `family_id = old_refresh.family_id` when rotating; a first-time login sets family_id = fresh UUID. The observer preserves the value if the caller set it, else populates fresh."
+      ]
+    },
+    {
+      "model": "PersonalAccessToken (sanctum)",
+      "observer": "Academorix\\Auth\\Observers\\PersonalAccessTokenObserver",
+      "handles": [
+        "creating \u2192 refuse when the abilities compact array is missing the `_app` pseudo-ability (auth.enforce_session_scope depends on it)",
+        "creating \u2192 refuse when the abilities array is empty (a session with zero permissions is a bug \u2014 at minimum the `authenticated` ability is present)",
+        "updating (last_used_at) \u2192 update async via a batched queue job to reduce write pressure. Direct writes on every request would saturate the postgres row-lock queue under load. Instead, the auth guard emits a fire-and-forget UpdateLastUsedAtJob per (token_id, timestamp) that batches every 30 seconds and issues an UPDATE covering all touched tokens.",
+        "updating (revoked_at transition NULL \u2192 non-null) \u2192 fire SessionRevoked event with the resolved reason",
+        "deleting \u2192 also delete the paired refresh token in the same transaction (safety net; the auth actions should always cascade explicitly)"
+      ],
+      "notes": [
+        "Sanctum's shipped model doesn't know about the `_app` scope \u2014 our observer is what enforces the auth.enforce_session_scope contract at write-time.",
+        "Async last_used_at is a performance optimization \u2014 for a service handling 10K requests/second, updating every PAT synchronously would saturate the DB. The batched update is idempotent (LAST-write-wins is fine here; a few seconds of drift on last_used_at is acceptable)."
+      ]
+    }
+  ]
+}

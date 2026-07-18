@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/auth/schemas/auth-jwt-deny-list",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "JwtDenyListEntry",
+  "description": "Deny-list entry for a specific jti \u2014 revoke a JWT immediately before its natural expiry. Populated on password change, user suspension, breach response, or platform-admin manual revocation. Rows self-purge once the underlying JWT's natural expires_at passes (downstream verifiers reject expired JWTs on their own).",
+  "type": "object",
+  "x-module": "auth",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "auth_jwt_deny_list",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "ajd_",
+    "incrementing": false,
+    "model": "Academorix\\Auth\\Models\\JwtDenyListEntry",
+    "traits": ["HasFactory", "HasUlids", "HasActivityLog", "Filterable"],
+    "casts": {
+      "revoked_at": "datetime",
+      "expires_at": "datetime"
+    },
+    "appends": ["is_expired"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "jti": { "type": "uuid", "nullable": false, "description": "The JWT's jti claim. UNIQUE." },
+      "reason": { "type": "string", "nullable": false, "description": "'password_change' | 'user_suspended' | 'manual_revocation' | 'breach_response'" },
+      "revoked_at": { "type": "timestamptz", "nullable": false, "default": "now()" },
+      "expires_at": { "type": "timestamptz", "nullable": false, "description": "Matches the original JWT's exp. After this timestamp the deny-list row is redundant (natural JWT expiry handles rejection); PurgeExpiredJwtDenyListJob deletes it." },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["jti"], "unique": true, "name": "auth_jwt_deny_list_jti_unique" },
+      { "columns": ["expires_at"], "unique": false, "name": "auth_jwt_deny_list_expires_idx" }
+    ]
+  },
+  "required": ["id", "jti", "reason", "revoked_at", "expires_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ajd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "jti": { "type": "string", "format": "uuid" },
+    "reason": { "type": "string", "enum": ["password_change", "user_suspended", "manual_revocation", "breach_response"] },
+    "revoked_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "is_expired": { "type": "boolean" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "note": "Wire-projected on the platform-admin plane (GET /api/v1/platform/jwt-deny-list \u2014 not yet spec'd; deferred). No tenant-facing surface.",
+    "never_projected": []
+  }
+}

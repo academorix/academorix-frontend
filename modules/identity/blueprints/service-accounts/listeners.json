@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/service-accounts/listeners",
+  "$version": 1,
+  "title": "service-accounts \u2014 subscribed events",
+  "description": "service-accounts listeners are focused on: (a) cache invalidation whenever an SA changes state, (b) cascading kid rotation when the auth module rotates a signing key, (c) tenant lifecycle propagation. The module is a substrate; it does not consume unrelated events.",
+  "listeners": [
+    {
+      "event": "service-accounts::ServiceAccountSecretRotated",
+      "listener": "Academorix\\ServiceAccount\\Listeners\\InvalidateServiceAccountLookupCache",
+      "queue": null,
+      "purpose": "Synchronous cache eviction on rotation so a request in flight can't reuse a stale cached row for JWT verification."
+    },
+    {
+      "event": "service-accounts::ServiceAccountDisabled",
+      "listener": "Academorix\\ServiceAccount\\Listeners\\InvalidateServiceAccountLookupCache",
+      "queue": null,
+      "purpose": "Same as above \u2014 disable propagates within one cache TTL. Also invalidates the `svc:signer_kid:{kid}` cache entry so batch-revocation views refresh."
+    },
+    {
+      "event": "service-accounts::ServiceAccountDeleted",
+      "listener": "Academorix\\ServiceAccount\\Listeners\\InvalidateServiceAccountLookupCache",
+      "queue": null,
+      "purpose": "Same eviction pattern on soft-delete + hard-delete phases."
+    },
+    {
+      "event": "service-accounts::ServiceAccountJwtIssued",
+      "listener": "Academorix\\ServiceAccount\\Listeners\\ScheduleLastUsedTimestampFlush",
+      "queue": null,
+      "purpose": "Synchronous append to `svc:last_used:{service_account_id}` cache buffer. The UpdateLastUsedTimestampJob flushes to Postgres. Fire-and-forget on the request hot path."
+    },
+    {
+      "event": "auth::JwtSigningKeyRotated",
+      "listener": "Academorix\\ServiceAccount\\Listeners\\HandleSignerKidRotation",
+      "queue": "notifications",
+      "purpose": "When the auth module rotates the key material for a specific kid (e.g. periodic key hygiene), enumerate every SA whose signer_kid = <rotated_kid> and either (a) leave them pointing at the new material (transparent \u2014 kid stayed the same), OR (b) if the auth module DEPRECATED the old kid and provisioned a new one, coordinate an SA-side kid update. Emits `academorix.service_account.kid_rotation.propagated` metric.",
+      "notes": "The auth module's kid-rotation event fires with a `mode` payload field: 'in_place' (kid stayed, material rotated) or 'renamed' (kid replaced). This listener only takes action on 'renamed' mode."
+    },
+    {
+      "event": "auth::JwtSigningKeyDisabled",
+      "listener": "Academorix\\ServiceAccount\\Listeners\\AlertServiceAccountsAffectedByKidBurn",
+      "queue": "notifications-critical",
+      "purpose": "When the auth module disables a kid (typically incident-response), enumerate every SA whose signer_kid = <disabled_kid>, mark them for operator review (metadata flag `signer_kid_burned = true`), and dispatch SuspiciousServiceAccountActivityNotification to platform-security naming the affected SAs. SAs are NOT auto-disabled \u2014 the kid burn revokes their JWT signatures, so they can't issue new tokens, but the SA rows remain in the table for triage."
+    },
+    {
+      "event": "compliance::TenantErasureRequested",
+      "listener": "Academorix\\ServiceAccount\\Listeners\\EnumerateServiceAccountsForCascadingErasure",
+      "queue": "notifications-critical",
+      "purpose": "When a Tenant is being erased (compliance-driven full-tenant delete), enumerate every SA scoped to the tenant (`tenant_id = <erased_tenant>`) and soft-delete them alongside. Platform-plane SAs (`tenant_id IS NULL`) stay put."
+    },
+    {
+      "event": "application::ApplicationDisabled",
+      "listener": "Academorix\\ServiceAccount\\Listeners\\DisableServiceAccountsForApplication",
+      "queue": "notifications-critical",
+      "purpose": "When an Application is disabled (rare \u2014 typically a product sunset event), soft-disable every SA bound to `application_id = <disabled_application>`. Existing JWTs remain valid until natural expiry; the disable prevents new token-exchange."
+    }
+  ],
+  "notes": [
+    "Every listener above is idempotent. A retry after partial success doesn't double-fire downstream effects.",
+    "Cache-invalidation listeners run synchronously (queue: null) so the state is guaranteed consistent by the time the emitting request returns to the caller. The tradeoff is a per-write cache-write cost \u2014 acceptable because writes on the SA table are rare (a few per day, not per second)."
+  ]
+}

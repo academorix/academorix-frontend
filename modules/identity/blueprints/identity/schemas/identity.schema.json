@@ -1,0 +1,264 @@
+{
+  "id": "academorix://modules/identity/schemas/identity",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Identity",
+  "description": "Global credential record. One row per real human across every Academorix Application. Owns email (citext, unique), password hash (argon2id preferred, bcrypt fallback), MFA secret (KMS-envelope-encrypted at rest), MFA recovery codes (bcrypt-hashed JSONB), email verification lifecycle, account lockout with progressive backoff, password history for reuse prevention. NEVER carries `application_id` or `tenant_id` \u2014 global by design (see design.md D1).",
+  "type": "object",
+  "x-module": "identity",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Foundation\\Auth\\User",
+    "table": "identities",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "idn_",
+    "incrementing": false,
+    "model": "Academorix\\Identity\\Models\\Identity",
+    "interface": "Academorix\\Identity\\Contracts\\Data\\IdentityInterface",
+    "implements": ["Academorix\\Identity\\Contracts\\Data\\IdentityInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "Notifiable",
+      "CanResetPassword",
+      "IsIdentity",
+      "HasCredentialLifecycle",
+      "HasMetadata",
+      "HasUserstamps",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "email_verified_at": "datetime",
+      "email_verification_expires_at": "datetime",
+      "password_changed_at": "datetime",
+      "last_login_at": "datetime",
+      "last_failed_at": "datetime",
+      "locked_until": "datetime",
+      "failed_attempts_count": "integer",
+      "dob": "date",
+      "mfa_secret_encrypted": "EncryptedMfaSecret",
+      "mfa_recovery_codes_hashed": "HashedRecoveryCodes",
+      "password_history_hashed": "array"
+    },
+    "appends": ["email_fingerprint", "mfa_enabled", "email_verified", "is_locked", "recovery_codes_remaining", "password_age_days"],
+    "observers": ["IdentityObserver"],
+    "hidden": [
+      "password_hash",
+      "password_history_hashed",
+      "mfa_secret_encrypted",
+      "mfa_recovery_codes_hashed",
+      "email_verification_token_hash"
+    ],
+    "guarded": [
+      "id",
+      "password_hash",
+      "password_history_hashed",
+      "mfa_secret_encrypted",
+      "mfa_recovery_codes_hashed",
+      "email_verification_token_hash",
+      "email_verified_at",
+      "password_changed_at",
+      "locked_until",
+      "failed_attempts_count"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Global identities table. NO tenant scope. NO application scope. Referenced by user::User + user::PlatformUser via `identity_id`.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `idn_<26 chars>`."
+      },
+      "email": {
+        "type": "citext",
+        "nullable": false,
+        "description": "Case-insensitive UNIQUE via Postgres CITEXT extension. Falls back to `string` + LOWER() functional index on non-Postgres engines."
+      },
+      "password_hash": {
+        "type": "text",
+        "nullable": false,
+        "description": "Argon2id (preferred) or bcrypt (fallback). Never plaintext."
+      },
+      "mfa_secret_encrypted": {
+        "type": "text",
+        "nullable": true,
+        "description": "KMS-envelope-encrypted TOTP secret. NULL = MFA not enrolled."
+      },
+      "mfa_recovery_codes_hashed": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of bcrypt-hashed recovery codes. NULL = MFA not enrolled OR no codes issued."
+      },
+      "email_verified_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "NULL until the user confirms email ownership."
+      },
+      "email_verification_token_hash": {
+        "type": "text",
+        "nullable": true,
+        "description": "SHA-256 hash of the outstanding verification token (plaintext token NEVER stored)."
+      },
+      "email_verification_expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Verification token expiry (24 hours from issue)."
+      },
+      "password_history_hashed": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "Rolling window of prior password hashes; oldest evicted when write pushes past history_size."
+      },
+      "password_changed_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "default": "now()",
+        "description": "Stamped on every password_hash mutation. Drives age-based rotation checks."
+      },
+      "last_login_at": {
+        "type": "timestamptz",
+        "nullable": true
+      },
+      "last_failed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Timestamp of the most recent failed login attempt. Drives the sliding-window failed_attempts_count reset."
+      },
+      "locked_until": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Non-null = active lockout. Auto-cleared by AutoUnlockExpiredLockoutsJob when expired."
+      },
+      "failed_attempts_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Reset on successful login OR after `lockout.window_minutes` of no failed attempts."
+      },
+      "dob": {
+        "type": "date",
+        "nullable": true,
+        "description": "Date of birth. Drives CompliantAgePolicy resolution (COPPA / GDPR floors). Nullable because platform-provisioned identities may lack it."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form metadata bag from HasMetadata. Never used for security-critical state."
+      },
+      "created_by": { "type": "uuid", "nullable": true, "description": "Actor who created the row (platform-admin CLI OR self-signup marker)." },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true, "description": "Soft-delete marker. GDPR erasure hold-period begins here." },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["email"],
+        "unique": true,
+        "name": "identities_email_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "Partial UNIQUE on live rows only. Configurable: `identity.retention.replace_erased_identities` (default true) allows a fresh sign-up on the same email during the GDPR hold-period."
+      },
+      {
+        "columns": ["locked_until"],
+        "unique": false,
+        "name": "identities_locked_idx",
+        "predicate": "locked_until IS NOT NULL",
+        "description": "Speeds up AutoUnlockExpiredLockoutsJob's scan."
+      },
+      {
+        "columns": ["email_verified_at"],
+        "unique": false,
+        "name": "identities_unverified_idx",
+        "predicate": "email_verified_at IS NULL AND deleted_at IS NULL",
+        "description": "Speeds up the unverified-identities gauge + activation-funnel dashboards."
+      },
+      {
+        "columns": ["deleted_at"],
+        "unique": false,
+        "name": "identities_erasure_idx",
+        "predicate": "deleted_at IS NOT NULL",
+        "description": "Speeds up PurgeSoftDeletedIdentitiesJob's scan."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "email",
+    "password_hash",
+    "password_history_hashed",
+    "password_changed_at",
+    "failed_attempts_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^idn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "maxLength": 320,
+      "description": "RFC 5321 compliant. Length cap enforces the address-part max (64) + `@` + domain max (255)."
+    },
+    "email_verified_at": { "type": ["string", "null"], "format": "date-time" },
+    "email_verification_expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "password_changed_at": { "type": "string", "format": "date-time" },
+    "last_login_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_failed_at": { "type": ["string", "null"], "format": "date-time" },
+    "locked_until": { "type": ["string", "null"], "format": "date-time" },
+    "failed_attempts_count": { "type": "integer", "minimum": 0 },
+    "dob": { "type": ["string", "null"], "format": "date" },
+    "email_fingerprint": { "type": "string", "description": "Computed. SHA-256 of the normalised email." },
+    "mfa_enabled": { "type": "boolean", "description": "Computed. mfa_secret_encrypted IS NOT NULL." },
+    "email_verified": { "type": "boolean", "description": "Computed. email_verified_at IS NOT NULL." },
+    "is_locked": { "type": "boolean", "description": "Computed. locked_until IS NOT NULL AND > now()." },
+    "recovery_codes_remaining": { "type": "integer", "description": "Computed. Count of non-consumed entries in mfa_recovery_codes_hashed." },
+    "password_age_days": { "type": "integer", "description": "Computed. Days since password_changed_at." },
+    "metadata": { "type": ["object", "null"] },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": [
+      "email_fingerprint",
+      "mfa_enabled",
+      "email_verified",
+      "is_locked",
+      "recovery_codes_remaining",
+      "password_age_days"
+    ],
+    "never_projected": [
+      "password_hash",
+      "password_history_hashed",
+      "mfa_secret_encrypted",
+      "mfa_recovery_codes_hashed",
+      "email_verification_token_hash"
+    ],
+    "redacted_by_default": [
+      "email",
+      "dob"
+    ],
+    "redaction_unmute_permission": "platform.identity.view.pii"
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`idn_<26>`)"],
+    "notes": "Identity is NEVER a URL parameter on tenant-audience routes. Only platform-admin routes bind it, and always by ULID (never by email \u2014 to avoid emitting email as a URL path segment)."
+  }
+}

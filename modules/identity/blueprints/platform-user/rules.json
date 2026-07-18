@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/platform-user/rules",
+  "$version": 1,
+  "title": "platform-user \u2014 validation rules",
+  "description": "Custom Laravel validation rules published by `PlatformUserServiceProvider::boot()`. All four rules are consumed by the HirePlatformUserInput, UpdatePlatformProfileInput, and ReassignManagerInput data classes. Two of them (valid_e164_phone, valid_iana_timezone) mirror rules the tenant-plane user module ships but are re-declared here so the platform-user module has no soft-dependency on `identity/user` beyond the Identity substrate.",
+  "namespace": "Academorix\\PlatformUser\\Rules",
+  "rules": [
+    {
+      "name": "valid_e164_phone",
+      "class": "Academorix\\PlatformUser\\Rules\\ValidE164Phone",
+      "signature": "valid_e164_phone",
+      "description": "Ensures the value is a valid E.164-formatted phone number. Uses `giggsey/libphonenumber-for-php` under the hood. Required for PlatformProfile.phone_e164 because the on-call escalation resolver dials this number \u2014 an invalid value would cause a page to fail silently at 3am. Format: leading `+`, country code, subscriber number (up to 15 digits total). Example: `+14155552671`. Rejects: `(415) 555-2671`, `4155552671`, `+1 415 555 2671` (whitespace).",
+      "params": [],
+      "example_field_rule": "phone_e164: [required, valid_e164_phone]",
+      "error_message_key": "platform-user::validation.valid_e164_phone",
+      "default_message": "The :attribute must be a valid E.164 phone number (leading +, country code, digits only, up to 15 digits total)."
+    },
+    {
+      "name": "valid_iana_timezone",
+      "class": "Academorix\\PlatformUser\\Rules\\ValidIanaTimezone",
+      "signature": "valid_iana_timezone",
+      "description": "Ensures the value is a valid IANA timezone identifier (e.g. `America/New_York`, `Europe/London`, `Asia/Tokyo`). Validates against PHP's built-in `DateTimeZone::listIdentifiers()`. Used for PlatformProfile.timezone which drives the on-call rotation's local-time display + shift-handoff computation.",
+      "params": [],
+      "example_field_rule": "timezone: [required, valid_iana_timezone]",
+      "error_message_key": "platform-user::validation.valid_iana_timezone",
+      "default_message": "The :attribute must be a valid IANA timezone identifier (e.g. America/New_York)."
+    },
+    {
+      "name": "valid_department",
+      "class": "Academorix\\PlatformUser\\Rules\\ValidDepartment",
+      "signature": "valid_department",
+      "description": "Ensures the value is a member of the Academorix\\PlatformUser\\Enums\\PlatformDepartment enum. The canonical set is seeded from `data/departments.json` at boot. Validated against a runtime cache so a mistyped department in an admin CLI invocation fails fast with a helpful error listing the valid values.",
+      "params": [],
+      "example_field_rule": "department: [required, valid_department]",
+      "error_message_key": "platform-user::validation.valid_department",
+      "default_message": "The :attribute must be one of: ops, product, engineering, support, sales, finance, legal, security, dpo, hr."
+    },
+    {
+      "name": "manager_belongs_to_platform",
+      "class": "Academorix\\PlatformUser\\Rules\\ManagerBelongsToPlatform",
+      "signature": "manager_belongs_to_platform[:allow_self]",
+      "description": "Ensures the value (a PlatformUser id) references an active or suspended PlatformUser (not offboarded, not soft-deleted). Rejects self-references (a PlatformUser cannot manage themselves) unless the `allow_self` argument is passed \u2014 that flag exists for the top-of-tree seeding case where the founder / CEO has themselves as their `manager_id` placeholder before the org chart is initialised, and is NEVER used in normal operation.",
+      "params": [
+        {
+          "name": "allow_self",
+          "type": "'allow_self' | 'reject_self'",
+          "default": "reject_self",
+          "description": "Whether self-referential manager_id is allowed."
+        }
+      ],
+      "example_field_rule": "manager_id: [nullable, manager_belongs_to_platform]",
+      "error_message_key": "platform-user::validation.manager_belongs_to_platform",
+      "default_message": "The :attribute must reference an active or suspended platform user (not offboarded, not soft-deleted).",
+      "additional_checks": [
+        "Cycle detection: refuse when the proposed manager's chain of managers eventually points back to the current row. Prevents infinite-loop resolution in the org-chart accessor.",
+        "Depth cap: refuse when the resulting chain would exceed `platform-user.org_chart.max_depth` (default 8 levels). Prevents pathological org-chart shapes."
+      ]
+    }
+  ],
+  "usage_from_data_class": "The HirePlatformUserInput, UpdatePlatformProfileInput, and ReassignManagerInput data classes auto-emit the FormRequest rule sets. Custom validation errors surface in the standard `data.errors` map on 422 responses; the CLI commands print them one-per-line with the failed field prefixed."
+}

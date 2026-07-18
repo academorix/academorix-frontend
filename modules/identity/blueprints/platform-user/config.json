@@ -1,0 +1,173 @@
+{
+  "id": "academorix://modules/platform-user/config",
+  "$version": 1,
+  "title": "platform-user \u2014 developer configuration",
+  "configFile": "config/platform-user.php",
+  "envPrefix": "PLATFORM_USER_",
+  "description": "Runtime configuration for the platform-user module. Every key here is either an operational tuning parameter (SLAs, retention windows, MFA enforcement) or an integration credential (PagerDuty for on-call rotation). Nothing under this module is tenant-facing \u2014 there is no per-tenant override via the settings module. Every credential resolves via env only (Doppler-managed in staging + prod).",
+  "sections": {
+    "onboarding": {
+      "description": "Onboarding checklist reminder policy. New PlatformUsers land in status=`pending`; the module tracks time-since-hire and pings the manager + the new hire on a schedule until they promote to active.",
+      "keys": [
+        {
+          "path": "platform-user.onboarding.checklist_reminder_days",
+          "type": "array<int>",
+          "default": [1, 3, 7, 14],
+          "description": "Days-since-hire on which to remind. After the last day, escalates to the department head."
+        },
+        {
+          "path": "platform-user.onboarding.escalate_after_days",
+          "type": "int",
+          "default": 30,
+          "description": "Days-since-hire at which a pending PlatformUser triggers an escalation notification to super_admin + ops."
+        },
+        {
+          "path": "platform-user.onboarding.auto_promote_on_checklist_complete",
+          "type": "bool",
+          "env": "PLATFORM_USER_ONBOARDING_AUTO_PROMOTE",
+          "default": true,
+          "description": "When the onboarding checklist reports 100% complete, automatically transition status=pending\u2192active. Off = super_admin must explicitly activate via the platform-admin UI."
+        }
+      ]
+    },
+    "offboarding": {
+      "description": "Offboarding SLA + retention hold policy. The 24h SLA is a SOC 2 CC6.7 control \u2014 access to systems must be revoked promptly after termination. The 90-day retention hold is a compliance-audit affordance.",
+      "keys": [
+        {
+          "path": "platform-user.offboarding.sla_hours",
+          "type": "int",
+          "env": "PLATFORM_USER_OFFBOARDING_SLA_HOURS",
+          "default": 24,
+          "description": "Target completion window for RevokePlatformUserAccessJob. Alerting fires at 12h (half-SLA)."
+        },
+        {
+          "path": "platform-user.offboarding.grace_period_hours",
+          "type": "int",
+          "default": 4,
+          "description": "Grace window between PlatformUserOffboarded event and access-revocation job start. Allows a planned offboard to be reversed within the same day (rare but supported)."
+        },
+        {
+          "path": "platform-user.offboarding.max_future_scheduling_days",
+          "type": "int",
+          "default": 30,
+          "description": "Cap on effective_at future-dating. Prevents an actor from queueing offboardings months in advance."
+        }
+      ]
+    },
+    "retention": {
+      "description": "Retention hold on offboarded PlatformUser rows. During the hold, the row is soft-deleted but not hard-deleted \u2014 audit rows written before offboard still resolve to the display_name. Post-hold, PurgeOffboardedPlatformUsersJob hard-deletes.",
+      "keys": [
+        {
+          "path": "platform-user.retention.hold_days",
+          "type": "int",
+          "env": "PLATFORM_USER_RETENTION_HOLD_DAYS",
+          "default": 90,
+          "description": "Days between soft-delete (offboard) and hard-delete. 90 days matches the compliance-audit lookup window used by SOC 2 attestations."
+        },
+        {
+          "path": "platform-user.retention.audit_correlation_preserved_indefinitely",
+          "type": "bool",
+          "default": true,
+          "description": "When true (default), audit rows referencing this PlatformUser are RETAINED after hard delete with an anonymised actor placeholder. When false, audit rows are anonymised via a hash of the original user_id at hard-delete time. NEVER set to false without a compliance-officer sign-off \u2014 SOC2 evidence retention requires the former."
+        }
+      ]
+    },
+    "mfa": {
+      "description": "MFA enforcement on the platform_admin guard. Stricter than the tenant plane \u2014 platform staff have zero option to opt out of MFA.",
+      "keys": [
+        {
+          "path": "platform-user.mfa.require_on_hire",
+          "type": "bool",
+          "env": "PLATFORM_USER_MFA_REQUIRE_ON_HIRE",
+          "default": true,
+          "description": "Refuse hiring an Identity that has NULL mfa_secret_encrypted. Off = allow (used only in dev)."
+        },
+        {
+          "path": "platform-user.mfa.require_on_every_request",
+          "type": "bool",
+          "env": "PLATFORM_USER_MFA_REQUIRE_ON_EVERY_REQUEST",
+          "default": true,
+          "description": "The `platform.mfa_required` middleware enforces this at request time: refuses tokens issued to Identities that have since disabled MFA. Off = only checked at login (weaker; not recommended)."
+        },
+        {
+          "path": "platform-user.mfa.session_ttl_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "Sanctum PAT TTL on the platform_admin guard. Shorter than the tenant plane's 8h default \u2014 platform sessions time out at 1h so an unlocked laptop is exposed for less time."
+        }
+      ]
+    },
+    "on_call": {
+      "description": "On-call rotation resolver settings. Off by default; enable per-environment via PLATFORM_USER_ON_CALL_ENABLED. When enabled, primary backend is PagerDuty; fallback is the internal on_call_rotation_entries table (seeded via `data/on-call-departments.json`).",
+      "keys": [
+        {
+          "path": "platform-user.on_call.enabled",
+          "type": "bool",
+          "env": "PLATFORM_USER_ON_CALL_ENABLED",
+          "default": false,
+          "description": "Master toggle. Off = OnCallResolver returns null for every query + no PagerDuty API calls fire."
+        },
+        {
+          "path": "platform-user.on_call.default_backend",
+          "type": "string",
+          "env": "PLATFORM_USER_ON_CALL_BACKEND",
+          "default": "internal",
+          "enum": ["internal", "pagerduty"],
+          "description": "Which resolver backs OnCallResolver by default. `internal` = read from on_call_rotation_entries table. `pagerduty` = call PagerDuty's schedules API."
+        },
+        {
+          "path": "platform-user.on_call.pagerduty.api_key",
+          "type": "string",
+          "env": "PAGERDUTY_API_KEY",
+          "description": "REST API v2 token. Doppler-managed."
+        },
+        {
+          "path": "platform-user.on_call.pagerduty.escalation_policy_id",
+          "type": "string",
+          "env": "PAGERDUTY_ESCALATION_POLICY_ID"
+        },
+        {
+          "path": "platform-user.on_call.pagerduty.timeout_seconds",
+          "type": "int",
+          "default": 5,
+          "description": "PagerDuty API HTTP timeout. Short because on-call resolution is on a critical path (production incident routing)."
+        },
+        {
+          "path": "platform-user.on_call.cache_ttl_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "OnCallResolver result cache TTL. Short so a rotation change (someone offboarded mid-shift) propagates within a minute."
+        }
+      ]
+    },
+    "commands": {
+      "description": "Console-command safety guards.",
+      "keys": [
+        {
+          "path": "platform-user.commands.require_reason",
+          "type": "bool",
+          "env": "PLATFORM_USER_COMMANDS_REQUIRE_REASON",
+          "default": true,
+          "description": "When true (default in staging + prod), every mutating Artisan command must be invoked with --reason=<text>. Off in dev; on in staging + prod (SOC2 evidence). Audit rows for CLI-driven mutations carry the reason string in the tags field."
+        }
+      ]
+    },
+    "audit": {
+      "description": "Audit stamping policy specific to the platform plane.",
+      "keys": [
+        {
+          "path": "platform-user.audit.correlate_across_requests",
+          "type": "bool",
+          "default": true,
+          "description": "When true, the `platform.audit` middleware writes a shared correlation_id to every audit + activity row in the same request. Consumed by the `platform-user:audit-report` command to group related mutations."
+        },
+        {
+          "path": "platform-user.audit.retention_hot_days",
+          "type": "int",
+          "default": 365,
+          "description": "Hot-storage window for platform-plane audit rows. Longer than the tenant plane's default (matches SOC 2 attestation window). Post-hot, rows rotate to cold via audit::RotateAuditColdStorageJob."
+        }
+      ]
+    }
+  }
+}

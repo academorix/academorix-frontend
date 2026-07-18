@@ -1,0 +1,110 @@
+{
+  "id": "academorix://modules/auth/analytics",
+  "$version": 1,
+  "title": "auth \u2014 product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "description": "Product-analytics events from the auth surface. Fired alongside operational metrics but with different consent tiers + property shapes. No PII on any event; identity_fingerprint used as the correlation key.",
+  "events": [
+    {
+      "name": "User Logged In",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "identity_fingerprint",
+        "guard",
+        "application_id",
+        "mfa_verified",
+        "is_new_device"
+      ],
+      "description": "Successful login. Essential-tier because sessions-per-day is a foundational retention metric."
+    },
+    {
+      "name": "User Logged Out",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint", "guard", "trigger"],
+      "description": "trigger=self_service|idle_timeout|admin_revocation."
+    },
+    {
+      "name": "MFA Verified",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint", "challenge_type", "attempts_taken"],
+      "description": "MFA challenge completed. Drives the MFA-adoption dashboard."
+    },
+    {
+      "name": "Refresh Rotated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint", "elapsed_since_login_hours"],
+      "description": "Refresh token rotation. Drives session-length dashboards."
+    },
+    {
+      "name": "Refresh Reuse Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["identity_fingerprint"],
+      "description": "Essential-tier because breach reporting depends on the count regardless of consent state."
+    },
+    {
+      "name": "Session Revoked",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint", "reason", "actor_kind"],
+      "description": "actor_kind = self | platform_admin | system."
+    },
+    {
+      "name": "Cross App SSO Start",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint", "source_application_id", "target_application_id"],
+      "description": "Grant issued \u2014 signals user intent to switch Applications."
+    },
+    {
+      "name": "Cross App SSO Complete",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint", "target_application_id", "elapsed_grant_to_exchange_seconds"],
+      "description": "Grant exchanged. Funnel with Cross App SSO Start."
+    },
+    {
+      "name": "New Device Login",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint", "device_fingerprint_short"],
+      "description": "Login from a device fingerprint not seen in 30 days."
+    },
+    {
+      "name": "Password Reset Requested",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint"],
+      "description": "Only fires when the email resolves to a real Identity \u2014 unknown-email requests are silent (enumeration safety)."
+    },
+    {
+      "name": "Password Reset Completed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["identity_fingerprint", "elapsed_since_request_minutes"]
+    },
+    {
+      "name": "Impersonation Started",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["impersonator_fingerprint", "target_fingerprint", "target_application_id"],
+      "description": "Essential-tier because impersonation compliance reporting depends on the count."
+    },
+    {
+      "name": "Impersonation Ended",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["impersonator_fingerprint", "target_fingerprint", "duration_seconds", "trigger"]
+    }
+  ],
+  "notes": [
+    "identity_fingerprint / impersonator_fingerprint / target_fingerprint are SHA-256 hashes of the corresponding IDs \u2014 stable across events but never reversible to the underlying ULID.",
+    "device_fingerprint_short is the first 8 characters of the DeviceFingerprinter output \u2014 distinguishes across a per-User session list without being unique enough to correlate across Users.",
+    "Consent-tier decisions: 'essential' for events product cannot ship without (login count, MFA adoption baseline, breach signals, impersonation audit). 'functional' for growth + adoption dashboards. Downstream consent-honoring drops functional events for users at essential-only."
+  ]
+}

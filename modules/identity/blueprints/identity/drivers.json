@@ -1,0 +1,100 @@
+{
+  "id": "academorix://modules/identity/drivers",
+  "$version": 1,
+  "title": "identity \u2014 driver specifications",
+  "description": "Two driver contracts. MfaSecretEncryptor drivers wrap the KMS envelope encryption for Identity.mfa_secret_encrypted. CredentialHasher drivers wrap the password-hash algorithm. Every driver is resolved via `TranslatorDriverManager`-style factory in IdentityServiceProvider.",
+  "contracts": [
+    {
+      "interface": "Academorix\\Identity\\Contracts\\MfaSecretEncryptorInterface",
+      "methods": [
+        {
+          "signature": "encrypt(string $plaintext): string",
+          "returns": "Ciphertext blob (encrypted data-key + AES-256-GCM ciphertext + IV + auth tag, base64-encoded). Ready to persist to Identity.mfa_secret_encrypted."
+        },
+        {
+          "signature": "decrypt(string $ciphertext): string",
+          "returns": "Plaintext TOTP secret (base32). Caller is expected to consume it in a bounded scope + zero it out."
+        },
+        {
+          "signature": "rotate(string $ciphertext): string",
+          "returns": "Ciphertext re-encrypted under the current KMS data key. Idempotent \u2014 returns the input when already under the current key."
+        },
+        { "signature": "healthcheck(): DriverHealth", "description": "Non-billable reachability probe." }
+      ]
+    },
+    {
+      "interface": "Academorix\\Identity\\Contracts\\CredentialHasherInterface",
+      "methods": [
+        {
+          "signature": "hash(string $plaintext): string",
+          "returns": "Argon2id/bcrypt hash string (self-describing \u2014 the algorithm identifier is embedded in the hash prefix)."
+        },
+        {
+          "signature": "verify(string $plaintext, string $hash): bool",
+          "returns": "Constant-time comparison result. Constant-time property enforced at implementation."
+        },
+        {
+          "signature": "needsRehash(string $hash): bool",
+          "returns": "True when the hash was produced under an older cost parameter than the current config. Callers rehash on next successful verify."
+        }
+      ]
+    }
+  ],
+  "mfa_secret_encryptor_drivers": [
+    {
+      "name": "kms",
+      "class": "Academorix\\Identity\\Drivers\\KmsMfaSecretEncryptor",
+      "underlying_package": "aws/aws-sdk-php",
+      "strengths": [
+        "Managed key rotation via KMS built-in rotation policy",
+        "Auditable \u2014 every decrypt call appears in CloudTrail"
+      ],
+      "weaknesses": ["Requires AWS credentials + KMS endpoint reachable"],
+      "config_prefix": "identity.mfa_secret.kms"
+    },
+    {
+      "name": "vault",
+      "class": "Academorix\\Identity\\Drivers\\VaultMfaSecretEncryptor",
+      "underlying_package": "hashicorp/vault-php",
+      "strengths": ["Self-hosted", "Cross-cloud portable"],
+      "weaknesses": ["Additional operational surface"],
+      "config_prefix": "identity.mfa_secret.vault"
+    },
+    {
+      "name": "local",
+      "class": "Academorix\\Identity\\Drivers\\LocalMfaSecretEncryptor",
+      "purpose": "DEV-ONLY. Reads a key from disk and performs AES-256-GCM inline. Refuses to load when APP_ENV=production. Retained here for local-development ergonomics.",
+      "strengths": ["Zero external dependencies"],
+      "weaknesses": ["No key rotation; single-point-of-compromise", "Explicitly refuses in production"],
+      "config_prefix": "identity.mfa_secret.local"
+    }
+  ],
+  "credential_hasher_drivers": [
+    {
+      "name": "argon2id",
+      "class": "Academorix\\Identity\\Drivers\\Argon2idHasher",
+      "underlying_package": "laravel/framework Hash::driver('argon2id')",
+      "strengths": [
+        "Memory-hard \u2014 resistant to GPU cracking",
+        "Winner of the Password Hashing Competition",
+        "NIST 800-63B compliant"
+      ],
+      "weaknesses": [
+        "Higher CPU + RAM per hash (default 64 MiB) than bcrypt",
+        "Requires libsodium in the PHP runtime"
+      ],
+      "config_prefix": "identity.password.argon2id"
+    },
+    {
+      "name": "bcrypt",
+      "class": "Academorix\\Identity\\Drivers\\BcryptHasher",
+      "underlying_package": "laravel/framework Hash::driver('bcrypt')",
+      "strengths": [
+        "Battle-tested \u2014 in wide use since 1999",
+        "Ships with every PHP install (no extension required)"
+      ],
+      "weaknesses": ["Not memory-hard \u2014 GPU-friendly compared to argon2id"],
+      "config_prefix": "identity.password.bcrypt"
+    }
+  ]
+}

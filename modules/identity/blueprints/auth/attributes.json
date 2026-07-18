@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/auth/attributes",
+  "$version": 1,
+  "title": "auth \u2014 PHP attribute contracts",
+  "description": "Two attributes. #[AsAuthListener] marks a class as a subscriber to auth-lifecycle events (login / logout / refresh / reuse-detection / cross-app-grant / impersonation / JWT rotation). #[RegistrationPolicy] marks a class as a domain-specific registration policy \u2014 discovered at boot, resolved per RegistrationContext type. Both are discovered by the AuthServiceProvider at boot so downstream services react without explicit event bindings.",
+  "namespace": "Academorix\\Auth\\Attributes",
+  "attributes": [
+    {
+      "name": "AsAuthListener",
+      "class": "Academorix\\Auth\\Attributes\\AsAuthListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Which auth events this class reacts to. Wildcard `*` = every event under `Academorix\\Auth\\Events\\*`. Specific list e.g. `['UserLoggedIn', 'RefreshTokenReuseDetected']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": "notifications",
+          "description": "Queue name for asynchronous dispatch. `null` = synchronous (reserved for observability tap-outs). Common values: `notifications` (default), `notifications-critical` (P0 events \u2014 refresh-token reuse, JWT deny-list adds, impersonation start), `audit` (write-heavy compliance streams)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Listener execution order. Lower runs first. Use for cases where one listener's side-effect must precede another (e.g. `RevokeAllActiveSessionsListener` before `SendPasswordChangedFromNewDeviceNotification`). Framework default listeners occupy 1\u201399; user-defined listeners default to 100."
+        }
+      ],
+      "example": "#[AsAuthListener(events: ['RefreshTokenReuseDetected'], queue: 'notifications-critical', priority: 5)]\nfinal class LockdownOnBreachDetected\n{\n    public function handle(RefreshTokenReuseDetected $event): void\n    {\n        // ...\n    }\n}"
+    },
+    {
+      "name": "RegistrationPolicy",
+      "class": "Academorix\\Auth\\Attributes\\RegistrationPolicy",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "contextType",
+          "type": "string",
+          "required": true,
+          "description": "Fully-qualified class name of the RegistrationContext subclass this policy handles. E.g. `Academorix\\Sports\\Athletes\\Data\\AthleteRegistrationContext`. The default `GenericRegistrationPolicy` handles `Academorix\\Auth\\Data\\GenericRegistrationContext`. Discovery matches a context to its policy via this attribute at boot."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "When multiple policies match a context (rare \u2014 domain module overrides the default), the LOWEST priority wins. Framework's `GenericRegistrationPolicy` runs at priority 1000; domain-specific policies default to 100 so they naturally override."
+        }
+      ],
+      "example": "#[RegistrationPolicy(contextType: AthleteRegistrationContext::class, priority: 50)]\nfinal class AthleteRegistrationPolicy implements RegistrationPolicyInterface\n{\n    public function evaluate(RegistrationContext $context): RegistrationDecision\n    {\n        // Composes CompliantAgePolicy + parent-consent + entitlements gate\n    }\n}"
+    }
+  ]
+}

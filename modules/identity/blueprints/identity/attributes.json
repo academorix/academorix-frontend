@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/identity/attributes",
+  "$version": 1,
+  "title": "identity \u2014 PHP attribute contracts",
+  "description": "One attribute. #[AsCredentialListener] marks a class as a subscriber to credential-lifecycle events (registered, locked, password changed, MFA enrolled, erased). Discovered at boot by the IdentityServiceProvider so services under `auth/`, `notifications/`, `activity/`, and `observability/` can react without explicit event bindings.",
+  "namespace": "Academorix\\Identity\\Attributes",
+  "attributes": [
+    {
+      "name": "AsCredentialListener",
+      "class": "Academorix\\Identity\\Attributes\\AsCredentialListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": ["*"],
+          "description": "Which credential events this class reacts to. Wildcard `*` = every event under `Academorix\\Identity\\Events\\*`. Specific list e.g. `['IdentityLocked', 'PasswordChanged']` subscribes to those only. Validated against the events map at boot; typos abort application boot."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": "notifications",
+          "description": "Queue name for asynchronous dispatch. Set to `null` for synchronous listeners (rare \u2014 reserve for observability tap-outs). Common values: `notifications` (default, mail/push channels), `notifications-critical` (P0 events like IdentityLocked reaching multiple failed attempts), `audit` (write-heavy compliance streams)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Listener execution order. Lower values run first. Use for cases where one listener's side-effect must precede another (e.g. `PurgeSessionsListener` before `SendPasswordChangedConfirmation`). Framework default listeners occupy 1\u201399; user-defined listeners default to 100."
+        }
+      ],
+      "example": "#[AsCredentialListener(events: ['IdentityLocked'], queue: 'notifications-critical', priority: 10)]\nfinal class DispatchAccountLockedNotification\n{\n    public function handle(IdentityLocked $event): void\n    {\n        // ...\n    }\n}"
+    }
+  ]
+}

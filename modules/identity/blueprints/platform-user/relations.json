@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/platform-user/relations",
+  "$version": 1,
+  "title": "platform-user \u2014 model relationships",
+  "description": "PlatformUser is the aggregate root for the Academorix-staff plane. Outbound FKs: `identity_id` (reuses the Identity credential substrate), `profile_id` (1:1 PII satellite), `manager_id` (self-referential org chart, nullable). Inbound FKs from `access::PlatformRoleAssignment` (roles on the `platform_admin` guard), `access::PlatformImpersonationSession` (tenant-side act-as sessions, Wave 1b), `audit::Audit` (polymorphic actor pointing at PlatformUsers for platform-plane writes). NEVER carries `tenant_id` or `application_id` \u2014 the platform_users table is cross-plane by definition (see tenancy-columns.md \u00a72 exception + design.md \u00a74.3).",
+  "internal": [
+    {
+      "from": "PlatformUser",
+      "kind": "hasOne",
+      "to": "PlatformProfile",
+      "foreignKey": "platform_user_id_on_platform_profiles",
+      "localKey": "profile_id",
+      "throughAssociation": "belongsTo",
+      "description": "1:1 PII satellite. Split from `platform_users` for backup isolation (encrypted-backup workflows target `platform_profiles` separately from the credential-adjacent `platform_users`). Deletion order: PlatformUser first (soft), then PlatformProfile purges only on hard delete of PlatformUser after the 90-day retention hold."
+    },
+    {
+      "from": "PlatformProfile",
+      "kind": "hasOne",
+      "to": "PlatformUser",
+      "foreignKey": "profile_id",
+      "onDelete": "restrict",
+      "description": "Reverse relation. RESTRICT on delete so we cannot orphan a PlatformUser's PII satellite; the PlatformUser row must be soft-deleted first, then hard-deleted, which cascades PlatformProfile purge."
+    },
+    {
+      "from": "PlatformUser",
+      "kind": "belongsTo",
+      "to": "PlatformUser",
+      "foreignKey": "manager_id",
+      "onDelete": "set null",
+      "description": "Self-referential org chart. Nullable \u2014 top-of-tree PlatformUsers (heads of department) have no manager. `set null` on delete so offboarding a manager does not cascade-delete their reports; a separate `platform-user:reassign-manager` command handles the reparenting workflow."
+    },
+    {
+      "from": "PlatformUser",
+      "kind": "hasMany",
+      "to": "PlatformUser",
+      "foreignKey": "manager_id",
+      "description": "Direct reports. Read via the `directReports()` relation on the model."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "PlatformUser",
+      "kind": "belongsTo",
+      "to": "identity::Identity",
+      "foreignKey": "identity_id",
+      "targetTable": "identities",
+      "targetKey": "id",
+      "onDelete": "restrict",
+      "description": "Reuses the global credential record. `RESTRICT` on delete so a compliance-officer erasing an Identity must first offboard every PlatformUser row referencing that Identity (prevents accidental Identity-side erasure orphaning a staff row). One Identity may back at most ONE PlatformUser (UNIQUE(identity_id) on platform_users) \u2014 an Academorix employee is a distinct human, not a projection like User is."
+    }
+  ],
+  "inbound": [
+    {
+      "from": "access::PlatformRoleAssignment",
+      "kind": "belongsTo",
+      "to": "PlatformUser",
+      "foreignKey": "platform_user_id",
+      "onDelete": "cascade",
+      "description": "spatie-permission-shaped pivot on the `platform_admin` guard. Cascades on hard delete of the PlatformUser (after the 90-day retention hold) so no orphan role assignments remain. Wave 1b addition."
+    },
+    {
+      "from": "access::PlatformImpersonationSession",
+      "kind": "belongsTo",
+      "to": "PlatformUser",
+      "foreignKey": "impersonator_platform_user_id",
+      "onDelete": "restrict",
+      "description": "Real-time act-as sessions where a PlatformUser is impersonating a tenant User. RESTRICT on delete \u2014 impersonation sessions are compliance evidence and must outlive the PlatformUser row. On offboarding, the `RevokePlatformUserAccessJob` terminates every ACTIVE impersonation but preserves the historical rows for the retention window. Wave 1b addition."
+    },
+    {
+      "from": "audit::Audit",
+      "kind": "morphOne",
+      "to": "PlatformUser",
+      "foreignKey": "user_id",
+      "morphType": "user_type",
+      "description": "Polymorphic audit-actor pointer. Every platform-plane write stamps `audit.user_type = App\\PlatformUser\\Models\\PlatformUser` + `audit.user_id = platform_users.id`. Audit rows are RETAINED even after PlatformUser hard delete (see retention.json) \u2014 the user_id becomes a dangling reference, resolved via anonymised placeholders."
+    },
+    {
+      "from": "activity::Activity",
+      "kind": "morphOne",
+      "to": "PlatformUser",
+      "foreignKey": "causer_id",
+      "morphType": "causer_type",
+      "description": "Same shape as audit but on the shorter-retention activity_log. Every platform-plane write emits an activity_log entry via the `platform.audit` middleware."
+    }
+  ],
+  "accessor_chain": {
+    "description": "PlatformUser exposes computed accessors so downstream code never touches Identity fields directly \u2014 preserves the guard boundary + centralises redaction rules.",
+    "PlatformUser": {
+      "email": "identity->email (REDACTED unless caller has `platform.platform_users.view.pii`)",
+      "email_verified": "identity->email_verified_at IS NOT NULL",
+      "mfa_enabled": "identity->mfa_secret_encrypted IS NOT NULL",
+      "identity_last_login_at": "identity->last_login_at",
+      "is_active": "status = 'active'",
+      "is_offboarded": "status = 'offboarded'",
+      "tenure_days": "(now() - hire_date) / 86400",
+      "reports_to_id": "manager_id",
+      "reports_count": "count of direct reports via hasMany",
+      "on_call_at": "resolved via OnCallResolver \u2014 timestamp of next on-call shift, null when not in rotation"
+    },
+    "PlatformProfile": {
+      "full_name": "concat(first_name, ' ', last_name)",
+      "initials": "first letter of first_name + first letter of last_name",
+      "internal_handle": "slack_handle when set, else github_handle when set, else first_name",
+      "phone_e164_masked": "phone_e164 with middle digits replaced by \u2022 unless caller has `platform.platform_profiles.view.pii`"
+    }
+  },
+  "boundary_note": "PlatformUser NEVER references applications, tenants, users, or any tenant-plane row. Any accessor or relation that appears to \"scope\" a PlatformUser to a tenant is a bug \u2014 the platform-admin guard is cross-plane by construction. Impersonation sessions (inbound from `access::PlatformImpersonationSession`) are the ONE legitimate bridge and they still keep the two rows in separate tables."
+}

@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/auth/macros",
+  "$version": 1,
+  "title": "auth \u2014 published macros",
+  "description": "Two macros. `Str::sanctum_token_prefix` gives callers a consistent way to format Sanctum PATs (Laravel doesn't expose one out of the box). `Blueprint::auth_token_fields` is the migration shorthand for the token-storage column set every auth-owned token table shares.",
+  "namespace_note": "Blueprint macros extend `Illuminate\\Database\\Schema\\Blueprint`. Str macros extend `Illuminate\\Support\\Str`. Both are Laravel core classes.",
+  "macros": [
+    {
+      "name": "Str::sanctum_token_prefix",
+      "signature": "Str::sanctum_token_prefix(int $tokenId, string $secret): string",
+      "returns": "The full Sanctum PAT wire-format: `<tokenId>|<secret>`. Consumers rarely need this \u2014 Sanctum's `createToken()` method already returns the formatted string. This macro is for the (rare) case where a test fixture needs to reconstruct the format from parts.",
+      "description": "Formats a Sanctum PAT for wire transport. Never emits into logs / errors / audit trails.",
+      "example": "$pat = Str::sanctum_token_prefix(42, 'abcdef0123...');\n// => '42|abcdef0123...'"
+    },
+    {
+      "name": "Blueprint::auth_token_fields",
+      "signature": "Blueprint::auth_token_fields(string $tokenablePrefix = 'idn'): void",
+      "adds": {
+        "columns": [
+          {
+            "name": "token_hash",
+            "type": "text",
+            "nullable": false,
+            "description": "SHA-256 hex digest of the opaque token plaintext. Plaintext returned once in the response body only."
+          },
+          {
+            "name": "expires_at",
+            "type": "timestamptz",
+            "nullable": false,
+            "description": "Absolute expiry \u2014 the token cannot be used past this timestamp regardless of consumed_at state."
+          },
+          {
+            "name": "consumed_at",
+            "type": "timestamptz",
+            "nullable": true,
+            "description": "Set when the token is exchanged (atomic consume). Re-presenting a consumed token is a REPLAY signal."
+          },
+          {
+            "name": "ip_address_hash",
+            "type": "text",
+            "nullable": true,
+            "description": "SHA-256 of the request IP at issue time. Plaintext IP never persisted."
+          },
+          {
+            "name": "user_agent_hash",
+            "type": "text",
+            "nullable": true,
+            "description": "SHA-256 of the request User-Agent at issue time. Plaintext never persisted."
+          }
+        ],
+        "indexes": [
+          {
+            "columns": ["token_hash"],
+            "unique": true,
+            "description": "UNIQUE index for constant-time lookup during token verification."
+          },
+          {
+            "columns": ["expires_at"],
+            "unique": false,
+            "predicate": "consumed_at IS NULL",
+            "description": "Partial index for PurgeExpired*Job's fast enumeration of unconsumed expired tokens."
+          }
+        ]
+      },
+      "description": "Idempotent migration shorthand for token-shape columns shared across auth_refresh_tokens, auth_password_resets, auth_email_verifications, auth_cross_app_grants. Each table adds its own domain-specific columns (family_id, identity_id, target_application_id, etc.) alongside these shared ones.",
+      "boot_order_note": "Registered by AuthServiceProvider::boot(). Because module priority is 25, every downstream migration that would use this macro sees it available.",
+      "usage_example": "Schema::create('auth_password_resets', function (Blueprint $t) {\n    $t->ulidPrefixed('id', 'apr');\n    $t->foreignUlid('identity_id')->constrained('identities')->cascadeOnDelete();\n    $t->auth_token_fields();\n    $t->timestamps();\n    $t->userstamps();\n});"
+    }
+  ],
+  "registered_by": "Academorix\\Auth\\Providers\\AuthServiceProvider::boot()"
+}

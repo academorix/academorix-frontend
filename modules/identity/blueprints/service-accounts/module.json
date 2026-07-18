@@ -1,0 +1,153 @@
+{
+  "$version": 1,
+  "name": "service-accounts",
+  "alias": "service-accounts",
+  "namespace": "Academorix\\ServiceAccount",
+  "description": "Machine credentials for inter-service authentication. Issues HS256-signed JWTs that carry service-to-service call authorization. Each ServiceAccount is bound to one Application via `application_id` FK; optionally tenant-scoped for tenant-specific integrations (webhook signers, tenant AI service endpoints, etc.). Ships two credential mechanisms: (a) direct secret hash — a bcrypt-hashed rotation secret used as an HTTP Basic-like credential at the token-exchange endpoint, (b) HS256 JWT signing per-account — each ServiceAccount holds its OWN `signer_kid` linking to the auth module's `jwt_signing_keys` table for revocation isolation. Mandatory secret rotation via `expires_at` column (default 90-day TTL, 14-day warning window). Never used for interactive login — no MFA, no password change, no session lifecycle. NEVER interactive: no MFA, no email verification, no user-facing endpoints. Every request from a service account carries `X-Service-Account-Id` header + the HS256 JWT; downstream services verify the JWT signature (via JWKS or the shared secret keyed by kid) + confirm the SA is enabled + confirm the requested tenant scope (if any). Ships the `service_account.audit` middleware that heavy-audits every request (SOC 2 CC6.1 — every machine action correlated to its identity). Ships eight lifecycle events, five queued notifications, four maintenance jobs, nine Artisan commands, two validation rules, three request-time middlewares, and one platform-plane HTTP surface (`/api/v1/platform/service-accounts/*`). Plus one unauthenticated exchange endpoint (`POST /api/v1/service-accounts/token`) that swaps a bcrypt secret for a short-lived JWT. Wave 1a: HS256 signing with per-tenant shared secrets is the baseline; Wave 1c introduces RS256 asymmetric signing alongside — the same signer_kid column migrates without shape change.",
+  "keywords": [
+    "service-account",
+    "machine-credential",
+    "inter-service",
+    "jwt",
+    "hs256",
+    "bearer",
+    "rotation",
+    "kid",
+    "jwks",
+    "signer",
+    "audit-heavy",
+    "soc2",
+    "least-privilege",
+    "expiring-secrets",
+    "dormant-detection",
+    "platform-plane"
+  ],
+  "priority": 24,
+  "providers": [
+    "Academorix\\ServiceAccount\\Providers\\ServiceAccountServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "application"
+  ],
+  "extendedBy": [
+    "auth"
+  ],
+  "contributes": {
+    "traits": [
+      "IsServiceAccount"
+    ],
+    "attributes": [
+      "AsServiceAccountListener"
+    ],
+    "blueprints": [],
+    "middleware": [
+      "service_account.audit",
+      "service_account.verify_jwt",
+      "service_account.enforce_scope"
+    ],
+    "events": [
+      "ServiceAccountCreated",
+      "ServiceAccountEnabled",
+      "ServiceAccountDisabled",
+      "ServiceAccountDeleted",
+      "ServiceAccountSecretRotated",
+      "ServiceAccountSecretRotationScheduled",
+      "ServiceAccountJwtIssued",
+      "ServiceAccountUsageDetected",
+      "ServiceAccountExpired"
+    ],
+    "policies": [
+      "ServiceAccountPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "service-account:create",
+      "service-account:list",
+      "service-account:describe",
+      "service-account:rotate",
+      "service-account:disable",
+      "service-account:enable",
+      "service-account:delete",
+      "service-account:test-jwt",
+      "service-account:audit-usage"
+    ],
+    "jobs": [
+      "RotateServiceAccountSecretJob",
+      "NotifyRotationDueJob",
+      "PurgeExpiredServiceAccountsJob",
+      "UpdateLastUsedTimestampJob",
+      "DetectDormantServiceAccountJob"
+    ],
+    "notifications": [
+      "ServiceAccountCreatedNotification",
+      "ServiceAccountSecretRotationDueNotification",
+      "ServiceAccountExpiredNotification",
+      "ServiceAccountDormantNotification",
+      "SuspiciousServiceAccountActivityNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "ServiceAccountObserver"
+    ],
+    "rules": [
+      "valid_service_account_name",
+      "valid_kid_format"
+    ],
+    "casts": [
+      "ServiceAccountStatus"
+    ],
+    "views": [],
+    "lang": [
+      "service-accounts"
+    ],
+    "config": [
+      "service-accounts"
+    ],
+    "macros": [],
+    "bindings": [
+      "ServiceAccountRepository",
+      "ServiceAccountProvisioner",
+      "SecretRotator",
+      "ServiceAccountJwtIssuer",
+      "RotationSchedulerService",
+      "DormantAccountDetector",
+      "ServiceAccountFingerprinter"
+    ],
+    "resources": [
+      "service-account"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "laravel/framework (Hash facade wrapped via SecretRotator for bcrypt rotation-secret hashing)",
+      "firebase/php-jwt (composed via auth::JwtSigner — this module never touches the JWT library directly)",
+      "spatie/laravel-data (ServiceAccount DTOs)"
+    ],
+    "rationale": "We do NOT sign JWTs directly — `ServiceAccountJwtIssuer` bridges to the `auth::JwtSigner` service (owned by the `identity/auth` module, priority 25) with the per-SA signing key resolved from the `jwt_signing_keys` table by `signer_kid`. The `signer_kid` column on this module's rows names the KEY, not the JWT. Every ServiceAccount holds its own kid so revocation is isolated per-account. Password-hash rotation for the exchange secret runs through `SecretRotator` which wraps the Laravel Hash facade with bcrypt at cost 12."
+  },
+  "hosts": {
+    "platform-admin": {
+      "description": "Platform-plane CRUD for machine credentials. `platform_admin` guard exclusively. `super_admin`-scoped for creation + rotation + deletion; `security` + `ops` can read + issue test JWTs; every write writes a heavy audit row via `service_account.audit` middleware.",
+      "routes": [
+        "GET /api/v1/platform/service-accounts",
+        "POST /api/v1/platform/service-accounts",
+        "GET /api/v1/platform/service-accounts/{serviceAccount}",
+        "PATCH /api/v1/platform/service-accounts/{serviceAccount}",
+        "DELETE /api/v1/platform/service-accounts/{serviceAccount}",
+        "POST /api/v1/platform/service-accounts/{serviceAccount}/rotate-secret",
+        "POST /api/v1/platform/service-accounts/{serviceAccount}/issue-jwt",
+        "GET /api/v1/platform/service-accounts/{serviceAccount}/audit-usage"
+      ]
+    },
+    "public-exchange": {
+      "description": "Unauthenticated exchange endpoint used by service accounts to trade their bcrypt-hashed secret for a short-lived HS256 JWT. Aggressively rate-limited (per-SA per-IP). Never exposes SA existence — unknown SA + wrong secret return the same generic error to avoid enumeration.",
+      "routes": [
+        "POST /api/v1/service-accounts/token"
+      ]
+    }
+  },
+  "compliance_note": "SOC 2 CC6.1 (logical access controls — every machine action correlated to its identity via service_account.audit middleware) + CC7.2 (system monitoring — dormant credential detection + suspicious-activity alerts) + NIST SP 800-131A (minimum HS256 key length 32 bytes; enforced by the auth module's JwtSigningKey creation flow, not this module) + OWASP ASVS V6 (service account key rotation, revocation, and audit trail).",
+  "tenancy_note": "One of the eight rows carrying `application_id` DIRECTLY (per `.kiro/steering/tenancy-columns.md` §2). Additionally optionally carries `tenant_id` — non-null = tenant-scoped service (webhook signer, tenant AI endpoint credential), null = platform-plane service (shared observability collector, cross-tenant sync worker). The observer enforces `tenant_id.application_id === row.application_id` — a service account cannot scope to a tenant on a different application than its own."
+}

@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/user/policies",
+  "$version": 1,
+  "title": "user \u2014 authorization policies",
+  "description": "Three policies. UserPolicy narrows by scope suffix (`.any` / `.tenant` / `.branch` / `.own`). ProfilePolicy is stricter (`.pii` gates the read side; only the subject or a `profile.update.pii` admin may write). TenantMemberPolicy is admin-only apart from the read-own case.",
+  "policies": [
+    {
+      "model": "User",
+      "class": "Academorix\\User\\Policies\\UserPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "users.viewAny",
+          "scope": "resolved via ScopeSuffixResolver \u2014 `.tenant` narrows to the caller's active tenant, `.branch` to the caller's active branch (via `sports::Coach.branch_id`), `.any` unrestricted (platform_admin only)"
+        },
+        {
+          "action": "view",
+          "permission": "users.view",
+          "scope": "single-row check by suffix. `.own` requires user_id === auth()->id(); every scope requires the target user's tenant_id to be visible to the caller."
+        },
+        {
+          "action": "create",
+          "permission": "users.create",
+          "scope": "admin or owner in the active tenant. Also gated by the entitlement slot `user_slot` \u2014 the observer decrements on create."
+        },
+        {
+          "action": "update",
+          "permission": "users.update",
+          "scope": "admin. Self-updates go through `me.update` instead \u2014 do NOT reuse `users.update` for the /me surface."
+        },
+        {
+          "action": "delete",
+          "permission": "users.delete",
+          "scope": "admin. Soft-delete; hard-delete via PurgeErasedUsersJob after the hold window."
+        },
+        {
+          "action": "restore",
+          "permission": "users.restore",
+          "scope": "admin. Only during the erasure hold window (soft-deleted rows past the window can't be restored \u2014 they've been purged)."
+        },
+        {
+          "action": "suspend",
+          "permission": "users.suspend",
+          "scope": "admin. Cannot suspend the tenant owner unless caller is platform_admin."
+        },
+        {
+          "action": "erase",
+          "permission": "users.erase",
+          "scope": "admin. GDPR-triggered erasure. Also requires `compliance.gdpr.enabled` on the caller's region."
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.users.viewAny",
+          "scope": "platform_admin only. Cross-tenant read for support tooling."
+        },
+        {
+          "action": "platformView",
+          "permission": "platform.users.view",
+          "scope": "platform_admin only."
+        }
+      ]
+    },
+    {
+      "model": "Profile",
+      "class": "Academorix\\User\\Policies\\ProfilePolicy",
+      "abilities": [
+        {
+          "action": "view",
+          "permission": "profiles.view",
+          "scope": "subject (`profile.user_id === auth()->id()`) OR admin with `profile.view.pii`. Without the `.pii` permission, redactor rules strip first_name / last_name / dob / phone_e164 from the response."
+        },
+        {
+          "action": "viewPii",
+          "permission": "profile.view.pii",
+          "scope": "admin only. Guards egress of first_name / last_name / dob / phone_e164 columns."
+        },
+        {
+          "action": "viewMinorPii",
+          "permission": "profile.view.pii.child",
+          "scope": "admin OR guardian relationship via `sports::AthleteGuardian`. Guards egress when the subject is a minor per `identity->dob + user.privacy.adult_transition_age` computation."
+        },
+        {
+          "action": "update",
+          "permission": "profiles.update",
+          "scope": "subject OR admin. Non-subject writes require `profile.update.pii` too when touching the confidential columns."
+        },
+        {
+          "action": "updatePii",
+          "permission": "profile.update.pii",
+          "scope": "admin only. Non-subject writes to first_name / last_name / dob / phone_e164."
+        },
+        {
+          "action": "uploadAvatar",
+          "permission": "profiles.upload_avatar",
+          "scope": "subject or admin. Gated by the `avatar_upload` entitlement (all plans, but size scales with tier)."
+        },
+        {
+          "action": "resetAvatar",
+          "permission": "profiles.reset_avatar",
+          "scope": "subject or admin."
+        }
+      ]
+    },
+    {
+      "model": "TenantMember",
+      "class": "Academorix\\User\\Policies\\TenantMemberPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "tenant_members.viewAny",
+          "scope": "any tenant member sees the roster within the active tenant. `.own` narrows to the caller's own memberships across the /me surface."
+        },
+        {
+          "action": "view",
+          "permission": "tenant_members.view",
+          "scope": "member of the target tenant."
+        },
+        {
+          "action": "manage",
+          "permission": "tenant_members.manage",
+          "scope": "owner or admin. Includes add / remove / change-role."
+        },
+        {
+          "action": "switch",
+          "permission": "tenant_members.switch",
+          "scope": "any User can switch between their own memberships \u2014 no admin required. Enforced via `membership.user_id === auth()->id()`."
+        }
+      ]
+    }
+  ]
+}

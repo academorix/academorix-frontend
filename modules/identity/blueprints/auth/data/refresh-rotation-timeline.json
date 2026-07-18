@@ -1,0 +1,98 @@
+{
+  "$version": 1,
+  "title": "Refresh token rotation \u2014 timeline reference",
+  "description": "Reference data illustrating the refresh rotation chain + reuse-detection breach signal. Each row represents a request against POST /auth/refresh; the state transitions of auth_refresh_tokens rows are shown side-by-side with the events fired.",
+  "happy_path_timeline": [
+    {
+      "step": 1,
+      "t": "T+0",
+      "action": "POST /auth/login (Alice, correct password)",
+      "state_change": [
+        "INSERT auth_refresh_tokens (id=atr_01, family_id=fam_A, token_hash=hash(A), consumed_at=NULL, tokenable=Alice.User)",
+        "INSERT personal_access_tokens (id=42, tokenable=Alice.User) via Sanctum"
+      ],
+      "events_fired": ["UserLoggedIn(token_id=42)"],
+      "client_holds": { "pat": "42|...", "refresh": "atr_01.opaque..." }
+    },
+    {
+      "step": 2,
+      "t": "T+15min (PAT close to expiry)",
+      "action": "POST /auth/refresh (client presents atr_01)",
+      "state_change": [
+        "UPDATE auth_refresh_tokens SET consumed_at = T+15min WHERE id = atr_01",
+        "INSERT auth_refresh_tokens (id=atr_02, family_id=fam_A, token_hash=hash(B), consumed_at=NULL, tokenable=Alice.User)",
+        "UPDATE personal_access_tokens SET revoked_at = T+15min WHERE id = 42",
+        "INSERT personal_access_tokens (id=43, tokenable=Alice.User)"
+      ],
+      "events_fired": ["RefreshTokenRotated(family_id=fam_A, old=atr_01, new=atr_02)"],
+      "client_holds": { "pat": "43|...", "refresh": "atr_02.opaque..." }
+    },
+    {
+      "step": 3,
+      "t": "T+30min",
+      "action": "POST /auth/refresh (client presents atr_02)",
+      "state_change": [
+        "UPDATE auth_refresh_tokens SET consumed_at = T+30min WHERE id = atr_02",
+        "INSERT auth_refresh_tokens (id=atr_03, family_id=fam_A, consumed_at=NULL)",
+        "UPDATE personal_access_tokens SET revoked_at = T+30min WHERE id = 43",
+        "INSERT personal_access_tokens (id=44)"
+      ],
+      "events_fired": ["RefreshTokenRotated(family_id=fam_A, old=atr_02, new=atr_03)"],
+      "client_holds": { "pat": "44|...", "refresh": "atr_03.opaque..." }
+    }
+  ],
+  "reuse_detection_timeline": [
+    {
+      "step": 1,
+      "t": "T+0",
+      "action": "POST /auth/login (Alice) \u2192 Alice receives atr_01",
+      "note": "Same as happy-path step 1."
+    },
+    {
+      "step": 2,
+      "t": "T+15min",
+      "action": "Attacker (who stole atr_01 from Alice's device) POST /auth/refresh (presents atr_01)",
+      "state_change": [
+        "UPDATE auth_refresh_tokens SET consumed_at = T+15min WHERE id = atr_01",
+        "INSERT auth_refresh_tokens (id=atr_02, family_id=fam_A, consumed_at=NULL, tokenable=Alice.User)",
+        "INSERT personal_access_tokens (id=99) \u2014 attacker's PAT"
+      ],
+      "events_fired": ["RefreshTokenRotated(family_id=fam_A, old=atr_01, new=atr_02)"],
+      "note": "Attacker now holds atr_02 + PAT 99. Alice STILL holds her copy of atr_01 (thinks it's valid)."
+    },
+    {
+      "step": 3,
+      "t": "T+25min",
+      "action": "Alice's client (background refresh) POST /auth/refresh (presents atr_01)",
+      "state_change": [
+        "SELECT auth_refresh_tokens WHERE token_hash = hash(atr_01) \u2192 row found; consumed_at IS NOT NULL",
+        "REPLAY DETECTED"
+      ],
+      "events_fired": [
+        "RefreshTokenReuseDetected(family_id=fam_A, presented_refresh=atr_01)",
+        "LockdownOnBreachDetected listener fires:",
+        "  UPDATE auth_refresh_tokens SET revoked_at = T+25min WHERE family_id = fam_A",
+        "  Enumerate every active PAT for Alice.User \u2192 UPDATE personal_access_tokens SET revoked_at = T+25min WHERE id IN (99)",
+        "  Fires AllSessionsRevoked(user_id=Alice.User, reason=refresh_reuse, tokens_revoked_count=1)",
+        "  Fires SecurityAlertNotification to Alice's email"
+      ],
+      "client_response": {
+        "status": 401,
+        "body": {
+          "message": "Session invalid.",
+          "code": "REFRESH_TOKEN_INVALID"
+        },
+        "note": "DELIBERATELY opaque \u2014 not REFRESH_TOKEN_REUSE_DETECTED so an attacker holding a replayed token can't confirm from the response body that they've been detected."
+      },
+      "next_step_for_alice": "Alice's client falls back to login screen. Alice receives 'Unusual activity' email + reviews /auth/sessions to see the attacker's session (revoked) + investigates."
+    }
+  ],
+  "invariants": [
+    "family_id is UNIQUE PER LOGIN. Every rotation from that login carries the same family_id \u2014 the chain is queryable.",
+    "consumed_at is SET ATOMICALLY inside the same transaction as INSERT-new-row. No client-observable window between old-consumed and new-issued.",
+    "Reuse detection triggers on the second presentation of a consumed token, regardless of which client presents it (attacker OR legitimate). Symmetric \u2014 the attacker's presentation of atr_02 (after atr_01 was consumed) also fires the same signal.",
+    "The response to a reuse-detection event is DELIBERATELY the same as a plain invalid-token response. This prevents attackers from confirming they've been detected via response-body / response-status timing.",
+    "Every session revocation cascades \u2014 revoking atr_02 also revokes PAT 99 (attacker's). Revoking Alice's active PAT means Alice reloads to a logged-out state and re-authenticates.",
+    "The security notification to Alice fires ONLY if she has the identity.suspicious_login category on (default opt-in). Alice can opt out but the audit-log entry always fires."
+  ]
+}

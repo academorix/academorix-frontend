@@ -1,0 +1,175 @@
+{
+  "id": "academorix://modules/user/schemas/profile",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Profile",
+  "description": "1:1 PII satellite for User. Split from `users` so backup / audit / retention policies can target it independently (Profile carries the entire PII cluster; User carries administrative metadata). Every field except id + display_name + avatar_url + locale + timezone is redactor-gated \u2014 non-subject callers see the redacted response unless they carry `profile.view.pii` (adult subjects) or `profile.view.pii.child` (minor subjects, with a live AthleteGuardian link).",
+  "type": "object",
+  "x-module": "user",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "profiles",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "prf_",
+    "incrementing": false,
+    "model": "Academorix\\User\\Models\\Profile",
+    "interface": "Academorix\\User\\Contracts\\Data\\ProfileInterface",
+    "implements": ["Academorix\\User\\Contracts\\Data\\ProfileInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "phone_e164": "E164Phone",
+      "locale": "Bcp47Locale",
+      "timezone": "IanaTimezone",
+      "dob": "date",
+      "metadata": "array"
+    },
+    "appends": ["full_name", "is_minor"],
+    "observers": ["ProfileObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `prf_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Denormalised from users.tenant_id for query performance. Kept in sync by the observer."
+      },
+      "first_name": {
+        "type": "string",
+        "length": 100,
+        "nullable": true,
+        "description": "Required for adult subjects when `user.profile.require_first_last_name = true`; nullable at the DB level so minor athlete profiles can exist name-less until a guardian attests. CONFIDENTIAL data class."
+      },
+      "last_name": {
+        "type": "string",
+        "length": 100,
+        "nullable": true,
+        "description": "Same as first_name."
+      },
+      "display_name": {
+        "type": "string",
+        "length": 100,
+        "nullable": true,
+        "description": "UI-facing name. Falls back to first_name when null. PUBLIC data class."
+      },
+      "avatar_url": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Public S3 URL for the avatar object. Null = default avatar (SVG rendered client-side from initials)."
+      },
+      "phone_e164": {
+        "type": "string",
+        "length": 20,
+        "nullable": true,
+        "description": "E.164 international format. Validated by `valid_e164_phone` rule. CONFIDENTIAL data class."
+      },
+      "locale": {
+        "type": "string",
+        "length": 12,
+        "nullable": true,
+        "description": "BCP-47 tag. Per-user override for the tenant default. Null = fall back to `user.preferred_locale` then `tenant.default_locale`."
+      },
+      "timezone": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "IANA timezone. Required (defaults to tenant.default_timezone during provisioning)."
+      },
+      "dob": {
+        "type": "date",
+        "nullable": true,
+        "description": "Denormalised from identity->dob for query performance. Kept in sync by the observer. Reads via the Profile accessor go through the redactor unless the caller has `profile.view.pii` (adults) or `profile.view.pii.child` (minors). CONFIDENTIAL / REGULATED_MINOR when the subject is < adult_transition_age."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Extension bag for adjacent modules (staff HR notes, sports coaching notes). Never exposed on the wire by default."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "last_name", "first_name"],
+        "unique": false,
+        "name": "profiles_tenant_name_idx",
+        "description": "Sort + partial-match on the admin roster screen."
+      },
+      {
+        "columns": ["tenant_id", "phone_e164"],
+        "unique": false,
+        "name": "profiles_tenant_phone_idx",
+        "description": "Reverse-lookup by phone (support tooling)."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "timezone",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^prf_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "first_name": { "type": ["string", "null"], "maxLength": 100 },
+    "last_name": { "type": ["string", "null"], "maxLength": 100 },
+    "display_name": { "type": ["string", "null"], "maxLength": 100 },
+    "avatar_url": { "type": ["string", "null"], "maxLength": 500, "format": "uri" },
+    "phone_e164": { "type": ["string", "null"], "pattern": "^\\+[1-9]\\d{1,14}$", "maxLength": 20 },
+    "locale": { "type": ["string", "null"], "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$", "maxLength": 12 },
+    "timezone": { "type": "string", "maxLength": 64 },
+    "dob": { "type": ["string", "null"], "format": "date" },
+    "metadata": { "type": ["object", "null"] },
+    "full_name": { "type": ["string", "null"], "description": "Computed. `first_name + ' ' + last_name`. Redactor-gated." },
+    "is_minor": { "type": "boolean", "description": "Computed. `dob !== null AND age(dob) < user.privacy.adult_transition_age`. Feeds redactor tier selection." },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["full_name", "is_minor"],
+    "redacted_when_missing_permission": {
+      "adult_subject_permission": "profile.view.pii",
+      "minor_subject_permission": "profile.view.pii.child",
+      "fields": ["first_name", "last_name", "phone_e164", "dob", "full_name"]
+    }
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`prf_<26>`)"]
+  }
+}

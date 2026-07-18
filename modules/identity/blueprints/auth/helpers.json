@@ -1,0 +1,46 @@
+{
+  "id": "academorix://modules/auth/helpers",
+  "$version": 1,
+  "title": "auth \u2014 helper functions",
+  "description": "Three global helpers. Everything else exposed by auth is behind DI / facades \u2014 helpers here cover the very-hot request-scoped lookups downstream modules would otherwise repeat in every file.",
+  "namespace": "Academorix\\Auth\\Support",
+  "helpers": [
+    {
+      "signature": "current_user_or_platform_user(): User|PlatformUser|null",
+      "purpose": "Return the authenticated principal regardless of guard. Delegates to `auth()->user()` under `sanctum` or `platform_admin`. Returns null on unauthenticated requests OR ServiceAccount principals (those go through the JWT auth.jwt_verify middleware, which populates auth.jwt_claims instead of setting a user).",
+      "behaviours": [
+        "Returns User instance on sanctum-authenticated requests",
+        "Returns PlatformUser instance on platform_admin-authenticated requests",
+        "Returns null on unauthenticated / service-account-authenticated requests",
+        "Cached in the request-scoped container so repeated calls in one request don't repeat guard resolution"
+      ],
+      "example": "$actor = current_user_or_platform_user();\nif ($actor === null) {\n    // service account OR unauthenticated\n}"
+    },
+    {
+      "signature": "session_scope(): SessionScope|null",
+      "purpose": "Return the resolved scope of the current session (application_id, tenant_id, roles, permissions) without a repeat DB round-trip. Reads from the auth:session_scope:token:{token_id} cache; falls back to the Sanctum PAT's abilities compact array on cache miss.",
+      "behaviours": [
+        "Returns SessionScope on any authenticated request",
+        "Returns null on unauthenticated requests",
+        "Refreshes on cache miss (60-second TTL)"
+      ],
+      "example": "$scope = session_scope();\nif ($scope?->hasPermission('athletes.viewAny.branch')) {\n    // ...\n}"
+    },
+    {
+      "signature": "issue_jwt(User|PlatformUser|ServiceAccount $subject, array $extraClaims = []): string",
+      "purpose": "Convenience wrapper around JwtSigner::sign() for the common case (Application-scoped, per-session JWT). Handles kid resolution + `app` claim binding + jti generation. NEVER used for interactive sessions (those use Sanctum PAT) \u2014 reserved for inter-service call paths where a downstream module needs to propagate the caller's context.",
+      "behaviours": [
+        "Resolves the active JwtSigningKey for the subject's Application",
+        "Generates a fresh UUID jti",
+        "Sets iat=now(), exp=now()+auth.jwt.ttl_seconds (or extended per entitlement)",
+        "Binds `app` claim to the subject's application_id",
+        "Signs with HS256 via the KMS-decrypted secret (stack-scoped)"
+      ],
+      "example": "$jwt = issue_jwt($user, ['transaction_id' => 'txn_01H...']);"
+    }
+  ],
+  "notes": [
+    "Helpers are registered from `src/Support/helpers.php`. Namespaced functions are safe to call across every framework layer including migrations + seeders (though the auth helpers rarely fire outside HTTP context).",
+    "None of these helpers accept a token secret / PAT plaintext as input. Callers that need to work with tokens use the auth actions directly (RefreshAction, LoginAction, etc.)."
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": "academorix://modules/mfa/caches",
+  "$version": 1,
+  "title": "mfa — cache keys + tags",
+  "driver": "redis",
+  "description": "MFA caches split into two categories. EPHEMERAL STATE (enrolment previews, WebAuthn registration challenges, verify challenge outcomes) is Redis-only — never persisted to Postgres, TTL-purged aggressively. LOOKUP CACHES (per-Identity credential lists) are Redis with a short TTL for read-heavy paths (login MFA, /me/mfa summary). Every regulated_secret is NEVER cached (see the never_cached list at the bottom).",
+  "ownedTags": ["mfa"],
+  "keys": [
+    {
+      "pattern": "mfa:enroll:preview:{session_id}",
+      "description": "Round-1 TOTP enrolment preview. Stores a signed envelope containing the ephemeral TOTP secret (base32) + issued_at timestamp + expires_at. Consumed atomically by round-2 confirm; deleted on TTL if never confirmed.",
+      "ttlSeconds": 300,
+      "tags": ["mfa"],
+      "invalidatedBy": ["TotpEnrollmentConfirmer atomic consume", "PurgeUnconfirmedEnrollmentsJob"],
+      "encryption_note": "The envelope IS the plaintext TOTP secret — this Redis key MUST be encrypted at rest (Redis TLS + at-rest encryption on the Redis persistence layer). If the Redis provider does not support at-rest encryption, this cache MUST NOT be used — an alternative session-side envelope is required."
+    },
+    {
+      "pattern": "mfa:webauthn:register:challenge:{session_id}",
+      "description": "Round-1 WebAuthn registration challenge. Stores the 32-byte random challenge sent to navigator.credentials.create() so it can be verified in round 2.",
+      "ttlSeconds": 300,
+      "tags": ["mfa"],
+      "invalidatedBy": ["WebauthnRegistrar atomic consume", "PurgeUnconfirmedEnrollmentsJob"]
+    },
+    {
+      "pattern": "mfa:webauthn:assert:challenge:{session_id}",
+      "description": "Login-time WebAuthn assertion challenge. Same shape as the registration challenge; separate key namespace so the two lifecycles don't collide.",
+      "ttlSeconds": 300,
+      "tags": ["mfa"],
+      "invalidatedBy": ["WebauthnAssertionVerifier atomic consume"]
+    },
+    {
+      "pattern": "mfa:credentials:{identity_id}",
+      "description": "Cached active-credentials list for an Identity. Read on every WebAuthn assertion (login) + /me/mfa/webauthn/credentials list. Very short TTL so a credential disable / delete propagates within one minute.",
+      "ttlSeconds": 60,
+      "tags": ["mfa"],
+      "invalidatedBy": [
+        "WebauthnCredentialObserver.created",
+        "WebauthnCredentialObserver.updated",
+        "WebauthnCredentialObserver.deleted",
+        "MfaChallengeSucceeded (updates last_used_at)"
+      ]
+    },
+    {
+      "pattern": "mfa:posture:{identity_id}",
+      "description": "Cached MFA-posture summary (totp_enrolled + webauthn_credentials_count + recovery_codes_remaining). Feeds the /me/mfa GET response + the `mfa.require_challenge_complete` middleware's `Identity.mfa_enabled` accessor.",
+      "ttlSeconds": 30,
+      "tags": ["mfa"],
+      "invalidatedBy": [
+        "identity::MfaEnrolled",
+        "identity::MfaDisabled",
+        "mfa::WebauthnCredentialRegistered",
+        "mfa::WebauthnCredentialDeleted",
+        "mfa::WebauthnCredentialDisabled",
+        "identity::RecoveryCodesRegenerated",
+        "mfa::MfaRecoveryCodeConsumed"
+      ]
+    },
+    {
+      "pattern": "mfa:suspicious_activity:window:{identity_id}",
+      "description": "Rolling window of MfaChallengeFailed events for the MfaSuspiciousActivityDetector. Uses Redis sorted-set with score=timestamp; window size = `config('mfa.suspicious_activity.window_minutes')`. Read on every MfaChallengeFailed to compute the threshold check.",
+      "ttlSeconds": 900,
+      "tags": ["mfa"]
+    },
+    {
+      "pattern": "mfa:suspicious_activity:notification_debounce:{identity_id}",
+      "description": "Debounce guard preventing repeat MfaChallengeSuspiciousActivityNotification within `config('mfa.suspicious_activity.notification_debounce_hours')`.",
+      "ttlSeconds": 14400,
+      "tags": ["mfa"]
+    },
+    {
+      "pattern": "mfa:recovery_codes_low:notification_debounce:{identity_id}",
+      "description": "Debounce guard preventing repeat LowRecoveryCodesRemainingNotification within 30 days (per-event debounce; the nightly sweep has its own broader debounce).",
+      "ttlSeconds": 2592000,
+      "tags": ["mfa"]
+    },
+    {
+      "pattern": "mfa:challenge:cooldown:{identity_id}",
+      "description": "Cooldown timer set when a challenge exhausts max_attempts. Blocks fresh challenge issuance for `config('mfa.challenge.cooldown_minutes_after_max')`.",
+      "ttlSeconds": 300,
+      "tags": ["mfa"]
+    }
+  ],
+  "never_cached": [
+    "Identity.mfa_secret_encrypted (plaintext form — even the KMS-decrypted plaintext stays in a single stack frame during verification, never travels through Redis)",
+    "Identity.mfa_recovery_codes_hashed (individual bcrypt hashes — the per-Identity constant-time compare loop reads directly from Postgres)",
+    "WebauthnCredential.public_key (bytea — verifier reads directly from Postgres per assertion)",
+    "WebauthnCredential.credential_id (raw bytea — always Postgres)",
+    "MfaEnrollmentPreview.totp_secret (base32) — held only in the mfa:enroll:preview:{session_id} envelope, which IS the cache but is a controlled encrypted-at-rest region",
+    "RecoveryCodesDownload.codes (plaintext array — emitted in one response, never persisted to cache OR log OR metric)"
+  ],
+  "notes": [
+    "The mfa:enroll:preview:{session_id} key is the ONLY cache that carries plaintext credential material. Its encryption-at-rest is a compliance requirement, not a nice-to-have. Deployments that can't guarantee encryption-at-rest on Redis MUST configure `config('mfa.totp.preview_backend')` to `session` (falls back to Laravel's encrypted session driver) — a per-tenant Doppler policy decision.",
+    "Suspicious-activity + notification-debounce keys are intentionally scoped to the Identity ULID because they carry policy state (rate-limiter data). Cardinality is bounded by the number of Identities with MFA enrolled; this is fine at every scale we anticipate."
+  ]
+}

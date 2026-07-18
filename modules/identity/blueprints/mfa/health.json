@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/mfa/health",
+  "$version": 1,
+  "title": "mfa — health probes",
+  "probes": [
+    {
+      "name": "mfa-schema-current",
+      "class": "Academorix\\Mfa\\Health\\Probes\\SchemaCurrentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `webauthn_credentials` table has every column the module expects (id, identity_id, credential_id, public_key, attestation_format, transports, aaguid, sign_count, backup_eligible, backup_state, device_name, last_used_at, disabled_at, metadata, timestamps, soft-delete columns). Catches unmigrated environments before they crash on first WebAuthn registration.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "mfa-totp-library-loaded",
+      "class": "Academorix\\Mfa\\Health\\Probes\\TotpLibraryLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `pragmarx/google2fa` package is available AND functional. Performs a round-trip test — generate a secret, compute a code for a fixed timestamp, verify — so a corrupt install or ABI mismatch after a PHP upgrade fails boot immediately.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "mfa-webauthn-library-loaded",
+      "class": "Academorix\\Mfa\\Health\\Probes\\WebauthnLibraryLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `web-auth/webauthn-lib` package is available AND its dependent extensions (openssl, sodium) are loaded. Boot fails clearly when the WebAuthn stack is unavailable rather than silently degrading to TOTP-only.",
+      "timeoutMs": 100,
+      "enabledWhen": "config('mfa.webauthn.enabled') === true"
+    },
+    {
+      "name": "mfa-encryptor-reachable",
+      "class": "Academorix\\Mfa\\Health\\Probes\\EncryptorReachableProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "The MfaSecretEncryptor (from identity/identity) is reachable. Reuses identity/identity's `identity-kms-reachable` probe — this probe is a thin cross-module smoke test that MFA-side callers can hit KMS without a full-blown TOTP verification. Failure fails-open the enrolment endpoint but keeps verification working (existing enrolled Identities can still verify from the hot-cached data-key).",
+      "timeoutMs": 3000
+    },
+    {
+      "name": "mfa-challenge-ledger-reachable",
+      "class": "Academorix\\Mfa\\Health\\Probes\\ChallengeLedgerReachableProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "identity/auth's `auth_mfa_challenges` table is reachable AND writable. Performs a no-op INSERT + ROLLBACK inside a transaction to verify our repository bindings resolve. Because MFA challenge lifecycle depends on this table, unreachability blocks every MFA-required login.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "mfa-webauthn-preview-cache-reachable",
+      "class": "Academorix\\Mfa\\Health\\Probes\\WebauthnPreviewCacheReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Redis is reachable + the `mfa:webauthn:register:challenge:*` key pattern responds. Non-critical because a Redis outage only blocks new WebAuthn registrations (existing WebAuthn credentials still verify since assertion verification is stateless server-side beyond sign_count).",
+      "timeoutMs": 500
+    },
+    {
+      "name": "mfa-totp-preview-cache-reachable",
+      "class": "Academorix\\Mfa\\Health\\Probes\\TotpPreviewCacheReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Redis is reachable + the `mfa:enroll:preview:*` key pattern responds. Same posture as the WebAuthn preview cache probe.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "mfa-suspicious-activity-scheduler-alive",
+      "class": "Academorix\\Mfa\\Health\\Probes\\SuspiciousActivitySchedulerAliveProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "The suspicious-activity detector has evaluated within the last 5 minutes. Failure indicates the queue worker or the metrics-based signal source is stuck; brute-force patterns will not trigger alerts.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "mfa-retention-current",
+      "class": "Academorix\\Mfa\\Health\\Probes\\RetentionCurrentProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "CleanupDisabledWebauthnCredentialsJob has run within the last 25 hours. Missed runs risk breaching the 90-day disabled-credential retention commitment.",
+      "timeoutMs": 500
+    }
+  ]
+}

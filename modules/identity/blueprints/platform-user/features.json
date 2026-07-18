@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/platform-user/features",
+  "$version": 1,
+  "title": "platform-user \u2014 feature keys",
+  "description": "Feature keys exposed on the platform_admin plane. NOT tenant-facing features (those live per-tenant + are surfaced via `GET /api/auth/me\u2192data.features`). These features gate platform-admin UI surfaces + drive the sidebar rendering of the ops dashboard.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/v1/platform/auth/me \u2192 data.features",
+    "consumed_by": "the platform-admin SPA + internal tooling that mounts based on caller capability"
+  },
+  "features": [
+    {
+      "key": "platform_user.hire",
+      "displayName": "Hire platform staff",
+      "description": "Enables the `Hire staff` action in the platform-admin UI. Gated by the `platform.platform_users.hire` permission at server-side.",
+      "defaultEnabled": true,
+      "planTiers": ["platform_baseline"]
+    },
+    {
+      "key": "platform_user.offboard",
+      "displayName": "Offboard platform staff",
+      "description": "Enables the `Offboard` action + the offboarding dashboard.",
+      "defaultEnabled": true,
+      "planTiers": ["platform_baseline"]
+    },
+    {
+      "key": "platform_user.suspend",
+      "displayName": "Suspend / restore platform staff",
+      "description": "Enables the suspension workflow. Distinct from offboard \u2014 suspend is temporary.",
+      "defaultEnabled": true,
+      "planTiers": ["platform_baseline"]
+    },
+    {
+      "key": "platform_user.audit_report",
+      "displayName": "Audit trail viewer",
+      "description": "Enables the per-staffer audit-trail dashboard + PDF export. Gated by `platform.platform_users.view.audit_trail` server-side.",
+      "defaultEnabled": true,
+      "planTiers": ["platform_baseline"]
+    },
+    {
+      "key": "platform_user.on_call",
+      "displayName": "On-call rotation",
+      "description": "Enables the on-call rotation viewer + the escalation-path resolver in the ops dashboard.",
+      "defaultEnabled": false,
+      "requires_env": "platform-user.on_call.enabled=true",
+      "planTiers": ["platform_baseline"]
+    },
+    {
+      "key": "platform_user.pagerduty_integration",
+      "displayName": "PagerDuty integration",
+      "description": "Off unless PagerDuty API key is configured. Surfaces the schedule-authoring links in the ops dashboard.",
+      "defaultEnabled": false,
+      "requires_env": "PAGERDUTY_API_KEY set + platform-user.on_call.default_backend=pagerduty"
+    },
+    {
+      "key": "platform_user.impersonation_source",
+      "displayName": "Impersonation start-point",
+      "description": "Enables the `Impersonate as this tenant user` action. Requires the caller to hold the `platform.impersonate` entitlement (per-PlatformUser flag, not a role).",
+      "defaultEnabled": true,
+      "planTiers": ["platform_baseline"],
+      "wave_dependency": "Wave 1b access/delegation module"
+    },
+    {
+      "key": "platform_user.org_chart",
+      "displayName": "Org chart",
+      "description": "Enables the manager-hierarchy visualisation in the ops dashboard.",
+      "defaultEnabled": true,
+      "planTiers": ["platform_baseline"]
+    }
+  ]
+}

@@ -1,0 +1,216 @@
+{
+  "id": "academorix://modules/user/settings",
+  "$version": 1,
+  "title": "user \u2014 settings",
+  "description": "Tenant-scoped policy for user provisioning + profile + privacy + retention. Compliance floors clamp every value \u2014 tenants may only TIGHTEN, never loosen. Two per-user settings groups too.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "user",
+      "class": "Academorix\\User\\Settings\\UserSettings",
+      "label": "Users",
+      "description": "Tenant-wide policy for user provisioning + lifecycle.",
+      "icon": "user-group",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 20,
+      "permission": "users.manage",
+      "sections": [
+        {
+          "label": "Registration",
+          "description": "Who can create new users, and under what conditions.",
+          "icon": "user-plus",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "self_registration_enabled",
+              "controlType": "toggle",
+              "label": "Allow self-registration",
+              "defaultValue": false,
+              "helpText": "When on, anyone with the invitation-free sign-up URL can create an account.",
+              "sortOrder": 1
+            },
+            {
+              "name": "requires_invitation",
+              "controlType": "toggle",
+              "label": "Require invitation",
+              "defaultValue": true,
+              "helpText": "Users must accept an invitation to register.",
+              "sortOrder": 2
+            },
+            {
+              "name": "requires_admin_approval",
+              "controlType": "toggle",
+              "label": "Require admin approval",
+              "defaultValue": false,
+              "helpText": "New users land in pending status until an admin activates them.",
+              "sortOrder": 3
+            },
+            {
+              "name": "default_role_slug",
+              "controlType": "select",
+              "label": "Default role for new members",
+              "defaultValue": "member",
+              "optionsSource": "roles.slugs",
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Profile requirements",
+          "description": "Which fields are mandatory on a new profile.",
+          "icon": "identification",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "require_first_last_name",
+              "controlType": "toggle",
+              "label": "Require full name",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "require_phone",
+              "controlType": "toggle",
+              "label": "Require phone number",
+              "defaultValue": false,
+              "sortOrder": 2
+            },
+            {
+              "name": "allow_avatar_upload",
+              "controlType": "toggle",
+              "label": "Allow profile picture upload",
+              "defaultValue": true,
+              "requiresEntitlement": "avatar_upload",
+              "sortOrder": 3
+            },
+            {
+              "name": "max_avatar_size_kb",
+              "controlType": "number",
+              "label": "Maximum profile picture size (KB)",
+              "defaultValue": 2048,
+              "min": 128,
+              "max": 8192,
+              "helpText": "Upper bound. Per-tier cap clamps this down.",
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Privacy + retention",
+          "description": "Minor visibility + erasure timelines. Compliance floors may tighten these values automatically.",
+          "icon": "shield-check",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "minor_data_visibility",
+              "controlType": "select",
+              "label": "Who sees minor profile PII",
+              "defaultValue": "guardian_only",
+              "options": {
+                "guardian_only": "Guardians + admins with child-PII permission",
+                "tenant_admin": "Every tenant admin",
+                "any_authenticated": "Any authenticated caller in the tenant"
+              },
+              "helpText": "COPPA + regional GDPR floors may force `guardian_only`.",
+              "sortOrder": 1
+            },
+            {
+              "name": "adult_transition_age",
+              "controlType": "number",
+              "label": "Age of majority (years)",
+              "defaultValue": 18,
+              "min": 16,
+              "max": 21,
+              "helpText": "Age at which guardianship auto-terminates + medical/financial data transfers to the athlete's own consent.",
+              "sortOrder": 2
+            },
+            {
+              "name": "erasure_hold_days",
+              "controlType": "number",
+              "label": "Days to hold erased users before purge",
+              "defaultValue": 30,
+              "min": 30,
+              "max": 90,
+              "helpText": "Soft-deleted rows survive this window \u2014 restorable during it. Compliance floor: 30 days.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell-alert",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "notify_profile_updated",
+              "controlType": "toggle",
+              "label": "Confirmation email when profile is updated",
+              "defaultValue": false,
+              "helpText": "Helps catch account-takeover attempts.",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "user_me",
+      "class": "Academorix\\User\\Settings\\UserMeSettings",
+      "label": "My profile",
+      "description": "Per-user preferences.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 4,
+      "sections": [
+        {
+          "label": "Locale + time",
+          "icon": "clock",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "preferred_locale",
+              "controlType": "select",
+              "label": "Preferred language",
+              "helpText": "Overrides the tenant default for this user.",
+              "optionsSource": "tenant-locales.enabled",
+              "requiresEntitlement": "profile_i18n_override",
+              "sortOrder": 1
+            },
+            {
+              "name": "timezone",
+              "controlType": "select",
+              "label": "Time zone",
+              "optionsSource": "iana-timezones",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "notify_added_to_tenant",
+              "controlType": "toggle",
+              "label": "Email me when I'm added to a tenant",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_profile_updated",
+              "controlType": "toggle",
+              "label": "Email me when my profile changes",
+              "defaultValue": false,
+              "helpText": "Recommended \u2014 helps you catch account-takeover attempts.",
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "id": "academorix://modules/service-accounts/config",
+  "$version": 1,
+  "title": "service-accounts \u2014 developer configuration",
+  "configFile": "config/service-accounts.php",
+  "envPrefix": "SERVICE_ACCOUNTS_",
+  "description": "Config keys owned by the service-accounts module. JWT-signing settings themselves (algorithm, kid rotation cadence) live in `identity/auth/config/auth.php` under the `jwt.*` prefix \u2014 THIS module's `jwt.*` keys are the SA-specific overlay (TTL bounds, clock-skew tolerance). See design.md \u00a76 (config keys owned by identity modules).",
+  "sections": {
+    "rotation": {
+      "description": "Mandatory-rotation policy. Applies to every SA regardless of tenant / application.",
+      "keys": [
+        {
+          "path": "service-accounts.rotation.default_secret_ttl_days",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_ROTATION_DEFAULT_TTL_DAYS",
+          "default": 90,
+          "description": "Default secret TTL applied at creation + every rotation. Callers may override per-SA via CreateServiceAccountInput.expires_at OR the `--ttl` command flag."
+        },
+        {
+          "path": "service-accounts.rotation.warning_days_before_expiry",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_ROTATION_WARNING_DAYS",
+          "default": 14,
+          "description": "Days before `expires_at` when NotifyRotationDueJob dispatches the reminder notification."
+        },
+        {
+          "path": "service-accounts.rotation.grace_days_after_expiry",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_ROTATION_GRACE_DAYS",
+          "default": 7,
+          "description": "Days past `expires_at` before PurgeExpiredServiceAccountsJob soft-disables. Grace exists to catch operator-inflight rotations that finish shortly after expiry."
+        },
+        {
+          "path": "service-accounts.rotation.notify_emails",
+          "type": "array<string>",
+          "env": "SERVICE_ACCOUNTS_ROTATION_NOTIFY_EMAILS",
+          "default": [],
+          "description": "Additional email addresses (comma-separated in env) that receive the ServiceAccountSecretRotationDueNotification. Application owners are notified regardless \u2014 this list adds broadcast to team-wide DLs (e.g. `platform-ops@academorix.com`)."
+        },
+        {
+          "path": "service-accounts.rotation.retention_hold_days",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_RETENTION_HOLD_DAYS",
+          "default": 90,
+          "description": "Days after soft-delete before hard-delete by PurgeExpiredServiceAccountsJob. Longer than typical retention because audit-correlation on machine actions extends further than human-actor retention (SOC 2 evidence window)."
+        }
+      ]
+    },
+    "jwt": {
+      "description": "SA-specific JWT overlay on top of the auth module's global JWT config. TTL bounds enforce a floor + ceiling for `IssueTestJwtInput.ttl_seconds` and the runtime `requested_scope.ttl_seconds`.",
+      "keys": [
+        {
+          "path": "service-accounts.jwt.ttl_seconds",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_JWT_TTL_SECONDS",
+          "default": 300,
+          "description": "Default TTL for JWTs issued by the token-exchange endpoint when the request does not specify one. 5 minutes matches industry practice for machine-to-machine bearer tokens (short enough to bound compromise; long enough to survive intra-call latency)."
+        },
+        {
+          "path": "service-accounts.jwt.clock_skew_seconds",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_JWT_CLOCK_SKEW_SECONDS",
+          "default": 30,
+          "description": "Verifier tolerance for `iat` + `exp` claim drift. 30s absorbs typical NTP skew across pods without meaningfully extending the compromise window."
+        },
+        {
+          "path": "service-accounts.jwt.max_ttl_seconds",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_JWT_MAX_TTL_SECONDS",
+          "default": 3600,
+          "description": "Upper bound. `IssueTestJwtInput.ttl_seconds` above this value refuses with 422 SERVICE_ACCOUNT_TTL_EXCEEDS_MAX. Long-TTL exceptions ship via the `service_accounts_extended_ttl` entitlement (see entitlements.json)."
+        },
+        {
+          "path": "service-accounts.jwt.min_ttl_seconds",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_JWT_MIN_TTL_SECONDS",
+          "default": 60,
+          "description": "Lower bound. Requests below this refuse with 422 SERVICE_ACCOUNT_TTL_BELOW_MIN. Prevents callers from requesting near-zero TTLs that increase exchange-endpoint pressure."
+        }
+      ]
+    },
+    "naming": {
+      "description": "Naming policy for the `name` column. Enforced by `valid_service_account_name` rule.",
+      "keys": [
+        {
+          "path": "service-accounts.naming.max_length",
+          "type": "int",
+          "default": 128,
+          "description": "Max characters. Bounded so machine-generated names (e.g. `webhook-signer-{tenant_slug}-{integration}`) fit comfortably without truncation."
+        },
+        {
+          "path": "service-accounts.naming.allow_pattern",
+          "type": "string",
+          "default": "^[a-z0-9][a-z0-9_-]*[a-z0-9]$",
+          "description": "Regex pattern. Lowercase alphanumerics + hyphens + underscores; must start + end with alphanumeric. Rejects whitespace, punctuation, and Unicode to keep names URL-safe + shell-safe."
+        }
+      ]
+    },
+    "kid": {
+      "description": "signer_kid policy. Values flow through to the auth module's `jwt_signing_keys` table.",
+      "keys": [
+        {
+          "path": "service-accounts.kid.format",
+          "type": "string",
+          "default": "uuid",
+          "enum": ["uuid", "opaque"],
+          "description": "`uuid` = kid is a UUIDv4 (kebab-case); `opaque` = kid is a bcrypt-friendly opaque string of exactly 32 chars. Consumers of the JWKS endpoint MUST NOT parse the kid \u2014 it's a lookup key, not structured data."
+        },
+        {
+          "path": "service-accounts.kid.include_application_prefix",
+          "type": "bool",
+          "default": false,
+          "description": "When true, generated kids are prefixed with the application slug (`app_sports-<uuid>`). Debug aid for operator triage; increases surface for information disclosure (kid names leak application identity into JWKS payloads). Default off."
+        }
+      ]
+    },
+    "security": {
+      "description": "Security posture toggles.",
+      "keys": [
+        {
+          "path": "service-accounts.security.require_ip_allowlist_for_platform_plane",
+          "type": "bool",
+          "env": "SERVICE_ACCOUNTS_REQUIRE_IP_ALLOWLIST_PLATFORM",
+          "default": false,
+          "description": "When true, platform-plane SAs (`tenant_id IS NULL`) require a non-empty IP allowlist in metadata + the audit middleware refuses non-allowlisted source IPs. Enterprise-tier feature (see entitlements.json). Deferred to Wave 1b."
+        },
+        {
+          "path": "service-accounts.security.dormant_threshold_days",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_DORMANT_THRESHOLD_DAYS",
+          "default": 30,
+          "description": "Days since `last_used_at` before DetectDormantServiceAccountJob flags the SA."
+        },
+        {
+          "path": "service-accounts.security.baseline_rate_spike_multiplier",
+          "type": "int",
+          "env": "SERVICE_ACCOUNTS_BASELINE_RATE_SPIKE_MULTIPLIER",
+          "default": 5,
+          "description": "Multiplier over rolling-hour baseline that constitutes a rate-spike anomaly. Combined with novel-tuple detection to fire SuspiciousServiceAccountActivityNotification."
+        }
+      ]
+    },
+    "commands": {
+      "description": "Console-command safety guards.",
+      "keys": [
+        {
+          "path": "service-accounts.commands.require_reason",
+          "type": "bool",
+          "env": "SERVICE_ACCOUNTS_COMMANDS_REQUIRE_REASON",
+          "default": true,
+          "description": "When true, every mutating Artisan command must be invoked with --reason=<text> (audit-logged). Off in dev; on in staging + prod."
+        }
+      ]
+    }
+  }
+}

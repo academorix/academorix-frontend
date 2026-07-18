@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/auth/commands",
+  "$version": 1,
+  "title": "auth \u2014 Artisan commands",
+  "commands": [
+    {
+      "signature": "auth:list-sessions {--user=} {--identity=} {--application=} {--active} {--include-expired} {--per-page=25}",
+      "class": "Academorix\\Auth\\Console\\Commands\\ListSessionsCommand",
+      "purpose": "List active + optionally expired sessions. Filterable by user_id, identity_id, application_id. Redacted \u2014 PAT plaintext + hashes never shown. Useful for support-driven session investigation without touching HTTP admin surfaces.",
+      "usage_examples": [
+        "php artisan auth:list-sessions --user=usr_01H2K3M4N5P6Q7R8S9TAVBWCXDY --active",
+        "php artisan auth:list-sessions --identity=idn_01H... --include-expired",
+        "php artisan auth:list-sessions --application=app_sports --active --per-page=100"
+      ]
+    },
+    {
+      "signature": "auth:revoke-session {id : PAT id (integer or ULID form)} {--reason=}",
+      "class": "Academorix\\Auth\\Console\\Commands\\RevokeSessionCommand",
+      "purpose": "Revoke a specific session by PAT id. Fires SessionRevoked(reason=admin_revocation). --reason is written to the audit log; required in production per auth.commands.require_reason.",
+      "usage_examples": [
+        "php artisan auth:revoke-session 12345 --reason='Support ticket #67890, user reported unfamiliar session'"
+      ]
+    },
+    {
+      "signature": "auth:revoke-all-sessions {--user=} {--identity=} {--reason=} {--confirm}",
+      "class": "Academorix\\Auth\\Console\\Commands\\RevokeAllSessionsCommand",
+      "purpose": "Bulk revoke every active PAT + refresh token for a User or Identity (cross-Application). Dispatches RevokeAllActiveSessionsJob. --confirm required in production to prevent accidental bulk revocation.",
+      "usage_examples": [
+        "php artisan auth:revoke-all-sessions --user=usr_01H... --reason='User requested account lockdown' --confirm",
+        "php artisan auth:revoke-all-sessions --identity=idn_01H... --reason='Suspected credential compromise \u2014 cross-Application lockdown' --confirm"
+      ]
+    },
+    {
+      "signature": "auth:rotate-jwt-key {--application=} {--reason=} {--force}",
+      "class": "Academorix\\Auth\\Console\\Commands\\RotateJwtKeyCommand",
+      "purpose": "Rotate to a new JWT signing key. --application binds to a single Application; omit to rotate the global platform-plane key. Old key marked retired_at=now(); still verify-capable through auth.jwt.rotation_grace_period_days. --force skips the 25-days-since-last-rotation guard (used for incident response).",
+      "usage_examples": [
+        "php artisan auth:rotate-jwt-key --application=app_sports --reason='Scheduled monthly rotation'",
+        "php artisan auth:rotate-jwt-key --reason='Global key rotation \u2014 KMS incident response' --force"
+      ]
+    },
+    {
+      "signature": "auth:list-jwt-keys {--application=} {--include-retired}",
+      "class": "Academorix\\Auth\\Console\\Commands\\ListJwtKeysCommand",
+      "purpose": "List JWT signing keys. Redacted \u2014 secret_encrypted NEVER shown. Includes kid, algorithm, application binding, active state, timestamps.",
+      "usage_examples": [
+        "php artisan auth:list-jwt-keys",
+        "php artisan auth:list-jwt-keys --application=app_sports --include-retired"
+      ]
+    },
+    {
+      "signature": "auth:add-to-deny-list {jti : JWT jti to revoke} {--reason=} {--natural-expiry=}",
+      "class": "Academorix\\Auth\\Console\\Commands\\AddToDenyListCommand",
+      "purpose": "Add a jti to the JWT deny list. Fires JwtRevoked. --natural-expiry MUST match the original JWT's exp so the deny-list row auto-purges when no longer needed.",
+      "usage_examples": [
+        "php artisan auth:add-to-deny-list jwt_01H... --reason='Breach response' --natural-expiry='2026-07-16T14:00:00Z'"
+      ]
+    },
+    {
+      "signature": "auth:purge-expired {--dry-run}",
+      "class": "Academorix\\Auth\\Console\\Commands\\PurgeExpiredCommand",
+      "purpose": "Run every purge job synchronously: refresh tokens, password resets, email verifications, MFA challenges, cross-app grants, JWT deny list. --dry-run reports counts without deleting. Useful for offline environments where the scheduler isn't running.",
+      "usage_examples": [
+        "php artisan auth:purge-expired",
+        "php artisan auth:purge-expired --dry-run"
+      ]
+    },
+    {
+      "signature": "auth:test-signing-key {kid : Key ID} {--payload=default}",
+      "class": "Academorix\\Auth\\Console\\Commands\\TestSigningKeyCommand",
+      "purpose": "Sign a synthetic JWT with the specified kid + verify the signature round-trips. Never emits the shared secret. Used to validate a rotation worked before switching production traffic.",
+      "usage_examples": [
+        "php artisan auth:test-signing-key identity-2026-07-1",
+        "php artisan auth:test-signing-key identity-2026-07-1 --payload=custom"
+      ]
+    },
+    {
+      "signature": "auth:describe-token {token : Token identifier \u2014 Sanctum PAT id, refresh ULID, jti, or reset/verification token ULID}",
+      "class": "Academorix\\Auth\\Console\\Commands\\DescribeTokenCommand",
+      "purpose": "Print token metadata (issued_at, expires_at, consumed_at, revoked_at, kind, tokenable). Redacted \u2014 the token secret / hash / signature is NEVER emitted. Used for debugging session issues.",
+      "usage_examples": [
+        "php artisan auth:describe-token 12345",
+        "php artisan auth:describe-token atr_01H...",
+        "php artisan auth:describe-token jwt_01H..."
+      ]
+    }
+  ]
+}

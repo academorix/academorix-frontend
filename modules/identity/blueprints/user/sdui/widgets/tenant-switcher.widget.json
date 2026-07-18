@@ -1,0 +1,131 @@
+{
+  "id": "user.tenant-switcher",
+  "title": "Tenant switcher",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Dropdown in the app shell. Lists every TenantMember row for the current User inside the current Application. Selecting a tenant POSTs to /me/tenants/{tenant}/switch and hard-reloads. The current default is starred; the currently-active tenant carries a check indicator.",
+  "props": {
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
+    "showTenantSlug": { "type": "boolean", "default": false, "description": "Show the tenant slug alongside the name for support-agent operators." }
+  },
+  "dataSources": [
+    {
+      "name": "memberships",
+      "kind": "http.get",
+      "url": "/api/v1/me/tenants",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/v1/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Popover",
+      "children": [
+        {
+          "kind": "Button",
+          "props": { "variant": "ghost", "size": "sm" },
+          "children": [
+            {
+              "kind": "Icon",
+              "props": { "name": "building-office-2", "className": "size-4 mr-1" }
+            },
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": { "$expr": "(memberships.find(m => m.tenant_id === me.active_tenant_id)?.tenant_name) || 'Choose tenant'" }
+              }
+            },
+            {
+              "kind": "Icon",
+              "props": { "name": "chevron-down", "className": "size-3 ml-1" }
+            }
+          ]
+        },
+        {
+          "kind": "PopoverContent",
+          "props": { "className": "w-72" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h4",
+                "className": "text-xs font-semibold text-muted uppercase px-2 pt-1 pb-2",
+                "children": "Switch tenant"
+              }
+            },
+            {
+              "kind": "List",
+              "props": { "className": "max-h-96 overflow-y-auto" },
+              "bindings": { "items": { "$ref": "memberships" } },
+              "itemRenderer": {
+                "kind": "Pressable",
+                "props": {
+                  "className": "flex items-center gap-2 px-2 py-2 rounded hover:bg-content1 w-full"
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "http.post",
+                    "urlExpr": "'/api/v1/me/tenants/' + row.tenant_id + '/switch'",
+                    "onSuccess": { "kind": "reload" }
+                  }
+                },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "src": { "$ref": "row.tenant_avatar_url" },
+                      "fallbackText": { "$ref": "row.tenant_name" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col items-start flex-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-1" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium" },
+                            "bindings": { "children": { "$ref": "row.tenant_name" } }
+                          },
+                          {
+                            "kind": "Icon",
+                            "props": { "name": "star-solid", "className": "size-3 text-warning" },
+                            "bindings": { "hidden": { "$expr": "!row.is_default" } }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "row.role_name" } }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Icon",
+                    "props": { "name": "check", "className": "size-4 text-accent" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.tenant_id !== me.active_tenant_id" }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

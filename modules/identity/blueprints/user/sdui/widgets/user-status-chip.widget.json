@@ -1,0 +1,37 @@
+{
+  "id": "user.user-status-chip",
+  "title": "User status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for the four User.status values. Consumed by the roster table + the user-detail header.",
+  "props": {
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": ["pending", "active", "suspended", "disabled"]
+    },
+    "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "props": { "size": "xs" },
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "({ pending: 'warning', active: 'success', suspended: 'danger', disabled: 'neutral' }[props.status] || 'neutral')"
+          },
+          "leadingIcon": {
+            "$expr": "props.showIcon ? ({ pending: 'clock', active: 'check-circle', suspended: 'pause-circle', disabled: 'no-symbol' }[props.status]) : null"
+          },
+          "children": {
+            "$expr": "({ pending: 'Pending', active: 'Active', suspended: 'Suspended', disabled: 'Disabled' }[props.status])"
+          }
+        }
+      }
+    }
+  ]
+}

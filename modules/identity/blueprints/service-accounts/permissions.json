@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/service-accounts/permissions",
+  "$version": 1,
+  "title": "service-accounts \u2014 permissions",
+  "seeder": "Academorix\\ServiceAccount\\Database\\Seeders\\ServiceAccountPermissionSeeder",
+  "isSystem": true,
+  "description": "Every permission on this table is scoped to the `platform_admin` guard. The tenant-audience `sanctum` guard NEVER interacts with SA rows directly. See policies.json for the enforcement layer + boundary_note. Seeded roles reuse the platform-user baseline (super_admin, security, ops, dpo) \u2014 no new roles introduced here.",
+  "permissions": [
+    {
+      "name": "platform.service_accounts.viewAny",
+      "guard": "platform_admin",
+      "description": "List SAs. Redacted list \u2014 no secret material, no last_used_ip.",
+      "seededOn": ["super_admin", "security", "ops", "dpo"]
+    },
+    {
+      "name": "platform.service_accounts.view",
+      "guard": "platform_admin",
+      "description": "Show one SA. Includes signer_kid + expiry + status. No secret material.",
+      "seededOn": ["super_admin", "security", "ops", "dpo"]
+    },
+    {
+      "name": "platform.service_accounts.view.audit_trail",
+      "guard": "platform_admin",
+      "description": "Read the audit-usage report (usage histogram, IP-tuple diversity, jti-reuse detections, last 100 audit rows).",
+      "seededOn": ["super_admin", "security", "dpo"]
+    },
+    {
+      "name": "platform.service_accounts.create",
+      "guard": "platform_admin",
+      "description": "Provision a new SA. Requires --reason. Returns the plaintext secret ONCE.",
+      "seededOn": ["super_admin", "security", "ops"]
+    },
+    {
+      "name": "platform.service_accounts.update",
+      "guard": "platform_admin",
+      "description": "Update mutable fields (name, description, is_enabled, expires_at, metadata). application_id + tenant_id + signer_kid are immutable regardless of this permission.",
+      "seededOn": ["super_admin", "security", "ops"]
+    },
+    {
+      "name": "platform.service_accounts.rotate",
+      "guard": "platform_admin",
+      "description": "Rotate the SA secret. Returns the plaintext new secret ONCE.",
+      "seededOn": ["super_admin", "security", "ops"]
+    },
+    {
+      "name": "platform.service_accounts.disable",
+      "guard": "platform_admin",
+      "description": "Set is_enabled=false. Existing JWTs remain valid until natural expiry.",
+      "seededOn": ["super_admin", "security", "ops"]
+    },
+    {
+      "name": "platform.service_accounts.enable",
+      "guard": "platform_admin",
+      "description": "Set is_enabled=true. Refuses when expires_at has elapsed.",
+      "seededOn": ["super_admin", "security", "ops"]
+    },
+    {
+      "name": "platform.service_accounts.delete",
+      "guard": "platform_admin",
+      "description": "Soft-delete. Starts the retention hold clock. Actual hard-delete via PurgeExpiredServiceAccountsJob.",
+      "seededOn": ["super_admin", "security"]
+    },
+    {
+      "name": "platform.service_accounts.issue_test_jwt",
+      "guard": "platform_admin",
+      "description": "Issue a test JWT for troubleshooting. Uses `service-account:test-jwt` command OR the /issue-jwt HTTP endpoint. Every issue is audit-logged.",
+      "seededOn": ["super_admin", "security", "ops"]
+    },
+    {
+      "name": "platform.service_accounts.view.metadata",
+      "guard": "platform_admin",
+      "description": "Read the SA's metadata JSONB (IP allowlist, ops notes, deployment hints). Metadata may contain sensitive integration details; separate permission from view.",
+      "seededOn": ["super_admin", "security"]
+    }
+  ]
+}

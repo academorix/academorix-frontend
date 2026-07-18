@@ -1,0 +1,127 @@
+{
+  "id": "academorix://modules/mfa/sdui/resources/mfa/totp-enroll",
+  "$version": 1,
+  "kind": "screen",
+  "route": "/me/mfa/totp/enroll",
+  "title": "Set up authenticator app",
+  "description": "Two-round TOTP enrolment wizard. Step 1 issues + renders the QR + secret. Step 2 collects the confirmation code. Step 3 displays the RecoveryCodesReveal widget (one-shot plaintext codes).",
+  "permission": "mfa.enrollTotp",
+  "entitlement": "mfa_totp",
+  "layout": {
+    "type": "wizard",
+    "steps": [
+      {
+        "id": "step_1_scan",
+        "label": "Scan the QR code",
+        "data_source": {
+          "kind": "action",
+          "endpoint": "POST /api/v1/me/mfa/totp/enroll/preview",
+          "on_error": {
+            "MFA_ALREADY_ENROLLED": {
+              "kind": "redirect",
+              "to": "/me/mfa",
+              "toast": "Two-factor authentication is already active. Disable first to re-enrol."
+            },
+            "MFA_ENROLMENT_NOT_ENTITLED": {
+              "kind": "redirect",
+              "to": "/settings/billing",
+              "toast": "Your plan doesn't include two-factor authentication. Upgrade to enable."
+            }
+          }
+        },
+        "content": {
+          "kind": "card",
+          "body": "Open your authenticator app (Google Authenticator, Authy, 1Password) and scan this QR code, or type in the setup key manually.",
+          "sub_widgets": [
+            {
+              "widget": "qr-code",
+              "data": "{{response.totp_uri}}",
+              "size": 240,
+              "border": true
+            },
+            {
+              "widget": "code-block",
+              "label": "Manual setup key",
+              "value": "{{response.totp_secret | group_by_4}}",
+              "copyable": true,
+              "helptext": "Type this into your authenticator if you can't scan the QR."
+            },
+            {
+              "widget": "expiry-countdown",
+              "expires_at": "{{response.expires_at}}",
+              "message_prefix": "Setup expires in"
+            }
+          ]
+        },
+        "next_button": {
+          "label": "I've scanned it — continue",
+          "kind": "primary"
+        }
+      },
+      {
+        "id": "step_2_confirm",
+        "label": "Enter the 6-digit code",
+        "content": {
+          "kind": "form",
+          "endpoint": "POST /api/v1/me/mfa/totp/enroll",
+          "fields": [
+            {
+              "name": "totp_confirmation_code",
+              "control_type": "text",
+              "label": "6-digit code",
+              "auto_focus": true,
+              "input_mode": "numeric",
+              "auto_complete": "one-time-code",
+              "pattern": "^[0-9]{6}$",
+              "validation_rule": "valid_totp_code",
+              "helptext": "Open your authenticator app and type the code shown next to Academorix."
+            }
+          ],
+          "hidden_fields": [
+            {
+              "name": "totp_secret",
+              "value": "{{step_1.response.totp_secret}}"
+            }
+          ],
+          "on_error": {
+            "MFA_ENROLMENT_CONFIRMATION_INVALID": {
+              "kind": "inline",
+              "field": "totp_confirmation_code",
+              "message": "That code didn't match. Wait for the next 30-second period and try again."
+            },
+            "MFA_PREVIEW_EXPIRED": {
+              "kind": "restart_wizard",
+              "toast": "Your setup timed out. Let's start fresh."
+            }
+          }
+        },
+        "next_button": {
+          "label": "Confirm + generate recovery codes",
+          "kind": "primary"
+        }
+      },
+      {
+        "id": "step_3_save_recovery_codes",
+        "label": "Save your recovery codes",
+        "content": {
+          "widget": "recovery-codes-reveal",
+          "data": "{{step_2.response.recovery_codes}}",
+          "instructions": "You'll need these if you lose your authenticator app. Save them somewhere safe now — Academorix cannot show them to you again.",
+          "actions": [
+            { "label": "Copy all", "kind": "copy-to-clipboard" },
+            { "label": "Download as text", "kind": "download-txt" }
+          ]
+        },
+        "next_button": {
+          "label": "I've saved them — done",
+          "kind": "primary",
+          "route": "/me/mfa",
+          "confirm": {
+            "title": "You won't see these codes again",
+            "body": "Have you saved them somewhere safe? Academorix can regenerate a new set but cannot show these specific codes again."
+          }
+        }
+      }
+    ]
+  }
+}

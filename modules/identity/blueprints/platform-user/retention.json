@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/platform-user/retention",
+  "$version": 1,
+  "title": "platform-user \u2014 retention windows",
+  "description": "Two-phase retention. Phase 1 (soft-delete, 90-day hold) starts on offboard \u2014 the row is soft-deleted, access is revoked, but the display_name + department + dates remain resolvable so audit rows written before offboard still name the staffer clearly. Phase 2 (hard delete) fires after the hold expires \u2014 the row is purged, audit rows referencing this PlatformUser are RETAINED with an anonymised actor placeholder (compliance retention prevails over erasure). Audit correlation IDs are preserved indefinitely.",
+  "compliance_regimes_referenced": [
+    "soc2 CC6.7 (24h access removal SLA)",
+    "soc2 CC8.1 (7y change-record retention on the audit trail)",
+    "iso 27001 A.5.16 (identity management lifecycle)",
+    "gdpr Art. 17 (bounded erasure \u2014 the audit-retention overrides Art. 17 for the employment record)",
+    "hr_compliance regional employment-record retention floors (typically 3\u20137 years, satisfied by audit-trail retention)"
+  ],
+  "retention": [
+    {
+      "entity": "PlatformUser (active phase)",
+      "hot": { "days": "while status IN (pending, active, suspended)" },
+      "purge": {
+        "trigger": "N/A \u2014 active rows are never purged. Only offboarded rows enter the retention hold.",
+        "action": "none"
+      }
+    },
+    {
+      "entity": "PlatformUser (retention hold, phase 1)",
+      "hot": { "days": "90 (configurable via platform-user.retention.hold_days)" },
+      "purge": {
+        "trigger": "PlatformUserOffboarded event fires \u2192 status transitions to 'offboarded' \u2192 deleted_at set to offboarded_at \u2192 hold clock starts",
+        "action": "soft delete (row survives with deleted_at set)",
+        "job": "N/A \u2014 soft-delete happens inline with the offboard action"
+      },
+      "notes": [
+        "During the hold, the PlatformUser row remains queryable via a `platform.platform_users.view.offboarded` scope on the index endpoint. The row is EXCLUDED from the default list.",
+        "Manual restoration during the hold is supported via a super_admin's `platform-user:restore-from-offboarding` command \u2014 requires a compliance-officer co-signer. Restoration reverses the deleted_at + resets status to 'suspended' (never straight to 'active'; requires a separate `restore` action)."
+      ]
+    },
+    {
+      "entity": "PlatformUser (hard delete, phase 2)",
+      "hot": { "days": 0 },
+      "purge": {
+        "trigger": "deleted_at + 90 days < now() AND status = 'offboarded' AND RevokePlatformUserAccessJob completed successfully",
+        "action": "hard delete + cascade PlatformProfile hard delete in same transaction",
+        "job": "PurgeOffboardedPlatformUsersJob"
+      },
+      "notes": [
+        "The Identity row is NOT purged \u2014 it may still be referenced by a User row (the same human as a tenant customer) OR live on unattached for a subsequent hire.",
+        "Audit rows keyed by this PlatformUser as actor are RETAINED with `user_id` replaced by an anonymised placeholder (`[REDACTED-PLATFORM-USER]`). The `user_type` is preserved for filter purposes.",
+        "The `platform-user:audit-report` command run BEFORE hard delete generates a compliance-filing PDF that HR retains for the jurisdictional employment-record retention floor (usually 3\u20137 years). Post-hard-delete queries against the audit trail resolve the actor to the redacted placeholder \u2014 the PDF is the enduring record."
+      ]
+    },
+    {
+      "entity": "PlatformProfile (linked to PlatformUser)",
+      "hot": { "days": "while linked PlatformUser is active OR in retention hold" },
+      "purge": {
+        "trigger": "PurgeOffboardedPlatformUsersJob transaction \u2014 same commit as PlatformUser hard delete",
+        "action": "hard delete via foreign-key cascade (RESTRICT on the PlatformUser side means the transaction must be explicit)"
+      }
+    },
+    {
+      "entity": "Audit rows referencing this PlatformUser",
+      "hot": { "days": 365 },
+      "cold": {
+        "days": 2555,
+        "description": "7 years total. Rotates to S3 Glacier via audit::RotateAuditColdStorageJob at 365d. Owned by the audit module; this file references the policy."
+      },
+      "purge": {
+        "trigger": "audit module's own retention policy \u2014 platform-user does not purge audit rows directly",
+        "action": "anonymise-not-delete via audit module lifecycle. PlatformUser hard delete triggers a user_id anonymisation on the audit rows (see phase 2 notes) but the row bodies survive."
+      }
+    },
+    {
+      "entity": "PlatformImpersonationSession referencing this PlatformUser (Wave 1b)",
+      "hot": { "days": "while linked PlatformUser is active OR in retention hold" },
+      "purge": {
+        "trigger": "PurgeOffboardedPlatformUsersJob detects zero active sessions AND all historical sessions have ended_at set. Cascade behaviour is RESTRICT on the PlatformUser FK.",
+        "action": "no purge \u2014 historical impersonation sessions survive with the actor anonymised (owned by access/delegation module)"
+      }
+    }
+  ],
+  "audit_correlation_preserved_indefinitely": {
+    "description": "Correlation IDs written by the `platform.audit` middleware are ALWAYS preserved. Even after PlatformUser hard delete, cross-referencing audit rows via correlation_id remains possible. This is the load-bearing evidence for SOC 2 CC8.1 \u2014 an auditor can trace 'the sequence of platform-admin actions that led to this tenant-plane change' 5 years after the acting staffer left."
+  },
+  "grace_beyond_hold_days": {
+    "description": "PurgeOffboardedPlatformUsersJob checks that RevokePlatformUserAccessJob completed successfully BEFORE hard-deleting. If access revocation is stuck (extremely rare \u2014 typically a bug), the retention hold effectively extends indefinitely + emits `platform_user.retention.blocked` metric with `reason=revocation_incomplete`. Ops must intervene manually."
+  }
+}

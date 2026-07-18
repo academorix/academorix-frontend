@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/user/caches",
+  "$version": 1,
+  "title": "user \u2014 cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["user", "profile", "tenant-members"],
+  "keys": [
+    {
+      "pattern": "usr:me:{user_id}",
+      "description": "The `/api/v1/me` bootstrap payload for one User. Includes profile + roles + permissions + features + terminology + tenant memberships. Warmed on login; invalidated on any Profile / TenantMember / Role mutation for the User.",
+      "ttlSeconds": 300,
+      "tags": ["user", "tenant"],
+      "invalidatedBy": [
+        "UserObserver.updated",
+        "ProfileObserver.updated",
+        "TenantMemberObserver.*",
+        "AccessRoleObserver.updated (from access module \u2014 role permission set changed)"
+      ]
+    },
+    {
+      "pattern": "usr:profile:{profile_id}",
+      "description": "One Profile row (unredacted). Cached briefly (30s) because Profile updates are rare + reads are frequent (avatar + display_name are on every page).",
+      "ttlSeconds": 30,
+      "tags": ["user", "profile"],
+      "invalidatedBy": ["ProfileObserver.updated"]
+    },
+    {
+      "pattern": "usr:memberships:{user_id}",
+      "description": "All TenantMember rows for one User. Read by `/me/tenants` + by the tenant switcher SPA widget.",
+      "ttlSeconds": 300,
+      "tags": ["user", "tenant-members"],
+      "invalidatedBy": ["TenantMemberObserver.*"]
+    },
+    {
+      "pattern": "usr:active_tenant:{user_id}:{session_id}",
+      "description": "The active tenant ULID for THIS session. Written by the tenant-switch endpoint; read by `user.resolve_active_tenant` middleware. Long TTL (24h) matches the Sanctum PAT idle timeout.",
+      "ttlSeconds": 86400,
+      "tags": ["user", "tenant-members"]
+    },
+    {
+      "pattern": "usr:last_active_buffer",
+      "description": "Redis SET keyed by membership_id, values are the latest `last_active_at` timestamp seen in this batch window. Flushed to DB by UpdateLastActiveJob every 60s.",
+      "ttlSeconds": 120,
+      "tags": ["user", "tenant-members"]
+    },
+    {
+      "pattern": "usr:principal_cache_bust:{user_id}",
+      "description": "Fan-out invalidation marker. Written when any of the User's cached data mutates \u2014 downstream modules (access, ai) subscribe to this key + drop their own caches on change.",
+      "ttlSeconds": 60,
+      "tags": ["user"]
+    },
+    {
+      "pattern": "usr:erasure_hold:{user_id}",
+      "description": "Soft-deleted User rows keyed by ULID + their `hard_delete_scheduled_for` timestamp. Read by the scheduler to know which rows to hand to PurgeErasedUsersJob.",
+      "ttlSeconds": 7776000,
+      "tags": ["user"],
+      "invalidatedBy": ["UserObserver.deleted", "UserObserver.restored", "UserObserver.forceDeleted"]
+    }
+  ]
+}

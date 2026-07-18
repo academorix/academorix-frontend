@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/mfa/schemas/totp-enrollment-preview",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TotpEnrollmentPreview",
+  "description": "DTO returned by POST /api/v1/me/mfa/totp/enroll/preview (round 1 of the two-round TOTP enrolment). Emits the plaintext TOTP secret ONCE — the caller must round-trip it back to the server on round 2 (POST /enroll) with a valid confirmation code to complete enrolment. If round 2 never runs, PurgeUnconfirmedEnrollmentsJob evicts the ephemeral state (Redis, 5-minute TTL). Not persisted to Postgres — this is a signed envelope response, not a durable row.",
+  "type": "object",
+  "x-module": "mfa",
+  "x-storage": {
+    "layer": "ephemeral",
+    "backend": "redis",
+    "key_pattern": "mfa:enroll:preview:{session_id}",
+    "ttl_seconds": 300,
+    "encryption_note": "The envelope carries the plaintext TOTP secret. Redis MUST have at-rest encryption enabled OR the deployment MUST configure `mfa.totp.preview_backend='session'` to fall back to Laravel's encrypted session driver."
+  },
+  "properties": {
+    "totp_secret": {
+      "type": "string",
+      "description": "Base32-encoded shared secret. 32 characters (encodes 20 bytes = 160 bits of entropy per RFC 6238 recommendation). Emitted ONCE for QR-code generation client-side. Round 2 confirms by submitting the secret + a valid TOTP code — server verifies against the ephemeral envelope, not against a database row. Never emitted after round 2 confirmation.",
+      "pattern": "^[A-Z2-7]{32}$",
+      "x-classification": "regulated_secret"
+    },
+    "totp_uri": {
+      "type": "string",
+      "description": "otpauth:// URI encoding the secret + issuer + label. Format: `otpauth://totp/{issuer}:{account_label}?secret={base32_secret}&issuer={issuer}&digits=6&period=30&algorithm=SHA1`. Rendered as a QR code by the SPA. account_label is the email fingerprint (SHA-256 truncated), NEVER the plaintext email — protects the caller if the QR code is photographed.",
+      "format": "uri",
+      "x-classification": "regulated_secret"
+    },
+    "issuer": {
+      "type": "string",
+      "description": "Human-readable issuer string that appears in the authenticator app's account list (e.g. 'Academorix'). Tenant admins can override via config('mfa.totp.issuer') settings; caller-facing string only, no security material.",
+      "x-classification": "public"
+    },
+    "account_label": {
+      "type": "string",
+      "description": "Label shown next to the issuer in the authenticator app. SHA-256 truncated fingerprint of the caller's email — NEVER the plaintext email. Preserves privacy if the QR code is photographed / shared.",
+      "x-classification": "internal"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the ephemeral envelope evicts from Redis. Caller must confirm within this window. Typically 5 minutes from issuance.",
+      "x-classification": "public"
+    },
+    "preview_id": {
+      "type": "string",
+      "description": "Ephemeral ID of the Redis envelope (used to correlate MfaEnrollmentPreviewIssued → MfaEnrollmentConfirmed events). NOT a durable row identifier; the server-side envelope is keyed on session, not preview_id.",
+      "x-classification": "internal"
+    }
+  },
+  "required": ["totp_secret", "totp_uri", "issuer", "account_label", "expires_at", "preview_id"],
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "cache_control": "no-store",
+    "cache_control_reason": "Response carries plaintext secret; must not be cached by proxies / browser HTTP cache. Explicit `Cache-Control: no-store` header on the response.",
+    "logged_fields": ["preview_id", "issuer", "expires_at"],
+    "never_logged": ["totp_secret", "totp_uri", "account_label"]
+  },
+  "invariants": [
+    "The plaintext TOTP secret exists ONLY inside a signed Redis envelope + the response body of this endpoint. It is NEVER persisted to Postgres before round-2 confirmation. It is NEVER logged. It is NEVER included in metrics labels. It is NEVER echoed in error messages.",
+    "The endpoint refuses to issue a preview when the caller's Identity already has a TOTP secret persisted (`Identity.mfa_secret_encrypted IS NOT NULL`) — with error MFA_ALREADY_ENROLLED (409). To rotate, disable first, then re-enroll.",
+    "Repeated calls within the 5-minute window return the SAME envelope + secret — the endpoint is idempotent by session ID. Reissuing a fresh secret on every call would defeat the two-round protocol (a slow user might scan an old secret + submit a fresh code that doesn't match the fresh secret)."
+  ]
+}

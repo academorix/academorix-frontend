@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/mfa/helpers",
+  "$version": 1,
+  "title": "mfa — helper functions",
+  "description": "Two helpers. Both live at Support tier so anyone can call them without pulling in the bindings — the underlying flows go through the container.",
+  "namespace": "Academorix\\Mfa\\Support",
+  "helpers": [
+    {
+      "signature": "mfa_step_up_completed(?Identity $identity = null): bool",
+      "purpose": "Convenience accessor for gated UI. Returns true when the resolved caller has completed an MFA challenge within `config('mfa.step_up.sensitive_action_ttl_minutes')`. Reads the session's `last_mfa_challenge_at`.",
+      "behaviours": [
+        "$identity defaults to `current_identity()` (see identity module's helpers.json)",
+        "Returns false when the Identity has no MFA enrolled — the concept of a 'recent challenge' is undefined",
+        "Returns false when there is no active session (CLI, background jobs)",
+        "Cached in the request-scoped container so repeated calls in one request don't reread the session"
+      ],
+      "example": "if (! mfa_step_up_completed()) {\n    return response()->json(['step_up_url' => route('mfa.challenge.initiate')], 403);\n}"
+    },
+    {
+      "signature": "mfa_recovery_codes_remaining(?Identity $identity = null): int",
+      "purpose": "Convenience accessor. Returns the count of unconsumed recovery codes for the resolved caller.",
+      "behaviours": [
+        "$identity defaults to `current_identity()`",
+        "Returns 0 when the Identity has no MFA enrolled OR the recovery-codes array is null",
+        "Reads the cached posture from the `mfa:posture:{identity_id}` Redis key when available; falls through to Postgres otherwise",
+        "This is a read of the on-Identity JSONB array count — no plaintext codes flow through this helper"
+      ],
+      "example": "$remaining = mfa_recovery_codes_remaining();\nif ($remaining < 3) {\n    // Show inline warning in the SPA header\n}"
+    }
+  ],
+  "notes": [
+    "Helpers are registered by the composer autoloader from `src/Support/helpers.php`. Namespaced functions are safe to call across every framework layer including migrations + seeders (though these two are session-aware and will return conservative defaults in migration / seeder context).",
+    "There is deliberately NO helper for issuing / verifying a challenge — those operations MUST go through the DI-bound services (TotpChallenger / WebauthnChallenger / RecoveryCodeChallenger) so timing constants are preserved. A helper that shortcut'd verification would have to duplicate the constant-time compare + audit log integration + suspicious-activity signal emission — that's the challenger's job.",
+    "Similarly no helper for `mfa_enabled(?Identity $identity = null)` — that concept is on identity/identity's Identity model (`$identity->mfa_enabled` accessor). Cross-module accessor duplication is anti-pattern."
+  ]
+}

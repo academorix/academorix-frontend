@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/service-accounts/features",
+  "$version": 1,
+  "title": "service-accounts \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features"
+  },
+  "description": "Service accounts contribute NO tenant-facing UI features \u2014 the tenant surface never sees SA rows. The feature keys below are consumed by the platform-admin SDUI + by observability tooling to decide whether the SA machinery is available in the current environment.",
+  "features": [
+    {
+      "key": "service_accounts.core",
+      "displayName": "Machine credentials",
+      "description": "Base SA capability. Always on when the module is booted. Presence of this feature key indicates the SA substrate is reachable + operational.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "service_accounts.tenant_scope",
+      "displayName": "Tenant-scoped service accounts",
+      "description": "SAs bound to a specific tenant. Baseline across every plan tier.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "service_accounts.platform_plane",
+      "displayName": "Platform-plane service accounts",
+      "description": "SAs without tenant scope (cross-tenant integrations). Team+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "service_accounts.ip_allowlist",
+      "displayName": "IP allowlist enforcement",
+      "description": "Per-SA IP allowlist stored in metadata. Enterprise-only. Refuses requests from non-allowlisted source IPs at runtime.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "service_accounts.extended_ttl",
+      "displayName": "Extended JWT TTL",
+      "description": "Ability to request JWT TTLs beyond the module-default max (3600s). Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "service_accounts.dormant_detection",
+      "displayName": "Dormant credential alerts",
+      "description": "Weekly detection of SAs unused for > 30 days. Team+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "service_accounts.suspicious_activity_alerts",
+      "displayName": "Suspicious-activity alerts",
+      "description": "Novel-IP + rate-spike detection dispatches SuspiciousServiceAccountActivityNotification.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    }
+  ]
+}

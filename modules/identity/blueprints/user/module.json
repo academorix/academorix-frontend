@@ -1,0 +1,171 @@
+{
+  "$version": 1,
+  "name": "user",
+  "alias": "user",
+  "namespace": "Academorix\\User",
+  "description": "Per-Application projection of an Identity. Owns three entities: User (identity × application × tenant — the authenticated principal for one Application), Profile (1:1 PII satellite carrying first/last/display name, phone, avatar, locale, timezone, DOB), and TenantMember (multi-tenant pivot letting one User participate in more than one Tenant inside the same Application). Ships provisioning (`ProvisionUser` action — create User from an existing Identity + Application + Tenant, assign initial role, link a fresh Profile, issue email verification challenge), lifecycle transitions (activate / suspend / restore / erase), self-service `/me` endpoints, and multi-tenant switching (`/me/tenants/{tenant}/switch`). Domain-agnostic: creates Users for admins, coaches, receptionists, and adult / teen athletes alike — the athlete-with-login flow is enabled by keeping `Athlete.user_id` nullable in the future `sports/athletes/` module, which layers its own `LinkAthleteToUser` action ON TOP of the generic `ProvisionUser` shipped here. Publishes the `.own` scope resolver (a permission suffix consulted by the base repository at query time so `athletes.view.own` implicitly narrows to `WHERE user_id = current_user_id`). PII cluster on Profile — the redactor rules always apply unless the caller carries `profile.view.pii`. Layered config via the scope substrate: framework defaults → business-type defaults → tenant settings → region overrides, gated by compliance floors (COPPA 13 / GDPR minor age per country / FERPA educational records) which tenant overrides may only tighten.",
+  "keywords": [
+    "user",
+    "profile",
+    "tenant-member",
+    "provisioning",
+    "identity",
+    "sanctum",
+    "me",
+    "tenant-switcher",
+    "avatar",
+    "pii"
+  ],
+  "priority": 18,
+  "providers": [
+    "Academorix\\User\\Providers\\UserServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "identity",
+    "application",
+    "tenancy"
+  ],
+  "extendedBy": [
+    "auth"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToUser",
+      "HasProfile",
+      "IsUserOwnable"
+    ],
+    "attributes": [
+      "AsUserListener"
+    ],
+    "blueprints": [],
+    "middleware": [
+      "user.resolve_active_tenant",
+      "user.enforce_tenant_membership"
+    ],
+    "events": [
+      "UserProvisioned",
+      "UserActivated",
+      "UserSuspended",
+      "UserRestored",
+      "UserSoftDeleted",
+      "UserHardDeleted",
+      "ProfileUpdated",
+      "AvatarUpdated",
+      "UserLinkedToTenant",
+      "UserRemovedFromTenant",
+      "UserSwitchedActiveTenant",
+      "UserPreferredLocaleChanged",
+      "TenantMembershipRoleChanged"
+    ],
+    "policies": [
+      "UserPolicy",
+      "ProfilePolicy",
+      "TenantMemberPolicy"
+    ],
+    "hooks": [
+      "TenantMembersOnTenantErased",
+      "SeedOwnerMembershipOnTenantProvisioned"
+    ],
+    "commands": [
+      "user:list",
+      "user:describe",
+      "user:provision",
+      "user:suspend",
+      "user:restore",
+      "user:erase",
+      "user:switch-default-tenant",
+      "user:bulk-invite",
+      "profile:update",
+      "tenant-member:add",
+      "tenant-member:remove",
+      "tenant-member:list"
+    ],
+    "jobs": [
+      "ProvisionUserJob",
+      "UpdateLastActiveJob",
+      "CleanupOrphanedProfilesJob",
+      "PurgeErasedUsersJob"
+    ],
+    "notifications": [
+      "UserProvisionedNotification",
+      "UserSuspendedNotification",
+      "UserAddedToTenantNotification",
+      "UserRemovedFromTenantNotification",
+      "ProfileUpdatedConfirmationNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "UserObserver",
+      "ProfileObserver",
+      "TenantMemberObserver"
+    ],
+    "rules": [
+      "valid_e164_phone",
+      "valid_iana_timezone",
+      "valid_bcp47_locale",
+      "age_meets_min"
+    ],
+    "casts": [
+      "E164Phone",
+      "IanaTimezone",
+      "Bcp47Locale"
+    ],
+    "views": [],
+    "lang": [
+      "user"
+    ],
+    "config": [
+      "user"
+    ],
+    "macros": [],
+    "bindings": [
+      "UserRepository",
+      "ProfileRepository",
+      "TenantMemberRepository",
+      "UserProvisioner",
+      "TenantSwitcher",
+      "ProfilePiiRedactor",
+      "ScopeSuffixResolver"
+    ],
+    "resources": [
+      "user",
+      "profile",
+      "tenant-member"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing user CRUD, self-service /me endpoints, profile management, tenant switching.",
+      "routes": [
+        "GET/POST /api/v1/users",
+        "GET/PATCH/DELETE /api/v1/users/{user}",
+        "GET /api/v1/me",
+        "PATCH /api/v1/me",
+        "GET /api/v1/me/profile",
+        "PATCH /api/v1/me/profile",
+        "POST /api/v1/me/avatar",
+        "DELETE /api/v1/me/avatar",
+        "GET /api/v1/me/tenants",
+        "POST /api/v1/me/tenants/{tenant}/switch",
+        "GET /api/v1/users/{user}/tenants",
+        "POST /api/v1/users/{user}/tenants",
+        "DELETE /api/v1/users/{user}/tenants/{tenant}",
+        "PATCH /api/v1/users/{user}/tenants/{tenant}"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling. Writes stay on the tenant surface.",
+      "routes": [
+        "GET /api/v1/platform/users",
+        "GET /api/v1/platform/users/{user}"
+      ]
+    }
+  },
+  "planned_consumers": [
+    "access",
+    "sports",
+    "staff"
+  ]
+}

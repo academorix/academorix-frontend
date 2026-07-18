@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/auth/schemas/jwt-payload",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "JwtPayload",
+  "description": "The structured payload of an inter-service HS256 JWT. Signed by identity-service via JwtSigner; verified locally by every downstream service via JwtVerifier. The `app` claim binds the token to a single Application; downstream services reject cross-Application-forged tokens with 403 JWT_APPLICATION_MISMATCH.",
+  "type": "object",
+  "x-module": "auth",
+  "properties": {
+    "iss": {
+      "type": "string",
+      "format": "uri",
+      "description": "Issuer. Always identity-service's public URL, e.g. `https://identity.academorix.com`. Downstream verifiers check this.",
+      "example": "https://identity.academorix.com"
+    },
+    "aud": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Audience \u2014 the fully-qualified hosts the token is intended for. Downstream verifiers check their own hostname is in the array.",
+      "example": ["sports.academorix.com"]
+    },
+    "sub": {
+      "type": "string",
+      "description": "Subject \u2014 the user_id (ULID `usr_...`) OR platform_user_id (ULID `plu_...`) OR service_account_id (ULID `svc_...`).",
+      "example": "usr_01H2K3M4N5P6Q7R8S9TAVBWCXDY"
+    },
+    "app": {
+      "type": "string",
+      "description": "Application ID (ULID `app_...`). LOAD-BEARING \u2014 downstream services check `payload.app === config('app.slug')` before trusting any other claim.",
+      "example": "app_sports"
+    },
+    "tid": {
+      "type": ["string", "null"],
+      "description": "Tenant ID (ULID `tnt_...`). NULL for platform_admin subjects; NULL for service accounts scoped platform-wide.",
+      "example": "tnt_01H2K3M4N5P6Q7R8S9TAVBWCXDY"
+    },
+    "sco": {
+      "type": "object",
+      "description": "Scope claims \u2014 the caller's active organizational context resolved at token issue.",
+      "properties": {
+        "org_id": { "type": ["string", "null"] },
+        "region_id": { "type": ["string", "null"] },
+        "branch_id": { "type": ["string", "null"] },
+        "team_ids": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "roles": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Compact role name array (e.g. ['coach', 'staff']). Cached at issue-time from RBAC. Downstream services trust this for the token's lifetime.",
+      "example": ["coach"]
+    },
+    "permissions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Compact permission name array with scope suffixes (e.g. ['athletes.view.branch', 'sessions.create.own']). Cached at issue-time.",
+      "example": ["athletes.view.branch", "sessions.create.own"]
+    },
+    "kid": {
+      "type": "string",
+      "description": "Key ID matching an entry in the JWKS. Verifier uses this to select the correct signing key for signature verification.",
+      "example": "identity-2026-07-1"
+    },
+    "iat": {
+      "type": "integer",
+      "description": "Issued-at Unix timestamp.",
+      "example": 1735689600
+    },
+    "exp": {
+      "type": "integer",
+      "description": "Expiry Unix timestamp. iat + auth.jwt.ttl_seconds (default 900).",
+      "example": 1735690500
+    },
+    "jti": {
+      "type": "string",
+      "format": "uuid",
+      "description": "JWT ID. UUID. Consulted against auth_jwt_deny_list by downstream verifiers; matching entry = 403 JWT_DENIED."
+    },
+    "purpose": {
+      "type": "string",
+      "enum": ["user_session", "service_account", "impersonation"],
+      "description": "Distinguishes the JWT's issuance context. Downstream services may branch on this (e.g. audit-log the caller kind differently).",
+      "example": "user_session"
+    }
+  },
+  "required": ["iss", "aud", "sub", "app", "iat", "exp", "kid", "jti", "purpose"],
+  "additionalProperties": false
+}

@@ -1,0 +1,36 @@
+{
+  "$version": 1,
+  "title": "User.status enum",
+  "description": "The four terminal states a User.status column may hold. Transitions between states are documented in `events.json` (each transition fires a distinct lifecycle event). Business-type + tenant setting layers may skip states (e.g. bypass `pending` when the tenant sets `requires_admin_approval = false` AND the Identity's email is already verified), but the physical enum is stable.",
+  "column_note": "Persisted as a string(24). Cast to the `UserStatus` enum on the model.",
+  "statuses": [
+    {
+      "value": "pending",
+      "display_label": "Pending verification",
+      "description": "Newly provisioned. Cannot authenticate. Transitions to `active` when (a) the underlying Identity's email is verified AND (b) `user.registration.requires_admin_approval` is false, OR when an admin explicitly activates.",
+      "reachable_from": ["\u2205 (fresh provision)"],
+      "reachable_to": ["active", "disabled"]
+    },
+    {
+      "value": "active",
+      "display_label": "Active",
+      "description": "The normal operational state. Can authenticate, participate in TenantMember memberships, receive notifications.",
+      "reachable_from": ["pending", "suspended"],
+      "reachable_to": ["suspended", "disabled"]
+    },
+    {
+      "value": "suspended",
+      "display_label": "Suspended",
+      "description": "Admin-invoked pause. Sanctum PATs are revoked but the User row survives. Distinguished from `disabled` in intent \u2014 suspension is temporary + expected to reverse; disabled is terminal.",
+      "reachable_from": ["active"],
+      "reachable_to": ["active", "disabled"]
+    },
+    {
+      "value": "disabled",
+      "display_label": "Disabled",
+      "description": "Terminal state short of erasure. Row survives (for audit + retention) but the User cannot authenticate or be reactivated. Erasure (soft-delete + PurgeErasedUsersJob) is the final step past this.",
+      "reachable_from": ["pending", "active", "suspended"],
+      "reachable_to": []
+    }
+  ]
+}

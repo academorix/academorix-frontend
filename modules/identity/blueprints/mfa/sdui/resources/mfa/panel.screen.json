@@ -1,0 +1,157 @@
+{
+  "id": "academorix://modules/mfa/sdui/resources/mfa/panel",
+  "$version": 1,
+  "kind": "screen",
+  "route": "/me/mfa",
+  "title": "Two-factor authentication",
+  "description": "Primary self-service MFA panel. Renders the MfaMethodsSummary widget at the top, then feature-gated tabs for TOTP / Passkeys / Recovery Codes. Every mutating action inside the tabs triggers a step-up challenge modal (via the mfa-challenge-prompt widget) if the recent-challenge freshness has elapsed.",
+  "permission": "mfa.viewOwn",
+  "data_source": {
+    "kind": "resource",
+    "resource": "mfa-method",
+    "endpoint": "GET /api/v1/me/mfa",
+    "cache_ttl_seconds": 30
+  },
+  "layout": {
+    "type": "single_column",
+    "sections": [
+      {
+        "id": "summary",
+        "widget": "mfa-methods-summary",
+        "props": { "compact": false }
+      },
+      {
+        "id": "step_up_notice",
+        "kind": "notice",
+        "condition": "response.step_up_required_for.length > 0",
+        "severity": "info",
+        "message": "Some actions on this page will prompt you to verify your identity again."
+      },
+      {
+        "id": "low_codes_notice",
+        "kind": "notice",
+        "condition": "response.recovery_codes_low",
+        "severity": "warning",
+        "message": "You have only {{recovery_codes_remaining}} recovery codes left. Regenerate to restock.",
+        "actions": [
+          {
+            "label": "Regenerate now",
+            "route": "/me/mfa/recovery-codes",
+            "kind": "primary"
+          }
+        ]
+      },
+      {
+        "id": "tabs",
+        "kind": "tabs",
+        "tabs": [
+          {
+            "id": "totp",
+            "label": "Authenticator app",
+            "icon": "device-phone-mobile",
+            "content": {
+              "kind": "conditional",
+              "when": {
+                "response.totp_enrolled": {
+                  "kind": "card",
+                  "title": "Authenticator app active",
+                  "body": "You enrolled on {{totp_enrolled_at | date}}. Use your authenticator app at every login.",
+                  "actions": [
+                    {
+                      "label": "Disable",
+                      "route": "/me/mfa/totp/disable",
+                      "kind": "danger",
+                      "requires_step_up": true,
+                      "confirm": {
+                        "title": "Disable authenticator app?",
+                        "body": "You'll need to enter a recovery code or use a passkey to sign in without this factor. Continue?"
+                      }
+                    }
+                  ]
+                }
+              },
+              "otherwise": {
+                "kind": "card",
+                "title": "Set up an authenticator app",
+                "body": "Enrol Google Authenticator, Authy, 1Password, or any TOTP-compatible app.",
+                "actions": [
+                  {
+                    "label": "Start setup",
+                    "route": "/me/mfa/totp/enroll",
+                    "kind": "primary"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "passkeys",
+            "label": "Passkeys & security keys",
+            "icon": "key",
+            "requires_feature": "mfa.webauthn",
+            "content": {
+              "kind": "list",
+              "data_source": {
+                "endpoint": "GET /api/v1/me/mfa/webauthn/credentials",
+                "cache_ttl_seconds": 60
+              },
+              "empty_state": {
+                "title": "No passkeys registered",
+                "body": "Register a passkey (Face ID / Touch ID / Windows Hello / phone-synced passkey) or a hardware key (YubiKey, Titan) for phishing-resistant sign-in.",
+                "action": {
+                  "label": "Register a passkey",
+                  "route": "/me/mfa/webauthn/register",
+                  "kind": "primary"
+                }
+              },
+              "item_widget": "webauthn-credential-card",
+              "footer_action": {
+                "label": "Register another",
+                "route": "/me/mfa/webauthn/register",
+                "condition": "response.length < 10 AND caller.entitlements.includes('mfa_multiple_devices')"
+              }
+            }
+          },
+          {
+            "id": "recovery_codes",
+            "label": "Recovery codes",
+            "icon": "clipboard-document-list",
+            "content": {
+              "kind": "card",
+              "title": "Recovery codes",
+              "body": "One-time-use fallback codes for when your primary factor isn't available. Store them somewhere safe.",
+              "sub_widgets": [
+                {
+                  "widget": "stat",
+                  "label": "Remaining",
+                  "value": "{{response.recovery_codes_remaining}}",
+                  "severity": "{{response.recovery_codes_low ? 'warning' : 'default'}}"
+                }
+              ],
+              "actions": [
+                {
+                  "label": "Show current codes",
+                  "route": "/me/mfa/recovery-codes/download",
+                  "requires_step_up": true,
+                  "kind": "secondary",
+                  "audit_note": "Auditable data-egress event."
+                },
+                {
+                  "label": "Regenerate all",
+                  "route": "/me/mfa/recovery-codes/regenerate",
+                  "requires_step_up": true,
+                  "kind": "danger",
+                  "confirm": {
+                    "title": "Regenerate all recovery codes?",
+                    "body": "This invalidates every unconsumed code. You'll be shown a fresh set — save them immediately."
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "audit_hint": "Every mutating action here triggers a POST that fires an MFA-lifecycle event. The audit log captures the operator (self), the action, and the resulting state transition."
+}

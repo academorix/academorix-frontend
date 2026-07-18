@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/service-accounts/schedule",
+  "$version": 1,
+  "title": "service-accounts \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "service-account-notify-rotation-due",
+      "command": "queue:dispatch NotifyRotationDueJob",
+      "cron": "0 8 * * 1",
+      "timezone": "UTC",
+      "purpose": "Weekly Mondays 08:00 UTC: enumerate SAs approaching expires_at within the warning window (default 14d) and dispatch ServiceAccountSecretRotationDueNotification to each Application's owners. Weekly cadence trades a slightly later warning for lower notification-volume; the 14-day window absorbs a single missed run."
+    },
+    {
+      "name": "service-account-purge-expired",
+      "command": "queue:dispatch PurgeExpiredServiceAccountsJob",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:00 UTC: two-pass sweep. Pass 1 soft-disables SAs past expires_at + grace_days_after_expiry. Pass 2 hard-deletes soft-deleted SAs past retention_hold_days. Critical for SOC 2 CC6.7 compliance \u2014 late execution risks breaching prompt-access-removal on SA expiry."
+    },
+    {
+      "name": "service-account-update-last-used",
+      "command": "queue:dispatch UpdateLastUsedTimestampJob",
+      "cron": "* * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: flush the coalesced `svc:last_used:{id}` cache buffer to Postgres. Batches all pending updates into a single UPDATE...FROM (VALUES ...) so hot-path traffic doesn't pressure the SA table."
+    },
+    {
+      "name": "service-account-detect-dormant",
+      "command": "queue:dispatch DetectDormantServiceAccountJob",
+      "cron": "0 6 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sundays 06:00 UTC: enumerate SAs unused for > `security.dormant_threshold_days` (default 30d) and dispatch ServiceAccountDormantNotification. Sunday timing so operators triage on Monday morning."
+    },
+    {
+      "name": "service-account-active-count-gauge",
+      "command": "metrics:emit service_account.active_count",
+      "cron": "* * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: emit `academorix.service_account.active_count` gauge for dashboarding."
+    },
+    {
+      "name": "service-account-rotation-due-count-gauge",
+      "command": "metrics:emit service_account.rotation_due_count",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly: emit `academorix.service_account.rotation_due_count` gauge for the rotation-hygiene dashboard."
+    },
+    {
+      "name": "service-account-expired-count-gauge",
+      "command": "metrics:emit service_account.expired_count",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: emit `academorix.service_account.expired_count` gauge. Non-zero for more than one purge cycle (24h) triggers ops alert \u2014 signals PurgeExpiredServiceAccountsJob is stalled."
+    }
+  ]
+}

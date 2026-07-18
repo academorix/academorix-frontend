@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/platform-user/feature-flags",
+  "$version": 1,
+  "title": "platform-user \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "description": "Platform-plane kill switches. Every flag defaults to `on` \u2014 platform-user is a core dependency and its subsystems must be live in production. Kill switches exist for emergency degradation (a bad deploy of one subsystem should not take the whole platform_admin surface down).",
+  "flags": [
+    {
+      "key": "platform_user.enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the entire platform_admin surface. Off = every /api/v1/platform/* route returns 503 Service Unavailable. Emergency-only \u2014 used during a Sev-1 to fully lock out platform staff (rare)."
+    },
+    {
+      "key": "platform_user.audit_middleware",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "The `platform.audit` middleware. Off = audit rows for platform-plane requests are NOT written. Kill-switch guards against a bug in the middleware causing audit-write failures that would otherwise 5xx every platform-admin request. Compliance is degraded when off; toggle back on within 1h and page compliance officer + DPO."
+    },
+    {
+      "key": "platform_user.mfa_required_middleware",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "The `platform.mfa_required` middleware runtime enforcement. Off = MFA is only checked at login (login-time enforcement is separate + not toggle-able here). NEVER turn off in production without an incident commander sign-off + a rollback ETA."
+    },
+    {
+      "key": "platform_user.hire_mfa_gate",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "The observer's refusal to create a PlatformUser row when the referenced Identity has NULL mfa_secret_encrypted. Off = allow (used in dev + during migration when historical Identities have not yet enrolled). Toggle back on before opening the environment for platform-admin traffic."
+    },
+    {
+      "key": "platform_user.on_call_resolver",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "OnCallResolver. Off = every resolver query returns null + `/on-call/current` returns a `RESOLVER_DISABLED` response. Escalation fallback is Slack broadcast to the department channel (out-of-band from this module)."
+    },
+    {
+      "key": "platform_user.pagerduty_transport",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "PagerDuty integration. Off = on-call rotation falls back to the internal `on_call_rotation_entries` table + notifications go via Slack instead of PagerDuty. Used when PagerDuty is unreachable or credentials expire."
+    },
+    {
+      "key": "platform_user.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "PurgeOffboardedPlatformUsersJob. Off = offboarded PlatformUsers linger past the 90-day retention hold. Used when compliance requires an extended-retention pause (e.g. active litigation)."
+    },
+    {
+      "key": "platform_user.access_revocation_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "RevokePlatformUserAccessJob dispatch on PlatformUserOffboarded. Off = access revocation is manual. Emergency-only \u2014 SOC 2 24h SLA becomes at risk when off; compliance-officer sign-off required to enable."
+    }
+  ]
+}

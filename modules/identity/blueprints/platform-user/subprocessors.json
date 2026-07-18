@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/platform-user/subprocessors",
+  "$version": 1,
+  "title": "platform-user \u2014 subprocessors",
+  "description": "One optional subprocessor: PagerDuty for on-call rotation resolution + escalation paging. Optional \u2014 enabled per environment via `platform-user.on_call.enabled`. Off = the internal `on_call_rotation_entries` table backs OnCallResolver and no external calls fire. Even when enabled, only PlatformUser display_name + phone_e164 + department are sent to PagerDuty \u2014 never tenant data. Since PagerDuty processes ACADEMORIX employee data (not tenant end-user data), this is a workforce-management subprocessor arrangement, distinct from the tenant-side subprocessor tier that GDPR Art. 28 primarily governs.",
+  "regulatoryBasis": ["soc2 CC6.7 (subprocessor evaluation)", "iso 27001 A.15.1 (supplier relationships)"],
+  "subprocessors": [
+    {
+      "name": "PagerDuty",
+      "role": "on_call_rotation_and_escalation",
+      "purpose": "Backs the OnCallResolver when `platform-user.on_call.default_backend = pagerduty`. Owns the schedule authoring surface (Academorix ops maintains schedules in PagerDuty's own UI), the escalation-policy resolution, and the paging channels (SMS + phone + push). Academorix reads current-on-call via PagerDuty's REST API v2 (GET /oncalls filtered by escalation_policy_id).",
+      "data_processed": [
+        "PlatformUser.id (opaque ULID)",
+        "PlatformProfile.first_name + last_name (identifying the on-call staffer)",
+        "PlatformProfile.phone_e164 (for SMS + phone escalation channels)",
+        "PlatformUser.department (for schedule membership)",
+        "incident payloads at page time (short incident summary text; NEVER tenant data)"
+      ],
+      "data_not_processed": [
+        "PlatformUser.identity_id",
+        "PlatformProfile.slack_handle",
+        "PlatformProfile.github_handle",
+        "PlatformProfile.avatar_url",
+        "PlatformUser.offboarding_reason",
+        "any tenant-plane data \u2014 tenant PII never leaves the Academorix boundary via this integration"
+      ],
+      "location": "US-East (Amazon AWS us-east-1). PagerDuty is US-only for backend processing.",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.pagerduty.com/legal/data-processing-addendum/",
+      "certifications": ["SOC 2 Type II", "ISO 27001", "CCPA compliant"],
+      "when_engaged": "config('platform-user.on_call.enabled') === true AND config('platform-user.on_call.default_backend') === 'pagerduty'",
+      "credential_management": "PAGERDUTY_API_KEY resolved via Doppler; rotated quarterly. On rotation, the token is issued at PagerDuty then written to Doppler in the same maintenance window \u2014 no plaintext token ever lands on developer laptops.",
+      "failure_behaviour": "OnCallResolverReachableProbe fails when PagerDuty is unreachable within 5s. Falls back to internal rotation table. `platform_user.on_call.resolver.miss.total{reason=backend_timeout|backend_error}` metric fires."
+    }
+  ],
+  "notes": [
+    "PagerDuty is the ONE optional subprocessor. Off-by-default (`platform-user.on_call.enabled = false`) so a fresh environment does not silently create a PagerDuty account or leak data before the DPA is countersigned.",
+    "The `null` on-call backend is a no-op used in tests + when the resolver is disabled. Not a subprocessor.",
+    "Slack is NOT listed here \u2014 the internal-notifications module owns the Slack transport, and its subprocessor listing lives on that module's blueprint. PlatformUser dispatches TO Slack via that transport but does not independently engage Slack.",
+    "PII shared with PagerDuty is workforce-management PII (name + phone), not customer PII. This is a distinct GDPR data-processing category (Art. 6(1)(b) employment contract) from the tenant-plane subprocessor tier."
+  ]
+}

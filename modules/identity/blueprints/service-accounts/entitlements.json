@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/service-accounts/entitlements",
+  "$version": 1,
+  "title": "service-accounts \u2014 declared entitlements",
+  "description": "Five entitlement keys covering the SA capability surface a tenant purchases. Every tenant gets tenant-scoped SAs on any plan (a webhook signer is baseline). Platform-plane SAs are medium+ (cross-tenant integrations imply a paid engagement). IP allowlisting + extended TTL are enterprise controls. Entitlements gate CREATION of an SA carrying the corresponding property; already-issued SAs are grandfathered until rotation.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "service_accounts_tenant_scope",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 1, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "SAs bound to a specific tenant (via non-null `tenant_id`). Baseline across every plan tier \u2014 webhook signers + tenant-scoped API integrations require this."
+    },
+    {
+      "key": "service_accounts_platform_plane",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "SAs without tenant scope (`tenant_id IS NULL`). These are cross-tenant machine credentials \u2014 shared observability collectors, cross-tenant sync workers, fleet health probes. Free tier gated off because the use case (multi-tenant integration) doesn't apply to single-tenant customers."
+    },
+    {
+      "key": "service_accounts_ip_allowlist",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 0, "business": 0, "enterprise": 1 },
+      "description": "Per-SA IP allowlist stored in metadata. When present, `service_account.audit` middleware refuses requests from non-allowlisted source IPs (403 SERVICE_ACCOUNT_IP_NOT_ALLOWED). Enterprise-tier feature; deferred Wave 1b implementation \u2014 the config flag exists in Wave 1a but is not enforced until Wave 1b's audit-middleware upgrade."
+    },
+    {
+      "key": "service_accounts_extended_ttl",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 0, "business": 0, "enterprise": 1 },
+      "description": "Ability to request JWT TTLs beyond the module-default `max_ttl_seconds` (default 3600s). Enterprise-only. Extending TTL beyond one hour trades security posture for integration latency \u2014 gated to plans with a matched compliance obligation."
+    },
+    {
+      "key": "service_accounts_dormant_detection",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": 0, "team": 1, "business": 1, "enterprise": 1 },
+      "description": "DetectDormantServiceAccountJob dispatches ServiceAccountDormantNotification for the tenant's SAs. Free tier gated off because the notification recipient (tenant's Application owner) doesn't exist on free tier's simpler ops posture."
+    }
+  ],
+  "notes": [
+    "Entitlements gate CREATION + certain runtime paths (IP allowlist enforcement, TTL bounds). They do NOT gate READ \u2014 platform-admin surface always sees every SA. Downgrading a tenant plan does not auto-revoke existing SAs; ops must manually rotate + delete via the platform-admin surface.",
+    "The `service_accounts_platform_plane` entitlement is INDEPENDENT of `platform.tenant_admin` (on the PlatformUser blueprint). Both are required for a platform_admin to provision a platform-plane SA \u2014 the entitlement gates the CAPABILITY, the platform-admin permission gates the ACTOR."
+  ]
+}

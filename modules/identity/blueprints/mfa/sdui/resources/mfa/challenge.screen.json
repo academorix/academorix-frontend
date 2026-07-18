@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/mfa/sdui/resources/mfa/challenge",
+  "$version": 1,
+  "kind": "modal",
+  "route": "/me/mfa/challenge/{challenge_id}",
+  "title": "Verify your identity",
+  "description": "Mid-session step-up challenge modal. Rendered when an action triggers mfa.require_recent_challenge middleware. Auto-selects the input for the caller's preferred method + offers method-switch links.",
+  "permission": "mfa.viewOwn",
+  "layout": {
+    "type": "modal",
+    "size": "sm",
+    "dismissible": false,
+    "sections": [
+      {
+        "id": "prompt",
+        "widget": "mfa-challenge-prompt",
+        "props": {
+          "challenge_id": "{{route.challenge_id}}",
+          "initial_method": "{{caller.settings.preferred_challenge_method | fallback:'auto'}}",
+          "on_success": {
+            "kind": "close_modal_and_retry_original_action",
+            "hint_context": "{{route.query.return_to}}"
+          },
+          "on_max_attempts": {
+            "kind": "toast",
+            "severity": "error",
+            "message": "Too many attempts. Sign out and back in to try again.",
+            "next_route": "/auth/logout"
+          }
+        }
+      }
+    ]
+  }
+}

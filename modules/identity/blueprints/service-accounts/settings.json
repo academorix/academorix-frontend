@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/service-accounts/settings",
+  "$version": 1,
+  "title": "service-accounts \u2014 settings",
+  "description": "service-accounts exposes NO tenant-configurable settings. Every knob (rotation TTL, warning window, dormant threshold, TTL bounds, rate-limit thresholds) is a platform-wide policy owned by `service-accounts.php` config. Tenants cannot loosen any of these settings for their own SAs \u2014 the compliance floors (mandatory rotation, mandatory audit) apply uniformly. This file registers the `service-accounts` scope-consumer namespace so future keys land under a consistent prefix.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "namespace_registration": {
+    "namespace": "service-accounts",
+    "consumer": "Academorix\\ServiceAccount\\Providers\\ServiceAccountServiceProvider",
+    "defaultValueFactory": "Delegates to config('service-accounts.*') when the tenant hasn't overridden. Placeholder \u2014 no tenant-visible settings are exposed today.",
+    "validator": "Enforces the mandatory-rotation floor (a tenant cannot extend expires_at beyond `service-accounts.rotation.default_secret_ttl_days` \u00d7 2 = 180d), the audit-required floor (audit middleware cannot be disabled), and the entitlement-gated ceilings (extended TTL requires enterprise entitlement)."
+  },
+  "groups": [],
+  "notes": [
+    "service-accounts is a substrate module. Every configuration knob is platform-wide \u2014 no tenant customisation of security controls.",
+    "The one legitimate per-SA override is `expires_at` at creation (bounded by config; enterprise entitlement removes the ceiling). That's a WRITE-time setting, not a scope-substrate value.",
+    "The `service_accounts_ip_allowlist` entitlement's per-SA metadata list IS per-row settings-adjacent, but it's stored in the row's `metadata` JSONB, not in the settings substrate. Rationale: the allowlist is enforcement data on the hot path (audit middleware reads it), not configuration."
+  ]
+}

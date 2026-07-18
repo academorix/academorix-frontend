@@ -1,0 +1,133 @@
+{
+  "id": "academorix://modules/identity/data-classes",
+  "$version": 1,
+  "title": "identity \u2014 field classification",
+  "description": "Identity is the most privacy-sensitive aggregate in the system. Every credential column is `regulated_secret` (never returned on wire, never logged, never emitted to metrics). PII (email, dob) is `restricted` and gated behind the platform-admin `identity.view.pii` permission. Redactor rules always apply to every field of the Identity row unless the caller has that permission. See compliance.json for COPPA + GDPR floors.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [],
+    "internal": [
+      "Identity.id",
+      "Identity.created_at",
+      "Identity.updated_at",
+      "Identity.email_verified_at",
+      "Identity.password_changed_at",
+      "Identity.last_login_at",
+      "Identity.locked_until",
+      "Identity.failed_attempts_count",
+      "Identity.deleted_at"
+    ],
+    "confidential": [
+      "Identity.last_failed_at",
+      "Identity.email_verification_expires_at"
+    ],
+    "restricted": [
+      "Identity.email",
+      "Identity.dob"
+    ],
+    "regulated_minor": [
+      "Identity.dob when dob resolves the caller to a minor under the applicable compliance floor (COPPA age_threshold OR GDPR per_country.minor_age)"
+    ],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "regulated_secret": [
+      "Identity.password_hash",
+      "Identity.password_history_hashed",
+      "Identity.mfa_secret_encrypted",
+      "Identity.mfa_recovery_codes_hashed",
+      "Identity.email_verification_token_hash"
+    ],
+    "audit_log": [
+      "Identity.email_verified_at",
+      "Identity.password_changed_at",
+      "Identity.locked_until",
+      "Identity.failed_attempts_count",
+      "Identity.deleted_at",
+      "Identity.mfa_secret_encrypted (existence only \u2014 never value)"
+    ]
+  },
+  "wire_projection": {
+    "description": "The Identity row NEVER round-trips through a tenant-facing API. Every read is scoped to auth-service actions returning derived shapes (LoginResult, MfaChallengeResult, RegistrationResult). Platform-admin surfaces receive a redacted IdentityAdminData DTO.",
+    "tenant_wire_shape": "N/A \u2014 no tenant endpoint returns Identity fields directly.",
+    "platform_admin_wire_shape": {
+      "id": "Identity.id (ULID `idn_...`)",
+      "email": "Identity.email (REDACTED unless caller has `identity.view.pii`)",
+      "email_verified": "boolean derived from email_verified_at IS NOT NULL",
+      "mfa_enabled": "boolean derived from mfa_secret_encrypted IS NOT NULL",
+      "is_locked": "boolean derived from locked_until > now()",
+      "locked_until": "timestamp | null",
+      "failed_attempts_count": "integer",
+      "password_changed_at": "timestamp",
+      "last_login_at": "timestamp | null",
+      "dob": "date (REDACTED to year-only unless caller has `identity.view.pii`)",
+      "deleted_at": "timestamp | null (visible during GDPR hold-period)",
+      "created_at": "timestamp"
+    },
+    "never_returned": [
+      "Identity.password_hash (regulated_secret)",
+      "Identity.password_history_hashed (regulated_secret)",
+      "Identity.mfa_secret_encrypted (regulated_secret \u2014 platform-admin surfaces show existence via `mfa_enabled` boolean, never the value)",
+      "Identity.mfa_recovery_codes_hashed (regulated_secret)",
+      "Identity.email_verification_token_hash (regulated_secret \u2014 issued via one-shot email, never retrievable)"
+    ]
+  },
+  "input_dtos": [
+    {
+      "class": "Academorix\\Identity\\Data\\RegisterIdentityInput",
+      "shape": {
+        "email": "string (validated: RFC 5321, citext-normalised)",
+        "password": "string (validated: strong_password rule)",
+        "dob": "date (validated: bcp47_locale-aware date, compliance floor check)",
+        "region_country_code": "string (ISO-3166-2 alpha-2 \u2014 resolves the applicable compliance floor)"
+      },
+      "compliance_gate": "Before creation, CompliantAgePolicy resolves the effective floor (US COPPA \u2192 13; EU country \u2192 per_country.minor_age 13\u201316) and refuses if dob resolves the applicant to a minor below that floor."
+    },
+    {
+      "class": "Academorix\\Identity\\Data\\ChangePasswordInput",
+      "shape": {
+        "current_password": "string (verified against password_hash)",
+        "new_password": "string (validated: strong_password + not_in_password_history)"
+      }
+    },
+    {
+      "class": "Academorix\\Identity\\Data\\ResetPasswordInput",
+      "shape": {
+        "reset_token": "string (validated against auth::PasswordResetToken)",
+        "new_password": "string (validated: strong_password + not_in_password_history)"
+      }
+    },
+    {
+      "class": "Academorix\\Identity\\Data\\EnrollMfaInput",
+      "shape": {
+        "totp_secret": "string (base32; server-generated on preview endpoint, echoed back to confirm)",
+        "totp_confirmation_code": "string (6-digit code the user typed from their authenticator)"
+      }
+    },
+    {
+      "class": "Academorix\\Identity\\Data\\ConsumeRecoveryCodeInput",
+      "shape": {
+        "recovery_code": "string (validated: valid_recovery_code)"
+      }
+    }
+  ],
+  "output_dtos": [
+    {
+      "class": "Academorix\\Identity\\Data\\IdentityAdminData",
+      "purpose": "Platform-admin listing + detail surface. See wire_projection.platform_admin_wire_shape above."
+    },
+    {
+      "class": "Academorix\\Identity\\Data\\MfaEnrolmentPreview",
+      "shape": {
+        "totp_secret": "string (base32 \u2014 shown once, then discarded; user re-submits to confirm)",
+        "totp_uri": "otpauth:// URI for QR-code rendering",
+        "recovery_codes": "string[] (10 codes \u00d7 10 characters; shown once at confirm)"
+      }
+    }
+  ],
+  "notes": [
+    "Every field on Identity is REDACTED by default at the audit layer. Redactor rules replace email with hash-fingerprint, dob with year-only, password_hash / mfa_secret_encrypted / mfa_recovery_codes_hashed with `[REDACTED]`. The `identity.view.pii` permission (platform_admin guard) unmutes email + dob; the regulated_secret set is NEVER unmuted.",
+    "The GDPR erasure hold-period (default 30 days) is a period during which Identity is soft-deleted; the row keeps `email` value + hashed credentials so a compliance-audit query for '  what did user X do' can still resolve. After the hold period, PurgeSoftDeletedIdentitiesJob hard-deletes the row and cascades to inbound FKs.",
+    "Minor identity handling: `dob` classification promotes from `restricted` to `regulated_minor` when the resolved age is below the applicable compliance floor. This is a compile-time classification, not a run-time check \u2014 the redactor sees the age-resolution outcome via the CompliantAgePolicy service.",
+    "Email is CITEXT in Postgres so `SELECT ... WHERE email = 'Alice@Example.COM'` matches the row stored as `alice@example.com`. The UNIQUE index is case-insensitive by construction."
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/identity/compliance",
+  "$version": 1,
+  "title": "identity \u2014 compliance evidence",
+  "description": "Identity is the most compliance-sensitive aggregate in the platform. Every enforceable rule from GDPR (Art. 5, 6, 17, 25, 32), COPPA (13-year-old floor), CCPA (right-to-know + right-to-delete), and NIST 800-63B (authentication policy) applies here. Every enforcement is codified as CODE + AUDIT rather than a policy document; the compliance officer verifies via automated checks against the entries below.",
+  "regimes": {
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "16 CFR \u00a7 312.5",
+          "principle": "verifiable parental consent for under-13s",
+          "evidence": "CompliantAgePolicy resolves the effective floor from `compliance.coppa.age_threshold` (13 for US country_code) BEFORE creation. Identity creation refuses with `IDENTITY_MINOR_UNDER_FLOOR` (422) when dob resolves the applicant to under-13. Parent-consent flows for tenants that legitimately serve under-13s live in the sports/athletes module; the raw Identity substrate refuses the write."
+        },
+        {
+          "article": "16 CFR \u00a7 312.8",
+          "principle": "data-security safeguards for children's PII",
+          "evidence": "For identities resolved as minors, `dob` classification is promoted from `restricted` to `regulated_minor` (see data-classes.json). Additional redaction rules apply. Audit trails carry an `is_minor=true` marker so DSR responses correctly scope the child's data package."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Identity carries email + password + MFA + dob ONLY. No name, phone, address \u2014 those live on `user::Profile` per Application. No cross-app metadata on the Identity row."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "Soft-deleted identities are hard-deleted after `identity.retention.erasure_hold_days` (default 30 days). See retention.json. PurgeSoftDeletedIdentitiesJob is the automated enforcer."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis \u2014 contract necessary",
+          "evidence": "Credentials are necessary to perform the contract with the tenant. Legal basis stored in the initial IdentityRegistered audit-log entry."
+        },
+        {
+          "article": "Art. 8",
+          "principle": "conditions applicable to child's consent",
+          "evidence": "For EU identities, CompliantAgePolicy reads `compliance.gdpr.per_country[country_code].minor_age` (13\u201316 per country). Same refusal path as COPPA when dob resolves the applicant below the floor."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "`identity:erase` Artisan command + POST /api/v1/platform/identities/{id} DELETE endpoint both trigger soft delete + start the hold-period. Hard delete cascades to `user::User`, `user::PlatformUser`, `mfa::MfaChallenge`, `auth::PasswordResetToken`, `auth::EmailVerificationToken`. IdentityErased event notifies every listener."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design and by default",
+          "evidence": "Password_hash uses argon2id. Mfa_secret is envelope-encrypted (KMS or Vault). Email is CITEXT (removing case-based dedup bugs that could leak related identities). Password_history_hashed retains only bcrypt/argon2id output, never plaintext."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "MFA-secret encryption at rest, lockout with progressive backoff, breach-check via haveibeenpwned, mandatory audit logging via HasActivityLog. All enforced by CODE + tested by automated compliance probes."
+        },
+        {
+          "article": "Art. 33",
+          "principle": "breach notification obligation",
+          "evidence": "SuspiciousLoginNotification fires on high-velocity + novel-IP lockouts. IdentityLocked events > threshold in a rolling window trigger the platform-security incident-response pipeline (out-of-scope for this module; handled by observability)."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "right to know",
+          "evidence": "The Data Subject Access Request (DSAR) flow reads the Identity row (unredacted PII) into the exported package. IdentityRepository::exportForDsar() is the entrypoint; audit-logged with the compliance officer as actor."
+        },
+        {
+          "principle": "right to delete",
+          "evidence": "Same as GDPR Art. 17 path. CCPA's 45-day fulfillment window is enforced by the erasure_hold_days config (defaulted to 30 days for safety)."
+        },
+        {
+          "principle": "right to opt-out of sale",
+          "evidence": "Not applicable \u2014 Identity data is never sold, shared, or transferred to third-party analytics. See subprocessors.json."
+        }
+      ]
+    },
+    "nist_800_63b": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "AAL2 authenticator strength",
+          "evidence": "Password (memorized secret) + TOTP or WebAuthn (single-factor OTP or single-factor cryptographic device) satisfies AAL2. Config defaults require MFA for admin-role identities via `identity/mfa`; roles below admin can opt in."
+        },
+        {
+          "principle": "\u00a7 5.1.1.2 memorized secret verifier",
+          "evidence": "Password min length 12 (spec floor 8, we exceed). Breach check against public corpus via HIBP. No composition rules that force predictable patterns (require_symbol is default OFF per NIST recommendation). No mandatory rotation by age (max_age_days default null per NIST recommendation \u2014 rotation only on suspected compromise)."
+        },
+        {
+          "principle": "\u00a7 5.1.1.1 rate limiting",
+          "evidence": "identity.rate_limit_login middleware enforces 5 attempts / 15 minutes per (IP, email). identity.check_lockout enforces the account-level lockout."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Two guards enforced (sanctum, platform_admin) with role scoping. All admin operations on Identity are audit-logged. Password hashes use argon2id."
+        },
+        {
+          "criterion": "CC6.6",
+          "principle": "protection against external threats",
+          "evidence": "Rate limiting + progressive lockout + suspicious-login detection. All threats emit metrics + alerts."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes (identity-db-writable, identity-kms-reachable, identity-hibp-reachable, identity-lockout-scheduler-alive, identity-retention-current) + OpenTelemetry metrics feed monitoring pipeline."
+        }
+      ]
+    }
+  }
+}

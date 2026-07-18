@@ -1,0 +1,180 @@
+{
+  "id": "academorix://modules/user/schemas/tenant-member",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TenantMember",
+  "description": "Pivot row linking a User to a Tenant within the same Application, carrying a Role. UNIQUE(user_id, tenant_id). Exactly one row per User has `is_default = true` (partial unique index + observer invariant). Cross-application memberships are refused by the observer with `TENANT_MEMBERSHIP_CROSS_APPLICATION` (422).",
+  "type": "object",
+  "x-module": "user",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "tenant_members",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "tmb_",
+    "incrementing": false,
+    "model": "Academorix\\User\\Models\\TenantMember",
+    "interface": "Academorix\\User\\Contracts\\Data\\TenantMemberInterface",
+    "implements": ["Academorix\\User\\Contracts\\Data\\TenantMemberInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "is_default": "boolean",
+      "is_staff_only": "boolean",
+      "joined_at": "datetime",
+      "last_active_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["user_email", "user_display_name", "role_name", "tenant_name"],
+    "observers": ["TenantMemberObserver"],
+    "hidden": [],
+    "guarded": [],
+    "relations_note": "`user()` belongsTo User via user_id (CASCADE). `tenant()` belongsTo tenancy::Tenant via tenant_id (CASCADE). `role()` belongsTo access::Role via role_id (RESTRICT). `invitedBy()` belongsTo User via invited_by (SET NULL)."
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `tmb_<26 chars>`."
+      },
+      "user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "role_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "roles", "column": "id", "onDelete": "restrict" },
+        "description": "The role the User carries in this Tenant. RESTRICT so a role delete cannot silently downgrade every membership; admins must reassign first."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one row per user_id has is_default=true. Enforced by partial unique index + TenantMemberObserver."
+      },
+      "is_staff_only": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Excluded from athlete / parent membership counts. Set by the sports module (Wave 7) when the membership represents a staff role rather than an athlete/parent."
+      },
+      "joined_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "default": "now()",
+        "description": "Real join event timestamp. Distinct from created_at because import flows may backdate joined_at while created_at remains the audit-preserving insertion time."
+      },
+      "invited_by": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "The User who invited this member. Null for system-provisioned rows (e.g. tenant owner seeded on TenantProvisioned)."
+      },
+      "last_active_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Batched update every ~60s by UpdateLastActiveJob. Buffered in Redis between flushes to avoid per-request DB writes."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["user_id", "tenant_id"],
+        "unique": true,
+        "name": "tenant_members_user_tenant_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["user_id"],
+        "unique": true,
+        "name": "tenant_members_default_unique",
+        "predicate": "is_default = true AND deleted_at IS NULL",
+        "description": "Enforces exactly-one-default per user."
+      },
+      {
+        "columns": ["tenant_id", "role_id"],
+        "unique": false,
+        "name": "tenant_members_tenant_role_idx",
+        "description": "Roster scan by role on the admin surface."
+      },
+      {
+        "columns": ["user_id", "last_active_at"],
+        "unique": false,
+        "name": "tenant_members_user_activity_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "user_id",
+    "tenant_id",
+    "role_id",
+    "is_default",
+    "is_staff_only",
+    "joined_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tmb_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "role_id": { "type": "string", "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "is_default": { "type": "boolean" },
+    "is_staff_only": { "type": "boolean" },
+    "joined_at": { "type": "string", "format": "date-time" },
+    "invited_by": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "last_active_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "user_email": { "type": "string", "format": "email", "description": "Computed. From user->identity->email." },
+    "user_display_name": { "type": "string", "description": "Computed. From user->profile->display_name." },
+    "role_name": { "type": "string", "description": "Computed. From role->name." },
+    "tenant_name": { "type": "string", "description": "Computed. From tenant->name." },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["user_email", "user_display_name", "role_name", "tenant_name"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`tmb_<26>`)"]
+  }
+}

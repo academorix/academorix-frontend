@@ -1,0 +1,267 @@
+{
+  "id": "academorix://modules/mfa/config",
+  "$version": 1,
+  "title": "mfa — developer configuration",
+  "configFile": "config/mfa.php",
+  "envPrefix": "MFA_",
+  "description": "MFA-specific configuration. KMS-backed secret encryption keys are configured in identity/identity's `identity.mfa_secret.*` block (see identity/config.json §mfa_secret) — this module only owns the CHALLENGE + ENROLMENT protocol tuning, not the encryption substrate.",
+  "sections": {
+    "required_for_roles": {
+      "description": "Which roles automatically require MFA. When a User holds any listed role, `mfa.require_challenge_complete` middleware refuses their tenant-scoped requests until an MFA challenge completes for the current session.",
+      "keys": [
+        {
+          "path": "mfa.required_for_roles",
+          "type": "array<string>",
+          "default": ["owner", "admin", "billing_manager", "super_admin"],
+          "description": "Role slugs (any guard). Tenant admins can widen the list via settings (see settings.json) but cannot narrow below this default — compliance floor."
+        },
+        {
+          "path": "mfa.grace_days_after_enrollment",
+          "type": "int",
+          "env": "MFA_GRACE_DAYS",
+          "default": 7,
+          "description": "How long a newly-elevated User (freshly granted a role in `required_for_roles`) may access without enrolling MFA. 0 = enforced immediately (breaks role-promotion flows for users who need a few minutes to enrol). Compliance-adjustable via settings."
+        }
+      ]
+    },
+    "totp": {
+      "description": "RFC 6238 TOTP tuning. Defaults follow the RFC's most common shape — do not change these lightly, most authenticator apps hardcode the same defaults and mismatching values cause 'valid code refused' errors.",
+      "keys": [
+        {
+          "path": "mfa.totp.issuer",
+          "type": "string",
+          "env": "MFA_TOTP_ISSUER",
+          "default": "Academorix",
+          "description": "The issuer string that appears in the authenticator app's account list (e.g. 'Academorix (alice@example.com)'). Change per-tenant via a settings override to render the tenant's brand name."
+        },
+        {
+          "path": "mfa.totp.digits",
+          "type": "int",
+          "default": 6,
+          "description": "TOTP code length. 6 is the RFC 6238 default and every authenticator app supports it. Do not change."
+        },
+        {
+          "path": "mfa.totp.period_seconds",
+          "type": "int",
+          "default": 30,
+          "description": "TOTP code refresh period. 30s is the RFC 6238 default."
+        },
+        {
+          "path": "mfa.totp.algorithm",
+          "type": "string",
+          "default": "SHA1",
+          "enum": ["SHA1", "SHA256", "SHA512"],
+          "description": "HMAC hash function. SHA1 is the RFC 6238 default AND the only algorithm every authenticator app supports. SHA256/SHA512 provided for spec conformance but WILL BREAK popular authenticator apps (Google Authenticator supports only SHA1)."
+        },
+        {
+          "path": "mfa.totp.window",
+          "type": "int",
+          "default": 1,
+          "description": "Number of periods (before + after) the current time to accept for clock-skew tolerance. 1 = accept the previous, current, and next 30s window (90s total). Higher = more tolerance but weaker security."
+        },
+        {
+          "path": "mfa.totp.secret_length_bytes",
+          "type": "int",
+          "default": 20,
+          "description": "Random-secret length in bytes before base32 encoding. 20 bytes = 160 bits (RFC 6238 recommended). NIST 800-63B allows 80 bits minimum but recommends 128+; 160 is standard."
+        },
+        {
+          "path": "mfa.totp.preview_ttl_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "How long the round-1 enrolment preview stays in Redis before eviction. 5 minutes — enough for a user to open their authenticator app, scan, wait for one full period, and type the code."
+        }
+      ]
+    },
+    "recovery_codes": {
+      "description": "Recovery-code generation policy.",
+      "keys": [
+        {
+          "path": "mfa.recovery_codes.count",
+          "type": "int",
+          "default": 10,
+          "description": "Codes per generation event. 10 balances usability (enough for reasonable churn) vs risk (too many stored plaintext by the user's credential manager becomes a liability)."
+        },
+        {
+          "path": "mfa.recovery_codes.length",
+          "type": "int",
+          "default": 10,
+          "description": "Characters per code. 10 chars from a 32-character alphabet = 10 × log2(32) = 50 bits of entropy per code. Above NIST 800-63B's 20-bit minimum for a memorized secret; bcrypt-hashed at rest so brute force requires online guessing."
+        },
+        {
+          "path": "mfa.recovery_codes.alphabet",
+          "type": "string",
+          "default": "0123456789ABCDEFGHJKMNPQRSTVWXYZ",
+          "description": "Crockford base32 (excludes I/L/O/U to avoid ambiguity with 1/0). 32 characters."
+        },
+        {
+          "path": "mfa.recovery_codes.format_group_size",
+          "type": "int",
+          "default": 5,
+          "description": "Insert a `-` every N chars for readability (e.g. `AB3CD-9EFGH`). Zero = no separator. Purely presentational; the separator is stripped before hashing / comparison."
+        },
+        {
+          "path": "mfa.recovery_codes.low_water_threshold",
+          "type": "int",
+          "default": 3,
+          "description": "When remaining_count falls below this after a MfaRecoveryCodeConsumed, fire MfaBackupCodeCountLow (which dispatches the low-recovery-codes notification). Tenant admins can raise this via settings."
+        }
+      ]
+    },
+    "webauthn": {
+      "description": "WebAuthn (FIDO2) configuration.",
+      "keys": [
+        {
+          "path": "mfa.webauthn.enabled",
+          "type": "bool",
+          "env": "MFA_WEBAUTHN_ENABLED",
+          "default": true,
+          "description": "Master toggle. When false, WebAuthn endpoints refuse with 503 + WebauthnCredential registration is refused at the observer level."
+        },
+        {
+          "path": "mfa.webauthn.rp_name",
+          "type": "string",
+          "env": "MFA_WEBAUTHN_RP_NAME",
+          "default": "Academorix",
+          "description": "Human-readable relying-party name shown in the browser's authenticator UI. Tenant admins can override via settings to display their brand."
+        },
+        {
+          "path": "mfa.webauthn.rp_id",
+          "type": "string",
+          "env": "MFA_WEBAUTHN_RP_ID",
+          "default": null,
+          "description": "Relying-party identifier. Null = derive from the request's Host header (recommended for multi-tenant deployments). Explicitly set only when running behind a reverse proxy that mangles Host."
+        },
+        {
+          "path": "mfa.webauthn.require_resident_key",
+          "type": "bool",
+          "default": false,
+          "description": "Require the authenticator to create a resident key (usable without a username prompt — a.k.a. 'passkey'). Off by default because roaming keys (like classic YubiKeys) are non-resident. Set true for a pure-passkey tenant environment."
+        },
+        {
+          "path": "mfa.webauthn.user_verification",
+          "type": "string",
+          "default": "preferred",
+          "enum": ["required", "preferred", "discouraged"],
+          "description": "Whether the authenticator MUST verify the user (PIN, biometric, etc.). `required` = MFA becomes single-step (WebAuthn subsumes the password); `preferred` = ask if the authenticator supports it, accept if not; `discouraged` = classic one-tap. `preferred` is the safe default per W3C guidance."
+        },
+        {
+          "path": "mfa.webauthn.attestation_conveyance",
+          "type": "string",
+          "default": "none",
+          "enum": ["none", "indirect", "direct", "enterprise"],
+          "description": "Attestation preference. `none` = don't collect attestation (privacy-preserving; the default per W3C). `direct` = collect and verify (needed for compliance regimes that mandate attestation-based auditor lists like FIDO Alliance's Metadata Service)."
+        },
+        {
+          "path": "mfa.webauthn.timeout_ms",
+          "type": "int",
+          "default": 60000,
+          "description": "Browser-side timeout for the WebAuthn ceremony (register + assert). 60 seconds is standard; lower confuses users on slow biometric readers, higher is a poor UX."
+        },
+        {
+          "path": "mfa.webauthn.max_credentials_per_identity",
+          "type": "int",
+          "default": 10,
+          "description": "Cap on WebauthnCredential rows per Identity. 10 covers 'phone + laptop + backup hardware key + spare' comfortably. Hard cap — refuses registration with `WEBAUTHN_MAX_CREDENTIALS_REACHED` (422) at the observer level."
+        },
+        {
+          "path": "mfa.webauthn.retention_days_after_disable",
+          "type": "int",
+          "default": 90,
+          "description": "How long a disabled credential is retained before CleanupDisabledWebauthnCredentialsJob hard-deletes it. Retention supports post-incident audit — 'was credential X active at time T'."
+        }
+      ]
+    },
+    "challenge": {
+      "description": "Challenge-ledger tuning. The auth_mfa_challenges table is OWNED BY identity/auth; these keys shape the behaviour when mfa dispatches into it.",
+      "keys": [
+        {
+          "path": "mfa.challenge.ttl_minutes",
+          "type": "int",
+          "default": 5,
+          "description": "How long a challenge row is valid for verification. 5 minutes matches identity/auth's default; changing here should be coordinated with the sibling module."
+        },
+        {
+          "path": "mfa.challenge.max_attempts",
+          "type": "int",
+          "default": 3,
+          "description": "How many verify attempts a challenge row allows before invalidation. On third failure the challenge row is destroyed + the caller must restart from login."
+        },
+        {
+          "path": "mfa.challenge.cooldown_minutes_after_max",
+          "type": "int",
+          "default": 5,
+          "description": "After max_attempts exhausted, the caller cannot issue a fresh challenge for N minutes. Rate-limits attackers who cycle through challenges. Applies per-Identity."
+        }
+      ]
+    },
+    "step_up": {
+      "description": "Step-up authentication policy — the `mfa.require_recent_challenge` middleware reads these keys.",
+      "keys": [
+        {
+          "path": "mfa.step_up.sensitive_action_ttl_minutes",
+          "type": "int",
+          "env": "MFA_STEP_UP_TTL",
+          "default": 5,
+          "description": "How long after a successful MFA challenge a sensitive-write action (password change, MFA disable, recovery-code regen, webauthn-credential delete) is allowed without a fresh challenge. Short window balances UX (don't force N challenges during one admin session) vs security (stolen sessions age out fast)."
+        },
+        {
+          "path": "mfa.step_up.gated_actions",
+          "type": "array<string>",
+          "default": [
+            "auth.change_password",
+            "auth.rotate_mfa_secret",
+            "mfa.disable_totp",
+            "mfa.regenerate_recovery_codes",
+            "mfa.download_recovery_codes",
+            "mfa.webauthn_credentials.update",
+            "mfa.webauthn_credentials.delete",
+            "user.erase"
+          ],
+          "description": "Action IDs (from #[UsesTrait(HasMfa)]) that participate in the step-up gate. Enumerated here so the enforcement is declarative + auditable."
+        }
+      ]
+    },
+    "suspicious_activity": {
+      "description": "MfaSuspiciousActivityDetector tuning.",
+      "keys": [
+        {
+          "path": "mfa.suspicious_activity.window_minutes",
+          "type": "int",
+          "default": 15,
+          "description": "Rolling window over which failure counts + distinct-IPs are aggregated."
+        },
+        {
+          "path": "mfa.suspicious_activity.failure_threshold",
+          "type": "int",
+          "default": 5,
+          "description": "N failures within the window trips a signal."
+        },
+        {
+          "path": "mfa.suspicious_activity.distinct_ips_threshold",
+          "type": "int",
+          "default": 2,
+          "description": "Signal fires ONLY when the failures span N or more distinct IPs — reduces false positives from a legitimate user retyping."
+        },
+        {
+          "path": "mfa.suspicious_activity.notification_debounce_hours",
+          "type": "int",
+          "default": 4,
+          "description": "Once a suspicious-activity notification is dispatched, further suppress duplicate dispatches for N hours to avoid spam during an active attack. The underlying signal keeps firing (metrics + audit); only the user-facing notification is debounced."
+        }
+      ]
+    },
+    "commands": {
+      "description": "Console-command safety guards.",
+      "keys": [
+        {
+          "path": "mfa.commands.require_reason",
+          "type": "bool",
+          "env": "MFA_COMMANDS_REQUIRE_REASON",
+          "default": true,
+          "description": "When true, every mutating Artisan command (force-disable, regenerate-recovery-codes) must be invoked with --reason=<text> (audit-logged). Off in dev; on in staging + prod."
+        }
+      ]
+    }
+  }
+}

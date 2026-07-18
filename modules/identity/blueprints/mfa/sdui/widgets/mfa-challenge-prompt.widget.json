@@ -1,0 +1,159 @@
+{
+  "id": "academorix://modules/mfa/sdui/widgets/mfa-challenge-prompt",
+  "$version": 1,
+  "kind": "widget",
+  "name": "mfa-challenge-prompt",
+  "description": "The step-up modal prompt. Renders method-specific input: TOTP text input, WebAuthn button that triggers navigator.credentials.get(), recovery-code input with 'if you've lost your device' hint. Handles method-switch links.",
+  "props": {
+    "challenge_id": {
+      "type": "string",
+      "description": "The mfc_<26> challenge ID from POST /auth/mfa/challenge/initiate."
+    },
+    "initial_method": {
+      "type": "string",
+      "enum": ["totp", "webauthn", "recovery_code", "auto"],
+      "default": "auto",
+      "description": "Which method to present first. `auto` resolves to the caller's preferred method OR the strongest enrolled method."
+    },
+    "on_success": {
+      "type": "object",
+      "description": "Action to run after verification succeeds."
+    },
+    "on_max_attempts": {
+      "type": "object",
+      "description": "Action to run when attempts_remaining reaches 0."
+    }
+  },
+  "renders": {
+    "kind": "state-machine",
+    "initial_state": "select_method",
+    "states": {
+      "select_method": {
+        "kind": "conditional",
+        "when_available_methods": {
+          "single_method": {
+            "kind": "transition_to",
+            "target": "{{single_method}}"
+          },
+          "multiple_methods": {
+            "kind": "method-picker",
+            "options": [
+              {
+                "method": "webauthn",
+                "icon": "key",
+                "label": "Use passkey or security key",
+                "description": "Fastest — approve with a passkey or plug in your key.",
+                "recommended": true
+              },
+              {
+                "method": "totp",
+                "icon": "device-phone-mobile",
+                "label": "Use authenticator app",
+                "description": "Enter the 6-digit code from your authenticator app."
+              },
+              {
+                "method": "recovery_code",
+                "icon": "clipboard-document-list",
+                "label": "Use a recovery code",
+                "description": "For when your primary device isn't available.",
+                "warning": "Consumes one of your recovery codes."
+              }
+            ]
+          }
+        }
+      },
+      "webauthn": {
+        "kind": "javascript_orchestrator",
+        "orchestrator_id": "webauthn-assertion-ceremony",
+        "orchestrator_config": {
+          "challenge_id": "{{props.challenge_id}}",
+          "assertion_options_endpoint": "POST /api/v1/auth/mfa/challenge/{challenge_id}/assertion-options",
+          "verify_endpoint": "POST /api/v1/me/mfa/challenge/{challenge_id}/verify",
+          "on_success": "{{props.on_success}}",
+          "on_error": {
+            "NotAllowedError": { "kind": "transition_to", "target": "select_method" },
+            "MFA_CHALLENGE_INVALID_ASSERTION": { "kind": "transition_to", "target": "webauthn_failed" },
+            "MFA_CHALLENGE_ATTEMPTS_EXHAUSTED": "{{props.on_max_attempts}}"
+          }
+        },
+        "content": {
+          "helptext": "Approve the passkey prompt in your browser."
+        }
+      },
+      "totp": {
+        "kind": "form",
+        "endpoint": "POST /api/v1/me/mfa/challenge/{{props.challenge_id}}/verify",
+        "body_prefill": { "method": "totp" },
+        "fields": [
+          {
+            "name": "totp_code",
+            "control_type": "text",
+            "label": "6-digit code",
+            "auto_focus": true,
+            "input_mode": "numeric",
+            "auto_complete": "one-time-code",
+            "validation_rule": "valid_totp_code"
+          }
+        ],
+        "footer_link": {
+          "label": "Use a different method",
+          "action": { "kind": "transition_to", "target": "select_method" }
+        },
+        "on_success": "{{props.on_success}}",
+        "on_error": {
+          "MFA_CHALLENGE_INVALID_CODE": {
+            "kind": "inline-error",
+            "field": "totp_code",
+            "message": "That code didn't match. {{response.attempts_remaining}} attempts left."
+          },
+          "MFA_CHALLENGE_ATTEMPTS_EXHAUSTED": "{{props.on_max_attempts}}"
+        }
+      },
+      "recovery_code": {
+        "kind": "form",
+        "endpoint": "POST /api/v1/me/mfa/challenge/{{props.challenge_id}}/verify",
+        "body_prefill": { "method": "recovery_code" },
+        "warning_banner": {
+          "severity": "warning",
+          "message": "This will consume one of your recovery codes. You have {{caller.mfa.recovery_codes_remaining}} remaining."
+        },
+        "fields": [
+          {
+            "name": "recovery_code",
+            "control_type": "text",
+            "label": "Recovery code",
+            "auto_focus": true,
+            "input_mode": "text",
+            "auto_complete": "off",
+            "auto_capitalize": "characters",
+            "validation_rule": "valid_recovery_code_format",
+            "helptext": "10 characters (0-9 or A-Z, excluding I / L / O / U). The hyphen is optional."
+          }
+        ],
+        "footer_link": {
+          "label": "Try authenticator app instead",
+          "action": { "kind": "transition_to", "target": "totp" }
+        },
+        "on_success": "{{props.on_success}}",
+        "on_error": {
+          "MFA_CHALLENGE_INVALID_RECOVERY_CODE": {
+            "kind": "inline-error",
+            "field": "recovery_code",
+            "message": "That code didn't match or has already been used. {{response.attempts_remaining}} attempts left."
+          },
+          "MFA_CHALLENGE_ATTEMPTS_EXHAUSTED": "{{props.on_max_attempts}}"
+        }
+      },
+      "webauthn_failed": {
+        "kind": "notice",
+        "severity": "error",
+        "title": "Assertion failed",
+        "body": "Your authenticator didn't produce a valid response. Try again or use a different method.",
+        "actions": [
+          { "label": "Try again", "action": { "kind": "transition_to", "target": "webauthn" } },
+          { "label": "Different method", "action": { "kind": "transition_to", "target": "select_method" } }
+        ]
+      }
+    }
+  }
+}

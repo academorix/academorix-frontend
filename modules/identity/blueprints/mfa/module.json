@@ -1,0 +1,190 @@
+{
+  "$version": 1,
+  "name": "mfa",
+  "alias": "mfa",
+  "namespace": "Academorix\\Mfa",
+  "description": "Multi-factor authentication challenge protocols. Composes on top of identity/identity's MFA secret storage — this module OWNS the CHALLENGE + VERIFICATION lifecycle; the identity module owns SECRET STORAGE. Ships three challenge types: TOTP (RFC 6238 time-based codes, 30s period, 6-digit, SHA1 HMAC), WebAuthn (FIDO2 platform authenticator or roaming hardware key — used as a second factor only in Wave 1a per spec §12 non-goals), and recovery codes (10 single-use codes, 10 chars from a Crockford base32 alphabet ≈ 48 bits entropy per code, bcrypt-hashed at rest, plaintext returned ONCE at enrolment / regeneration). Every challenge transits the shared auth_mfa_challenges table (owned by identity/auth) — this module dispatches verification actions and manages device registrations (`webauthn_credentials` table). Enrolment flow is two-round: preview (generate secret, return once for QR display) → confirm (submit secret + verification code to prove the scan). Recovery codes are generated at first enrolment; consumable by any subsequent MFA challenge as a fallback when the TOTP device is unavailable. Constant-time comparisons throughout (`hash_equals()` for recovery codes, timing-safe TOTP window comparison, `hash_equals()` on the WebAuthn assertion challenge). KMS-backed secret encryption is delegated to identity/identity via `MfaSecretEncryptor`. This module is the PROTOCOL layer; identity/identity is the STORAGE substrate.",
+  "keywords": [
+    "mfa",
+    "2fa",
+    "totp",
+    "rfc6238",
+    "webauthn",
+    "fido2",
+    "recovery-codes",
+    "challenge",
+    "authenticator",
+    "hardware-key",
+    "second-factor",
+    "constant-time",
+    "step-up-authentication",
+    "aal2"
+  ],
+  "priority": 20,
+  "providers": [
+    "Academorix\\Mfa\\Providers\\MfaServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "identity"
+  ],
+  "extendedBy": [
+    "auth",
+    "user",
+    "platform-user"
+  ],
+  "contributes": {
+    "traits": [
+      "HasMfa"
+    ],
+    "attributes": [
+      "AsMfaListener"
+    ],
+    "blueprints": [
+      "webauthn-credentials"
+    ],
+    "middleware": [
+      "mfa.require_challenge_complete",
+      "mfa.require_recent_challenge"
+    ],
+    "events": [
+      "MfaEnrollmentPreviewIssued",
+      "MfaEnrollmentConfirmed",
+      "MfaEnrollmentFailed",
+      "MfaChallengeIssued",
+      "MfaChallengeSucceeded",
+      "MfaChallengeFailed",
+      "MfaRecoveryCodeConsumed",
+      "MfaRecoveryCodesRegenerated",
+      "WebauthnCredentialRegistered",
+      "WebauthnCredentialRenamed",
+      "WebauthnCredentialDisabled",
+      "WebauthnCredentialDeleted",
+      "MfaBackupCodeCountLow",
+      "MfaDisabled"
+    ],
+    "policies": [
+      "MfaPolicy",
+      "WebauthnCredentialPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "mfa:list-methods",
+      "mfa:describe-method",
+      "mfa:force-disable",
+      "mfa:regenerate-recovery-codes",
+      "mfa:list-webauthn-credentials",
+      "mfa:purge-unconfirmed",
+      "mfa:audit-suspicious-activity"
+    ],
+    "jobs": [
+      "PurgeUnconfirmedEnrollmentsJob",
+      "NotifyLowRecoveryCodesJob",
+      "CleanupDisabledWebauthnCredentialsJob"
+    ],
+    "notifications": [
+      "MfaEnrolledConfirmationNotification",
+      "MfaDisabledConfirmationNotification",
+      "MfaRecoveryCodeConsumedNotification",
+      "LowRecoveryCodesRemainingNotification",
+      "MfaChallengeSuspiciousActivityNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "WebauthnCredentialObserver",
+      "MfaChallengeObserver"
+    ],
+    "rules": [
+      "valid_totp_code",
+      "valid_recovery_code_format",
+      "valid_webauthn_credential_id"
+    ],
+    "casts": [
+      "WebauthnCredentialId",
+      "WebauthnPublicKey"
+    ],
+    "views": [],
+    "lang": [
+      "mfa"
+    ],
+    "config": [
+      "mfa"
+    ],
+    "macros": [],
+    "bindings": [
+      "TotpChallenger",
+      "WebauthnChallenger",
+      "RecoveryCodeChallenger",
+      "MfaEnrollmentPreviewIssuer",
+      "MfaEnrollmentConfirmer",
+      "MfaDeviceRegistrar",
+      "MfaChallengeDispatcher",
+      "RecoveryCodeGenerator",
+      "TotpSecretGenerator",
+      "WebauthnAssertionVerifier",
+      "WebauthnAttestationVerifier",
+      "MfaSuspiciousActivityDetector"
+    ],
+    "resources": [
+      "mfa-method",
+      "webauthn-credential"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "pragmarx/google2fa (TOTP RFC 6238 implementation)",
+      "web-auth/webauthn-lib (FIDO2 attestation + assertion verification per W3C Level 2 spec)"
+    ],
+    "rationale": "We do not reimplement RFC 6238 or the W3C WebAuthn spec — we wrap the vetted community packages inside our `TotpChallenger` / `WebauthnAssertionVerifier` / `WebauthnAttestationVerifier` services. The wrappers add (a) `hash_equals()`-based constant-time comparisons around the third-party output, (b) rate-limit + challenge-ledger integration via identity/auth's `auth_mfa_challenges` table, (c) `MfaChallengeFailed` / `MfaChallengeSucceeded` domain events, and (d) sign-count monotonic replay-protection on WebAuthn credentials."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-audience MFA self-service surface. Every route requires an authenticated Sanctum PAT and an active tenant context.",
+      "routes": [
+        "GET /api/v1/me/mfa",
+        "POST /api/v1/me/mfa/totp/enroll/preview",
+        "POST /api/v1/me/mfa/totp/enroll",
+        "DELETE /api/v1/me/mfa/totp",
+        "POST /api/v1/me/mfa/webauthn/register/options",
+        "POST /api/v1/me/mfa/webauthn/register",
+        "GET /api/v1/me/mfa/webauthn/credentials",
+        "PATCH /api/v1/me/mfa/webauthn/credentials/{id}",
+        "DELETE /api/v1/me/mfa/webauthn/credentials/{id}",
+        "POST /api/v1/me/mfa/recovery-codes/regenerate",
+        "POST /api/v1/me/mfa/recovery-codes/download",
+        "POST /api/v1/me/mfa/challenge/{challenge_id}/verify"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin surface for support + emergency operations. Every write path is audit-critical and requires a `--reason` argument (or JSON `reason` field).",
+      "routes": [
+        "GET /api/v1/platform/mfa/methods/{user}",
+        "POST /api/v1/platform/mfa/force-disable/{user}",
+        "POST /api/v1/platform/mfa/regenerate-recovery-codes/{user}"
+      ]
+    }
+  },
+  "co_ownership_boundary": {
+    "identity_module_owns": [
+      "Identity.mfa_secret_encrypted (the encrypted TOTP shared secret at rest)",
+      "Identity.mfa_recovery_codes_hashed (bcrypt-hashed recovery codes in a JSONB array on the Identity row)",
+      "MfaSecretEncryptor service (KMS envelope encryption / decryption / rotation)",
+      "EncryptedMfaSecret + HashedRecoveryCodes casts (transparent DB read/write)",
+      "MfaEnrolled + MfaDisabled events (fired ON the Identity row when enrolment is confirmed OR fully disabled)"
+    ],
+    "mfa_module_owns": [
+      "Challenge dispatch across TOTP / WebAuthn / recovery-code protocols",
+      "TOTP verification (RFC 6238 window comparison, drift tolerance)",
+      "WebAuthn attestation (registration) + assertion (login) verification",
+      "Recovery-code consumption protocol (constant-time compare + atomic single-use removal)",
+      "`webauthn_credentials` table + WebauthnCredential model",
+      "MfaChallengeIssued / MfaChallengeSucceeded / MfaChallengeFailed events (per-challenge lifecycle)",
+      "MfaEnrollmentPreviewIssued / MfaEnrollmentConfirmed / MfaEnrollmentFailed events (per-enrolment lifecycle)",
+      "Suspicious-activity detection + notification dispatch",
+      "The step-up middleware (mfa.require_challenge_complete / mfa.require_recent_challenge)",
+      "The `/me/mfa/*` HTTP surface (tenant self-service) + `/platform/mfa/*` HTTP surface (support tooling)"
+    ],
+    "shared_table_note": "The `auth_mfa_challenges` table is OWNED BY identity/auth (it's the challenge ledger for every authentication flow, not just MFA). This module dispatches CREATE / VERIFY / EXPIRE operations against that table via identity/auth's `MfaChallengeRepository` contract but does NOT own the table's schema or lifecycle."
+  }
+}

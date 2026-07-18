@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/service-accounts/macros",
+  "$version": 1,
+  "title": "service-accounts \u2014 published macros",
+  "description": "This module publishes NO macros. Every SA-related capability is exposed via a service binding (SecretRotator, ServiceAccountJwtIssuer, DormantAccountDetector, ServiceAccountFingerprinter) OR a validation rule (valid_service_account_name, valid_kid_format), never as a global helper or Blueprint extension.",
+  "namespace_note": "N/A \u2014 no macros contributed.",
+  "macros": [],
+  "rationale": [
+    "Every consumer of the SA substrate goes through the platform-admin HTTP surface OR the token-exchange endpoint OR the DI-bound repository \u2014 there is no legitimate use case for a Blueprint::service_account_fields macro because the `service_accounts` table is owned by exactly ONE migration in this module.",
+    "The pattern set by `identity::Blueprint::identity_fields` exists because MULTIPLE downstream models (User, PlatformUser) legitimately reuse the credential-column shape. No downstream table reuses the SA-column shape; every machine credential lives on this single table."
+  ]
+}

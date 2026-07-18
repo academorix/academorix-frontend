@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/user/metrics",
+  "$version": 1,
+  "title": "user \u2014 OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.user",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["status", "source", "outcome"],
+    "forbiddenAsLabels": ["user_id", "identity_id", "email", "phone_e164", "tenant_id"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.user.provisioned.total",
+      "kind": "counter",
+      "unit": "users",
+      "labels": ["source"],
+      "description": "source: invitation / self_registration / admin_created / sso_grant / import."
+    },
+    {
+      "name": "academorix.user.provision.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 200, 1000, 5000, 30000],
+      "labels": ["source"],
+      "description": "End-to-end provisioning latency (create Identity + Profile + User + TenantMember + fire events). P95 target < 500ms; P99 < 2s."
+    },
+    {
+      "name": "academorix.user.suspended.total",
+      "kind": "counter",
+      "unit": "users",
+      "labels": []
+    },
+    {
+      "name": "academorix.user.erased.total",
+      "kind": "counter",
+      "unit": "users",
+      "labels": ["hard_or_soft"],
+      "description": "hard_or_soft: soft (deleted_at set) / hard (PurgeErasedUsersJob completed)."
+    },
+    {
+      "name": "academorix.user.active.count",
+      "kind": "gauge",
+      "unit": "users",
+      "labels": ["status"],
+      "description": "Point-in-time count of Users per status. Populated hourly by a metrics-collector task."
+    },
+    {
+      "name": "academorix.user.tenant_member.count",
+      "kind": "gauge",
+      "unit": "memberships",
+      "labels": [],
+      "description": "Global count of TenantMember rows. Feeds the multi-tenant-usage dashboard."
+    },
+    {
+      "name": "academorix.user.tenant_switch.total",
+      "kind": "counter",
+      "unit": "switches",
+      "labels": [],
+      "description": "How often users switch active tenant via `/me/tenants/{tenant}/switch`."
+    },
+    {
+      "name": "academorix.user.me_request.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 5, 20, 100, 500],
+      "labels": [],
+      "description": "`GET /api/v1/me` latency. P99 target < 100ms because the SPA blocks on it for the initial paint."
+    },
+    {
+      "name": "academorix.user.profile_update.total",
+      "kind": "counter",
+      "unit": "updates",
+      "labels": ["outcome"],
+      "description": "outcome: success / rejected_pii / rejected_age / rejected_locale."
+    },
+    {
+      "name": "academorix.user.avatar_upload.total",
+      "kind": "counter",
+      "unit": "uploads",
+      "labels": ["outcome"],
+      "description": "outcome: success / rejected_size / rejected_type / rejected_entitlement."
+    },
+    {
+      "name": "academorix.user.avatar_upload.size_kb",
+      "kind": "histogram",
+      "unit": "kb",
+      "buckets": [64, 256, 1024, 2048, 8192],
+      "labels": [],
+      "description": "Distribution of accepted avatar sizes."
+    },
+    {
+      "name": "academorix.user.last_active_flush.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [10, 100, 1000, 5000],
+      "labels": [],
+      "description": "UpdateLastActiveJob flush latency. Sustained > 5s indicates the buffer is oversized."
+    },
+    {
+      "name": "academorix.user.purge_pending.count",
+      "kind": "gauge",
+      "unit": "users",
+      "labels": [],
+      "description": "Users past their erasure hold window that haven't been hard-deleted yet. Feeds the `user-purge-queue-drained` health probe."
+    }
+  ]
+}

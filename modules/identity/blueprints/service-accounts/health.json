@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/service-accounts/health",
+  "$version": 1,
+  "title": "service-accounts \u2014 health probes",
+  "probes": [
+    {
+      "name": "service-account-db-writable",
+      "class": "Academorix\\ServiceAccount\\Health\\Probes\\DbWritableProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `service_accounts` table is reachable AND writable. Performs a no-op INSERT + ROLLBACK inside a transaction to verify DDL / DML privileges. Read-only DB aborts boot because rotation + disable writes would fail silently at runtime.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "service-account-schema-current",
+      "class": "Academorix\\ServiceAccount\\Health\\Probes\\SchemaCurrentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `service_accounts` table has every column the module expects (id, application_id, tenant_id, name, description, is_enabled, signer_kid, secret_hash, secret_rotated_at, expires_at, last_used_at, last_used_ip, status, metadata, audit + timestamps). Catches unmigrated environments before they crash on first exchange.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "service-account-hs256-key-configured",
+      "class": "Academorix\\ServiceAccount\\Health\\Probes\\Hs256KeyConfiguredProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "At least one enabled row exists in `auth::jwt_signing_keys` with `algorithm=HS256` AND `LENGTH(secret_material) >= 32`. Without it, SA creation succeeds but token-exchange fails on every request. Refuses production boot when no matching key exists.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "service-account-application-fk-reachable",
+      "class": "Academorix\\ServiceAccount\\Health\\Probes\\ApplicationFkReachableProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The `applications` table is queryable (SA creation depends on validating `application_id`). Failure indicates a broken dependency chain \u2014 the `platform/application` module hasn't finished booting or the FK target table is missing.",
+      "timeoutMs": 300
+    },
+    {
+      "name": "service-account-rotation-scheduler-alive",
+      "class": "Academorix\\ServiceAccount\\Health\\Probes\\RotationSchedulerAliveProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "NotifyRotationDueJob has run within the last 8 days (weekly cadence + 1-day slack). Failure indicates the queue worker is stuck OR the scheduler isn't triggering; SAs approaching expiry may miss their rotation warning.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "service-account-purge-scheduler-alive",
+      "class": "Academorix\\ServiceAccount\\Health\\Probes\\PurgeSchedulerAliveProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "PurgeExpiredServiceAccountsJob has run within the last 25 hours. Missed runs risk breach of the SA compliance floor (SOC 2 CC6.7 \u2014 prompt access removal on expiry).",
+      "timeoutMs": 500
+    },
+    {
+      "name": "service-account-dormant-detector-alive",
+      "class": "Academorix\\ServiceAccount\\Health\\Probes\\DormantDetectorAliveProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "DetectDormantServiceAccountJob has run within the last 8 days. Non-critical (dormant reporting is a hygiene metric, not a security-critical control), but sustained failure degrades the credential-inventory-cleanup workflow.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "service-account-fingerprint-cache-reachable",
+      "class": "Academorix\\ServiceAccount\\Health\\Probes\\FingerprintCacheReachableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "The Redis cache backing the fingerprint tuple store + baseline-rate averages is reachable AND supports SortedSet operations. Failure = SuspiciousServiceAccountActivityNotification will never dispatch (fingerprinter can't compute deltas). Falls back to policy-only fingerprint checks (novel-tuple-only, no rate signal).",
+      "timeoutMs": 500
+    }
+  ]
+}

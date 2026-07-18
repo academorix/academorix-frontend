@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/identity/listeners",
+  "$version": 1,
+  "title": "identity \u2014 subscribed events",
+  "description": "Identity listeners are RARE by design \u2014 the module is a substrate, not an event-consumer. The few listeners here connect Identity to the tenancy lifecycle (erasure cascading) and the identity/auth flows (session revocation on credential mutation).",
+  "listeners": [
+    {
+      "event": "user::UserProvisioned",
+      "listener": "Academorix\\Identity\\Listeners\\NoOpOnUserProvisioned",
+      "queue": null,
+      "purpose": "Deliberately a no-op. Documented to make explicit that Identity does NOT eagerly react to User provisioning. If we later need reciprocal indexing (e.g. cache invalidation when a User row appears), the listener lives here \u2014 today the User \u2192 Identity FK is enough."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Identity\\Listeners\\MaybeMarkIdentityForErasure",
+      "queue": "notifications-critical",
+      "purpose": "When the LAST User referencing an Identity is erased AND the caller signals `cascade_identity=true` (rare \u2014 typically GDPR-flagged requests), soft-delete the Identity. Idempotent \u2014 an Identity with no inbound rows and no explicit cascade flag stays put (it may be reactivated by a fresh registration on the same email during the hold-period)."
+    },
+    {
+      "event": "identity::PasswordChanged",
+      "listener": "Academorix\\Identity\\Listeners\\CyclePasswordHistoryIndex",
+      "queue": null,
+      "purpose": "Synchronous listener that verifies the password_history_hashed rolling window was correctly trimmed to `identity.password.history_size` in the same transaction. Emits a warning metric if the array grew unbounded (defensive \u2014 usually the observer already handles this)."
+    },
+    {
+      "event": "identity::PasswordChanged",
+      "listener": "Academorix\\Identity\\Listeners\\InvalidateIdentityLookupCache",
+      "queue": null,
+      "purpose": "Synchronous cache eviction on password change so a request in flight can't reuse a stale cached row for authentication."
+    },
+    {
+      "event": "identity::IdentityLocked",
+      "listener": "Academorix\\Identity\\Listeners\\CheckForSuspiciousLoginPattern",
+      "queue": "notifications-critical",
+      "purpose": "Decides whether the lockout warrants a SuspiciousLoginNotification. Signals: (a) request-IP is novel for this Identity in the last 30 days, (b) failed_attempts_count crossed the threshold in under 60 seconds. Both conditions true \u2192 dispatch."
+    },
+    {
+      "event": "compliance::TenantErasureRequested",
+      "listener": "Academorix\\Identity\\Listeners\\EnumerateIdentitiesForCascadingErasure",
+      "queue": "notifications-critical",
+      "purpose": "When a Tenant is being erased (compliance-driven full-tenant delete), enumerate every Identity whose ONLY inbound User is inside the erased Tenant \u2014 those Identities can be soft-deleted alongside. Identities with User rows in other Tenants stay put."
+    },
+    {
+      "event": "kms::KeyRotated",
+      "listener": "Academorix\\Identity\\Listeners\\ScheduleMfaSecretRotation",
+      "queue": "notifications",
+      "purpose": "When the KMS provider rotates the key referenced by `identity.mfa_secret.kms.key_id`, schedule a background re-encryption sweep (batched \u2014 the `identity:rotate-mfa-secret` command in bulk). Idempotent \u2014 secrets already encrypted under the new key are skipped."
+    }
+  ],
+  "notes": [
+    "The listeners above run on the queue names declared. Retry policy is inherited from the queue's default policy (3 tries, exponential backoff).",
+    "Every listener is idempotent by design so a retry after partial success doesn't double-fire downstream effects."
+  ]
+}

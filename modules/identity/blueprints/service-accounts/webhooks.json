@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/service-accounts/webhooks",
+  "$version": 1,
+  "title": "service-accounts \u2014 webhooks",
+  "description": "service-accounts DISPATCHES no outbound webhooks. Every lifecycle event is consumed by internal listeners (notifications, activity, observability). No tenant-configurable webhook stream fires on SA state changes \u2014 that would leak inter-service credential lifecycle metadata to third parties, a compromise surface with no matching product win.",
+  "outbound_webhook_kinds": [],
+  "inbound_webhook_kinds": [
+    {
+      "name": "kms.key.rotated",
+      "description": "Optional AWS EventBridge integration (Wave 1c \u2014 not shipping in Wave 1a HS256 baseline). When Wave 1c introduces RS256 keys hosted on AWS KMS, EventBridge notifies the app on KMS-driven key rotation. Received event triggers the `auth::JwtSigningKeyRotator` service which cascades to this module's `HandleSignerKidRotation` listener.",
+      "provider": "aws-kms",
+      "handler": "Academorix\\ServiceAccount\\Listeners\\HandleSignerKidRotation (via auth::JwtSigningKeyRotated event)",
+      "required": false,
+      "notes": "Best-effort. Missing the event is not catastrophic \u2014 the auth module also runs a periodic rotation-check cron. In Wave 1a HS256 baseline, key material is Doppler-backed + rotated via ops runbook; no external webhook needed."
+    }
+  ],
+  "rationale": [
+    "SA lifecycle events (created, rotated, expired, disabled) carry structured references to internal identity graph state (service_account_id, application_id, signer_kid). Exposing these to a tenant-configurable webhook allows a compromised or misconfigured tenant webhook receiver to correlate machine credentials across their tenancy \u2014 a compromise surface without a matching product win.",
+    "Tenants who legitimately need cross-system machine-credential sync should use future SCIM (deferred Wave 1c) or a dedicated integration module with contractual redaction obligations, not a general webhook.",
+    "Suspicious-activity + rotation-due notifications DO ship to tenant-adjacent recipients (Application owners), but as user-facing notifications through the notifications module \u2014 not as machine-parseable webhook payloads."
+  ]
+}

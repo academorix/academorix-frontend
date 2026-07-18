@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/auth/schemas/auth-email-verification",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "EmailVerification",
+  "description": "Email-ownership verification token. Issued at registration and on email change. Bound to a specific Identity via identity_id. 24-hour TTL. Idempotent \u2014 an already-consumed token for an already-verified Identity returns success.",
+  "type": "object",
+  "x-module": "auth",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "auth_email_verifications",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "aev_",
+    "incrementing": false,
+    "model": "Academorix\\Auth\\Models\\EmailVerification",
+    "traits": ["HasFactory", "HasUlids", "HasUserstamps", "HasActivityLog", "Filterable"],
+    "casts": {
+      "expires_at": "datetime",
+      "consumed_at": "datetime"
+    },
+    "appends": ["is_expired", "is_consumed"],
+    "hidden": ["token_hash"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "identity_id": { "type": "string", "length": 30, "nullable": false, "description": "FK to identities.id ON DELETE CASCADE." },
+      "token_hash": { "type": "text", "nullable": false, "description": "SHA-256 hash. Plaintext returned once in the emailed verification link." },
+      "reason": { "type": "string", "nullable": false, "description": "'registration' | 'email_change' | 'resend'. Passed to EmailVerificationRequested event payload." },
+      "expires_at": { "type": "timestamptz", "nullable": false },
+      "consumed_at": { "type": "timestamptz", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["token_hash"], "unique": true, "name": "auth_email_verifications_hash_unique" },
+      { "columns": ["identity_id"], "unique": false, "name": "auth_email_verifications_identity_idx" },
+      { "columns": ["expires_at"], "unique": false, "predicate": "consumed_at IS NULL", "name": "auth_email_verifications_active_expiry_idx" }
+    ]
+  },
+  "required": ["id", "identity_id", "token_hash", "reason", "expires_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^aev_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "identity_id": { "type": "string", "pattern": "^idn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "reason": { "type": "string", "enum": ["registration", "email_change", "resend"] },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "consumed_at": { "type": ["string", "null"], "format": "date-time" },
+    "is_expired": { "type": "boolean" },
+    "is_consumed": { "type": "boolean" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "none",
+    "note": "EmailVerification is NEVER returned to the client. Token plaintext is included ONCE in the emailed verification link.",
+    "never_projected": ["token_hash"]
+  }
+}

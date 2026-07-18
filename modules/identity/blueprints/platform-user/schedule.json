@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/platform-user/schedule",
+  "$version": 1,
+  "title": "platform-user \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "platform-user-offboarding-sla-check",
+      "command": "platform-user:offboarding-sla-check",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly: scan platform_users rows with status='offboarded' AND deleted_at + `platform-user.offboarding.sla_hours` < now() where the RevokePlatformUserAccessJob metric has NOT emitted successfully. Any hit pages PagerDuty via the on-call transport + writes a critical audit row. Zero hits is the healthy state."
+    },
+    {
+      "name": "platform-user-retention-purge",
+      "command": "queue:dispatch",
+      "arguments": ["Academorix\\PlatformUser\\Jobs\\PurgeOffboardedPlatformUsersJob"],
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 04:00 UTC: dispatch PurgeOffboardedPlatformUsersJob to hard-delete PlatformUser rows past the 90-day retention hold. Weekly cadence is enough because the retention window is long \u2014 a delay of up to 7 days beyond the 90th day is compliance-safe."
+    },
+    {
+      "name": "platform-user-onboarding-reminders",
+      "command": "platform-user:onboarding-reminders",
+      "cron": "0 10 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 10:00 UTC: scan platform_users rows with status='pending' AND days-since-hire matches `platform-user.onboarding.checklist_reminder_days`. Dispatch reminder notifications to the pending staffer + their manager. Escalate to super_admin when days-since-hire >= `platform-user.onboarding.escalate_after_days`."
+    },
+    {
+      "name": "platform-user-mfa-coverage-probe",
+      "command": "platform-user:mfa-coverage-check",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 minutes: compute the ratio of active PlatformUsers with mfa_secret_encrypted NOT NULL on their Identity. Emit the `academorix.platform_user.mfa.coverage_ratio` gauge. Ratio < 1.0 alerts security within one polling interval."
+    },
+    {
+      "name": "platform-user-active-headcount-metric",
+      "command": "platform-user:emit-active-headcount",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly: emit `academorix.platform_user.active.count` gauge per department. Cheap query; feeds the ops dashboard."
+    },
+    {
+      "name": "platform-user-on-call-warmup",
+      "command": "platform-user:on-call-warmup",
+      "cron": "*/1 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute (when platform-user.on_call.enabled=true): resolve current + next shift via OnCallResolver, refreshing the 60s cache pro-actively so the on-call escalation critical path never pays the resolver round-trip. Skipped when the resolver is disabled."
+    },
+    {
+      "name": "platform-user-manager-integrity-scan",
+      "command": "platform-user:manager-integrity-scan",
+      "cron": "0 6 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 06:00 UTC: run the ManagerIntegrityProbe as a scheduled task (in addition to the readiness probe endpoint). Any hit writes an audit row + emits an alert. Guards against a slow drift where an admin offboards a manager without reassigning their reports first."
+    }
+  ]
+}

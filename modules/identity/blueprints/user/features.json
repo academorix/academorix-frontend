@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/user/features",
+  "$version": 1,
+  "title": "user \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features"
+  },
+  "features": [
+    {
+      "key": "user.core",
+      "displayName": "User accounts",
+      "description": "Base capability. Always on across every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "user.multi_tenant",
+      "displayName": "Tenant switcher",
+      "description": "Users can hold TenantMember rows on more than one Tenant within the same Application. Off on small tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "user.avatar_upload",
+      "displayName": "Profile picture upload",
+      "description": "Users can upload a Profile.avatar_url. Available across all tiers; per-tier size caps come from `avatar_upload` entitlement.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "user.locale_override",
+      "displayName": "Per-user locale",
+      "description": "Users can override the tenant's default_locale via Profile.locale. Off on small tier \u2014 medium+ users pick their own.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "user.bulk_invite",
+      "displayName": "CSV bulk invite",
+      "description": "Admins can upload a CSV to invite many users at once. Consumes `bulk_user_provision` quota. Off on small tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "user.athlete_portal",
+      "displayName": "Athlete self-service portal",
+      "description": "Enables the athlete-with-login flow (Wave 7 sports module wires `Athlete.user_id`). Gated by compliance floor per §5 \u2014 tenants in COPPA regions cannot enable for minors under 13.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "user.profile_update_confirmation",
+      "displayName": "Profile-update confirmation email",
+      "description": "Sends a confirmation email when the User's Profile changes. Off by default; tenants flip on to detect account-takeover attempts.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "user.gdpr_erasure_ui",
+      "displayName": "Self-service GDPR erasure",
+      "description": "Adds a 'delete my account' button in the /me settings page. Requires `compliance.gdpr.enabled` on the tenant's region.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

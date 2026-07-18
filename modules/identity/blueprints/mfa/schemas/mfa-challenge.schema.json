@@ -1,0 +1,164 @@
+{
+  "id": "academorix://modules/mfa/schemas/mfa-challenge",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MfaChallenge",
+  "description": "One in-flight MFA challenge — the row in the shared auth_mfa_challenges ledger (owned by identity/auth). Ephemeral by design (5-minute TTL, hard-purged on expiry or consumption). Referenced here for documentation completeness — this module dispatches CREATE / VERIFY / EXPIRE against the ledger but does NOT own the schema.",
+  "type": "object",
+  "x-module": "mfa (consumer) + auth (owner)",
+  "x-ownership": {
+    "owner": "identity/auth",
+    "consumer": "mfa",
+    "description": "The auth_mfa_challenges table is a SHARED LEDGER for every authentication-related challenge (MFA, password-reset, email-verification). This module (mfa) uses only the MFA subset — rows where method IN ('totp', 'webauthn', 'recovery_code'). Password-reset + email-verification challenges are handled by identity/auth directly.",
+    "repository_binding": "Academorix\\Auth\\Contracts\\MfaChallengeRepositoryInterface (bound in identity/auth); mfa module injects this to CREATE / VERIFY / EXPIRE / INVALIDATE challenges."
+  },
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "auth_mfa_challenges",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mfc_",
+    "incrementing": false,
+    "model": "Academorix\\Auth\\Models\\MfaChallenge",
+    "interface": "Academorix\\Auth\\Contracts\\Data\\MfaChallengeInterface",
+    "note": "The MODEL lives in identity/auth. This schema documents the shape mfa sees when reading through the repository contract."
+  },
+  "x-database": {
+    "engine": "postgres",
+    "description": "Ephemeral ledger table. Rows are hard-purged on expiry (`expires_at < now()`) or consumption (successful verify or max_attempts exhausted). No SoftDeletes — retention is via activity_log entries for MfaChallengeSucceeded / MfaChallengeFailed.",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `mfc_<26 chars>`. Used as the challenge_id path parameter on POST /me/mfa/challenge/{challenge_id}/verify."
+      },
+      "identity_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "identities",
+          "column": "id",
+          "onDelete": "cascade"
+        },
+        "description": "FK to identities.id. Resolves the caller for constant-time secret lookup."
+      },
+      "method": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: totp / webauthn / recovery_code — dispatches to the right challenger at verify time."
+      },
+      "state": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / succeeded / failed / expired / invalidated."
+      },
+      "webauthn_challenge": {
+        "type": "bytea",
+        "nullable": true,
+        "description": "32-byte random challenge nonce for WebAuthn method (per W3C spec § 5.1.3 step 5). Null for other methods."
+      },
+      "webauthn_credential_id_hint": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "webauthn_credentials",
+          "column": "id",
+          "onDelete": "set null"
+        },
+        "description": "Optional hint for which WebauthnCredential is expected to answer this challenge. Null = any credential registered on the Identity is acceptable."
+      },
+      "attempts_remaining": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Decrement per failed verify. When zero, challenge is invalidated + caller must restart. Default from config('mfa.challenge.max_attempts') = 3."
+      },
+      "request_ip": {
+        "type": "inet",
+        "nullable": true,
+        "description": "IP that issued the challenge. Fed into MfaSuspiciousActivityDetector's rolling window on any subsequent MfaChallengeFailed."
+      },
+      "user_agent": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Truncated User-Agent for audit trail."
+      },
+      "issued_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Creation timestamp."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Issued_at + config('mfa.challenge.ttl_minutes'). Rows past this are hard-purged."
+      },
+      "consumed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Timestamp of successful verify. When non-null, the row cannot be verified again — atomic single-use."
+      },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["identity_id", "state"],
+        "unique": false,
+        "name": "auth_mfa_challenges_identity_state_idx"
+      },
+      {
+        "columns": ["expires_at"],
+        "unique": false,
+        "name": "auth_mfa_challenges_expiry_scan_idx",
+        "predicate": "state IN ('pending', 'expired')",
+        "description": "Speeds up the identity/auth-owned PurgeExpiredMfaChallengesJob scan."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "identity_id",
+    "method",
+    "state",
+    "attempts_remaining",
+    "issued_at",
+    "expires_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mfc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "identity_id": { "type": "string", "pattern": "^idn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "method": { "type": "string", "enum": ["totp", "webauthn", "recovery_code"] },
+    "state": {
+      "type": "string",
+      "enum": ["pending", "succeeded", "failed", "expired", "invalidated"]
+    },
+    "webauthn_credential_id_hint": {
+      "type": ["string", "null"],
+      "pattern": "^wac_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "attempts_remaining": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "request_ip": { "type": ["string", "null"] },
+    "user_agent": { "type": ["string", "null"], "maxLength": 255 },
+    "issued_at": { "type": "string", "format": "date-time" },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "consumed_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "note": "The MfaChallenge row is NEVER returned in full to the caller. The verify endpoint returns a MfaMethodsSummary + updated session state; the initiate endpoint (owned by identity/auth) returns only the challenge_id + method + expires_at. Fields like webauthn_challenge (bytea) are for server-side use only."
+  }
+}

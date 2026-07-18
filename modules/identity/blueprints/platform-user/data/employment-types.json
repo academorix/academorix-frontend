@@ -1,0 +1,53 @@
+{
+  "$version": 1,
+  "title": "EmploymentType enum seed",
+  "description": "Canonical employment-type taxonomy. Consumed at boot by `EmploymentType` enum registration + by the HirePlatformUserInput validator. Employment type drives retention treatment (contractors vs full-time have distinct expected retention windows) + on-call eligibility (temporary staff are excluded from PagerDuty rotation by default).",
+  "columns_note": "Fields on each row: `key` (enum member, stable), `display_name` (human-readable label), `slug` (URL-safe form), `sort_order` (picker sort ascending), `eligible_for_on_call` (default rotation membership hint), `default_pat_ttl_seconds` (Sanctum PAT TTL override \u2014 shorter for contractors), `retention_hold_days_override` (retention hold override; null = use module default of 90 days).",
+  "employment_types": [
+    {
+      "key": "full_time",
+      "display_name": "Full-time",
+      "slug": "full_time",
+      "sort_order": 1,
+      "eligible_for_on_call": true,
+      "default_pat_ttl_seconds": 3600,
+      "retention_hold_days_override": null,
+      "description": "Standard permanent employee. Default choice."
+    },
+    {
+      "key": "part_time",
+      "display_name": "Part-time",
+      "slug": "part_time",
+      "sort_order": 2,
+      "eligible_for_on_call": true,
+      "default_pat_ttl_seconds": 3600,
+      "retention_hold_days_override": null,
+      "description": "Permanent employee at reduced hours."
+    },
+    {
+      "key": "contractor",
+      "display_name": "Contractor",
+      "slug": "contractor",
+      "sort_order": 3,
+      "eligible_for_on_call": false,
+      "default_pat_ttl_seconds": 1800,
+      "retention_hold_days_override": 30,
+      "description": "External contractor with time-bounded access. Shorter default PAT TTL (30 min vs 1h) + shorter retention hold (30d vs 90d) reflects the tighter access-management posture for non-employees."
+    },
+    {
+      "key": "temporary",
+      "display_name": "Temporary",
+      "slug": "temporary",
+      "sort_order": 4,
+      "eligible_for_on_call": false,
+      "default_pat_ttl_seconds": 1800,
+      "retention_hold_days_override": 30,
+      "description": "Short-term staff (interns, seasonal, backfill). Same access-tightening posture as contractor."
+    }
+  ],
+  "notes": [
+    "`eligible_for_on_call` is a HINT, not a hard gate \u2014 a super_admin can still add a contractor to a rotation with explicit override.",
+    "`default_pat_ttl_seconds` is read at token-issuance time by the `identity/auth` module. Overrides the module-wide `platform-user.mfa.session_ttl_seconds` config value.",
+    "`retention_hold_days_override` on contractor + temporary rows is deliberately shorter (30d) than the default (90d). Faster hard-delete reduces the compliance footprint for staff whose employment contract explicitly bounds Academorix's data-retention obligations."
+  ]
+}

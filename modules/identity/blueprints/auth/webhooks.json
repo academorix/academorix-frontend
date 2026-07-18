@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/auth/webhooks",
+  "$version": 1,
+  "title": "auth \u2014 outbound webhooks",
+  "description": "Auth DISPATCHES a small, security-relevant set of outbound webhook events for tenants that opt in. Payloads are HEAVILY redacted \u2014 identity fingerprints, no email, no dob, no IPs. Distinct from identity substrate (which dispatches ZERO webhooks); auth's events are legitimately useful for tenant-side integrations (session-management dashboards, SIEM feeds).",
+  "outbound_webhook_kinds": [
+    {
+      "kind": "auth.session_revoked",
+      "trigger_event": "SessionRevoked",
+      "payload": {
+        "event_kind": "auth.session_revoked",
+        "occurred_at": "ISO-8601 timestamp",
+        "identity_fingerprint": "string (SHA-256 of identity_id)",
+        "user_fingerprint": "string (SHA-256 of user_id)",
+        "application_id": "ULID",
+        "reason": "'password_changed' | 'user_suspended' | 'user_disabled' | 'admin_revocation' | 'idle_timeout' | 'refresh_reuse' | 'self_service'"
+      },
+      "notes": "Sanitised for SIEM ingest \u2014 no email, no dob, no IP. Consumers can correlate via identity_fingerprint across events."
+    },
+    {
+      "kind": "auth.password_changed",
+      "trigger_event": "PasswordResetCompleted OR identity::PasswordChanged (auth listens + re-dispatches for tenants that need the notification-adjacent version)",
+      "payload": {
+        "event_kind": "auth.password_changed",
+        "occurred_at": "ISO-8601 timestamp",
+        "identity_fingerprint": "string",
+        "trigger": "'voluntary' | 'forced_reset' | 'admin_reset' | 'breach_detected'"
+      }
+    },
+    {
+      "kind": "auth.refresh_token_reuse_detected",
+      "trigger_event": "RefreshTokenReuseDetected",
+      "payload": {
+        "event_kind": "auth.refresh_token_reuse_detected",
+        "occurred_at": "ISO-8601 timestamp",
+        "identity_fingerprint": "string",
+        "user_fingerprint": "string",
+        "note": "This is a P0 security signal \u2014 tenant SIEM should trigger investigation."
+      }
+    },
+    {
+      "kind": "auth.impersonation_started",
+      "trigger_event": "ImpersonationStarted",
+      "payload": {
+        "event_kind": "auth.impersonation_started",
+        "occurred_at": "ISO-8601 timestamp",
+        "target_user_fingerprint": "string",
+        "target_application_id": "ULID",
+        "impersonator_department": "string (e.g. 'support', 'security' \u2014 which Academorix team)",
+        "reason": "string (mandatory audit-logged justification)",
+        "session_expires_at": "ISO-8601 timestamp"
+      },
+      "notes": "Impersonation start is legally required disclosure to the target User. This webhook is a nice-to-have secondary channel for tenants whose SIEM pipeline includes impersonation alerts."
+    },
+    {
+      "kind": "auth.impersonation_ended",
+      "trigger_event": "ImpersonationEnded",
+      "payload": {
+        "event_kind": "auth.impersonation_ended",
+        "occurred_at": "ISO-8601 timestamp",
+        "target_user_fingerprint": "string",
+        "duration_seconds": "integer",
+        "trigger": "'self_service' | 'ttl_expired' | 'admin_revocation'"
+      }
+    }
+  ],
+  "inbound_webhook_kinds": [
+    {
+      "name": "kms.key.rotated",
+      "description": "Optional AWS EventBridge integration \u2014 KMS notifies when the key backing JWT-signing-key encryption rotates. Received event triggers RotateJwtSigningKeyJob for the affected Application(s).",
+      "provider": "aws-kms",
+      "handler": "Academorix\\Auth\\Listeners\\OnKmsKeyRotated",
+      "required": false,
+      "notes": "Best-effort. Missing the event is not catastrophic \u2014 the monthly cron rotation cadence also fires."
+    }
+  ],
+  "rationale": [
+    "Auth-lifecycle webhooks are appropriate at this level \u2014 the payload contains ONLY fingerprints + coarse event metadata (guard, application_id, reason). No PII, no credentials, no session tokens.",
+    "Identity substrate deliberately publishes ZERO outbound webhooks (see modules/identity/blueprints/identity/webhooks.json) because its events carry too much PII to sanitise cleanly. Auth's events are already redacted-to-fingerprint at the event-payload layer (see events.json), so surfacing them via webhook is safe."
+  ]
+}

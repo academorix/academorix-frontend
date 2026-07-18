@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/service-accounts/helpers",
+  "$version": 1,
+  "title": "service-accounts \u2014 helper functions",
+  "description": "Two global helpers. Everything else the module exposes is behind DI / facades \u2014 helpers here are for the rare case where a downstream module needs a synchronous lookup without pulling in the repository binding.",
+  "namespace": "Academorix\\ServiceAccount\\Support",
+  "helpers": [
+    {
+      "signature": "resolve_service_account(string $id): ?ServiceAccount",
+      "purpose": "ULID lookup returning the resolved ServiceAccount model (or null when not found). Runs through the `svc:lookup:id:{service_account_id}` cache. Does NOT expose credential material \u2014 the caller may only read model attributes classified `internal`.",
+      "behaviours": [
+        "Returns null on unknown id (never throws \u2014 caller decides how to signal)",
+        "Returns null when the SA is soft-deleted (retention hold in effect)",
+        "Does NOT decrement the rate-limit counter \u2014 that's the middleware's job",
+        "Never logs the SA id at INFO level; only at DEBUG level with structured fields"
+      ],
+      "example": "$sa = resolve_service_account($jwt->sub);\nif ($sa === null || ! $sa->is_enabled) {\n    throw new ServiceAccountJwtInvalidException();\n}"
+    },
+    {
+      "signature": "current_service_account(): ?ServiceAccount",
+      "purpose": "Convenience accessor. When a request has been authenticated by service_account.verify_jwt, returns the corresponding ServiceAccount row. Returns null for requests not authenticated via SA (User, PlatformUser, or unauthenticated).",
+      "behaviours": [
+        "Delegates to the RequestContext binding populated by service_account.verify_jwt",
+        "Cached in the request-scoped container \u2014 repeated calls in one request don't hit the DB",
+        "Returns null on Web-worker / CLI contexts unless the CLI is running inside a SA-authenticated wrapper"
+      ],
+      "example": "if ($sa = current_service_account()) {\n    logger()->info('machine action', ['sa_id' => $sa->id, 'app' => $sa->application_id]);\n}"
+    }
+  ],
+  "notes": [
+    "Helpers are registered by the composer autoloader from `src/Support/helpers.php`. Namespaced functions are safe to call across every framework layer including migrations + seeders.",
+    "Neither helper accepts a raw secret \u2014 secret verification lives entirely inside `SecretRotator::verify()` on the exchange-endpoint path.",
+    "There is deliberately NO `verify_service_account_jwt(string $token): ?ServiceAccount` helper \u2014 that lives on `ServiceAccountJwtIssuer::verify()` behind the DI binding so unit tests can mock it cleanly."
+  ]
+}

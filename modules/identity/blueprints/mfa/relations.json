@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/mfa/relations",
+  "$version": 1,
+  "title": "mfa — model relationships",
+  "description": "WebauthnCredential is the ONLY row owned directly by this module — every other MFA state lives inline on the Identity row (identity/identity ownership) or in the shared auth_mfa_challenges ledger (identity/auth ownership). Consequently the FK topology here is intentionally shallow: WebauthnCredential belongs-to Identity, and Identity has-many WebauthnCredentials. The rich inbound / outbound relations chart lives on identity/identity — this file only documents mfa-owned rows.",
+  "internal": [
+    {
+      "from": "WebauthnCredential",
+      "kind": "belongsTo",
+      "to": "identity::Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "Every WebAuthn credential belongs to exactly one Identity. Cascade on delete so a hard-purged Identity (post-erasure-hold-period) drops every registered authenticator in the same transaction. Never orphan — a WebAuthn credential without an Identity is a compliance failure."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "WebauthnCredential",
+      "kind": "belongsTo",
+      "to": "identity::Identity",
+      "foreignKey": "identity_id",
+      "targetTable": "identities",
+      "targetKey": "id",
+      "onDelete": "cascade",
+      "description": "Same FK as the internal row above — repeated here as an outbound edge for the substrate-crossing view. Identity is a GLOBAL aggregate; WebauthnCredential is likewise global by transitivity (no tenant_id, no application_id). A hardware key registered by an Identity is usable across every Application that Identity is provisioned into."
+    }
+  ],
+  "inbound": {
+    "description": "Identity has-many WebauthnCredentials via `webauthn_credentials.identity_id`. No other model in the tenant references a WebauthnCredential row directly — challenges reference the credential by `credential_id` (the WebAuthn-native bytea handle) which we resolve at verification time, not by our internal ULID.",
+    "hasMany": [
+      {
+        "on": "identity::Identity",
+        "as": "webauthnCredentials",
+        "kind": "hasMany",
+        "targetTable": "webauthn_credentials",
+        "foreignKey": "identity_id",
+        "description": "Accessor: `$identity->webauthnCredentials` returns every registered credential (including disabled ones — filter with `->where('disabled_at', null)` for the active set)."
+      }
+    ]
+  },
+  "shared_table_references": {
+    "description": "MFA challenges transit the shared `auth_mfa_challenges` table owned by identity/auth. This module reads + writes rows there via identity/auth's `MfaChallengeRepository` contract but never declares FKs on it, and never joins against it from Eloquent (challenges are ephemeral, 5-minute TTL, resolved by the challenge_id in the request payload).",
+    "table": "auth_mfa_challenges",
+    "owner": "identity/auth",
+    "referenced_columns": [
+      "id (challenge ULID `mfc_<26>` — resolved by the /me/mfa/challenge/{challenge_id}/verify route)",
+      "identity_id (FK to identities.id — resolves the caller for constant-time secret lookup)",
+      "method (enum: totp / webauthn / recovery_code — dispatches to the right challenger)",
+      "attempts_remaining (decrement per failed verify; challenge invalidates on zero)",
+      "expires_at (5-minute TTL from creation)"
+    ]
+  },
+  "accessor_chain": {
+    "description": "WebauthnCredential exposes computed accessors that downstream code reads instead of touching the bytea columns directly.",
+    "WebauthnCredential": {
+      "credential_id_b64url": "base64url encoding of the `credential_id` bytea (used in the WebAuthn assertion payload the browser sends)",
+      "public_key_cose": "COSE-decoded public-key object (used by the assertion verifier)",
+      "is_active": "disabled_at IS NULL",
+      "is_platform_authenticator": "'internal' IN transports (heuristic — platform authenticators typically report `internal`; roaming keys typically report `usb` / `nfc` / `ble` / `hybrid`)",
+      "is_synced_passkey": "backup_state = true (the credential is currently synchronised across the user's cloud accounts, e.g. iCloud Keychain / Google Password Manager)"
+    }
+  }
+}

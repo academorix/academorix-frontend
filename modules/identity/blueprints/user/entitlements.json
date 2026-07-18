@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/user/entitlements",
+  "$version": 1,
+  "title": "user \u2014 declared entitlements",
+  "description": "Five entitlement keys. Feature booleans gate capability visibility. Slots scope quantity. Pools scope per-period consumption (bulk-invite is quota-gated).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "pool" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "multi_tenant_membership",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the User to hold TenantMember rows in more than one Tenant within the same Application. Off on the small tier \u2014 users have one home tenant only. When switched off after multi-tenant memberships exist, the entitlement reconciler picks the oldest membership per User and archives the rest."
+    },
+    {
+      "key": "custom_display_name",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Users can set `Profile.display_name` distinct from first_name + last_name. All tiers. Included here for symmetry \u2014 the entitlement is checked at the /me/profile update path when the caller submits display_name."
+    },
+    {
+      "key": "avatar_upload",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Global gate on avatar upload. All tiers, but per-tier size scaling is separately gated via `avatar_upload.max_kb` (see the settings blueprint for the resolved cap)."
+    },
+    {
+      "key": "profile_i18n_override",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables `Profile.locale` per-user overrides. Off on small tier \u2014 users inherit the tenant's default_locale. Medium+ users pick their own."
+    },
+    {
+      "key": "bulk_user_provision",
+      "kind": "pool",
+      "period": "month",
+      "unit": "invitations",
+      "defaultsByPlan": { "small": 0, "medium": 500, "enterprise": null },
+      "description": "Monthly CSV bulk-invite quota. Off (quota 0) on small tier. Enterprise = unlimited (null). One row in the CSV = 1 unit regardless of whether the invitation is accepted."
+    }
+  ]
+}

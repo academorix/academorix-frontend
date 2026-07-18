@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/mfa/features",
+  "$version": 1,
+  "title": "mfa — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "description": "Tenant-facing feature keys exposed in the /auth/me bootstrap manifest. Downstream SPAs / clients read these to render or hide MFA UI. Distinct from the entitlement keys in entitlements.json (which gate the underlying capability at the HTTP layer); these features gate UI-visible chunks of the MFA panel.",
+  "features": [
+    {
+      "key": "mfa.core",
+      "displayName": "Multi-factor authentication",
+      "description": "Base MFA capability. Always on if the caller has been assigned MFA enrolment access.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "mfa.totp",
+      "displayName": "Authenticator app (TOTP)",
+      "description": "Enrol a time-based one-time-password via Google Authenticator / Authy / 1Password / iCloud Keychain / etc.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "mfa.webauthn",
+      "displayName": "Passkey / hardware key",
+      "description": "Enrol a passkey (Face ID / Touch ID / Windows Hello / phone-synced passkey) or a hardware key (YubiKey / Titan Security Key). Free tier gated off — team+ can enrol WebAuthn.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "mfa.multiple_devices",
+      "displayName": "Multiple registered devices",
+      "description": "Register more than one WebAuthn credential (backup key, phone + laptop). Free tier caps at one credential.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "mfa.recovery_codes",
+      "displayName": "Recovery codes",
+      "description": "One-time-use fallback codes when the primary MFA method is unavailable. Ten codes per generation event; regenerable.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "mfa.step_up",
+      "displayName": "Step-up verification for sensitive actions",
+      "description": "Require a fresh MFA challenge before password changes / MFA disabling / credential deletion / recovery-code regeneration. Enterprise-only because of the friction cost.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "mfa.suspicious_activity_alerts",
+      "displayName": "Suspicious MFA activity alerts",
+      "description": "Sends email + platform-security notification when the caller's Identity sees rapid failed MFA challenges from novel IPs.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    }
+  ]
+}

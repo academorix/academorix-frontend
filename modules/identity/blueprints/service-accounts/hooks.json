@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/service-accounts/hooks",
+  "$version": 1,
+  "title": "service-accounts \u2014 tenancy hooks",
+  "description": "service-accounts has NO tenancy hooks. The module owns a table (`service_accounts`) that CAN carry `tenant_id`, but no `TenantProvisioned` action mutates the table \u2014 SAs are provisioned by a platform_admin operator via HTTP or CLI, never automatically as a side-effect of tenant creation.",
+  "hooks": [],
+  "rationale": [
+    "Tenancy hooks are for state that must materialise on tenant provisioning (default rows, seed data, per-tenant tables). Service accounts are provisioned intentionally by operators \u2014 nothing is auto-created when a tenant lands.",
+    "Similarly, TenantErased does not cascade to `service_accounts` because the FK `tenant_id` uses CASCADE at the DB layer \u2014 SAs scoped to a deleted tenant are hard-deleted by DB constraint, no application-layer hook needed. Platform-plane SAs (`tenant_id IS NULL`) are untouched by tenant lifecycle events.",
+    "Explicitly declaring `hooks: []` is a design invariant \u2014 any PR that adds a tenancy hook here is mis-scoping the module. If an ops workflow genuinely needs auto-provisioning of SAs on tenant creation, ship it as a separate `platform/onboarding` module concern that ORCHESTRATES the SA provisioner, not as a hook on this substrate."
+  ]
+}

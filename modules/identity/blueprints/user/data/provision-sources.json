@@ -1,0 +1,44 @@
+{
+  "$version": 1,
+  "title": "User provisioning sources",
+  "description": "The five recognised entry points into `UserProvisioner::provision()`. Each source pins a different set of preconditions + notification behaviour \u2014 the observer + listeners fan out per source when deciding whether to send email verification, whether to require admin approval, etc.",
+  "column_note": "Not persisted directly on the User row \u2014 stored as `metadata.provision_source` when the caller supplies it. Analytics events include the source as a top-level property.",
+  "sources": [
+    {
+      "value": "invitation",
+      "display_label": "Invitation accepted",
+      "description": "The most common path. An `access::Invitation` row was accepted; the acceptance flow invokes `ProvisionUser` synchronously (in-request) or via `ProvisionUserJob` (async retry).",
+      "requires_email_verification": "inherited from invitation (usually true; false when the invitation was for a pre-verified partner-federated identity)",
+      "initial_status": "active (email already verified via the invitation click)"
+    },
+    {
+      "value": "self_registration",
+      "display_label": "Self-registered",
+      "description": "Anonymous caller posted to `POST /api/v1/users` with the invitation-free sign-up URL. Requires `user.registration.self_registration_enabled = true` AND `user.registration.requires_invitation = false` on the tenant.",
+      "requires_email_verification": true,
+      "initial_status": "pending"
+    },
+    {
+      "value": "admin_created",
+      "display_label": "Created by admin",
+      "description": "An admin invoked `POST /api/v1/users` explicitly. Admin can pre-verify the email (skips the verification flow) via a `pre_verified: true` request flag.",
+      "requires_email_verification": "false when admin sets pre_verified=true; otherwise true",
+      "initial_status": "active OR pending (depends on admin approval setting)"
+    },
+    {
+      "value": "sso_grant",
+      "display_label": "Cross-app SSO grant",
+      "description": "Identity provisioned this User in response to a cross-app SSO grant exchange (design.md \u00a77.4). The target Application receives the grant + provisions a fresh User backed by the same underlying Identity.",
+      "requires_email_verification": false,
+      "initial_status": "active"
+    },
+    {
+      "value": "import",
+      "display_label": "Bulk import",
+      "description": "CSV bulk-invite via `POST /api/v1/users/bulk`. Each CSV row creates an `access::Invitation`; accepted invitations invoke `ProvisionUser` via `ProvisionUserJob` async.",
+      "requires_email_verification": true,
+      "initial_status": "pending",
+      "quota": "1 unit of `bulk_user_provision` per row (regardless of whether the invitation is accepted)"
+    }
+  ]
+}

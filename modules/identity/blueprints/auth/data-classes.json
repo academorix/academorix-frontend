@@ -1,0 +1,262 @@
+{
+  "id": "academorix://modules/auth/data-classes",
+  "$version": 1,
+  "title": "auth \u2014 field classification",
+  "description": "Auth models carry secrets on every table. Every token / hash / ciphertext column is `regulated_secret` (never returned on wire, never logged, never emitted to metrics). Session metadata (IP, user agent) is `confidential` \u2014 hashed at write time so plaintext never persists. JWT payloads are audit-loggable only in redacted form (subject / kid / iat / exp; NEVER the signature bytes).",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [],
+    "internal": [
+      "RefreshToken.id",
+      "RefreshToken.family_id",
+      "RefreshToken.issued_at",
+      "RefreshToken.expires_at",
+      "RefreshToken.consumed_at",
+      "RefreshToken.revoked_at",
+      "RefreshToken.created_at",
+      "RefreshToken.updated_at",
+      "PasswordReset.id",
+      "PasswordReset.expires_at",
+      "PasswordReset.consumed_at",
+      "PasswordReset.created_at",
+      "EmailVerification.id",
+      "EmailVerification.expires_at",
+      "EmailVerification.consumed_at",
+      "MfaChallenge.id",
+      "MfaChallenge.challenge_type",
+      "MfaChallenge.attempts_count",
+      "MfaChallenge.expires_at",
+      "MfaChallenge.consumed_at",
+      "CrossAppGrant.id",
+      "CrossAppGrant.source_application_id",
+      "CrossAppGrant.target_application_id",
+      "CrossAppGrant.expires_at",
+      "CrossAppGrant.consumed_at",
+      "JwtDenyListEntry.id",
+      "JwtDenyListEntry.jti",
+      "JwtDenyListEntry.reason",
+      "JwtDenyListEntry.revoked_at",
+      "JwtDenyListEntry.expires_at",
+      "JwtSigningKey.id",
+      "JwtSigningKey.kid",
+      "JwtSigningKey.application_id",
+      "JwtSigningKey.algorithm",
+      "JwtSigningKey.is_active",
+      "JwtSigningKey.issued_at",
+      "JwtSigningKey.rotated_at",
+      "JwtSigningKey.retired_at"
+    ],
+    "confidential": [
+      "RefreshToken.tokenable_type",
+      "RefreshToken.tokenable_id",
+      "RefreshToken.ip_address_hash",
+      "RefreshToken.user_agent_hash",
+      "PasswordReset.identity_id",
+      "PasswordReset.ip_address_hash",
+      "PasswordReset.user_agent_hash",
+      "EmailVerification.identity_id",
+      "MfaChallenge.identity_id",
+      "MfaChallenge.context (jsonb: application_id, tenant_id, requested_scope)",
+      "CrossAppGrant.identity_id"
+    ],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "regulated_secret": [
+      "RefreshToken.token_hash (SHA-256 of the opaque secret)",
+      "PasswordReset.token_hash (SHA-256)",
+      "EmailVerification.token_hash (SHA-256)",
+      "CrossAppGrant.token_hash (SHA-256)",
+      "JwtSigningKey.secret_encrypted (KMS-envelope-encrypted HS256 shared secret)",
+      "PersonalAccessToken.token (SHA-256; Sanctum's standard column)"
+    ],
+    "audit_log": [
+      "UserLoggedIn.user_id + logged_in_at + guard + mfa_verified",
+      "UserLoggedOut.user_id + logged_out_at + trigger",
+      "SessionRevoked.user_id + reason + actor_id",
+      "AllSessionsRevoked.identity_id + tokens_revoked_count + reason",
+      "RefreshTokenReuseDetected.user_id + family_id + detected_at (P0 audit event)",
+      "PasswordResetInitiated + Completed",
+      "EmailVerificationRequested + Completed",
+      "CrossAppGrantIssued + Exchanged + Expired",
+      "MfaChallengeIssued + Completed + Failed",
+      "ImpersonationStarted + Ended (compliance-critical)",
+      "JwtSigningKeyRotated + JwtRevoked"
+    ]
+  },
+  "wire_projection": {
+    "description": "Every auth wire response returns DERIVED shapes \u2014 never raw model rows. The LoginResult carries a Sanctum PAT (plaintext, one-shot response), a refresh token (plaintext, one-shot response), and a redacted User summary. Every subsequent response never returns tokens again \u2014 they're bearer-only from the caller's side.",
+    "LoginResult": {
+      "token": "string (Sanctum PAT plaintext \u2014 `<id>|<secret>` \u2014 shown ONCE)",
+      "refresh_token": "string (opaque secret \u2014 shown ONCE)",
+      "expires_at": "ISO-8601 timestamp",
+      "refresh_expires_at": "ISO-8601 timestamp",
+      "user": "UserSummaryData (redacted user projection from `identity/user`)",
+      "requires_mfa": "false (only present in the success shape; MFA branch returns MfaChallengeResult)"
+    },
+    "MfaChallengeResult": {
+      "note": "Returned with HTTP 202 when the login detected enrolled MFA. Caller submits challenge_id + code to /auth/mfa/verify.",
+      "challenge_id": "ULID",
+      "challenge_type": "'totp' | 'webauthn' | 'recovery_code'",
+      "expires_at": "ISO-8601 timestamp",
+      "attempts_remaining": "integer"
+    },
+    "RefreshResult": {
+      "token": "string (fresh PAT plaintext)",
+      "refresh_token": "string (fresh refresh plaintext)",
+      "expires_at": "ISO-8601 timestamp",
+      "refresh_expires_at": "ISO-8601 timestamp"
+    },
+    "CrossAppGrantResult": {
+      "note": "POST /auth/cross-app/grant returns this shape. Grant is passed to the target Application via URL or POST body.",
+      "grant_token": "string (opaque secret \u2014 shown ONCE)",
+      "target_application_id": "ULID",
+      "expires_at": "ISO-8601 timestamp"
+    },
+    "CrossAppGrantExchangeResult": {
+      "note": "POST /auth/cross-app/exchange on the target Application returns this \u2014 same shape as LoginResult since we're issuing a fresh session.",
+      "token": "string",
+      "refresh_token": "string",
+      "expires_at": "ISO-8601 timestamp",
+      "user": "UserSummaryData (redacted)"
+    },
+    "SessionSummaryData": {
+      "note": "Returned by GET /auth/sessions \u2014 the caller's active sessions across their Applications.",
+      "id": "integer (Sanctum PAT id)",
+      "application_id": "ULID",
+      "device_fingerprint_short": "string (first 8 chars of the SHA-256; enough to distinguish across a small session list)",
+      "geolocation_hint": "string | null",
+      "last_used_at": "ISO-8601 timestamp | null",
+      "issued_at": "ISO-8601 timestamp",
+      "expires_at": "ISO-8601 timestamp | null",
+      "is_current": "boolean (matches the token that made this request)"
+    },
+    "JwksResponse": {
+      "note": "Public JWKS payload served at /.well-known/jwks.json. Every active + retired-but-not-expired key is listed.",
+      "keys": [
+        {
+          "kty": "'oct' (HS256; Wave 1c switches to 'RSA' or 'EC')",
+          "kid": "string",
+          "alg": "'HS256'",
+          "k": "string (base64url-encoded shared secret \u2014 SAFE on public endpoint ONLY when identity-service + verifiers communicate over a private network; see design.md \u00a78.3 caveats)",
+          "use": "'sig'"
+        }
+      ]
+    },
+    "never_returned": [
+      "RefreshToken.token_hash",
+      "PasswordReset.token_hash",
+      "EmailVerification.token_hash",
+      "CrossAppGrant.token_hash",
+      "JwtSigningKey.secret_encrypted (regulated_secret)",
+      "PersonalAccessToken.token (Sanctum's shipped hash column \u2014 the plaintext is returned ONCE at issue and never again)"
+    ]
+  },
+  "input_dtos": [
+    {
+      "class": "Academorix\\Auth\\Data\\LoginInput",
+      "shape": {
+        "email": "string (validated against identity substrate)",
+        "password": "string (verified against identity.password_hash; NEVER logged)",
+        "device_fingerprint": "string | null (client-computed hint; server-computed via DeviceFingerprinter takes precedence)"
+      }
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\MfaVerifyInput",
+      "shape": {
+        "challenge_id": "ULID (`amc_...`; validated via valid_mfa_challenge_id rule)",
+        "code": "string (6-digit TOTP OR WebAuthn assertion payload OR 10-char recovery code)"
+      }
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\RefreshInput",
+      "shape": {
+        "refresh_token": "string (validated via valid_refresh_token rule)"
+      }
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\ForgotPasswordInput",
+      "shape": {
+        "email": "string (RFC 5321; enumeration-safe endpoint)"
+      }
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\ResetPasswordInput",
+      "shape": {
+        "reset_token": "string (validated via valid_password_reset_token rule)",
+        "new_password": "string (validated: strong_password_via_auth composes identity's strong_password rule)"
+      }
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\CrossAppGrantInput",
+      "shape": {
+        "target_application_id": "ULID (must resolve to an enabled Application AND the caller must have a User row on that Application)"
+      }
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\CrossAppExchangeInput",
+      "shape": {
+        "grant_token": "string (validated via valid_cross_app_grant_token rule)"
+      }
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\RegisterInput",
+      "shape": {
+        "email": "string",
+        "password": "string (strong_password)",
+        "dob": "date (compliance-floor gated by CompliantAgePolicy)",
+        "region_country_code": "string (ISO-3166-2)",
+        "context_type": "string (dispatches to matching RegistrationPolicy \u2014 default GenericRegistrationContext)"
+      }
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\ImpersonateStartInput",
+      "shape": {
+        "target_user_id": "ULID",
+        "reason": "string (mandatory; audit-logged)",
+        "session_ttl_seconds": "integer (60\u20133600; default 1800)"
+      }
+    }
+  ],
+  "output_dtos": [
+    {
+      "class": "Academorix\\Auth\\Data\\LoginResult",
+      "purpose": "Successful login result. See wire_projection.LoginResult."
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\MfaChallengeResult",
+      "purpose": "MFA-required intermediate result. HTTP 202."
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\RefreshResult",
+      "purpose": "Refresh rotation result."
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\CrossAppGrantResult",
+      "purpose": "Grant issuance result. Contains the opaque grant_token."
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\CrossAppGrantExchangeResult",
+      "purpose": "Grant exchange result on target Application \u2014 same shape as LoginResult."
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\SessionSummaryData",
+      "purpose": "Session listing entry."
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\JwksResponse",
+      "purpose": "Public JWKS response payload."
+    },
+    {
+      "class": "Academorix\\Auth\\Data\\JwtPayload",
+      "purpose": "Structured JWT payload for the inter-service token contract. See schemas/jwt-payload.schema.json for the full field list."
+    }
+  ],
+  "notes": [
+    "Every token PLAINTEXT is returned ONCE in the response body \u2014 at issue-time only. The database persists only the SHA-256 hash. This is the canonical opaque-token pattern (bearer tokens).",
+    "JwtSigningKey.secret_encrypted holds the HS256 shared secret enveloped by KMS. The plaintext secret is decrypted per signing request into a stack-scoped variable; never held in a request-scoped or process-scoped cache to reduce blast radius on a memory-disclosure vulnerability.",
+    "IP addresses + user agents are stored as SHA-256 hashes so a leaked auth_refresh_tokens dump doesn't correlate to specific network locations. GeoIP resolution happens at write time; only city + country make it to the row's metadata.",
+    "PersonalAccessToken.abilities column carries the compact permission array cached at issue-time. Downstream services in the same request context can trust it; long-lived Sanctum PATs (days-old) still verify against the current RBAC snapshot at every check (see auth.jwt_verify middleware)."
+  ]
+}

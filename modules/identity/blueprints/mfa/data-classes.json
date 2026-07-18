@@ -1,0 +1,185 @@
+{
+  "id": "academorix://modules/mfa/data-classes",
+  "$version": 1,
+  "title": "mfa — field classification",
+  "description": "MFA rows carry two classes of sensitive data: (1) cryptographic material (WebAuthn public keys, credential IDs, TOTP secrets — the latter live on identity/identity's Identity row) — `regulated_secret`; (2) device-recognition metadata (transports, AAGUID, sign_count) — `confidential`. Recovery-code plaintext is EMITTED-ONCE at enrolment / regeneration and thereafter exists only as bcrypt hashes on the Identity row (owned by identity/identity). Every field on the WebauthnCredential row is REDACTED by default at the audit layer.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "WebauthnCredential.device_name (user-provided nickname — e.g. 'iPhone Face ID'; treated as public because the user chooses it and it appears in the picker UI at login)",
+      "WebauthnCredential.attestation_format",
+      "WebauthnCredential.is_platform_authenticator (accessor, derived)",
+      "WebauthnCredential.is_synced_passkey (accessor, derived)"
+    ],
+    "internal": [
+      "WebauthnCredential.id",
+      "WebauthnCredential.identity_id",
+      "WebauthnCredential.aaguid",
+      "WebauthnCredential.transports",
+      "WebauthnCredential.backup_eligible",
+      "WebauthnCredential.backup_state",
+      "WebauthnCredential.last_used_at",
+      "WebauthnCredential.disabled_at",
+      "WebauthnCredential.created_at",
+      "WebauthnCredential.updated_at",
+      "WebauthnCredential.deleted_at",
+      "WebauthnCredential.metadata"
+    ],
+    "confidential": [
+      "WebauthnCredential.sign_count (monotonic replay-protection counter — leaking it doesn't compromise the key but does expose usage frequency)",
+      "MfaChallenge.attempts_remaining (leaks how far a brute-forcer got — resolved from the shared auth_mfa_challenges table by identity/auth)"
+    ],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "regulated_secret": [
+      "WebauthnCredential.credential_id (bytea — the credential handle emitted by the authenticator; combined with public_key it authenticates the caller. NEVER logged, NEVER emitted on metrics labels, NEVER returned unmuted on wire — the base64url accessor `credential_id_b64url` IS emitted because the browser needs it to construct the assertion request; the raw bytea stays server-side)",
+      "WebauthnCredential.public_key (bytea, COSE-encoded — the credential's public key)",
+      "MfaEnrollmentPreview.totp_secret (base32 — held in server memory only during the two-round enrolment; NEVER persisted before round 2 confirmation; discarded from memory the moment the preview response is dispatched)",
+      "RecoveryCodesDownload.codes (plaintext array — emitted ONCE at enrolment / regeneration; caller must persist client-side or the codes are lost)"
+    ],
+    "audit_log": [
+      "WebauthnCredential.registered_at (creation timestamp)",
+      "WebauthnCredential.last_used_at",
+      "WebauthnCredential.disabled_at",
+      "WebauthnCredential.device_name (existence and mutations)",
+      "MfaChallengeSucceeded (existence + method)",
+      "MfaChallengeFailed (existence + method + attempts_remaining)",
+      "MfaEnrollmentConfirmed (method + identity_id)",
+      "MfaRecoveryCodeConsumed (identity_id + remaining_count)",
+      "MfaRecoveryCodesRegenerated (identity_id + new_codes_count)"
+    ]
+  },
+  "wire_projection": {
+    "description": "WebauthnCredential is returned to the tenant caller on the /me/mfa/webauthn/credentials list + individual read endpoints. Every field marked `regulated_secret` is dropped at the wire boundary; every field marked `internal` is included but stays server-side by default in logs / metrics. The MfaEnrollmentPreview + RecoveryCodesDownload DTOs are the ONLY surfaces that emit plaintext secrets — both are single-shot endpoints whose responses are never cached and whose plaintext is deliberately never persisted.",
+    "tenant_wire_shape": {
+      "id": "WebauthnCredential.id (ULID `wac_...`)",
+      "device_name": "WebauthnCredential.device_name",
+      "credential_id_b64url": "base64url-encoded credential_id (needed by the browser at login to construct the assertion request)",
+      "attestation_format": "WebauthnCredential.attestation_format",
+      "transports": "WebauthnCredential.transports (array of usb / nfc / ble / internal / hybrid)",
+      "is_platform_authenticator": "boolean (accessor)",
+      "is_synced_passkey": "boolean (accessor)",
+      "last_used_at": "timestamp | null",
+      "disabled_at": "timestamp | null",
+      "created_at": "timestamp"
+    },
+    "never_returned": [
+      "WebauthnCredential.public_key (regulated_secret — never leaves the server)",
+      "WebauthnCredential.credential_id (raw bytea — regulated_secret; only the base64url accessor is emitted, and only for the login-side assertion construction)",
+      "WebauthnCredential.sign_count (confidential — internal-only)",
+      "WebauthnCredential.aaguid (internal — occasionally emitted on platform-admin surfaces for authenticator-model auditing)"
+    ]
+  },
+  "input_dtos": [
+    {
+      "class": "Academorix\\Mfa\\Data\\EnrollTotpPreviewInput",
+      "shape": {
+        "identity_id": "resolved from the authenticated session — never accepted from user input"
+      },
+      "compliance_gate": "Refused when the caller's tenant does not hold the `mfa_totp` entitlement OR the `mfa.enrollment_enabled` feature flag is off."
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\ConfirmTotpEnrollmentInput",
+      "shape": {
+        "totp_secret": "string (base32 — echoed back from the preview response; validated against the ephemeral secret held server-side)",
+        "totp_confirmation_code": "string (6-digit numeric — proves the user scanned the secret into their authenticator app)"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\WebauthnRegisterOptionsInput",
+      "shape": {
+        "authenticator_selection": "string ('platform' | 'cross-platform' | 'any') — hint to browsers about which authenticator type to prompt for"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\WebauthnRegisterInput",
+      "shape": {
+        "attestation_response": "object (raw WebAuthn attestation response from navigator.credentials.create)",
+        "device_name": "string (user-provided nickname, max 60 chars, validated by valid_device_name rule)"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\VerifyChallengeInput",
+      "shape": {
+        "challenge_id": "ULID (`mfc_...`) — resolved from the challenge ledger",
+        "method": "enum: totp | webauthn | recovery_code — must match the method the challenge was issued for",
+        "totp_code": "string | null (6 digits when method=totp)",
+        "webauthn_assertion": "object | null (raw WebAuthn assertion response when method=webauthn)",
+        "recovery_code": "string | null (10 chars from Crockford base32 alphabet when method=recovery_code, validated by valid_recovery_code_format rule)"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\RenameWebauthnCredentialInput",
+      "shape": {
+        "device_name": "string (60 chars max)"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\ForceDisableMfaInput",
+      "shape": {
+        "user_id": "string (ULID) — the User whose Identity's MFA should be force-disabled",
+        "reason": "string (justification, mandatory in production, audit-logged)"
+      }
+    }
+  ],
+  "output_dtos": [
+    {
+      "class": "Academorix\\Mfa\\Data\\MfaMethodsSummary",
+      "purpose": "Response for GET /api/v1/me/mfa. Summarises which methods the caller has enrolled + the recovery-codes remaining.",
+      "shape": {
+        "totp_enrolled": "boolean",
+        "totp_enrolled_at": "timestamp | null",
+        "webauthn_credentials_count": "integer (active only — disabled_at IS NULL)",
+        "recovery_codes_remaining": "integer",
+        "recovery_codes_low": "boolean (< 3 remaining)",
+        "step_up_required_for": "array of action IDs the caller has entitlement to but where the recent-challenge freshness has expired"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\TotpEnrollmentPreview",
+      "purpose": "Response for POST /api/v1/me/mfa/totp/enroll/preview. Exposes plaintext secret ONCE — never persisted before round 2.",
+      "shape": {
+        "totp_secret": "string (base32 — held server-side in a signed short-lived envelope; caller re-submits on confirm)",
+        "totp_uri": "otpauth:// URI for QR-code rendering by the SPA",
+        "issuer": "string (from config('mfa.totp.issuer'))",
+        "account_label": "string (email fingerprint, NOT plaintext email — keeps regulated_minor identities safe in QR-code scans)",
+        "expires_at": "timestamp (preview is valid for 5 minutes; the caller must confirm within that window OR run PurgeUnconfirmedEnrollmentsJob wipes the ephemeral state)"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\RecoveryCodesDownload",
+      "purpose": "Response for POST /api/v1/me/mfa/recovery-codes/regenerate + POST /me/mfa/recovery-codes/download. Emits plaintext codes ONCE.",
+      "shape": {
+        "codes": "string[] (10 codes, 10 chars each from Crockford base32 alphabet)",
+        "generated_at": "timestamp",
+        "expires_at": "null (codes never expire; regeneration is the only invalidation path)"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\WebauthnRegisterOptions",
+      "purpose": "Response for POST /api/v1/me/mfa/webauthn/register/options. The browser passes this to navigator.credentials.create().",
+      "shape": {
+        "challenge_b64url": "string (base64url-encoded 32-byte random challenge, retained server-side in the challenge ledger)",
+        "rp_id": "string (relying-party identifier — the tenant's domain)",
+        "rp_name": "string (from config('mfa.webauthn.rp_name'))",
+        "user_id_b64url": "string (base64url-encoded Identity ULID)",
+        "user_name": "string (email fingerprint — NEVER plaintext email)",
+        "user_display_name": "string (User's Profile display_name, resolved from the referring User)",
+        "authenticator_selection": "object (per W3C spec)",
+        "excluded_credentials": "array (already-registered credential IDs — prevents duplicate registration of the same physical key)"
+      }
+    },
+    {
+      "class": "Academorix\\Mfa\\Data\\WebauthnCredentialData",
+      "purpose": "Response for GET /api/v1/me/mfa/webauthn/credentials + PATCH updates. Standard wire shape — see wire_projection above."
+    }
+  ],
+  "notes": [
+    "The TOTP plaintext secret NEVER touches durable storage before the round-2 confirmation. During round 1 it lives inside a signed envelope held in Redis (short TTL, 5 min) under a key derived from the caller's session + a fresh nonce; PurgeUnconfirmedEnrollmentsJob evicts stale entries.",
+    "Recovery-code plaintext is emitted ONCE per generation event and NEVER retrievable again. The client (or the user) must persist them — an /me/mfa/recovery-codes/download endpoint exists for the current codes but requires a fresh MFA challenge and is audit-logged as a data-egress event.",
+    "The `credential_id_b64url` accessor IS emitted to the client on the WebAuthn login flow — the browser needs it to disambiguate which registered credential to use in navigator.credentials.get(). The raw bytea column is `regulated_secret` but the base64url projection is confidential-tier (needed for interoperability with the W3C JavaScript API).",
+    "AAGUID is technically PII-adjacent (identifies the authenticator model — e.g. YubiKey 5C NFC vs iCloud Keychain vs Windows Hello), but not the individual key. We classify it internal + emit on platform-admin surfaces only, so tenant callers don't see which model each other's Users hold. This supports a stronger corporate-security posture where hardware-key inventory is admin-only knowledge."
+  ]
+}

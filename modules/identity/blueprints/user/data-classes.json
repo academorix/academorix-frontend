@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/user/data-classes",
+  "$version": 1,
+  "title": "user \u2014 field classification",
+  "description": "User carries administrative metadata (tenant + application + status). Profile is the PII cluster \u2014 every column is regulated at least at the `confidential` tier, some at `restricted_minor` when the underlying Identity is a minor. TenantMember is administrative. The redactor pipeline (from telemetry) is applied on egress to any Profile field unless the caller carries the `profile.view.pii` permission.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "User.id",
+      "User.status",
+      "User.application_id",
+      "User.tenant_id",
+      "User.default_role_id",
+      "Profile.display_name",
+      "Profile.avatar_url",
+      "Profile.locale",
+      "Profile.timezone",
+      "TenantMember.id",
+      "TenantMember.tenant_id",
+      "TenantMember.role_id",
+      "TenantMember.is_default",
+      "TenantMember.is_staff_only",
+      "TenantMember.joined_at",
+      "TenantMember.last_active_at"
+    ],
+    "internal": [
+      "User.identity_id",
+      "User.profile_id",
+      "User.preferred_locale",
+      "User.last_login_at",
+      "TenantMember.invited_by",
+      "TenantMember.metadata"
+    ],
+    "confidential": [
+      "Profile.first_name",
+      "Profile.last_name",
+      "Profile.dob",
+      "Profile.phone_e164",
+      "Profile.metadata"
+    ],
+    "restricted": [
+      "Profile.first_name (when subject is a minor per identity->dob age-gate)",
+      "Profile.last_name (when subject is a minor)",
+      "Profile.dob (always \u2014 exposes an age computation; access requires `profile.view.pii` OR the caller IS the subject)"
+    ],
+    "regulated_minor": [
+      "Profile.first_name (minor subject)",
+      "Profile.last_name (minor subject)",
+      "Profile.dob (minor subject)",
+      "Profile.phone_e164 (minor subject)",
+      "Profile.avatar_url (minor subject \u2014 avatar can be a photo of a child)"
+    ],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "User.status (transitions written to `audits`)",
+      "User.default_role_id (transitions written to `audits`)",
+      "User.deleted_at (soft-delete + hard-delete written to `audits` + `audit_events` retained 7 years)",
+      "Profile.first_name (mutations)",
+      "Profile.last_name (mutations)",
+      "Profile.dob (mutations \u2014 immutable in practice, but audit any edit)",
+      "TenantMember.role_id (every role change is a compliance signal)"
+    ]
+  },
+  "notes": [
+    "The redactor pipeline (from telemetry::RedactorProcessor) applies to every Profile field on egress unless the caller's permission set contains `profile.view.pii`. Minors are gated harder: the redactor never returns the field, even to caller with `profile.view.pii`, unless they ALSO hold `profile.view.pii.child` and the subject is linked as their ward via `sports::AthleteGuardian`.",
+    "User.identity_id + Profile.dob together are enough to reconstruct age, so both are `internal` at minimum. Do not expose either outside the auth-service boundary.",
+    "TenantMember.metadata is an opaque JSON dictionary used by extending modules (subscription seat notes, HR notes) and treated as `internal` even when the parent User is public.",
+    "GDPR Art. 17 (right to erasure): soft-deleted User rows keep their Profile row for the hold period (`user.privacy.erasure_hold_days`, default 30) so the tenant admin can restore. After the hold, `PurgeErasedUsersJob` hard-deletes both."
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "id": "academorix://modules/service-accounts/relations",
+  "$version": 1,
+  "title": "service-accounts \u2014 model relationships",
+  "description": "ServiceAccount has TWO outbound FKs (application_id \u2192 applications, tenant_id \u2192 tenants) and ONE loose reference (signer_kid \u2192 auth::jwt_signing_keys.kid; not a schema-level FK because the auth module owns key lifecycle). There are NO inbound FKs from other modules \u2014 SAs are terminal in the ownership graph; nothing else references them.",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "ServiceAccount",
+      "kind": "belongsTo",
+      "to": "Application",
+      "foreignKey": "application_id",
+      "onDelete": "restrict",
+      "description": "Required. Binds the SA to exactly one Application. Immutable after creation. Restrict on delete so an Application soft-delete does not orphan SA rows; ops must delete the SAs first."
+    },
+    {
+      "from": "ServiceAccount",
+      "kind": "belongsTo",
+      "to": "Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Optional (nullable). When populated, scopes the SA to a specific tenant. Cascade on delete: erasing the tenant hard-deletes the tenant-scoped SAs. Constraint enforced additionally by observer: tenant.application_id MUST match SA.application_id (APPLICATION_MISMATCH_ON_TENANT)."
+    },
+    {
+      "from": "ServiceAccount",
+      "kind": "referencesLoose",
+      "to": "auth::JwtSigningKey",
+      "foreignKey": "signer_kid",
+      "targetColumn": "kid",
+      "onDelete": "N/A (no schema-level FK)",
+      "description": "Reference by KID string, NOT by a UUID FK. The auth module owns kid lifecycle. The observer validates at write time (signer_kid must exist + be enabled + be scoped to the SA's application_id when the kid has application scoping). Disabling a kid at the auth module does NOT delete or disable the referencing SAs \u2014 the AlertServiceAccountsAffectedByKidBurn listener handles operator notification; the SAs remain queryable until an operator explicitly disables them or rotates to a new kid."
+    }
+  ],
+  "inbound": [],
+  "accessor_chain": {
+    "description": "ServiceAccount exposes computed accessors that downstream code reads instead of touching raw columns.",
+    "ServiceAccount": {
+      "application_slug": "joined from applications.slug",
+      "tenant_slug": "joined from tenants.slug when tenant_id is populated; null otherwise",
+      "is_expired": "expires_at IS NOT NULL AND expires_at < now()",
+      "is_expiring_soon": "expires_at IS NOT NULL AND expires_at BETWEEN now() AND now() + INTERVAL 'warning_days_before_expiry days'",
+      "days_until_expiry": "expires_at IS NULL ? NULL : (expires_at - now()) / 86400",
+      "days_since_last_used": "last_used_at IS NULL ? NULL : (now() - last_used_at) / 86400",
+      "is_dormant": "days_since_last_used > security.dormant_threshold_days",
+      "days_since_rotation": "secret_rotated_at IS NULL ? NULL : (now() - secret_rotated_at) / 86400"
+    }
+  }
+}

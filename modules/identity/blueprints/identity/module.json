@@ -1,0 +1,152 @@
+{
+  "$version": 1,
+  "name": "identity",
+  "alias": "identity",
+  "namespace": "Academorix\\Identity",
+  "description": "Global credential record — one row per real human across every Academorix Application. Owns email (citext, unique), password hash (bcrypt/argon2id), MFA secret (KMS-encrypted at rest), MFA recovery codes (bcrypt-hashed), email verification lifecycle, account lockout with progressive backoff, password history for reuse prevention. The security substrate every downstream authentication flow (`identity/auth`, `identity/mfa`, `identity/user`, `identity/platform-user`, `identity/service-accounts`) depends on. NEVER exposes User-scoped data, NEVER carries `application_id` or `tenant_id` (global by design), NEVER queried by domain modules. Access is strictly through auth-service actions. This module is the single root of trust for the identity-service; a breach of `users` doesn't expose credentials because credentials live here — a breach of `identities` doesn't expose per-Application state because state lives on `users`. Ships the Identity model, IsIdentity trait for downstream composition, HasCredentialLifecycle trait for audit/reset/lockout methods, twelve domain events, five queued notifications, three retention jobs, seven Artisan commands, four validation rules, KMS-backed transparent MFA-secret encryption, and the compliance floor gates (COPPA/GDPR per-country minor-age).",
+  "keywords": [
+    "identity",
+    "credential",
+    "password",
+    "mfa",
+    "totp",
+    "webauthn",
+    "recovery-codes",
+    "email-verification",
+    "lockout",
+    "kms",
+    "argon2id",
+    "bcrypt",
+    "coppa",
+    "gdpr",
+    "haveibeenpwned",
+    "breach-check"
+  ],
+  "priority": 15,
+  "providers": [
+    "Academorix\\Identity\\Providers\\IdentityServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation"
+  ],
+  "extendedBy": [
+    "user",
+    "platform-user",
+    "mfa",
+    "auth",
+    "service-accounts"
+  ],
+  "contributes": {
+    "traits": [
+      "IsIdentity",
+      "HasCredentialLifecycle"
+    ],
+    "attributes": [
+      "AsCredentialListener"
+    ],
+    "blueprints": [
+      "identity"
+    ],
+    "middleware": [
+      "identity.rate_limit_login",
+      "identity.check_lockout"
+    ],
+    "events": [
+      "IdentityRegistered",
+      "IdentityEmailVerified",
+      "IdentityEmailVerificationRequested",
+      "PasswordChanged",
+      "PasswordResetRequested",
+      "PasswordResetCompleted",
+      "IdentityLocked",
+      "IdentityUnlocked",
+      "MfaEnrolled",
+      "MfaDisabled",
+      "RecoveryCodesRegenerated",
+      "IdentityErased"
+    ],
+    "policies": [
+      "IdentityPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "identity:list",
+      "identity:describe",
+      "identity:unlock",
+      "identity:force-password-reset",
+      "identity:erase",
+      "identity:rotate-mfa-secret",
+      "identity:purge-expired-tokens"
+    ],
+    "jobs": [
+      "PurgeExpiredResetTokensJob",
+      "AutoUnlockExpiredLockoutsJob",
+      "PurgeSoftDeletedIdentitiesJob"
+    ],
+    "notifications": [
+      "EmailVerificationNotification",
+      "PasswordResetNotification",
+      "PasswordChangedConfirmationNotification",
+      "AccountLockedNotification",
+      "SuspiciousLoginNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "IdentityObserver"
+    ],
+    "rules": [
+      "strong_password",
+      "bcp47_locale",
+      "valid_recovery_code",
+      "not_in_password_history"
+    ],
+    "casts": [
+      "EncryptedMfaSecret",
+      "HashedRecoveryCodes"
+    ],
+    "views": [],
+    "lang": [
+      "identity"
+    ],
+    "config": [
+      "identity"
+    ],
+    "macros": [
+      "Str::password_strength",
+      "Blueprint::identity_fields"
+    ],
+    "bindings": [
+      "IdentityRepository",
+      "CredentialHasher",
+      "MfaSecretEncryptor",
+      "EmailVerificationTokenIssuer",
+      "PasswordResetTokenIssuer",
+      "AccountLockoutPolicy",
+      "PasswordHistoryChecker",
+      "BreachedPasswordChecker"
+    ],
+    "resources": [
+      "identity"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "laravel/framework (Hash facade wrapped via CredentialHasher)",
+      "spatie/laravel-data (Identity DTOs)"
+    ],
+    "rationale": "We do not replace Laravel's Hash facade — we WRAP it in CredentialHasher so callers speak the same idiom while we route through argon2id (preferred) or bcrypt (fallback) with per-tenant cost tuning. The Hash facade is still used for MFA recovery codes (short strings, bcrypt is fine)."
+  },
+  "hosts": {
+    "internal": {
+      "description": "This module publishes NO direct HTTP routes. Every authentication endpoint (login, refresh, password reset, MFA challenge) lives in `identity/auth`. The `identity` module is accessed only through auth-service actions + downstream service dependencies. This is deliberate — identity is the security substrate; putting HTTP endpoints on it would blur the boundary.",
+      "accessed_by": [
+        "identity/auth (login, MFA challenge, password reset, email verification)",
+        "identity/user (User provisioning — needs the Identity row to link)",
+        "identity/platform-user (PlatformUser provisioning — reuses Identity substrate)",
+        "identity/mfa (TOTP + WebAuthn + recovery code operations against Identity.mfa_secret_encrypted)",
+        "identity/service-accounts (does NOT touch Identity — service accounts are a separate principal class)"
+      ]
+    }
+  }
+}

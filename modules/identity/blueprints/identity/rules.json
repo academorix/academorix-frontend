@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/identity/rules",
+  "$version": 1,
+  "title": "identity \u2014 validation rules",
+  "description": "Custom Laravel validation rules published by IdentityServiceProvider::boot() so any FormRequest / Data class can validate credential-related input. All four rules operate on scalar input (strings, dates).",
+  "namespace": "Academorix\\Identity\\Rules",
+  "rules": [
+    {
+      "name": "strong_password",
+      "class": "Academorix\\Identity\\Rules\\StrongPassword",
+      "signature": "strong_password",
+      "description": "Enforces every `identity.password.*` config key (min length, complexity, breach check). Composed of sub-rules that fire independently so the error message names which requirement failed (e.g. `Password must be at least 12 characters`, `Password must contain at least one uppercase letter`, `Password has been found in 342 public data breaches`). When `identity.password.breach_check_enabled=true`, submits the SHA-1 prefix (first 5 hex chars) to haveibeenpwned's k-anonymity API and matches the remainder client-side \u2014 the plaintext NEVER leaves the app.",
+      "params": [],
+      "example_field_rule": "password: [required, strong_password]",
+      "error_message_key": "identity::validation.strong_password",
+      "default_message": "Password does not meet security requirements. :reason",
+      "consumes": [
+        "config('identity.password.min_length')",
+        "config('identity.password.require_uppercase')",
+        "config('identity.password.require_lowercase')",
+        "config('identity.password.require_number')",
+        "config('identity.password.require_symbol')",
+        "config('identity.password.breach_check_enabled')",
+        "config('identity.password.breach_check_threshold')"
+      ]
+    },
+    {
+      "name": "bcp47_locale",
+      "class": "Academorix\\Identity\\Rules\\Bcp47Locale",
+      "signature": "bcp47_locale",
+      "description": "Validates a BCP-47 language tag (e.g. `en`, `fr-CA`, `zh-Hans-HK`). Uses the same regex as `platform_languages.bcp47_code`. Used on `dob` locale disambiguation and on Profile.locale in the referring `user` module.",
+      "params": [],
+      "example_field_rule": "locale: [nullable, bcp47_locale]",
+      "error_message_key": "identity::validation.bcp47_locale",
+      "default_message": "The :attribute must be a valid BCP-47 language tag (e.g. `en`, `fr-CA`, `zh-Hans`)."
+    },
+    {
+      "name": "valid_recovery_code",
+      "class": "Academorix\\Identity\\Rules\\ValidRecoveryCode",
+      "signature": "valid_recovery_code:<identity_id>",
+      "description": "Validates a submitted MFA recovery code against the bcrypt hashes stored in Identity.mfa_recovery_codes_hashed. Consumes the code atomically \u2014 removes it from the array so a replay is refused on second use. Constant-time hash comparison to prevent timing attacks.",
+      "params": [
+        {
+          "name": "identity_id",
+          "type": "ULID",
+          "description": "The Identity whose recovery codes should be checked. Passed as an argument at validation time from the request context (never trusted from user input)."
+        }
+      ],
+      "example_field_rule": "recovery_code: [required, string, size:12, valid_recovery_code:%identity_id%]",
+      "error_message_key": "identity::validation.valid_recovery_code",
+      "default_message": "The recovery code is invalid or has already been used."
+    },
+    {
+      "name": "not_in_password_history",
+      "class": "Academorix\\Identity\\Rules\\NotInPasswordHistory",
+      "signature": "not_in_password_history:<identity_id>",
+      "description": "Rejects the new password when its bcrypt/argon2id hash matches any entry in Identity.password_history_hashed. History window size configured by `identity.password.history_size` (default 5).",
+      "params": [
+        {
+          "name": "identity_id",
+          "type": "ULID",
+          "description": "The Identity whose password history should be checked."
+        }
+      ],
+      "example_field_rule": "new_password: [required, string, strong_password, not_in_password_history:%identity_id%]",
+      "error_message_key": "identity::validation.not_in_password_history",
+      "default_message": "You cannot reuse any of your last :history_size passwords.",
+      "consumes": ["config('identity.password.history_size')"]
+    }
+  ],
+  "usage_from_data_class": "Data classes composed with `RegisterIdentityInput`, `ChangePasswordInput`, `ResetPasswordInput` automatically wire the rules via #[Validation] attribute on each property; consumers rarely reference the rules by name."
+}

@@ -1,0 +1,172 @@
+{
+  "id": "academorix://modules/user/config",
+  "$version": 1,
+  "title": "user \u2014 developer configuration",
+  "configFile": "config/user.php",
+  "envPrefix": "USER_",
+  "sections": {
+    "registration": {
+      "keys": [
+        {
+          "path": "user.registration.self_registration_enabled",
+          "type": "bool",
+          "env": "USER_SELF_REGISTRATION",
+          "default": false,
+          "description": "Global toggle for open self-registration on the tenant plane. When false the only creation paths are invitation-acceptance + admin creation."
+        },
+        {
+          "path": "user.registration.requires_invitation",
+          "type": "bool",
+          "env": "USER_REQUIRES_INVITATION",
+          "default": true,
+          "description": "When true, `POST /api/v1/users` from an unauthenticated caller REJECTS unless an invitation_token is supplied. Layered on top of self_registration_enabled \u2014 both must permit for open sign-up to work."
+        },
+        {
+          "path": "user.registration.requires_admin_approval",
+          "type": "bool",
+          "env": "USER_REQUIRES_ADMIN_APPROVAL",
+          "default": false,
+          "description": "When true, newly-provisioned Users land in status='pending' and stay there until an admin activates them, EVEN IF the underlying Identity is email-verified."
+        },
+        {
+          "path": "user.registration.default_role_slug",
+          "type": "string",
+          "env": "USER_DEFAULT_ROLE_SLUG",
+          "default": "member",
+          "description": "Role slug assigned to the User's initial TenantMember when the caller doesn't specify one (invitations always carry an explicit role \u2014 this is the self-registration fallback)."
+        }
+      ]
+    },
+    "profile": {
+      "keys": [
+        {
+          "path": "user.profile.require_first_last_name",
+          "type": "bool",
+          "env": "USER_REQUIRE_NAMES",
+          "default": true,
+          "description": "Validation gate for adult principals. Waived automatically when identity->dob puts the subject under `user.privacy.adult_transition_age` (minors may enrol name-less until an adult attests)."
+        },
+        {
+          "path": "user.profile.require_phone",
+          "type": "bool",
+          "env": "USER_REQUIRE_PHONE",
+          "default": false,
+          "description": "Optional field by default."
+        },
+        {
+          "path": "user.profile.allow_avatar_upload",
+          "type": "bool",
+          "env": "USER_ALLOW_AVATAR",
+          "default": true,
+          "description": "Global kill-switch. Off overrides even the `avatar_upload` entitlement."
+        },
+        {
+          "path": "user.profile.max_avatar_size_kb",
+          "type": "int",
+          "env": "USER_AVATAR_MAX_KB",
+          "default": 2048,
+          "description": "Fallback cap. Tier-scaled at the entitlement layer (`avatar_upload` per-tier cap wins when it's lower)."
+        },
+        {
+          "path": "user.profile.default_locale",
+          "type": "string",
+          "default": null,
+          "description": "Fallback preferred_locale for Profile rows. Null = fall through to tenant.default_locale which itself falls through to config('app.locale')."
+        },
+        {
+          "path": "user.profile.default_timezone",
+          "type": "string",
+          "default": null,
+          "description": "Fallback timezone for Profile rows. Null = fall through to tenant.default_timezone."
+        }
+      ]
+    },
+    "privacy": {
+      "keys": [
+        {
+          "path": "user.privacy.minor_data_visibility",
+          "type": "string",
+          "default": "guardian_only",
+          "enum": ["guardian_only", "tenant_admin", "any_authenticated"],
+          "description": "Redactor policy for minor Profile fields. `guardian_only` = only the AthleteGuardian users + admins with `profile.view.pii.child` see the fields; `tenant_admin` = every tenant admin; `any_authenticated` = every authenticated caller in the same tenant. Compliance floor forces guardian_only when compliance.coppa.enabled AND region.country_code === 'US'."
+        },
+        {
+          "path": "user.privacy.adult_transition_age",
+          "type": "int",
+          "default": 18,
+          "description": "Age at which the guardian-managed minor becomes self-managed. Fed by `sports::athletes:process-age-transitions` scheduled command."
+        },
+        {
+          "path": "user.privacy.notify_athlete_at_age",
+          "type": "int",
+          "default": 15,
+          "description": "Age at which the athlete + guardians receive a preview notification about the upcoming adult transition."
+        },
+        {
+          "path": "user.privacy.can_manage_below_age",
+          "type": "int",
+          "default": 16,
+          "description": "Age below which guardians retain `AthleteGuardian.can_manage = true`. At this boundary the teen gains self-edit permissions."
+        },
+        {
+          "path": "user.privacy.erasure_hold_days",
+          "type": "int",
+          "env": "USER_ERASURE_HOLD_DAYS",
+          "default": 30,
+          "description": "Days a soft-deleted User row stays in the hold window before PurgeErasedUsersJob hard-deletes it. Tenant-side setting may only INCREASE this (max 90d via GDPR compliance policy)."
+        },
+        {
+          "path": "user.privacy.orphaned_profile_ttl_hours",
+          "type": "int",
+          "default": 24,
+          "description": "Hours an orphaned Profile row (no referring User) survives before CleanupOrphanedProfilesJob deletes it. Guards against half-provisioned rows piling up."
+        }
+      ]
+    },
+    "me": {
+      "keys": [
+        {
+          "path": "user.me.include_permissions",
+          "type": "bool",
+          "default": true,
+          "description": "`GET /api/v1/me` includes the caller's effective permissions array. Off for tighter payloads on very-large permission sets."
+        },
+        {
+          "path": "user.me.include_features",
+          "type": "bool",
+          "default": true,
+          "description": "`GET /api/v1/me` includes the tenant's enabled feature keys."
+        },
+        {
+          "path": "user.me.include_terminology",
+          "type": "bool",
+          "default": true,
+          "description": "`GET /api/v1/me` includes the tenant's terminology overrides (per business_type)."
+        }
+      ]
+    },
+    "tenants": {
+      "keys": [
+        {
+          "path": "user.tenants.allow_multi_tenant",
+          "type": "bool",
+          "env": "USER_ALLOW_MULTI_TENANT",
+          "default": true,
+          "description": "Global kill-switch for multi-tenant memberships. Off = one TenantMember per User. Also gated by the `multi_tenant_membership` entitlement (medium+)."
+        },
+        {
+          "path": "user.tenants.max_memberships_per_user",
+          "type": "int",
+          "default": 25,
+          "description": "Upper bound on TenantMember rows per User. Belt-and-braces \u2014 the entitlement layer caps this per plan, but this is the platform-wide ceiling."
+        },
+        {
+          "path": "user.tenants.batch_last_active_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "Buffer window for UpdateLastActiveJob. Every 60s the buffered updates flush to `tenant_members.last_active_at`."
+        }
+      ]
+    }
+  }
+}

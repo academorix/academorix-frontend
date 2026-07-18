@@ -1,0 +1,103 @@
+{
+  "$version": 1,
+  "title": "PlatformDepartment enum seed",
+  "description": "Canonical department taxonomy for the Academorix internal-workforce plane. Consumed at boot by `PlatformDepartment` enum registration + by the `valid_department` validation rule. Adding a new department here requires a schema migration (the department column is an enum type in Postgres) AND a coordinated update to the settings-module's default `notifications.department_channel_map`. Reordering rows is free \u2014 sort_order drives the picker UI, not the enum discriminator.",
+  "columns_note": "Fields on each row: `key` (enum member name, snake_case, stable identifier for FKs), `display_name` (human-readable label), `slug` (URL-safe form for API filters), `sort_order` (picker sort ascending), `default_notifications_channel` (Slack channel or similar for department-wide broadcasts), `on_call_rotation` (whether this department participates in the on-call rotation by default).",
+  "departments": [
+    {
+      "key": "ops",
+      "display_name": "Operations",
+      "slug": "ops",
+      "sort_order": 1,
+      "default_notifications_channel": "#ops",
+      "on_call_rotation": true,
+      "description": "Day-to-day platform operations, incident response, tenant support triage. Backbone of the platform-admin plane."
+    },
+    {
+      "key": "product",
+      "display_name": "Product",
+      "slug": "product",
+      "sort_order": 2,
+      "default_notifications_channel": "#product",
+      "on_call_rotation": false,
+      "description": "Product management + product design."
+    },
+    {
+      "key": "engineering",
+      "display_name": "Engineering",
+      "slug": "engineering",
+      "sort_order": 3,
+      "default_notifications_channel": "#engineering",
+      "on_call_rotation": true,
+      "description": "Software engineering across backend, frontend, and platform. Participates in on-call for the systems they own."
+    },
+    {
+      "key": "support",
+      "display_name": "Support",
+      "slug": "support",
+      "sort_order": 4,
+      "default_notifications_channel": "#support",
+      "on_call_rotation": true,
+      "description": "Customer support agents \u2014 primary consumers of the `platform.impersonate` entitlement for tenant-side troubleshooting."
+    },
+    {
+      "key": "sales",
+      "display_name": "Sales",
+      "slug": "sales",
+      "sort_order": 5,
+      "default_notifications_channel": "#sales",
+      "on_call_rotation": false,
+      "description": "Account executives + sales operations."
+    },
+    {
+      "key": "finance",
+      "display_name": "Finance",
+      "slug": "finance",
+      "sort_order": 6,
+      "default_notifications_channel": "#finance",
+      "on_call_rotation": false,
+      "description": "Accounting, revenue operations, billing reconciliation."
+    },
+    {
+      "key": "legal",
+      "display_name": "Legal",
+      "slug": "legal",
+      "sort_order": 7,
+      "default_notifications_channel": "#legal",
+      "on_call_rotation": false,
+      "description": "Contracts, regulatory response, HR-adjacent legal review."
+    },
+    {
+      "key": "security",
+      "display_name": "Security",
+      "slug": "security",
+      "sort_order": 8,
+      "default_notifications_channel": "#security",
+      "on_call_rotation": true,
+      "description": "Security engineering, incident response, threat modeling. Primary holders of `platform.security_review` entitlement."
+    },
+    {
+      "key": "dpo",
+      "display_name": "Data Protection Office",
+      "slug": "dpo",
+      "sort_order": 9,
+      "default_notifications_channel": "#dpo",
+      "on_call_rotation": false,
+      "description": "Data protection officers + privacy compliance. Primary consumers of `platform.audit_read` entitlement for compliance-review workflows."
+    },
+    {
+      "key": "hr",
+      "display_name": "Human Resources",
+      "slug": "hr",
+      "sort_order": 10,
+      "default_notifications_channel": "#hr",
+      "on_call_rotation": false,
+      "description": "People operations. Owns the `platform.platform_users.hire` + `.offboard` + `.update` permissions on employment metadata."
+    }
+  ],
+  "notes": [
+    "The `dpo` department is distinct from `legal` \u2014 in EU jurisdictions, the DPO role must be operationally independent of legal counsel, so staffers wear separate hats.",
+    "`on_call_rotation` is a HINT for the default rotation membership; individual PlatformUsers can opt in/out via `on_call_rotation_key` regardless of department. The hint drives the default suggestion in the UI.",
+    "Adding a new department requires: (1) schema migration to extend the Postgres enum, (2) update this file, (3) update settings default `notifications.department_channel_map`, (4) coordinate with the notifications module to provision the new Slack channel."
+  ]
+}

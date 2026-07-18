@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/user/attributes",
+  "$version": 1,
+  "title": "user \u2014 PHP attribute contracts",
+  "description": "One attribute. `#[AsUserListener]` on a service class marks it as a subscriber to user-lifecycle events \u2014 the AttributeDiscovery scan picks it up and wires it to the event map declared in `events.json`. No property-level attributes: profile columns are annotated by ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
+  "namespace": "Academorix\\User\\Attributes",
+  "attributes": [
+    {
+      "name": "AsUserListener",
+      "class": "Academorix\\User\\Attributes\\AsUserListener",
+      "targets": ["class"],
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`UserProvisioned`, `UserSuspended`, \u2026) the class listens to. Empty = subscribe to every event in `Academorix\\User\\Events\\*`. Names are resolved against `events.json`; typos surface at boot time when the discovery scan validates them."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see `events.json`.dispatchMode + per-event `queue`). Use to route long-running listeners onto a dedicated queue."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Only meaningful when multiple listeners subscribe to the same event and side-effect ordering matters (e.g. redactor before mailer)."
+        }
+      ],
+      "example": "#[AsUserListener(events: ['UserProvisioned', 'UserActivated'], queue: 'notifications')]\nfinal class NotifyUserOnProvisioning\n{\n    public function __invoke(UserProvisioned|UserActivated $event): void\n    {\n        // \u2026\n    }\n}"
+    }
+  ]
+}

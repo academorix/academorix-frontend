@@ -1,0 +1,105 @@
+{
+  "id": "academorix://modules/platform-user/analytics",
+  "$version": 1,
+  "title": "platform-user \u2014 product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "description": "Analytics events on the Academorix-staff plane. These land in the internal analytics tenant (a separate Segment source from the tenant-facing product), never mixed with tenant end-user events. Consent tier is `essential` \u2014 platform-staff analytics are internal-workforce metrics governed by the employment contract, not by the tenant-plane consent framework.",
+  "events": [
+    {
+      "name": "Platform User Hired",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "platform_user_id",
+        "department",
+        "employment_type",
+        "hire_date",
+        "actor_id"
+      ],
+      "description": "New Academorix staffer provisioned. Feeds the headcount + hiring-velocity dashboards."
+    },
+    {
+      "name": "Platform User Offboarded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "platform_user_id",
+        "department",
+        "employment_type",
+        "tenure_days",
+        "trigger",
+        "actor_id"
+      ],
+      "description": "Academorix staffer offboarded. `trigger` distinguishes voluntary vs involuntary. Feeds attrition dashboards."
+    },
+    {
+      "name": "Platform User Department Changed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "platform_user_id",
+        "from_department",
+        "to_department",
+        "actor_id"
+      ],
+      "description": "Internal transfer. Feeds the internal-mobility dashboard."
+    },
+    {
+      "name": "Platform User Manager Reassigned",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "platform_user_id",
+        "previous_manager_id",
+        "new_manager_id",
+        "actor_id"
+      ],
+      "description": "Org-chart mutation. Spikes correlate with re-org events."
+    },
+    {
+      "name": "Platform User Suspended",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["platform_user_id", "department", "actor_id"],
+      "description": "Temporary suspension. Reason not tracked to analytics (HR-sensitive; stays in the audit trail)."
+    },
+    {
+      "name": "Platform User Restored",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["platform_user_id", "department", "actor_id"]
+    },
+    {
+      "name": "Platform User MFA Enrolled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["platform_user_id"],
+      "description": "Consumed from identity::MfaEnrolled where the referenced Identity is linked to a PlatformUser \u2014 tracks staff-plane MFA-adoption independently of tenant MFA-adoption."
+    },
+    {
+      "name": "Platform User On Call Shift Started",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["platform_user_id", "department", "shift_duration_minutes"],
+      "description": "Fired when OnCallResolver detects a new shift start (transitioned from no-current-shift to current-shift for a PlatformUser). Feeds the on-call rotation dashboard."
+    },
+    {
+      "name": "Platform User Access Revocation Completed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "platform_user_id",
+        "duration_seconds",
+        "revoked_pat_count",
+        "terminated_impersonation_count"
+      ],
+      "description": "RevokePlatformUserAccessJob completed. `duration_seconds` is critical for the SOC 2 24h-SLA dashboard."
+    }
+  ],
+  "notes": [
+    "There is deliberately NO 'Platform User PII Viewed' event to analytics \u2014 that stays in the audit trail (compliance evidence) and never leaves the Academorix boundary.",
+    "Segment write key resolves via env `SEGMENT_INTERNAL_WRITE_KEY` (distinct from `SEGMENT_TENANT_WRITE_KEY`).",
+    "The `actor_id` property is always a PlatformUser id (never a User id). Cross-plane actor references are not permitted \u2014 platform events are staff-plane only."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "id": "academorix://modules/user/hooks",
+  "$version": 1,
+  "title": "user \u2014 tenancy hooks",
+  "description": "This module IS tenant-aware for TenantMember + User. It participates in tenancy lifecycle via two hooks. Distinct from `listeners.json` (which is domain-event listeners) \u2014 tenancy hooks fire at specific tenancy lifecycle points (bootstrapped / provisioning / erasure).",
+  "reference": {
+    "contract": "academorix://modules/tenancy/hooks",
+    "hierarchy_note": "See `hierarchy.md` §12 + `tenancy-columns.md` for the tenant plane the user module lives on."
+  },
+  "hooks": [
+    {
+      "class": "Academorix\\User\\Hooks\\SeedOwnerMembershipOnTenantProvisioned",
+      "event": "tenancy::TenantProvisioned",
+      "lifecycle_phase": "after_commit",
+      "queue": "notifications",
+      "purpose": "When a new Tenant is provisioned, seed the initial TenantMember for the tenant's owner User \u2014 role=owner, is_default=true. Skipped when the caller already provided a membership (idempotent). This is the tenancy-hook counterpart of the listener in `listeners.json` \u2014 the hook variant lets the tenancy module orchestrate a transaction across every registered module (tenant erasure needs cross-module knowledge to unwind cleanly)."
+    },
+    {
+      "class": "Academorix\\User\\Hooks\\TenantMembersOnTenantErased",
+      "event": "tenancy::TenantErased",
+      "lifecycle_phase": "before_cascade",
+      "queue": null,
+      "purpose": "Runs BEFORE tenancy's FK cascade drops the tenant. Iterates every TenantMember row on the tenant + for each User where the membership is_default=true AND the User has other memberships on OTHER tenants, promote the oldest sibling to default. This preserves the invariant `every User has a default tenant` during the erasure window."
+    }
+  ],
+  "notes": [
+    "`hooks.json` and `listeners.json` are BOTH legitimate. Hooks are tenancy-lifecycle-specific + participate in the tenancy transaction; listeners are general domain-event subscribers. Some hooks are also exposed as listeners (see SeedOwnerMembershipOnTenantProvisioned in both files) \u2014 tenancy dispatches the event AND runs the hook; whichever runs first wins the idempotency check.",
+    "This module does NOT participate in tenancy's `Bootstrappers` (which run per-tenant setup like cache prefix swap) because User + Profile + TenantMember rows are the tenant's data, not tenant-scoped runtime config.",
+    "See `.kiro/steering/hierarchy.md` §12 for the split between bootstrappers (per-request tenant switch) and hooks (lifecycle events)."
+  ]
+}

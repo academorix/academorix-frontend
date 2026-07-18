@@ -1,0 +1,78 @@
+{
+  "id": "service-accounts.rotation-countdown",
+  "title": "Rotation countdown",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Countdown timer for `expires_at`. Renders as text with colour + icon that shift based on days remaining: > 30 days = neutral text; 14-30 days = neutral text with `clock` icon; 0-14 days (warning window) = warning text with `clock-alert` icon; past expires_at = danger text with `exclamation-circle` icon + '(expired X days ago)' suffix. NULL expires_at renders as `\u2014 no expiry` in muted text (rare; used only for platform-critical bootstrap SAs).",
+  "props": {
+    "expires_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "required": true
+    },
+    "days_until_expiry": {
+      "type": ["integer", "null"],
+      "required": true
+    },
+    "size": {
+      "type": "string",
+      "enum": ["xs", "sm", "md"],
+      "required": false,
+      "default": "sm"
+    }
+  },
+  "renderRules": [
+    {
+      "when": "expires_at == null",
+      "render": { "kind": "Text", "props": { "className": "text-xs text-muted italic", "children": "\u2014 no expiry" } }
+    },
+    {
+      "when": "days_until_expiry > 30",
+      "render": {
+        "kind": "Text",
+        "props": { "className": "text-sm text-default" },
+        "childrenExpr": "days_until_expiry + ' days'"
+      }
+    },
+    {
+      "when": "days_until_expiry > 14 && days_until_expiry <= 30",
+      "render": {
+        "kind": "View",
+        "props": { "className": "flex items-center gap-1 text-default text-sm" },
+        "children": [
+          { "kind": "Icon", "props": { "name": "clock", "size": "xs" } },
+          { "kind": "Text", "childrenExpr": "days_until_expiry + ' days'" }
+        ]
+      }
+    },
+    {
+      "when": "days_until_expiry > 0 && days_until_expiry <= 14",
+      "render": {
+        "kind": "View",
+        "props": { "className": "flex items-center gap-1 text-warning text-sm font-medium" },
+        "children": [
+          { "kind": "Icon", "props": { "name": "clock-alert", "size": "xs" } },
+          { "kind": "Text", "childrenExpr": "days_until_expiry + ' days'" }
+        ]
+      }
+    },
+    {
+      "when": "days_until_expiry <= 0",
+      "render": {
+        "kind": "View",
+        "props": { "className": "flex items-center gap-1 text-danger text-sm font-medium" },
+        "children": [
+          { "kind": "Icon", "props": { "name": "exclamation-circle", "size": "xs" } },
+          {
+            "kind": "Text",
+            "childrenExpr": "'Expired ' + Math.abs(days_until_expiry) + 'd ago'"
+          }
+        ]
+      }
+    }
+  ],
+  "notes": [
+    "The widget is READ-ONLY \u2014 it does not itself trigger rotation. The list surface + show screen render adjacent action buttons (Rotate) that navigate to the rotation flow.",
+    "Time computation is server-authoritative (days_until_expiry is passed in); the widget does not re-compute against browser clock to avoid drift + timezone confusion."
+  ]
+}

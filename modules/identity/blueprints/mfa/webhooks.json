@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/mfa/webhooks",
+  "$version": 1,
+  "title": "mfa — outbound webhooks",
+  "description": "MFA DISPATCHES no outbound webhooks. Exposing MFA lifecycle events to tenant-configurable webhook endpoints would leak security-critical metadata to third parties — attestation formats, credential-model identifiers, sign_count values, and any other WebAuthn material carries a nonzero risk of assisting a targeted attack. Tenants that need MFA-lifecycle visibility can subscribe to the redacted `activity_log` stream via the observability module, which emits AGGREGATE counts + timestamps only.",
+  "outbound_webhook_kinds": [],
+  "inbound_webhook_kinds": [
+    {
+      "name": "fido_mds.metadata_updated",
+      "description": "Optional FIDO Alliance Metadata Service integration — MDS publishes an update feed of authenticator model changes (new certifications, revocations, known-compromised keys). Received event triggers a re-scan of the WebauthnCredential table for AAGUIDs that just appeared on the revocation list. Not enabled by default in Wave 1a.",
+      "provider": "fido-alliance-mds",
+      "handler": "Academorix\\Mfa\\Listeners\\HandleMdsRevocation",
+      "required": false,
+      "notes": "When configured, a WebauthnCredential referencing an AAGUID that lands on the MDS revocation list is auto-disabled + WebauthnCredentialDisabled(reason=admin_force_disable) fires. Best-effort: MDS polling backs up the webhook."
+    }
+  ],
+  "rationale": [
+    "The FIDO Alliance Metadata Service inbound webhook is defensive — cryptographic devices can have their certification revoked (bug in the secure element, private-key extraction, etc.). Auto-disable is the safe posture; the user is emailed via WebauthnCredentialDisabled → notification and asked to re-register with a different device.",
+    "For tenants that legitimately need cross-system MFA sync (e.g. an SSO federation announcing 'this user just registered a new passkey via SAML'), the correct integration path is via SCIM (deferred to Wave 1c per design.md §12). Webhooks would create a permanent leak of authenticator metadata to third parties who inevitably keep it forever."
+  ]
+}

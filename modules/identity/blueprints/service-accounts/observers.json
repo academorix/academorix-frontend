@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/service-accounts/observers",
+  "$version": 1,
+  "title": "service-accounts \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "ServiceAccount",
+      "observer": "Academorix\\ServiceAccount\\Observers\\ServiceAccountObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `svc_`",
+        "creating \u2192 validate `name` via valid_service_account_name (unique per application_id)",
+        "creating \u2192 refuse when application_id does not exist OR is disabled",
+        "creating \u2192 when tenant_id is populated, refuse when tenant.application_id != row.application_id (APPLICATION_MISMATCH_ON_TENANT)",
+        "creating \u2192 when signer_kid is populated, refuse when kid does not exist in auth::jwt_signing_keys OR is disabled OR is bound to a different application_id",
+        "creating \u2192 when signer_kid is null, request a fresh kid via auth::JwtSigningKeyProvisioner::provision($applicationId) and set signer_kid to the returned value",
+        "creating \u2192 compute initial status: 'pending' (never used yet)",
+        "creating \u2192 stamp secret_rotated_at with now() so age-based rotation checks have a baseline",
+        "creating \u2192 fire ServiceAccountCreated",
+        "updating (name dirty) \u2192 refuse when the new name exists on another SA within the same application_id",
+        "updating (application_id dirty) \u2192 REFUSE unconditionally (SERVICE_ACCOUNT_IMMUTABLE_FIELD) \u2014 application_id is immutable",
+        "updating (tenant_id dirty) \u2192 REFUSE unconditionally (SERVICE_ACCOUNT_IMMUTABLE_FIELD) \u2014 tenant_id is immutable after creation",
+        "updating (signer_kid dirty) \u2192 REFUSE unconditionally (SERVICE_ACCOUNT_IMMUTABLE_FIELD) \u2014 kid rotation goes through auth::JwtSigningKeyRotator, not a direct PATCH",
+        "updating (secret_hash dirty) \u2192 stamp secret_rotated_at with now(); refresh expires_at = now() + INTERVAL '$ttl days' when ttl is provided; recompute status; fire ServiceAccountSecretRotated",
+        "updating (is_enabled transition false \u2192 true) \u2192 refuse when expires_at IS NOT NULL AND expires_at < now() (caller must rotate first); recompute status; fire ServiceAccountEnabled",
+        "updating (is_enabled transition true \u2192 false) \u2192 recompute status = 'disabled'; fire ServiceAccountDisabled",
+        "updating (expires_at dirty) \u2192 refuse when the proposed value < now() (cannot shorten below the present); recompute status",
+        "deleting (soft) \u2192 emit `academorix.service_account.deleted` metric; fire ServiceAccountDeleted(erasure_phase='soft_delete'); write compliance-audit entry with actor + reason; also flip is_enabled to false in the same transaction",
+        "restoring \u2192 refuse when retention hold has elapsed (row must be gone by then); clear deleted_at; write audit entry",
+        "forceDeleted \u2192 fire ServiceAccountDeleted(erasure_phase='hard_delete') AFTER the row is gone (via afterCommit); anonymise audit rows referencing this SA to `[REDACTED-SERVICE-ACCOUNT]`"
+      ]
+    }
+  ],
+  "notes": [
+    "The observer is registered by ServiceAccountServiceProvider::boot(). It runs BEFORE HasActivityLog + HasAudit hooks so audit trails see the fully-normalised row.",
+    "Every `refuse` case throws a subclass of `Academorix\\ServiceAccount\\Exceptions\\ServiceAccountViolationException` \u2014 mapped to the errors in `errors.json`.",
+    "The `updating (secret_hash dirty)` branch NEVER touches password_history (SA secrets don't need reuse prevention). It's a clean overwrite \u2014 no history retained.",
+    "The `updating (is_enabled)` transitions run cache invalidation via the `svc:lookup:id:{id}` + `svc:signer_kid:{kid}` entries in the same transaction \u2014 pre-emptive invalidation prevents a race where a request in flight sees stale state."
+  ]
+}

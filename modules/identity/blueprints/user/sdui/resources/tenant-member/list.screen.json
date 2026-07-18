@@ -1,0 +1,153 @@
+{
+  "id": "user.resources.tenant-member.list",
+  "title": "My tenants",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/tenants",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "user", "entity": "tenant-member", "action": "list" },
+  "requiresPermission": null,
+  "notes": [
+    "The self-service /me/tenants surface. Users see every TenantMember row they hold inside the current Application. The active tenant is starred; selecting a row switches active tenant + hard-reloads.",
+    "Multi-tenant memberships require the `multi_tenant_membership` entitlement (medium+). Small-tier users see the single-row list without switch actions."
+  ],
+  "dataSources": [
+    {
+      "name": "memberships",
+      "kind": "http.get",
+      "url": "/api/v1/me/tenants",
+      "unwrap": "data"
+    },
+    {
+      "name": "me",
+      "kind": "http.get",
+      "url": "/api/v1/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "My tenants" }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Tenants you belong to. The active tenant is marked with a check; the default is starred."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "List",
+          "props": { "className": "flex flex-col gap-2" },
+          "bindings": { "items": { "$ref": "memberships" } },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 flex items-center gap-4" },
+            "children": [
+              {
+                "kind": "Avatar",
+                "props": { "size": "md" },
+                "bindings": {
+                  "src": { "$ref": "row.tenant_avatar_url" },
+                  "fallbackText": { "$ref": "row.tenant_name" }
+                }
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex flex-col flex-1" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center gap-2" },
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-medium" },
+                        "bindings": { "children": { "$ref": "row.tenant_name" } }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "warning" },
+                        "bindings": {
+                          "hidden": { "$expr": "!row.is_default" },
+                          "children": "Default"
+                        }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "xs", "variant": "accent" },
+                        "bindings": {
+                          "hidden": { "$expr": "row.tenant_id !== me.active_tenant_id" },
+                          "children": "Active"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted mt-1" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.role_name + ' \u00b7 joined ' + formatDate(row.joined_at)"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "Menu",
+                "trigger": {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "isIconOnly": true,
+                    "children": { "kind": "Icon", "props": { "name": "ellipsis-vertical" } }
+                  }
+                },
+                "items": [
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Switch to this tenant" },
+                    "bindings": { "hidden": { "$expr": "row.tenant_id === me.active_tenant_id" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlExpr": "'/api/v1/me/tenants/' + row.tenant_id + '/switch'",
+                        "onSuccess": { "kind": "reload" }
+                      }
+                    }
+                  },
+                  {
+                    "kind": "MenuItem",
+                    "props": { "children": "Set as default" },
+                    "bindings": { "hidden": { "$expr": "row.is_default" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.patch",
+                        "urlExpr": "'/api/v1/users/' + me.user.id + '/tenants/' + row.tenant_id",
+                        "body": { "is_default": true }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

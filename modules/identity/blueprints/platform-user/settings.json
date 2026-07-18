@@ -1,0 +1,180 @@
+{
+  "id": "academorix://modules/platform-user/settings",
+  "$version": 1,
+  "title": "platform-user \u2014 settings",
+  "description": "Platform-plane settings. Distinct from the tenant plane's settings substrate \u2014 there is NO per-tenant override here. All settings apply Academorix-wide + are edited only by super_admin via the platform-admin UI. Values persist through the same `settings` module infrastructure the tenant plane uses, but the `scope` on every entry is `platform` (not `tenant`).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "platform_user",
+      "class": "Academorix\\PlatformUser\\Settings\\PlatformUserSettings",
+      "label": "Platform staff",
+      "description": "Company-wide policies for Academorix internal staff management.",
+      "icon": "user-group",
+      "scope": "platform",
+      "public": false,
+      "sortOrder": 10,
+      "permission": "platform.platform_users.viewAny",
+      "sections": [
+        {
+          "label": "Onboarding",
+          "description": "Reminder cadence + auto-promotion policy for pending platform staff.",
+          "icon": "clipboard-document-check",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "onboarding_reminder_days",
+              "controlType": "chips",
+              "label": "Reminder days",
+              "defaultValue": [1, 3, 7, 14],
+              "helpText": "Days-since-hire on which to remind pending staffers + their managers.",
+              "sortOrder": 1
+            },
+            {
+              "name": "escalate_after_days",
+              "controlType": "number",
+              "label": "Escalate to super_admin after (days)",
+              "defaultValue": 30,
+              "min": 7,
+              "max": 90,
+              "sortOrder": 2
+            },
+            {
+              "name": "auto_promote_on_checklist_complete",
+              "controlType": "toggle",
+              "label": "Auto-promote pending \u2192 active on checklist completion",
+              "defaultValue": true,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Offboarding",
+          "description": "SLA + retention window policy. Changes require compliance-officer co-sign in staging + prod.",
+          "icon": "user-minus",
+          "sortOrder": 2,
+          "requires_co_signer_from": "compliance",
+          "fields": [
+            {
+              "name": "sla_hours",
+              "controlType": "number",
+              "label": "Access-revocation SLA (hours)",
+              "defaultValue": 24,
+              "min": 4,
+              "max": 72,
+              "helpText": "SOC 2 CC6.7 target. Alerting fires at half-SLA.",
+              "sortOrder": 1
+            },
+            {
+              "name": "retention_hold_days",
+              "controlType": "number",
+              "label": "Retention hold (days)",
+              "defaultValue": 90,
+              "min": 30,
+              "max": 365,
+              "helpText": "Days between soft-delete + hard-delete of offboarded rows.",
+              "sortOrder": 2
+            },
+            {
+              "name": "max_future_scheduling_days",
+              "controlType": "number",
+              "label": "Max future-scheduled offboard (days)",
+              "defaultValue": 30,
+              "min": 0,
+              "max": 90,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "MFA enforcement",
+          "description": "MFA gate on the platform_admin guard. Turning off requires incident-commander sign-off + a rollback ETA.",
+          "icon": "shield-check",
+          "sortOrder": 3,
+          "requires_incident_commander_sign_off_to_disable": true,
+          "fields": [
+            {
+              "name": "require_on_hire",
+              "controlType": "toggle",
+              "label": "Require MFA on hire",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "require_on_every_request",
+              "controlType": "toggle",
+              "label": "Require MFA on every request",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "session_ttl_seconds",
+              "controlType": "number",
+              "label": "Platform session TTL (seconds)",
+              "defaultValue": 3600,
+              "min": 300,
+              "max": 28800,
+              "helpText": "1h default. Shorter than the tenant plane's 8h.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "On-call",
+          "description": "Rotation resolver backend + PagerDuty settings.",
+          "icon": "bell-alert",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "enabled",
+              "controlType": "toggle",
+              "label": "Enable on-call rotation",
+              "defaultValue": false,
+              "sortOrder": 1
+            },
+            {
+              "name": "default_backend",
+              "controlType": "select",
+              "label": "Default backend",
+              "defaultValue": "internal",
+              "options": {
+                "internal": "Internal (rotation table)",
+                "pagerduty": "PagerDuty"
+              },
+              "sortOrder": 2
+            },
+            {
+              "name": "pagerduty_escalation_policy_id",
+              "controlType": "text",
+              "label": "PagerDuty escalation policy id",
+              "defaultValue": "",
+              "helpText": "Read on every OnCallResolver query when backend=pagerduty. API key resolves separately via Doppler.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Audit",
+          "description": "Correlation + retention on the audit trail.",
+          "icon": "document-magnifying-glass",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "correlate_across_requests",
+              "controlType": "toggle",
+              "label": "Correlate audit rows across request",
+              "defaultValue": true,
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "There is NO tenant-facing settings group. Platform staff policies are Academorix-wide.",
+    "There is NO user-facing settings group. A PlatformUser's OWN preferences are captured on the PlatformProfile row (timezone, display_name, avatar) \u2014 accessible via the /platform-profiles/me self-service endpoint, not via the settings module.",
+    "Every setting mutation writes an audit row via the `platform.audit` middleware. Some (offboarding.retention_hold_days, mfa.require_on_every_request) additionally require a co-signer / incident-commander sign-off surfaced as an approval workflow on the settings-mutation endpoint."
+  ]
+}

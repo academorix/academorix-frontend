@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/auth/caches",
+  "$version": 1,
+  "title": "auth \u2014 cache keys + tags",
+  "driver": "redis",
+  "description": "Auth caches back the hot login/verify paths. MFA challenge state lives in Redis (not Postgres) so a spike in challenge throughput doesn't hit the DB. JWKS is cached to serve /.well-known/jwks.json without a DB round-trip. Rate-limit buckets are Redis-native. Session-scope lookups (PAT \u2192 application_id + tenant_id) are cached under short TTL so PAT revocation propagates within 60 seconds.",
+  "ownedTags": ["auth"],
+  "keys": [
+    {
+      "pattern": "auth:jwks:response",
+      "description": "The JSON blob served by /.well-known/jwks.json. Rebuilt on JwtSigningKeyRotated event OR when the underlying auth_jwt_signing_keys table changes. TTL matches auth.jwt.jwks_cache_control max-age (default 3600s).",
+      "ttlSeconds": 3600,
+      "tags": ["auth"],
+      "invalidatedBy": ["JwtSigningKeyRotated event"]
+    },
+    {
+      "pattern": "auth:signing_key:active:{application_id}",
+      "description": "The currently-active signing key row (redacted \u2014 the decrypted secret is a MEMORY-ONLY cache, see below).",
+      "ttlSeconds": 300,
+      "tags": ["auth"],
+      "invalidatedBy": ["JwtSigningKeyRotated event"]
+    },
+    {
+      "pattern": "auth:signing_key:secret:{kid}",
+      "description": "The DECRYPTED HS256 shared secret. MEMORY-ONLY (process-scoped) \u2014 NEVER persisted to Redis. Held for 60s + drops on process exit. Fresh KMS-decrypt per key on cache miss. Listed here for documentation only; Redis is NOT the backing store.",
+      "ttlSeconds": 60,
+      "tags": [],
+      "notes": "IMPORTANT: this cache does NOT go through Redis. It's a process-scoped in-memory cache. Persisting the plaintext to Redis would defeat KMS envelope-encryption's blast-radius guarantee."
+    },
+    {
+      "pattern": "auth:mfa_challenge:{challenge_id}",
+      "description": "In-flight MFA challenge state (context blob + attempts_count). Auth's version of identity/caches.json's idn:mfa_challenge:{challenge_id} \u2014 identity ships the fallback pattern; auth OWNS the actual key.",
+      "ttlSeconds": 300,
+      "tags": ["auth"],
+      "invalidatedBy": ["MfaChallengeCompleted", "MfaChallengeFailed (terminal)", "TTL expiry"]
+    },
+    {
+      "pattern": "auth:rate_limit_login:ip:{ip_hash}",
+      "description": "Per-IP login attempt counter for auth.rate_limit_login middleware. 15-minute sliding window.",
+      "ttlSeconds": 900,
+      "tags": ["auth"]
+    },
+    {
+      "pattern": "auth:rate_limit_login:email:{email_hash}",
+      "description": "Per-email login attempt counter. 1-hour sliding window.",
+      "ttlSeconds": 3600,
+      "tags": ["auth"]
+    },
+    {
+      "pattern": "auth:rate_limit_password_reset:email:{email_hash}",
+      "description": "Per-email password-reset request counter. 1-hour sliding window.",
+      "ttlSeconds": 3600,
+      "tags": ["auth"]
+    },
+    {
+      "pattern": "auth:jwt_deny_list:jti:{jti}",
+      "description": "Deny-list membership check. TTL matches the underlying JWT's remaining lifetime. The full deny-list table is read at process start + refreshed via pubsub on JwtRevoked events.",
+      "ttlSeconds": 900,
+      "tags": ["auth"],
+      "invalidatedBy": ["JwtRevoked event", "TTL expiry"]
+    },
+    {
+      "pattern": "auth:session_scope:token:{token_id}",
+      "description": "Resolved (user_id, application_id, tenant_id, roles, permissions) for a Sanctum PAT. Populated on first request; invalidated on SessionRevoked / user.state_change.",
+      "ttlSeconds": 60,
+      "tags": ["auth"],
+      "invalidatedBy": ["SessionRevoked", "User.suspended", "User.disabled", "PasswordChanged", "TTL expiry"],
+      "notes": "Short TTL is deliberate \u2014 session revocation must propagate within 60 seconds regardless of the invalidation event."
+    },
+    {
+      "pattern": "auth:device_fingerprints:user:{user_id}",
+      "description": "Recent device fingerprints per User (last 30 days). Used by auth.detect_new_device middleware to distinguish new vs seen devices without a Postgres lookup.",
+      "ttlSeconds": 86400,
+      "tags": ["auth"]
+    },
+    {
+      "pattern": "auth:cross_app_grant:{grant_id}",
+      "description": "Grant metadata (source_app, target_app, identity_id, expires_at) for the exchange path's fast-lookup. Fallback to Postgres on cache miss.",
+      "ttlSeconds": 300,
+      "tags": ["auth"],
+      "invalidatedBy": ["CrossAppGrantExchanged", "CrossAppGrantExpired"]
+    }
+  ],
+  "never_cached": [
+    "RefreshToken.token_hash",
+    "PasswordReset.token_hash",
+    "EmailVerification.token_hash",
+    "CrossAppGrant.token_hash",
+    "PersonalAccessToken.token (Sanctum column)",
+    "JwtSigningKey.secret_encrypted (ciphertext IS cached in Redis under auth:signing_key:active; the DECRYPTED plaintext is memory-only \u2014 see the note under auth:signing_key:secret:{kid} above)"
+  ]
+}

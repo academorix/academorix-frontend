@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/user/feature-flags",
+  "$version": 1,
+  "title": "user \u2014 kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "user.provisioning_enabled",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle. Off = every write path in the user module returns 503. Emergency-only \u2014 flips down when the identity-service must freeze User creation (e.g. mid-migration)."
+    },
+    {
+      "key": "user.self_registration_endpoint",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `POST /api/v1/users` refuses unauthenticated callers even when `user.registration.self_registration_enabled` is true. Independent of the config setting so ops can flip the endpoint down without a redeploy."
+    },
+    {
+      "key": "user.me_endpoint",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `GET /api/v1/me` returns 503. Would break the SPA \u2014 flip only during scheduled maintenance windows."
+    },
+    {
+      "key": "user.tenant_switch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `POST /api/v1/me/tenants/{tenant}/switch` refuses. Users stay pinned to their default tenant."
+    },
+    {
+      "key": "user.bulk_invite",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `POST /api/v1/users/bulk` refuses even for entitled tenants. Used when the mail-provider has an outage that would swallow every invitation."
+    },
+    {
+      "key": "user.avatar_upload",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = every `POST /me/avatar` returns 503. Used during S3 outages."
+    },
+    {
+      "key": "user.erasure_execution",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = `PurgeErasedUsersJob` no-ops. Soft-deleted Users sit in the hold window past the boundary. Rare \u2014 used during legal holds when erasure would destroy evidence."
+    },
+    {
+      "key": "user.async_provisioning",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = every provisioning path runs synchronously (in-request). Used when the worker fleet is degraded and dispatching `ProvisionUserJob` would land in a stuck queue."
+    }
+  ]
+}

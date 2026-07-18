@@ -1,0 +1,209 @@
+{
+  "id": "academorix://modules/user/schemas/user",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "User",
+  "description": "Per-Application projection of an Identity. One row per `(identity_id \u00d7 application_id)` pair \u2014 the UNIQUE constraint enforces this hard. Carries a home tenant (users.tenant_id) + a 1:1 Profile satellite; multi-tenant membership goes through the `tenant_members` pivot. Every FK follows the compliance-aware onDelete policy documented in `relations.json`.",
+  "type": "object",
+  "x-module": "user",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Foundation\\Auth\\User",
+    "table": "users",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "usr_",
+    "incrementing": false,
+    "model": "Academorix\\User\\Models\\User",
+    "interface": "Academorix\\User\\Contracts\\Data\\UserInterface",
+    "implements": ["Academorix\\User\\Contracts\\Data\\UserInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasProfile",
+      "HasApiTokens",
+      "Notifiable",
+      "MustVerifyEmail",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "UserStatus",
+      "last_login_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["email", "email_verified_at", "mfa_enabled", "full_name", "display_name", "avatar_url", "locale", "timezone"],
+    "observers": ["UserObserver"],
+    "hidden": [],
+    "guarded": [],
+    "relations_note": "`identity()` belongsTo identity::Identity via identity_id (RESTRICT). `application()` belongsTo application::Application via application_id (RESTRICT). `tenant()` belongsTo tenancy::Tenant via tenant_id (CASCADE). `profile()` hasOne Profile via profile_id (RESTRICT). `memberships()` hasMany TenantMember via user_id (CASCADE). `defaultRole()` belongsTo access::Role via default_role_id (SET NULL)."
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `usr_<26 chars>`."
+      },
+      "identity_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "identities",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "FK to `identity::Identity.id`. RESTRICT so an Identity delete requires every projection (across every Application) to be erased first."
+      },
+      "application_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "applications",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "FK to `application::Application.id`. RESTRICT so decommissioning an Application requires every scoped User to be re-provisioned or erased first."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Home tenant. CASCADE aligns with tenancy::TenantErased. Multi-tenant Users may survive via other TenantMember rows \u2014 the tenant-erasure hook rehomes them before the cascade fires."
+      },
+      "profile_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "profiles", "column": "id", "onDelete": "restrict" },
+        "description": "1:1 PII satellite. RESTRICT so a Profile is never orphaned by a hasty User delete \u2014 the cleanup path is CleanupOrphanedProfilesJob after a hard-delete grace period."
+      },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / active / suspended / disabled."
+      },
+      "last_login_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Last successful login for this (Identity, Application) pair. Updated by the auth module's LoginSucceeded listener."
+      },
+      "default_role_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "roles", "column": "id", "onDelete": "set null" },
+        "description": "First-seen role for new-user routing. Distinct from TenantMember.role_id which is per-tenant."
+      },
+      "preferred_locale": {
+        "type": "string",
+        "length": 12,
+        "nullable": true,
+        "description": "BCP-47 tag. User-scoped locale override; Profile.locale is the finer-grained per-tenant override that takes precedence for the /me surface."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["identity_id", "application_id"],
+        "unique": true,
+        "name": "users_identity_application_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "The D1 invariant: one User per Identity per Application."
+      },
+      {
+        "columns": ["profile_id"],
+        "unique": true,
+        "name": "users_profile_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "1:1 with Profile."
+      },
+      {
+        "columns": ["application_id", "tenant_id"],
+        "unique": false,
+        "name": "users_application_tenant_idx"
+      },
+      {
+        "columns": ["tenant_id", "status"],
+        "unique": false,
+        "name": "users_tenant_status_idx"
+      },
+      {
+        "columns": ["identity_id"],
+        "unique": false,
+        "name": "users_identity_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "identity_id",
+    "application_id",
+    "tenant_id",
+    "profile_id",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "identity_id": { "type": "string", "pattern": "^idn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "profile_id": { "type": "string", "pattern": "^prf_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["pending", "active", "suspended", "disabled"] },
+    "last_login_at": { "type": ["string", "null"], "format": "date-time" },
+    "default_role_id": { "type": ["string", "null"], "pattern": "^rol_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "preferred_locale": { "type": ["string", "null"], "pattern": "^[a-z]{2,3}(-[A-Z][a-z]{3})?(-[A-Z]{2})?$", "maxLength": 12 },
+    "metadata": { "type": ["object", "null"] },
+    "email": { "type": "string", "format": "email", "description": "Computed. From identity->email." },
+    "email_verified_at": { "type": ["string", "null"], "format": "date-time", "description": "Computed. From identity->email_verified_at." },
+    "mfa_enabled": { "type": "boolean", "description": "Computed. identity->mfa_secret_encrypted !== null." },
+    "full_name": { "type": "string", "description": "Computed. `profile.first_name + ' ' + profile.last_name`. Redactor-gated for non-subject callers." },
+    "display_name": { "type": "string", "description": "Computed. `profile.display_name ?? profile.first_name`." },
+    "avatar_url": { "type": ["string", "null"], "description": "Computed. From profile->avatar_url." },
+    "locale": { "type": "string", "description": "Computed. Resolution chain: profile.locale \u2192 user.preferred_locale \u2192 tenant.default_locale." },
+    "timezone": { "type": "string", "description": "Computed. profile.timezone \u2192 tenant.default_timezone." },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["email", "email_verified_at", "mfa_enabled", "full_name", "display_name", "avatar_url", "locale", "timezone"],
+    "redacted_when_missing_permission": {
+      "permission": "profile.view.pii",
+      "fields": ["full_name"]
+    }
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`usr_<26>`)", "identity email (case-insensitive; admin surfaces only)"]
+  }
+}

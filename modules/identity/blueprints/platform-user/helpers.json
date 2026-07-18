@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/platform-user/helpers",
+  "$version": 1,
+  "title": "platform-user \u2014 helper functions",
+  "description": "Two helper facades exposed for internal tooling that reaches PlatformUser + on-call state without going through the full HTTP layer (Artisan commands, listeners, notifications composing enrichment text). Every helper delegates to a service binding under the `platform-user` container namespace; helpers are the ergonomic surface.",
+  "namespace": "Academorix\\PlatformUser\\Support",
+  "helpers": [
+    {
+      "signature": "platform_user(?string $identityIdOrPlatformUserId = null): ?PlatformUser",
+      "purpose": "Resolve the current platform_admin-guard PlatformUser (when called without args) OR resolve a specific PlatformUser by ULID (`plu_...` or `idn_...`). Null when the caller is not on the platform_admin guard OR the id does not resolve.",
+      "behaviours": [
+        "platform_user() when authenticated on the platform_admin guard \u2192 returns Auth::guard('platform_admin')->user() cast to PlatformUser",
+        "platform_user() when authenticated on the sanctum guard \u2192 returns null (guard boundary; never cross)",
+        "platform_user('plu_01H...') \u2192 direct id lookup",
+        "platform_user('idn_01H...') \u2192 resolves the PlatformUser via UNIQUE(identity_id)",
+        "platform_user('idn_01H...') when the identity has no linked PlatformUser \u2192 returns null (an identity may be a tenant User only)"
+      ],
+      "delegates_to": "Academorix\\PlatformUser\\Repositories\\PlatformUserRepository"
+    },
+    {
+      "signature": "on_call_now(?string $department = null): ?OnCallShift",
+      "purpose": "Resolve the currently-on-call PlatformUser (platform-wide when department is null; scoped when set). Returns an OnCallShift value object with platform_user, shift_end_at, source ('internal' | 'pagerduty'). Null when no shift is active OR the OnCallResolver is disabled.",
+      "behaviours": [
+        "on_call_now() when platform-user.on_call.enabled=false \u2192 returns null",
+        "on_call_now() during business hours with a live rotation \u2192 returns the active shift",
+        "on_call_now('security') \u2192 scoped to the security department's rotation",
+        "on_call_now() during a resolver timeout \u2192 returns null (never throws; falls back to Slack broadcast at the caller layer)"
+      ],
+      "delegates_to": "Academorix\\PlatformUser\\Services\\OnCallResolver"
+    }
+  ],
+  "notes": [
+    "There is deliberately NO helper equivalent for `platform_user_can()` \u2014 permission checks go through the standard Gate::allows() with a PlatformUser instance to preserve the audit trail on the meta-audit rows.",
+    "The `platform_user()` helper is available in ALL contexts (Artisan, HTTP, queue workers). In a queue worker, the caller must pass an explicit id \u2014 there is no request-context guard.",
+    "The `on_call_now()` helper is safe to call from unauthenticated contexts (e.g. an incident-response webhook) because it does not require an actor \u2014 it only reads the resolver. When enabled + the backend is PagerDuty, the caller pays a ~200ms round-trip; the value is cached per the caches.json policy."
+  ]
+}

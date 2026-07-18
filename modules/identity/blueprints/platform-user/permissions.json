@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/platform-user/permissions",
+  "$version": 1,
+  "title": "platform-user \u2014 permissions",
+  "description": "Permission seeder for the platform_admin guard. Every permission here is namespaced under `platform.platform_users.*` or `platform.platform_profiles.*` \u2014 the `sanctum` guard NEVER holds any of these. Seeded roles: `super_admin` (root Academorix authority), `ops` (day-to-day operations), `product` (product management), `security` (security engineering), `hr` (people operations), `compliance` (compliance officers + DPO). Fresh hires land with ZERO role assignments \u2014 super_admin grants roles + entitlements post-hire, per the least-privilege posture.",
+  "seeder": "Academorix\\PlatformUser\\Database\\Seeders\\PlatformUserPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "platform.platform_users.viewAny",
+      "guard": "platform_admin",
+      "description": "List platform staff. Redacted list \u2014 no PII, no offboarding_reason.",
+      "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance"]
+    },
+    {
+      "name": "platform.platform_users.view",
+      "guard": "platform_admin",
+      "description": "Read a specific platform staff row. Redacted per PII gate.",
+      "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance"]
+    },
+    {
+      "name": "platform.platform_users.view.pii",
+      "guard": "platform_admin",
+      "description": "Unmutes email + phone + Slack/GitHub handles on the response. Every unmute writes an audit meta-row.",
+      "seededOn": ["super_admin", "security", "hr"]
+    },
+    {
+      "name": "platform.platform_users.view.hr_context",
+      "guard": "platform_admin",
+      "description": "Unmutes offboarding_reason + suspension_reason (free-form HR-sensitive text).",
+      "seededOn": ["hr", "compliance"]
+    },
+    {
+      "name": "platform.platform_users.view.audit_trail",
+      "guard": "platform_admin",
+      "description": "Read the 90-day audit-trail summary for a specific PlatformUser as actor.",
+      "seededOn": ["super_admin", "compliance"]
+    },
+    {
+      "name": "platform.platform_users.hire",
+      "guard": "platform_admin",
+      "description": "Create new PlatformUser rows via the hire flow.",
+      "seededOn": ["super_admin", "hr"]
+    },
+    {
+      "name": "platform.platform_users.update",
+      "guard": "platform_admin",
+      "description": "Update employment metadata (department, employment_type, job_title, manager_id, hire_date).",
+      "seededOn": ["super_admin", "hr"]
+    },
+    {
+      "name": "platform.platform_users.suspend",
+      "guard": "platform_admin",
+      "description": "Temporarily suspend a PlatformUser.",
+      "seededOn": ["super_admin", "security"]
+    },
+    {
+      "name": "platform.platform_users.restore",
+      "guard": "platform_admin",
+      "description": "Reverse a suspend.",
+      "seededOn": ["super_admin", "security"]
+    },
+    {
+      "name": "platform.platform_users.offboard",
+      "guard": "platform_admin",
+      "description": "Terminal offboarding. Kicks off the 24h access-revocation SLA + 90-day retention hold.",
+      "seededOn": ["super_admin", "hr"]
+    },
+    {
+      "name": "platform.platform_users.reassign_manager",
+      "guard": "platform_admin",
+      "description": "Reassign a PlatformUser's manager. Enforces cycle detection + depth cap.",
+      "seededOn": ["super_admin", "hr"]
+    },
+    {
+      "name": "platform.platform_profiles.view.self",
+      "guard": "platform_admin",
+      "description": "Read own PlatformProfile row (self-service).",
+      "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance", "engineering", "support", "sales", "finance", "legal"],
+      "seeded_on_every_platform_role": true
+    },
+    {
+      "name": "platform.platform_profiles.update.self",
+      "guard": "platform_admin",
+      "description": "Update own PlatformProfile fields (except first_name + last_name, which are HR-controlled).",
+      "seededOn": ["super_admin", "ops", "product", "security", "hr", "compliance", "engineering", "support", "sales", "finance", "legal"],
+      "seeded_on_every_platform_role": true
+    },
+    {
+      "name": "platform.platform_profiles.view.pii",
+      "guard": "platform_admin",
+      "description": "Unmute PII fields (phone_e164, slack_handle, github_handle) on ANOTHER PlatformUser's profile.",
+      "seededOn": ["super_admin", "security", "hr"]
+    },
+    {
+      "name": "platform.on_call.view",
+      "guard": "platform_admin",
+      "description": "Read the on-call rotation resolver. Unmutes phone_e164 on the resolution response (specifically \u2014 not the general view.pii). Also seeded on the on_call_router_service_account for internal escalation tooling.",
+      "seededOn": ["super_admin", "ops", "security", "on_call_router_service_account"]
+    }
+  ],
+  "seed_note": "New hires land with NO role assignments \u2014 the seeder provisions the permission catalogue + the seeded roles hold the mapped permissions, but a PlatformUser row is not associated with any role until a super_admin explicitly grants one via the future `access/rbac` module (Wave 1b). Two abilities (view.self + update.self on PlatformProfile) are the exception \u2014 they are seeded on EVERY baseline platform_admin role because every PlatformUser must be able to read + write their own profile."
+}

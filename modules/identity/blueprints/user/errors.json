@@ -1,0 +1,211 @@
+{
+  "id": "academorix://modules/user/errors",
+  "$version": 1,
+  "title": "user \u2014 error codes",
+  "namespace": "user",
+  "errors": [
+    {
+      "code": "USER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.user_not_found"
+    },
+    {
+      "code": "USER_ALREADY_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.user_already_exists",
+      "description": "Attempted to provision a User for an (identity_id, application_id) triple that already exists. Client should reuse the existing row."
+    },
+    {
+      "code": "USER_SUSPENDED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.user_suspended",
+      "description": "User.status = suspended. Response includes reactivation_scheduled_for when set."
+    },
+    {
+      "code": "USER_DISABLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.user_disabled"
+    },
+    {
+      "code": "USER_PENDING_VERIFICATION",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.user_pending_verification",
+      "description": "User.status = pending because email verification hasn't completed. Response includes the resend-verification endpoint."
+    },
+    {
+      "code": "USER_SLOT_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.user_slot_quota_exceeded",
+      "description": "Reached the `user_slot` entitlement cap for this tenant. Response includes upgrade path."
+    },
+    {
+      "code": "PROFILE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.profile_not_found"
+    },
+    {
+      "code": "PROFILE_PII_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "user.errors.profile_pii_forbidden",
+      "description": "Caller attempted to write a Profile PII field without `profile.update.pii`. Audit severity=warn because unexpected PII writes are a security signal."
+    },
+    {
+      "code": "PROFILE_MINOR_PII_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "user.errors.profile_minor_pii_forbidden",
+      "description": "Caller attempted to read a minor Profile's PII without `profile.view.pii.child` OR without a live AthleteGuardian relationship."
+    },
+    {
+      "code": "AVATAR_TOO_LARGE",
+      "http": 413,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.avatar_too_large",
+      "description": "Upload exceeded the resolved cap (min of tenant setting + tier cap + `user.profile.max_avatar_size_kb`)."
+    },
+    {
+      "code": "AVATAR_UNSUPPORTED_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.avatar_unsupported_type",
+      "description": "Content-Type must be image/jpeg | image/png | image/webp. GIF + SVG rejected (SVG XSS risk)."
+    },
+    {
+      "code": "AVATAR_UPLOAD_UNAVAILABLE",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.avatar_upload_unavailable",
+      "description": "`avatar_upload` entitlement is disabled OR `user.profile.allow_avatar_upload` = false OR the feature flag `user.avatar_upload` is off."
+    },
+    {
+      "code": "TENANT_MEMBERSHIP_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.tenant_membership_not_found"
+    },
+    {
+      "code": "TENANT_MEMBERSHIP_ALREADY_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.tenant_membership_already_exists",
+      "description": "UNIQUE(user_id, tenant_id) hit. If soft-deleted, response includes the restore path."
+    },
+    {
+      "code": "TENANT_MEMBERSHIP_CROSS_APPLICATION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "user.errors.tenant_membership_cross_application",
+      "description": "Attempted to add a TenantMember on a Tenant whose application_id \u2260 the User's application_id. Hard reject \u2014 cross-application memberships are forbidden per hierarchy.md §4."
+    },
+    {
+      "code": "TENANT_MEMBERSHIP_LAST_DEFAULT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.tenant_membership_last_default",
+      "description": "Attempted to remove the User's only default TenantMember. Response asks the caller to erase the User OR promote another membership first."
+    },
+    {
+      "code": "TENANT_MEMBERSHIP_MULTI_TENANT_DISABLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.tenant_membership_multi_tenant_disabled",
+      "description": "`multi_tenant_membership` entitlement is off (small tier). Response includes upgrade path."
+    },
+    {
+      "code": "BULK_INVITE_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.bulk_invite_quota_exceeded",
+      "description": "`bulk_user_provision` monthly pool exhausted."
+    },
+    {
+      "code": "BULK_INVITE_CSV_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.bulk_invite_csv_invalid",
+      "description": "CSV parse failed or a required column (email) is missing on \u2265 1 row. Response includes the line number."
+    },
+    {
+      "code": "AGE_BELOW_COMPLIANCE_FLOOR",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.age_below_compliance_floor",
+      "description": "identity->dob puts the subject below the effective compliance floor (COPPA 13 US / GDPR per-country / tenant setting). Response includes the floor + the resolving policy."
+    },
+    {
+      "code": "ERASURE_HOLD_EXPIRED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.erasure_hold_expired",
+      "description": "Attempted to restore a soft-deleted User past the erasure hold window. The row has been (or will imminently be) hard-deleted."
+    },
+    {
+      "code": "NO_ACTIVE_TENANT",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "user.errors.no_active_tenant",
+      "description": "The caller has no default TenantMember AND supplied no `X-Tenant-Id` header. The middleware `user.resolve_active_tenant` couldn't resolve."
+    },
+    {
+      "code": "TENANT_MEMBERSHIP_REQUIRED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "user.errors.tenant_membership_required",
+      "description": "The middleware `user.enforce_tenant_membership` refused because the resolved tenant_id doesn't correspond to a live TenantMember. Warn-level because a forged X-Tenant-Id is a security signal."
+    }
+  ]
+}

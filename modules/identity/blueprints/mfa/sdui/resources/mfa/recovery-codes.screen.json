@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/mfa/sdui/resources/mfa/recovery-codes",
+  "$version": 1,
+  "kind": "screen",
+  "route": "/me/mfa/recovery-codes",
+  "title": "Recovery codes",
+  "description": "Recovery-code management surface. Shows remaining count, offers regenerate + download (both step-up-gated). The RecoveryCodesReveal widget handles the one-shot plaintext display on regenerate / download responses.",
+  "permission": "mfa.viewOwn",
+  "data_source": {
+    "kind": "resource",
+    "resource": "mfa-method",
+    "endpoint": "GET /api/v1/me/mfa",
+    "cache_ttl_seconds": 30
+  },
+  "layout": {
+    "type": "single_column",
+    "sections": [
+      {
+        "id": "summary",
+        "widget": "stat-card",
+        "props": {
+          "label": "Recovery codes remaining",
+          "value": "{{response.recovery_codes_remaining}}",
+          "severity": "{{response.recovery_codes_low ? 'warning' : 'default'}}",
+          "sub_message": "{{response.recovery_codes_low ? 'Consider regenerating soon.' : 'You have a healthy supply.'}}"
+        }
+      },
+      {
+        "id": "download",
+        "kind": "card",
+        "title": "Show current codes",
+        "body": "Re-display the codes you were shown when you enrolled. This doesn't invalidate them.",
+        "actions": [
+          {
+            "label": "Show codes",
+            "kind": "primary",
+            "endpoint": "POST /api/v1/me/mfa/recovery-codes/download",
+            "requires_step_up": true,
+            "on_success": {
+              "widget": "recovery-codes-reveal",
+              "data": "{{response.codes}}",
+              "instructions": "Save these somewhere safe. They will not be shown again unless you use this button.",
+              "auto_hide_seconds": 60
+            },
+            "on_error": {
+              "MFA_RECOVERY_CODES_EMPTY": {
+                "kind": "modal",
+                "title": "No codes remaining",
+                "body": "Every code has been consumed. Regenerate a fresh set to continue.",
+                "actions": [
+                  { "label": "Regenerate", "kind": "primary", "action": "trigger_regenerate" }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      {
+        "id": "regenerate",
+        "kind": "card",
+        "title": "Regenerate all codes",
+        "body": "Invalidates every unconsumed code and generates a fresh set of ten. Use this if you've lost your saved codes.",
+        "actions": [
+          {
+            "label": "Regenerate all codes",
+            "kind": "danger",
+            "endpoint": "POST /api/v1/me/mfa/recovery-codes/regenerate",
+            "requires_step_up": true,
+            "confirm": {
+              "title": "Regenerate all recovery codes?",
+              "body": "Every code you previously saved will stop working. You'll see the new set once. Continue?"
+            },
+            "on_success": {
+              "widget": "recovery-codes-reveal",
+              "data": "{{response.codes}}",
+              "instructions": "Save these codes NOW. The previous set is invalidated.",
+              "auto_hide_seconds": 60
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

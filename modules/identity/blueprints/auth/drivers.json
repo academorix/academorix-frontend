@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/auth/drivers",
+  "$version": 1,
+  "title": "auth \u2014 driver specifications",
+  "description": "Two driver contracts. JwtSigner drivers wrap the HS256 signing pipeline (KMS-decrypt secret \u2192 firebase/php-jwt sign). RegistrationPolicy drivers implement the domain-specific policy strategy pattern.",
+  "contracts": [
+    {
+      "interface": "Academorix\\Auth\\Contracts\\JwtSignerInterface",
+      "methods": [
+        {
+          "signature": "sign(JwtPayload $payload, string $applicationId): string",
+          "returns": "The signed JWT (three dot-separated base64url parts: header.payload.signature). Kid resolved via ResolveJwtSigningKeyAction; secret KMS-decrypted into a stack-scoped variable inside the sign() call."
+        },
+        {
+          "signature": "verify(string $jwt, ?string $expectedApplicationId = null): JwtPayload",
+          "returns": "Decoded payload when signature verifies + `iss`+`aud`+`exp`+`iat` valid + not in deny list + (when expectedApplicationId given) `app` claim matches."
+        },
+        {
+          "signature": "healthcheck(): DriverHealth",
+          "description": "Signs + verifies a synthetic payload as a round-trip probe."
+        }
+      ]
+    },
+    {
+      "interface": "Academorix\\Auth\\Contracts\\RegistrationPolicyInterface",
+      "methods": [
+        {
+          "signature": "evaluate(RegistrationContext $context): RegistrationDecision",
+          "returns": "One of RegistrationDecision::Allowed, RegistrationDecision::RequiresGuardianConsent, RegistrationDecision::Denied. Never throws \u2014 caller inspects the enum + branches."
+        },
+        {
+          "signature": "supports(RegistrationContext $context): bool",
+          "returns": "True when THIS policy handles the given context's type (matches on #[RegistrationPolicy(contextType: X)]). Discovery uses this to dispatch."
+        }
+      ]
+    },
+    {
+      "interface": "Academorix\\Auth\\Contracts\\SessionRevokerInterface",
+      "methods": [
+        {
+          "signature": "revokeSingle(string $tokenId, SessionRevocationReason $reason, ?string $actorId): void",
+          "description": "Revoke one PAT. Fires SessionRevoked."
+        },
+        {
+          "signature": "revokeAllForUser(string $userId, SessionRevocationReason $reason, ?string $actorId): int",
+          "description": "Revoke every active PAT for a single User. Returns the count. Fires AllSessionsRevoked."
+        },
+        {
+          "signature": "revokeAllForIdentity(string $identityId, SessionRevocationReason $reason, ?string $actorId): int",
+          "description": "Revoke every active PAT for every User referencing the Identity (cross-Application). Returns the count. Fires AllSessionsRevoked."
+        }
+      ]
+    },
+    {
+      "interface": "Academorix\\Auth\\Contracts\\ScopeSuffixResolverInterface",
+      "methods": [
+        {
+          "signature": "resolve(User|PlatformUser $principal, string $permission): ScopeFilterClause",
+          "description": "Given a permission (e.g. `athletes.viewAny.branch`) return the SQL WHERE clause needed to filter to the applicable scope. Recognises `.any`, `.tenant`, `.organization`, `.branch`, `.team`, `.child`, `.own` suffixes. Returns a ScopeFilterClause (a value object the base repository translates into an Eloquent scope)."
+        }
+      ]
+    },
+    {
+      "interface": "Academorix\\Auth\\Contracts\\CompliantAgePolicyInterface",
+      "methods": [
+        {
+          "signature": "resolveFloor(string $regionCountryCode, ?string $tenantId): int",
+          "description": "Compute the effective minimum age. Chain: COPPA (US) \u2192 GDPR per-country \u2192 framework default (auth.principal.min_age) \u2192 tenant override (MAX only). Returns the effective floor."
+        },
+        {
+          "signature": "isAllowed(int $ageAtRegistration, string $regionCountryCode, ?string $tenantId): AgeGateDecision",
+          "description": "Returns AgeGateDecision::Allowed | RequiresGuardianConsent | Denied. Composes the floor lookup with the guardian-consent age band."
+        }
+      ]
+    }
+  ],
+  "jwt_signer_drivers": [
+    {
+      "name": "hs256-kms",
+      "class": "Academorix\\Auth\\Drivers\\Hs256KmsJwtSigner",
+      "underlying_package": "firebase/php-jwt + aws/aws-sdk-php",
+      "strengths": [
+        "KMS-managed key rotation via built-in KMS rotation policy",
+        "Auditable \u2014 every decrypt call appears in CloudTrail",
+        "Stack-scoped plaintext \u2014 blast radius bounded"
+      ],
+      "weaknesses": ["Requires AWS credentials + KMS endpoint reachable"],
+      "config_prefix": "auth.jwt (algorithm=HS256, KMS backend selected by auth.jwt.signing_backend='kms')"
+    },
+    {
+      "name": "hs256-vault",
+      "class": "Academorix\\Auth\\Drivers\\Hs256VaultJwtSigner",
+      "underlying_package": "firebase/php-jwt + hashicorp/vault-php",
+      "strengths": ["Self-hosted", "Cross-cloud portable"],
+      "weaknesses": ["Additional operational surface"],
+      "config_prefix": "auth.jwt.signing_backend='vault'"
+    }
+  ],
+  "registration_policy_drivers": [
+    {
+      "name": "generic",
+      "class": "Academorix\\Auth\\Drivers\\GenericRegistrationPolicy",
+      "attribute": "#[RegistrationPolicy(contextType: GenericRegistrationContext::class, priority: 1000)]",
+      "purpose": "Framework default. Composes CompliantAgePolicy + auth.principal.require_email_verification + user.registration.requires_invitation. Domain-specific policies (athletes, coaches, etc.) OVERRIDE by registering at lower priority.",
+      "checks": [
+        "CompliantAgePolicy::isAllowed(dob, region) \u2192 Denied | RequiresGuardianConsent | Allowed",
+        "auth.principal.require_email_verification \u2192 email_verification_required (added to decision context)",
+        "user.registration.requires_invitation \u2192 refuse when no valid invitation in the context"
+      ]
+    }
+  ]
+}

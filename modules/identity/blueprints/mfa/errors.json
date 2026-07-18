@@ -1,0 +1,242 @@
+{
+  "id": "academorix://modules/mfa/errors",
+  "$version": 1,
+  "title": "mfa — error codes",
+  "namespace": "mfa",
+  "errors": [
+    {
+      "code": "MFA_CHALLENGE_REQUIRED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.challenge_required",
+      "description": "The `mfa.require_challenge_complete` middleware refused because the caller has MFA enrolled + a role requiring MFA but no challenge has succeeded in the current session. Response includes the initiation URL."
+    },
+    {
+      "code": "MFA_CHALLENGE_TOO_STALE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.challenge_too_stale",
+      "description": "The `mfa.require_recent_challenge` middleware refused because the last successful MFA challenge is older than `mfa.step_up.sensitive_action_ttl_minutes`. Response includes the step-up URL + the action ID the caller was trying to invoke."
+    },
+    {
+      "code": "MFA_ENROLMENT_REQUIRED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.enrolment_required",
+      "description": "Caller holds a role requiring MFA + the grace_days_after_enrollment window has elapsed + no MFA is enrolled. Response includes the enrolment URL."
+    },
+    {
+      "code": "MFA_CHALLENGE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.challenge_not_found",
+      "description": "The challenge_id path parameter did not resolve to a challenge row. Same error for unknown-challenge, expired-challenge, and consumed-challenge cases (no info leak about challenge state)."
+    },
+    {
+      "code": "MFA_CHALLENGE_INVALID_CODE",
+      "http": 422,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.challenge_invalid_code",
+      "description": "Submitted TOTP code did not match. Retryable up to challenge.max_attempts. Response includes the attempts_remaining count so the SPA can render 'N attempts left'."
+    },
+    {
+      "code": "MFA_CHALLENGE_INVALID_ASSERTION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "mfa.errors.challenge_invalid_assertion",
+      "description": "Submitted WebAuthn assertion failed signature verification. Non-retryable within the same challenge — the client must restart the WebAuthn flow with a fresh challenge (browsers can't reuse assertions)."
+    },
+    {
+      "code": "MFA_CHALLENGE_INVALID_RECOVERY_CODE",
+      "http": 422,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "mfa.errors.challenge_invalid_recovery_code",
+      "description": "Submitted recovery code did not match ANY unconsumed hash on the Identity. Same error for wrong-code / already-consumed / no-MFA-enrolled cases (no info leak). Retryable up to challenge.max_attempts."
+    },
+    {
+      "code": "MFA_CHALLENGE_ATTEMPTS_EXHAUSTED",
+      "http": 429,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "mfa.errors.challenge_attempts_exhausted",
+      "description": "attempts_remaining reached 0. Caller must wait `mfa.challenge.cooldown_minutes_after_max` before issuing a fresh challenge. Response includes Retry-After header."
+    },
+    {
+      "code": "MFA_ALREADY_ENROLLED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.already_enrolled",
+      "description": "POST /me/mfa/totp/enroll refused because the Identity already has a TOTP secret persisted. To rotate, disable first, then re-enroll."
+    },
+    {
+      "code": "MFA_PREVIEW_EXPIRED",
+      "http": 410,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.preview_expired",
+      "description": "Round-2 confirm refused because the round-1 preview envelope is no longer in Redis (either TTL elapsed OR PurgeUnconfirmedEnrollmentsJob evicted). Caller must restart from /enroll/preview."
+    },
+    {
+      "code": "MFA_PREVIEW_MISSING",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.preview_missing",
+      "description": "Round-2 confirm refused because no round-1 preview was ever issued for the caller's session. Same error shape as PREVIEW_EXPIRED (no info leak about which endpoint was called first)."
+    },
+    {
+      "code": "MFA_ENROLMENT_CONFIRMATION_INVALID",
+      "http": 422,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.enrolment_confirmation_invalid",
+      "description": "Round-2 confirm: the submitted TOTP code did not match the ephemeral preview secret. Ephemeral state discarded; caller must restart from preview. NOT retryable on the same envelope."
+    },
+    {
+      "code": "MFA_ENROLMENT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.enrolment_not_entitled",
+      "description": "Entitlement gate refused enrolment. Response includes the missing entitlement key (mfa_totp OR mfa_webauthn) so the SPA can route to the upgrade CTA."
+    },
+    {
+      "code": "MFA_STEP_UP_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.step_up_not_entitled",
+      "description": "Caller invoked an action gated by `mfa.require_recent_challenge` but their tenant does not hold the `mfa_step_up` entitlement. Middleware degrades to pass-through (no error surfaced to the tenant caller); this error code exists for the audit trail only."
+    },
+    {
+      "code": "WEBAUTHN_ATTESTATION_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "mfa.errors.webauthn_attestation_invalid",
+      "description": "Attestation verification failed at registration. Response includes a generic 'security check failed' message; full detail (which spec check failed) stays in the audit log."
+    },
+    {
+      "code": "WEBAUTHN_CREDENTIAL_ALREADY_REGISTERED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.webauthn_credential_already_registered",
+      "description": "Registration refused because the submitted credential_id already exists (globally unique). Either the user is registering the same physical key twice OR they're registering a synced-passkey that another Identity also has (in which case the security posture depends on whether cross-Identity sync is allowed — refused by default)."
+    },
+    {
+      "code": "WEBAUTHN_MAX_CREDENTIALS_REACHED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.webauthn_max_credentials_reached",
+      "description": "Registration refused because the Identity has `config('mfa.webauthn.max_credentials_per_identity')` (default 10) active credentials. User must delete an existing credential first."
+    },
+    {
+      "code": "WEBAUTHN_MULTIPLE_DEVICES_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.webauthn_multiple_devices_not_entitled",
+      "description": "Registration refused because the caller already has one WebAuthn credential AND their tenant lacks the `mfa_multiple_devices` entitlement (free tier). Response includes the upgrade CTA."
+    },
+    {
+      "code": "WEBAUTHN_UV_POLICY_VIOLATION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "mfa.errors.webauthn_uv_policy_violation",
+      "description": "Assertion refused because the UV (user-verification) flag did not match the requested policy. E.g. server required UV=required but authenticator returned UV=false."
+    },
+    {
+      "code": "WEBAUTHN_SIGN_COUNT_REPLAY_DETECTED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "mfa.errors.webauthn_sign_count_replay",
+      "description": "Assertion refused because the submitted sign_count is <= the stored value. Indicates a cloned authenticator OR a replay attack. When `mfa.sign_count_replay_hard_delete` is on (default), the credential is auto-deleted in the same request; when off, it's auto-disabled. Always logs a critical audit entry."
+    },
+    {
+      "code": "WEBAUTHN_CREDENTIAL_DISABLED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.webauthn_credential_disabled",
+      "description": "Assertion refused because the credential is disabled (disabled_at IS NOT NULL). Caller should choose a different credential OR contact support to re-enable / re-register."
+    },
+    {
+      "code": "MFA_NOT_ENROLLED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.not_enrolled",
+      "description": "Operation refused because it requires MFA enrolment but the Identity has none. E.g. DELETE /me/mfa/totp on an Identity without a TOTP secret."
+    },
+    {
+      "code": "MFA_DISABLE_REQUIRES_ALTERNATE_FACTOR",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "mfa.errors.disable_requires_alternate_factor",
+      "description": "DELETE /me/mfa/totp refused because the caller is trying to disable TOTP with a TOTP challenge (would leave them locked out). Response instructs the caller to use a recovery code OR a WebAuthn credential to verify the disable."
+    },
+    {
+      "code": "MFA_RECOVERY_CODES_EMPTY",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "mfa.errors.recovery_codes_empty",
+      "description": "POST /me/mfa/recovery-codes/download refused because the Identity's recovery-code array is empty (all consumed OR not yet generated). Caller must regenerate instead."
+    },
+    {
+      "code": "MFA_ROLE_REQUIRES_MFA",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "mfa.errors.role_requires_mfa",
+      "description": "Grant of a role listed in `mfa.required_for_roles` was refused because the target Identity has no MFA enrolled AND the grace_days_after_enrollment configuration is 0. Fired at the RBAC layer, error propagated through this namespace for consistency."
+    },
+    {
+      "code": "MFA_FORCE_DISABLE_REASON_REQUIRED",
+      "http": 400,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "mfa.errors.force_disable_reason_required",
+      "description": "Platform-admin force-disable refused because `config('mfa.commands.require_reason')` is true and the request body lacked a `reason` field. Non-optional in staging + production."
+    }
+  ]
+}

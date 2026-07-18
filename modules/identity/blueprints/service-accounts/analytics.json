@@ -1,0 +1,153 @@
+{
+  "id": "academorix://modules/service-accounts/analytics",
+  "$version": 1,
+  "title": "service-accounts \u2014 platform-ops analytics",
+  "sink": "segment",
+  "consentTiers": ["essential"],
+  "description": "Analytics events on the machine-credential plane. These are Academorix-internal platform-ops events \u2014 they land in the SAME internal Segment source as platform-user events (SEGMENT_INTERNAL_WRITE_KEY), never in the tenant-facing product source. Consent tier is `essential` \u2014 platform-ops analytics are internal operational metrics governed by SOC 2 CC7.2, not by the tenant-plane consent framework. No SA secret material ever appears on any event.",
+  "events": [
+    {
+      "name": "Service Account Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "tenant_id",
+        "expires_at",
+        "actor_platform_user_id"
+      ],
+      "description": "New SA provisioned. `tenant_id` is nullable (null = platform-plane SA). `expires_at` drives the rotation-due dashboards. Feeds the machine-credential inventory dashboard."
+    },
+    {
+      "name": "Service Account Secret Rotated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "trigger",
+        "days_since_last_rotation",
+        "new_expires_at",
+        "actor_platform_user_id"
+      ],
+      "description": "Secret rotated. `trigger` = manual|scheduled|incident|expired_grace. `days_since_last_rotation` feeds the rotation-hygiene dashboard \u2014 target median < ttl_days, tail warning > 1.5x ttl."
+    },
+    {
+      "name": "Service Account Disabled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "trigger",
+        "actor_platform_user_id"
+      ],
+      "description": "SA soft-disabled. `trigger` = manual|expired|dormant|suspicious_activity|incident. Feeds the credential-hygiene dashboard \u2014 dormant + expired triggers should tail down as ops adopts rotation discipline."
+    },
+    {
+      "name": "Service Account Enabled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "actor_platform_user_id",
+        "disabled_duration_days"
+      ],
+      "description": "SA re-enabled after having been disabled. `disabled_duration_days` correlates with incident-recovery time; long durations may indicate the SA should have been deleted rather than disabled."
+    },
+    {
+      "name": "Service Account Deleted",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "actor_platform_user_id",
+        "lifetime_days",
+        "usage_last_day_count"
+      ],
+      "description": "SA soft-deleted (start of the retention hold). `lifetime_days` counts from `created_at`. `usage_last_day_count` reads the last 24h `last_used_at` velocity so ops can catch accidentally deleting an actively-used SA."
+    },
+    {
+      "name": "Service Account JWT Issued",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "kid",
+        "requested_ttl_seconds",
+        "aud"
+      ],
+      "description": "Token-exchange endpoint issued a JWT. Feeds the JWT-issuance-rate dashboard \u2014 anomalies + spikes correlate with either a fleet scale-out (benign) or a compromised-credential replay (malignant). Sampled: 1 event per 100 successful issuances by default to keep event volume manageable."
+    },
+    {
+      "name": "Service Account Rotation Due Notified",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "days_until_expiry",
+        "recipient_count"
+      ],
+      "description": "NotifyRotationDueJob dispatched the warning notification. Feeds the rotation-followup dashboard \u2014 SAs with a Rotation Due Notified event but no Secret Rotated event within `days_until_expiry` become the rotation-noncompliance queue."
+    },
+    {
+      "name": "Service Account Expired",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "days_past_expiry",
+        "last_used_at_days_ago"
+      ],
+      "description": "expires_at + grace period elapsed with no rotation \u2014 SA soft-disabled by PurgeExpiredServiceAccountsJob. `last_used_at_days_ago` distinguishes 'genuinely forgotten' (large value) from 'in-use but ops missed the rotation' (small value)."
+    },
+    {
+      "name": "Service Account Dormant Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "days_since_last_use",
+        "days_since_created"
+      ],
+      "description": "DetectDormantServiceAccountJob flagged an unused SA. Feeds the credential-inventory-cleanup dashboard; the security team triages via the Sunday-morning report."
+    },
+    {
+      "name": "Service Account Usage Detected After Dormancy",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "days_since_last_use",
+        "request_ip_prefix_24"
+      ],
+      "description": "Fired when a SA that has been silent >30 days makes a request. Distinct from the periodic Dormant Detected \u2014 this signals a WAKE UP, which is a compromise-adjacent signal. Feeds the security triage queue."
+    },
+    {
+      "name": "Service Account Suspicious Activity Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": [
+        "service_account_id",
+        "application_id",
+        "signal_type",
+        "request_ip_prefix_24"
+      ],
+      "description": "Fingerprinter caught a rate-spike + novel-tuple combination. `signal_type` = rate_spike_novel_ip | rate_spike_novel_ua | high_failure_rate | cross_kid_signature_reuse. Feeds the security incident-response pipeline."
+    }
+  ],
+  "notes": [
+    "None of these events carry `secret_hash`, `signer_kid` (the kid value itself IS included for auditability but is not a secret), plaintext secrets, or JWT payloads.",
+    "`actor_platform_user_id` is always a PlatformUser id (never a User id, never a ServiceAccount id). Every mutating event has a human operator behind it.",
+    "`request_ip_prefix_24` truncates the IP to the /24 network. Sufficient for anomaly correlation, insufficient for surveillance.",
+    "Segment write key resolves via env `SEGMENT_INTERNAL_WRITE_KEY` (distinct from `SEGMENT_TENANT_WRITE_KEY`). Same source as platform-user events."
+  ]
+}

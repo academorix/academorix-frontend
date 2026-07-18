@@ -1,0 +1,134 @@
+{
+  "id": "academorix://modules/auth/relations",
+  "$version": 1,
+  "title": "auth \u2014 model relationships",
+  "description": "Six owned tables plus Sanctum's shipped `personal_access_tokens`. Every table references either `identities` (password resets, verifications, MFA challenges, cross-app grants) or is unrelated to a specific identity (JWT signing keys, JWT deny list). Refresh tokens reference the Sanctum `tokenable` polymorphically (User OR PlatformUser). NO tenant scope on ANY of these tables \u2014 tenant / application scope propagates through the referring User / PlatformUser or through the encoded JWT claims.",
+  "internal": [
+    {
+      "from": "RefreshToken",
+      "kind": "morphTo",
+      "to": "tokenable (User | PlatformUser)",
+      "foreignKey": "tokenable_id",
+      "morphType": "tokenable_type",
+      "description": "Polymorphic parent \u2014 refresh tokens issue against a User (tenant plane) OR a PlatformUser (platform plane). Never against an Identity directly \u2014 refresh tokens are session-scoped, not credential-scoped."
+    },
+    {
+      "from": "RefreshToken",
+      "kind": "hasMany (self)",
+      "to": "RefreshToken",
+      "foreignKey": "family_id",
+      "description": "Every rotation shares a `family_id` with its predecessor. Reuse detection: if any consumed token in the family is presented again, EVERY token in the family (and every active PAT for the tokenable) is invalidated as a breach signal."
+    },
+    {
+      "from": "JwtSigningKey",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Signing keys are per-Application for `app` claim binding. NULL = global signing key (used for platform-plane JWTs)."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "RefreshToken",
+      "kind": "belongsTo",
+      "to": "personal_access_tokens (sanctum)",
+      "foreignKey": "personal_access_token_id",
+      "onDelete": "cascade",
+      "description": "Each refresh token pairs with the Sanctum PAT it accompanies. Revoking the PAT cascades the refresh token; consuming the refresh token invalidates the paired PAT."
+    },
+    {
+      "from": "PasswordReset",
+      "kind": "belongsTo",
+      "to": "identity::Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "One-time-use token bound to a specific Identity. Cascade on Identity hard delete."
+    },
+    {
+      "from": "EmailVerification",
+      "kind": "belongsTo",
+      "to": "identity::Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "Email-ownership token \u2014 issued at registration + on email change. Cascade on Identity hard delete."
+    },
+    {
+      "from": "MfaChallenge",
+      "kind": "belongsTo",
+      "to": "identity::Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "Ephemeral pending-login state (5-minute TTL). Cascade on Identity hard delete."
+    },
+    {
+      "from": "CrossAppGrant",
+      "kind": "belongsTo (twice)",
+      "to": "application::Application",
+      "foreignKey": ["source_application_id", "target_application_id"],
+      "onDelete": "restrict",
+      "description": "Grant token carries source + target Application IDs. Restrict on delete so a disappeared Application can't orphan grants mid-exchange."
+    },
+    {
+      "from": "CrossAppGrant",
+      "kind": "belongsTo",
+      "to": "identity::Identity",
+      "foreignKey": "identity_id",
+      "onDelete": "cascade",
+      "description": "Grant is scoped to the Identity being cross-authenticated."
+    },
+    {
+      "from": "JwtDenyListEntry",
+      "kind": "no FK",
+      "description": "jti is a UUID string; the deny list is a lookup table, not a graph node."
+    },
+    {
+      "from": "PersonalAccessToken (sanctum)",
+      "kind": "morphTo",
+      "to": "tokenable (User | PlatformUser)",
+      "foreignKey": "tokenable_id",
+      "morphType": "tokenable_type",
+      "description": "Sanctum's shipped polymorphism. Auth::user() resolves to User (sanctum guard) or PlatformUser (platform_admin guard) based on the token."
+    }
+  ],
+  "inbound": [
+    {
+      "from": "audit::Audit",
+      "kind": "morphTo",
+      "to": "auditable (RefreshToken | PasswordReset | ...)",
+      "description": "Every auth-lifecycle mutation is audited via HasActivityLog composition. Audit rows carry the auditable_type / auditable_id polymorphic pointer back."
+    },
+    {
+      "from": "activity::Activity",
+      "kind": "morphTo",
+      "to": "subject (RefreshToken | CrossAppGrant | JwtSigningKey | ...)",
+      "description": "Product-audit rows record who did what on the auth surface \u2014 grant issue/exchange, key rotation, session revocation."
+    }
+  ],
+  "accessor_chain": {
+    "description": "Auth models expose computed accessors that downstream code reads instead of touching hashes / ciphertexts directly.",
+    "RefreshToken": {
+      "is_active": "revoked_at IS NULL AND consumed_at IS NULL AND expires_at > now()",
+      "is_consumed": "consumed_at IS NOT NULL",
+      "is_revoked": "revoked_at IS NOT NULL",
+      "family_size": "count of RefreshToken WHERE family_id = self.family_id",
+      "is_breach_family": "any RefreshToken in family has consumed_at IS NOT NULL AND presented again \u2014 flagged by RefreshTokenObserver"
+    },
+    "PersonalAccessToken": {
+      "is_expired": "expires_at IS NOT NULL AND expires_at < now()",
+      "abilities_compact": "the compact permission array cached at issue-time in the `abilities` column",
+      "application_id_scope": "extracted from the token's issuance context (Sanctum's abilities column carries a `_app` pseudo-ability)"
+    },
+    "JwtSigningKey": {
+      "is_active": "is_active = true AND retired_at IS NULL",
+      "is_signing_capable": "is_active AND retired_at IS NULL",
+      "is_verify_only": "retired_at IS NOT NULL AND retired_at + 180 days > now()"
+    },
+    "CrossAppGrant": {
+      "is_consumed": "consumed_at IS NOT NULL",
+      "is_expired": "expires_at < now()",
+      "is_redeemable": "NOT is_consumed AND NOT is_expired"
+    }
+  }
+}

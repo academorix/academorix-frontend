@@ -1,0 +1,36 @@
+{
+  "id": "platform-user.platform-user-status-chip",
+  "title": "Platform user status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for the four PlatformUser status values. Consumed in list rows, detail headers, audit-trail entries.",
+  "props": {
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": ["pending", "active", "suspended", "offboarded"]
+    },
+    "size": { "type": "string", "default": "xs", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "chip",
+      "kind": "Chip",
+      "props": { "size": "xs" },
+      "bindings": {
+        "props": {
+          "size": { "$ref": "props.size" },
+          "variant": {
+            "$expr": "({ pending: 'neutral', active: 'success', suspended: 'warning', offboarded: 'danger' }[props.status])"
+          },
+          "leadingIcon": {
+            "$expr": "({ pending: 'clock', active: 'check-circle', suspended: 'pause-circle', offboarded: 'user-minus' }[props.status])"
+          },
+          "children": {
+            "$expr": "({ pending: 'Pending', active: 'Active', suspended: 'Suspended', offboarded: 'Offboarded' }[props.status])"
+          }
+        }
+      }
+    }
+  ]
+}

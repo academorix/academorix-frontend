@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/identity/features",
+  "$version": 1,
+  "title": "identity \u2014 feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me \u2192 data.features"
+  },
+  "description": "Identity contributes NO tenant-facing UI features directly \u2014 the tenant surface is owned by `identity/auth`. The keys below are consumed by identity/auth to gate the enrolment / recovery flows.",
+  "features": [
+    {
+      "key": "identity.core",
+      "displayName": "Authentication substrate",
+      "description": "Base identity capability. Always on. Presence of this feature key indicates identity-service is reachable.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "identity.mfa",
+      "displayName": "Two-factor authentication",
+      "description": "Composite of the mfa_totp / mfa_webauthn / mfa_recovery_codes entitlements. When any is on, this feature key is exposed.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "identity.password_breach_check",
+      "displayName": "Breach-check on password change",
+      "description": "Checks every new password against publicly-known breaches. Silent gate \u2014 shows an error only when a breached password is submitted.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "identity.password_history",
+      "displayName": "Prevent password reuse",
+      "description": "Refuses new passwords that match any of the last N. Silent gate.",
+      "defaultEnabled": false,
+      "planTiers": ["team", "business", "enterprise"]
+    },
+    {
+      "key": "identity.progressive_lockout",
+      "displayName": "Progressive lockout backoff",
+      "description": "Doubles lockout duration on consecutive lockouts within an hour. Silent gate.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    },
+    {
+      "key": "identity.suspicious_login_alerts",
+      "displayName": "Suspicious-login email alerts",
+      "description": "Sends SuspiciousLoginNotification on novel-IP + high-velocity lockout events.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "team", "business", "enterprise"]
+    }
+  ]
+}

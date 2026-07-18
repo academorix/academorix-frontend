@@ -1,0 +1,98 @@
+{
+  "id": "service-accounts.signer-kid-badge",
+  "title": "Signer kid badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact kid identifier with hover-reveal tooltip. Renders the kid string in font-mono type. Tooltip fetches the kid's metadata from the auth module (algorithm + creation date + count of SAs sharing this kid). Cached per-kid at the widget-instance level to avoid N+1 requests when many SAs on the list surface share one kid.",
+  "props": {
+    "kid": {
+      "type": "string",
+      "required": true
+    },
+    "size": {
+      "type": "string",
+      "enum": ["xs", "sm", "md"],
+      "required": false,
+      "default": "sm"
+    }
+  },
+  "dataSource": {
+    "kind": "http.get",
+    "urlExpr": "'/api/v1/platform/jwt-signing-keys/' + props.kid",
+    "unwrap": "data",
+    "cache": {
+      "keyExpr": "'kid-metadata:' + props.kid",
+      "ttlSeconds": 60,
+      "sharedAcrossInstances": true
+    },
+    "loadOn": "hover",
+    "requiresPermission": "platform.jwt_signing_keys.view"
+  },
+  "render": {
+    "kind": "Tooltip",
+    "props": {
+      "placement": "top"
+    },
+    "children": [
+      {
+        "kind": "TooltipTrigger",
+        "children": [
+          {
+            "kind": "Chip",
+            "props": {
+              "size": "xs",
+              "variant": "neutral",
+              "className": "font-mono"
+            },
+            "bindings": {
+              "children": { "$ref": "props.kid" }
+            }
+          }
+        ]
+      },
+      {
+        "kind": "TooltipContent",
+        "props": { "className": "text-xs flex flex-col gap-1" },
+        "children": [
+          {
+            "kind": "Text",
+            "props": { "className": "font-medium" },
+            "bindings": { "children": { "$ref": "props.kid" } }
+          },
+          {
+            "kind": "Text",
+            "props": { "className": "text-muted" },
+            "bindings": {
+              "children": {
+                "$expr": "'Algorithm: ' + dataSource.algorithm"
+              }
+            }
+          },
+          {
+            "kind": "Text",
+            "props": { "className": "text-muted" },
+            "bindings": {
+              "children": {
+                "$expr": "'Created: ' + dataSource.created_at"
+              }
+            }
+          },
+          {
+            "kind": "Text",
+            "props": { "className": "text-muted" },
+            "bindings": {
+              "children": {
+                "$expr": "dataSource.shared_by_sa_count > 1 ? 'Shared by ' + dataSource.shared_by_sa_count + ' SAs' : 'Exclusive to this SA'"
+              }
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "notes": [
+    "The tooltip data loads on hover \u2014 the initial paint of a list surface with N SAs does not fire N kid-metadata requests.",
+    "Cache key is per-kid + shared across widget instances so multiple SAs on the same page sharing a kid make ONE request between them.",
+    "Falls back to the raw kid string without the tooltip when the caller lacks `platform.jwt_signing_keys.view` permission (kid still visible, but metadata is not)."
+  ]
+}

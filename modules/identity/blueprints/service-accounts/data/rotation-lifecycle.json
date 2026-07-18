@@ -1,0 +1,126 @@
+{
+  "$version": 1,
+  "title": "SA rotation lifecycle \u2014 timeline from creation through expiry",
+  "description": "Reference timeline illustrating the mandatory-rotation lifecycle. Every transition is guarded by the observer or a scheduled job. Times are relative to creation (T=0) and use the module-default TTL (90d) + warning window (14d) + grace period (7d).",
+  "timeline": [
+    {
+      "at": "T=0",
+      "event": "ServiceAccountCreated",
+      "actor": "platform_admin",
+      "state": {
+        "is_enabled": true,
+        "status": "pending",
+        "expires_at": "T+90d",
+        "secret_hash": "<bcrypt of a fresh 32-byte random secret>",
+        "secret_rotated_at": "T=0",
+        "last_used_at": null
+      },
+      "notes": "The `pending` status persists until the SA makes its first token-exchange. Plaintext secret returned ONCE in the response body."
+    },
+    {
+      "at": "T+ minutes to hours",
+      "event": "ServiceAccountJwtIssued (first)",
+      "actor": "the SA itself (bcrypt secret \u2192 HS256 JWT via /api/v1/service-accounts/token)",
+      "state": {
+        "is_enabled": true,
+        "status": "active",
+        "last_used_at": "T+ (first exchange)",
+        "last_used_ip": "the SA's caller IP"
+      },
+      "notes": "status transitions from `pending` to `active` on first successful exchange. All subsequent exchanges + verifications update last_used_at without changing status."
+    },
+    {
+      "at": "T+76d",
+      "event": "ServiceAccountSecretRotationScheduled (weekly warning)",
+      "actor": "NotifyRotationDueJob (weekly cron, Mondays 08:00 UTC)",
+      "state": {
+        "is_enabled": true,
+        "status": "active",
+        "days_until_expiry": 14
+      },
+      "notes": "Job enumerates every SA whose expires_at falls inside the 14-day warning window and fires this event per SA. The event is debounced weekly so a single SA sees at most 3 reminders across the 14-day window."
+    },
+    {
+      "at": "T+83d",
+      "event": "ServiceAccountSecretRotationScheduled (second reminder)",
+      "actor": "NotifyRotationDueJob",
+      "state": {
+        "is_enabled": true,
+        "status": "active",
+        "days_until_expiry": 7
+      },
+      "notes": "Second reminder. Operators who ignored the first should now escalate."
+    },
+    {
+      "at": "T+88d (example rotation before expiry)",
+      "event": "ServiceAccountSecretRotated",
+      "actor": "platform_admin (via `service-account:rotate` or POST /platform/service-accounts/{id}/rotate-secret)",
+      "state": {
+        "is_enabled": true,
+        "status": "active",
+        "secret_hash": "<bcrypt of new secret>",
+        "secret_rotated_at": "T+88d",
+        "expires_at": "T+88d + 90d = T+178d"
+      },
+      "notes": "Rotation refreshes secret_hash + secret_rotated_at + expires_at atomically. Plaintext returned ONCE. The signer_kid is UNCHANGED \u2014 kid rotation is a separate operation coordinated with the auth module."
+    },
+    {
+      "at": "T+90d (example: NO rotation happened)",
+      "event": "\u2014 (no event fires here)",
+      "state": {
+        "is_enabled": true,
+        "status": "active",
+        "days_until_expiry": 0
+      },
+      "notes": "expires_at reached. JWTs signed BEFORE this moment remain valid until natural exp (default 300s = 5min). Token-exchange refuses new secret-swap with 401 INVALID_SERVICE_ACCOUNT_CREDENTIALS (the audit-log line captures SERVICE_ACCOUNT_SECRET_EXPIRED)."
+    },
+    {
+      "at": "T+97d (7-day grace period passed)",
+      "event": "ServiceAccountExpired \u2192 ServiceAccountDisabled",
+      "actor": "PurgeExpiredServiceAccountsJob (daily 04:00 UTC)",
+      "state": {
+        "is_enabled": false,
+        "status": "expired",
+        "expires_at": "T+90d (past)",
+        "days_past_expiry": 7
+      },
+      "notes": "Two events fire in the same transaction: (a) ServiceAccountExpired (informational, gauge + alert), (b) ServiceAccountDisabled with trigger='expired'. Dispatch ServiceAccountExpiredNotification to Application owners + security-mailing-list."
+    },
+    {
+      "at": "T+180d (example: no manual delete)",
+      "event": "\u2014 (SA still present, is_enabled=false, expires_at long past)",
+      "state": {
+        "is_enabled": false,
+        "status": "expired"
+      },
+      "notes": "An expired SA remains in the table indefinitely until manually deleted. Ops that ignored the disable can either rotate (re-enable) OR delete."
+    },
+    {
+      "at": "T+180d (example: manual delete)",
+      "event": "ServiceAccountDeleted(erasure_phase='soft_delete')",
+      "actor": "platform_admin",
+      "state": {
+        "is_enabled": false,
+        "deleted_at": "T+180d",
+        "status": "disabled"
+      },
+      "notes": "Soft-delete starts the retention hold. is_enabled is force-set to false in the same transaction as deleted_at."
+    },
+    {
+      "at": "T+270d (soft-delete + 90d retention hold)",
+      "event": "ServiceAccountDeleted(erasure_phase='hard_delete')",
+      "actor": "PurgeExpiredServiceAccountsJob",
+      "state": {
+        "row": "hard-deleted"
+      },
+      "notes": "Job's pass 2 hard-deletes the row. Audit rows referencing this SA get their user_id anonymised to `[REDACTED-SERVICE-ACCOUNT]`. The signer_kid is NOT touched \u2014 the auth module owns kid retention independently."
+    }
+  ],
+  "invariants": [
+    "Every state transition fires an after-commit event so downstream listeners never see uncommitted state.",
+    "The plaintext secret is generated + returned ONCE, at create + rotate. Never retrievable again \u2014 lost secret = mandatory rotation.",
+    "The signer_kid does NOT rotate on secret rotation. Kid rotation is a separate operation orchestrated by auth::JwtSigningKeyRotator and cascades to this module via the HandleSignerKidRotation listener.",
+    "Existing JWTs signed BEFORE any lifecycle transition (rotation, disable, expiry, delete) remain valid until their natural exp \u2014 hard revocation requires kid burn via auth::JwtSigningKeyDisabled.",
+    "PurgeExpiredServiceAccountsJob's two-pass daily sweep is idempotent \u2014 running it twice in a day (backfill) yields the same state as running it once."
+  ]
+}

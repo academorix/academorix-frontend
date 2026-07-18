@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/auth/hooks",
+  "$version": 1,
+  "title": "auth \u2014 tenancy hooks",
+  "description": "Auth registers ONE tenancy hook \u2014 TenantErased triggers a listener that revokes every active session for every User under that tenant. Auth is otherwise TENANT-NEUTRAL by design: its tables reference identity_id / tokenable polymorphically, not tenant_id, so tenant provisioning does not require any auth-specific setup.",
+  "hooks": [
+    {
+      "trigger": "tenancy::TenantErased",
+      "listener": "Academorix\\Auth\\Listeners\\RevokeAllSessionsForTenantListener",
+      "purpose": "On tenant erasure: enumerate every User row where tenant_id = erased_tenant_id, revoke every active PAT + refresh token for those Users. Fires AllSessionsRevoked with tenant_id set. Idempotent \u2014 a retried tenant-erasure that has already revoked sessions is a no-op.",
+      "queue": "notifications-critical",
+      "notes": "This is the ONLY auth-flow tenancy hook. TenantProvisioned does NOT need a hook \u2014 auth's tables are polymorphic + identity-scoped, so a fresh tenant with zero Users has zero auth rows to seed."
+    }
+  ],
+  "rationale": [
+    "Tenancy hooks are for state that must materialise on tenant provisioning (default rows, seed data, per-tenant tables). Auth doesn't have per-tenant tables \u2014 refresh tokens / password resets / MFA challenges / cross-app grants are all identity-scoped, and JWT signing keys are per-Application (not per-Tenant).",
+    "TenantErased DOES need a hook because active sessions issued to Users under that tenant must be revoked as part of the cascade. Without the hook, a User's PAT would remain valid until natural expiry \u2014 which is a security bug when the tenant is erased for compliance reasons.",
+    "The `RevokeAllSessionsForTenantListener` is idempotent, transactional, and fires AllSessionsRevoked once with the aggregated count \u2014 not per-PAT SessionRevoked events (which would flood the notifications queue)."
+  ]
+}

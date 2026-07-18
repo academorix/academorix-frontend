@@ -1,0 +1,203 @@
+{
+  "id": "user.resources.profile.edit",
+  "title": "Edit profile",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/settings/profile",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "user", "entity": "profile", "action": "edit" },
+  "requiresPermission": null,
+  "notes": [
+    "This is the self-service /me/profile editor. No permission gate \u2014 authorization is `subject === auth()->id()`. Non-subject writes go through the admin surface (`/tenant/users/{user}/profile/edit`) which requires `profile.update.pii`."
+  ],
+  "dataSources": [
+    {
+      "name": "profile",
+      "kind": "http.get",
+      "url": "/api/v1/me/profile",
+      "unwrap": "data"
+    },
+    {
+      "name": "entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/avatar_upload",
+      "unwrap": "data"
+    },
+    {
+      "name": "locales",
+      "kind": "http.get",
+      "url": "/api/v1/tenant-locales?filter[is_enabled]=true",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "My profile" }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase mb-4",
+                "children": "Profile picture"
+              }
+            },
+            {
+              "kind": "Widget",
+              "widget": "user.avatar-upload",
+              "props": {
+                "currentUrl": { "$ref": "profile.avatar_url" },
+                "maxSizeKb": { "$ref": "entitlement.value_cap" },
+                "endpoint": "/api/v1/me/avatar"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase mb-4",
+                "children": "Name"
+              }
+            },
+            {
+              "kind": "Form",
+              "props": { "endpoint": "/api/v1/me/profile", "method": "PATCH" },
+              "bindings": { "initialValues": { "$ref": "profile" } },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "grid grid-cols-2 gap-4" },
+                  "children": [
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "first_name",
+                        "label": "First name",
+                        "required": true
+                      }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "last_name",
+                        "label": "Last name",
+                        "required": true
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "display_name",
+                    "label": "Display name",
+                    "helpText": "Shown across the tenant. Falls back to your first name.",
+                    "maxLength": 100
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "phone_e164",
+                    "label": "Phone number",
+                    "placeholder": "+14155552671",
+                    "helpText": "International format with country code."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-muted uppercase mb-4",
+                "children": "Language + time"
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "grid grid-cols-2 gap-4" },
+              "children": [
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "locale",
+                    "label": "Preferred language",
+                    "helpText": "Overrides the tenant default for you.",
+                    "requiresEntitlement": "profile_i18n_override"
+                  },
+                  "bindings": { "options": { "$ref": "locales" } },
+                  "optionsMap": { "key": "language_code", "label": "language_native_name" }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "timezone",
+                    "label": "Time zone",
+                    "required": true,
+                    "optionsSource": "iana-timezones"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 border-danger" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold text-danger uppercase mb-2",
+                "children": "Delete my account"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted mb-4",
+                "children": "GDPR erasure. Your account soft-deletes now and hard-deletes after a 30-day hold window. During the hold you can restore via a link in your email."
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "children": "Delete my account" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/me/erase",
+                  "confirm": "Are you sure? This kicks off GDPR erasure with a 30-day hold."
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

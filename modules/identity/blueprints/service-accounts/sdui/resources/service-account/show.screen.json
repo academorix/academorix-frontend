@@ -1,0 +1,237 @@
+{
+  "id": "service-accounts.resources.service-account.show",
+  "title": "Service account",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/service-accounts/{id}",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "service-accounts", "entity": "service-account", "action": "show" },
+  "requiresPermission": "platform.service_accounts.view",
+  "notes": [
+    "Full detail view. Composes the identity card, rotation-status panel, usage histogram (last 30 days), suspicious-activity signal panel, and action bar. Action buttons render as `null` when the caller lacks the corresponding permission (no dead disabled controls). Secret material is NEVER rendered here \u2014 rotation goes through a dedicated flow that returns the plaintext ONCE in a modal."
+  ],
+  "dataSources": [
+    {
+      "name": "serviceAccount",
+      "kind": "http.get",
+      "url": "/api/v1/platform/service-accounts/{id}",
+      "unwrap": "data"
+    },
+    {
+      "name": "usage",
+      "kind": "http.get",
+      "url": "/api/v1/platform/service-accounts/{id}/audit-usage?window=30d",
+      "unwrap": "data",
+      "requiresPermission": "platform.service_accounts.view.audit_trail"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6" },
+      "children": [
+        {
+          "kind": "Breadcrumb",
+          "children": [
+            { "kind": "BreadcrumbItem", "props": { "to": "/platform/service-accounts", "children": "Service accounts" } },
+            {
+              "kind": "BreadcrumbItem",
+              "bindings": { "children": { "$ref": "serviceAccount.name" } }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "serviceAccount.name" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": { "children": { "$ref": "serviceAccount.description" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "secondary", "leadingIcon": "refresh", "children": "Rotate secret" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/platform/service-accounts/{id}/rotate" } },
+                  "requiresPermission": "platform.service_accounts.rotate"
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "secondary", "leadingIcon": "beaker", "children": "Issue test JWT" },
+                  "actions": { "onPress": { "kind": "modal.open", "modal": "issue-test-jwt" } },
+                  "requiresPermission": "platform.service_accounts.issue_test_jwt"
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "danger-outline", "leadingIcon": "no-symbol", "children": "Disable" },
+                  "actions": { "onPress": { "kind": "modal.open", "modal": "disable-service-account" } },
+                  "requiresPermission": "platform.service_accounts.disable",
+                  "bindings": { "hidden": { "$expr": "!serviceAccount.is_enabled" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "check-circle", "children": "Enable" },
+                  "actions": { "onPress": { "kind": "http.post", "url": "/api/v1/platform/service-accounts/{id}/enable" } },
+                  "requiresPermission": "platform.service_accounts.enable",
+                  "bindings": {
+                    "hidden": {
+                      "$expr": "serviceAccount.is_enabled || serviceAccount.is_expired"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "danger", "leadingIcon": "trash", "children": "Delete" },
+                  "actions": { "onPress": { "kind": "modal.open", "modal": "delete-service-account" } },
+                  "requiresPermission": "platform.service_accounts.delete"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid-cols-3 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "children": [
+                { "kind": "CardHeader", "props": { "children": "Status" } },
+                {
+                  "kind": "CardContent",
+                  "props": { "className": "flex flex-col gap-2" },
+                  "children": [
+                    {
+                      "kind": "Widget",
+                      "widget": "service-accounts.service-account-status-chip",
+                      "propsExpr": "{ status: serviceAccount.status, is_expiring_soon: serviceAccount.is_expiring_soon, is_dormant: serviceAccount.is_dormant, size: 'sm' }"
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Signer kid: ' + serviceAccount.signer_kid"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                { "kind": "CardHeader", "props": { "children": "Rotation" } },
+                {
+                  "kind": "CardContent",
+                  "children": [
+                    {
+                      "kind": "Widget",
+                      "widget": "service-accounts.rotation-countdown",
+                      "propsExpr": "{ expires_at: serviceAccount.expires_at, days_until_expiry: serviceAccount.days_until_expiry, size: 'md' }"
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted mt-2" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "'Last rotated: ' + (serviceAccount.days_since_rotation != null ? serviceAccount.days_since_rotation + ' days ago' : 'Never')"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                { "kind": "CardHeader", "props": { "children": "Usage" } },
+                {
+                  "kind": "CardContent",
+                  "props": { "className": "flex flex-col gap-1" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-sm" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "serviceAccount.last_used_at != null ? 'Last used ' + serviceAccount.days_since_last_used + ' days ago from ' + serviceAccount.last_used_ip : 'Never used'"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Widget",
+                      "widget": "service-accounts.service-account-audit-preview",
+                      "propsExpr": "{ usage: usage }",
+                      "requiresPermission": "platform.service_accounts.view.audit_trail"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "props": { "children": "Scope" } },
+            {
+              "kind": "CardContent",
+              "props": { "className": "grid grid-cols-2 gap-4 text-sm" },
+              "children": [
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Application" } },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm", "variant": "neutral" },
+                      "bindings": { "children": { "$ref": "serviceAccount.application_slug" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs text-muted", "children": "Tenant" } },
+                    {
+                      "kind": "Chip",
+                      "props": { "size": "sm", "variant": "info" },
+                      "bindings": {
+                        "hidden": { "$expr": "serviceAccount.tenant_id == null" },
+                        "children": { "$ref": "serviceAccount.tenant_slug" }
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted italic", "children": "\u2014 platform-plane (cross-tenant)" },
+                      "bindings": { "hidden": { "$expr": "serviceAccount.tenant_id != null" } }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

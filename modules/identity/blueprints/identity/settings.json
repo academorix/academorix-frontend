@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/identity/settings",
+  "$version": 1,
+  "title": "identity \u2014 settings",
+  "description": "Identity substrate exposes NO tenant-configurable settings directly. Tenants tune authentication policy via `identity/auth` settings (password rules, session TTL, MFA requirements). This file registers the `identity` scope-consumer namespace with `academorix/settings` so future keys land under a consistent prefix.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "namespace_registration": {
+    "namespace": "identity",
+    "consumer": "Academorix\\Identity\\Providers\\IdentityServiceProvider",
+    "defaultValueFactory": "Delegates to config('identity.*') when the tenant hasn't overridden. Ensures the effective value falls back to the config layer if no tenant-specific row exists.",
+    "validator": "Enforces the compliance-floor rules (COPPA / GDPR minor age) as a hard clamp: a tenant setting can only TIGHTEN password / lockout policy, never loosen below the compliance floor."
+  },
+  "groups": [],
+  "notes": [
+    "Identity is a substrate module. Every user-facing setting (default MFA method, password rotation cadence, lockout duration) is owned by `identity/auth` \u2014 the module that presents the UI + evaluates policy at request time.",
+    "The one exception is the erasure hold-period, which compliance officers can extend per-Identity via the audit-logged CLI extension (see retention.json). That's per-row metadata, not a group setting.",
+    "When identity/auth lands, it will register groups under the `identity/auth` namespace, not `identity` \u2014 keeping the substrate module's namespace clean for future compliance-scope keys."
+  ]
+}

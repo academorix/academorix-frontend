@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/identity/subprocessors",
+  "$version": 1,
+  "title": "identity \u2014 subprocessors",
+  "description": "Two categories of subprocessor. KMS provider for MFA-secret envelope encryption at rest (invoked on every enrolment + verification). haveibeenpwned for password-breach k-anonymity check (invoked on every password set / reset, optional per config). Email delivery is a subprocessor of `notifications`, not `identity` directly.",
+  "subprocessors": [
+    {
+      "name": "AWS KMS",
+      "role": "encryption_at_rest",
+      "purpose": "Envelope encryption of Identity.mfa_secret_encrypted. Every MFA enrolment generates a fresh data key via KMS; encrypted data key stored inline with the ciphertext.",
+      "data_processed": [
+        "AES-256 data-key ciphertexts",
+        "no plaintext credentials",
+        "no user identifiers"
+      ],
+      "location": "customer's AWS region (default us-east-1; configurable per deployment)",
+      "legal_basis": "contract",
+      "dpa_url": "https://aws.amazon.com/agreement/",
+      "cardholder_data_exposure": "none",
+      "when_engaged": "config('identity.mfa_secret.encryptor') === 'kms'",
+      "notes": "Alternative backend: HashiCorp Vault (equivalent envelope-encryption workflow) for on-prem deployments. Local-file backend (config value 'local') is DEV-ONLY \u2014 the health probe refuses production boot when this is selected."
+    },
+    {
+      "name": "HashiCorp Vault",
+      "role": "encryption_at_rest",
+      "purpose": "Envelope encryption alternative to AWS KMS for on-prem deployments. Same operational contract.",
+      "data_processed": [
+        "AES-256 data-key ciphertexts",
+        "no plaintext credentials"
+      ],
+      "location": "customer-managed (self-hosted)",
+      "legal_basis": "contract",
+      "dpa_url": "https://www.hashicorp.com/data-processing-addendum",
+      "when_engaged": "config('identity.mfa_secret.encryptor') === 'vault'"
+    },
+    {
+      "name": "haveibeenpwned",
+      "role": "breach_intelligence",
+      "purpose": "K-anonymity password-breach check. We send the SHA-1 hash of the plaintext password truncated to the first 5 hex characters; HIBP returns a list of matching hash suffixes with breach counts. The plaintext + full hash NEVER leave the app.",
+      "data_processed": [
+        "SHA-1 prefix (5 hex chars, 20 bits of entropy \u2014 not sufficient to reconstruct the password)"
+      ],
+      "location": "Cloudflare edge / Have I Been Pwned infrastructure",
+      "legal_basis": "legitimate interest (security)",
+      "dpa_url": "https://haveibeenpwned.com/Privacy",
+      "cardholder_data_exposure": "none",
+      "when_engaged": "config('identity.password.breach_check_enabled') === true AND `password_breach_check` entitlement active for the tenant of the referring User",
+      "notes": "The k-anonymity protocol is HIBP's native design \u2014 no per-user identifier is transmitted. HIBP has no visibility into which identity submitted the check. Rate-limited to 1 request per second per IP; we cache the truncated-hash response for 24 hours to survive HIBP outages."
+    }
+  ],
+  "not_a_subprocessor": [
+    "Argon2id / bcrypt \u2014 in-process libraries, no data leaves the app",
+    "OpenTelemetry / metrics collector \u2014 receives aggregate metrics only (no identifiers, per metrics.json)",
+    "Email delivery (SES / Postmark / SMTP relay) \u2014 handled by `notifications` module; identity does not maintain its own delivery pipeline"
+  ]
+}

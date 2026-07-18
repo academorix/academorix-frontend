@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/identity/retention",
+  "$version": 1,
+  "title": "identity \u2014 retention windows",
+  "description": "Identity retention is compliance-driven, not product-driven. Soft-deleted Identities carry a GDPR erasure hold-period (default 30 days) before hard delete. Email-verification tokens live 24 hours; password-reset tokens live 15 minutes; recovery codes never expire (regenerated on demand).",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) (storage limitation) + Art. 17 (right to erasure) \u2014 identities purged past the hold-period",
+    "coppa 16 CFR \u00a7 312.10 (retention limitation) \u2014 identities resolved as minors receive stricter retention windows",
+    "ccpa \u00a7 1798.105 (right to delete) \u2014 45-day statutory response window bounded by our 30-day hold + timely purge cycle",
+    "nist 800-63B \u00a7 4.2 (memorized secret lifecycle) \u2014 password_history retained ONLY as hashes, not plaintext"
+  ],
+  "retention": [
+    {
+      "entity": "Identity (active, not soft-deleted)",
+      "hot": { "days": "while any inbound User / PlatformUser row references it" },
+      "purge": {
+        "trigger": "manual soft-delete via `identity:erase` command OR compliance-officer HTTP endpoint",
+        "action": "sets deleted_at, keeps hashed credentials + PII for the hold-period",
+        "notes": "Row is NEVER hard-deleted while an inbound row exists. Users are cascade-erased BEFORE the Identity itself (design pattern: cascade downwards, purge upwards)."
+      }
+    },
+    {
+      "entity": "Identity (soft-deleted)",
+      "hot": { "days": "config('identity.retention.erasure_hold_days'), default 30" },
+      "purge": {
+        "trigger": "deleted_at + hold_days < now() + no inbound rows remain",
+        "action": "hard delete",
+        "job": "PurgeSoftDeletedIdentitiesJob (runs daily at 04:00 UTC)"
+      }
+    },
+    {
+      "entity": "PasswordResetToken (via auth::PasswordResetToken)",
+      "hot": { "days": "15 minutes" },
+      "purge": {
+        "trigger": "expires_at < now()",
+        "action": "hard delete",
+        "job": "PurgeExpiredResetTokensJob (runs every 5 minutes)"
+      }
+    },
+    {
+      "entity": "EmailVerificationToken (via auth::EmailVerificationToken)",
+      "hot": { "days": "24 hours" },
+      "purge": {
+        "trigger": "expires_at < now()",
+        "action": "hard delete",
+        "job": "PurgeExpiredResetTokensJob (same job, both token types)"
+      }
+    },
+    {
+      "entity": "MFA recovery codes (JSONB on Identity)",
+      "hot": { "days": "until consumed OR regenerated" },
+      "purge": {
+        "trigger": "user regenerates OR disables MFA OR erasure hard-delete",
+        "action": "overwrite JSONB with new hashes OR set to NULL (MFA disabled)",
+        "notes": "Individual codes are single-use: once consumed, they're removed from the JSONB array in the same transaction as the login."
+      }
+    },
+    {
+      "entity": "Password history (JSONB on Identity)",
+      "hot": { "days": "rolling window \u2014 keeps last `identity.password.history_size` hashes (default 5)" },
+      "purge": {
+        "trigger": "new password change \u2014 evicts oldest entry when window is full",
+        "action": "JSONB array update inside the same transaction as the password change"
+      }
+    },
+    {
+      "entity": "Failed-attempts counter (on Identity)",
+      "hot": { "days": "resets on successful login" },
+      "purge": {
+        "trigger": "successful login OR AutoUnlockExpiredLockoutsJob after `identity.lockout.window_minutes` (default 15) of no activity",
+        "action": "UPDATE identities SET failed_attempts_count = 0"
+      }
+    }
+  ],
+  "hold_period_extensions": {
+    "description": "The hold_days config can be extended (never shortened below the DEFAULT floor) by compliance officers when a request is under legal dispute. Extension is stored as a per-identity metadata flag (`retention_hold_extended_until`) that overrides the config default. PurgeSoftDeletedIdentitiesJob honours the per-identity override.",
+    "how_to_extend": "Via `identity:describe {id}` \u2192 `--set-hold-until=<date>` (proposed CLI extension \u2014 not shipped in Day 1 blueprint)",
+    "audit_trail": "Every extension is written to the compliance-audit log with the compliance officer as actor + free-form justification."
+  }
+}

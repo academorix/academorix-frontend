@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/mfa/traits",
+  "$version": 1,
+  "title": "mfa — trait composition",
+  "description": "One owned trait. `HasMfa` is a marker composed by services that participate in MFA policy resolution — actions that must be gated by a recent MFA challenge (sensitive-write actions, admin operations, platform-security surfaces) declare it so the boot-time discovery can enumerate them + wire the `mfa.require_recent_challenge` middleware automatically. NO BelongsToTenant on WebauthnCredential — WebAuthn credentials are GLOBAL (belong to the Identity), matching the substrate they extend.",
+  "owned": [
+    {
+      "trait": "Academorix\\Mfa\\Concerns\\HasMfa",
+      "description": "Marker trait for services + actions requiring MFA-gated access. Composition triggers a boot-time scan by the MfaServiceProvider that (a) enumerates every #[UsesTrait(HasMfa::class)] target, (b) verifies the class has a corresponding route mounted with `mfa.require_recent_challenge` middleware, and (c) fails the boot when a marker exists on a route missing the middleware. The trait itself contributes no methods — it is a pure discovery marker so the wiring stays declarative.",
+      "public": true,
+      "usedBy": [
+        "identity/auth: ChangePasswordAction (sensitive-write on Identity)",
+        "identity/auth: ForcePasswordResetAction (platform-admin surface)",
+        "identity/auth: RotateMfaSecretAction (KMS re-encryption)",
+        "identity/auth: EnrollWebauthnAction (registering a new credential requires a recent challenge on any existing MFA method)",
+        "identity/auth: DisableMfaAction (self-service disable requires a recent challenge on the very MFA method being disabled)",
+        "identity/user: EraseUserAction (GDPR erasure surface)"
+      ],
+      "underlying_package": null,
+      "wraps": null,
+      "conflicts_with": []
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "WebauthnCredential composes SoftDeletes so a `disabled_at` disable + eventual hard-delete after 90 days (CleanupDisabledWebauthnCredentialsJob) leaves an audit trail during the retention window. Consumers checking `is_active` read `disabled_at IS NULL`, not the SoftDeletes deleted_at."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+  },
+  "composition": {
+    "webauthn_credential": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": [
+        "NO BelongsToTenant — WebAuthn credentials attach to the Identity, which is a global aggregate. A single physical hardware key is usable across every Application the Identity is provisioned into.",
+        "NO BelongsToApplication — same reason. The credential's public-key handle is Application-agnostic; the `X-Application-Id` header only affects which User row is resolved after MFA succeeds.",
+        "The trait order matters: `HasUlids` must precede `HasUserstamps` so the ULID is populated before the creator/updater columns fire on the observer chain.",
+        "`HasActivityLog` writes credential registration / rename / disable / delete to the shared `activity_log` table so the compliance timeline captures every hardware-key mutation with full attribution."
+      ]
+    }
+  }
+}

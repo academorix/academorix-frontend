@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/service-accounts/policies",
+  "$version": 1,
+  "title": "service-accounts \u2014 authorization policies",
+  "description": "Only ONE policy exists: `ServiceAccountPolicy`. Every ability is gated behind the `platform_admin` guard \u2014 the tenant-audience `sanctum` guard NEVER interacts with SA rows directly. Tenant callers reach the SA substrate ONLY when their own tenant's SAs (webhook signers, etc.) are provisioned on their behalf by a platform_admin \u2014 the tenant never sees the SA row itself. The token-exchange endpoint is unauthenticated and does NOT flow through this policy.",
+  "policies": [
+    {
+      "model": "ServiceAccount",
+      "class": "Academorix\\ServiceAccount\\Policies\\ServiceAccountPolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "platform.service_accounts.viewAny",
+          "scope": "Platform-admin surface. Redacted list (no secret material, no last_used_ip)."
+        },
+        {
+          "action": "view",
+          "permission": "platform.service_accounts.view",
+          "scope": "Show one SA. Includes signer_kid + expiry + status + last_used_at. NEVER the secret_hash."
+        },
+        {
+          "action": "viewAuditTrail",
+          "permission": "platform.service_accounts.view.audit_trail",
+          "scope": "Audit-usage report. Includes usage histogram, distinct IP-/24 prefixes, jti-reuse detections, last 100 audit rows.",
+          "audit_severity": "warn"
+        },
+        {
+          "action": "viewMetadata",
+          "permission": "platform.service_accounts.view.metadata",
+          "scope": "Metadata JSONB (IP allowlist, deployment hints). Separate ability because metadata may carry integration secrets that are inappropriate to expose to ops-baseline roles."
+        },
+        {
+          "action": "create",
+          "permission": "platform.service_accounts.create",
+          "scope": "Provision a new SA. Requires --reason. Returns the plaintext secret ONCE.",
+          "audit_severity": "warn"
+        },
+        {
+          "action": "update",
+          "permission": "platform.service_accounts.update",
+          "scope": "Update mutable fields. application_id / tenant_id / signer_kid remain immutable regardless of this permission."
+        },
+        {
+          "action": "rotate",
+          "permission": "platform.service_accounts.rotate",
+          "scope": "Generate + persist a fresh secret. Returns plaintext ONCE.",
+          "audit_severity": "warn"
+        },
+        {
+          "action": "disable",
+          "permission": "platform.service_accounts.disable",
+          "scope": "Set is_enabled=false. Existing JWTs remain valid until natural expiry \u2014 hard revocation requires kid burn via the auth module."
+        },
+        {
+          "action": "enable",
+          "permission": "platform.service_accounts.enable",
+          "scope": "Set is_enabled=true. Refuses when expires_at has elapsed."
+        },
+        {
+          "action": "delete",
+          "permission": "platform.service_accounts.delete",
+          "scope": "Soft-delete + disable. Starts the retention hold clock. Actual hard-delete via PurgeExpiredServiceAccountsJob.",
+          "audit_severity": "critical"
+        },
+        {
+          "action": "issueTestJwt",
+          "permission": "platform.service_accounts.issue_test_jwt",
+          "scope": "Issue a test JWT for troubleshooting. TTL bounded by min/max config. Audit-logged with trigger=test.",
+          "audit_severity": "warn"
+        }
+      ]
+    }
+  ],
+  "boundary_note": "This policy applies EXCLUSIVELY to the `platform_admin` guard. Under the `sanctum` guard, the ServiceAccount row is never a first-class resource \u2014 tenant callers cannot list, show, or mutate SAs. Any tenant-audience code that receives an authorization refusal here has taken a wrong path; SA management belongs to the platform plane. The unauthenticated token-exchange endpoint (`POST /api/v1/service-accounts/token`) does NOT flow through this policy \u2014 authentication is by secret-hash verification alone, and enrolment safety is enforced by rate limiting + generic error responses."
+}

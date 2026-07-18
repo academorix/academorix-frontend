@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/mfa/broadcasts",
+  "$version": 1,
+  "title": "mfa — broadcast channels",
+  "description": "MFA publishes NO broadcast channels. Real-time notification of MFA state changes to open browser sessions is not a use case in Wave 1a — a stolen session that had MFA disabled server-side simply fails on the next request (401), no push required. A future WebAuthn conditional-UI or mobile-push-based MFA flow would introduce a private channel here.",
+  "channels": [],
+  "rationale": [
+    "Real-time credential-registration confirmation (e.g. 'new hardware key registered on your account') is currently email-based via WebauthnCredentialRegisteredNotification. Push-based confirmation with a real-time reject option (`Approve this registration? Yes/No`) would need a private channel — deferred to Wave 2 alongside the mobile-push MFA feature.",
+    "Cross-tab session-revocation coordination on MFA disable (e.g. every tab logs out simultaneously when the caller disables MFA in one tab) is an `identity/auth` concern — the auth module owns Sanctum PAT lifecycle. When identity/auth ships broadcast-based session revocation, MFA-disable will piggyback on the same channel.",
+    "The step-up prompt in the SPA is initiated by the SERVER responding 403 MFA_CHALLENGE_TOO_STALE with an initiation URL — no push needed."
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/auth/policies",
+  "$version": 1,
+  "title": "auth \u2014 authorization policies",
+  "description": "Three policies. `AuthPolicy` covers rare auth-surface abilities that need policy gates (most auth flows are self-service and don't policy-check). `SessionPolicy` covers session-management surface \u2014 tenant users can view + revoke their own sessions; platform admins can view + revoke any session. `CrossAppGrantPolicy` covers grant issuance + exchange \u2014 always self-scoped (the caller's own Identity).",
+  "policies": [
+    {
+      "model": "AuthAction",
+      "class": "Academorix\\Auth\\Policies\\AuthPolicy",
+      "guard": "sanctum",
+      "abilities": [
+        {
+          "action": "changeOwnPassword",
+          "permission": null,
+          "scope": "Always allowed for authenticated users \u2014 no permission check. Rate-limited by auth.lockout.password_reset_per_hour."
+        },
+        {
+          "action": "requestOwnEmailVerification",
+          "permission": null,
+          "scope": "Always allowed for authenticated users \u2014 debounced 60s per identity."
+        }
+      ]
+    },
+    {
+      "model": "Session (PersonalAccessToken)",
+      "class": "Academorix\\Auth\\Policies\\SessionPolicy",
+      "guard": "sanctum",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "sessions.viewAny.own",
+          "scope": "List the caller's own sessions across their Applications. Cross-User listing requires the platform_admin guard's `platform.auth.sessions.viewAny`."
+        },
+        {
+          "action": "view",
+          "permission": "sessions.viewAny.own",
+          "scope": "Show detail on the caller's own session. Refuses when the session's tokenable is not the caller's User."
+        },
+        {
+          "action": "revoke",
+          "permission": "sessions.revoke.own",
+          "scope": "Revoke the caller's own session. Fires SessionRevoked(reason=self_service). Refuses revoking the CURRENT session via this endpoint (must use /auth/logout)."
+        }
+      ]
+    },
+    {
+      "model": "Session (PersonalAccessToken) \u2014 platform_admin guard",
+      "class": "Academorix\\Auth\\Policies\\SessionPolicy",
+      "guard": "platform_admin",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "platform.auth.sessions.viewAny",
+          "scope": "Platform-security listing. Sessions filtered by User / tenant / application / date range. Redacted \u2014 no PAT plaintext."
+        },
+        {
+          "action": "revoke",
+          "permission": "platform.auth.sessions.revoke",
+          "scope": "Support-driven session revocation. Fires SessionRevoked(reason=admin_revocation) + notifies the target User's email."
+        },
+        {
+          "action": "revokeAll",
+          "permission": "platform.auth.sessions.revoke_all",
+          "scope": "Bulk revoke every session for a User or Identity. Fires AllSessionsRevoked. Used for breach response.",
+          "audit_severity": "critical"
+        }
+      ]
+    },
+    {
+      "model": "CrossAppGrant",
+      "class": "Academorix\\Auth\\Policies\\CrossAppGrantPolicy",
+      "guard": "sanctum",
+      "abilities": [
+        {
+          "action": "issue",
+          "permission": "sessions.cross_app_grant",
+          "scope": "Issue a grant on the caller's own Identity. Refuses if caller lacks a User row on the target Application. Enforces cross_app_sso entitlement on the caller's current tenant."
+        },
+        {
+          "action": "exchange",
+          "permission": null,
+          "scope": "Exchange a grant on the target Application. No permission check \u2014 possession of the grant token IS the auth. Refuses if grant is expired / consumed / issued for a different Identity."
+        }
+      ]
+    }
+  ],
+  "boundary_note": "Every ability in this file respects the two-audience guard boundary. Tenant-guard abilities are always scoped to the caller's own Identity / User (`.own`). Platform-guard abilities are cross-user by definition \u2014 no `.own` suffix, no tenant scope. Neither guard's abilities leak into the other's policy map \u2014 cross-guard authorization checks return false silently."
+}

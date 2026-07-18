@@ -1,0 +1,12 @@
+{
+  "id": "academorix://modules/identity/broadcasts",
+  "$version": 1,
+  "title": "identity \u2014 broadcast channels",
+  "description": "Identity publishes NO broadcast channels. The module is internal-only \u2014 every state change is either (a) a fire-and-forget event consumed by other server-side modules or (b) a mail / in-app notification routed through the notifications module.",
+  "channels": [],
+  "rationale": [
+    "Real-time notification of password changes / lockouts to open browser sessions is a valid use case, but the correct pattern is: session revocation (Sanctum PAT invalidation), NOT a broadcast channel. When a session is revoked, the SPA's next request receives 401 and reloads the login screen \u2014 no push required.",
+    "Real-time MFA challenge push (e.g. `Approve login on your phone?`) is an `identity/mfa` concern once WebAuthn conditional UI + push-based mobile MFA ship. That's Wave 2, not this module.",
+    "Cross-tab session-revocation coordination (log out one tab, all tabs know) is also `identity/auth` \u2014 the auth module owns session lifecycle."
+  ]
+}

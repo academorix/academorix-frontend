@@ -1,0 +1,190 @@
+{
+  "id": "service-accounts.resources.service-account.list",
+  "title": "Service accounts",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/platform/service-accounts",
+  "host": "platform-admin",
+  "audience": "platform_admin",
+  "resource": { "module": "service-accounts", "entity": "service-account", "action": "list" },
+  "requiresPermission": "platform.service_accounts.viewAny",
+  "notes": [
+    "Filterable list of machine credentials across every Application. Rows carry inline status + rotation-urgency chips so ops can triage attention (expiring-soon, dormant, expired) at a glance. Secret material is NEVER rendered on this screen; the show-screen surface reveals `last_used_ip` only."
+  ],
+  "dataSources": [
+    {
+      "name": "serviceAccounts",
+      "kind": "http.get",
+      "url": "/api/v1/platform/service-accounts",
+      "unwrap": "data"
+    },
+    {
+      "name": "applications",
+      "kind": "http.get",
+      "url": "/api/v1/platform/applications",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Service accounts"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Machine credentials for inter-service authentication. Every SA is bound to one Application; tenant scope is optional. Rotation is mandatory \u2014 SAs approaching expiry show a warning chip."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Provision service account" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/platform/service-accounts/create" } },
+              "requiresPermission": "platform.service_accounts.create"
+            }
+          ]
+        },
+        {
+          "kind": "Toolbar",
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": { "placeholder": "Name or description", "name": "q" }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "application_id", "placeholder": "All applications", "clearable": true },
+              "bindings": { "options": { "$expr": "applications.map(a => ({ key: a.id, label: a.slug + ' \u2014 ' + a.name }))" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "tenant_scope", "placeholder": "All scopes", "clearable": true },
+              "options": [
+                { "key": "platform", "label": "Platform-plane (no tenant)" },
+                { "key": "tenant", "label": "Tenant-scoped" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": { "name": "status", "placeholder": "All statuses", "clearable": true },
+              "options": [
+                { "key": "pending", "label": "Pending (never used)" },
+                { "key": "active", "label": "Active" },
+                { "key": "disabled", "label": "Disabled" },
+                { "key": "expired", "label": "Expired" }
+              ]
+            },
+            { "kind": "Toggle", "props": { "name": "expiring_soon", "label": "Expiring within 14 days" } },
+            { "kind": "Toggle", "props": { "name": "dormant", "label": "Dormant (> 30 days)" } },
+            { "kind": "Toggle", "props": { "name": "include_deleted", "label": "Include soft-deleted" } }
+          ]
+        },
+        {
+          "kind": "Table",
+          "columns": [
+            {
+              "key": "name",
+              "header": "Name",
+              "cell": {
+                "kind": "Link",
+                "propsExpr": "{ to: '/platform/service-accounts/' + row.id, children: row.name, className: 'font-mono text-sm' }"
+              }
+            },
+            {
+              "key": "application",
+              "header": "Application",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "neutral" },
+                "bindings": { "children": { "$ref": "row.application_slug" } }
+              }
+            },
+            {
+              "key": "tenant",
+              "header": "Tenant",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "xs" },
+                "bindings": {
+                  "hidden": { "$expr": "row.tenant_id == null" },
+                  "props": { "variant": "info" },
+                  "children": { "$ref": "row.tenant_slug" }
+                }
+              },
+              "note": "Empty for platform-plane SAs."
+            },
+            {
+              "key": "status",
+              "header": "Status",
+              "cell": {
+                "kind": "Widget",
+                "widget": "service-accounts.service-account-status-chip",
+                "propsExpr": "{ status: row.status, is_expiring_soon: row.is_expiring_soon, is_dormant: row.is_dormant, size: 'xs' }"
+              }
+            },
+            {
+              "key": "kid",
+              "header": "Kid",
+              "cell": {
+                "kind": "Widget",
+                "widget": "service-accounts.signer-kid-badge",
+                "propsExpr": "{ kid: row.signer_kid, size: 'xs' }"
+              }
+            },
+            {
+              "key": "expires_at",
+              "header": "Expires",
+              "cell": {
+                "kind": "Widget",
+                "widget": "service-accounts.rotation-countdown",
+                "propsExpr": "{ expires_at: row.expires_at, days_until_expiry: row.days_until_expiry }"
+              }
+            },
+            {
+              "key": "last_used_at",
+              "header": "Last used",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.last_used_at == null ? 'Never' : row.days_since_last_used + 'd ago'"
+                  }
+                }
+              }
+            },
+            {
+              "key": "is_enabled",
+              "header": "Enabled",
+              "cell": {
+                "kind": "Icon",
+                "propsExpr": "{ name: row.is_enabled ? 'check-circle' : 'x-circle', className: row.is_enabled ? 'text-success' : 'text-danger' }"
+              }
+            }
+          ],
+          "bindings": { "rows": { "$ref": "serviceAccounts" } }
+        }
+      ]
+    }
+  ]
+}

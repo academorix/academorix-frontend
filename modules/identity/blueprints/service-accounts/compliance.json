@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/service-accounts/compliance",
+  "$version": 1,
+  "title": "service-accounts \u2014 compliance evidence",
+  "description": "Service accounts are the primary machine-credential surface \u2014 SOC 2 (CC6.1, CC6.7, CC7.2, CC7.3), NIST SP 800-131A (approved cryptographic algorithms), OWASP ASVS V6 (stored cryptography + access control), and PCI-DSS 8.6 (service-account authentication) all apply. Every enforcement is codified as CODE + AUDIT rather than a policy document; the compliance officer verifies via automated checks against the entries below.",
+  "regimes": {
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls \u2014 every machine action correlated to an identity",
+          "evidence": "Every request presenting a SA JWT passes through `service_account.audit` middleware which writes: (a) `service_account.request.audit` activity_log row (method + path + status + service_account_id + application_id + tenant_id + ip_prefix_24 + user_agent + correlation_id + duration_ms), (b) `service_account.jwt_verified` activity_log row keyed by jti (replay-attack signal), (c) N\u00d7 HasAudit rows per Eloquent write. Retention 365 days hot, 7 years cold."
+        },
+        {
+          "criterion": "CC6.6",
+          "principle": "protection against external threats",
+          "evidence": "Token-exchange endpoint rate-limited per-SA (5/min) + per-IP-/24 (20/min). Fingerprinter tracks (SA, ip_prefix_24, user_agent_hash) tuples over rolling 30 days; novel tuple + >5x baseline rate = SuspiciousServiceAccountActivityNotification to security. Kid disable revokes every JWT signed under it, batched via cache invalidation."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "prompt access removal on offboarding",
+          "evidence": "SA deletion (soft) is immediate: `is_enabled=false` + `deleted_at=now()`. Every outstanding JWT's jti added to the deny-list cache. New token-exchange refused. Kid burn (via `identity/auth`) is the hard-revocation lever for shared kids."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "DetectDormantServiceAccountJob (weekly) reports SAs unused > 30d. `academorix.service_account.dormant_count` gauge feeds monitoring pipeline. First-request-after-dormancy fires `ServiceAccountUsageDetected` (distinct signal for compromise-adjacent wake-ups). Suspicious-activity fingerprint detection covered under CC6.6."
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "vulnerability evaluation on account credential lifecycle",
+          "evidence": "Mandatory rotation via `expires_at` (default 90d TTL). NotifyRotationDueJob (weekly) dispatches 14-day warning. Grace period 7d after `expires_at`; PurgeExpiredServiceAccountsJob (daily) then soft-disables. `service-accounts.rotation.notify_emails` config for team-wide notifications."
+        }
+      ]
+    },
+    "nist_sp_800_131a": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "approved cryptographic algorithms \u2014 HS256 requires \u2265 32-byte key",
+          "evidence": "Every entry in `auth::jwt_signing_keys` for `algorithm=HS256` MUST have `secret_material` \u2265 32 bytes (256 bits). Enforced at key creation by the auth module's `JwtSigningKeyProvisioner`. This module only NAMES the kid \u2014 the key-length constraint is verified upstream. Health probe `service-account-hs256-key-configured` fails production boot if any active kid violates the length."
+        },
+        {
+          "principle": "bcrypt cost \u2265 12 for stored credentials",
+          "evidence": "`SecretRotator` uses `Hash::make($plain, ['rounds' => 12])`. Cost bumps roadmap alongside CPU-cost benchmarking; the module never regresses below 12."
+        }
+      ]
+    },
+    "owasp_asvs_v4": {
+      "applicable": true,
+      "controls": [
+        {
+          "control": "V6.2.1",
+          "principle": "cryptographic module verification",
+          "evidence": "JWT signing routed through `auth::JwtSigner`; that module wraps `firebase/php-jwt` (audited implementation). This module never signs directly."
+        },
+        {
+          "control": "V6.4.1",
+          "principle": "cryptographic key material lifecycle",
+          "evidence": "Per-SA `signer_kid` isolation; kid rotation via `auth::JwtSigningKeyRotator`; kid burn revokes all JWTs signed under it. Rotation-hygiene dashboard tracks mean days-since-rotation per SA."
+        },
+        {
+          "control": "V6.5.1",
+          "principle": "authentication credentials transport in HTTP",
+          "evidence": "Token-exchange endpoint requires TLS (Foundation-level `cors.strict` + `enforce.tls` middleware). Bearer JWT header only \u2014 no query-string credential. `Authorization: Bearer` scheme only \u2014 no `Basic` scheme (SAs use a stronger primitive than shared HTTP Basic)."
+        },
+        {
+          "control": "V6.6.1",
+          "principle": "verification of credential storage",
+          "evidence": "`secret_hash` is bcrypt at cost 12. `mfa_secret_encrypted`-style KMS wrapping is intentionally NOT used \u2014 SA secrets are single-purpose bearer credentials that rotate frequently; the bcrypt hash is one-way + sufficient. Plaintext secret returned ONCE at creation + rotation, then irretrievable."
+        }
+      ]
+    },
+    "pci_dss_v4": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "8.6.1",
+          "principle": "service accounts must not use interactive login",
+          "evidence": "SAs have NO login page, NO MFA, NO password-reset. Every credential presentation is programmatic via the token-exchange endpoint. Interactive login is architecturally impossible."
+        },
+        {
+          "requirement": "8.6.2",
+          "principle": "service account credentials cannot be embedded in code",
+          "evidence": "This is a POLICY control not enforced by this module \u2014 documented in the ops runbook (Doppler secrets, K8s secrets, Vault dynamic secrets). The module contributes by: (a) plaintext-secret-shown-once discipline that discourages code embedding, (b) rotation cadence that surfaces embedded credentials via rotation-noncompliance dashboards."
+        },
+        {
+          "requirement": "8.6.3",
+          "principle": "service account credential rotation",
+          "evidence": "Mandatory `expires_at` (default 90d TTL). NotifyRotationDueJob dispatches 14-day warnings. PurgeExpiredServiceAccountsJob soft-disables past-grace SAs."
+        }
+      ]
+    }
+  }
+}

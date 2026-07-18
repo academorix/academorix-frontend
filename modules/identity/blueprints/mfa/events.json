@@ -1,0 +1,258 @@
+{
+  "id": "academorix://modules/mfa/events",
+  "$version": 1,
+  "title": "mfa — published events",
+  "namespace": "Academorix\\Mfa\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Fourteen MFA-lifecycle events. Every dispatch is after-commit so downstream listeners never see uncommitted challenge state. Payloads are readonly value objects (readonly class + readonly properties) — immutable by construction so a listener cannot mutate the shape another listener depends on. Payloads carry `identity_id` (and optionally `challenge_id` / `credential_id`) only; downstream services that need email / dob / MFA state re-fetch through IdentityRepository so redaction rules apply consistently. No plaintext secrets, no plaintext recovery codes, no bytea public keys ever appear on an event payload.",
+  "events": [
+    {
+      "name": "MfaEnrollmentPreviewIssued",
+      "class": "Academorix\\Mfa\\Events\\MfaEnrollmentPreviewIssued",
+      "trigger": "POST /api/v1/me/mfa/totp/enroll/preview returned a fresh TOTP secret to the caller. The secret is held ephemerally in Redis under a signed envelope; the caller must confirm (round 2) within 5 minutes.",
+      "queue": "notifications",
+      "consumers": [
+        "observability::EmitMfaEnrollmentPreviewMetric",
+        "analytics::TrackMfaEnrollmentStarted"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "preview_id": "string (ephemeral ID of the Redis envelope — used to correlate with the confirm event; NEVER the raw secret)",
+        "issued_at": "ISO-8601 timestamp",
+        "expires_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "MfaEnrollmentConfirmed",
+      "class": "Academorix\\Mfa\\Events\\MfaEnrollmentConfirmed",
+      "trigger": "POST /api/v1/me/mfa/totp/enroll succeeded — TOTP secret persisted to Identity.mfa_secret_encrypted via identity/identity's encryptor. Recovery codes generated + hashed atomically. Fires identity::MfaEnrolled downstream via the identity module's observer.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchMfaEnrolledConfirmationNotification",
+        "activity::WriteToActivityLog",
+        "observability::EmitMfaEnrollmentCompletedMetric",
+        "analytics::TrackMfaEnrolled"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "method": "'totp'",
+        "confirmed_at": "ISO-8601 timestamp",
+        "recovery_codes_count": "integer (10)",
+        "elapsed_from_preview_ms": "integer (duration from MfaEnrollmentPreviewIssued to confirm — signal for suspicious rushed enrolments)"
+      }
+    },
+    {
+      "name": "MfaEnrollmentFailed",
+      "class": "Academorix\\Mfa\\Events\\MfaEnrollmentFailed",
+      "trigger": "Round-2 confirm rejected — either the TOTP confirmation code was wrong OR the ephemeral secret expired OR the round-1 preview never happened. Ephemeral state discarded on failure.",
+      "queue": "notifications",
+      "consumers": [
+        "observability::EmitMfaEnrollmentFailedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "method": "'totp' | 'webauthn'",
+        "reason": "'confirmation_code_invalid' | 'preview_expired' | 'preview_missing' | 'attestation_verification_failed' | 'duplicate_credential'",
+        "failed_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "MfaChallengeIssued",
+      "class": "Academorix\\Mfa\\Events\\MfaChallengeIssued",
+      "trigger": "identity/auth::LoginAction issued a challenge because the resolved Identity has MFA enrolled. A row was written to the shared auth_mfa_challenges table with a 5-minute TTL + 3-attempt cap.",
+      "queue": null,
+      "consumers": [
+        "observability::EmitMfaChallengeIssuedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "challenge_id": "ULID (`mfc_...`)",
+        "method": "'totp' | 'webauthn' | 'recovery_code'",
+        "issued_at": "ISO-8601 timestamp",
+        "expires_at": "ISO-8601 timestamp",
+        "request_ip": "string (IPv4 / IPv6)"
+      }
+    },
+    {
+      "name": "MfaChallengeSucceeded",
+      "class": "Academorix\\Mfa\\Events\\MfaChallengeSucceeded",
+      "trigger": "POST /api/v1/me/mfa/challenge/{challenge_id}/verify succeeded. Challenge row consumed atomically; Sanctum PAT issued by identity/auth in the same transaction as the challenge consumption.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitMfaChallengeSucceededMetric",
+        "analytics::TrackMfaChallengeSucceeded"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "challenge_id": "ULID",
+        "method": "'totp' | 'webauthn' | 'recovery_code'",
+        "credential_id": "ULID | null (WebauthnCredential.id when method=webauthn; null otherwise)",
+        "succeeded_at": "ISO-8601 timestamp",
+        "duration_ms": "integer (issued_at → verified — signals user friction if too high, or automation if too low)"
+      }
+    },
+    {
+      "name": "MfaChallengeFailed",
+      "class": "Academorix\\Mfa\\Events\\MfaChallengeFailed",
+      "trigger": "Challenge verification rejected. attempts_remaining decremented; challenge row invalidates on zero. Fires MfaChallengeFailed EVERY time the code / assertion mismatch occurs, even mid-attempts.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "mfa::EvaluateSuspiciousActivitySignal",
+        "activity::WriteToActivityLog",
+        "observability::EmitMfaChallengeFailedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "challenge_id": "ULID",
+        "method": "'totp' | 'webauthn' | 'recovery_code'",
+        "reason": "'code_mismatch' | 'assertion_signature_invalid' | 'sign_count_replay' | 'recovery_code_invalid' | 'expired' | 'attempts_exhausted'",
+        "attempts_remaining": "integer (0 = the challenge is now invalidated and the caller must restart from login)",
+        "failed_at": "ISO-8601 timestamp",
+        "request_ip": "string"
+      }
+    },
+    {
+      "name": "MfaRecoveryCodeConsumed",
+      "class": "Academorix\\Mfa\\Events\\MfaRecoveryCodeConsumed",
+      "trigger": "A recovery code was successfully consumed in a challenge verification. The consumed entry was atomically removed from Identity.mfa_recovery_codes_hashed. The user is now down one code — LowRecoveryCodesRemaining evaluates in the same request.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "notifications::DispatchMfaRecoveryCodeConsumedNotification",
+        "mfa::EvaluateLowRecoveryCodesSignal",
+        "activity::WriteToActivityLog",
+        "observability::EmitMfaRecoveryCodeConsumedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "consumed_at": "ISO-8601 timestamp",
+        "remaining_count": "integer",
+        "request_ip": "string"
+      }
+    },
+    {
+      "name": "MfaRecoveryCodesRegenerated",
+      "class": "Academorix\\Mfa\\Events\\MfaRecoveryCodesRegenerated",
+      "trigger": "POST /api/v1/me/mfa/recovery-codes/regenerate succeeded. Old bcrypt-hashed array purged, new codes generated + hashed, plaintext returned ONCE in the response. Fires identity::RecoveryCodesRegenerated downstream via the identity module's observer.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitMfaRecoveryCodesRegeneratedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "regenerated_at": "ISO-8601 timestamp",
+        "new_codes_count": "integer (10)",
+        "actor_id": "ULID (Identity holder OR platform admin performing the regeneration on behalf of a user)"
+      }
+    },
+    {
+      "name": "WebauthnCredentialRegistered",
+      "class": "Academorix\\Mfa\\Events\\WebauthnCredentialRegistered",
+      "trigger": "POST /api/v1/me/mfa/webauthn/register succeeded — attestation verified, credential row inserted into webauthn_credentials.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitWebauthnCredentialRegisteredMetric",
+        "analytics::TrackWebauthnCredentialRegistered"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "credential_id": "ULID (`wac_...`)",
+        "device_name": "string (60 chars max)",
+        "attestation_format": "'packed' | 'fido-u2f' | 'android-key' | 'apple' | 'none' | 'tpm'",
+        "transports": "string[] (subset of usb / nfc / ble / internal / hybrid)",
+        "is_platform_authenticator": "boolean",
+        "is_synced_passkey": "boolean",
+        "registered_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "WebauthnCredentialRenamed",
+      "class": "Academorix\\Mfa\\Events\\WebauthnCredentialRenamed",
+      "trigger": "PATCH /api/v1/me/mfa/webauthn/credentials/{id} changed device_name.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "credential_id": "ULID",
+        "from_name": "string",
+        "to_name": "string",
+        "renamed_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "WebauthnCredentialDisabled",
+      "class": "Academorix\\Mfa\\Events\\WebauthnCredentialDisabled",
+      "trigger": "PATCH /api/v1/me/mfa/webauthn/credentials/{id} with `disabled_at=<now>` — user chose to temporarily disable without deleting. Preserves the row for the 90-day retention window (CleanupDisabledWebauthnCredentialsJob).",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitWebauthnCredentialDisabledMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "credential_id": "ULID",
+        "device_name": "string",
+        "disabled_at": "ISO-8601 timestamp",
+        "actor_id": "ULID (user OR platform admin)",
+        "reason": "'user_action' | 'admin_force_disable' | 'lost_device'"
+      }
+    },
+    {
+      "name": "WebauthnCredentialDeleted",
+      "class": "Academorix\\Mfa\\Events\\WebauthnCredentialDeleted",
+      "trigger": "DELETE /api/v1/me/mfa/webauthn/credentials/{id} OR the 90-day retention window elapsed on a disabled credential (via CleanupDisabledWebauthnCredentialsJob).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "observability::EmitWebauthnCredentialDeletedMetric"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "credential_id": "ULID",
+        "device_name": "string",
+        "deleted_at": "ISO-8601 timestamp",
+        "actor_id": "ULID | null (null = automatic retention purge)",
+        "trigger": "'user_action' | 'retention_purge' | 'admin_action' | 'identity_erasure_cascade'"
+      }
+    },
+    {
+      "name": "MfaBackupCodeCountLow",
+      "class": "Academorix\\Mfa\\Events\\MfaBackupCodeCountLow",
+      "trigger": "MfaRecoveryCodeConsumed fired AND remaining_count < 3. Debounced 24h per Identity so a rapid burn-down doesn't spam the user.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::DispatchLowRecoveryCodesRemainingNotification"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "remaining_count": "integer",
+        "detected_at": "ISO-8601 timestamp"
+      }
+    },
+    {
+      "name": "MfaDisabled",
+      "class": "Academorix\\Mfa\\Events\\MfaDisabled",
+      "trigger": "All MFA factors removed from the Identity — TOTP disabled AND every active WebauthnCredential is disabled/deleted. This event is distinct from identity::MfaDisabled (fired by identity/identity when the TOTP secret column transitions to NULL); it fires when the CUMULATIVE MFA posture on the Identity is now zero factors — which trips a policy shift (any role-required-MFA becomes unenforced) so auth/policy needs to react.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "auth::EnforceMfaRequirementPolicy",
+        "notifications::DispatchMfaDisabledConfirmationNotification",
+        "activity::WriteToActivityLog",
+        "observability::EmitMfaDisabledMetric",
+        "analytics::TrackMfaDisabled"
+      ],
+      "payload": {
+        "identity_id": "ULID",
+        "disabled_at": "ISO-8601 timestamp",
+        "trigger": "'self_service' | 'admin_action' | 'account_recovery' | 'identity_erasure'",
+        "actor_id": "ULID | null (null = identity erasure cascade)",
+        "was_totp_enrolled": "boolean",
+        "webauthn_credentials_removed": "integer"
+      }
+    }
+  ]
+}

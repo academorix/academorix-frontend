@@ -1,0 +1,141 @@
+{
+  "id": "academorix://modules/auth/jobs",
+  "$version": 1,
+  "title": "auth \u2014 background jobs",
+  "description": "Eight jobs. Six purge expired/consumed tokens on staggered cadences (per retention.json). One rotates JWT signing keys on a monthly cadence per key. One asynchronously revokes every active session for a User (dispatched by the PasswordChanged listener \u2014 the bulk revocation can be slow for cross-Application identities with many User rows).",
+  "jobs": [
+    {
+      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredRefreshTokensJob",
+      "queue": "notifications",
+      "purpose": "Hard-delete auth_refresh_tokens rows whose consumed_at OR revoked_at OR expires_at is older than 90 days. 90-day tail is for post-incident audit; anything older has no compliance value.",
+      "steps": [
+        "SELECT id FROM auth_refresh_tokens WHERE (consumed_at IS NOT NULL AND consumed_at < now() - INTERVAL '90 days') OR (revoked_at IS NOT NULL AND revoked_at < now() - INTERVAL '90 days') OR (expires_at < now() - INTERVAL '90 days') LIMIT 5000.",
+        "DELETE the batch inside a transaction.",
+        "Emit `academorix.auth.refresh_tokens.purged` metric.",
+        "Recurse if batch was 5000."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "(class-name only, singleton)",
+      "tries": 3,
+      "backoff": [60, 300, 1200],
+      "timeout": 300
+    },
+    {
+      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredResetTokensJob",
+      "queue": "notifications",
+      "purpose": "Hard-delete auth_password_resets rows past their 24h purge window (24h AFTER consumed_at OR expires_at; the extra 24h is for immediate post-consumption audit trace).",
+      "steps": [
+        "SELECT id FROM auth_password_resets WHERE (consumed_at IS NOT NULL AND consumed_at < now() - INTERVAL '24 hours') OR (expires_at < now() - INTERVAL '24 hours') LIMIT 1000.",
+        "DELETE the batch.",
+        "Recurse if batch was 1000."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "timeout": 120
+    },
+    {
+      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredVerificationTokensJob",
+      "queue": "notifications",
+      "purpose": "Hard-delete auth_email_verifications rows past their 30-day purge window.",
+      "steps": [
+        "SELECT id FROM auth_email_verifications WHERE (consumed_at IS NOT NULL AND consumed_at < now() - INTERVAL '30 days') OR (expires_at < now() - INTERVAL '30 days') LIMIT 1000.",
+        "DELETE the batch.",
+        "Recurse if batch was 1000."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3,
+      "backoff": [60, 300, 1200],
+      "timeout": 120
+    },
+    {
+      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredMfaChallengesJob",
+      "queue": "notifications",
+      "purpose": "Hard-delete auth_mfa_challenges rows past their 1h purge window. Short cadence (every 5 min) because challenges have a 5-min TTL \u2014 many rows to reap fast.",
+      "steps": [
+        "SELECT id FROM auth_mfa_challenges WHERE (consumed_at IS NOT NULL AND consumed_at < now() - INTERVAL '1 hour') OR (expires_at < now() - INTERVAL '1 hour') LIMIT 2000.",
+        "DELETE the batch.",
+        "Recurse if batch was 2000."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 120,
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "timeout": 60
+    },
+    {
+      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredCrossAppGrantsJob",
+      "queue": "notifications",
+      "purpose": "Hard-delete auth_cross_app_grants rows past their 24h purge window. Fires CrossAppGrantExpired for grants that were never consumed.",
+      "steps": [
+        "SELECT id FROM auth_cross_app_grants WHERE (consumed_at IS NOT NULL AND consumed_at < now() - INTERVAL '24 hours') OR (expires_at < now() - INTERVAL '24 hours') LIMIT 1000.",
+        "For each unconsumed expired row: fire CrossAppGrantExpired event.",
+        "DELETE the batch."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 900,
+      "tries": 3,
+      "backoff": [60, 300, 1200],
+      "timeout": 120
+    },
+    {
+      "class": "Academorix\\Auth\\Jobs\\PurgeExpiredJwtDenyListJob",
+      "queue": "notifications",
+      "purpose": "Hard-delete auth_jwt_deny_list rows once the underlying JWT's natural expires_at has passed. After natural expiry, downstream verifiers reject the JWT on their own \u2014 no need to keep the deny-list row.",
+      "steps": [
+        "SELECT id FROM auth_jwt_deny_list WHERE expires_at < now() LIMIT 5000.",
+        "DELETE the batch."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3,
+      "backoff": [60, 300, 1200],
+      "timeout": 300
+    },
+    {
+      "class": "Academorix\\Auth\\Jobs\\RotateJwtSigningKeyJob",
+      "queue": "notifications-critical",
+      "purpose": "Monthly rotation cadence per Application (or global key). Inserts a new active key, marks the previous key retired_at=now() (still verify-capable for auth.jwt.rotation_grace_period_days). Fires JwtSigningKeyRotated.",
+      "steps": [
+        "Enumerate signing keys per Application (and the global slot).",
+        "For each key whose (rotated_at + 30 days) < now(): generate fresh 32-byte secret, envelope-encrypt via KMS, insert new row with fresh kid, mark old row retired_at=now().",
+        "Fire JwtSigningKeyRotated per rotation.",
+        "Update JWKS cache invalidation for the /.well-known/jwks.json endpoint."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2,
+      "backoff": [300, 1800],
+      "timeout": 600
+    },
+    {
+      "class": "Academorix\\Auth\\Jobs\\RevokeAllActiveSessionsJob",
+      "queue": "notifications-critical",
+      "purpose": "Bulk revoke every active PAT for every User referencing an Identity. Dispatched by the PasswordChanged / MfaDisabled / IdentityLocked listeners. Runs async because a User with User rows on many Applications can have dozens of PATs \u2014 doing this inside the request would slow the password change.",
+      "steps": [
+        "Enumerate every User row where identity_id = target.",
+        "For each User: enumerate active PATs (Sanctum personal_access_tokens).",
+        "Revoke each PAT in a batched update inside a transaction (5000 tokens per batch).",
+        "Also revoke every active refresh token in the family_id chain for these Users.",
+        "Fire AllSessionsRevoked once (with tokens_revoked_count aggregated)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueVia": "identity_id (one bulk-revoke in-flight per Identity at a time)",
+      "uniqueFor": 300,
+      "tries": 3,
+      "backoff": [30, 120, 600],
+      "timeout": 300
+    }
+  ]
+}

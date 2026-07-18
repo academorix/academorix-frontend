@@ -1,0 +1,119 @@
+{
+  "id": "academorix://modules/user/compliance",
+  "$version": 1,
+  "title": "user \u2014 compliance evidence",
+  "description": "Profile is the PII cluster. Provisioning is where compliance floors bite (age gate at User creation). Erasure is where retention windows matter. This module carries the biggest concentration of GDPR + COPPA + FERPA responsibilities in the identity tier.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(b)",
+          "principle": "purpose limitation",
+          "evidence": "Profile fields are used only for User identification + personalisation (display + locale + timezone). They are never resold, never joined with third-party enrichment, never exposed to Application B when the User is on Application A."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "first_name + last_name required only for adult principals; phone optional; DOB stored once on Identity + denormalised to Profile only for query performance (both accessible via the identity_id FK). No collection of address / SSN / gender / nationality on the base module \u2014 those are domain-module concerns."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "`GET /api/v1/me/profile` returns the caller's own Profile unredacted. Subject requests over-the-wall export via `access::data-export` (Wave 1c)."
+        },
+        {
+          "article": "Art. 16",
+          "principle": "right to rectification",
+          "evidence": "`PATCH /api/v1/me/profile` lets the subject correct their own record for non-DOB fields. DOB requires admin action + audit trail entry."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "`POST /api/v1/users/{user}/erase` soft-deletes; `PurgeErasedUsersJob` finalises after the hold window (default 30d, up to 90d per tenant setting). All child rows CASCADE via FK on hard-delete. See retention.json for the timeline."
+        },
+        {
+          "article": "Art. 20",
+          "principle": "right to data portability",
+          "evidence": "Machine-readable JSON export via `access::data-export`. Includes the full Profile blob + every TenantMember row."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "privacy by design + default",
+          "evidence": "Profile PII is behind the redactor by default; the `profile.view.pii` permission is opt-in per admin role. Minor subjects gate even harder via `profile.view.pii.child` requiring an active AthleteGuardian link."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "Every Profile mutation is `Auditable`; the audit row carries actor, timestamp, changed_fields, and the request_id."
+        }
+      ]
+    },
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "\u00a7312.5",
+          "principle": "verifiable parental consent under 13",
+          "evidence": "`age_meets_min` validation rule refuses provisioning when identity->dob puts the subject under 13 AND region.country_code === 'US'. Bypasses require the parent's User to hold `athletes.provision.child` on an `AthleteGuardian` row (Wave 7 sports module wires this)."
+        },
+        {
+          "provision": "\u00a7312.4",
+          "principle": "notice of collection",
+          "evidence": "The provisioning notification includes the tenant's DPA + link to the parent-consent flow when the subject is a minor."
+        },
+        {
+          "provision": "\u00a7312.6",
+          "principle": "parental review + deletion right",
+          "evidence": "Guardians on an AthleteGuardian row see the full minor Profile via the `profile.view.pii.child` permission and can trigger erasure on behalf of the child."
+        }
+      ]
+    },
+    "ferpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "\u00a799.31",
+          "principle": "consent for disclosure of educational records",
+          "evidence": "Profile fields flagged `educational_record=true` (Wave 7 sports module wires the flag) require an explicit consent grant before being exposed to any caller outside the direct educational relationship. The user module ships the redactor hook; the classification lives per-domain."
+        }
+      ],
+      "applicability_note": "FERPA applies only when the tenant.business_type = 'school' AND region.country_code = 'US'. The compliance-service resolves this at provisioning time + writes the flag to the tenant's compliance profile."
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Every write path is behind a Policy. Every Policy check is logged in `audits`. Cross-tenant memberships require an explicit UserLinkedToTenant event + admin actor."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "PII redactor applies to every egress path unless the caller carries the `.pii` permission. Serverside redaction \u2014 clients see the redacted payload before decryption."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "The health probes cover FK integrity + orphaned Profile detection + purge queue drain. Failed probes page ops."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "provision": "\u00a71798.105",
+          "principle": "right to delete",
+          "evidence": "Aliased to the GDPR Art. 17 erasure flow."
+        },
+        {
+          "provision": "\u00a71798.110",
+          "principle": "right to know",
+          "evidence": "Aliased to the GDPR Art. 15 access flow."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/user/observers",
+  "$version": 1,
+  "title": "user \u2014 Eloquent observers",
+  "observers": [
+    {
+      "model": "User",
+      "observer": "Academorix\\User\\Observers\\UserObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `usr_`.",
+        "creating \u2192 default status = 'pending' unless the caller explicitly set 'active' (admin-created + email-pre-verified).",
+        "creating \u2192 consume 1 unit of the `user_slot` entitlement for the target tenant (throws QuotaExceeded).",
+        "creating \u2192 refuse when identity_id + application_id triple already exists (defends against the UNIQUE index race).",
+        "creating \u2192 refuse when identity->dob is under `auth::CompliantAgePolicy::resolveEffectiveMinimum($region)` \u2014 hard compliance floor.",
+        "created \u2192 invalidate the caller's principal cache in access::PermissionCache.",
+        "created \u2192 fire UserProvisioned.",
+        "updating (status changed) \u2192 dispatch the correct lifecycle event per transition (UserActivated / UserSuspended / \u2014).",
+        "updating (default_role_id changed) \u2192 fire a TenantMembershipRoleChanged targeting the default membership.",
+        "updating (preferred_locale changed) \u2192 fire UserPreferredLocaleChanged.",
+        "deleting \u2192 revoke every Sanctum PAT scoped to this User in-process (before the row is gone so the token cache invalidation can find them).",
+        "deleted (soft) \u2192 fire UserSoftDeleted; schedule PurgeErasedUsersJob for the row's `deleted_at + user.privacy.erasure_hold_days`.",
+        "forceDeleted \u2192 fire UserHardDeleted (fired ONCE per user_id \u2014 ProvisionerObserver refuses re-provisioning against a hard-deleted identity_id + application_id triple for 24h to catch replay bugs).",
+        "restored \u2192 fire UserRestored."
+      ]
+    },
+    {
+      "model": "Profile",
+      "observer": "Academorix\\User\\Observers\\ProfileObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `prf_`.",
+        "creating \u2192 dob defaults to identity->dob if the caller left it null (denormalisation is intentional per §4.5).",
+        "creating \u2192 refuse when phone_e164 fails the `valid_e164_phone` rule (belt-and-braces on top of the DB check).",
+        "creating \u2192 refuse when timezone is not in `\\DateTimeZone::listIdentifiers()` (IANA tz check).",
+        "creating \u2192 refuse when locale is not a valid BCP-47 tag.",
+        "updating (avatar_url changed) \u2192 fire AvatarUpdated (with old + new); do NOT also fire ProfileUpdated for the avatar change.",
+        "updating (any other tracked field) \u2192 fire ProfileUpdated with `changed_fields` populated from `$model->getDirty()->keys()`.",
+        "updating (dob changed) \u2192 write to the audit log with `severity=info` even when redacted from the diff (dob edits are compliance-relevant).",
+        "deleting \u2192 refuse when a User still references this Profile (RESTRICT FK is the DB fallback; the observer surfaces a clearer error)."
+      ]
+    },
+    {
+      "model": "TenantMember",
+      "observer": "Academorix\\User\\Observers\\TenantMemberObserver",
+      "handles": [
+        "creating \u2192 populate ULID prefix `tmb_`.",
+        "creating \u2192 default joined_at = now() unless the caller supplied one (audit-preserving import path).",
+        "creating \u2192 refuse when UNIQUE(user_id, tenant_id) already exists (soft-deleted rows count \u2014 caller must restore).",
+        "creating \u2192 refuse when the target Tenant's application_id \u2260 the User's application_id (cross-application memberships forbidden per hierarchy.md §4).",
+        "creating \u2192 fire UserLinkedToTenant.",
+        "updating (is_default flipped true) \u2192 set is_default=false on every other TenantMember row for this user_id (invariant: exactly one default).",
+        "updating (is_default flipped false + no sibling is_default=true) \u2192 refuse (the User must always have a landing tenant).",
+        "updating (is_staff_only flipped) \u2192 recompute the tenant's athlete-count metric (Wave 7 sports module observer subscribes to this transition).",
+        "updating (role_id changed) \u2192 fire TenantMembershipRoleChanged with from/to.",
+        "deleting \u2192 refuse when is_default=true AND the User has no other memberships (caller must promote another or erase the User instead).",
+        "deleted (soft) \u2192 revoke Sanctum PATs scoped to this (user_id, tenant_id); fire UserRemovedFromTenant.",
+        "tenantErased (via hook) \u2192 if this membership's tenant is being erased AND is_default=true AND the user has other memberships, promote the oldest sibling to default before the CASCADE deletes this row."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/identity/helpers",
+  "$version": 1,
+  "title": "identity \u2014 helper functions",
+  "description": "One global helper. Everything else the module exposes is behind DI / facades \u2014 helpers here are for the rare case where a downstream module needs a synchronous lookup without pulling in the repository binding.",
+  "namespace": "Academorix\\Identity\\Support",
+  "helpers": [
+    {
+      "signature": "resolve_identity(string $email): ?Identity",
+      "purpose": "Case-insensitive email lookup returning the resolved Identity model (or null when not found). Runs through the `idn:lookup:email:{email_hash}` cache. Does NOT expose credentials \u2014 the caller may only read the model attributes classified `internal`.",
+      "behaviours": [
+        "Returns null on unknown email (never throws \u2014 caller decides how to signal)",
+        "Returns null when the Identity is soft-deleted (i.e. the erasure hold-period is in effect)",
+        "Does NOT decrement the rate-limit counter \u2014 that's the middleware's job",
+        "Never logs the email as a label; only the fingerprint (SHA-256) if logging is required"
+      ],
+      "example": "$identity = resolve_identity($request->email);\nif ($identity === null) {\n    throw new AuthFailedException();\n}"
+    },
+    {
+      "signature": "identity_fingerprint(string $email): string",
+      "purpose": "Compute the canonical email fingerprint (SHA-256 of the normalised email) used across events, metrics, and analytics.",
+      "behaviours": [
+        "Normalises the email (lowercase, trim) before hashing \u2014 same normalisation as CITEXT",
+        "Deterministic \u2014 same input, same output",
+        "Never reversible \u2014 no lookup path from fingerprint \u2192 email exists"
+      ],
+      "example": "logger()->info('login attempt', ['email_fp' => identity_fingerprint($request->email)]);"
+    },
+    {
+      "signature": "current_identity(): ?Identity",
+      "purpose": "Convenience accessor. When Auth resolves a User (via sanctum) OR a PlatformUser (via platform_admin), returns the corresponding Identity row. Returns null for unauthenticated requests OR ServiceAccount principals.",
+      "behaviours": [
+        "Delegates to `auth()->user()?->identity`",
+        "Cached in the request-scoped container \u2014 repeated calls in one request don't hit the DB",
+        "Returns null on Web-worker / CLI contexts where auth() is null"
+      ],
+      "example": "if (current_identity()?->mfa_enabled) {\n    // ...\n}"
+    }
+  ],
+  "notes": [
+    "Helpers are registered by the composer autoloader from `src/Support/helpers.php`. Namespaced functions are safe to call across every framework layer including migrations + seeders.",
+    "None of these helpers accept a raw ULID as input \u2014 caller code that has a ULID should use `IdentityRepository::findById($id)` instead. The email-based path is the frequent one; the ID-based path is a code-level operation that deserves the explicit repository call."
+  ]
+}

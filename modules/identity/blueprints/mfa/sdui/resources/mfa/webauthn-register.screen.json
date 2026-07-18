@@ -1,0 +1,148 @@
+{
+  "id": "academorix://modules/mfa/sdui/resources/mfa/webauthn-register",
+  "$version": 1,
+  "kind": "screen",
+  "route": "/me/mfa/webauthn/register",
+  "title": "Register a passkey or security key",
+  "description": "WebAuthn registration wizard. Two rounds mirroring the WebAuthn spec — round 1 fetches options + calls navigator.credentials.create(); round 2 submits the attestation + device_name.",
+  "permission": "mfa.registerWebauthn",
+  "entitlement": "mfa_webauthn",
+  "layout": {
+    "type": "wizard",
+    "steps": [
+      {
+        "id": "step_1_prepare",
+        "label": "Choose your authenticator",
+        "content": {
+          "kind": "form",
+          "fields": [
+            {
+              "name": "authenticator_selection",
+              "control_type": "radio",
+              "label": "What are you using?",
+              "options": [
+                {
+                  "value": "platform",
+                  "label": "This device",
+                  "description": "Face ID, Touch ID, Windows Hello — the biometric on the device you're using now."
+                },
+                {
+                  "value": "cross-platform",
+                  "label": "A hardware key",
+                  "description": "A physical USB / NFC / Bluetooth security key (YubiKey, Titan)."
+                },
+                {
+                  "value": "any",
+                  "label": "Any authenticator",
+                  "description": "Let the browser prompt for anything available (including phone-synced passkeys)."
+                }
+              ],
+              "default": "any"
+            }
+          ]
+        },
+        "next_button": {
+          "label": "Continue",
+          "kind": "primary"
+        }
+      },
+      {
+        "id": "step_2_browser_ceremony",
+        "label": "Confirm with your device",
+        "data_source": {
+          "kind": "action",
+          "endpoint": "POST /api/v1/me/mfa/webauthn/register/options",
+          "body": {
+            "authenticator_selection": "{{step_1.authenticator_selection}}"
+          }
+        },
+        "content": {
+          "kind": "javascript_orchestrator",
+          "orchestrator_id": "webauthn-registration-ceremony",
+          "orchestrator_config": {
+            "options_response": "{{response}}",
+            "on_success": "advance_to_step_3",
+            "on_error": {
+              "NotAllowedError": "User declined or timeout — retry.",
+              "InvalidStateError": "This credential is already registered — go back and try again.",
+              "SecurityError": "This site doesn't match the credential's origin. Contact support.",
+              "AbortError": "Browser cancelled the request — retry."
+            }
+          },
+          "helptext": "Your browser will prompt you to authenticate. Approve the prompt on your device.",
+          "fallback_text": "If the prompt didn't appear, click Retry."
+        }
+      },
+      {
+        "id": "step_3_confirm",
+        "label": "Name your device",
+        "content": {
+          "kind": "form",
+          "endpoint": "POST /api/v1/me/mfa/webauthn/register",
+          "fields": [
+            {
+              "name": "device_name",
+              "control_type": "text",
+              "label": "Device nickname",
+              "max_length": 60,
+              "validation_rule": "valid_device_name",
+              "placeholder_from": "{{step_2.attestation_response.auto_suggest_device_name}}",
+              "helptext": "Give this device a name you'll recognise later (e.g. 'iPhone Face ID', 'Work YubiKey').",
+              "auto_focus": true
+            }
+          ],
+          "hidden_fields": [
+            {
+              "name": "attestation_response",
+              "value": "{{step_2.attestation_response}}"
+            }
+          ],
+          "on_error": {
+            "WEBAUTHN_CREDENTIAL_ALREADY_REGISTERED": {
+              "kind": "toast",
+              "severity": "warning",
+              "message": "This authenticator is already registered on your account."
+            },
+            "WEBAUTHN_MAX_CREDENTIALS_REACHED": {
+              "kind": "toast",
+              "severity": "warning",
+              "message": "You've reached the maximum number of registered devices. Delete one first."
+            },
+            "WEBAUTHN_MULTIPLE_DEVICES_NOT_ENTITLED": {
+              "kind": "modal",
+              "severity": "info",
+              "title": "Upgrade needed",
+              "message": "Your plan allows one registered passkey. Upgrade to team+ to register multiple.",
+              "actions": [{ "label": "See plans", "route": "/settings/billing" }]
+            }
+          }
+        },
+        "next_button": {
+          "label": "Register",
+          "kind": "primary"
+        }
+      },
+      {
+        "id": "step_4_done",
+        "label": "Registered",
+        "content": {
+          "kind": "card",
+          "severity": "success",
+          "title": "Passkey registered",
+          "body": "You'll be prompted for this passkey the next time you sign in.",
+          "sub_widgets": [
+            {
+              "widget": "webauthn-credential-card",
+              "data": "{{step_3.response}}",
+              "compact": true
+            }
+          ],
+          "actions": [
+            { "label": "Register another", "route": "/me/mfa/webauthn/register", "kind": "secondary" },
+            { "label": "Back to MFA settings", "route": "/me/mfa", "kind": "primary" }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "id": "academorix://modules/mfa/compliance",
+  "$version": 1,
+  "title": "mfa — compliance evidence",
+  "description": "MFA is one of the most compliance-material layers of the platform. Every applicable rule from NIST 800-63B (AAL2 authenticator strength), FIDO Alliance Level 2 (WebAuthn attestation verification), PCI-DSS 4.0 (MFA for administrative access), GDPR (data minimisation on device metadata), and SOC 2 Type 2 (access controls + monitoring) applies here. Every enforcement is codified as CODE + AUDIT — no policy documents to interpret at runtime.",
+  "regimes": {
+    "nist_800_63b": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "AAL2 authenticator strength (§ 4.2)",
+          "evidence": "Password (memorized secret, handled by identity/identity) + TOTP (§ 5.1.4 OTP device) OR WebAuthn (§ 5.1.7 single-factor cryptographic device / § 5.1.8 multi-factor cryptographic software) satisfies AAL2. `mfa.required_for_roles` (default: owner + admin + billing_manager + super_admin) enforces AAL2 for privileged principals via `mfa.require_challenge_complete` middleware."
+        },
+        {
+          "principle": "§ 5.1.4.1 OTP authenticator lifecycle",
+          "evidence": "TOTP secret is 160 bits (RFC 6238 recommended, above NIST's 80-bit minimum). Preview-then-confirm enrolment (§ 5.1.4.2 verifier lifecycle: proof-of-possession before persistence) — the plaintext never persists before the user demonstrates they scanned it. Constant-time verifier (§ 5.1.4.3 timing-attack resistance)."
+        },
+        {
+          "principle": "§ 5.1.7 single-factor cryptographic device",
+          "evidence": "WebAuthn platform authenticator (Face ID, Touch ID, Windows Hello) satisfies § 5.1.7. Attestation verification runs at registration; sign-count monotonic invariant enforced at every assertion (§ 5.1.7.2 verifier requirements)."
+        },
+        {
+          "principle": "§ 5.1.8 multi-factor cryptographic software / hardware",
+          "evidence": "WebAuthn with `user_verification: required` and a resident-key-supporting authenticator satisfies § 5.1.8 as a single-step MFA. Our default (`user_verification: preferred`) satisfies § 5.1.7 (single-factor cryptographic device); tenants can tighten to § 5.1.8 via settings."
+        },
+        {
+          "principle": "§ 5.2.9 replay resistance",
+          "evidence": "TOTP: the (identity_id, challenge_id, code) tuple can be consumed once (challenge row is marked consumed atomically). WebAuthn: sign-count monotonic invariant + credential.disabled_at flag guard against cloned-authenticator replay. Every replay attempt is rejected with `SIGN_COUNT_REPLAY_DETECTED` (422) + records a critical audit entry."
+        }
+      ]
+    },
+    "fido_alliance_l2": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "Attestation verification (W3C spec § 7.1 step 15+)",
+          "evidence": "Every WebAuthn registration verifies the attestation statement against the format-specific verifier (packed / fido-u2f / android-key / apple / tpm — implemented by `web-auth/webauthn-lib`). Config `mfa.webauthn.attestation_conveyance` defaults to `none` (privacy-preserving); tenants with FIDO MDS compliance mandates set to `direct` and reject authenticators absent from the FIDO Alliance Metadata Service."
+        },
+        {
+          "principle": "User-verification signal validation (W3C spec § 7.2 step 13)",
+          "evidence": "The assertion verifier checks the UV flag matches the requested `user_verification` policy. Mismatch → refusal + `WEBAUTHN_UV_POLICY_VIOLATION` (422)."
+        },
+        {
+          "principle": "Origin binding (W3C spec § 5.1.3 step 7)",
+          "evidence": "The RP ID (`config('mfa.webauthn.rp_id')`) is bound at registration + verified at assertion. Prevents cross-origin attestations from being replayed against Academorix."
+        }
+      ]
+    },
+    "pci_dss_4_0": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "Req 8.5 MFA for administrative access",
+          "evidence": "`mfa.required_for_roles` includes billing_manager + owner + admin + super_admin by default. Every tenant-audience action on the billing surface (subscription changes, refunds, chargebacks) traverses `mfa.require_challenge_complete` before reaching the controller. Compliance auditor can prove enforcement via the metrics stream: `academorix.mfa.step_up.enforced` is non-zero on every billing surface."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "WebauthnCredential carries only the cryptographic material + user-provided device_name + technical metadata (transports, AAGUID, sign_count). No IP, no user-agent, no browser fingerprint — those live in identity/auth's login trail, not here. Even the AAGUID (which identifies the authenticator model) is classified internal-only and never exposed to tenant callers."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "WebauthnCredential.identity_id FK is CASCADE on delete — an Identity hard-purge in identity/identity's PurgeSoftDeletedIdentitiesJob drops every credential in the same transaction. MFA disable also purges the recovery-codes JSONB atomically. No stale MFA material survives an erasure."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "TOTP secret plaintext never persists (in-memory during enrolment preview only). WebAuthn public key is stored — public by design of WebAuthn — but the corresponding private key never leaves the authenticator. Recovery codes are bcrypt-hashed at rest. sign_count is monotonic-checked to defeat cloned-authenticator replay."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Constant-time comparisons (`hash_equals()`) on every code / recovery-code / assertion verify. Rate-limited enrolment previews (`mfa.challenge.cooldown_minutes_after_max`). Progressive challenge invalidation after `max_attempts`. Suspicious-activity detection with fleet-wide notification dispatch."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access controls",
+          "evidence": "Two guards enforced (sanctum, platform_admin) with role scoping. All privileged MFA operations (force-disable, regenerate-recovery-codes) are audit-logged with the operator's Identity + reason. Recovery codes are single-use by construction."
+        },
+        {
+          "criterion": "CC6.6",
+          "principle": "protection against external threats",
+          "evidence": "Rate limiting + progressive-attempt caps + suspicious-activity detection. All threats emit metrics + alerts. sign_count replay detection is a distinct alert channel."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Health probes (mfa-schema-current, mfa-totp-library-loaded, mfa-webauthn-library-loaded, mfa-encryptor-reachable, mfa-challenge-ledger-reachable, mfa-suspicious-activity-scheduler-alive, mfa-retention-current) + comprehensive OpenTelemetry metrics feed the operational monitoring pipeline."
+        }
+      ]
+    },
+    "iso_27001_2022": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "A.5.16 identity management + A.5.17 authentication information",
+          "evidence": "Every state transition (enrolment, challenge, credential registration / disable / delete, recovery-code regen) is captured as an event + written to the activity_log via HasActivityLog composition. Enables the auditor to reconstruct any user's MFA history in a compliance interview."
+        },
+        {
+          "criterion": "A.8.5 secure authentication",
+          "evidence": "Cryptographic authenticator strength + secret encryption at rest (delegated to identity/identity's MfaSecretEncryptor) + timing-safe verifier + attempt limits."
+        }
+      ]
+    }
+  },
+  "audit_evidence_endpoints": {
+    "description": "Endpoints an auditor can hit (with appropriate platform-admin credentials) to gather compliance evidence WITHOUT touching production data.",
+    "endpoints": [
+      {
+        "path": "GET /api/v1/platform/mfa/methods/{user}",
+        "purpose": "Prove per-user MFA posture — which factors enrolled, credential count."
+      },
+      {
+        "path": "GET /api/v1/platform/mfa/audit?days=30",
+        "purpose": "Enumerate the last N days of MFA-lifecycle events (enrolments, challenges, credential lifecycles, disables) at the tenant or fleet level. Redacted — no plaintext, no bytea, only aggregated counts + timestamps."
+      },
+      {
+        "path": "GET /api/v1/platform/mfa/policy-compliance?role=admin",
+        "purpose": "Enumerate Identities that hold role=admin but lack MFA (past the grace period). Compliance-violation report."
+      }
+    ]
+  }
+}

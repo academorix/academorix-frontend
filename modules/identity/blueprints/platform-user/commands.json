@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/platform-user/commands",
+  "$version": 1,
+  "title": "platform-user \u2014 Artisan commands",
+  "description": "Six commands cover the platform-staff lifecycle from CLI. Every mutating command respects `platform-user.commands.require_reason` \u2014 when true (default in staging + prod), invocation MUST include `--reason=<text>` which is captured on the audit row. Every command runs on the platform_admin guard and requires an authenticated platform-admin actor (via a service-account token or a super_admin's PAT) \u2014 the command layer NEVER runs unauthenticated.",
+  "commands": [
+    {
+      "signature": "platform-user:list {--department=} {--status=} {--employment-type=} {--search=} {--include-offboarded}",
+      "class": "Academorix\\PlatformUser\\Console\\Commands\\ListPlatformUsersCommand",
+      "purpose": "List platform users. Defaults to active + suspended (excludes offboarded). Filters on department, status, employment_type, and name search. Output includes id, display_name, department, employment_type, hire_date, manager display_name. PII columns are always redacted from CLI output regardless of the actor's permissions \u2014 use the platform-admin UI when PII is required.",
+      "audit_severity": "info",
+      "requires_reason": false
+    },
+    {
+      "signature": "platform-user:describe {platformUser}",
+      "class": "Academorix\\PlatformUser\\Console\\Commands\\DescribePlatformUserCommand",
+      "purpose": "Print full detail for one PlatformUser (by ID or email). Includes on-call rotation membership, direct reports count, tenure, current status transitions. PII redacted unless invoked with a session that already carries `platform.platform_users.view.pii`.",
+      "audit_severity": "info",
+      "requires_reason": false
+    },
+    {
+      "signature": "platform-user:hire {--identity-id=} {--first-name=} {--last-name=} {--phone=} {--timezone=} {--hire-date=} {--department=} {--employment-type=full_time} {--job-title=} {--manager-id=} {--slack-handle=} {--github-handle=} {--reason=}",
+      "class": "Academorix\\PlatformUser\\Console\\Commands\\HirePlatformUserCommand",
+      "purpose": "Provision a new PlatformUser from an existing Identity. The Identity must already exist (created via `identity:register` in a prior step or via the identity-service self-service) AND must have MFA enrolled + email verified. Composes HirePlatformUserInput and dispatches to PlatformUserProvisioner. Fires PlatformUserHired on success. Requires --reason in staging + prod.",
+      "audit_severity": "warn",
+      "requires_reason": true,
+      "required_permission": "platform.platform_users.hire"
+    },
+    {
+      "signature": "platform-user:offboard {platformUser} {--effective-at=} {--reason=}",
+      "class": "Academorix\\PlatformUser\\Console\\Commands\\OffboardPlatformUserCommand",
+      "purpose": "Kick off the terminal offboarding lifecycle. Refuses when the target has direct reports (must be reassigned first). Composes OffboardPlatformUserInput and dispatches to PlatformOffboardingCoordinator. Fires PlatformUserOffboarded on success, which triggers RevokePlatformUserAccessJob and starts the 90-day retention hold clock. Always requires --reason (min 20 chars).",
+      "audit_severity": "critical",
+      "requires_reason": true,
+      "required_permission": "platform.platform_users.offboard"
+    },
+    {
+      "signature": "platform-user:reassign-manager {platformUser} {--new-manager-id=} {--reason=}",
+      "class": "Academorix\\PlatformUser\\Console\\Commands\\ReassignManagerCommand",
+      "purpose": "Reassign a PlatformUser's manager. --new-manager-id may be null (orphans to top-of-tree). Used in bulk during re-orgs \u2014 wrap in a shell script iterating over affected rows. Enforces the `manager_belongs_to_platform` rule + rejects cycles. Fires PlatformUserManagerReassigned.",
+      "audit_severity": "warn",
+      "requires_reason": true,
+      "required_permission": "platform.platform_users.reassign_manager"
+    },
+    {
+      "signature": "platform-user:audit-report {platformUser} {--from=} {--to=} {--format=json} {--output=}",
+      "class": "Academorix\\PlatformUser\\Console\\Commands\\AuditReportCommand",
+      "purpose": "Generate a compliance snapshot for one PlatformUser: every audit row + activity row + impersonation session where this PlatformUser is the actor OR the subject, within the window. --from defaults to 90 days ago, --to defaults to now. --format supports json (default), csv (for spreadsheet export), pdf (for compliance filing). --output writes to a file path; without --output, streams to stdout. Every invocation writes its own audit row so 'who ran an audit report on whom' is itself auditable.",
+      "audit_severity": "warn",
+      "requires_reason": true,
+      "required_permission": "platform.platform_users.view.audit_trail"
+    }
+  ]
+}

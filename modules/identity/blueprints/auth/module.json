@@ -1,0 +1,250 @@
+{
+  "$version": 1,
+  "name": "auth",
+  "alias": "auth",
+  "namespace": "Academorix\\Auth",
+  "description": "The protocol layer that operates on the Identity substrate. Owns every authentication endpoint — login (Sanctum-backed), refresh (with rotation + reuse detection), logout, MFA challenge dispatch, password reset flow (forgot + reset), email verification confirmation, cross-app SSO grant issuance + exchange. Signs every inter-service JWT (HS256 with per-Application `app` claim binding + key rotation via `kid`) and publishes the JWKS endpoint with aggressive Cache-Control. Ships the CompliantAgePolicy service that resolves the effective age floor from the compliance chain (COPPA / GDPR per-country / framework default / tenant override — floor can only tighten). Ships the ScopeSuffixResolver service that the base repository (in framework/crud) consults to apply the `.own` / `.tenant` / `.branch` / `.team` / `.child` / `.any` filter suffixes per caller permission. Owns the RegistrationPolicyInterface contract + default GenericRegistrationPolicy implementation; domain modules (e.g. sports/athletes in Wave 7) bind their own implementations via #[Bind]. Refresh-token rotation with reuse detection (already-consumed refresh → invalidate all tokens for the User = breach signal). Sanctum PAT abilities cache the compact permission array at issue-time from RBAC. Session revocation on credential mutation (PasswordChanged listener revokes every active PAT for every User row referencing the Identity — cross-Application, one-action lockdown). This module NEVER stores credentials — it delegates every hash / verify / recovery-code operation to the `identity` substrate.",
+  "keywords": [
+    "auth",
+    "authentication",
+    "sanctum",
+    "jwt",
+    "jwks",
+    "hs256",
+    "refresh-token",
+    "rotation",
+    "reuse-detection",
+    "mfa-challenge",
+    "password-reset",
+    "email-verification",
+    "cross-app-sso",
+    "grant-exchange",
+    "impersonation",
+    "session-revocation",
+    "coppa",
+    "gdpr",
+    "nist-800-63b",
+    "owasp-asvs",
+    "scope-suffix",
+    "registration-policy"
+  ],
+  "priority": 25,
+  "providers": [
+    "Academorix\\Auth\\Providers\\AuthServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "identity",
+    "user",
+    "platform-user",
+    "mfa",
+    "service-accounts",
+    "application",
+    "tenancy"
+  ],
+  "extendedBy": [
+    "rbac",
+    "approvals"
+  ],
+  "consumedIndirectlyBy": {
+    "description": "Every downstream tenant-plane module reaches this module ONLY via HTTP middleware (`auth:sanctum` guard + `auth.enforce_session_scope` + `auth.jwt_verify` for inter-service calls). Domain modules NEVER inject auth services directly — they inject User / PlatformUser resolved by the guard.",
+    "modules": [
+      "every module below platform tier"
+    ]
+  },
+  "contributes": {
+    "traits": [
+      "HasScopeSuffixResolution",
+      "HasSessionRevocation"
+    ],
+    "attributes": [
+      "AsAuthListener",
+      "RegistrationPolicy"
+    ],
+    "blueprints": [
+      "auth_refresh_tokens",
+      "auth_password_resets",
+      "auth_email_verifications",
+      "auth_mfa_challenges",
+      "auth_cross_app_grants",
+      "auth_jwt_deny_list",
+      "auth_jwt_signing_keys"
+    ],
+    "middleware": [
+      "auth.rate_limit_login",
+      "auth.enforce_session_scope",
+      "auth.jwt_verify",
+      "auth.cors_strict",
+      "auth.detect_new_device"
+    ],
+    "events": [
+      "UserLoggedIn",
+      "UserLoggedOut",
+      "SessionRevoked",
+      "AllSessionsRevoked",
+      "RefreshTokenRotated",
+      "RefreshTokenReuseDetected",
+      "PasswordResetInitiated",
+      "PasswordResetCompleted",
+      "EmailVerificationRequested",
+      "EmailVerificationCompleted",
+      "CrossAppGrantIssued",
+      "CrossAppGrantExchanged",
+      "CrossAppGrantExpired",
+      "MfaChallengeIssued",
+      "MfaChallengeCompleted",
+      "MfaChallengeFailed",
+      "ImpersonationStarted",
+      "ImpersonationEnded",
+      "JwtSigningKeyRotated",
+      "JwtRevoked",
+      "LoginFromNewDeviceDetected"
+    ],
+    "policies": [
+      "AuthPolicy",
+      "SessionPolicy",
+      "CrossAppGrantPolicy"
+    ],
+    "hooks": [],
+    "commands": [
+      "auth:list-sessions",
+      "auth:revoke-session",
+      "auth:revoke-all-sessions",
+      "auth:rotate-jwt-key",
+      "auth:list-jwt-keys",
+      "auth:add-to-deny-list",
+      "auth:purge-expired",
+      "auth:test-signing-key",
+      "auth:describe-token"
+    ],
+    "jobs": [
+      "PurgeExpiredRefreshTokensJob",
+      "PurgeExpiredResetTokensJob",
+      "PurgeExpiredVerificationTokensJob",
+      "PurgeExpiredMfaChallengesJob",
+      "PurgeExpiredCrossAppGrantsJob",
+      "PurgeExpiredJwtDenyListJob",
+      "RotateJwtSigningKeyJob",
+      "RevokeAllActiveSessionsJob"
+    ],
+    "notifications": [
+      "LoginFromNewDeviceNotification",
+      "LoginFromNewLocationNotification",
+      "PasswordChangedFromNewDeviceNotification",
+      "ImpersonationSessionActiveNotification",
+      "MfaEnrolledConfirmationNotification",
+      "PasswordResetLinkNotification",
+      "EmailVerificationLinkNotification"
+    ],
+    "broadcasts": [],
+    "observers": [
+      "RefreshTokenObserver",
+      "PersonalAccessTokenObserver"
+    ],
+    "rules": [
+      "valid_refresh_token",
+      "valid_password_reset_token",
+      "valid_email_verification_token",
+      "valid_mfa_challenge_id",
+      "valid_cross_app_grant_token",
+      "strong_password_via_auth"
+    ],
+    "casts": [
+      "JwtPayload",
+      "RefreshTokenFamily"
+    ],
+    "views": [],
+    "lang": [
+      "auth"
+    ],
+    "config": [
+      "auth"
+    ],
+    "macros": [
+      "Str::sanctum_token_prefix",
+      "Blueprint::auth_token_fields"
+    ],
+    "bindings": [
+      "SanctumTokenIssuer",
+      "RefreshTokenIssuer",
+      "PasswordResetTokenIssuer",
+      "EmailVerificationTokenIssuer",
+      "CrossAppGrantIssuer",
+      "MfaChallengeDispatcher",
+      "JwtSigner",
+      "JwtVerifier",
+      "JwtKeyRotator",
+      "JwtDenyListManager",
+      "SessionRevoker",
+      "RegistrationPolicyInterface",
+      "ScopeSuffixResolver",
+      "CompliantAgePolicy",
+      "DeviceFingerprinter"
+    ],
+    "resources": [
+      "session",
+      "refresh-token",
+      "cross-app-grant",
+      "jwt-signing-key"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "laravel/sanctum (PAT lifecycle + tokenable polymorphism)",
+      "firebase/php-jwt (HS256 sign / verify + kid resolution)"
+    ],
+    "rationale": "Sanctum's `personal_access_tokens` table is used as-shipped — we DO NOT reimplement PAT storage. Our SanctumTokenIssuer decorates Sanctum's `createToken(...)` to cache the compact permission array on the `abilities` column at issue time (so downstream services don't need a per-request RBAC round-trip). firebase/php-jwt is wrapped in JwtSigner + JwtVerifier so callers speak our idiom (kid resolution from `auth_jwt_signing_keys`, deny-list check from `auth_jwt_deny_list`, per-Application `app` claim binding) while the JWT algorithm itself remains the library's."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing authentication surface. Every route below carries the `sanctum` guard (issuance) OR the `sanctum` PAT (post-issuance). `X-Application-Id` header REQUIRED on every request; missing / unknown / disabled application → 400 / 404 / 403 per spec §Req 2.",
+      "routes": [
+        "POST /api/v1/auth/register",
+        "POST /api/v1/auth/login",
+        "POST /api/v1/auth/mfa/verify",
+        "POST /api/v1/auth/refresh",
+        "POST /api/v1/auth/logout",
+        "POST /api/v1/auth/logout-all-devices",
+        "POST /api/v1/auth/password/forgot",
+        "POST /api/v1/auth/password/reset",
+        "POST /api/v1/auth/password/change",
+        "POST /api/v1/auth/email/request-verification",
+        "POST /api/v1/auth/email/verify",
+        "POST /api/v1/auth/cross-app/grant",
+        "POST /api/v1/auth/cross-app/exchange",
+        "GET /api/v1/auth/me",
+        "GET /api/v1/auth/sessions",
+        "DELETE /api/v1/auth/sessions/{session}"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin authentication surface + identity-substrate CRUD (identity substrate is UI-less — its admin surface lives here). Every route carries `platform_admin` guard; no `X-Application-Id` header required (platform staff are cross-application by definition).",
+      "routes": [
+        "POST /api/v1/platform/auth/login",
+        "POST /api/v1/platform/auth/mfa/verify",
+        "POST /api/v1/platform/auth/refresh",
+        "POST /api/v1/platform/auth/logout",
+        "POST /api/v1/platform/auth/password/forgot",
+        "POST /api/v1/platform/auth/password/reset",
+        "POST /api/v1/platform/auth/impersonate/start",
+        "POST /api/v1/platform/auth/impersonate/end",
+        "GET /api/v1/platform/identities",
+        "GET /api/v1/platform/identities/{identity}",
+        "POST /api/v1/platform/identities/{identity}/unlock",
+        "POST /api/v1/platform/identities/{identity}/force-password-reset",
+        "DELETE /api/v1/platform/identities/{identity}",
+        "GET /api/v1/platform/jwt-signing-keys",
+        "POST /api/v1/platform/jwt-signing-keys/rotate",
+        "POST /api/v1/platform/jwt-deny-list"
+      ]
+    },
+    "public": {
+      "description": "Unauthenticated endpoints. Rate-limited by IP + monitored aggressively — aggressive because these are the only Auth surfaces reachable without a bearer token.",
+      "routes": [
+        "GET /.well-known/jwks.json",
+        "GET /api/health/auth"
+      ]
+    }
+  }
+}

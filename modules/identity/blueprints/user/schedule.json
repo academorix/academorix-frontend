@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/user/schedule",
+  "$version": 1,
+  "title": "user \u2014 scheduled tasks",
+  "entries": [
+    {
+      "name": "user-flush-last-active",
+      "command": "queue:work --queue=low --once",
+      "cron": "* * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: dispatch UpdateLastActiveJob so the last_active_at buffer flushes to DB. Alternative to a supervisord-managed worker for small deployments."
+    },
+    {
+      "name": "user-cleanup-orphaned-profiles",
+      "command": "queue:work --queue=low --once --job=CleanupOrphanedProfilesJob",
+      "cron": "17 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly at :17. Delete Profile rows that have no User AND are older than `user.privacy.orphaned_profile_ttl_hours` (default 24h)."
+    },
+    {
+      "name": "user-purge-erased-users",
+      "command": "queue:work --queue=low --once --job=PurgeErasedUsersJob",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily at 04:00 UTC. Hard-delete User rows whose `deleted_at + user.privacy.erasure_hold_days` has passed. Cascade deletes their TenantMember + Profile rows."
+    },
+    {
+      "name": "user-auto-reactivate-suspended",
+      "command": "user:reactivate-due --dry-run=false",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 minutes. Find Users with status=suspended AND reactivation_scheduled_for <= now(); transition to status=active + fire UserActivated."
+    },
+    {
+      "name": "user-metrics-snapshot",
+      "command": "user:metrics:snapshot",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly. Compute `academorix.user.active.count` per status + `academorix.user.tenant_member.count` gauges + `academorix.user.purge_pending.count`. Publishes to the OpenTelemetry endpoint."
+    }
+  ]
+}
