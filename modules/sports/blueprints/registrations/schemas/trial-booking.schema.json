@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/registrations/schemas/trial-booking",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TrialBooking",
+  "description": "Trial (taster) session booked as part of a Registration. References a facility slot + coach. States: booked → attended / no_show / cancelled. On attend the Registration transitions from TRIAL → OFFERED (or is dispatched to the OFFER path).",
+  "type": "object",
+  "x-module": "registrations",
+  "x-eloquent": {
+    "table": "trial_bookings",
+    "keyPrefix": "trb_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "registration_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "registrations", "column": "id", "onDelete": "cascade" }
+      },
+      "facility_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "facilities", "column": "id", "onDelete": "restrict" }
+      },
+      "resource_booking_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "resource_bookings", "column": "id", "onDelete": "set null" },
+        "description": "The ResourceBooking that reserves the facility slot."
+      },
+      "coach_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "coaching_profiles", "column": "id", "onDelete": "set null" }
+      },
+      "scheduled_at": { "type": "timestamptz", "nullable": false },
+      "ends_at": { "type": "timestamptz", "nullable": false },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'booked'" },
+      "attended_at": { "type": "timestamptz", "nullable": true },
+      "cancellation_reason": { "type": "string", "length": 200, "nullable": true },
+      "notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "registration_id"], "name": "trial_bookings_registration_idx" },
+      { "columns": ["tenant_id", "facility_id", "scheduled_at"], "name": "trial_bookings_slot_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "registration_id",
+    "facility_id",
+    "scheduled_at",
+    "ends_at",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^trb_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["booked", "attended", "no_show", "cancelled"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Transitions: booked → attended / no_show / cancelled. Terminal states.",
+    "ends_at > scheduled_at.",
+    "resource_booking_id set on booked; released on cancelled."
+  ]
+}

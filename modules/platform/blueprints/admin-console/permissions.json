@@ -2,6 +2,66 @@
   "id": "academorix://modules/admin-console/permissions",
   "$version": 1,
   "title": "admin-console — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Platform\\AdminConsole\\Database\\Seeders\\AdminConsolePermissionSeeder",
+  "isSystem": true,
+  "description": "Guard = platform_admin exclusively. Zero tenant-side seeding.",
+  "permissions": [
+    {
+      "name": "platform.tenants.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.tenants.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    { "name": "platform.tenants.update", "guard": "platform_admin", "seededOn": ["super_admin"] },
+    { "name": "platform.tenants.suspend", "guard": "platform_admin", "seededOn": ["super_admin"] },
+    {
+      "name": "platform.tenants.unsuspend",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "platform.tenants.export",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "compliance"]
+    },
+    {
+      "name": "platform.tenants.export-download",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "compliance"]
+    },
+    {
+      "name": "platform.impersonations.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "security_audit"]
+    },
+    {
+      "name": "platform.impersonations.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "security_audit"]
+    },
+    {
+      "name": "platform.impersonations.start",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support"]
+    },
+    {
+      "name": "platform.impersonations.end",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "support"]
+    },
+    {
+      "name": "platform.metrics.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.system-alerts.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
 }

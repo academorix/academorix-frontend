@@ -2,27 +2,37 @@
   "$version": 1,
   "name": "ai",
   "alias": "ai",
-  "namespace": "Academorix\\Ai",
-  "description": "Backend-first AI substrate per blueprint §10.21 (D6 locked). Wraps `laravel/ai` (first-party). Ships FOUR owned entities: `AiConversation` (persona-scoped chat — user_id + persona + title + status; message history tenant-scoped), `AiRun` (single model invocation — model / tokens_in / tokens_out / latency_ms / cost_minor; audit trail per conversation), `AiToolCall` (individual tool invocation inside an AiRun — tool_name + args_hash + result_summary + ms + error?), `AiEmbedding` (vector embedding for RAG search — source_type + source_id + vector; tenant-namespaced). Three layers: (1) AI module owns tools/agents/provider calls, (2) domain modules contribute tools via `#[AsAiTool]`, (3) personas bundle tool set + system prompt + guardrails. Nine built-in personas including CoachAssistant / ParentAssistant / AdminAssistant / MedicalAssistant. All prompts + responses + tool calls audited. Per-tenant AI-token pool via entitlements. Medical/safeguarding data NEVER sent without explicit consent. Write-back tools default to draft-then-confirm. Frontend uses Vercel AI SDK useChat streaming — browser NEVER holds provider keys.",
+  "namespace": "Academorix\\AI",
+  "description": "Tenant-scoped AI personas + tools + draft-then-confirm flow, built on top of the first-party `laravel/ai` SDK. Reference implementation lives at `.ref/AI` and is the source of truth for this blueprint. Every persona is a vendor `Laravel\\Ai\\Contracts\\Agent` implementer using `Laravel\\Ai\\Promptable`. Every custom tool implements `Laravel\\Ai\\Contracts\\Tool` via our `SensitiveTool` abstract base which adds compliance concerns (sensitivity classification, write-mode routing, role-gated authorization). Compliance concerns land as vendor `AgentMiddleware` classes returned from each persona's `middleware()` method. Streaming uses `->stream()->usingVercelDataProtocol()` (vendor-native). Conversation persistence uses `Conversational` + `RememberConversation` — vendor tables at `agent_conversations`. Failover cascades declared per persona via `#[Provider([Lab::Anthropic, Lab::OpenAI])]` and recorded to `ai_runs.provider_fallbacks_json`. Ships THREE owned entities: `AiRun` (single model invocation — model / provider / tokens_in / tokens_out / latency_ms / cost_minor / status per RunStatus enum; audit trail per conversation), `AiToolCall` (individual tool invocation inside an AiRun — tool_name + args_hash + result_summary + ms + error?), `AiDraft` (draft-then-confirm envelope for `WriteMode::Draft` tool invocations — payload + preview + expires_at + status per DraftStatus enum; separate `POST /ai/drafts/{id}/confirm` endpoint applies the draft after human review). Conversations are vendor-owned (`agent_conversations`, no owned entity). Optional `AiEmbedding` (pgvector RAG for SearchIndexerPersona). MCP support via `Mcp/AiToolAdapter` + `Mcp/ToolServer` — exposes tenant AI as an MCP endpoint for external agents (Claude Desktop, Cursor). Backend-first per D6 locked — browser NEVER holds provider keys.",
   "keywords": [
     "ai",
-    "assistant",
-    "persona",
+    "agents",
+    "personas",
     "tools",
-    "rag",
-    "embeddings",
     "laravel-ai",
     "backend-first",
+    "draft-then-confirm",
+    "rag",
+    "embeddings",
+    "mcp",
+    "sensitive-data-gate",
+    "pii-anonymizer",
+    "streaming",
+    "vercel-data-protocol",
     "wave-4"
   ],
   "priority": 92,
-  "providers": ["Academorix\\Ai\\Providers\\AiServiceProvider"],
+  "providers": [
+    "Academorix\\AI\\Providers\\AiServiceProvider",
+    "Academorix\\AI\\Providers\\AiHealthProvider"
+  ],
   "files": [],
   "dependencies": [
     "foundation",
     "tenancy",
     "application",
     "user",
+    "rbac",
     "entitlements",
     "storage",
     "search",
@@ -32,68 +42,241 @@
     "notifications"
   ],
   "extendedBy": [],
-  "planned_consumers": [],
+  "planned_consumers": [
+    "athlete",
+    "athlete-enrollment",
+    "attendance",
+    "coaching",
+    "event",
+    "session",
+    "progress",
+    "medical",
+    "development",
+    "competition",
+    "drills",
+    "invoice",
+    "payment",
+    "membership",
+    "reporting",
+    "reception",
+    "staff"
+  ],
+  "vendor_packages": [
+    {
+      "package": "laravel/ai",
+      "role": "First-party vendor SDK — Agent + Promptable + Tool contracts, streaming pipeline, conversation persistence via Conversational + RememberConversation."
+    },
+    {
+      "package": "laravel/mcp",
+      "role": "MCP server framework — Mcp/ToolServer exposes tenant AI tools over MCP."
+    }
+  ],
   "contributes": {
-    "traits": ["CanUseAi"],
-    "attributes": ["AsAiTool", "AsAiPersona"],
-    "blueprints": ["ai-conversation", "ai-run", "ai-tool-call", "ai-embedding"],
-    "middleware": ["ai.persona-role", "ai.token-pool", "ai.sensitive-data-gate", "ai.rate-limit"],
-    "events": [
-      "ConversationStarted",
-      "RunStarted",
-      "RunCompleted",
-      "RunFailed",
-      "ToolCalled",
-      "ToolFailed",
-      "EmbeddingIndexed",
-      "SensitiveDataBlocked",
-      "TokenPoolExhausted"
+    "traits": ["AcademorixAgent"],
+    "attributes": [
+      "AsAiTool",
+      "Sensitivity",
+      "RequiresRoles",
+      "NeverAutoWrite",
+      "AllowBackgroundWrite"
     ],
-    "policies": ["AiConversationPolicy", "AiRunPolicy", "AiToolCallPolicy"],
-    "hooks": ["EnforceSensitiveDataGate", "AuditPromptResponse", "TrackTokenUsage"],
+    "blueprints": ["ai-run", "ai-tool-call", "ai-draft", "ai-embedding"],
+    "middleware": [
+      "ai.persona-role",
+      "ai.rate",
+      "ai.reserve",
+      "ai.feature",
+      "ai.agent.bind-tenant-context",
+      "ai.agent.inject-tenant-system-prompt",
+      "ai.agent.sensitive-data-gate",
+      "ai.agent.pii-anonymizer-pipe",
+      "ai.agent.record-ai-run",
+      "ai.agent.emit-run-summary",
+      "ai.agent.check-cancellation"
+    ],
+    "events": [
+      "AiRunStarted",
+      "AiRunCompleted",
+      "AiRunFailed",
+      "AiRunCancelled",
+      "AiRunRateLimited",
+      "AiToolCalled",
+      "AiToolFailed",
+      "AiToolRefused",
+      "AiDraftCreated",
+      "AiDraftConfirmed",
+      "AiDraftDiscarded",
+      "AiDraftExpired",
+      "AiEmbeddingIndexed",
+      "SensitiveDataBlocked",
+      "TokenPoolExhausted",
+      "PersonaRoleGateDenied"
+    ],
+    "policies": ["AiRunPolicy", "AiToolCallPolicy", "AiDraftPolicy"],
+    "hooks": [
+      "EnforceSensitiveDataGate",
+      "EnforceNeverAutoWriteOnPersona",
+      "AllowBackgroundWriteEscapeHatch",
+      "AuditPromptResponse",
+      "TrackTokenUsage",
+      "TrackDraftExpiry"
+    ],
     "commands": [
       "ai:describe",
       "ai:list-tools",
       "ai:list-personas",
       "ai:test-tool",
-      "ai:reindex-embeddings"
+      "ai:reindex-embeddings",
+      "ai:drafts:expire",
+      "ai:mcp:serve"
     ],
     "jobs": [
       "ReindexEmbeddingsJob",
       "PurgeOrphanEmbeddingsJob",
       "RunBackgroundPersonaJob",
-      "AlertOnTokenPoolExhaustionJob"
+      "AlertOnTokenPoolExhaustionJob",
+      "ExpireOpenDraftsJob"
     ],
-    "notifications": ["AnomalyDetectedNotification", "WeeklyDigestNotification"],
-    "broadcasts": ["user.{userId}.ai.{conversationId}"],
-    "observers": ["AiConversationObserver", "AiRunObserver", "AiToolCallObserver"],
-    "rules": ["valid_persona", "valid_model", "positive_token_count"],
-    "casts": ["Persona", "ConversationStatus", "RunStatus"],
+    "notifications": [
+      "AnomalyDetectedNotification",
+      "WeeklyDigestNotification",
+      "DraftReadyForReviewNotification",
+      "TokenPoolExhaustedNotification"
+    ],
+    "broadcasts": ["user.{userId}.ai.streams"],
+    "observers": ["AiRunObserver", "AiToolCallObserver", "AiDraftObserver"],
+    "rules": [
+      "valid_persona",
+      "valid_run_status",
+      "valid_draft_status",
+      "valid_sensitivity",
+      "valid_write_mode",
+      "positive_token_count"
+    ],
+    "casts": ["Sensitivity", "WriteMode", "RunStatus", "DraftStatus"],
     "views": [],
     "lang": ["ai"],
     "config": ["ai"],
     "macros": [],
     "bindings": [
       "AiProvider",
-      "PersonaRegistry",
-      "AiToolRegistry",
+      "PersonaResolver",
+      "ToolRegistry",
+      "ToolAuthorizerDecorator",
+      "ToolDiscoveryBootstrapper",
+      "DraftService",
       "SensitiveDataGate",
+      "PiiAnonymizerPipe",
+      "TokenEstimator",
+      "AuditService",
       "EmbeddingIndexer",
-      "AiRunAuditor",
-      "AiTokenGate"
+      "AiTokenGate",
+      "McpToolServer"
     ],
-    "resources": ["ai-conversation", "ai-run", "ai-tool-call"]
+    "resources": ["ai-run", "ai-tool-call", "ai-draft"]
   },
   "attribute_driven": {
-    "description": "Domain modules contribute tools + personas via attributes discovered at boot.",
+    "description": "Five class-level attributes drive discovery + authorization. Discovered at boot by `ToolDiscoveryBootstrapper` (tools) and `PersonaResolver` (personas). Runtime authorization = pure hash-map lookup, never reflection.",
     "attributes": {
-      "AsAiTool": "Marks a class as an AI tool. `#[AsAiTool(name: 'find_athlete', sensitivity: 'pii', personas: ['CoachAssistant', 'AdminAssistant'])]`.",
-      "AsAiPersona": "Marks a class as an AI persona. `#[AsAiPersona(name: 'CoachAssistant', model: 'gpt-4', tools: [...])]`."
+      "AsAiTool": "Marks a class as an AI tool discoverable by ToolDiscoveryBootstrapper. `#[AsAiTool(name: 'find_athlete', description: '…')]`. Name MUST be globally unique — bootstrapper throws DuplicateToolNameException on collision. Convention: snake_case verbs (find_*, get_*, create_*, draft_*, search_*, send_*, run_*).",
+      "Sensitivity": "Per-persona ceiling — declares the strictest sensitivity class the persona may reach. Values from Sensitivity enum (Public/Pii/Financial/Medical/Safeguarding). A `Public` persona MUST NOT bundle a `Medical` tool (enforced at boot). `Safeguarding` is hard-denied regardless of consent.",
+      "RequiresRoles": "Declares the spatie/permission role(s) required to invoke a persona. `#[RequiresRoles(['coach'])]`. Multiple roles = OR. Read by AuthorizePersonaRole middleware BEFORE reaching RunPersonaChatController. Canonical roles: owner / admin / branch_manager / coach / athlete / parent_guardian / front_desk / viewer / medical (sports only).",
+      "NeverAutoWrite": "Persona-level marker (defence-in-depth). Every tool call — regardless of the tool's declared WriteMode — routes through the draft-then-confirm flow. Applied on MedicalAssistantPersona + AnomalyDetectorPersona.",
+      "AllowBackgroundWrite": "Tool-level escape hatch. Marks a tool that MAY execute a direct write inside a background persona (bypasses draft flow). Currently only `upsert_embedding` on SearchIndexerPersona carries this. Interactive personas SHALL NOT bundle a tool carrying this attribute (verified at boot). Loses to `#[NeverAutoWrite]` on the persona."
     }
+  },
+  "personas": {
+    "description": "Eleven personas ship in the reference. Each maps to a spatie/permission role from the canonical Tenancy::defaultRoles() catalogue.",
+    "interactive": [
+      {
+        "name": "CoachAssistantPersona",
+        "roles": ["coach"],
+        "sensitivity": "Pii",
+        "focus": "Athletes, teams, sessions, drills, scouting for own teams only",
+        "never_auto_write": false
+      },
+      {
+        "name": "ParentAssistantPersona",
+        "roles": ["parent_guardian"],
+        "sensitivity": "Pii",
+        "focus": "Own children's data — strictest PII/RBAC",
+        "never_auto_write": false
+      },
+      {
+        "name": "AthleteAssistantPersona",
+        "roles": ["athlete"],
+        "sensitivity": "Pii",
+        "focus": "Own schedule / progress / attendance / awards (v1.5 deferred)",
+        "never_auto_write": true
+      },
+      {
+        "name": "AdminAssistantPersona",
+        "roles": ["admin", "owner"],
+        "sensitivity": "Financial",
+        "focus": "Cross-cutting ops, reports, tenant-wide reads",
+        "never_auto_write": false
+      },
+      {
+        "name": "FinanceAssistantPersona",
+        "roles": ["admin", "owner"],
+        "sensitivity": "Financial",
+        "focus": "Revenue/expense reports, dunning drafts, membership status",
+        "never_auto_write": false
+      },
+      {
+        "name": "MedicalAssistantPersona",
+        "roles": ["medical"],
+        "sensitivity": "Medical",
+        "focus": "Injuries, clearances, RTP summaries — sports variants only",
+        "never_auto_write": true
+      },
+      {
+        "name": "StaffAssistantPersona",
+        "roles": ["branch_manager"],
+        "sensitivity": "Pii",
+        "focus": "Daily branch operations, staff assignment, scheduling",
+        "never_auto_write": false
+      },
+      {
+        "name": "ReceptionAssistantPersona",
+        "roles": ["front_desk"],
+        "sensitivity": "Pii",
+        "focus": "Kiosk lookups, walk-in registration, day-pass sale, wristband issuance",
+        "never_auto_write": false
+      }
+    ],
+    "background": [
+      {
+        "name": "AnomalyDetectorPersona",
+        "roles": ["system"],
+        "sensitivity": "Pii",
+        "focus": "Nightly attendance/injury pattern scan; files notifications only",
+        "never_auto_write": true
+      },
+      {
+        "name": "NotificationDrafterPersona",
+        "roles": ["system"],
+        "sensitivity": "Pii",
+        "focus": "Weekly digests as drafts",
+        "never_auto_write": false
+      },
+      {
+        "name": "SearchIndexerPersona",
+        "roles": ["system"],
+        "sensitivity": "Pii",
+        "focus": "Embeddings queue drain; uses upsert_embedding with #[AllowBackgroundWrite]",
+        "never_auto_write": false
+      }
+    ]
+  },
+  "mcp_support": {
+    "description": "Tenant AI exposed as an MCP endpoint for external agents (Claude Desktop, Cursor, Zed). Enterprise-only feature per ai.mcp entitlement gate. Two files: Mcp/AiToolAdapter (adapts an AI Tool to an MCP tool contract) + Mcp/ToolServer (the MCP server). Every MCP tool invocation re-runs the SensitiveDataGate + persona-role check — the MCP transport doesn't bypass authorization.",
+    "command": "ai:mcp:serve",
+    "authentication": "Signed JWT bound to the tenant + a specific persona; expires per config."
   },
   "hosts": {
     "tenant": {
-      "description": "Backend-first streaming — POST /api/ai/chat/{persona} with Vercel AI SDK data-stream protocol.",
+      "description": "Backend-first streaming — POST /api/ai/chat/{persona} with Vercel AI SDK data-stream protocol. Every route runs the four HTTP middleware (ai.feature / ai.rate / ai.reserve / ai.persona-role) BEFORE the vendor agent pipeline picks up the seven agent middleware (BindTenantContext / InjectTenantSystemPrompt / SensitiveDataGate / PiiAnonymizerPipe / RecordAiRun / EmitRunSummary / CheckCancellation).",
       "routes": [
         "GET /api/v1/ai/personas",
         "POST /api/v1/ai/chat/{persona}",
@@ -102,11 +285,21 @@
         "DELETE /api/v1/ai/conversations/{conversation}",
         "GET /api/v1/ai/conversations/{conversation}/runs",
         "GET /api/v1/ai/runs/{run}",
+        "DELETE /api/v1/ai/runs/{run}",
+        "GET /api/v1/ai/drafts",
+        "GET /api/v1/ai/drafts/{draft}",
+        "POST /api/v1/ai/drafts/{draft}/confirm",
+        "POST /api/v1/ai/drafts/{draft}/discard",
         "POST /api/v1/ai/tools/{tool}/test"
       ]
     },
     "platform-admin": {
-      "routes": ["GET /api/v1/platform/ai/token-usage", "GET /api/v1/platform/ai/audit-runs"]
+      "routes": [
+        "GET /api/v1/platform/ai/token-usage",
+        "GET /api/v1/platform/ai/audit-runs",
+        "GET /api/v1/platform/ai/tool-registry",
+        "GET /api/v1/platform/ai/personas"
+      ]
     }
   }
 }

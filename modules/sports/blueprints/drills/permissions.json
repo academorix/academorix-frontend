@@ -2,6 +2,61 @@
   "id": "academorix://modules/drills/permissions",
   "$version": 1,
   "title": "drills — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\Drills\\Database\\Seeders\\DrillsPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "drills.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "drills.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "drills.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "drills.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "drills.publish",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "drills.publish-public",
+      "guard": "sanctum",
+      "description": "Publish to public (cross-tenant) drill marketplace. Requires moderation.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "drills.archive",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "drills.rate",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "drills.import",
+      "guard": "sanctum",
+      "description": "Bulk import from CSV / partner libraries.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "platform.drills.moderate",
+      "guard": "platform_admin",
+      "description": "Moderate the public drill marketplace.",
+      "seededOn": ["super_admin", "content_moderator"]
+    }
+  ]
 }

@@ -2,6 +2,48 @@
   "id": "academorix://modules/performance/policies",
   "$version": 1,
   "title": "performance — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "policies": [
+    {
+      "model": "TestBattery",
+      "class": "Academorix\\Sports\\Performance\\Policies\\TestBatteryPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "performance.batteries.viewAny" },
+        { "action": "view", "permission": "performance.batteries.view" },
+        {
+          "action": "create",
+          "permission": "performance.batteries.create",
+          "scope": "coach + branch_manager + admin + owner"
+        },
+        { "action": "update", "permission": "performance.batteries.update" },
+        {
+          "action": "delete",
+          "permission": "performance.batteries.delete",
+          "scope": "admin + owner"
+        }
+      ]
+    },
+    {
+      "model": "TestResult",
+      "class": "Academorix\\Sports\\Performance\\Policies\\TestResultPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "performance.results.viewAny",
+          "scope": "athlete sees own; parent sees own children; coach sees own teams; admin sees tenant"
+        },
+        { "action": "view", "permission": "performance.results.view" },
+        {
+          "action": "record",
+          "permission": "performance.results.record",
+          "scope": "coach + admin + owner"
+        },
+        {
+          "action": "amend",
+          "permission": "performance.results.amend",
+          "scope": "admin + owner. Reason REQUIRED. Full audit"
+        },
+        { "action": "delete", "permission": "performance.results.delete", "scope": "admin + owner" }
+      ]
+    }
+  ]
 }

@@ -2,6 +2,68 @@
   "id": "academorix://modules/private-sessions/permissions",
   "$version": 1,
   "title": "private-sessions — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\PrivateSessions\\Database\\Seeders\\PrivateSessionsPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "private-sessions.requests.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.requests.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.requests.create",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian"]
+    },
+    {
+      "name": "private-sessions.requests.approve",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.requests.reject",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.sessions.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.sessions.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.sessions.cancel",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.sessions.mark-completed",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.credits.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.credits.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "private-sessions.credits.purchase",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian"]
+    }
+  ]
 }

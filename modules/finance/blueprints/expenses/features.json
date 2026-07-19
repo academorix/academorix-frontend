@@ -2,6 +2,62 @@
   "id": "academorix://modules/expenses/features",
   "$version": 1,
   "title": "expenses — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "expenses.core",
+      "displayName": "Expense tracking",
+      "description": "Money-out substrate — receipts, approvals, payments.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "expenses.approval_workflow",
+      "displayName": "Multi-step approval workflow",
+      "description": "Configurable approval chains (coach → branch_manager → admin). Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "expenses.receipt_ocr",
+      "displayName": "Receipt OCR",
+      "description": "Auto-extract vendor + amount + date from receipt images. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "expenses.payroll",
+      "displayName": "Staff payroll batches",
+      "description": "Aggregate + approve staff payments as a batch.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "expenses.vendor_management",
+      "displayName": "Vendor registry",
+      "description": "Structured vendor records with tax IDs + payment terms.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "expenses.mileage_tracking",
+      "displayName": "Mileage / travel expenses",
+      "description": "Distance-based reimbursement with per-mile rate. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "expenses.export_accounting",
+      "displayName": "Export to accounting software",
+      "description": "QuickBooks / Xero export of approved expenses. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ],
+  "entitlements": [
+    {
+      "key": "expense.approve.threshold",
+      "kind": "amount_minor",
+      "description": "Max approvable amount per approval action. Tier-gated: coach $500, branch_manager $5000, admin/owner unlimited."
+    }
+  ]
 }

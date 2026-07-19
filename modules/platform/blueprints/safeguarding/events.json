@@ -1,7 +1,116 @@
 {
   "id": "academorix://modules/safeguarding/events",
   "$version": 1,
-  "title": "safeguarding — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "safeguarding — published events",
+  "namespace": "Academorix\\Platform\\Safeguarding\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "K-12 + child-protection compliance. Every event is retained 7yr under legal-hold exception. StaffCheckExpiring feeds the monthly compliance dashboard.",
+  "events": [
+    {
+      "name": "IncidentReported",
+      "trigger": "New Incident row (safeguarding / injury / discipline / near-miss / property_damage). status='submitted'.",
+      "consumers": [
+        "audit::WriteToAuditLog (retention 7yr, legal-hold)",
+        "notifications::AlertSafeguardingOfficer",
+        "notifications::AlertBranchManagerOnP0"
+      ],
+      "payload": {
+        "incident_id": "ULID (sfi_*)",
+        "tenant_id": "ULID",
+        "kind": "'safeguarding'|'injury'|'discipline'|'near_miss'|'property_damage'",
+        "severity": "'low'|'medium'|'high'|'critical'",
+        "involved_athlete_id": "ULID|null",
+        "reporter_user_id": "ULID",
+        "occurred_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "IncidentInvestigationOpened",
+      "trigger": "Safeguarding officer opened investigation. status: submitted → investigating. Assigned to investigator.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::NotifyReporter",
+        "notifications::NotifyInvestigator"
+      ],
+      "payload": {
+        "incident_id": "ULID",
+        "opened_by_user_id": "ULID",
+        "assigned_investigator_id": "ULID"
+      }
+    },
+    {
+      "name": "IncidentResolved",
+      "trigger": "P1 event. status: investigating → resolved. Outcome + follow-up documented.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyInvolvedParties"],
+      "payload": {
+        "incident_id": "ULID",
+        "resolved_by_user_id": "ULID",
+        "outcome": "'no_action'|'warning'|'training_required'|'staff_reassigned'|'terminated'|'reported_to_authorities'|'other'",
+        "resolution_notes": "string"
+      }
+    },
+    {
+      "name": "IncidentEscalated",
+      "trigger": "P0 event. Escalated to external authorities (police, CPS, DBS). Legal-hold applies to every associated record.",
+      "consumers": [
+        "audit::WriteToAuditLog (indefinite retention)",
+        "notifications::AlertOwner",
+        "compliance::ApplyLegalHold"
+      ],
+      "payload": {
+        "incident_id": "ULID",
+        "escalated_to": "'police'|'child_protective_services'|'dbs'|'ofsted'|'other'",
+        "escalated_by_user_id": "ULID",
+        "external_reference": "string|null"
+      }
+    },
+    {
+      "name": "StaffCheckCreated",
+      "trigger": "New StaffCheck row (DBS / background check / medical / qualification).",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "check_id": "ULID (skc_*)",
+        "tenant_id": "ULID",
+        "staff_user_id": "ULID",
+        "kind": "'dbs_enhanced'|'dbs_standard'|'background'|'medical'|'qualification'|'first_aid'",
+        "expires_at": "date|null"
+      }
+    },
+    {
+      "name": "StaffCheckExpiring",
+      "trigger": "P1 event. StaffCheck expires within 60 days. Notify staff + branch_manager + admin.",
+      "consumers": [
+        "notifications::NotifyStaffCheckExpiring",
+        "reporting::UpdateComplianceDashboard"
+      ],
+      "payload": {
+        "check_id": "ULID",
+        "staff_user_id": "ULID",
+        "kind": "string",
+        "expires_at": "date",
+        "days_until_expiry": "int"
+      }
+    },
+    {
+      "name": "StaffCheckExpired",
+      "trigger": "P0 event. StaffCheck expired. Staff MUST BE STOOD DOWN from athlete-facing duties per policy.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::AlertOwner",
+        "jobs::AutoRevokeAthleteFacingRolesJob"
+      ],
+      "payload": {
+        "check_id": "ULID",
+        "staff_user_id": "ULID",
+        "kind": "string",
+        "expired_on": "date"
+      }
+    },
+    {
+      "name": "StaffCheckRenewed",
+      "trigger": "Renewed check submitted. New expires_at.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyRenewalConfirmed"],
+      "payload": { "old_check_id": "ULID", "new_check_id": "ULID", "expires_at": "date" }
+    }
+  ]
 }

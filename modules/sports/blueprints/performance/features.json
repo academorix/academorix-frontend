@@ -2,6 +2,34 @@
   "id": "academorix://modules/performance/features",
   "$version": 1,
   "title": "performance — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "performance.core",
+      "displayName": "Performance testing",
+      "description": "Master feature. Test batteries + benchmarks.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "performance.benchmarks_national",
+      "displayName": "National benchmark rankings",
+      "description": "Cross-tenant national rankings (federation tier). Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "performance.charts_trending",
+      "displayName": "Trend charts",
+      "description": "Athlete performance-over-time visualisations.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "performance.wearable_ingest",
+      "displayName": "Wearable device ingest",
+      "description": "Auto-import test results from Garmin / Whoop / Polar. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

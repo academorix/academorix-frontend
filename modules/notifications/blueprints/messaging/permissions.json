@@ -2,6 +2,187 @@
   "id": "academorix://modules/messaging/permissions",
   "$version": 1,
   "title": "messaging — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Notifications\\Messaging\\Database\\Seeders\\MessagingPermissionSeeder",
+  "isSystem": true,
+  "description": "Coach ↔ parent + coach ↔ athlete DMs are the default use case. Safeguarding officers see all messages tenant-wide (compliance + child protection).",
+  "permissions": [
+    {
+      "name": "messaging.conversations.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.conversations.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.conversations.create",
+      "guard": "sanctum",
+      "seededOn": [
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.conversations.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "messaging.conversations.archive",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "messaging.members.add",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "messaging.members.remove",
+      "guard": "sanctum",
+      "seededOn": [
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.members.promote",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "messaging.messages.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.messages.send",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.messages.edit",
+      "guard": "sanctum",
+      "description": "Own messages only. 24h window from send.",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.messages.delete",
+      "guard": "sanctum",
+      "description": "Own messages OR conversation admin.",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.messages.admin-delete",
+      "guard": "sanctum",
+      "description": "Reason REQUIRED. Full audit chain (7yr retention).",
+      "seededOn": ["medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "messaging.reactions.add",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.reactions.remove",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "messaging.safeguarding.view-all",
+      "guard": "sanctum",
+      "description": "Safeguarding officer — reads ALL messages tenant-wide. Child protection use only.",
+      "seededOn": ["medical"]
+    },
+    {
+      "name": "platform.messaging.audit",
+      "guard": "platform_admin",
+      "description": "Cross-tenant safeguarding audit. Metadata + reason only, no message bodies.",
+      "seededOn": ["super_admin"]
+    }
+  ]
 }

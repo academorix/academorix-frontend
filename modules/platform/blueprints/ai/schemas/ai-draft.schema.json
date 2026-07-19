@@ -1,0 +1,157 @@
+{
+  "id": "academorix://modules/ai/schemas/ai-draft",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AiDraft",
+  "description": "Draft-then-confirm envelope for WriteMode::Draft tool invocations. Every WritableTool's sealed handle() locks the write into a draft row and returns { draft_id, preview, expires_at, confirm_url } to the LLM instead of executing the mutation. A separate authenticated POST /ai/drafts/{id}/confirm applies the pending change after human review. State: open → confirmed / expired / discarded (per DraftStatus enum).",
+  "type": "object",
+  "x-module": "ai",
+  "x-eloquent": {
+    "table": "ai_drafts",
+    "keyPrefix": "adr_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "ai_run_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "ai_runs", "column": "id", "onDelete": "cascade" }
+      },
+      "ai_tool_call_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "ai_tool_calls", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "persona": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "FQCN of the persona that produced the draft."
+      },
+      "tool_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Tool that produced the draft."
+      },
+      "action_class": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "FQCN of the domain Action that will run on confirm."
+      },
+      "action_payload": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "The full payload to hand the Action. Encrypted at rest for medical/safeguarding drafts."
+      },
+      "preview": {
+        "type": "text",
+        "nullable": false,
+        "description": "Human-readable preview shown to the reviewer."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'open'",
+        "description": "open / confirmed / expired / discarded (DraftStatus enum)."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "TTL for confirmation. Elapsed drafts are swept by ai:drafts:expire."
+      },
+      "confirmed_at": { "type": "timestamptz", "nullable": true },
+      "confirmed_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "discarded_at": { "type": "timestamptz", "nullable": true },
+      "discarded_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "discarded_reason": { "type": "string", "length": 500, "nullable": true },
+      "result_summary": {
+        "type": "text",
+        "nullable": true,
+        "description": "Post-confirm summary of what the Action returned."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "user_id", "status", "expires_at"],
+        "name": "ai_drafts_user_status_idx"
+      },
+      { "columns": ["tenant_id", "ai_run_id"], "name": "ai_drafts_run_idx" },
+      {
+        "columns": ["tenant_id", "status", "expires_at"],
+        "name": "ai_drafts_expiry_idx",
+        "predicate": "status = 'open'"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "ai_run_id",
+    "ai_tool_call_id",
+    "user_id",
+    "persona",
+    "tool_name",
+    "action_class",
+    "action_payload",
+    "preview",
+    "status",
+    "expires_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^adr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["open", "confirmed", "expired", "discarded"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "action_payload IMMUTABLE post-create — a reviewer cannot mutate the pending change; they can only confirm or discard.",
+    "Transitions: open → confirmed / expired / discarded (all terminal).",
+    "Confirm refused when expires_at is in the past — status becomes 'expired' via ExpireOpenDraftsJob.",
+    "action_payload encrypted at rest for medical/safeguarding sensitivity classes."
+  ]
+}

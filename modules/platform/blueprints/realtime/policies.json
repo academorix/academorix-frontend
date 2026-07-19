@@ -2,6 +2,41 @@
   "id": "academorix://modules/realtime/policies",
   "$version": 1,
   "title": "realtime — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Two policies. Channel registration is admin-only (BroadcastChannel rows are seeded by boot scan). Subscription policy governs who can subscribe to which channel — the per-channel authorize callback is the OTHER gate.",
+  "policies": [
+    {
+      "model": "BroadcastChannel",
+      "class": "Academorix\\Realtime\\Policies\\BroadcastChannelPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "realtime.channels.viewAny",
+          "scope": "admin + owner"
+        },
+        { "action": "view", "permission": "realtime.channels.view" },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.realtime.channels.viewAny",
+          "guard": "platform_admin"
+        }
+      ]
+    },
+    {
+      "model": "BroadcastSubscription",
+      "class": "Academorix\\Realtime\\Policies\\BroadcastSubscriptionPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "realtime.subscriptions.viewAny",
+          "scope": "user sees own subscriptions; admin sees tenant-wide"
+        },
+        { "action": "view", "permission": "realtime.subscriptions.view" },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.realtime.subscriptions.viewAny",
+          "guard": "platform_admin"
+        }
+      ]
+    }
+  ]
 }

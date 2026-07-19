@@ -1,7 +1,82 @@
 {
   "id": "academorix://modules/digital-passes/events",
   "$version": 1,
-  "title": "digital-passes — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "digital-passes — published events",
+  "namespace": "Academorix\\Finance\\DigitalPasses\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Apple Wallet + Google Wallet + generic QR passes. Wraps spatie/laravel-mobile-pass v1. Push updates dispatched via APNs + FCM.",
+  "events": [
+    {
+      "name": "PassIssued",
+      "trigger": "New WalletPass row. Provider selected (apple / google / generic_qr). Signed JWT QR payload minted.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::NotifyPassIssued"
+      ],
+      "payload": {
+        "wallet_pass_id": "ULID (wpp_*)",
+        "tenant_id": "ULID",
+        "holder_id": "ULID",
+        "provider": "'apple'|'google'|'generic_qr'",
+        "kind": "'membership_card'|'event_ticket'|'day_pass_card'",
+        "serial": "string"
+      }
+    },
+    {
+      "name": "PassInstalled",
+      "trigger": "Wallet reports the pass was added to the user's wallet.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::TrackInstallStats"],
+      "payload": {
+        "wallet_pass_id": "ULID",
+        "installed_at": "ISO 8601",
+        "device_id_hash": "string"
+      }
+    },
+    {
+      "name": "PassUpdated",
+      "trigger": "Pass re-minted (membership renewal, branding change). APNs/FCM push dispatched.",
+      "consumers": ["audit::WriteToAuditLog", "jobs::PushWalletUpdateJob"],
+      "payload": {
+        "wallet_pass_id": "ULID",
+        "reason": "'membership_renewed'|'branding_changed'|'holder_data_changed'|'manual'"
+      }
+    },
+    {
+      "name": "PassRemovedByUser",
+      "trigger": "User removed the pass from their wallet (spatie webhook).",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "wallet_pass_id": "ULID", "removed_at": "ISO 8601" }
+    },
+    {
+      "name": "PassRevoked",
+      "trigger": "P1 event. Pass revoked — lost / stolen / membership cancelled / security. Push-notify device.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "jobs::PushRevocationUpdateJob",
+        "notifications::NotifyPassRevoked"
+      ],
+      "payload": {
+        "wallet_pass_id": "ULID",
+        "revoked_by_user_id": "ULID",
+        "reason": "'lost'|'stolen'|'membership_cancelled'|'security'|'other'"
+      }
+    },
+    {
+      "name": "PassExpired",
+      "trigger": "Pass validity ended (membership expired). Auto-marked expired.",
+      "consumers": ["audit::WriteToAuditLog", "jobs::PushExpiryUpdateJob"],
+      "payload": { "wallet_pass_id": "ULID", "expired_on": "date" }
+    },
+    {
+      "name": "PassScanned",
+      "trigger": "QR scanned at credentials gate. Forwarded to attendance module.",
+      "consumers": [
+        "credentials::VerifyPassJwt",
+        "attendance::LogPassScan",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": { "wallet_pass_id": "ULID", "gate_id": "ULID", "scanned_at": "ISO 8601" }
+    }
+  ]
 }

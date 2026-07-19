@@ -2,6 +2,37 @@
   "id": "academorix://modules/expenses/retention",
   "$version": 1,
   "title": "expenses — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "Financial audit horizon: 7 years post-close for all money-out records (tax + regulatory). Receipts + invoices retained at rest per the same window.",
+  "policies": [
+    {
+      "entity": "Expense",
+      "hot_days": 730,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "7 years post-paid/rejected. Regulatory horizon (IRS 7-year rule)."
+    },
+    {
+      "entity": "ExpenseAttachment",
+      "hot_days": 730,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "cascade_with_parent",
+      "description": "Storage cost mitigation: cold-tier receipts >2yr in S3 Glacier."
+    },
+    {
+      "entity": "PayrollBatch",
+      "hot_days": 730,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "7 years — payroll tax audit horizon."
+    },
+    {
+      "entity": "Vendor",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Vendor registry retained indefinitely (historical audit needs FK integrity)."
+    }
+  ]
 }

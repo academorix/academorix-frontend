@@ -1,7 +1,158 @@
 {
   "id": "academorix://modules/competition/events",
   "$version": 1,
-  "title": "competition — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "competition — published events",
+  "namespace": "Academorix\\Sports\\Competition\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event is `ShouldDispatchAfterCommit`. Fixture + standings recompute events are HIGH-VOLUME on match day; RecomputeStandingsJob is debounced 5s.",
+  "events": [
+    {
+      "name": "CompetitionCreated",
+      "trigger": "New Competition row committed with status='draft'.",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "competition_id": "ULID (cmp_*)",
+        "tenant_id": "ULID",
+        "kind": "'league'|'tournament'|'friendly'",
+        "format": "'single_elimination'|'double_elimination'|'round_robin'|'group_stage'|'seeded_bracket'",
+        "season_id": "ULID"
+      }
+    },
+    {
+      "name": "CompetitionPublished",
+      "trigger": "Registration opened. status: draft → registration_open.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::AnnounceCompetitionOpen"
+      ],
+      "payload": { "competition_id": "ULID", "opens_at": "ISO 8601", "capacity": "int" }
+    },
+    {
+      "name": "CompetitionRegistrationClosed",
+      "trigger": "status: registration_open → seeded. GenerateFixturesJob fires next.",
+      "consumers": ["jobs::GenerateFixturesJob"],
+      "payload": { "competition_id": "ULID", "team_count": "int" }
+    },
+    {
+      "name": "CompetitionTeamRegistered",
+      "trigger": "New CompetitionTeam row (participant enrolled) — with entry_fee_invoice_id set when kind=paid.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "finance::RaiseEntryFeeInvoice"
+      ],
+      "payload": {
+        "competition_team_id": "ULID (cpt_*)",
+        "competition_id": "ULID",
+        "team_id": "ULID",
+        "seed": "int|null"
+      }
+    },
+    {
+      "name": "CompetitionTeamWithdrew",
+      "trigger": "P1 event. Team withdrew post-registration — fixtures involving them are marked walkover.",
+      "consumers": ["audit::WriteToAuditLog", "jobs::MarkWalkoversOnWithdrawJob"],
+      "payload": { "competition_team_id": "ULID", "reason": "string" }
+    },
+    {
+      "name": "FixtureScheduled",
+      "trigger": "CompetitionFixture row created by GenerateFixturesJob (or manual).",
+      "consumers": ["event::CreateEventFromFixture", "activity::WriteToActivityLog"],
+      "payload": {
+        "fixture_id": "ULID (cfx_*)",
+        "competition_id": "ULID",
+        "home_team_id": "ULID",
+        "away_team_id": "ULID",
+        "scheduled_at": "ISO 8601",
+        "facility_id": "ULID|null"
+      }
+    },
+    {
+      "name": "FixtureResultRecorded",
+      "trigger": "Score entered. status: scheduled → completed. Triggers RecomputeStandingsJob + BracketProgressionJob.",
+      "consumers": [
+        "jobs::RecomputeStandingsJob (debounced 5s)",
+        "jobs::BracketProgressionJob",
+        "audit::WriteToAuditLog"
+      ],
+      "payload": {
+        "fixture_id": "ULID",
+        "home_score": "int",
+        "away_score": "int",
+        "recorded_by_user_id": "ULID",
+        "period_scores_json": "array"
+      }
+    },
+    {
+      "name": "FixtureResultAmended",
+      "trigger": "P1 event. Post-match correction. Full audit chain. Triggers full re-standings recompute.",
+      "consumers": [
+        "audit::WriteToAuditLog (retention 7yr)",
+        "jobs::RecomputeStandingsJob",
+        "notifications::NotifyResultAmended"
+      ],
+      "payload": {
+        "fixture_id": "ULID",
+        "previous_home_score": "int",
+        "previous_away_score": "int",
+        "new_home_score": "int",
+        "new_away_score": "int",
+        "amended_by_user_id": "ULID",
+        "reason": "string"
+      }
+    },
+    {
+      "name": "FixtureWalkover",
+      "trigger": "One team fails to show or withdraws. Score defaulted per competition_config.walkover_score.",
+      "consumers": ["jobs::RecomputeStandingsJob", "audit::WriteToAuditLog"],
+      "payload": {
+        "fixture_id": "ULID",
+        "winner_team_id": "ULID",
+        "loser_team_id": "ULID",
+        "reason": "string"
+      }
+    },
+    {
+      "name": "StandingsRecomputed",
+      "trigger": "Standing rows rebuilt for a stage. Broadcast to public league page.",
+      "consumers": ["realtime::BroadcastStandings", "cache::InvalidateStandingsCache"],
+      "payload": { "competition_id": "ULID", "stage": "string", "row_count": "int" }
+    },
+    {
+      "name": "BracketProgressed",
+      "trigger": "Winner advanced to next bracket node. status: node → completed; child node gets team assignment.",
+      "consumers": ["realtime::BroadcastBracket", "jobs::ScheduleNextRoundJob"],
+      "payload": {
+        "competition_id": "ULID",
+        "completed_node_id": "ULID (brn_*)",
+        "advanced_team_id": "ULID",
+        "next_node_id": "ULID|null"
+      }
+    },
+    {
+      "name": "CompetitionCompleted",
+      "trigger": "Final round played. status: in_progress → completed. Triggers awards.",
+      "consumers": [
+        "awards::IssueChampionAwards",
+        "audit::WriteToAuditLog",
+        "notifications::AnnounceCompetitionCompleted"
+      ],
+      "payload": {
+        "competition_id": "ULID",
+        "winner_team_id": "ULID|null",
+        "runner_up_team_id": "ULID|null"
+      }
+    },
+    {
+      "name": "CompetitionCancelled",
+      "trigger": "Cancelled mid-flight. All open fixtures marked cancelled.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "finance::RefundEntryFees",
+        "notifications::AnnounceCompetitionCancelled"
+      ],
+      "payload": { "competition_id": "ULID", "cancelled_by_user_id": "ULID", "reason": "string" }
+    }
+  ]
 }

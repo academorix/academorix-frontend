@@ -2,6 +2,27 @@
   "id": "academorix://modules/realtime/features",
   "$version": 1,
   "title": "realtime — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "realtime.core",
+      "displayName": "Real-time broadcasts",
+      "description": "Master feature — Reverb WebSocket transport. Powers live attendance, live standings, presence rosters, DM typing indicators.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "realtime.presence_channels",
+      "displayName": "Presence rosters",
+      "description": "Live who-is-online on presence channels. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "realtime.concurrent_connections_extended",
+      "displayName": "Extended concurrent connections",
+      "description": "Enterprise. Small: 50 concurrent; Medium: 500; Enterprise: 5000+.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

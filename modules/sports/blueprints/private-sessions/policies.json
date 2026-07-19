@@ -2,6 +2,64 @@
   "id": "academorix://modules/private-sessions/policies",
   "$version": 1,
   "title": "private-sessions — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "policies": [
+    {
+      "model": "PrivateSessionRequest",
+      "class": "Academorix\\Sports\\PrivateSessions\\Policies\\PrivateSessionRequestPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "private-sessions.requests.viewAny",
+          "scope": "own + requested-of + admin"
+        },
+        { "action": "view", "permission": "private-sessions.requests.view" },
+        {
+          "action": "create",
+          "permission": "private-sessions.requests.create",
+          "scope": "athlete + guardian"
+        },
+        {
+          "action": "approve",
+          "permission": "private-sessions.requests.approve",
+          "scope": "target coach + branch_manager + admin"
+        },
+        {
+          "action": "reject",
+          "permission": "private-sessions.requests.reject",
+          "scope": "target coach + admin"
+        }
+      ]
+    },
+    {
+      "model": "PrivateSession",
+      "class": "Academorix\\Sports\\PrivateSessions\\Policies\\PrivateSessionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "private-sessions.sessions.viewAny" },
+        { "action": "view", "permission": "private-sessions.sessions.view" },
+        {
+          "action": "cancel",
+          "permission": "private-sessions.sessions.cancel",
+          "scope": "athlete + coach + admin"
+        },
+        {
+          "action": "markCompleted",
+          "permission": "private-sessions.sessions.mark-completed",
+          "scope": "coach + admin"
+        }
+      ]
+    },
+    {
+      "model": "CreditLedger",
+      "class": "Academorix\\Sports\\PrivateSessions\\Policies\\CreditLedgerPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "private-sessions.credits.viewAny",
+          "scope": "own only"
+        },
+        { "action": "view", "permission": "private-sessions.credits.view" },
+        { "action": "purchase", "permission": "private-sessions.credits.purchase" }
+      ]
+    }
+  ]
 }

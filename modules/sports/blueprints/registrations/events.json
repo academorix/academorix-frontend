@@ -1,0 +1,148 @@
+{
+  "id": "academorix://modules/registrations/events",
+  "$version": 1,
+  "title": "registrations — published events",
+  "namespace": "Academorix\\Sports\\Registrations\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Enrollment + waitlist funnel. Every stage transition is an event; the terminal ENROLLED transition atomically creates Athlete + AthleteEnrollment + Invoice (via AtomicallyConvertOnOfferAccepted). Waitlist auto-offer on capacity free.",
+  "events": [
+    {
+      "name": "RegistrationSubmitted",
+      "trigger": "New Registration row. Public form OR admin-created. status='lead'.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::NotifyOwnerAssigned",
+        "growth::CaptureAttribution"
+      ],
+      "payload": {
+        "registration_id": "ULID (srg_*)",
+        "tenant_id": "ULID",
+        "season_id": "ULID",
+        "team_id": "ULID|null",
+        "source": "'web_form'|'referral'|'walk_in'|'cold_outreach'|'imported'|'crm_lead'"
+      }
+    },
+    {
+      "name": "RegistrationContacted",
+      "trigger": "Owner initiated contact. stage: lead → contacted.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "registration_id": "ULID", "contacted_by_user_id": "ULID" }
+    },
+    {
+      "name": "TrialBooked",
+      "trigger": "TrialBooking created. Facility slot reserved.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "facility::ReserveSlot",
+        "notifications::ConfirmTrial"
+      ],
+      "payload": {
+        "trial_id": "ULID (trb_*)",
+        "registration_id": "ULID",
+        "facility_id": "ULID",
+        "scheduled_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TrialAttended",
+      "trigger": "Trial delivered. Coach recorded attendance.",
+      "consumers": ["attendance::LogTrialAttendance", "notifications::TrialFollowUp"],
+      "payload": { "trial_id": "ULID", "registration_id": "ULID", "attended_at": "ISO 8601" }
+    },
+    {
+      "name": "TrialNoShow",
+      "trigger": "P1 event. Athlete didn't show up to trial. Follow-up task auto-created.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::TrialNoShowFollowUp"],
+      "payload": { "trial_id": "ULID", "registration_id": "ULID" }
+    },
+    {
+      "name": "Waitlisted",
+      "trigger": "Registration waitlisted. New WaitlistEntry created at end of queue.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyWaitlisted"],
+      "payload": {
+        "waitlist_entry_id": "ULID (wle_*)",
+        "registration_id": "ULID",
+        "team_id": "ULID",
+        "position": "int"
+      }
+    },
+    {
+      "name": "WaitlistPositionChanged",
+      "trigger": "P1 event. Waitlist reordered (removal + reorder). Positions shift for everyone below.",
+      "consumers": ["notifications::NotifyPositionChange"],
+      "payload": { "waitlist_entry_id": "ULID", "old_position": "int", "new_position": "int" }
+    },
+    {
+      "name": "OfferMade",
+      "trigger": "Offer created. Time-boxed. Signed accept URL emailed.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::EmailOffer"
+      ],
+      "payload": {
+        "offer_id": "ULID (off_*)",
+        "registration_id": "ULID",
+        "expires_at": "ISO 8601",
+        "offered_amount_minor": "bigint|null"
+      }
+    },
+    {
+      "name": "OfferAccepted",
+      "trigger": "P0 event. Guardian accepted via signed URL. Fires AtomicallyConvertOnOfferAccepted → creates Athlete + AthleteEnrollment + Invoice atomically.",
+      "consumers": ["registrations::AtomicallyConvertOnOfferAccepted", "audit::WriteToAuditLog"],
+      "payload": { "offer_id": "ULID", "accepted_at": "ISO 8601", "accepted_by_user_id": "ULID" }
+    },
+    {
+      "name": "OfferDeclined",
+      "trigger": "Guardian declined. Registration transitions to DECLINED.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::NotifyDeclined",
+        "jobs::AutoOfferOnCapacityFreedJob"
+      ],
+      "payload": { "offer_id": "ULID", "declined_reason": "string" }
+    },
+    {
+      "name": "OfferExpired",
+      "trigger": "P1 event. Offer TTL elapsed. Registration → EXPIRED. Waitlist auto-offer fires next.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "jobs::AutoOfferOnCapacityFreedJob",
+        "notifications::NotifyOfferExpired"
+      ],
+      "payload": { "offer_id": "ULID", "registration_id": "ULID" }
+    },
+    {
+      "name": "Enrolled",
+      "trigger": "P0 event. Terminal state. Registration.stage=enrolled. Downstream: Athlete created, AthleteEnrollment created, Invoice raised.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::WelcomeEnrolledNotification",
+        "growth::PropagateAttributionOnEnrolled",
+        "reporting::UpdateConversionFunnel"
+      ],
+      "payload": {
+        "registration_id": "ULID",
+        "athlete_id": "ULID",
+        "athlete_enrollment_id": "ULID",
+        "invoice_id": "ULID",
+        "converted_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RegistrationDeclined",
+      "trigger": "Manual decline OR offer-declined path. Terminal. Reason REQUIRED.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "registration_id": "ULID", "declined_reason": "string" }
+    },
+    {
+      "name": "RegistrationExpired",
+      "trigger": "Auto-expired via ExpireOffersJob after 30d inactive.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "registration_id": "ULID" }
+    }
+  ]
+}

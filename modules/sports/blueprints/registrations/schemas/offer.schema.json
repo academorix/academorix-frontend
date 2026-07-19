@@ -1,0 +1,136 @@
+{
+  "id": "academorix://modules/registrations/schemas/offer",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Offer",
+  "description": "Time-boxed enrollment offer. Created when a Registration reaches OFFERED (either directly or via waitlist auto-offer). expires_at + auto_decline_on_expire. On accept → atomic creation of Athlete + AthleteEnrollment + Invoice via AtomicallyConvertOnOfferAccepted; on expire → transition Registration to EXPIRED + trigger next in waitlist.",
+  "type": "object",
+  "x-module": "registrations",
+  "x-eloquent": {
+    "table": "offers",
+    "keyPrefix": "off_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "registration_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "registrations", "column": "id", "onDelete": "cascade" }
+      },
+      "team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" }
+      },
+      "season_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "seasons", "column": "id", "onDelete": "restrict" }
+      },
+      "membership_plan_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "membership_plans", "column": "id", "onDelete": "restrict" },
+        "description": "The finance/membership plan the offer proposes."
+      },
+      "offered_amount_minor": {
+        "type": "bigint",
+        "nullable": true,
+        "description": "Custom amount override in minor units. NULL = use plan price at accept time."
+      },
+      "currency": { "type": "string", "length": 3, "nullable": true },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'open'" },
+      "signature": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Signed URL segment for the guardian's accept/decline endpoints."
+      },
+      "offered_at": { "type": "timestamptz", "nullable": false },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Auto-decline at this time via ExpireOffersJob."
+      },
+      "accepted_at": { "type": "timestamptz", "nullable": true },
+      "accepted_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "declined_at": { "type": "timestamptz", "nullable": true },
+      "declined_reason": { "type": "string", "length": 500, "nullable": true },
+      "withdrawn_at": { "type": "timestamptz", "nullable": true },
+      "withdrawn_reason": { "type": "string", "length": 500, "nullable": true },
+      "auto_decline_on_expire": { "type": "boolean", "nullable": false, "default": "true" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "registration_id", "status"],
+        "name": "offers_registration_status_idx"
+      },
+      { "columns": ["signature"], "unique": true, "name": "offers_signature_unique" },
+      {
+        "columns": ["tenant_id", "expires_at"],
+        "name": "offers_expiry_idx",
+        "predicate": "status = 'open'"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "registration_id",
+    "team_id",
+    "season_id",
+    "status",
+    "signature",
+    "offered_at",
+    "expires_at",
+    "auto_decline_on_expire",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^off_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["open", "accepted", "declined", "expired", "withdrawn"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Transitions: open → accepted / declined / expired / withdrawn. All terminal.",
+    "expires_at > offered_at.",
+    "accepted_at + accepted_by_user_id REQUIRED (non-null) when status = 'accepted'.",
+    "declined_at + declined_reason REQUIRED when status = 'declined'.",
+    "signature globally unique + non-enumerable."
+  ]
+}

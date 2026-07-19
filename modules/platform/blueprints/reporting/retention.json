@@ -2,6 +2,46 @@
   "id": "academorix://modules/reporting/retention",
   "$version": 1,
   "title": "reporting — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "Reports themselves are DERIVED DATA — regenerable from source modules. Purge is safe once the underlying data is available. However, EXPORT AUDIT ENTRIES (who exported which PII when) are retained for the full compliance window.",
+  "policies": [
+    {
+      "entity": "Report",
+      "hot_days": 90,
+      "warm_days": 365,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["scheduled_report_id IS NULL AND kind != 'attendance_certificate'"],
+      "description": "Ad-hoc reports: 90d hot, 1yr warm, purge. Data is regenerable."
+    },
+    {
+      "entity": "Report",
+      "hot_days": null,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["kind = 'attendance_certificate'"],
+      "description": "Attendance certificates retained indefinitely — career-timeline compliance."
+    },
+    {
+      "entity": "Dashboard",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Dashboards are configuration, retained indefinitely."
+    },
+    {
+      "entity": "ScheduledReport",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Retained while enabled + 90 days after disable."
+    },
+    {
+      "entity": "ReportExportAudit",
+      "hot_days": null,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["sensitivity IN ('pii','financial','medical')"],
+      "description": "PII/Financial/Medical export audit retained 7yr min for compliance."
+    }
+  ]
 }

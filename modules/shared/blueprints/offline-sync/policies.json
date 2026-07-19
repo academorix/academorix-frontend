@@ -2,6 +2,40 @@
   "id": "academorix://modules/offline-sync/policies",
   "$version": 1,
   "title": "offline-sync — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "policies": [
+    {
+      "model": "SyncDevice",
+      "class": "Academorix\\Shared\\OfflineSync\\Policies\\SyncDevicePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "offline-sync.devices.viewAny",
+          "scope": "own + admin"
+        },
+        { "action": "view", "permission": "offline-sync.devices.view" },
+        {
+          "action": "register",
+          "permission": "offline-sync.devices.register",
+          "scope": "any authenticated user"
+        },
+        { "action": "revoke", "permission": "offline-sync.devices.revoke", "scope": "own + admin" }
+      ]
+    },
+    {
+      "model": "SyncBatch",
+      "class": "Academorix\\Shared\\OfflineSync\\Policies\\SyncBatchPolicy",
+      "abilities": [
+        {
+          "action": "submit",
+          "permission": "offline-sync.batches.submit",
+          "scope": "device owner only"
+        },
+        {
+          "action": "viewAny",
+          "permission": "offline-sync.batches.viewAny",
+          "scope": "admin + owner"
+        }
+      ]
+    }
+  ]
 }

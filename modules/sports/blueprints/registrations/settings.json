@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/registrations/settings",
+  "$version": 1,
+  "title": "registrations — tenant-editable settings",
+  "description": "Settings this module registers against the settings substrate.",
+  "settings": []
+}

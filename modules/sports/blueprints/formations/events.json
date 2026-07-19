@@ -1,7 +1,46 @@
 {
   "id": "academorix://modules/formations/events",
   "$version": 1,
-  "title": "formations — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "formations — published events",
+  "namespace": "Academorix\\Sports\\Formations\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Formations + tactical set-pieces. Sport-specific (soccer 4-3-3, basketball zone defense, etc.). Coach-owned + shared within team.",
+  "events": [
+    {
+      "name": "FormationCreated",
+      "trigger": "New Formation row. Tactical layout with player positions.",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "formation_id": "ULID (fmt_*)",
+        "tenant_id": "ULID",
+        "sport_key": "string",
+        "team_id": "ULID",
+        "created_by_user_id": "ULID",
+        "name": "string"
+      }
+    },
+    {
+      "name": "FormationAppliedToMatch",
+      "trigger": "Formation selected for a match's starting lineup.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "formation_id": "ULID", "match_id": "ULID", "applied_by_user_id": "ULID" }
+    },
+    {
+      "name": "FormationRevisioned",
+      "trigger": "New version of an existing formation (tactical evolution).",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "formation_id": "ULID", "new_version": "int", "revisioned_by_user_id": "ULID" }
+    },
+    {
+      "name": "SetPieceCreated",
+      "trigger": "New SetPiece row (corner-kick play, penalty routine, timeout play).",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "set_piece_id": "ULID",
+        "formation_id": "ULID|null",
+        "kind": "string",
+        "created_by_user_id": "ULID"
+      }
+    }
+  ]
 }

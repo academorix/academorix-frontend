@@ -2,6 +2,62 @@
   "id": "academorix://modules/messaging/features",
   "$version": 1,
   "title": "messaging — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "messaging.core",
+      "displayName": "DM messaging",
+      "description": "1:1 DMs between conversation-eligible pairs (parent↔coach, athlete↔coach, staff↔staff).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "messaging.group_chats",
+      "displayName": "Group conversations",
+      "description": "Multi-member group chats (team channels, family channels). Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "messaging.attachments",
+      "displayName": "File attachments",
+      "description": "Attach images / videos / documents. Passes through storage module with size cap per tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "messaging.voice_messages",
+      "displayName": "Voice messages",
+      "description": "Recorded voice notes. Storage-heavy. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "messaging.reactions",
+      "displayName": "Emoji reactions",
+      "description": "Add emoji reactions to messages.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "messaging.typing_indicators",
+      "displayName": "Live typing indicators",
+      "description": "Realtime broadcast of typing status. Requires realtime.presence_channels.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "messaging.read_receipts",
+      "displayName": "Read receipts",
+      "description": "Show who has read a message. Configurable per-user.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "messaging.safeguarding_scan",
+      "displayName": "Safeguarding keyword scan",
+      "description": "Auto-flag messages matching safeguarding keyword list. Enterprise + K-12 compliance.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

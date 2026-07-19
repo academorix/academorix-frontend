@@ -2,6 +2,32 @@
   "id": "academorix://modules/drills/policies",
   "$version": 1,
   "title": "drills — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Drill visibility scoped per visibility field: private (author-only) → branch (branch coaches) → tenant (all coaches) → public (cross-tenant marketplace). Public drills require moderation approval.",
+  "policies": [
+    {
+      "model": "Drill",
+      "class": "Academorix\\Sports\\Drills\\Policies\\DrillPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "drills.viewAny", "scope": "visibility-scoped" },
+        { "action": "view", "permission": "drills.view", "scope": "visibility-scoped" },
+        {
+          "action": "create",
+          "permission": "drills.create",
+          "scope": "coach + branch_manager + admin + owner"
+        },
+        { "action": "update", "permission": "drills.update", "scope": "author + admin" },
+        {
+          "action": "publish",
+          "permission": "drills.publish",
+          "scope": "author + admin. Public visibility requires moderation approval"
+        },
+        { "action": "archive", "permission": "drills.archive", "scope": "author + admin" },
+        {
+          "action": "rate",
+          "permission": "drills.rate",
+          "scope": "any authenticated coach who has used the drill"
+        }
+      ]
+    }
+  ]
 }

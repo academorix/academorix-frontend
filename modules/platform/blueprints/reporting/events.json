@@ -1,7 +1,88 @@
 {
   "id": "academorix://modules/reporting/events",
   "$version": 1,
-  "title": "reporting — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "reporting — published events",
+  "namespace": "Academorix\\Platform\\Reporting\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Cross-module analytics + scheduled report generation. Every export event carries the actor + data-classification level for compliance audit (which staff exported which PII from which module).",
+  "events": [
+    {
+      "name": "ReportGenerated",
+      "trigger": "Report row committed. status='generated'. FileId set.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::NotifyReportReady"
+      ],
+      "payload": {
+        "report_id": "ULID (rpt_*)",
+        "tenant_id": "ULID",
+        "kind": "'attendance_summary'|'revenue_report'|'staff_compliance'|'athlete_progress'|'membership_churn'|'roster_export'|'custom_sql'",
+        "sensitivity": "'public'|'internal'|'pii'|'financial'|'medical'",
+        "generated_by_user_id": "ULID",
+        "row_count": "int",
+        "file_id": "ULID"
+      }
+    },
+    {
+      "name": "ReportExported",
+      "trigger": "Report downloaded / emailed / API-consumed. Full audit trail per export.",
+      "consumers": [
+        "audit::WriteToAuditLog (retention 7yr for PII/Financial/Medical)",
+        "notifications::AlertOnBulkPiiExport"
+      ],
+      "payload": {
+        "report_id": "ULID",
+        "exported_by_user_id": "ULID",
+        "export_method": "'download'|'email'|'api'|'scheduled_delivery'",
+        "sensitivity": "string",
+        "row_count": "int"
+      }
+    },
+    {
+      "name": "ScheduledReportRun",
+      "trigger": "Scheduled report auto-generated (weekly / monthly cadence).",
+      "consumers": ["audit::WriteToAuditLog", "notifications::EmailScheduledReport"],
+      "payload": {
+        "schedule_id": "ULID (rps_*)",
+        "report_id": "ULID",
+        "recipient_user_ids": "array<ULID>",
+        "next_run_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "DashboardViewed",
+      "trigger": "User opened a dashboard. HIGH VOLUME — sampled 5%.",
+      "consumers": ["activity::WriteToActivityLog (sampled)"],
+      "payload": { "dashboard_id": "ULID (dsb_*)", "user_id": "ULID", "viewed_at": "ISO 8601" }
+    },
+    {
+      "name": "DashboardCreated",
+      "trigger": "Custom dashboard created.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "dashboard_id": "ULID", "created_by_user_id": "ULID", "widget_count": "int" }
+    },
+    {
+      "name": "DashboardShared",
+      "trigger": "P1 event. Dashboard shared with another user / role. New viewers gain implicit read access to underlying modules' data.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyDashboardShared"],
+      "payload": {
+        "dashboard_id": "ULID",
+        "shared_by_user_id": "ULID",
+        "recipient_ids": "array<ULID>",
+        "recipient_type": "'user'|'role'|'team'"
+      }
+    },
+    {
+      "name": "AnomalyDetected",
+      "trigger": "Reporting anomaly detector flagged unusual data pattern (e.g. attendance drop, revenue spike). Feeds ai/AnomalyDetectorPersona.",
+      "consumers": ["ai::TriggerAnomalyPersonaScan", "notifications::NotifyReportingAnomaly"],
+      "payload": {
+        "anomaly_kind": "string",
+        "affected_module": "string",
+        "confidence": "float",
+        "detected_at": "ISO 8601"
+      }
+    }
+  ]
 }

@@ -1,7 +1,50 @@
 {
   "id": "academorix://modules/awards/events",
   "$version": 1,
-  "title": "awards — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "awards — published events",
+  "namespace": "Academorix\\Sports\\Awards\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Award issuance triggered by performance benchmarks, competition wins, goal achievements, or manual admin issuance. Certificates rendered async via jobs.",
+  "events": [
+    {
+      "name": "AwardTemplateCreated",
+      "trigger": "New AwardTemplate row. Defines criteria + design.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "template_id": "ULID (awt_*)",
+        "tenant_id": "ULID",
+        "kind": "'certificate'|'medal'|'trophy'|'digital_badge'",
+        "criteria_kind": "'benchmark'|'competition_win'|'goal_achieved'|'manual'|'attendance_streak'"
+      }
+    },
+    {
+      "name": "AwardIssued",
+      "trigger": "Award issued to athlete. Certificate render queued.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "jobs::RenderCertificateJob",
+        "notifications::CelebrateAward"
+      ],
+      "payload": {
+        "award_id": "ULID (awr_*)",
+        "template_id": "ULID",
+        "athlete_id": "ULID",
+        "issued_at": "ISO 8601",
+        "certificate_number": "string"
+      }
+    },
+    {
+      "name": "AwardRevoked",
+      "trigger": "P1 event. Award revoked (rare — usually after result amendment). Full audit chain.",
+      "consumers": ["audit::WriteToAuditLog (retention 7yr)", "notifications::NotifyAwardRevoked"],
+      "payload": { "award_id": "ULID", "revoked_by_user_id": "ULID", "reason": "string" }
+    },
+    {
+      "name": "CertificateRendered",
+      "trigger": "Async job completed. PDF certificate stored + linked.",
+      "consumers": ["notifications::EmailCertificatePdf"],
+      "payload": { "award_id": "ULID", "file_id": "ULID", "signed_url_expires_at": "ISO 8601" }
+    }
+  ]
 }

@@ -1,7 +1,92 @@
 {
   "id": "academorix://modules/private-sessions/events",
   "$version": 1,
-  "title": "private-sessions — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "private-sessions — published events",
+  "namespace": "Academorix\\Sports\\PrivateSessions\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "1:1 coaching session lifecycle. Request → approve → schedule → deliver, with a credit ledger.",
+  "events": [
+    {
+      "name": "PrivateSessionRequested",
+      "trigger": "New PrivateSessionRequest row. status='requested'.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyCoachOfRequest"],
+      "payload": {
+        "request_id": "ULID (psr_*)",
+        "athlete_id": "ULID",
+        "coach_id": "ULID",
+        "duration_minutes": "int",
+        "preferred_dates": "array<date>"
+      }
+    },
+    {
+      "name": "PrivateSessionApproved",
+      "trigger": "Coach approved request. status: requested → approved.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyRequesterApproved"],
+      "payload": {
+        "request_id": "ULID",
+        "approved_by_coach_user_id": "ULID",
+        "proposed_slot": "ISO 8601"
+      }
+    },
+    {
+      "name": "PrivateSessionScheduled",
+      "trigger": "Facility slot booked. status: approved → scheduled. Credits deducted.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "facility::CreateResourceBooking",
+        "notifications::NotifyScheduleConfirmed"
+      ],
+      "payload": {
+        "session_id": "ULID (pvs_*)",
+        "request_id": "ULID",
+        "facility_id": "ULID",
+        "scheduled_at": "ISO 8601",
+        "credits_used": "int"
+      }
+    },
+    {
+      "name": "PrivateSessionCompleted",
+      "trigger": "Session delivered. Attendance recorded. Coach can leave a note.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "attendance::LogPrivateSessionAttendance"
+      ],
+      "payload": {
+        "session_id": "ULID",
+        "actual_start_at": "ISO 8601",
+        "actual_end_at": "ISO 8601",
+        "notes": "string|null"
+      }
+    },
+    {
+      "name": "PrivateSessionCancelled",
+      "trigger": "Cancelled by athlete or coach. Credits refunded if outside cancellation window.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyCancellation"],
+      "payload": {
+        "session_id": "ULID",
+        "cancelled_by_user_id": "ULID",
+        "reason": "string",
+        "credits_refunded": "int"
+      }
+    },
+    {
+      "name": "CreditsPurchased",
+      "trigger": "Athlete purchased credits pack.",
+      "consumers": ["finance::RaiseCreditInvoice", "audit::WriteToAuditLog"],
+      "payload": {
+        "credit_ledger_id": "ULID (pcl_*)",
+        "athlete_id": "ULID",
+        "quantity": "int",
+        "amount_minor": "bigint",
+        "currency": "string(3)"
+      }
+    },
+    {
+      "name": "CreditsExpired",
+      "trigger": "Credit pack past expiry. Balance zeroed.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyCreditsExpired"],
+      "payload": { "credit_ledger_id": "ULID", "athlete_id": "ULID", "credits_lost": "int" }
+    }
+  ]
 }

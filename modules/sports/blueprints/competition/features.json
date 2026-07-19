@@ -2,6 +2,76 @@
   "id": "academorix://modules/competition/features",
   "$version": 1,
   "title": "competition — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "competition.core",
+      "displayName": "Competitions",
+      "description": "Master feature. Leagues + tournaments + friendlies substrate.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "competition.formats.round_robin",
+      "displayName": "Round-robin format",
+      "description": "Every-team-plays-every-team.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "competition.formats.single_elimination",
+      "displayName": "Single elimination bracket",
+      "description": "Standard knockout tournament.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "competition.formats.double_elimination",
+      "displayName": "Double elimination bracket",
+      "description": "Losers bracket + finals reset. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "competition.formats.group_stage_plus_knockout",
+      "displayName": "Group stage → knockout",
+      "description": "World-cup style — pool play + advance. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "competition.formats.seeded_bracket",
+      "displayName": "Seeded brackets",
+      "description": "Bracket generated from CompetitionTeam.seed values.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "competition.public_league_page",
+      "displayName": "Public league page",
+      "description": "Signed public URL exposes standings + fixtures + bracket. Public-site consumer.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "competition.livestream_broadcast",
+      "displayName": "Live-score broadcast",
+      "description": "WebSocket broadcast of score updates to public viewers. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "competition.entry_fees",
+      "displayName": "Paid entry fees",
+      "description": "CompetitionTeam.entry_fee_invoice_id → raises finance/invoice on register.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "competition.cross_tenant_federation",
+      "displayName": "Cross-tenant federation competitions",
+      "description": "Multi-academy tournaments (federation tier). Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

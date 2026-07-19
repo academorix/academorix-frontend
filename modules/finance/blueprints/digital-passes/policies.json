@@ -2,6 +2,38 @@
   "id": "academorix://modules/digital-passes/policies",
   "$version": 1,
   "title": "digital-passes — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "policies": [
+    {
+      "model": "WalletPass",
+      "class": "Academorix\\Finance\\DigitalPasses\\Policies\\WalletPassPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "wallet-passes.viewAny",
+          "scope": "own + guardian's children + admin"
+        },
+        { "action": "view", "permission": "wallet-passes.view" },
+        {
+          "action": "issue",
+          "permission": "wallet-passes.issue",
+          "scope": "front_desk + branch_manager + admin + owner. Auto-issued on membership_active event"
+        },
+        {
+          "action": "regenerate",
+          "permission": "wallet-passes.regenerate",
+          "scope": "front_desk + branch_manager + admin + owner. On device change / branding update"
+        },
+        {
+          "action": "revoke",
+          "permission": "wallet-passes.revoke",
+          "scope": "front_desk + branch_manager + admin + owner. Reason REQUIRED"
+        },
+        {
+          "action": "download",
+          "permission": "wallet-passes.download",
+          "scope": "holder + guardian + admin. Signed URL only"
+        }
+      ]
+    }
+  ]
 }

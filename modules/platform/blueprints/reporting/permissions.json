@@ -2,6 +2,106 @@
   "id": "academorix://modules/reporting/permissions",
   "$version": 1,
   "title": "reporting — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Platform\\Reporting\\Database\\Seeders\\ReportingPermissionSeeder",
+  "isSystem": true,
+  "description": "Reporting permissions gate the reporting SURFACE. Each report/dashboard widget re-checks the underlying module's permission at render time — so a coach with reporting.dashboards.view but without athletes.viewAny still cannot see athlete data through a dashboard widget.",
+  "permissions": [
+    {
+      "name": "reporting.reports.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.reports.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.reports.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.reports.export",
+      "guard": "sanctum",
+      "description": "Bulk PII exports alert compliance officer.",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.reports.schedule",
+      "guard": "sanctum",
+      "description": "Auto-generate reports on cadence.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "reporting.reports.share",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.reports.delete",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.dashboards.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "reporting.dashboards.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "reporting.dashboards.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.dashboards.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.dashboards.share",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.dashboards.delete",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reporting.custom_sql",
+      "guard": "sanctum",
+      "description": "Custom SQL / ad-hoc query access. High risk. Enterprise entitlement.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.reporting.audit",
+      "guard": "platform_admin",
+      "description": "Cross-tenant export audit. Detects mass-PII exfiltration patterns.",
+      "seededOn": ["super_admin", "security"]
+    }
+  ]
 }

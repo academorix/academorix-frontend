@@ -2,6 +2,41 @@
   "id": "academorix://modules/crm-leads/features",
   "$version": 1,
   "title": "crm-leads — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "crm-leads.core",
+      "displayName": "CRM leads pipeline",
+      "description": "Master feature. Pre-enrollment lead tracking.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "crm-leads.attribution_tracking",
+      "displayName": "Marketing attribution",
+      "description": "First-touch + last-touch UTM tracking + campaign source stitching.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "crm-leads.follow_up_tasks",
+      "displayName": "Follow-up tasks",
+      "description": "Schedule + track follow-ups per lead.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "crm-leads.email_sequences",
+      "displayName": "Automated email nurture sequences",
+      "description": "Drip email campaigns for cold leads. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "crm-leads.ai_lead_scoring",
+      "displayName": "AI lead scoring",
+      "description": "AI-predicted conversion likelihood. Feeds NotificationDrafterPersona.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

@@ -1,7 +1,85 @@
 {
   "id": "academorix://modules/announcements/events",
   "$version": 1,
-  "title": "announcements — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "announcements — published events",
+  "namespace": "Academorix\\Notifications\\Announcements\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "One-way broadcast surface. Tenant-wide / org / branch / team announcements delivered via chosen channels (in_app / email / push / sms). Fan-out is asynchronous via jobs; per-recipient delivery tracked for read receipts.",
+  "events": [
+    {
+      "name": "AnnouncementDrafted",
+      "trigger": "New Announcement row. status='draft'.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "announcement_id": "ULID (ann_*)",
+        "tenant_id": "ULID",
+        "author_user_id": "ULID",
+        "audience_kind": "'tenant'|'organization'|'branch'|'team'|'role'|'custom'",
+        "audience_ref_id": "ULID|null"
+      }
+    },
+    {
+      "name": "AnnouncementPublished",
+      "trigger": "status: draft → published. Fan-out fires next.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "jobs::FanOutAnnouncementJob"
+      ],
+      "payload": {
+        "announcement_id": "ULID",
+        "published_by_user_id": "ULID",
+        "audience_size": "int",
+        "channels": "array<'in_app'|'email'|'push'|'sms'>"
+      }
+    },
+    {
+      "name": "AnnouncementDelivered",
+      "trigger": "Delivered to ONE recipient on ONE channel. Fires per (recipient × channel).",
+      "consumers": ["realtime::UpdateAnnouncementInbox", "notifications::TrackDeliveryStats"],
+      "payload": {
+        "delivery_id": "ULID",
+        "announcement_id": "ULID",
+        "recipient_user_id": "ULID",
+        "channel": "string",
+        "delivered_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AnnouncementRead",
+      "trigger": "Recipient opened the announcement.",
+      "consumers": ["realtime::UpdateReadCount", "notifications::TrackEngagement"],
+      "payload": {
+        "delivery_id": "ULID",
+        "announcement_id": "ULID",
+        "read_by_user_id": "ULID",
+        "read_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AnnouncementRetracted",
+      "trigger": "P1 event. Announcement retracted post-publish. All recipients notified of retraction.",
+      "consumers": ["audit::WriteToAuditLog", "jobs::NotifyRetractionJob"],
+      "payload": { "announcement_id": "ULID", "retracted_by_user_id": "ULID", "reason": "string" }
+    },
+    {
+      "name": "AnnouncementScheduled",
+      "trigger": "Announcement scheduled for future publish.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "announcement_id": "ULID", "publish_at": "ISO 8601" }
+    },
+    {
+      "name": "AnnouncementDeliveryFailed",
+      "trigger": "P1 event. Channel delivery failed (bounced email, invalid phone, missing device token). Retry OR abandon per retry policy.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::AlertOnDeliveryFailureRate"],
+      "payload": {
+        "delivery_id": "ULID",
+        "announcement_id": "ULID",
+        "recipient_user_id": "ULID",
+        "channel": "string",
+        "reason": "string",
+        "attempt": "int"
+      }
+    }
+  ]
 }

@@ -2,6 +2,108 @@
   "id": "academorix://modules/competition/policies",
   "$version": 1,
   "title": "competition — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Five policies. Result amendments require special permission. Public read of standings + brackets is signed-URL-only for external league pages.",
+  "policies": [
+    {
+      "model": "Competition",
+      "class": "Academorix\\Sports\\Competition\\Policies\\CompetitionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "competition.viewAny" },
+        { "action": "view", "permission": "competition.view" },
+        {
+          "action": "create",
+          "permission": "competition.create",
+          "scope": "branch_manager + admin + owner"
+        },
+        {
+          "action": "update",
+          "permission": "competition.update",
+          "scope": "author + branch_manager + admin + owner"
+        },
+        {
+          "action": "publish",
+          "permission": "competition.publish",
+          "scope": "author + admin + owner"
+        },
+        {
+          "action": "cancel",
+          "permission": "competition.cancel",
+          "scope": "admin + owner. Non-reversible"
+        },
+        { "action": "delete", "permission": "competition.delete", "scope": "draft state only" }
+      ]
+    },
+    {
+      "model": "CompetitionTeam",
+      "class": "Academorix\\Sports\\Competition\\Policies\\CompetitionTeamPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "competition-teams.viewAny" },
+        { "action": "view", "permission": "competition-teams.view" },
+        {
+          "action": "register",
+          "permission": "competition-teams.register",
+          "scope": "team coach + admin + owner"
+        },
+        {
+          "action": "withdraw",
+          "permission": "competition-teams.withdraw",
+          "scope": "team coach + admin + owner"
+        },
+        { "action": "reseed", "permission": "competition-teams.reseed", "scope": "admin + owner" }
+      ]
+    },
+    {
+      "model": "CompetitionFixture",
+      "class": "Academorix\\Sports\\Competition\\Policies\\CompetitionFixturePolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "competition-fixtures.viewAny" },
+        { "action": "view", "permission": "competition-fixtures.view" },
+        {
+          "action": "recordResult",
+          "permission": "competition-fixtures.record-result",
+          "scope": "referee + coach + admin + owner"
+        },
+        {
+          "action": "amendResult",
+          "permission": "competition-fixtures.amend-result",
+          "scope": "admin + owner. Reason REQUIRED"
+        },
+        { "action": "reschedule", "permission": "competition-fixtures.reschedule" },
+        {
+          "action": "markWalkover",
+          "permission": "competition-fixtures.mark-walkover",
+          "scope": "admin + owner"
+        }
+      ]
+    },
+    {
+      "model": "StandingRow",
+      "class": "Academorix\\Sports\\Competition\\Policies\\StandingRowPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "competition-standings.viewAny",
+          "scope": "Public read via signed URL — competition config decides visibility"
+        },
+        { "action": "view", "permission": "competition-standings.view" }
+      ]
+    },
+    {
+      "model": "BracketNode",
+      "class": "Academorix\\Sports\\Competition\\Policies\\BracketNodePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "competition-brackets.viewAny",
+          "scope": "Public read via signed URL"
+        },
+        { "action": "view", "permission": "competition-brackets.view" },
+        {
+          "action": "manuallyProgress",
+          "permission": "competition-brackets.progress",
+          "scope": "admin + owner. Break-glass override"
+        }
+      ]
+    }
+  ]
 }

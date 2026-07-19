@@ -2,6 +2,34 @@
   "id": "academorix://modules/admin-console/features",
   "$version": 1,
   "title": "admin-console — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "admin-console.core",
+      "displayName": "Platform admin console",
+      "description": "Master feature. Academorix internal use only.",
+      "defaultEnabled": true,
+      "planTiers": []
+    },
+    {
+      "key": "admin-console.impersonation",
+      "displayName": "User impersonation",
+      "description": "Platform admin impersonate a tenant user for support. Full audit + reason required.",
+      "defaultEnabled": true,
+      "planTiers": []
+    },
+    {
+      "key": "admin-console.tenant_export",
+      "displayName": "Full tenant data export",
+      "description": "GDPR-portability tenant data export.",
+      "defaultEnabled": true,
+      "planTiers": []
+    },
+    {
+      "key": "admin-console.tenant_suspend",
+      "displayName": "Tenant suspension",
+      "description": "Suspend a tenant (billing / compliance / abuse).",
+      "defaultEnabled": true,
+      "planTiers": []
+    }
+  ]
 }

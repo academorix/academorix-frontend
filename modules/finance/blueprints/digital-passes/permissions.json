@@ -2,6 +2,56 @@
   "id": "academorix://modules/digital-passes/permissions",
   "$version": 1,
   "title": "digital-passes — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Finance\\DigitalPasses\\Database\\Seeders\\DigitalPassesPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "wallet-passes.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "wallet-passes.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "wallet-passes.issue",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "wallet-passes.regenerate",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "wallet-passes.revoke",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "wallet-passes.download",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "front_desk", "branch_manager", "admin", "owner"]
+    }
+  ]
 }

@@ -2,6 +2,41 @@
   "id": "academorix://modules/awards/features",
   "$version": 1,
   "title": "awards — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "awards.core",
+      "displayName": "Awards + certificates",
+      "description": "Master feature.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "awards.auto_issuance",
+      "displayName": "Automatic award issuance",
+      "description": "Auto-issue awards on benchmark break / competition win / goal achievement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "awards.custom_templates",
+      "displayName": "Custom certificate templates",
+      "description": "Upload own certificate designs with mail-merge fields.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "awards.digital_badges",
+      "displayName": "Digital badges",
+      "description": "OpenBadges-compliant digital credentials. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "awards.public_gallery",
+      "displayName": "Public awards gallery",
+      "description": "Public leaderboard of tenant awards on public-site.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    }
+  ]
 }

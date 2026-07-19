@@ -2,6 +2,34 @@
   "id": "academorix://modules/offline-sync/features",
   "$version": 1,
   "title": "offline-sync — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "offline-sync.core",
+      "displayName": "Offline-first mobile / desktop sync",
+      "description": "Master feature. Mobile app operates offline; syncs when reconnected.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "offline-sync.attendance",
+      "displayName": "Attendance offline capture",
+      "description": "Coach records attendance in the field without connectivity; syncs later.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "offline-sync.conflict_prompts",
+      "displayName": "Interactive conflict prompts",
+      "description": "User chooses resolution when server + client both changed the same field. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "offline-sync.credentials_offline_gates",
+      "displayName": "Credentials offline gate mode",
+      "description": "Gate devices cache credential registry for offline operation. Requires credentials.gate_offline_mode.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

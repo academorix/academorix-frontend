@@ -2,6 +2,28 @@
   "id": "academorix://modules/admin-console/retention",
   "$version": 1,
   "title": "admin-console — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "PlatformAdminAction",
+      "hot_days": null,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Retained indefinitely — audit compliance."
+    },
+    {
+      "entity": "Impersonation",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Impersonations audit-retained indefinitely. Every impersonation session becomes part of the tenant owner's compliance report."
+    },
+    {
+      "entity": "TenantDataExport",
+      "hot_days": 30,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "Export archive purged after 30d download window. Audit envelope retained indefinitely."
+    }
+  ]
 }

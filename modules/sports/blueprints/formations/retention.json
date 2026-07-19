@@ -2,6 +2,14 @@
   "id": "academorix://modules/formations/retention",
   "$version": 1,
   "title": "formations — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "Formation",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Match history references formations; retain FK integrity."
+    },
+    { "entity": "SetPiece", "hot_days": null, "on_purge": "keep_indefinitely" },
+    { "entity": "FormationRevision", "hot_days": null, "on_purge": "cascade_with_parent" }
+  ]
 }

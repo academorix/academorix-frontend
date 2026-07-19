@@ -1,7 +1,135 @@
 {
   "id": "academorix://modules/messaging/events",
   "$version": 1,
-  "title": "messaging — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "messaging — published events",
+  "namespace": "Academorix\\Notifications\\Messaging\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "DM + group chat. MessageSent is HIGH-VOLUME (broadcasts to conversation members over realtime). Presence typing indicators are ephemeral (never persisted, never audited).",
+  "events": [
+    {
+      "name": "ConversationStarted",
+      "trigger": "New Conversation row committed. Kind IN dm / group.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::NotifyConversationParticipants"
+      ],
+      "payload": {
+        "conversation_id": "ULID (cnv_*)",
+        "tenant_id": "ULID",
+        "kind": "'dm'|'group'",
+        "created_by_user_id": "ULID",
+        "member_count": "int"
+      }
+    },
+    {
+      "name": "ConversationMemberAdded",
+      "trigger": "New ConversationMember row.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "realtime::BroadcastToConversation",
+        "notifications::NotifyAddedToConversation"
+      ],
+      "payload": {
+        "conversation_id": "ULID",
+        "user_id": "ULID",
+        "added_by_user_id": "ULID|null",
+        "role": "'admin'|'member'"
+      }
+    },
+    {
+      "name": "ConversationMemberRemoved",
+      "trigger": "ConversationMember archived — voluntary leave or admin removal.",
+      "consumers": ["audit::WriteToAuditLog", "realtime::BroadcastToConversation"],
+      "payload": {
+        "conversation_id": "ULID",
+        "user_id": "ULID",
+        "removed_by_user_id": "ULID|null",
+        "reason": "'left'|'removed'|'blocked'"
+      }
+    },
+    {
+      "name": "MessageSent",
+      "trigger": "New Message row. HIGH VOLUME. Broadcasts to every conversation member via realtime channel.",
+      "consumers": [
+        "realtime::BroadcastToConversation",
+        "activity::WriteToActivityLog (sampled)",
+        "safeguarding::ScanForFlaggedContent",
+        "notifications::PushToOfflineMembers"
+      ],
+      "payload": {
+        "message_id": "ULID (msg_*)",
+        "conversation_id": "ULID",
+        "sender_user_id": "ULID",
+        "body_preview": "string (first 100 chars, PII-redacted)",
+        "attachment_count": "int",
+        "sent_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MessageEdited",
+      "trigger": "Message body updated. Edited-timestamp added. Original preserved in audit trail.",
+      "consumers": ["audit::WriteToAuditLog (retention 90d)", "realtime::BroadcastToConversation"],
+      "payload": {
+        "message_id": "ULID",
+        "conversation_id": "ULID",
+        "edited_by_user_id": "ULID",
+        "edited_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MessageDeleted",
+      "trigger": "Message soft-deleted. Content masked in downstream broadcasts.",
+      "consumers": ["audit::WriteToAuditLog", "realtime::BroadcastToConversation"],
+      "payload": {
+        "message_id": "ULID",
+        "conversation_id": "ULID",
+        "deleted_by_user_id": "ULID",
+        "reason": "'self'|'admin'|'safeguarding'|'gdpr_delete'"
+      }
+    },
+    {
+      "name": "MessageReactionAdded",
+      "trigger": "Emoji reaction added.",
+      "consumers": ["realtime::BroadcastToConversation"],
+      "payload": {
+        "message_id": "ULID",
+        "reaction_id": "ULID (rxn_*)",
+        "user_id": "ULID",
+        "emoji": "string"
+      }
+    },
+    {
+      "name": "MessageReactionRemoved",
+      "trigger": "Reaction removed.",
+      "consumers": ["realtime::BroadcastToConversation"],
+      "payload": { "message_id": "ULID", "user_id": "ULID", "emoji": "string" }
+    },
+    {
+      "name": "MessageReadReceipt",
+      "trigger": "User marked messages read (client → server). Batched update.",
+      "consumers": ["realtime::BroadcastReadReceipt"],
+      "payload": {
+        "conversation_id": "ULID",
+        "user_id": "ULID",
+        "last_read_message_id": "ULID",
+        "read_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "SafeguardingContentFlagged",
+      "trigger": "P0 event. Content matched a keyword filter or reported. Sent to safeguarding module for review.",
+      "consumers": [
+        "audit::WriteToAuditLog (retention 7yr)",
+        "safeguarding::CreateIncident",
+        "notifications::AlertModerators"
+      ],
+      "payload": {
+        "message_id": "ULID",
+        "conversation_id": "ULID",
+        "flag_reason": "'keyword_match'|'user_report'",
+        "detected_keywords": "array<string>"
+      }
+    }
+  ]
 }

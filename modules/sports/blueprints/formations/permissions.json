@@ -2,6 +2,49 @@
   "id": "academorix://modules/formations/permissions",
   "$version": 1,
   "title": "formations — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\Formations\\Database\\Seeders\\FormationsPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "formations.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "formations.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "formations.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "formations.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    { "name": "formations.delete", "guard": "sanctum", "seededOn": ["coach", "admin", "owner"] },
+    {
+      "name": "formations.set-pieces.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "formations.set-pieces.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "formations.set-pieces.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "formations.set-pieces.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    }
+  ]
 }

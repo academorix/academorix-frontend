@@ -2,6 +2,41 @@
   "id": "academorix://modules/development/features",
   "$version": 1,
   "title": "development — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "development.core",
+      "displayName": "Athlete development",
+      "description": "Master feature. Pathways + goals + scouting.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "development.pathways",
+      "displayName": "Development pathways",
+      "description": "Configurable pathway stages (e.g. U8 → U10 → U12).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "development.goals_smart",
+      "displayName": "SMART goals",
+      "description": "Set + track SMART goals per athlete.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "development.scouting",
+      "displayName": "Scouting reports",
+      "description": "Cross-team scouting reports. Coach-owned + admin visibility.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "development.federation_scouting",
+      "displayName": "Federation-wide scouting",
+      "description": "Cross-tenant scouting for federations. Requires tenant-to-tenant consent.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

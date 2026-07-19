@@ -1,0 +1,127 @@
+{
+  "id": "academorix://modules/event/schemas/event-invitation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "EventInvitation",
+  "description": "Invitation for an athlete (or user, when applicable) to attend a scheduled activity. Polymorphic on (event_type + event_id) — the activity may be an Event / Session / Match / Training. Confirmed invitations pre-fill the expected roster on attendance capture.",
+  "type": "object",
+  "x-module": "event",
+  "x-eloquent": {
+    "table": "event_invitations",
+    "keyPrefix": "evi_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthlete",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "event_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Polymorphic activity type: events / sessions / matches / training_sessions."
+      },
+      "event_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "description": "The activity ID (Event / Session / Match / Training)."
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "athlete_enrollments", "column": "id", "onDelete": "set null" },
+        "description": "The enrollment through which the athlete is being invited. Nullable for cross-team invitations."
+      },
+      "invited_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "invited_at": { "type": "timestamptz", "nullable": false },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the invitation is no longer accepting responses. Typically = activity start time + grace period."
+      },
+      "notification_key": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Idempotency key for the delivery pipeline (prevents double-invite on retries)."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "event_type", "event_id", "athlete_id"],
+        "unique": true,
+        "name": "event_invitations_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "athlete_id", "invited_at"],
+        "name": "event_invitations_athlete_time_idx"
+      },
+      {
+        "columns": ["tenant_id", "expires_at"],
+        "name": "event_invitations_expiry_idx",
+        "predicate": "expires_at IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "event_type",
+    "event_id",
+    "athlete_id",
+    "invited_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^evi_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "event_type": {
+      "type": "string",
+      "enum": ["events", "sessions", "matches", "training_sessions"]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One invitation per (tenant, event_type, event_id, athlete) via partial unique index.",
+    "invited_at IMMUTABLE post-create.",
+    "Cascade delete when the parent activity is cancelled.",
+    "The activity's tenant + branch must match the athlete's tenant."
+  ]
+}

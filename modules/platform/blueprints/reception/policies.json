@@ -2,6 +2,49 @@
   "id": "academorix://modules/reception/policies",
   "$version": 1,
   "title": "reception — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Reception is a THIN orchestration layer over other modules (credentials + facility/DayPass + registrations + finance). Its policies gate the front-desk UI; the underlying modules enforce their own policies on the actions reception dispatches.",
+  "policies": [
+    {
+      "model": "Visitor",
+      "class": "Academorix\\Platform\\Reception\\Policies\\VisitorPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "reception.visitors.viewAny",
+          "scope": "front_desk + branch_manager + admin + owner"
+        },
+        { "action": "view", "permission": "reception.visitors.view" },
+        {
+          "action": "checkIn",
+          "permission": "reception.visitors.check-in",
+          "scope": "front_desk + branch_manager + admin + owner"
+        },
+        { "action": "checkOut", "permission": "reception.visitors.check-out" },
+        { "action": "convertToRegistration", "permission": "reception.visitors.convert" }
+      ]
+    },
+    {
+      "model": "FrontDeskShift",
+      "class": "Academorix\\Platform\\Reception\\Policies\\FrontDeskShiftPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "reception.shifts.viewAny",
+          "scope": "branch_manager + admin + owner"
+        },
+        {
+          "action": "view",
+          "permission": "reception.shifts.view",
+          "scope": "shift staff + supervisor + branch_manager + admin"
+        },
+        { "action": "startShift", "permission": "reception.shifts.start" },
+        { "action": "endShift", "permission": "reception.shifts.end" },
+        {
+          "action": "reconcile",
+          "permission": "reception.shifts.reconcile",
+          "scope": "branch_manager + admin + owner"
+        }
+      ]
+    }
+  ]
 }

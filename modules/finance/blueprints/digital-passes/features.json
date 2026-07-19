@@ -2,6 +2,48 @@
   "id": "academorix://modules/digital-passes/features",
   "$version": 1,
   "title": "digital-passes — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "digital-passes.core",
+      "displayName": "Digital wallet passes",
+      "description": "Master feature. Apple Wallet + Google Wallet + generic QR passes via spatie/laravel-mobile-pass v1.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "digital-passes.providers.apple",
+      "displayName": "Apple Wallet (.pkpass)",
+      "description": "Apple Wallet integration. Requires .pkpass certificate from tenant's Apple Developer account.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "digital-passes.providers.google",
+      "displayName": "Google Wallet",
+      "description": "Google Wallet Passes API integration.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "digital-passes.providers.generic_qr",
+      "displayName": "Generic QR wallet pass",
+      "description": "Fallback for tenants without Apple/Google wallet setup — signed QR downloaded as PNG.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "digital-passes.auto_update_on_renewal",
+      "displayName": "Auto-update on membership renewal",
+      "description": "Auto-push updated pass to wallet when membership renews. Requires APNs / FCM tokens.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "digital-passes.branding_regeneration",
+      "displayName": "Regenerate on branding change",
+      "description": "Auto-regenerate all active passes when tenant branding is updated. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

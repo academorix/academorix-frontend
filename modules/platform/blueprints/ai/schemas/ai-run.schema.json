@@ -48,7 +48,13 @@
         "description": "SHA-256 of the prompt payload for reproducibility."
       },
       "response_hash": { "type": "string", "length": 64, "nullable": true },
-      "status": { "type": "string", "length": 16, "nullable": false, "default": "'running'" },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'running'",
+        "description": "RunStatus enum: running → succeeded / failed / cancelled / rate_limited. Terminal states set by RecordAiRun middleware after-hook, cancellation poller, or rate-limit middleware."
+      },
       "started_at": { "type": "timestamptz", "nullable": false },
       "completed_at": { "type": "timestamptz", "nullable": true },
       "latency_ms": { "type": "integer", "nullable": true },
@@ -84,7 +90,7 @@
     "id": { "type": "string", "pattern": "^arv_[0-9A-HJKMNP-TV-Z]{26}$" },
     "status": {
       "type": "string",
-      "enum": ["running", "completed", "failed", "cancelled", "blocked"]
+      "enum": ["running", "succeeded", "failed", "cancelled", "rate_limited"]
     }
   },
   "additionalProperties": false

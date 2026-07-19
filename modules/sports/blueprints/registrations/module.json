@@ -1,0 +1,172 @@
+{
+  "$version": 1,
+  "name": "registrations",
+  "alias": "registrations",
+  "namespace": "Academorix\\Sports\\Registrations",
+  "description": "Enrollment + waitlist funnel per blueprint §12.4. Ships FOUR owned entities: `Registration` (state LEAD → CONTACTED → TRIAL → OFFERED → ENROLLED with side branches WAITLISTED / DECLINED / EXPIRED), `TrialBooking` (trial/taster session as part of a registration; books a facility slot + coach), `WaitlistEntry` (monotonic position-ordered waitlist per (tenant, season, team); auto-offer on capacity free), `Offer` (time-boxed offer with expires_at + auto_decline_on_expire; on accept → atomic creation of Athlete + AthleteEnrollment + Invoice; on expire → next in waitlist). Convergence point of `growth/crm-leads` (marketing pipeline hands off leads that convert), `sports/athlete` (creates the Athlete on ENROLLED), `sports/athlete-enrollment` (creates the roster attachment), `sports/season` (season windows + age cutoffs), `sports/teams` (team capacity), `finance/invoice` (raises enrollment invoice), and `platform/facility` (books the trial slot).",
+  "keywords": [
+    "registrations",
+    "enrollment",
+    "signup",
+    "waitlist",
+    "trial",
+    "offer",
+    "auto-offer",
+    "conversion",
+    "capacity",
+    "wave-1"
+  ],
+  "priority": 69,
+  "providers": ["Academorix\\Sports\\Registrations\\Providers\\RegistrationsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "athlete",
+    "athlete-enrollment",
+    "athlete-guardian",
+    "age-group",
+    "season",
+    "teams",
+    "coaching",
+    "facility",
+    "invoice",
+    "payment",
+    "notifications",
+    "storage"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "crm-leads",
+    "reception",
+    "public-site",
+    "reporting",
+    "ai",
+    "growth/marketing",
+    "growth/attribution"
+  ],
+  "contributes": {
+    "traits": ["HasRegistration"],
+    "attributes": [],
+    "blueprints": ["registration", "trial-booking", "waitlist-entry", "offer"],
+    "middleware": ["registrations.public-form-rate-limit"],
+    "events": [
+      "RegistrationSubmitted",
+      "RegistrationContacted",
+      "TrialBooked",
+      "TrialAttended",
+      "TrialNoShow",
+      "Waitlisted",
+      "WaitlistPositionChanged",
+      "OfferMade",
+      "OfferAccepted",
+      "OfferDeclined",
+      "OfferExpired",
+      "Enrolled",
+      "RegistrationDeclined",
+      "RegistrationExpired"
+    ],
+    "policies": ["RegistrationPolicy", "TrialBookingPolicy", "WaitlistEntryPolicy", "OfferPolicy"],
+    "hooks": [
+      "AutoAssignRegistrationOwner",
+      "AutoOfferOnCapacityFreedJob",
+      "ExpireOffersJob",
+      "AutoDeclineOnRegistrationExpire",
+      "AtomicallyConvertOnOfferAccepted",
+      "ValidateAgeAgainstSeason",
+      "PropagateAttributionOnEnrolled"
+    ],
+    "commands": [
+      "registrations:list",
+      "registrations:expire-offers",
+      "registrations:auto-offer-waitlist",
+      "registrations:conversion-report"
+    ],
+    "jobs": [
+      "ExpireOffersJob",
+      "AutoOfferOnCapacityFreedJob",
+      "AlertOwnerOnStaleRegistrationJob",
+      "PurgeExpiredRegistrationsJob"
+    ],
+    "notifications": [
+      "RegistrationReceivedNotification",
+      "TrialConfirmedNotification",
+      "WaitlistedNotification",
+      "OfferMadeNotification",
+      "OfferExpiringNotification",
+      "OfferAcceptedNotification",
+      "EnrolledNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.registrations", "tenant.{tenantId}.waitlists.{teamId}"],
+    "observers": [
+      "RegistrationObserver",
+      "TrialBookingObserver",
+      "WaitlistEntryObserver",
+      "OfferObserver"
+    ],
+    "rules": [
+      "valid_registration_stage",
+      "valid_offer_status",
+      "positive_waitlist_position",
+      "unique_waitlist_position",
+      "age_within_season_cutoff",
+      "team_has_capacity",
+      "offer_expiry_reasonable"
+    ],
+    "casts": ["RegistrationStage", "OfferStatus", "TrialStatus"],
+    "views": [],
+    "lang": ["registrations"],
+    "config": ["registrations"],
+    "macros": [],
+    "bindings": [
+      "RegistrationRepository",
+      "WaitlistRepository",
+      "OfferRepository",
+      "RegistrationOrchestrator",
+      "CapacityResolver",
+      "AutoOfferer",
+      "TrialSlotBooker",
+      "EnrollmentConverter"
+    ],
+    "resources": ["registration", "trial-booking", "waitlist-entry", "offer"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing registration CRUD — admin sees the pipeline; front-desk moves leads through; owners see the conversion funnel.",
+      "routes": [
+        "GET /api/v1/registrations",
+        "POST /api/v1/registrations",
+        "GET /api/v1/registrations/{registration}",
+        "PATCH /api/v1/registrations/{registration}",
+        "POST /api/v1/registrations/{registration}/contact",
+        "POST /api/v1/registrations/{registration}/decline",
+        "POST /api/v1/registrations/{registration}/book-trial",
+        "POST /api/v1/registrations/{registration}/waitlist",
+        "POST /api/v1/registrations/{registration}/make-offer",
+        "GET /api/v1/trial-bookings",
+        "PATCH /api/v1/trial-bookings/{trial}",
+        "POST /api/v1/trial-bookings/{trial}/mark-attended",
+        "POST /api/v1/trial-bookings/{trial}/mark-no-show",
+        "GET /api/v1/waitlist-entries",
+        "POST /api/v1/waitlist-entries/{entry}/reorder",
+        "DELETE /api/v1/waitlist-entries/{entry}",
+        "GET /api/v1/offers",
+        "GET /api/v1/offers/{offer}",
+        "POST /api/v1/offers/{offer}/extend",
+        "POST /api/v1/offers/{offer}/withdraw",
+        "GET /api/v1/reports/conversion-funnel"
+      ]
+    },
+    "central": {
+      "description": "PUBLIC registration form + offer acceptance surface. Signed URLs for guardians to accept offers without logging in.",
+      "routes": [
+        "POST /public/registrations",
+        "GET /offers/{signature}",
+        "POST /offers/{signature}/accept",
+        "POST /offers/{signature}/decline"
+      ]
+    }
+  }
+}

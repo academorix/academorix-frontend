@@ -2,6 +2,39 @@
   "id": "academorix://modules/competition/retention",
   "$version": 1,
   "title": "competition — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "Career-timeline provenance means fixture + standing data retained indefinitely once a competition is completed. Cancelled or draft competitions can be purged after 90 days.",
+  "policies": [
+    {
+      "entity": "Competition",
+      "hot_days": 730,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["status = 'completed'"],
+      "description": "Completed competitions retained indefinitely (historical league record + athlete career timeline)."
+    },
+    {
+      "entity": "Competition",
+      "hot_days": 90,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["status IN ('draft', 'cancelled')"],
+      "description": "Cancelled or never-published competitions purged after 90 days."
+    },
+    {
+      "entity": "CompetitionTeam",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Career-timeline provenance."
+    },
+    {
+      "entity": "CompetitionFixture",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Match history retained indefinitely — feeds standings + athlete stats + awards."
+    },
+    { "entity": "StandingRow", "hot_days": null, "on_purge": "keep_indefinitely" },
+    { "entity": "BracketNode", "hot_days": null, "on_purge": "keep_indefinitely" }
+  ]
 }

@@ -2,6 +2,83 @@
   "id": "academorix://modules/expenses/policies",
   "$version": 1,
   "title": "expenses — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Four policies. Approval threshold gated by expense.approve.threshold entitlement — coaches approve <$500, branch_manager <$5000, admin/owner unlimited. Approvers CANNOT approve their own submissions (self-approval blocked by policy).",
+  "policies": [
+    {
+      "model": "Expense",
+      "class": "Academorix\\Finance\\Expenses\\Policies\\ExpensePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "expenses.viewAny",
+          "scope": "own submissions + tenant reporting"
+        },
+        {
+          "action": "view",
+          "permission": "expenses.view",
+          "scope": "submitter + approvers + admin"
+        },
+        { "action": "submit", "permission": "expenses.submit", "scope": "any staff role" },
+        {
+          "action": "approve",
+          "permission": "expenses.approve",
+          "scope": "role-gated threshold. Self-approval blocked."
+        },
+        { "action": "reject", "permission": "expenses.reject" },
+        { "action": "markPaid", "permission": "expenses.mark-paid", "scope": "admin + owner only" },
+        { "action": "cancel", "permission": "expenses.cancel" },
+        {
+          "action": "delete",
+          "permission": "expenses.delete",
+          "scope": "draft only; hard-deletes attachments too"
+        }
+      ]
+    },
+    {
+      "model": "ExpenseAttachment",
+      "class": "Academorix\\Finance\\Expenses\\Policies\\ExpenseAttachmentPolicy",
+      "abilities": [
+        { "action": "view", "permission": "expenses.attachments.view" },
+        {
+          "action": "create",
+          "permission": "expenses.attachments.create",
+          "scope": "expense author + admin"
+        },
+        {
+          "action": "delete",
+          "permission": "expenses.attachments.delete",
+          "scope": "expense author (draft only) + admin"
+        }
+      ]
+    },
+    {
+      "model": "PayrollBatch",
+      "class": "Academorix\\Finance\\Expenses\\Policies\\PayrollBatchPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "expenses.payroll.viewAny", "scope": "admin + owner" },
+        { "action": "view", "permission": "expenses.payroll.view" },
+        { "action": "create", "permission": "expenses.payroll.create", "scope": "admin + owner" },
+        {
+          "action": "approve",
+          "permission": "expenses.payroll.approve",
+          "scope": "owner only for batches over $10k"
+        }
+      ]
+    },
+    {
+      "model": "Vendor",
+      "class": "Academorix\\Finance\\Expenses\\Policies\\VendorPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "expenses.vendors.viewAny" },
+        { "action": "view", "permission": "expenses.vendors.view" },
+        {
+          "action": "create",
+          "permission": "expenses.vendors.create",
+          "scope": "branch_manager + admin + owner"
+        },
+        { "action": "update", "permission": "expenses.vendors.update" },
+        { "action": "archive", "permission": "expenses.vendors.archive", "scope": "admin + owner" }
+      ]
+    }
+  ]
 }

@@ -2,6 +2,27 @@
   "id": "academorix://modules/drills/retention",
   "$version": 1,
   "title": "drills — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "Drill",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["status IN ('published','archived')"],
+      "description": "Historical drill references in session plans need FK integrity."
+    },
+    {
+      "entity": "Drill",
+      "hot_days": 90,
+      "on_purge": "hard_delete",
+      "conditions": ["status = 'draft'"],
+      "description": "Abandoned drafts purged after 90d."
+    },
+    { "entity": "DrillRating", "hot_days": null, "on_purge": "keep_indefinitely" },
+    {
+      "entity": "DrillEmbedding",
+      "hot_days": null,
+      "on_purge": "cascade_with_parent",
+      "description": "Regenerable — safe to hard delete on drill archive."
+    }
+  ]
 }

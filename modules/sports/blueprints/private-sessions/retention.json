@@ -2,6 +2,28 @@
   "id": "academorix://modules/private-sessions/retention",
   "$version": 1,
   "title": "private-sessions — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "PrivateSessionRequest",
+      "hot_days": 365,
+      "warm_days": 1825,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "Requests retained 5yr for training-history audit."
+    },
+    {
+      "entity": "PrivateSession",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Delivered sessions on athlete career timeline — retained indefinitely."
+    },
+    {
+      "entity": "CreditLedger",
+      "hot_days": null,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Financial ledger — 7yr min. Balance history retained forever."
+    }
+  ]
 }

@@ -2,6 +2,73 @@
   "id": "academorix://modules/performance/permissions",
   "$version": 1,
   "title": "performance — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\Performance\\Database\\Seeders\\PerformancePermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "performance.batteries.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "performance.batteries.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "performance.batteries.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "performance.batteries.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    { "name": "performance.batteries.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "performance.results.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "performance.results.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "performance.results.record",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "performance.results.amend",
+      "guard": "sanctum",
+      "description": "Reason REQUIRED. Full audit chain.",
+      "seededOn": ["admin", "owner"]
+    },
+    { "name": "performance.results.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "platform.performance.audit",
+      "guard": "platform_admin",
+      "description": "Cross-tenant benchmark analytics (national records feature).",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
 }

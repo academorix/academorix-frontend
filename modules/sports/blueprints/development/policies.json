@@ -2,6 +2,97 @@
   "id": "academorix://modules/development/policies",
   "$version": 1,
   "title": "development — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "policies": [
+    {
+      "model": "Pathway",
+      "class": "Academorix\\Sports\\Development\\Policies\\PathwayPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "development.pathways.viewAny" },
+        { "action": "view", "permission": "development.pathways.view" },
+        {
+          "action": "create",
+          "permission": "development.pathways.create",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "update",
+          "permission": "development.pathways.update",
+          "scope": "admin + owner"
+        },
+        {
+          "action": "delete",
+          "permission": "development.pathways.delete",
+          "scope": "admin + owner"
+        }
+      ]
+    },
+    {
+      "model": "AthletePathwayAssignment",
+      "class": "Academorix\\Sports\\Development\\Policies\\AthletePathwayAssignmentPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "development.assignments.viewAny" },
+        { "action": "view", "permission": "development.assignments.view" },
+        {
+          "action": "assign",
+          "permission": "development.assignments.assign",
+          "scope": "coach + branch_manager + admin + owner"
+        },
+        {
+          "action": "promote",
+          "permission": "development.assignments.promote",
+          "scope": "coach (own athletes) + branch_manager + admin + owner"
+        },
+        {
+          "action": "demote",
+          "permission": "development.assignments.demote",
+          "scope": "coach + branch_manager + admin + owner. Reason REQUIRED"
+        }
+      ]
+    },
+    {
+      "model": "AthleteGoal",
+      "class": "Academorix\\Sports\\Development\\Policies\\AthleteGoalPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "development.goals.viewAny" },
+        { "action": "view", "permission": "development.goals.view" },
+        {
+          "action": "create",
+          "permission": "development.goals.create",
+          "scope": "coach (own athletes)"
+        },
+        {
+          "action": "update",
+          "permission": "development.goals.update",
+          "scope": "author coach + admin"
+        },
+        {
+          "action": "markAchieved",
+          "permission": "development.goals.mark-achieved",
+          "scope": "coach + athlete self-marking (subject to coach confirm)"
+        }
+      ]
+    },
+    {
+      "model": "ScoutingReport",
+      "class": "Academorix\\Sports\\Development\\Policies\\ScoutingReportPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "development.scouting.viewAny",
+          "scope": "coach (limited to own team's reports) + admin + owner"
+        },
+        { "action": "view", "permission": "development.scouting.view" },
+        {
+          "action": "create",
+          "permission": "development.scouting.create",
+          "scope": "coach + branch_manager + admin"
+        },
+        {
+          "action": "delete",
+          "permission": "development.scouting.delete",
+          "scope": "author (draft only) + admin"
+        }
+      ]
+    }
+  ]
 }

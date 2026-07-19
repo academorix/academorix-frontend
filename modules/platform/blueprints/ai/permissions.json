@@ -2,21 +2,19 @@
   "id": "academorix://modules/ai/permissions",
   "$version": 1,
   "title": "ai — permissions",
-  "seeder": "Academorix\\Ai\\Database\\Seeders\\AiPermissionSeeder",
+  "seeder": "Academorix\\AI\\Database\\Seeders\\AiPermissionSeeder",
   "isSystem": true,
-  "description": "Two audiences with persona-role binding. Tenant plane — anyone with the appropriate role for a persona can start conversations. Platform plane — PII-masked audit only.",
+  "description": "Persona-role bindings sourced from the canonical Tenancy::defaultRoles() catalogue: `owner, admin, branch_manager, coach, athlete, parent_guardian, front_desk, viewer` (base) + `medical` (sports variants). NO head_coach / hr / finance / staff roles — those don't exist in the catalogue. Draft-then-confirm ability + tool write-back gated per persona.",
   "permissions": [
     {
       "name": "ai.conversations.viewAny",
       "guard": "sanctum",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -27,12 +25,10 @@
       "guard": "sanctum",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -44,12 +40,10 @@
       "description": "Gated by ai.persona-role middleware — persona checked against caller's roles.",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -60,12 +54,10 @@
       "guard": "sanctum",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -76,61 +68,69 @@
       "guard": "sanctum",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
       ]
     },
-    { "name": "ai.conversations.flag", "guard": "sanctum", "seededOn": ["admin", "owner"] },
 
     {
-      "name": "ai.personas.CoachAssistant",
+      "name": "ai.personas.CoachAssistantPersona",
       "guard": "sanctum",
       "description": "Persona binding — required to start CoachAssistant conversations.",
-      "seededOn": ["coach", "head_coach"]
+      "seededOn": ["coach"]
     },
     {
-      "name": "ai.personas.ParentAssistant",
+      "name": "ai.personas.ParentAssistantPersona",
       "guard": "sanctum",
-      "seededOn": ["guardian", "athlete"]
-    },
-    { "name": "ai.personas.AdminAssistant", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    { "name": "ai.personas.FinanceAssistant", "guard": "sanctum", "seededOn": ["admin", "owner"] },
-    {
-      "name": "ai.personas.HeadCoachAssistant",
-      "guard": "sanctum",
-      "seededOn": ["head_coach", "admin"]
+      "seededOn": ["parent_guardian"]
     },
     {
-      "name": "ai.personas.MedicalAssistant",
+      "name": "ai.personas.AthleteAssistantPersona",
       "guard": "sanctum",
-      "description": "Medical role only. Never autonomous. Always draft-then-confirm.",
-      "seededOn": ["medical", "admin"]
+      "description": "Feature-flagged v1.5 deferred.",
+      "seededOn": ["athlete"]
     },
     {
-      "name": "ai.personas.ReceptionAssistant",
+      "name": "ai.personas.AdminAssistantPersona",
       "guard": "sanctum",
-      "seededOn": ["reception", "admin"]
+      "seededOn": ["admin", "owner"]
     },
-    { "name": "ai.personas.HrAssistant", "guard": "sanctum", "seededOn": ["hr", "admin"] },
+    {
+      "name": "ai.personas.FinanceAssistantPersona",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "ai.personas.MedicalAssistantPersona",
+      "guard": "sanctum",
+      "description": "Medical role only. #[NeverAutoWrite]. Always draft-then-confirm.",
+      "seededOn": ["medical"]
+    },
+    {
+      "name": "ai.personas.StaffAssistantPersona",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager"]
+    },
+    {
+      "name": "ai.personas.ReceptionAssistantPersona",
+      "guard": "sanctum",
+      "seededOn": ["front_desk"]
+    },
 
     {
       "name": "ai.runs.viewAny",
       "guard": "sanctum",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -141,12 +141,10 @@
       "guard": "sanctum",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -155,14 +153,13 @@
     {
       "name": "ai.runs.cancel",
       "guard": "sanctum",
+      "description": "Cancel in-flight run. Sets status='cancelled'.",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -174,12 +171,10 @@
       "guard": "sanctum",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -190,12 +185,10 @@
       "guard": "sanctum",
       "seededOn": [
         "athlete",
-        "guardian",
+        "parent_guardian",
         "coach",
-        "head_coach",
-        "hr",
         "medical",
-        "reception",
+        "front_desk",
         "branch_manager",
         "admin",
         "owner"
@@ -203,15 +196,38 @@
     },
 
     {
-      "name": "ai.tools.write-back",
+      "name": "ai.drafts.viewAny",
       "guard": "sanctum",
-      "description": "Allow AI write-back tools (draft mode). Human confirmation still required.",
-      "seededOn": ["coach", "head_coach", "hr", "medical", "admin", "owner"]
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
     },
     {
-      "name": "ai.tools.write-back-autonomous",
+      "name": "ai.drafts.view",
       "guard": "sanctum",
-      "description": "P1 gate. Allow AI to execute write-back WITHOUT human confirmation. Enterprise only.",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "ai.drafts.confirm",
+      "guard": "sanctum",
+      "description": "Confirm a draft — executes the pending domain action. Author or admin only.",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "ai.drafts.discard",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+
+    {
+      "name": "ai.tools.background-write",
+      "guard": "sanctum",
+      "description": "Marker permission — carried by system/background users only.",
+      "seededOn": []
+    },
+
+    {
+      "name": "ai.mcp.serve",
+      "guard": "sanctum",
+      "description": "Access to expose tenant AI via MCP endpoint. Enterprise entitlement.",
       "seededOn": ["admin", "owner"]
     },
 
@@ -232,6 +248,12 @@
       "guard": "platform_admin",
       "description": "Tool-abuse detection. tool_name + status only.",
       "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.ai.tool-registry.view",
+      "guard": "platform_admin",
+      "description": "Read the discovered tool registry across tenants.",
+      "seededOn": ["super_admin", "ops", "support"]
     }
   ]
 }

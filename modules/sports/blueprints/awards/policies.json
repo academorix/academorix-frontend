@@ -2,6 +2,39 @@
   "id": "academorix://modules/awards/policies",
   "$version": 1,
   "title": "awards — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "policies": [
+    {
+      "model": "AwardTemplate",
+      "class": "Academorix\\Sports\\Awards\\Policies\\AwardTemplatePolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "awards.templates.viewAny" },
+        { "action": "view", "permission": "awards.templates.view" },
+        {
+          "action": "create",
+          "permission": "awards.templates.create",
+          "scope": "branch_manager + admin + owner"
+        },
+        { "action": "update", "permission": "awards.templates.update" },
+        { "action": "delete", "permission": "awards.templates.delete", "scope": "admin + owner" }
+      ]
+    },
+    {
+      "model": "Award",
+      "class": "Academorix\\Sports\\Awards\\Policies\\AwardPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "awards.viewAny" },
+        { "action": "view", "permission": "awards.view", "scope": "own + team + admin" },
+        {
+          "action": "issue",
+          "permission": "awards.issue",
+          "scope": "coach + branch_manager + admin. Manual issuance path"
+        },
+        {
+          "action": "revoke",
+          "permission": "awards.revoke",
+          "scope": "admin + owner. Reason REQUIRED. Full audit chain"
+        }
+      ]
+    }
+  ]
 }

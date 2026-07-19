@@ -2,6 +2,76 @@
   "id": "academorix://modules/announcements/features",
   "$version": 1,
   "title": "announcements — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "announcements.core",
+      "displayName": "Announcements",
+      "description": "Master feature. Tenant-wide + scoped announcements substrate.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "announcements.channels.email",
+      "displayName": "Email channel",
+      "description": "Deliver announcements via email.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "announcements.channels.push",
+      "displayName": "Push channel",
+      "description": "Deliver via mobile push notification.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "announcements.channels.sms",
+      "displayName": "SMS channel",
+      "description": "Deliver via SMS. Metered by per-message credit.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "announcements.scheduled_publish",
+      "displayName": "Scheduled publish",
+      "description": "Schedule future publish time.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "announcements.rich_content",
+      "displayName": "Rich content (images / video / attachments)",
+      "description": "Include media in announcements.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "announcements.audience_targeting",
+      "displayName": "Advanced audience targeting",
+      "description": "Filter recipients by team + age group + role + custom SQL. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "announcements.read_receipts",
+      "displayName": "Read receipts",
+      "description": "Track who has read the announcement.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "announcements.translation",
+      "displayName": "Auto translation to recipient locale",
+      "description": "Auto-translate announcement to each recipient's preferred locale. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ],
+  "entitlements": [
+    {
+      "key": "announcements.sms_credits.month",
+      "kind": "count",
+      "description": "Per-month SMS credit pool. Small: 100, Medium: 1000, Enterprise: unlimited."
+    }
+  ]
 }

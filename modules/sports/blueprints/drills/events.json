@@ -1,7 +1,70 @@
 {
   "id": "academorix://modules/drills/events",
   "$version": 1,
-  "title": "drills — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "drills — published events",
+  "namespace": "Academorix\\Sports\\Drills\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Drill library. Every drill is search-indexed via search::UpsertDrillEmbedding (feeds ai/RAG). CoachAssistantPersona queries this library during session planning.",
+  "events": [
+    {
+      "name": "DrillCreated",
+      "trigger": "New Drill row. status='draft'.",
+      "consumers": ["audit::WriteToAuditLog", "search::UpsertDrillEmbedding"],
+      "payload": {
+        "drill_id": "ULID (drl_*)",
+        "tenant_id": "ULID",
+        "sport_key": "string",
+        "created_by_user_id": "ULID",
+        "title": "string"
+      }
+    },
+    {
+      "name": "DrillPublished",
+      "trigger": "status: draft → published. Available in library.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "search::UpsertDrillEmbedding"
+      ],
+      "payload": {
+        "drill_id": "ULID",
+        "published_by_user_id": "ULID",
+        "visibility": "'private'|'branch'|'tenant'|'public'"
+      }
+    },
+    {
+      "name": "DrillUsed",
+      "trigger": "Drill included in a Session plan. HIGH VOLUME — sampled 10%.",
+      "consumers": ["reporting::TrackDrillUsage", "search::UpdateDrillPopularityScore"],
+      "payload": { "drill_id": "ULID", "used_by_user_id": "ULID", "session_id": "ULID|null" }
+    },
+    {
+      "name": "DrillRated",
+      "trigger": "Coach rated drill after use.",
+      "consumers": ["search::UpdateDrillQualityScore"],
+      "payload": {
+        "drill_id": "ULID",
+        "user_id": "ULID",
+        "rating": "int (1-5)",
+        "review_text": "string|null"
+      }
+    },
+    {
+      "name": "DrillArchived",
+      "trigger": "Drill archived (deprecated). Removed from search but retained for historical references.",
+      "consumers": ["audit::WriteToAuditLog", "search::RemoveFromIndex"],
+      "payload": { "drill_id": "ULID", "archived_by_user_id": "ULID", "reason": "string" }
+    },
+    {
+      "name": "DrillLibraryImported",
+      "trigger": "Bulk import from external drill library.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "import_id": "ULID",
+        "tenant_id": "ULID",
+        "source": "'academorix_public'|'partner_academy'|'csv_upload'",
+        "count": "int"
+      }
+    }
+  ]
 }

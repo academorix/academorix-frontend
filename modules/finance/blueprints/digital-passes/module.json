@@ -3,13 +3,17 @@
   "name": "digital-passes",
   "alias": "digital-passes",
   "namespace": "Academorix\\Finance\\DigitalPasses",
-  "description": "Apple Wallet + Google Wallet digital membership passes per blueprint §16.6. Ships ONE owned entity: `WalletPass` (per-holder wallet pass — serial + kind IN membership_card/event_ticket + status IN issued/updated/revoked; auto-updates on renewal; tenant branding). Distinct from finance/membership `Pass` (session-consumption ticket) — this is a WALLET credential that carries the membership ID + QR code for entry check-in. Cascades: on `MEMBERSHIP_RENEWED` → auto-update pass; on `MEMBERSHIP_CANCELLED` → revoke pass.",
+  "description": "Apple Wallet + Google Wallet digital membership passes per blueprint §16.6. Ships ONE owned entity: `WalletPass` (per-holder wallet pass — serial + kind IN membership_card/event_ticket/day_pass_card + provider IN apple/google/generic_qr + status IN issued/installed/updated/revoked/expired; auto-updates on renewal; tenant branding). Distinct from finance/membership `Pass` (session-consumption ticket) — this is a WALLET credential that carries the membership ID + QR code for entry check-in. Cascades: on `MEMBERSHIP_RENEWED` → auto-update pass; on `MEMBERSHIP_CANCELLED` → revoke pass; on `Branding.updated` → regenerate all active passes.\n\n**Underlying package: `spatie/laravel-mobile-pass` v1** (https://spatie.be/docs/laravel-mobile-pass/v1/introduction). Wraps its Apple `.pkpass` generation + Google Wallet Passes API + APNs/FCM push-update pipeline. We add: tenant-scoped issuance, QR-payload signed-JWT verification at gate (via credentials module), Branding-driven regeneration, retention.\n\n**Not built:** the .pkpass certificate + Google Wallet issuer credentials — those come from tenant configuration (per-tenant integration credentials via platform/integrations).",
   "keywords": [
     "wallet-pass",
     "apple-wallet",
     "google-wallet",
     "membership-card",
     "digital-credential",
+    "spatie-mobile-pass",
+    "apns-update",
+    "fcm-update",
+    "qr-signed-jwt",
     "wave-4"
   ],
   "priority": 88,
@@ -25,28 +29,54 @@
     "credentials",
     "attendance",
     "storage",
-    "notifications"
+    "notifications",
+    "branding",
+    "integrations"
   ],
   "extendedBy": [],
-  "planned_consumers": ["ai"],
+  "planned_consumers": ["ai", "public-site"],
+  "vendor_packages": [
+    {
+      "package": "spatie/laravel-mobile-pass",
+      "version": "^1.0",
+      "url": "https://spatie.be/docs/laravel-mobile-pass/v1/introduction",
+      "role": "Apple `.pkpass` generation + Google Wallet Passes API + APNs/FCM push-update pipeline. We wrap its templates + registration + push notification pipeline with tenant scoping."
+    }
+  ],
   "contributes": {
     "traits": ["HasWalletPass"],
     "attributes": [],
     "blueprints": ["wallet-pass"],
-    "middleware": [],
-    "events": ["PassIssued", "PassUpdated", "PassRevoked", "PassInstalled", "PassRemovedByUser"],
+    "middleware": ["wallet-passes.signed-qr"],
+    "events": [
+      "PassIssued",
+      "PassUpdated",
+      "PassInstalled",
+      "PassRemovedByUser",
+      "PassRevoked",
+      "PassExpired",
+      "PassScanned"
+    ],
     "policies": ["WalletPassPolicy"],
     "hooks": [
       "AutoUpdatePassOnMembershipRenewed",
       "RevokePassOnMembershipCancelled",
-      "RegeneratePassOnBrandingChange"
+      "RegeneratePassesOnBrandingChange",
+      "MintQrPayloadOnIssue"
     ],
-    "commands": ["passes:list", "passes:issue", "passes:revoke", "passes:regenerate-all"],
+    "commands": [
+      "passes:list",
+      "passes:issue",
+      "passes:revoke",
+      "passes:regenerate-all",
+      "passes:test-push"
+    ],
     "jobs": [
       "IssueWalletPassJob",
       "UpdateWalletPassJob",
       "RevokeWalletPassJob",
-      "RegeneratePassesOnBrandingChangeJob"
+      "RegeneratePassesOnBrandingChangeJob",
+      "PushWalletUpdateJob"
     ],
     "notifications": [
       "PassIssuedNotification",
@@ -55,8 +85,13 @@
     ],
     "broadcasts": [],
     "observers": ["WalletPassObserver"],
-    "rules": ["valid_pass_status", "unique_serial"],
-    "casts": ["PassStatus", "PassKind"],
+    "rules": [
+      "valid_pass_status",
+      "valid_pass_kind",
+      "valid_provider",
+      "unique_serial_per_provider"
+    ],
+    "casts": ["PassStatus", "PassKind", "PassProvider"],
     "views": [],
     "lang": ["digital-passes"],
     "config": ["digital-passes"],
@@ -65,7 +100,8 @@
       "WalletPassRepository",
       "AppleWalletProvider",
       "GoogleWalletProvider",
-      "PassRenderer"
+      "PassRenderer",
+      "QrPayloadMinter"
     ],
     "resources": ["wallet-pass"]
   },
@@ -76,15 +112,19 @@
         "POST /api/v1/wallet-passes",
         "GET /api/v1/wallet-passes/{pass}",
         "POST /api/v1/wallet-passes/{pass}/regenerate",
-        "POST /api/v1/wallet-passes/{pass}/revoke"
+        "POST /api/v1/wallet-passes/{pass}/revoke",
+        "GET /api/v1/wallet-passes/{pass}/download.pkpass"
       ]
     },
     "central": {
-      "description": "Apple/Google Wallet callbacks + pass download.",
+      "description": "Apple/Google Wallet callback surface — the spatie/laravel-mobile-pass endpoints for pass download + registration + push token exchange.",
       "routes": [
         "GET /wallet/passes/{serial}.pkpass",
-        "POST /wallet/passes/register",
-        "POST /wallet/passes/unregister"
+        "POST /v1/devices/{deviceId}/registrations/{passTypeId}/{serial}",
+        "GET /v1/devices/{deviceId}/registrations/{passTypeId}",
+        "DELETE /v1/devices/{deviceId}/registrations/{passTypeId}/{serial}",
+        "POST /v1/log",
+        "GET /wallet/google/save/{signature}"
       ]
     }
   }

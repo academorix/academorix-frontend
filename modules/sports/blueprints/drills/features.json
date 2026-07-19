@@ -2,6 +2,41 @@
   "id": "academorix://modules/drills/features",
   "$version": 1,
   "title": "drills — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "drills.core",
+      "displayName": "Drill library",
+      "description": "Master feature. Search + create + share drills.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "drills.video_uploads",
+      "displayName": "Video attachments",
+      "description": "Attach video demonstrations. Storage-heavy.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "drills.rag_search",
+      "displayName": "AI-powered semantic search",
+      "description": "Vector search over drill descriptions via ai/RAG. Consumed by CoachAssistantPersona.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "drills.public_marketplace",
+      "displayName": "Public drill marketplace",
+      "description": "Share + browse public drills across tenants. Requires moderation approval.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "drills.ai_generation",
+      "displayName": "AI-generated drill suggestions",
+      "description": "AI proposes drills based on session objectives. Draft-then-confirm.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

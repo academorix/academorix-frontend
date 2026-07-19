@@ -2,6 +2,19 @@
   "id": "academorix://modules/awards/retention",
   "$version": 1,
   "title": "awards — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    { "entity": "AwardTemplate", "hot_days": null, "on_purge": "keep_indefinitely" },
+    {
+      "entity": "Award",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Athlete career-timeline provenance."
+    },
+    {
+      "entity": "AwardCertificate",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Certificate PDFs retained on athlete portfolio. Storage cost mitigated by cold-tier after 3yr."
+    }
+  ]
 }

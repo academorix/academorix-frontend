@@ -2,6 +2,72 @@
   "id": "academorix://modules/reporting/policies",
   "$version": 1,
   "title": "reporting — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Reporting reads across every module. Every report inherits the SENSITIVITY LEVEL of its most-sensitive data source; readers must hold the equivalent module permission (e.g. viewing a report containing medical clearances requires medical.viewAny). Sharing a dashboard grants implicit read to its underlying data.",
+  "policies": [
+    {
+      "model": "Report",
+      "class": "Academorix\\Platform\\Reporting\\Policies\\ReportPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "reporting.reports.viewAny" },
+        {
+          "action": "view",
+          "permission": "reporting.reports.view",
+          "scope": "author + shared_with + module-perm-transitive-check"
+        },
+        {
+          "action": "create",
+          "permission": "reporting.reports.create",
+          "scope": "branch_manager + admin + owner + coach (limited to own team)"
+        },
+        {
+          "action": "export",
+          "permission": "reporting.reports.export",
+          "scope": "author + shared_with. AlertOnBulkPiiExport fires above threshold"
+        },
+        {
+          "action": "schedule",
+          "permission": "reporting.reports.schedule",
+          "scope": "admin + owner"
+        },
+        { "action": "share", "permission": "reporting.reports.share" },
+        {
+          "action": "delete",
+          "permission": "reporting.reports.delete",
+          "scope": "author + admin + owner"
+        }
+      ]
+    },
+    {
+      "model": "Dashboard",
+      "class": "Academorix\\Platform\\Reporting\\Policies\\DashboardPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "reporting.dashboards.viewAny" },
+        {
+          "action": "view",
+          "permission": "reporting.dashboards.view",
+          "scope": "author + shared_with. Widgets re-run policy checks against their data sources"
+        },
+        {
+          "action": "create",
+          "permission": "reporting.dashboards.create",
+          "scope": "coach + branch_manager + admin + owner"
+        },
+        {
+          "action": "update",
+          "permission": "reporting.dashboards.update",
+          "scope": "author + admin + owner"
+        },
+        {
+          "action": "share",
+          "permission": "reporting.dashboards.share",
+          "scope": "author + admin + owner. Full audit chain"
+        },
+        {
+          "action": "delete",
+          "permission": "reporting.dashboards.delete",
+          "scope": "author + admin + owner"
+        }
+      ]
+    }
+  ]
 }

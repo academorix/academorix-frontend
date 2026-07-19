@@ -2,64 +2,22 @@
   "id": "academorix://modules/ai/policies",
   "$version": 1,
   "title": "ai — authorization policies",
-  "description": "Three policies with STRICT persona-role binding. Every AiRun + AiToolCall re-checks the caller's role against the persona's allowed roles — an LLM promise means nothing without a runtime policy gate.",
+  "description": "Three policies covering the three owned entities. Persona-role authorization is enforced by AuthorizePersonaRole HTTP middleware (reads `#[RequiresRoles]`) BEFORE the run controller — policies here handle post-run access to the persisted rows. Every run + tool-call re-checks RBAC inside the vendor agent pipeline via ToolAuthorizerDecorator — the LLM's promise is not authorization.",
   "policies": [
     {
-      "model": "AiConversation",
-      "class": "Academorix\\Ai\\Policies\\AiConversationPolicy",
-      "abilities": [
-        {
-          "action": "viewAny",
-          "permission": "ai.conversations.viewAny",
-          "scope": "user sees .own conversations; admin sees all"
-        },
-        {
-          "action": "view",
-          "permission": "ai.conversations.view",
-          "scope": "conversation user + admin"
-        },
-        {
-          "action": "start",
-          "permission": "ai.conversations.start",
-          "scope": "any authenticated user with persona-appropriate role. Gated by ai.persona-role middleware"
-        },
-        {
-          "action": "archive",
-          "permission": "ai.conversations.archive",
-          "scope": "conversation user + admin"
-        },
-        {
-          "action": "delete",
-          "permission": "ai.conversations.delete",
-          "scope": "conversation user (soft-delete) + admin (hard-delete via retention)"
-        },
-        {
-          "action": "flag",
-          "permission": "ai.conversations.flag",
-          "scope": "user can flag their own conversation for review; admin flags any"
-        },
-        {
-          "action": "platformViewAny",
-          "permission": "platform.ai.conversations.viewAny",
-          "guard": "platform_admin",
-          "scope": "PII-masked. Prompts + responses redacted; only tokens + cost + persona visible"
-        }
-      ]
-    },
-    {
       "model": "AiRun",
-      "class": "Academorix\\Ai\\Policies\\AiRunPolicy",
+      "class": "Academorix\\AI\\Policies\\AiRunPolicy",
       "abilities": [
         {
           "action": "viewAny",
           "permission": "ai.runs.viewAny",
           "scope": "conversation user sees own runs; admin sees tenant-wide"
         },
-        { "action": "view", "permission": "ai.runs.view" },
+        { "action": "view", "permission": "ai.runs.view", "scope": "conversation user + admin" },
         {
           "action": "cancel",
           "permission": "ai.runs.cancel",
-          "scope": "conversation user + admin. In-flight only"
+          "scope": "conversation user + admin. status must be 'running'"
         },
         {
           "action": "platformAudit",
@@ -71,7 +29,7 @@
     },
     {
       "model": "AiToolCall",
-      "class": "Academorix\\Ai\\Policies\\AiToolCallPolicy",
+      "class": "Academorix\\AI\\Policies\\AiToolCallPolicy",
       "abilities": [
         {
           "action": "viewAny",
@@ -89,6 +47,24 @@
           "guard": "platform_admin",
           "scope": "cross-tenant tool-abuse detection. tool_name + status only"
         }
+      ]
+    },
+    {
+      "model": "AiDraft",
+      "class": "Academorix\\AI\\Policies\\AiDraftPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "ai.drafts.viewAny",
+          "scope": "user sees drafts they authored; admin sees tenant-wide"
+        },
+        { "action": "view", "permission": "ai.drafts.view" },
+        {
+          "action": "confirm",
+          "permission": "ai.drafts.confirm",
+          "scope": "authoring user (self-confirm allowed for interactive drafts) + admin. Status must be 'open' + expires_at in the future"
+        },
+        { "action": "discard", "permission": "ai.drafts.discard", "scope": "same as confirm" }
       ]
     }
   ]

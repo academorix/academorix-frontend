@@ -2,6 +2,49 @@
   "id": "academorix://modules/announcements/policies",
   "$version": 1,
   "title": "announcements — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "One policy. Audience-scoped: an announcement TO branch X can only be created by staff WITH branch X access; policy enforces this via caller's TenantMember role scopes.",
+  "policies": [
+    {
+      "model": "Announcement",
+      "class": "Academorix\\Notifications\\Announcements\\Policies\\AnnouncementPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "announcements.viewAny" },
+        {
+          "action": "view",
+          "permission": "announcements.view",
+          "scope": "audience member OR author OR admin"
+        },
+        {
+          "action": "create",
+          "permission": "announcements.create",
+          "scope": "audience must intersect caller's tenant scopes"
+        },
+        {
+          "action": "update",
+          "permission": "announcements.update",
+          "scope": "author + admin. Draft state only"
+        },
+        {
+          "action": "publish",
+          "permission": "announcements.publish",
+          "scope": "author + admin. Tenant-wide requires admin/owner"
+        },
+        {
+          "action": "retract",
+          "permission": "announcements.retract",
+          "scope": "author + admin. Full audit"
+        },
+        {
+          "action": "delete",
+          "permission": "announcements.delete",
+          "scope": "author + admin. Draft state only"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.announcements.viewAny",
+          "guard": "platform_admin"
+        }
+      ]
+    }
+  ]
 }

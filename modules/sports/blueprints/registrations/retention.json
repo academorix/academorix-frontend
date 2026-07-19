@@ -1,0 +1,26 @@
+{
+  "id": "academorix://modules/registrations/retention",
+  "$version": 1,
+  "title": "registrations — data retention windows",
+  "policies": [
+    {
+      "entity": "Registration",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["stage = 'enrolled'"],
+      "description": "Enrolled registrations retained indefinitely — career-timeline provenance link to Athlete."
+    },
+    {
+      "entity": "Registration",
+      "hot_days": 365,
+      "warm_days": 1095,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["stage IN ('declined','expired')"],
+      "description": "3yr for marketing analytics + regulatory conversion tracking."
+    },
+    { "entity": "TrialBooking", "hot_days": null, "on_purge": "cascade_with_parent" },
+    { "entity": "WaitlistEntry", "hot_days": null, "on_purge": "cascade_with_parent" },
+    { "entity": "Offer", "hot_days": null, "on_purge": "cascade_with_parent" }
+  ]
+}

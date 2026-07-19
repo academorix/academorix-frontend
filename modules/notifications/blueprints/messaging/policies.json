@@ -2,6 +2,106 @@
   "id": "academorix://modules/messaging/policies",
   "$version": 1,
   "title": "messaging — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Four policies. All conversation writes require caller be an active ConversationMember (or admin/owner). Message deletion by non-author requires safeguarding permission — enforces the safeguarding-first design.",
+  "policies": [
+    {
+      "model": "Conversation",
+      "class": "Academorix\\Notifications\\Messaging\\Policies\\ConversationPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "messaging.conversations.viewAny",
+          "scope": "user sees own conversations only"
+        },
+        {
+          "action": "view",
+          "permission": "messaging.conversations.view",
+          "scope": "member OR admin"
+        },
+        {
+          "action": "create",
+          "permission": "messaging.conversations.create",
+          "scope": "at least one target member must be in caller's tenant"
+        },
+        {
+          "action": "update",
+          "permission": "messaging.conversations.update",
+          "scope": "conversation admin OR tenant admin"
+        },
+        {
+          "action": "archive",
+          "permission": "messaging.conversations.archive",
+          "scope": "conversation admin OR tenant admin"
+        }
+      ]
+    },
+    {
+      "model": "ConversationMember",
+      "class": "Academorix\\Notifications\\Messaging\\Policies\\ConversationMemberPolicy",
+      "abilities": [
+        {
+          "action": "addMember",
+          "permission": "messaging.members.add",
+          "scope": "conversation admin (group) OR self-join public channels"
+        },
+        {
+          "action": "removeMember",
+          "permission": "messaging.members.remove",
+          "scope": "self OR conversation admin"
+        },
+        {
+          "action": "promoteToAdmin",
+          "permission": "messaging.members.promote",
+          "scope": "conversation admin"
+        }
+      ]
+    },
+    {
+      "model": "Message",
+      "class": "Academorix\\Notifications\\Messaging\\Policies\\MessagePolicy",
+      "abilities": [
+        {
+          "action": "view",
+          "permission": "messaging.messages.view",
+          "scope": "conversation member OR safeguarding officer"
+        },
+        {
+          "action": "send",
+          "permission": "messaging.messages.send",
+          "scope": "conversation member"
+        },
+        {
+          "action": "edit",
+          "permission": "messaging.messages.edit",
+          "scope": "author only. 24h window from send"
+        },
+        {
+          "action": "delete",
+          "permission": "messaging.messages.delete",
+          "scope": "author OR conversation admin"
+        },
+        {
+          "action": "adminDelete",
+          "permission": "messaging.messages.admin-delete",
+          "scope": "safeguarding officer OR tenant admin — logged with reason"
+        }
+      ]
+    },
+    {
+      "model": "MessageReaction",
+      "class": "Academorix\\Notifications\\Messaging\\Policies\\MessageReactionPolicy",
+      "abilities": [
+        {
+          "action": "add",
+          "permission": "messaging.reactions.add",
+          "scope": "conversation member"
+        },
+        {
+          "action": "remove",
+          "permission": "messaging.reactions.remove",
+          "scope": "own reaction only"
+        }
+      ]
+    }
+  ]
 }

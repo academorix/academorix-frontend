@@ -1,0 +1,111 @@
+{
+  "id": "academorix://modules/event/schemas/rsvp",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Rsvp",
+  "description": "RSVP response on an EventInvitation. State machine: pending → confirmed / declined; confirmed → cancelled (with reason, frees slot); declined → confirmed (changed mind). Cancelled RSVPs fire slot-freed notifications to coaches.",
+  "type": "object",
+  "x-module": "event",
+  "x-eloquent": {
+    "table": "rsvps",
+    "keyPrefix": "rsv_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "event_invitation_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "event_invitations", "column": "id", "onDelete": "cascade" }
+      },
+      "responder_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The user (guardian or athlete-owned user) who responded."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "pending / confirmed / declined / cancelled."
+      },
+      "note": { "type": "string", "length": 500, "nullable": true },
+      "cancellation_reason": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "REQUIRED when status transitions confirmed → cancelled."
+      },
+      "confirmed_at": { "type": "timestamptz", "nullable": true },
+      "declined_at": { "type": "timestamptz", "nullable": true },
+      "cancelled_at": { "type": "timestamptz", "nullable": true },
+      "response_source": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "self / guardian / admin / kiosk / calendar_link."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "event_invitation_id"],
+        "unique": true,
+        "name": "rsvps_invitation_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "status"], "name": "rsvps_status_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "event_invitation_id",
+    "responder_user_id",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rsv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["pending", "confirmed", "declined", "cancelled"] },
+    "response_source": {
+      "type": ["string", "null"],
+      "enum": ["self", "guardian", "admin", "kiosk", "calendar_link", null]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One RSVP per invitation via partial unique index.",
+    "Transitions: pending → confirmed / declined; confirmed → cancelled; declined → confirmed (allowed once).",
+    "cancellation_reason REQUIRED when status = 'cancelled'.",
+    "confirmed_at / declined_at / cancelled_at timestamps set on transition, never re-set."
+  ]
+}

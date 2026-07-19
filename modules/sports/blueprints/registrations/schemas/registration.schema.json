@@ -1,0 +1,200 @@
+{
+  "id": "academorix://modules/registrations/schemas/registration",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Registration",
+  "description": "The root funnel record. State machine LEAD → CONTACTED → TRIAL → OFFERED → ENROLLED with side branches WAITLISTED / DECLINED / EXPIRED. Captures the applicant + prospective athlete + preferred team+season. Terminal state ENROLLED atomically creates Athlete + AthleteEnrollment + Invoice via AtomicallyConvertOnOfferAccepted.",
+  "type": "object",
+  "x-module": "registrations",
+  "x-eloquent": {
+    "table": "registrations",
+    "keyPrefix": "srg_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToSeason",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "stage": "RegistrationStage",
+      "submitted_at": "datetime",
+      "expires_at": "datetime",
+      "declined_at": "datetime",
+      "enrolled_at": "datetime",
+      "attribution": "array",
+      "consent_snapshot": "array",
+      "metadata": "array"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "season_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "seasons", "column": "id", "onDelete": "restrict" }
+      },
+      "team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "set null" },
+        "description": "Optional — a registration may target a program rather than a specific team."
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "set null" }
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": false },
+      "applicant_first_name": { "type": "string", "length": 100, "nullable": false },
+      "applicant_last_name": { "type": "string", "length": 100, "nullable": false },
+      "applicant_email": { "type": "string", "length": 200, "nullable": false },
+      "applicant_phone": { "type": "string", "length": 32, "nullable": true },
+      "athlete_first_name": { "type": "string", "length": 100, "nullable": false },
+      "athlete_last_name": { "type": "string", "length": 100, "nullable": true },
+      "athlete_date_of_birth": {
+        "type": "date",
+        "nullable": true,
+        "description": "Used by ValidateAgeAgainstSeason on trial + offer + convert transitions."
+      },
+      "athlete_gender": { "type": "string", "length": 16, "nullable": true },
+      "stage": { "type": "string", "length": 16, "nullable": false, "default": "'lead'" },
+      "submitted_at": { "type": "timestamptz", "nullable": false },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Auto-decline after 30d inactive by default. NULL = indefinite."
+      },
+      "declined_at": { "type": "timestamptz", "nullable": true },
+      "declined_reason": { "type": "string", "length": 500, "nullable": true },
+      "enrolled_at": { "type": "timestamptz", "nullable": true },
+      "converted_athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "set null" },
+        "description": "Set on ENROLLED — links back to the created Athlete."
+      },
+      "converted_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "athlete_enrollments", "column": "id", "onDelete": "set null" }
+      },
+      "converted_invoice_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "invoices", "column": "id", "onDelete": "set null" }
+      },
+      "owner_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Sales rep / admin assigned to move this through the funnel."
+      },
+      "source": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "web_form / referral / walk_in / cold_outreach / imported / crm_lead."
+      },
+      "source_ref_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "When source=crm_lead — the growth::Lead ID."
+      },
+      "attribution": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "First-touch + last-touch marketing attribution captured at form submission."
+      },
+      "consent_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Consent flags at submission — photo / medical / marketing."
+      },
+      "notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "stage", "submitted_at"], "name": "registrations_stage_time_idx" },
+      {
+        "columns": ["tenant_id", "owner_user_id", "stage"],
+        "name": "registrations_owner_stage_idx"
+      },
+      {
+        "columns": ["tenant_id", "team_id", "season_id", "stage"],
+        "name": "registrations_team_season_stage_idx"
+      },
+      { "columns": ["tenant_id", "applicant_email"], "name": "registrations_email_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "season_id",
+    "sport_key",
+    "applicant_first_name",
+    "applicant_last_name",
+    "applicant_email",
+    "athlete_first_name",
+    "stage",
+    "submitted_at",
+    "source",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^srg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "lead",
+        "contacted",
+        "trial",
+        "waitlisted",
+        "offered",
+        "enrolled",
+        "declined",
+        "expired"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": ["web_form", "referral", "walk_in", "cold_outreach", "imported", "crm_lead"]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Transitions: lead → contacted → trial → offered → enrolled (happy path); any stage → waitlisted / declined / expired.",
+    "Terminal states: enrolled / declined / expired. No transitions out.",
+    "converted_athlete_id + converted_enrollment_id + converted_invoice_id REQUIRED (non-null) when stage = 'enrolled'.",
+    "declined_reason REQUIRED when stage = 'declined'.",
+    "athlete_date_of_birth validated against season's age_cutoff_date on stage transitions."
+  ]
+}

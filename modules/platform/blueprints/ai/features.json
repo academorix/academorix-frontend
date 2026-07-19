@@ -6,79 +6,93 @@
     {
       "key": "ai.core",
       "displayName": "AI assistant",
-      "description": "Master feature. Backend-first laravel/ai integration + persona substrate + tool registry. Feature-flagged.",
-      "defaultEnabled": false,
-      "planTiers": ["small", "medium", "enterprise"]
-    },
-    {
-      "key": "ai.personas.parent",
-      "displayName": "Parent assistant",
-      "description": "Parent chat persona — own children only. Strictest PII/RBAC gates. Small tier.",
+      "description": "Master feature — laravel/ai integration + persona substrate + tool registry. Feature-flagged off by default.",
       "defaultEnabled": false,
       "planTiers": ["small", "medium", "enterprise"]
     },
     {
       "key": "ai.personas.coach",
       "displayName": "Coach assistant",
-      "description": "Coach persona — own teams + drill search + session-plan gen. Small tier.",
+      "description": "CoachAssistantPersona — own teams + drill search + session-plan gen.",
       "defaultEnabled": false,
       "planTiers": ["small", "medium", "enterprise"]
     },
     {
+      "key": "ai.personas.parent",
+      "displayName": "Parent assistant",
+      "description": "ParentAssistantPersona — own children only. Strictest PII/RBAC gates.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "ai.personas.athlete",
+      "displayName": "Athlete assistant",
+      "description": "AthleteAssistantPersona — own schedule/progress/attendance. v1.5 deferred.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
       "key": "ai.personas.admin",
       "displayName": "Admin assistant",
-      "description": "Admin persona — cross-tenant reads + run_report. Medium+.",
+      "description": "AdminAssistantPersona — cross-tenant reads + run_report. Medium+.",
       "defaultEnabled": false,
       "planTiers": ["medium", "enterprise"]
     },
     {
       "key": "ai.personas.finance",
       "displayName": "Finance assistant",
-      "description": "Finance persona — revenue/expense reports + dunning-draft. Medium+.",
+      "description": "FinanceAssistantPersona — revenue/expense reports + dunning draft. Medium+.",
       "defaultEnabled": false,
       "planTiers": ["medium", "enterprise"]
     },
     {
-      "key": "ai.personas.head_coach",
-      "displayName": "Head coach assistant",
-      "description": "Head coach persona — coach tools + scouting + cross-team. Medium+.",
+      "key": "ai.personas.staff",
+      "displayName": "Staff assistant",
+      "description": "StaffAssistantPersona — daily branch operations. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "ai.personas.reception",
+      "displayName": "Reception assistant",
+      "description": "ReceptionAssistantPersona — walk-in / kiosk lookups. Medium+.",
       "defaultEnabled": false,
       "planTiers": ["medium", "enterprise"]
     },
     {
       "key": "ai.personas.medical",
       "displayName": "Medical assistant",
-      "description": "Medical role only + RTP-summary draft. NEVER autonomous. Enterprise.",
+      "description": "MedicalAssistantPersona — medical role only + #[NeverAutoWrite]. Enterprise.",
       "defaultEnabled": false,
       "planTiers": ["enterprise"]
     },
     {
-      "key": "ai.personas.reception",
-      "displayName": "Reception assistant",
-      "description": "Front desk assistant — walk-in / visitor / day-pass. Medium+.",
+      "key": "ai.background.anomaly_detector",
+      "displayName": "Anomaly detector (background)",
+      "description": "Nightly attendance/injury pattern scan. Enterprise.",
       "defaultEnabled": false,
-      "planTiers": ["medium", "enterprise"]
+      "planTiers": ["enterprise"]
     },
     {
-      "key": "ai.personas.hr",
-      "displayName": "HR assistant",
-      "description": "Staff/payroll/vetting assistant. Medium+.",
+      "key": "ai.background.notification_drafter",
+      "displayName": "Notification drafter (background)",
+      "description": "Weekly digest drafts. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "ai.background.search_indexer",
+      "displayName": "Search indexer (background)",
+      "description": "Embedding queue drain. Medium+.",
       "defaultEnabled": false,
       "planTiers": ["medium", "enterprise"]
     },
     {
       "key": "ai.write_back.draft",
       "displayName": "AI write-back (draft mode)",
-      "description": "AI tools may draft writes; human confirms. Medium+.",
+      "description": "AI tools may draft writes; human confirms via POST /ai/drafts/{id}/confirm. Medium+.",
       "defaultEnabled": false,
       "planTiers": ["medium", "enterprise"]
-    },
-    {
-      "key": "ai.write_back.autonomous",
-      "displayName": "AI write-back (autonomous)",
-      "description": "AI executes write-back without human confirmation. Enterprise ONLY. P1 governance.",
-      "defaultEnabled": false,
-      "planTiers": ["enterprise"]
     },
     {
       "key": "ai.rag",
@@ -88,16 +102,9 @@
       "planTiers": ["medium", "enterprise"]
     },
     {
-      "key": "ai.background_personas",
-      "displayName": "Background personas",
-      "description": "AnomalyDetector + NotificationDrafter + SearchIndexer. Enterprise.",
-      "defaultEnabled": false,
-      "planTiers": ["enterprise"]
-    },
-    {
       "key": "ai.mcp",
       "displayName": "MCP server",
-      "description": "Expose tenant AI as an MCP endpoint for external agents (Claude Desktop, Cursor, etc). Enterprise.",
+      "description": "Expose tenant AI as an MCP endpoint for external agents (Claude Desktop, Cursor). Enterprise.",
       "defaultEnabled": false,
       "planTiers": ["enterprise"]
     }

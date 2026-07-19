@@ -2,6 +2,62 @@
   "id": "academorix://modules/reporting/features",
   "$version": 1,
   "title": "reporting — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "reporting.core",
+      "displayName": "Reports + dashboards",
+      "description": "Master feature — cross-module analytics.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "reporting.canned_reports",
+      "displayName": "Canned reports library",
+      "description": "Pre-built reports (attendance / revenue / roster / progress). Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "reporting.custom_dashboards",
+      "displayName": "Custom dashboards",
+      "description": "User-built dashboards with drag-drop widgets. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "reporting.scheduled_delivery",
+      "displayName": "Scheduled email delivery",
+      "description": "Weekly / monthly auto-emailed reports. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "reporting.custom_sql",
+      "displayName": "Custom SQL query builder",
+      "description": "Advanced users write custom SQL. Enterprise + audit-heavy.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "reporting.api_export",
+      "displayName": "API export access",
+      "description": "Programmatic access to reports via API (data warehouse integration). Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "reporting.anomaly_detection",
+      "displayName": "AI anomaly detection",
+      "description": "Auto-flag unusual patterns (attendance drops, revenue spikes). Feeds ai/AnomalyDetectorPersona.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "reporting.cross_tenant_federation",
+      "displayName": "Federation reporting",
+      "description": "Cross-tenant aggregate reporting for federations. Enterprise + Federation tier.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

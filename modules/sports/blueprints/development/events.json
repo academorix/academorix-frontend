@@ -1,7 +1,100 @@
 {
   "id": "academorix://modules/development/events",
   "$version": 1,
-  "title": "development — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "development — published events",
+  "namespace": "Academorix\\Sports\\Development\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Pathway + scouting. AthletePromoted is a P1 event feeding progress + finance/membership (may bump membership tier). ScoutingReportFiled is compliance-audited.",
+  "events": [
+    {
+      "name": "PathwayCreated",
+      "trigger": "New Pathway row. Tenant-defined development stage sequence.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "pathway_id": "ULID (dvp_*)",
+        "tenant_id": "ULID",
+        "sport_key": "string",
+        "stage_count": "int"
+      }
+    },
+    {
+      "name": "AthletePlacedOnPathway",
+      "trigger": "AthletePathwayAssignment created. Athlete enters development pathway at stage N.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::NotifyPathwayStart"
+      ],
+      "payload": {
+        "assignment_id": "ULID (dpa_*)",
+        "athlete_id": "ULID",
+        "pathway_id": "ULID",
+        "starting_stage": "int"
+      }
+    },
+    {
+      "name": "AthletePromoted",
+      "trigger": "P1 event. Athlete advanced to next pathway stage. May trigger team change + membership tier adjustment.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::CelebratePromotion",
+        "membership::EvaluateTierChange"
+      ],
+      "payload": {
+        "assignment_id": "ULID",
+        "athlete_id": "ULID",
+        "from_stage": "int",
+        "to_stage": "int",
+        "promoted_by_user_id": "ULID",
+        "notes": "string"
+      }
+    },
+    {
+      "name": "AthleteDemoted",
+      "trigger": "P1 event. Reason REQUIRED (rare — usually for RTP-related reasons).",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyDemotion"],
+      "payload": {
+        "assignment_id": "ULID",
+        "athlete_id": "ULID",
+        "from_stage": "int",
+        "to_stage": "int",
+        "demoted_by_user_id": "ULID",
+        "reason": "string"
+      }
+    },
+    {
+      "name": "GoalSet",
+      "trigger": "New AthleteGoal row (SMART goal for an athlete).",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyGoalSet"],
+      "payload": {
+        "goal_id": "ULID (dgl_*)",
+        "athlete_id": "ULID",
+        "coach_user_id": "ULID",
+        "target_date": "date",
+        "goal_type": "'skill'|'performance'|'attendance'|'other'"
+      }
+    },
+    {
+      "name": "GoalAchieved",
+      "trigger": "Goal marked achieved.",
+      "consumers": ["awards::ConsiderGoalAward", "notifications::CelebrateGoalAchieved"],
+      "payload": { "goal_id": "ULID", "athlete_id": "ULID", "achieved_at": "ISO 8601" }
+    },
+    {
+      "name": "ScoutingReportFiled",
+      "trigger": "P1 event. Scout filed a scouting report on an athlete (may be from another tenant). Compliance audit chain.",
+      "consumers": [
+        "audit::WriteToAuditLog (retention 7yr)",
+        "notifications::NotifyScoutingReport"
+      ],
+      "payload": {
+        "report_id": "ULID (dsc_*)",
+        "scouted_athlete_id": "ULID",
+        "scout_user_id": "ULID",
+        "rating": "int",
+        "recommendation": "'sign'|'monitor'|'reject'|'refer'"
+      }
+    }
+  ]
 }

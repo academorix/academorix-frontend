@@ -1258,7 +1258,7 @@
     "aic_": {
       "module": "ai",
       "entity": "AiConversation",
-      "description": "Persona-scoped chat conversation — user_id + persona + title + status. Message history tenant-scoped."
+      "description": "Tenant-scoped metadata wrapper over the vendor `agent_conversations` table owned by laravel/ai (Conversational + RememberConversation). Adds tenant_id + persona + cost totals for admin visibility. The vendor table owns the message history; this row owns the tenant/audit envelope."
     },
     "arv_": {
       "module": "ai",
@@ -1299,6 +1299,51 @@
       "module": "admin-console",
       "entity": "AdminDashboardConfig",
       "description": "Per-tenant admin dashboard configuration — enabled_widgets + layout + recent_actions cache."
+    },
+    "adr_": {
+      "module": "ai",
+      "entity": "AiDraft",
+      "description": "Draft-then-confirm envelope for WriteMode::Draft tool invocations. status IN open/confirmed/expired/discarded (DraftStatus enum). Every WritableTool.handle() locks writes into an AiDraft; POST /ai/drafts/{id}/confirm applies the pending change after human review. action_payload IMMUTABLE post-create."
+    },
+    "evi_": {
+      "module": "event",
+      "entity": "EventInvitation",
+      "description": "Invitation for an athlete or user to attend a scheduled activity (Event / Session / Match / Training). Polymorphic on (event_type + event_id). Composite unique (tenant_id, event_type, event_id, athlete_id). Consumed by attendance pre-fill: confirmed invitations become the expected roster on the session/match. Cascade delete when the parent activity is cancelled."
+    },
+    "rsv_": {
+      "module": "event",
+      "entity": "Rsvp",
+      "description": "RSVP response on an EventInvitation. Status IN pending / confirmed / declined / cancelled with optional note. State machine: pending → confirmed / declined; confirmed → cancelled (with reason, frees slot); declined → confirmed (changed mind). One RSVP per invitation via partial unique."
+    },
+    "ern_": {
+      "module": "event",
+      "entity": "EventReminder",
+      "description": "Throttled reminder log — records that a reminder was dispatched for an invitation, prevents double-fire within 24h. Kinds: first_reminder / final_reminder / chase / cancelled_slot_freed."
+    },
+    "csb_": {
+      "module": "event",
+      "entity": "CalendarSubscription",
+      "description": "Per-user calendar feed subscription (iCal / ICS). Generates a signed feed URL that filters events by the user (their invitations + their athletes invitations for guardians). Regenerated on token rotation."
+    },
+    "srg_": {
+      "module": "registrations",
+      "entity": "Registration",
+      "description": "Sales / enrollment funnel record — state LEAD → CONTACTED → TRIAL → OFFERED → ENROLLED with side-branches WAITLISTED / DECLINED / EXPIRED. Converts to an athlete + athlete-enrollment + invoice on ENROLLED terminal. Distinct from access/invitations (auth invites) and crm-leads (marketing pipeline)."
+    },
+    "trb_": {
+      "module": "registrations",
+      "entity": "TrialBooking",
+      "description": "Trial (taster) session booked as part of a Registration. References a facility slot + coach. On attend → transition Registration to CONTACTED → OFFER path; on no-show → Registration stays at TRIAL for follow-up."
+    },
+    "wle_": {
+      "module": "registrations",
+      "entity": "WaitlistEntry",
+      "description": "Position-ordered waitlist entry when a Team + Season combo is at capacity. Monotonic position within (tenant, season, team). Auto-offer on capacity free via AutoOfferOnCapacityFreedJob."
+    },
+    "off_": {
+      "module": "registrations",
+      "entity": "Offer",
+      "description": "Time-boxed offer created when a Registration reaches OFFERED (either directly or via waitlist auto-offer). expires_at + auto_decline_on_expire. On accept → creates athlete + athlete-enrollment + invoice atomically. On expire → transition Registration to EXPIRED + trigger next in line."
     }
   },
   "renaming_history": [

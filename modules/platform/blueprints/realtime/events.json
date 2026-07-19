@@ -1,7 +1,88 @@
 {
   "id": "academorix://modules/realtime/events",
   "$version": 1,
-  "title": "realtime — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "realtime — published events",
+  "namespace": "Academorix\\Realtime\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit`. Auth + subscription lifecycle events feed the monitoring dashboards (broadcast health) + audit trail. Presence-join/leave events are HIGH-VOLUME — audit only samples them.",
+  "events": [
+    {
+      "name": "BroadcastChannelRegistered",
+      "queue": "realtime",
+      "trigger": "New BroadcastChannel row committed via #[AsBroadcastChannel] discovery at boot.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "channel_id": "ULID (bch_*)",
+        "tenant_id": "ULID",
+        "namespace": "string",
+        "channel_type": "'public' | 'private' | 'presence'"
+      }
+    },
+    {
+      "name": "SubscriptionAuthorized",
+      "queue": "realtime",
+      "trigger": "Reverb broadcasting/auth endpoint issued a signed channel URL for a User.",
+      "consumers": ["audit::WriteToAuditLog", "monitoring::TrackAuthLatency"],
+      "payload": {
+        "subscription_id": "ULID (bsn_*)",
+        "tenant_id": "ULID",
+        "channel_id": "ULID",
+        "user_id": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "SubscriptionRefused",
+      "queue": "realtime",
+      "trigger": "P1 event. Auth callback returned false OR TenantBoundaryEnforcer refused a cross-tenant channel name. Fail-closed.",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 90 days)",
+        "activity::WriteToActivityLog",
+        "monitoring::AlertOnAuthRefusalRate"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "channel_namespace": "string",
+        "user_id": "ULID | null",
+        "reason_code": "'tenant_boundary' | 'authorize_callback_false' | 'channel_not_found'"
+      }
+    },
+    {
+      "name": "SubscriptionDisconnected",
+      "queue": "realtime",
+      "trigger": "WebSocket closed. Fires normally on tab-close / route change. High volume.",
+      "consumers": ["cache::InvalidatePresenceCache"],
+      "payload": { "subscription_id": "ULID", "tenant_id": "ULID", "disconnected_at": "ISO 8601" }
+    },
+    {
+      "name": "PresenceJoined",
+      "queue": "realtime",
+      "trigger": "User joined a presence channel. High volume — audit sampling only.",
+      "consumers": ["cache::UpdatePresenceRoster"],
+      "payload": {
+        "presence_id": "ULID (prs_*)",
+        "tenant_id": "ULID",
+        "channel_id": "ULID",
+        "user_id": "ULID"
+      }
+    },
+    {
+      "name": "PresenceLeft",
+      "queue": "realtime",
+      "trigger": "User left a presence channel (explicit unsubscribe OR disconnect). High volume.",
+      "consumers": ["cache::UpdatePresenceRoster"],
+      "payload": {
+        "presence_id": "ULID",
+        "tenant_id": "ULID",
+        "channel_id": "ULID",
+        "user_id": "ULID"
+      }
+    },
+    {
+      "name": "PresenceHeartbeat",
+      "queue": "realtime",
+      "trigger": "Periodic heartbeat from a connected client. Refreshes last_heartbeat_at; presence rows are purged 15m after last heartbeat.",
+      "consumers": ["cache::UpdatePresenceHeartbeat"],
+      "payload": { "presence_id": "ULID", "tenant_id": "ULID", "heartbeat_at": "ISO 8601" }
+    }
+  ]
 }

@@ -1,7 +1,78 @@
 {
   "id": "academorix://modules/admin-console/events",
   "$version": 1,
-  "title": "admin-console — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "admin-console — published events",
+  "namespace": "Academorix\\Platform\\AdminConsole\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Platform admin surface. Every action is HIGHLY audited — retention 7yr for compliance. Impersonation events flag potential support-team abuse.",
+  "events": [
+    {
+      "name": "PlatformAdminActionLogged",
+      "trigger": "Any platform-admin action (any endpoint under /api/v1/platform/*) — auto-logged by ObservePlatformAdmin middleware.",
+      "consumers": ["audit::WriteToAuditLog (retention 7yr)"],
+      "payload": {
+        "action_id": "ULID",
+        "platform_user_id": "ULID (plu_*)",
+        "action_kind": "string",
+        "target_tenant_id": "ULID|null",
+        "target_resource_type": "string|null",
+        "target_resource_id": "ULID|null",
+        "duration_ms": "int"
+      }
+    },
+    {
+      "name": "ImpersonationStarted",
+      "trigger": "P0 event. Platform admin impersonated a tenant user for support. Full audit + notify tenant owner.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifyTenantOwnerOfImpersonation"],
+      "payload": {
+        "impersonation_id": "ULID (imp_*)",
+        "platform_user_id": "ULID",
+        "target_user_id": "ULID",
+        "target_tenant_id": "ULID",
+        "reason": "string",
+        "expires_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ImpersonationEnded",
+      "trigger": "P0 event. Impersonation session ended.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "impersonation_id": "ULID", "duration_minutes": "int" }
+    },
+    {
+      "name": "TenantSuspended",
+      "trigger": "P0 event. Platform admin suspended a tenant. All tenant users are logged out; scheduled jobs paused.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::NotifyTenantOwnerSuspended",
+        "jobs::PauseTenantSchedulesJob"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "suspended_by_platform_user_id": "ULID",
+        "reason": "string"
+      }
+    },
+    {
+      "name": "TenantUnsuspended",
+      "trigger": "P1 event. Tenant reinstated.",
+      "consumers": ["audit::WriteToAuditLog", "jobs::ResumeTenantSchedulesJob"],
+      "payload": { "tenant_id": "ULID", "unsuspended_by_platform_user_id": "ULID" }
+    },
+    {
+      "name": "TenantDataExported",
+      "trigger": "P1 event. Full tenant data export requested + generated. GDPR portability.",
+      "consumers": [
+        "audit::WriteToAuditLog (retention indefinite)",
+        "notifications::NotifyTenantOwnerOfExport"
+      ],
+      "payload": {
+        "export_id": "ULID",
+        "tenant_id": "ULID",
+        "exported_by_platform_user_id": "ULID",
+        "row_count": "bigint",
+        "file_size_bytes": "bigint"
+      }
+    }
+  ]
 }

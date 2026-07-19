@@ -2,6 +2,39 @@
   "id": "academorix://modules/formations/policies",
   "$version": 1,
   "title": "formations — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "policies": [
+    {
+      "model": "Formation",
+      "class": "Academorix\\Sports\\Formations\\Policies\\FormationPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "formations.viewAny",
+          "scope": "team coach + team members + admin"
+        },
+        { "action": "view", "permission": "formations.view" },
+        { "action": "create", "permission": "formations.create", "scope": "coach + admin + owner" },
+        { "action": "update", "permission": "formations.update", "scope": "author + admin" },
+        { "action": "delete", "permission": "formations.delete", "scope": "author + admin + owner" }
+      ]
+    },
+    {
+      "model": "SetPiece",
+      "class": "Academorix\\Sports\\Formations\\Policies\\SetPiecePolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "formations.set-pieces.viewAny" },
+        { "action": "view", "permission": "formations.set-pieces.view" },
+        {
+          "action": "create",
+          "permission": "formations.set-pieces.create",
+          "scope": "coach + admin + owner"
+        },
+        {
+          "action": "update",
+          "permission": "formations.set-pieces.update",
+          "scope": "author + admin"
+        }
+      ]
+    }
+  ]
 }

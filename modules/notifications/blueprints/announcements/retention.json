@@ -2,6 +2,32 @@
   "id": "academorix://modules/announcements/retention",
   "$version": 1,
   "title": "announcements — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "Announcement",
+      "hot_days": 90,
+      "warm_days": 365,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["status IN ('draft','archived','cancelled')"],
+      "description": "Draft or archived announcements: 90d hot, 1yr warm, purge."
+    },
+    {
+      "entity": "Announcement",
+      "hot_days": 90,
+      "warm_days": 730,
+      "cold_days": null,
+      "on_purge": "soft_delete",
+      "conditions": ["status = 'published'"],
+      "description": "Published announcements retained 2 years — historical communication trail."
+    },
+    {
+      "entity": "AnnouncementDelivery",
+      "hot_days": 90,
+      "warm_days": 365,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "HIGH VOLUME. 90d hot, 1yr warm, purge. Aggregate read/delivery stats retained on parent."
+    }
+  ]
 }

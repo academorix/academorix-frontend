@@ -2,6 +2,98 @@
   "id": "academorix://modules/expenses/permissions",
   "$version": 1,
   "title": "expenses — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Finance\\Expenses\\Database\\Seeders\\ExpensesPermissionSeeder",
+  "isSystem": true,
+  "description": "Money-out audit surface. Approval thresholds enforced by policy, not by permission — coaches may hold expenses.approve but the policy caps their approval at expense.approve.threshold entitlement.",
+  "permissions": [
+    {
+      "name": "expenses.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.submit",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.approve",
+      "guard": "sanctum",
+      "description": "Threshold-gated by entitlement. Self-approval blocked.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.reject",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    { "name": "expenses.mark-paid", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "expenses.cancel",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.delete",
+      "guard": "sanctum",
+      "description": "Draft state only.",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.attachments.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.attachments.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.attachments.delete",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    { "name": "expenses.payroll.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "expenses.payroll.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "expenses.payroll.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "expenses.payroll.approve",
+      "guard": "sanctum",
+      "description": "Batches over $10k require owner.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "expenses.vendors.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.vendors.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.vendors.create",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "expenses.vendors.update",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    { "name": "expenses.vendors.archive", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "platform.expenses.audit",
+      "guard": "platform_admin",
+      "description": "Cross-tenant expense audit. Aggregate totals only; no receipts.",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
 }

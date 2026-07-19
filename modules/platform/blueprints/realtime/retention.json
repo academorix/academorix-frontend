@@ -2,6 +2,32 @@
   "id": "academorix://modules/realtime/retention",
   "$version": 1,
   "title": "realtime — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "Ephemeral module. Presence rows evicted 15m after last heartbeat. Subscription rows purged 30d post-disconnect. Channels retained indefinitely (config).",
+  "policies": [
+    {
+      "entity": "BroadcastChannel",
+      "hot_days": null,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "Retained indefinitely while registered. On deregistration + no active subscriptions: hard delete."
+    },
+    {
+      "entity": "BroadcastSubscription",
+      "hot_days": 30,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "30 days post-disconnect. Ephemeral connection state."
+    },
+    {
+      "entity": "Presence",
+      "hot_days": null,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["last_heartbeat_at > 15m ago"],
+      "description": "Evicted 15m after last heartbeat. Redis-backed with periodic postgres snapshot."
+    }
+  ]
 }

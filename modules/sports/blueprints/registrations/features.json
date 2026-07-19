@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/registrations/features",
+  "$version": 1,
+  "title": "registrations — feature keys",
+  "features": [
+    {
+      "key": "registrations.core",
+      "displayName": "Enrollment funnel",
+      "description": "Master feature. Registration → contacted → trial → offer → enrolled.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "registrations.public_form",
+      "displayName": "Public registration form",
+      "description": "Anonymous public form on tenant public site + custom domains.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "registrations.trial_booking",
+      "displayName": "Trial (taster) session booking",
+      "description": "Book trial sessions as part of the funnel.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "registrations.waitlist",
+      "displayName": "Team capacity waitlist",
+      "description": "Position-ordered waitlist per (team, season).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "registrations.auto_offer",
+      "displayName": "Automatic waitlist auto-offer",
+      "description": "AutoOfferOnCapacityFreedJob fires when a team slot frees. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "registrations.signed_accept_url",
+      "displayName": "Signed offer accept URL",
+      "description": "Guardian accepts offer without a login via signed URL.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "registrations.age_gate",
+      "displayName": "Season age gate",
+      "description": "ValidateAgeAgainstSeason on trial + offer + convert transitions.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

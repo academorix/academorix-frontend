@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/registrations/hooks",
+  "$version": 1,
+  "title": "registrations — tenant hooks",
+  "description": "Per-tenant lifecycle callbacks (log context, cache prefix, cache invalidation).",
+  "hooks": []
+}

@@ -2,6 +2,99 @@
   "id": "academorix://modules/development/permissions",
   "$version": 1,
   "title": "development — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\Development\\Database\\Seeders\\DevelopmentPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "development.pathways.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.pathways.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    { "name": "development.pathways.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "development.pathways.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "development.pathways.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "development.assignments.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.assignments.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.assignments.assign",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.assignments.promote",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.assignments.demote",
+      "guard": "sanctum",
+      "description": "Reason REQUIRED. Full audit chain.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.goals.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.goals.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.goals.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.goals.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.goals.mark-achieved",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.scouting.viewAny",
+      "guard": "sanctum",
+      "description": "Scouting reports are sensitive — restricted access.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.scouting.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.scouting.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "development.scouting.delete",
+      "guard": "sanctum",
+      "seededOn": ["coach", "admin", "owner"]
+    },
+    {
+      "name": "platform.development.audit",
+      "guard": "platform_admin",
+      "description": "Cross-tenant scouting analytics (federation-level).",
+      "seededOn": ["super_admin"]
+    }
+  ]
 }

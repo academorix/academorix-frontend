@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/event/schemas/event-reminder",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "EventReminder",
+  "description": "Throttled reminder log — records that a reminder was dispatched for an invitation, prevents double-fire within 24h. Kinds: first_reminder / final_reminder / chase / cancelled_slot_freed. Used by ThrottleRemindersJob to enforce max 1 reminder / invitation / 24h.",
+  "type": "object",
+  "x-module": "event",
+  "x-eloquent": {
+    "table": "event_reminders",
+    "keyPrefix": "ern_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "event_invitation_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "event_invitations", "column": "id", "onDelete": "cascade" }
+      },
+      "kind": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "first_reminder / final_reminder / chase / cancelled_slot_freed."
+      },
+      "dispatched_at": { "type": "timestamptz", "nullable": false },
+      "dispatched_via": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "email / sms / push / in_app / webhook."
+      },
+      "delivery_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "notifications module delivery reference."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "event_invitation_id", "kind"],
+        "name": "event_reminders_invitation_kind_idx"
+      },
+      { "columns": ["tenant_id", "dispatched_at"], "name": "event_reminders_time_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "event_invitation_id",
+    "kind",
+    "dispatched_at",
+    "dispatched_via",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ern_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": {
+      "type": "string",
+      "enum": ["first_reminder", "final_reminder", "chase", "cancelled_slot_freed"]
+    },
+    "dispatched_via": { "type": "string", "enum": ["email", "sms", "push", "in_app", "webhook"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Max 1 reminder per invitation per 24h — enforced by ThrottleRemindersJob checking latest dispatched_at."
+  ]
+}

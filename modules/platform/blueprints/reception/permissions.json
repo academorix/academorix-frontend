@@ -2,6 +2,67 @@
   "id": "academorix://modules/reception/permissions",
   "$version": 1,
   "title": "reception — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Platform\\Reception\\Database\\Seeders\\ReceptionPermissionSeeder",
+  "isSystem": true,
+  "description": "Reception permissions gate the front-desk UI. Underlying operations (credential issuance, day pass sale, registration creation) also check their own module permissions.",
+  "permissions": [
+    {
+      "name": "reception.visitors.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.visitors.view",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.visitors.check-in",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.visitors.check-out",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.visitors.convert",
+      "guard": "sanctum",
+      "description": "Convert walk-in to registration + athlete.",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.shifts.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.shifts.view",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.shifts.start",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.shifts.end",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.shifts.reconcile",
+      "guard": "sanctum",
+      "description": "Cash drawer reconciliation. Alerts on discrepancy.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "reception.dashboard.realtime",
+      "guard": "sanctum",
+      "description": "Realtime reception dashboard access.",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    }
+  ]
 }

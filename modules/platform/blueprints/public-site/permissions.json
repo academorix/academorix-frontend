@@ -2,6 +2,28 @@
   "id": "academorix://modules/public-site/permissions",
   "$version": 1,
   "title": "public-site — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Platform\\PublicSite\\Database\\Seeders\\PublicSitePermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "public-site.pages.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "public-site.pages.view",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    { "name": "public-site.pages.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.pages.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.pages.publish", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.pages.archive", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.blocks.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.blocks.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.blocks.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.blocks.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.settings.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "public-site.settings.update", "guard": "sanctum", "seededOn": ["owner"] }
+  ]
 }

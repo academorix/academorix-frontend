@@ -2,6 +2,34 @@
   "id": "academorix://modules/formations/features",
   "$version": 1,
   "title": "formations — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "formations.core",
+      "displayName": "Tactical formations",
+      "description": "Master feature — formations + set-pieces.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "formations.set_pieces",
+      "displayName": "Set-piece plays",
+      "description": "Corner kicks, timeout plays, penalty routines.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "formations.animation_editor",
+      "displayName": "Animated tactical editor",
+      "description": "Draw player movements + timing on tactical board. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "formations.match_integration",
+      "displayName": "Apply to match lineups",
+      "description": "Assign a formation to a match's starting XI directly.",
+      "defaultEnabled": true,
+      "planTiers": ["medium", "enterprise"]
+    }
+  ]
 }

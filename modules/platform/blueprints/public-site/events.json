@@ -1,7 +1,62 @@
 {
   "id": "academorix://modules/public-site/events",
   "$version": 1,
-  "title": "public-site — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "public-site — published events",
+  "namespace": "Academorix\\Platform\\PublicSite\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Public tenant marketing site (custom subdomain). Blocks + pages + navigation. Read-heavy; every publish triggers CDN cache invalidation.",
+  "events": [
+    {
+      "name": "PagePublished",
+      "trigger": "Page committed with status=published. CDN cache invalidated.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateCdn"
+      ],
+      "payload": {
+        "page_id": "ULID (pgs_*)",
+        "tenant_id": "ULID",
+        "slug": "string",
+        "published_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "PageArchived",
+      "trigger": "Page removed from live site.",
+      "consumers": ["audit::WriteToAuditLog", "cache::InvalidateCdn"],
+      "payload": { "page_id": "ULID", "archived_by_user_id": "ULID" }
+    },
+    {
+      "name": "BlockUpdated",
+      "trigger": "Reusable block updated. All pages containing it are re-rendered.",
+      "consumers": ["audit::WriteToAuditLog", "jobs::RerenderPagesJob", "cache::InvalidateCdn"],
+      "payload": {
+        "block_id": "ULID (bkc_*)",
+        "updated_by_user_id": "ULID",
+        "affected_page_count": "int"
+      }
+    },
+    {
+      "name": "PublicFormSubmitted",
+      "trigger": "Form on public site submitted (contact / trial-request / newsletter).",
+      "consumers": [
+        "registrations::MaybeCreateLead",
+        "notifications::NotifyOwner",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "form_slug": "string",
+        "tenant_id": "ULID",
+        "captured_at": "ISO 8601",
+        "ip_address_masked": "string"
+      }
+    },
+    {
+      "name": "CdnInvalidationCompleted",
+      "trigger": "Async CDN purge finished. Optional page-level SLA tracking.",
+      "consumers": ["monitoring::TrackCdnPurgeLatency"],
+      "payload": { "invalidation_id": "ULID", "urls_purged": "int", "duration_ms": "int" }
+    }
+  ]
 }

@@ -2,6 +2,48 @@
   "id": "academorix://modules/reception/features",
   "$version": 1,
   "title": "reception — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "reception.core",
+      "displayName": "Reception dashboard",
+      "description": "Master feature — front-desk operational dashboard.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "reception.walk_in_conversion",
+      "displayName": "Walk-in → registration on the spot",
+      "description": "One-click conversion from visitor check-in to full registration + athlete.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "reception.day_pass_sale",
+      "displayName": "Day pass point-of-sale",
+      "description": "Sell one-time day passes at reception. Integrates with finance/payment.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "reception.cash_reconciliation",
+      "displayName": "Cash drawer reconciliation",
+      "description": "Track opening + closing cash + reconcile against POS transactions.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "reception.kiosk_self_check_in",
+      "displayName": "Self-service kiosk mode",
+      "description": "Athlete self-scan wristband at unattended kiosk.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "reception.visitor_photo_capture",
+      "displayName": "Visitor photo capture",
+      "description": "Capture visitor photo at check-in for temporary access pass. Enterprise + high-security venues.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

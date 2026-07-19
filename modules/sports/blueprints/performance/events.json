@@ -1,7 +1,75 @@
 {
   "id": "academorix://modules/performance/events",
   "$version": 1,
-  "title": "performance — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "performance — published events",
+  "namespace": "Academorix\\Sports\\Performance\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Test batteries + benchmarks. Every test result event feeds athlete progress + awards + reporting. BenchmarkBroken events trigger downstream award consideration + coach notification.",
+  "events": [
+    {
+      "name": "TestBatteryCreated",
+      "trigger": "New TestBattery row (assessment session with multiple tests).",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "battery_id": "ULID (tbt_*)",
+        "tenant_id": "ULID",
+        "sport_key": "string",
+        "created_by_user_id": "ULID",
+        "target_age_group_id": "ULID|null"
+      }
+    },
+    {
+      "name": "TestConducted",
+      "trigger": "Test administered to an athlete. Result recorded.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "progress::UpdateAthleteProgress"
+      ],
+      "payload": {
+        "test_result_id": "ULID (tst_*)",
+        "athlete_id": "ULID",
+        "test_definition_id": "ULID",
+        "raw_value": "float",
+        "unit": "string",
+        "administered_by_user_id": "ULID",
+        "conducted_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "BenchmarkBroken",
+      "trigger": "P1 event. Athlete beat existing benchmark (personal / team / branch / tenant / national). Cascade to awards.",
+      "consumers": [
+        "awards::ConsiderBenchmarkAward",
+        "notifications::NotifyBenchmarkBroken",
+        "realtime::BroadcastBenchmark"
+      ],
+      "payload": {
+        "test_result_id": "ULID",
+        "athlete_id": "ULID",
+        "benchmark_scope": "'personal'|'team'|'branch'|'tenant'|'national'",
+        "previous_holder_athlete_id": "ULID|null",
+        "previous_value": "float",
+        "new_value": "float"
+      }
+    },
+    {
+      "name": "TestResultAmended",
+      "trigger": "P1 event. Result corrected. Full audit chain.",
+      "consumers": ["audit::WriteToAuditLog (retention 7yr)", "notifications::NotifyResultAmended"],
+      "payload": {
+        "test_result_id": "ULID",
+        "previous_value": "float",
+        "new_value": "float",
+        "amended_by_user_id": "ULID",
+        "reason": "string"
+      }
+    },
+    {
+      "name": "PerformanceProfileUpdated",
+      "trigger": "Athlete's performance profile recomputed (weighted average of recent test results + trend line).",
+      "consumers": ["ai::UpdatePerformanceEmbedding", "reporting::UpdatePerformanceDashboard"],
+      "payload": { "athlete_id": "ULID", "profile_id": "ULID (prf_*)", "computed_at": "ISO 8601" }
+    }
+  ]
 }

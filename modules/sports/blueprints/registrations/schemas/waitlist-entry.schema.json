@@ -1,0 +1,113 @@
+{
+  "id": "academorix://modules/registrations/schemas/waitlist-entry",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "WaitlistEntry",
+  "description": "Position-ordered waitlist entry when a Team+Season is at capacity. Monotonic position within (tenant, season, team). AutoOfferOnCapacityFreedJob picks the head-of-queue when a slot frees and transitions their Registration to OFFERED.",
+  "type": "object",
+  "x-module": "registrations",
+  "x-eloquent": {
+    "table": "waitlist_entries",
+    "keyPrefix": "wle_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "registration_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "registrations", "column": "id", "onDelete": "cascade" }
+      },
+      "season_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "seasons", "column": "id", "onDelete": "restrict" }
+      },
+      "team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" }
+      },
+      "position": {
+        "type": "integer",
+        "nullable": false,
+        "description": "1-indexed position; head = 1."
+      },
+      "auto_offer_enabled": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "true",
+        "description": "When true, AutoOfferOnCapacityFreedJob offers automatically. False = manual dispatch by admin."
+      },
+      "removed_at": { "type": "timestamptz", "nullable": true },
+      "removed_reason": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "offer_extended / offer_accepted / abandoned / manually_removed."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "season_id", "team_id", "position"],
+        "unique": true,
+        "name": "waitlist_entries_position_unique",
+        "predicate": "deleted_at IS NULL AND removed_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "registration_id"],
+        "unique": true,
+        "name": "waitlist_entries_registration_unique",
+        "predicate": "deleted_at IS NULL AND removed_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "registration_id",
+    "season_id",
+    "team_id",
+    "position",
+    "auto_offer_enabled",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^wle_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "position": { "type": "integer", "minimum": 1 }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "position monotonic within (tenant, season, team) — enforced by unique partial index.",
+    "One active entry per (registration) — a registration cannot occupy multiple positions.",
+    "Reorder operation shifts everyone else + logs the reorder in audit.",
+    "removed_at + removed_reason set together on removal."
+  ]
+}

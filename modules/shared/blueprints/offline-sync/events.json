@@ -1,7 +1,63 @@
 {
   "id": "academorix://modules/offline-sync/events",
   "$version": 1,
-  "title": "offline-sync — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "offline-sync — published events",
+  "namespace": "Academorix\\Shared\\OfflineSync\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Mobile / desktop offline-first sync substrate. Every device tracks its own outbox + inbox; conflicts resolved by last-writer-wins with client-timestamp OR merge strategy per aggregate.",
+  "events": [
+    {
+      "name": "SyncDeviceRegistered",
+      "trigger": "New SyncDevice row. Device registered with server + granted a client_id.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "device_id": "ULID (syd_*)",
+        "tenant_id": "ULID",
+        "user_id": "ULID",
+        "platform": "'ios'|'android'|'macos'|'windows'|'web'",
+        "app_version": "string"
+      }
+    },
+    {
+      "name": "SyncBatchReceived",
+      "trigger": "Client pushed a batch of outbox ops to server.",
+      "consumers": ["audit::WriteToAuditLog (sampled 5%)"],
+      "payload": {
+        "batch_id": "ULID (syb_*)",
+        "device_id": "ULID",
+        "op_count": "int",
+        "conflict_count": "int"
+      }
+    },
+    {
+      "name": "SyncOpApplied",
+      "trigger": "Server successfully applied one op from a batch. HIGH VOLUME.",
+      "consumers": ["realtime::BroadcastAppliedOp"],
+      "payload": {
+        "op_id": "ULID (syo_*)",
+        "aggregate_type": "string",
+        "aggregate_id": "ULID",
+        "op_kind": "'create'|'update'|'delete'",
+        "applied_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "SyncConflictDetected",
+      "trigger": "P1 event. Op conflicted with server state. Resolution strategy applied per aggregate.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::AlertOnConflictRate"],
+      "payload": {
+        "op_id": "ULID",
+        "device_id": "ULID",
+        "aggregate_type": "string",
+        "aggregate_id": "ULID",
+        "resolution": "'last_writer_wins'|'merge'|'client_reject'|'user_prompt'"
+      }
+    },
+    {
+      "name": "SyncOpRejected",
+      "trigger": "P0 event. Op rejected — authz failure OR aggregate-not-found OR tenant-boundary breach.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::AlertOpsOfRejection"],
+      "payload": { "op_id": "ULID", "device_id": "ULID", "reason_code": "string" }
+    }
+  ]
 }

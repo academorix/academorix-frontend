@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/registrations/policies",
+  "$version": 1,
+  "title": "registrations — authorization policies",
+  "policies": [
+    {
+      "model": "Registration",
+      "class": "Academorix\\Sports\\Registrations\\Policies\\RegistrationPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "registrations.viewAny",
+          "scope": "own submissions + owner assigned + admin"
+        },
+        { "action": "view", "permission": "registrations.view" },
+        { "action": "create", "permission": "registrations.create" },
+        { "action": "update", "permission": "registrations.update" },
+        { "action": "contact", "permission": "registrations.contact" },
+        {
+          "action": "decline",
+          "permission": "registrations.decline",
+          "scope": "owner + admin. Reason REQUIRED"
+        },
+        {
+          "action": "delete",
+          "permission": "registrations.delete",
+          "scope": "admin + owner. Lead state only"
+        }
+      ]
+    },
+    {
+      "model": "TrialBooking",
+      "class": "Academorix\\Sports\\Registrations\\Policies\\TrialBookingPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "registrations.trials.viewAny" },
+        { "action": "view", "permission": "registrations.trials.view" },
+        { "action": "create", "permission": "registrations.trials.create" },
+        { "action": "reschedule", "permission": "registrations.trials.reschedule" },
+        {
+          "action": "markAttended",
+          "permission": "registrations.trials.mark-attended",
+          "scope": "coach + admin"
+        },
+        {
+          "action": "markNoShow",
+          "permission": "registrations.trials.mark-no-show",
+          "scope": "coach + admin"
+        }
+      ]
+    },
+    {
+      "model": "WaitlistEntry",
+      "class": "Academorix\\Sports\\Registrations\\Policies\\WaitlistEntryPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "registrations.waitlist.viewAny" },
+        { "action": "view", "permission": "registrations.waitlist.view" },
+        {
+          "action": "reorder",
+          "permission": "registrations.waitlist.reorder",
+          "scope": "admin + owner. Full audit chain"
+        },
+        { "action": "remove", "permission": "registrations.waitlist.remove" }
+      ]
+    },
+    {
+      "model": "Offer",
+      "class": "Academorix\\Sports\\Registrations\\Policies\\OfferPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "registrations.offers.viewAny" },
+        { "action": "view", "permission": "registrations.offers.view" },
+        {
+          "action": "create",
+          "permission": "registrations.offers.create",
+          "scope": "branch_manager + admin + owner"
+        },
+        {
+          "action": "extend",
+          "permission": "registrations.offers.extend",
+          "scope": "admin + owner. Reason REQUIRED"
+        },
+        { "action": "withdraw", "permission": "registrations.offers.withdraw" },
+        {
+          "action": "publicAccept",
+          "permission": null,
+          "scope": "public via signed URL. Signature validates identity + expiry"
+        }
+      ]
+    }
+  ]
+}

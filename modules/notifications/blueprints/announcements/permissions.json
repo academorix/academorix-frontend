@@ -2,6 +2,96 @@
   "id": "academorix://modules/announcements/permissions",
   "$version": 1,
   "title": "announcements — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Notifications\\Announcements\\Database\\Seeders\\AnnouncementsPermissionSeeder",
+  "isSystem": true,
+  "description": "Audience scope is enforced dynamically: a coach can publish to own teams; branch_manager to own branch; admin/owner tenant-wide. Recipients see announcements matching their audience membership.",
+  "permissions": [
+    {
+      "name": "announcements.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "announcements.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "announcements.create",
+      "guard": "sanctum",
+      "description": "Draft an announcement. Audience must intersect caller's scopes.",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "announcements.update",
+      "guard": "sanctum",
+      "description": "Draft state only.",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "announcements.publish",
+      "guard": "sanctum",
+      "description": "Publish. Tenant-wide audience requires admin/owner.",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "announcements.retract",
+      "guard": "sanctum",
+      "description": "Retract published announcement.",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "announcements.delete",
+      "guard": "sanctum",
+      "description": "Draft state only.",
+      "seededOn": ["coach", "medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "announcements.schedule",
+      "guard": "sanctum",
+      "description": "Schedule future publish.",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "announcements.channels.sms",
+      "guard": "sanctum",
+      "description": "Use SMS channel. Gated by per-tenant SMS-credit entitlement.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "announcements.channels.push",
+      "guard": "sanctum",
+      "description": "Use push notification channel.",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "announcements.channels.email",
+      "guard": "sanctum",
+      "seededOn": ["coach", "medical", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "platform.announcements.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant announcement audit.",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
 }

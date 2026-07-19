@@ -2,6 +2,70 @@
   "id": "academorix://modules/admin-console/policies",
   "$version": 1,
   "title": "admin-console — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Platform admin only. Guard = platform_admin. Every action requires super_admin OR the specific ops role, and every action fires the ObservePlatformAdmin middleware audit chain.",
+  "policies": [
+    {
+      "model": "Impersonation",
+      "class": "Academorix\\Platform\\AdminConsole\\Policies\\ImpersonationPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "platform.impersonations.viewAny",
+          "guard": "platform_admin",
+          "scope": "super_admin + security_audit"
+        },
+        {
+          "action": "view",
+          "permission": "platform.impersonations.view",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "start",
+          "permission": "platform.impersonations.start",
+          "guard": "platform_admin",
+          "scope": "support + super_admin. Reason REQUIRED"
+        },
+        {
+          "action": "end",
+          "permission": "platform.impersonations.end",
+          "guard": "platform_admin",
+          "scope": "self OR super_admin"
+        }
+      ]
+    },
+    {
+      "model": "TenantSuspension",
+      "class": "Academorix\\Platform\\AdminConsole\\Policies\\TenantSuspensionPolicy",
+      "abilities": [
+        {
+          "action": "suspend",
+          "permission": "platform.tenants.suspend",
+          "guard": "platform_admin",
+          "scope": "super_admin only. Non-reversible without super_admin approval"
+        },
+        {
+          "action": "unsuspend",
+          "permission": "platform.tenants.unsuspend",
+          "guard": "platform_admin"
+        }
+      ]
+    },
+    {
+      "model": "TenantDataExport",
+      "class": "Academorix\\Platform\\AdminConsole\\Policies\\TenantDataExportPolicy",
+      "abilities": [
+        {
+          "action": "create",
+          "permission": "platform.tenants.export",
+          "guard": "platform_admin",
+          "scope": "super_admin + compliance. Full audit + notify tenant owner"
+        },
+        {
+          "action": "download",
+          "permission": "platform.tenants.export-download",
+          "guard": "platform_admin"
+        }
+      ]
+    }
+  ]
 }

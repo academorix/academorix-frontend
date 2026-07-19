@@ -2,6 +2,23 @@
   "id": "academorix://modules/crm-leads/retention",
   "$version": 1,
   "title": "crm-leads — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "Lead",
+      "hot_days": 365,
+      "warm_days": 1095,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["status IN ('lost','stale')"],
+      "description": "Lost leads: 3yr retention for marketing analytics."
+    },
+    {
+      "entity": "Lead",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["status = 'won'"],
+      "description": "Won leads retained indefinitely — link to Registration + Athlete."
+    },
+    { "entity": "FollowUpTask", "hot_days": 365, "on_purge": "hard_delete" }
+  ]
 }

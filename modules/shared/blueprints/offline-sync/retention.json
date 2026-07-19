@@ -2,6 +2,34 @@
   "id": "academorix://modules/offline-sync/retention",
   "$version": 1,
   "title": "offline-sync — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "SyncDevice",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["revoked_at IS NULL"]
+    },
+    {
+      "entity": "SyncDevice",
+      "hot_days": 90,
+      "on_purge": "hard_delete",
+      "conditions": ["revoked_at IS NOT NULL"]
+    },
+    {
+      "entity": "SyncBatch",
+      "hot_days": 30,
+      "warm_days": 90,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "Batch metadata purged after 90d. Applied ops persisted on their target aggregates."
+    },
+    {
+      "entity": "SyncConflict",
+      "hot_days": 90,
+      "warm_days": 365,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "Conflict analytics retention. Aggregate stats retained on parent."
+    }
+  ]
 }

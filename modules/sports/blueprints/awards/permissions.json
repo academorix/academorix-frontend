@@ -2,6 +2,51 @@
   "id": "academorix://modules/awards/permissions",
   "$version": 1,
   "title": "awards — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\Awards\\Database\\Seeders\\AwardsPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "awards.templates.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "awards.templates.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "awards.templates.create",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "awards.templates.update",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    { "name": "awards.templates.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "awards.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "awards.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "parent_guardian", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "awards.issue",
+      "guard": "sanctum",
+      "description": "Manual award issuance path. Auto-issuance happens via events.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "awards.revoke",
+      "guard": "sanctum",
+      "description": "Reason REQUIRED. 7yr audit retention.",
+      "seededOn": ["admin", "owner"]
+    }
+  ]
 }

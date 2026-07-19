@@ -2,6 +2,210 @@
   "id": "academorix://modules/competition/permissions",
   "$version": 1,
   "title": "competition — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\Competition\\Database\\Seeders\\CompetitionPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "competition.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition.create",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "competition.update",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "competition.publish",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "competition.cancel",
+      "guard": "sanctum",
+      "description": "Non-reversible. Full audit chain.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "competition.delete",
+      "guard": "sanctum",
+      "description": "Draft state only.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "competition-teams.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition-teams.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition-teams.register",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "competition-teams.withdraw",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    { "name": "competition-teams.reseed", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "competition-fixtures.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition-fixtures.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition-fixtures.record-result",
+      "guard": "sanctum",
+      "description": "First result entry. status: scheduled → completed.",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "competition-fixtures.amend-result",
+      "guard": "sanctum",
+      "description": "Post-match correction. Reason REQUIRED. Full audit chain.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "competition-fixtures.reschedule",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "competition-fixtures.mark-walkover",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "competition-standings.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition-standings.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition-brackets.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition-brackets.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "competition-brackets.progress",
+      "guard": "sanctum",
+      "description": "Break-glass manual progression override.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.competition.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant tournament oversight (federation feature).",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
 }

@@ -2,6 +2,48 @@
   "id": "academorix://modules/public-site/features",
   "$version": 1,
   "title": "public-site — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "public-site.core",
+      "displayName": "Public marketing site",
+      "description": "Master feature. Tenant public subdomain.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "public-site.custom_domain",
+      "displayName": "Custom domain",
+      "description": "Bring-your-own domain (e.g. www.example.com).",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "public-site.blocks_marketplace",
+      "displayName": "Block marketplace",
+      "description": "Pre-built reusable content blocks (hero / testimonial / pricing).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "public-site.public_forms",
+      "displayName": "Public forms (contact / trial-request)",
+      "description": "Embed forms on public pages. Handoff to crm-leads or registrations.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "public-site.seo_customization",
+      "displayName": "SEO metadata customisation",
+      "description": "Custom meta tags + OpenGraph + structured data. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "public-site.multi_language",
+      "displayName": "Multi-language pages",
+      "description": "Publish site in multiple locales. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

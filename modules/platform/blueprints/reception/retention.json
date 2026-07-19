@@ -2,6 +2,23 @@
   "id": "academorix://modules/reception/retention",
   "$version": 1,
   "title": "reception — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "Visitor logs are OPERATIONAL DATA — retained per K-12 policy (2 years for education venues). Front-desk shifts retained per financial audit window (7yr).",
+  "policies": [
+    {
+      "entity": "Visitor",
+      "hot_days": 90,
+      "warm_days": 730,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "90 days hot; 2 years warm; purge. K-12 policy default."
+    },
+    {
+      "entity": "FrontDeskShift",
+      "hot_days": 365,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Financial audit horizon — 7yr min. Cash reconciliation records retained indefinitely."
+    }
+  ]
 }

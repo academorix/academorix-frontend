@@ -1,7 +1,126 @@
 {
   "id": "academorix://modules/expenses/events",
   "$version": 1,
-  "title": "expenses — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "expenses — published events",
+  "namespace": "Academorix\\Finance\\Expenses\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Money-out audit trail. Every expense event carries the actor + amount + category. Approval events feed the reporting module's cash-flow dashboards.",
+  "events": [
+    {
+      "name": "ExpenseSubmitted",
+      "trigger": "New Expense row. status: draft → submitted. Awaiting approval.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::NotifyApprovers"
+      ],
+      "payload": {
+        "expense_id": "ULID (exp_*)",
+        "tenant_id": "ULID",
+        "submitter_user_id": "ULID",
+        "amount_minor": "bigint",
+        "currency": "string(3)",
+        "category": "string",
+        "vendor_id": "ULID|null"
+      }
+    },
+    {
+      "name": "ExpenseApproved",
+      "trigger": "status: submitted → approved. Pending payout.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::NotifySubmitter",
+        "reporting::UpdateCashFlowProjection"
+      ],
+      "payload": {
+        "expense_id": "ULID",
+        "approved_by_user_id": "ULID",
+        "approved_at": "ISO 8601",
+        "approval_notes": "string|null"
+      }
+    },
+    {
+      "name": "ExpenseRejected",
+      "trigger": "status: submitted → rejected. Reason REQUIRED.",
+      "consumers": ["audit::WriteToAuditLog", "notifications::NotifySubmitterRejected"],
+      "payload": {
+        "expense_id": "ULID",
+        "rejected_by_user_id": "ULID",
+        "rejection_reason": "string"
+      }
+    },
+    {
+      "name": "ExpensePaid",
+      "trigger": "status: approved → paid. External payment provider callback OR manual mark-paid.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "reporting::WriteToCashFlowLedger"
+      ],
+      "payload": {
+        "expense_id": "ULID",
+        "paid_at": "ISO 8601",
+        "payment_reference": "string",
+        "payment_method": "'bank_transfer'|'card'|'cash'|'check'"
+      }
+    },
+    {
+      "name": "ExpenseCancelled",
+      "trigger": "P1 event. Cancelled by submitter (draft) or admin (any state).",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "expense_id": "ULID", "cancelled_by_user_id": "ULID", "reason": "string" }
+    },
+    {
+      "name": "ExpenseAttachmentAdded",
+      "trigger": "Receipt / invoice attached to Expense.",
+      "consumers": ["audit::WriteToAuditLog", "compliance::VerifyOcrReceipt"],
+      "payload": {
+        "expense_id": "ULID",
+        "attachment_id": "ULID",
+        "file_id": "ULID",
+        "kind": "'receipt'|'invoice'|'contract'|'other'"
+      }
+    },
+    {
+      "name": "PayrollBatchCreated",
+      "trigger": "Payroll batch aggregated N staff payments.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::NotifyPayrollBatchReady"
+      ],
+      "payload": {
+        "batch_id": "ULID (pyr_*)",
+        "tenant_id": "ULID",
+        "period_start": "date",
+        "period_end": "date",
+        "staff_count": "int",
+        "total_amount_minor": "bigint"
+      }
+    },
+    {
+      "name": "PayrollBatchApproved",
+      "trigger": "Batch approved. Individual payments dispatched.",
+      "consumers": ["audit::WriteToAuditLog", "jobs::DispatchPayrollPaymentsJob"],
+      "payload": { "batch_id": "ULID", "approved_by_user_id": "ULID", "payment_count": "int" }
+    },
+    {
+      "name": "VendorCreated",
+      "trigger": "New Vendor row (money-out counterparty).",
+      "consumers": ["audit::WriteToAuditLog", "compliance::VerifyVendorTaxId"],
+      "payload": {
+        "vendor_id": "ULID (ven_*)",
+        "tenant_id": "ULID",
+        "name": "string",
+        "tax_id": "string|null"
+      }
+    },
+    {
+      "name": "VendorArchived",
+      "trigger": "Vendor marked inactive.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "vendor_id": "ULID", "archived_by_user_id": "ULID" }
+    }
+  ]
 }

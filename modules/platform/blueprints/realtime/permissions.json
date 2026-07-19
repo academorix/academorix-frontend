@@ -2,6 +2,65 @@
   "id": "academorix://modules/realtime/permissions",
   "$version": 1,
   "title": "realtime — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Realtime\\Database\\Seeders\\RealtimePermissionSeeder",
+  "isSystem": true,
+  "description": "Broadcast auth is via the channel's own authorize callback. These permissions govern the ADMIN surface for channel + subscription inventory.",
+  "permissions": [
+    { "name": "realtime.channels.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "realtime.channels.view", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "realtime.subscriptions.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "realtime.subscriptions.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "realtime.presence.read",
+      "guard": "sanctum",
+      "description": "Read the presence roster on a presence channel.",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "platform.realtime.channels.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.realtime.subscriptions.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant broadcast health monitoring.",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
+  ]
 }

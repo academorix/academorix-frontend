@@ -2,6 +2,34 @@
   "id": "academorix://modules/private-sessions/features",
   "$version": 1,
   "title": "private-sessions — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "private-sessions.core",
+      "displayName": "1:1 private sessions",
+      "description": "Master feature. Athletes book 1:1 sessions with coaches.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "private-sessions.credits_ledger",
+      "displayName": "Credits ledger",
+      "description": "Pack purchasing + credit balance + expiry.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "private-sessions.coach_scheduling",
+      "displayName": "Coach availability calendar",
+      "description": "Coaches publish availability windows.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "private-sessions.online_sessions",
+      "displayName": "Online (virtual) sessions",
+      "description": "Zoom/Meet integration for online 1:1s. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

@@ -2,6 +2,40 @@
   "id": "academorix://modules/messaging/retention",
   "$version": 1,
   "title": "messaging — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "Message retention is the trickiest in the codebase. Safeguarding compliance mandates 7yr retention of flagged messages; GDPR mandates deletion on user request; K-12 tenants require zero retention post-graduation. Multi-policy resolution defers to the STRICTEST setting.",
+  "policies": [
+    {
+      "entity": "Conversation",
+      "hot_days": 730,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "soft_delete",
+      "description": "Conversation shell retained 2 years post-last-message. Purged conversations retain member list + message count."
+    },
+    { "entity": "ConversationMember", "hot_days": null, "on_purge": "cascade_with_parent" },
+    {
+      "entity": "Message",
+      "hot_days": 365,
+      "warm_days": 730,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["safeguarding_flag_id IS NULL"],
+      "description": "Standard messages: hot 1yr, warm 2yr, purge. Flagged messages retained 7yr (audit compliance)."
+    },
+    {
+      "entity": "Message",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["safeguarding_flag_id IS NOT NULL"],
+      "description": "Safeguarding-flagged messages retained indefinitely for compliance audit."
+    },
+    { "entity": "MessageReaction", "hot_days": null, "on_purge": "cascade_with_parent" },
+    {
+      "entity": "MessageAttachment",
+      "hot_days": null,
+      "on_purge": "cascade_with_parent",
+      "description": "S3 objects purged with parent message. Safeguarding-flagged attachments retained 7yr like their messages."
+    }
+  ],
+  "gdpr_deletion": "On user account deletion, own messages replaced with '[Message deleted]' tombstone. Safeguarding-flagged messages retain full body under legal-hold exception (documented in compliance module)."
 }

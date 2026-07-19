@@ -2,6 +2,19 @@
   "id": "academorix://modules/performance/retention",
   "$version": 1,
   "title": "performance — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "TestBattery",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Test definitions retained indefinitely — historical result comparisons need them."
+    },
+    {
+      "entity": "TestResult",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Career-timeline provenance — athlete performance history retained forever."
+    },
+    { "entity": "PerformanceProfile", "hot_days": null, "on_purge": "keep_indefinitely" }
+  ]
 }

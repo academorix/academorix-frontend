@@ -2,6 +2,22 @@
   "id": "academorix://modules/digital-passes/retention",
   "$version": 1,
   "title": "digital-passes — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    {
+      "entity": "WalletPass",
+      "hot_days": null,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["status = 'revoked'"],
+      "description": "Revoked passes retained 7yr — financial audit (membership + pass provenance)."
+    },
+    {
+      "entity": "WalletPass",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["status IN ('issued','installed','updated')"],
+      "description": "Active passes retained while linked to a live membership."
+    }
+  ]
 }

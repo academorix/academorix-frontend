@@ -2,6 +2,85 @@
   "id": "academorix://modules/offline-sync/permissions",
   "$version": 1,
   "title": "offline-sync — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Shared\\OfflineSync\\Database\\Seeders\\OfflineSyncPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "offline-sync.devices.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "offline-sync.devices.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "offline-sync.devices.register",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "offline-sync.devices.revoke",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "offline-sync.batches.submit",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "parent_guardian",
+        "coach",
+        "medical",
+        "front_desk",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    { "name": "offline-sync.batches.viewAny", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "platform.offline-sync.audit",
+      "guard": "platform_admin",
+      "description": "Cross-tenant sync-latency + conflict-rate analytics.",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
 }

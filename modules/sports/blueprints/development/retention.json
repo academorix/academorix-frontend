@@ -2,6 +2,29 @@
   "id": "academorix://modules/development/retention",
   "$version": 1,
   "title": "development — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "policies": [
+    { "entity": "Pathway", "hot_days": null, "on_purge": "keep_indefinitely" },
+    {
+      "entity": "AthletePathwayAssignment",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Career-timeline provenance."
+    },
+    {
+      "entity": "AthleteGoal",
+      "hot_days": null,
+      "warm_days": 1825,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "5 years post-close. Athlete career-timeline entries preserved on the assignment side."
+    },
+    {
+      "entity": "ScoutingReport",
+      "hot_days": 730,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "7yr — regulatory compliance for cross-team scouting practices."
+    }
+  ]
 }

@@ -1,7 +1,102 @@
 {
   "id": "academorix://modules/reception/events",
   "$version": 1,
-  "title": "reception — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "reception — published events",
+  "namespace": "Academorix\\Platform\\Reception\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Front-desk orchestration surface. Walk-in visits + day-pass sales + credential issuance on-the-fly. Every event is broadcast to the tenant's reception dashboard for realtime.",
+  "events": [
+    {
+      "name": "VisitorCheckedIn",
+      "trigger": "New Visitor row created. Guest check-in via kiosk or front desk.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "realtime::UpdateReceptionDashboard",
+        "attendance::LogVisitorPresence"
+      ],
+      "payload": {
+        "visitor_id": "ULID (vst_*)",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "kind": "'walk_in'|'prospect'|'visitor'|'contractor'|'delivery'",
+        "checked_in_at": "ISO 8601",
+        "escorted_by_user_id": "ULID|null"
+      }
+    },
+    {
+      "name": "VisitorCheckedOut",
+      "trigger": "Visitor exit recorded.",
+      "consumers": ["audit::WriteToAuditLog", "realtime::UpdateReceptionDashboard"],
+      "payload": {
+        "visitor_id": "ULID",
+        "checked_out_at": "ISO 8601",
+        "total_duration_minutes": "int"
+      }
+    },
+    {
+      "name": "DayPassSold",
+      "trigger": "One-time day pass purchased at reception. Payment cleared via facilities/DayPass.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::EmailDayPassReceipt",
+        "credentials::IssueTemporaryCredential"
+      ],
+      "payload": {
+        "day_pass_id": "ULID",
+        "visitor_id": "ULID|null",
+        "amount_minor": "bigint",
+        "currency": "string(3)",
+        "sold_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "WalkInEnrolled",
+      "trigger": "Walk-in converted to registration + athlete on the spot.",
+      "consumers": [
+        "registrations::CreateFromWalkIn",
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "visitor_id": "ULID",
+        "registration_id": "ULID",
+        "athlete_id": "ULID",
+        "converted_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CredentialQuickIssued",
+      "trigger": "Emergency credential issued at front desk (replacement, guest pass).",
+      "consumers": ["credentials::IssueCredential", "audit::WriteToAuditLog"],
+      "payload": {
+        "credential_id": "ULID",
+        "holder_id": "ULID",
+        "reason": "'replacement'|'guest'|'emergency'",
+        "issued_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "FrontDeskShiftStarted",
+      "trigger": "Front desk staff started shift. Cash drawer opened.",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": { "shift_id": "ULID", "staff_user_id": "ULID", "opening_cash_minor": "bigint" }
+    },
+    {
+      "name": "FrontDeskShiftEnded",
+      "trigger": "Shift closed. Cash drawer reconciled.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "finance::RecordCashReconciliation",
+        "notifications::AlertOnCashDiscrepancy"
+      ],
+      "payload": {
+        "shift_id": "ULID",
+        "staff_user_id": "ULID",
+        "closing_cash_minor": "bigint",
+        "expected_cash_minor": "bigint",
+        "discrepancy_minor": "bigint"
+      }
+    }
+  ]
 }

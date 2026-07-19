@@ -1,0 +1,111 @@
+{
+  "id": "academorix://modules/registrations/permissions",
+  "$version": 1,
+  "title": "registrations — permissions",
+  "seeder": "Academorix\\Sports\\Registrations\\Database\\Seeders\\RegistrationsPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "registrations.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.view",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.create",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.update",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.contact",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.decline",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    { "name": "registrations.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "registrations.trials.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.trials.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.trials.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.trials.reschedule",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.trials.mark-attended",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.trials.mark-no-show",
+      "guard": "sanctum",
+      "seededOn": ["coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.waitlist.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.waitlist.view",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.waitlist.reorder",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "registrations.waitlist.remove",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.offers.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.offers.view",
+      "guard": "sanctum",
+      "seededOn": ["front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "registrations.offers.create",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    { "name": "registrations.offers.extend", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "registrations.offers.withdraw",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    }
+  ]
+}

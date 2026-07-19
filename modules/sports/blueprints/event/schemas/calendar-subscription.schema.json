@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/event/schemas/calendar-subscription",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "CalendarSubscription",
+  "description": "Per-user calendar feed subscription (iCal / ICS). Generates a signed feed URL that filters events by the user's own invitations + their athletes' invitations (for guardians). Signed URL rotates on token rotation.",
+  "type": "object",
+  "x-module": "event",
+  "x-eloquent": {
+    "table": "calendar_subscriptions",
+    "keyPrefix": "csb_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "kind": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "personal / guardian / coach / branch."
+      },
+      "scope_ref_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "For kind=branch or kind=team: the scope ID. Null for personal + guardian."
+      },
+      "signature": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Signed URL segment (rotates on regenerate)."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Feed access expiry. Null = indefinite."
+      },
+      "last_synced_at": { "type": "timestamptz", "nullable": true },
+      "sync_count": { "type": "integer", "nullable": false, "default": "0" },
+      "user_agent_snapshot": { "type": "string", "length": 200, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "user_id", "kind"],
+        "name": "calendar_subscriptions_user_kind_idx"
+      },
+      {
+        "columns": ["signature"],
+        "unique": true,
+        "name": "calendar_subscriptions_signature_unique"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "user_id",
+    "kind",
+    "signature",
+    "sync_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^csb_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": { "type": "string", "enum": ["personal", "guardian", "coach", "branch"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "signature globally unique + non-enumerable (>= 64 chars entropy).",
+    "signature rotates on RegenerateSubscriptionJob or explicit user regenerate — old feed URL invalidates immediately."
+  ]
+}
