@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/tasks/policies",
+  "$version": 1,
+  "title": "tasks — authorization policies",
+  "description": "Task.view scoped by assignment (assignee | collaborator | watcher | creator) UNLESS caller holds tasks.viewAll. TaskComment.update refuses beyond a 15-minute edit window. TaskAssignment.accept/decline refuses when caller is not the target user.",
+  "policies": [
+    {
+      "model": "Task",
+      "class": "Academorix\\Workflow\\Tasks\\Policies\\TaskPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "tasks.viewAny", "scope": "narrowed to caller's assignments unless caller holds tasks.viewAll." },
+        { "action": "view", "permission": "tasks.view", "scope": "same narrowing." },
+        { "action": "create", "permission": "tasks.create" },
+        { "action": "update", "permission": "tasks.update", "scope": "refuses when task.status IN ('completed', 'cancelled')." },
+        { "action": "delete", "permission": "tasks.delete" },
+        { "action": "complete", "permission": "tasks.complete", "scope": "refuses when status NOT IN ('open', 'in_progress', 'blocked')." },
+        { "action": "cancel", "permission": "tasks.cancel", "scope": "refuses when status IN ('completed', 'cancelled')." }
+      ]
+    },
+    {
+      "model": "TaskAssignment",
+      "class": "Academorix\\Workflow\\Tasks\\Policies\\TaskAssignmentPolicy",
+      "abilities": [
+        { "action": "create", "permission": "task-assignments.create" },
+        { "action": "update", "permission": "task-assignments.update" },
+        { "action": "delete", "permission": "task-assignments.delete" },
+        { "action": "accept", "permission": "task-assignments.accept", "scope": "refuses when assignment.user_id != caller.id, or already accepted/declined/unassigned." },
+        { "action": "decline", "permission": "task-assignments.decline", "scope": "same narrowing." }
+      ]
+    },
+    {
+      "model": "TaskComment",
+      "class": "Academorix\\Workflow\\Tasks\\Policies\\TaskCommentPolicy",
+      "abilities": [
+        { "action": "create", "permission": "task-comments.create", "scope": "parent task must be visible to caller." },
+        { "action": "update", "permission": "task-comments.update", "scope": "refuses when comment.user_id != caller.id, or created_at > NOW() - INTERVAL '15 minutes'." },
+        { "action": "delete", "permission": "task-comments.delete", "scope": "refuses when comment.user_id != caller.id (moderators can delete via a separate ability)." }
+      ]
+    }
+  ]
+}

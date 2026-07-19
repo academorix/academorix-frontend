@@ -1,0 +1,19 @@
+{
+  "id": "academorix://modules/tasks/errors",
+  "$version": 1,
+  "title": "tasks — error codes",
+  "namespace": "tasks",
+  "errors": [
+    { "code": "TASK_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.task_not_found" },
+    { "code": "TASK_STATE_INVALID", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.task_state_invalid" },
+    { "code": "TASK_TERMINAL_STATE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.task_terminal", "description": "Cannot modify a completed or cancelled task." },
+    { "code": "TASK_ASSIGNMENT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.assignment_not_found" },
+    { "code": "TASK_ASSIGNMENT_ALREADY_ACTIVE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.assignment_already_active", "description": "User already assigned to this task with the same role." },
+    { "code": "TASK_ASSIGNMENT_NOT_YOURS", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.assignment_not_yours", "description": "Only the assignee can accept/decline their own assignment." },
+    { "code": "TASK_ASSIGNMENT_ALREADY_RESOLVED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.assignment_already_resolved", "description": "Assignment already accepted/declined/unassigned." },
+    { "code": "TASK_COMMENT_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.comment_not_found" },
+    { "code": "TASK_COMMENT_EDIT_WINDOW_EXPIRED", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.comment_edit_window_expired", "description": "Comments are editable only within 15 minutes of creation." },
+    { "code": "TASK_COMMENT_NOT_YOURS", "http": 403, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.comment_not_yours", "description": "Only the author can edit or delete their own comment." },
+    { "code": "TASK_SUBJECT_TYPE_UNKNOWN", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "tasks.errors.subject_type_unknown", "description": "subject_type not registered via #[AsTaskSubject]." }
+  ]
+}

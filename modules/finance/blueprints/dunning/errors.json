@@ -1,0 +1,16 @@
+{
+  "id": "academorix://modules/dunning/errors",
+  "$version": 1,
+  "title": "dunning — error codes",
+  "namespace": "dunning",
+  "errors": [
+    { "code": "DUNNING_PLAN_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "dunning.errors.plan_not_found" },
+    { "code": "DUNNING_PLAN_IN_USE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "dunning.errors.plan_in_use", "description": "Cannot delete plan while active runs reference it. Wait for runs to complete or reassign to a different plan." },
+    { "code": "DUNNING_PLAN_INVALID_STEPS", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "dunning.errors.plan_invalid_steps", "description": "steps_json invalid: day_offset must be non-negative and monotonically non-decreasing; each step must have a valid action." },
+    { "code": "DUNNING_RUN_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "dunning.errors.run_not_found" },
+    { "code": "DUNNING_RUN_STATE_INVALID", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "dunning.errors.run_state_invalid", "description": "Requested transition not allowed from current status." },
+    { "code": "DUNNING_RUN_ALREADY_ACTIVE", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "dunning.errors.run_already_active", "description": "Attempted to start a new run for a subject that already has an active run. Constraint violation." },
+    { "code": "DUNNING_RETRY_GATEWAY_ERROR", "http": 502, "retryable": true, "user_facing": false, "audit_severity": "warn", "i18n_key": "dunning.errors.retry_gateway_error", "description": "Gateway API failure during retry. TickDunningStepJob will retry with exponential backoff." },
+    { "code": "DUNNING_TICK_ALREADY_ADVANCED", "http": 409, "retryable": false, "user_facing": false, "audit_severity": "info", "i18n_key": "dunning.errors.tick_already_advanced", "description": "Idempotency guard — the step was already advanced by a prior tick job. Silent no-op." }
+  ]
+}

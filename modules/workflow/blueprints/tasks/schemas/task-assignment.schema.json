@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/tasks/schemas/task-assignment",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TaskAssignment",
+  "description": "Assigns a task to a User (staff). N assignments per task supported (collaborative). Belongs to Tenant + Task (cascade). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "tasks",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "task_assignments",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "tas_",
+    "incrementing": false,
+    "model": "Academorix\\Workflow\\Tasks\\Models\\TaskAssignment",
+    "interface": "Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskAssignmentInterface",
+    "implements": ["Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskAssignmentInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "role": "TaskAssignmentRole",
+      "accepted_at": "datetime",
+      "declined_at": "datetime",
+      "unassigned_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["TaskAssignmentObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `tas_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "task_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tasks", "column": "id", "onDelete": "cascade" } },
+      "user_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "users", "column": "id", "onDelete": "cascade" } },
+      "role": { "type": "string", "length": 16, "nullable": false, "default": "'assignee'", "description": "Enum: assignee (primary) / collaborator / watcher." },
+      "accepted_at": { "type": "timestamptz", "nullable": true, "description": "Assignee acknowledged the assignment. NULL = pending." },
+      "declined_at": { "type": "timestamptz", "nullable": true, "description": "Assignee declined the assignment." },
+      "declined_reason": { "type": "string", "length": 500, "nullable": true },
+      "unassigned_at": { "type": "timestamptz", "nullable": true, "description": "Removed. Soft removal — assignment row retained for audit." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "task_id", "user_id", "role"], "unique": true, "name": "task_assignments_unique", "predicate": "unassigned_at IS NULL" },
+      { "columns": ["tenant_id", "user_id", "role"], "name": "task_assignments_user_idx", "predicate": "unassigned_at IS NULL" }
+    ]
+  },
+  "required": ["id", "tenant_id", "task_id", "user_id", "role", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tas_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "task_id": { "type": "string", "pattern": "^tsk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "role": { "type": "string", "enum": ["assignee", "collaborator", "watcher"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

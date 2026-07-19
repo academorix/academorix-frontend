@@ -1,0 +1,72 @@
+{
+  "$version": 1,
+  "name": "dunning",
+  "alias": "dunning",
+  "namespace": "Academorix\\Finance\\Dunning",
+  "description": "Retry + escalation ladder for failed recurring charges (memberships, tenant subscriptions, marketplace fees). Not a collections agency — a retry engine that gracefully degrades a paying customer to a non-paying one while giving them plenty of chances to fix the payment. Owns three tables: dunning_plans (per-tenant reusable retry-schedule + escalation-ladder templates, referenced by memberships/subscriptions at charge time), dunning_runs (one row per triggered dunning cycle, tracks progress through plan steps, polymorphic subject_type/subject_id — membership | tenant_subscription | fee_payout), dunning_events (timeline: retry_attempted, retry_succeeded, retry_failed, notification_sent, escalated_step, cancelled, exhausted). Cross-integrates with finance/membership (failed monthly charge kicks off a run), billing/subscription (failed SaaS invoice), finance/gateway (retry attempts route through PaymentGatewayInterface), notifications/notifications (DunningReminderNotification per step), entitlements/entitlements (access revocation on exhausted).",
+  "keywords": ["dunning", "retry", "collections", "escalation", "payment-failure", "subscription-recovery", "grace-period", "membership-recovery", "finance"],
+  "priority": 43,
+  "providers": ["Academorix\\Finance\\Dunning\\Providers\\DunningServiceProvider"],
+  "dependencies": ["foundation", "tenancy", "application", "gateway"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasDunning"],
+    "attributes": ["AsDunningSubject", "AsDunningStepHandler"],
+    "blueprints": ["dunning_plans", "dunning_runs", "dunning_events"],
+    "middleware": [],
+    "events": [
+      "DunningPlanCreated",
+      "DunningPlanUpdated",
+      "DunningPlanDeleted",
+      "DunningRunStarted",
+      "DunningStepReached",
+      "DunningRetryAttempted",
+      "DunningRetrySucceeded",
+      "DunningRetryFailed",
+      "DunningRunEscalated",
+      "DunningRunPaused",
+      "DunningRunResumed",
+      "DunningRunCancelled",
+      "DunningRunExhausted",
+      "DunningRunResolved"
+    ],
+    "policies": ["DunningPlanPolicy", "DunningRunPolicy", "DunningEventPolicy"],
+    "hooks": ["PurgeDunningForErasedTenant", "PauseDunningOnTenantSuspended"],
+    "commands": ["dunning:list-plans", "dunning:create-plan", "dunning:show-run", "dunning:list-runs", "dunning:pause-run", "dunning:resume-run", "dunning:cancel-run", "dunning:tick"],
+    "jobs": ["TickDunningStepJob", "AttemptDunningRetryJob", "EscalateDunningRunJob", "RevokeAccessOnExhaustionJob"],
+    "notifications": ["DunningReminderNotification", "DunningExhaustedNotification", "DunningResolvedNotification"],
+    "broadcasts": ["tenant.{tenantId}.dunning", "guardian.{guardianId}.dunning"],
+    "observers": ["DunningPlanObserver", "DunningRunObserver", "DunningEventObserver"],
+    "rules": ["valid_dunning_step_schedule", "valid_dunning_status", "positive_days_offset"],
+    "casts": ["DunningRunStatus", "DunningEventKind"],
+    "views": [],
+    "lang": ["dunning"],
+    "config": ["dunning"],
+    "macros": [],
+    "bindings": ["DunningPlanRepository", "DunningRunRepository", "DunningEventRepository", "DunningEngine", "DunningStepResolver", "RetryScheduler", "DunningInterface"],
+    "resources": ["dunning-plan", "dunning-run", "dunning-event"]
+  },
+  "wraps": {
+    "packages": ["spatie/laravel-schedule-monitor ^3"],
+    "rationale": "Schedule-monitor tracks the tick job's health; missed ticks trigger monitoring alerts."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing dunning management.",
+      "routes": [
+        "GET /api/v1/dunning/plans",
+        "POST /api/v1/dunning/plans",
+        "GET /api/v1/dunning/plans/{plan}",
+        "PATCH /api/v1/dunning/plans/{plan}",
+        "DELETE /api/v1/dunning/plans/{plan}",
+        "GET /api/v1/dunning/runs",
+        "GET /api/v1/dunning/runs/{run}",
+        "GET /api/v1/dunning/runs/{run}/events",
+        "POST /api/v1/dunning/runs/{run}/pause",
+        "POST /api/v1/dunning/runs/{run}/resume",
+        "POST /api/v1/dunning/runs/{run}/cancel",
+        "POST /api/v1/dunning/runs/{run}/retry-now"
+      ]
+    }
+  }
+}

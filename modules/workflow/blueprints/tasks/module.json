@@ -1,0 +1,78 @@
+{
+  "$version": 1,
+  "name": "tasks",
+  "alias": "tasks",
+  "namespace": "Academorix\\Workflow\\Tasks",
+  "description": "Human-in-loop work queue. Wraps a domain event (a lead needs a follow-up call, a payment failed and someone should call the parent, a coach didn't submit attendance) in a Task with an assignee + due date + status. Complements workflow/approvals (formal approve/deny cycles) — tasks are the lightweight side. Owns three tables: tasks (the work item with polymorphic subject_type/subject_id — Athlete / Order / Payment / Lead), task_assignments (N-to-N users with role: assignee / collaborator / watcher), task_comments (chronological comment thread with @-mentions + file attachments via platform/storage). Cross-integrates with growth/leads (auto-creates follow-up tasks), finance/payment (failed-charge tasks), sports/coaching (staff task queue), notifications/notifications (TaskAssignedNotification + TaskCommentMentionedNotification + TaskDueSoonNotification). Includes TaskAutomationRule engine (per-tenant configurable — 'when a lead sits >48h, create a follow-up task for its owner') via #[AsTaskAutomation] attribute.",
+  "keywords": ["tasks", "todo", "assignment", "comment", "reminder", "queue", "human-in-loop", "workflow", "automation-rule", "task-subject"],
+  "priority": 42,
+  "providers": ["Academorix\\Workflow\\Tasks\\Providers\\TasksServiceProvider"],
+  "dependencies": ["foundation", "tenancy", "application", "storage", "notifications"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasTasks"],
+    "attributes": ["AsTaskSubject", "AsTaskAutomation"],
+    "blueprints": ["tasks", "task_assignments", "task_comments"],
+    "middleware": [],
+    "events": [
+      "TaskCreated",
+      "TaskUpdated",
+      "TaskDeleted",
+      "TaskStatusChanged",
+      "TaskAssigned",
+      "TaskUnassigned",
+      "TaskAssignmentAccepted",
+      "TaskAssignmentDeclined",
+      "TaskCommentAdded",
+      "TaskCommentEdited",
+      "TaskCommentDeleted",
+      "TaskCommentMentioned",
+      "TaskDueSoon",
+      "TaskOverdue",
+      "TaskCompleted",
+      "TaskCancelled"
+    ],
+    "policies": ["TaskPolicy", "TaskAssignmentPolicy", "TaskCommentPolicy"],
+    "hooks": ["PurgeTasksForErasedTenant", "CancelOpenTasksOnUserErased"],
+    "commands": ["tasks:list", "tasks:create", "tasks:assign", "tasks:complete", "tasks:cancel", "tasks:remind-due", "tasks:automate-tick"],
+    "jobs": ["FireDueSoonRemindersJob", "MarkOverdueTasksJob", "RunTaskAutomationJob"],
+    "notifications": ["TaskAssignedNotification", "TaskCommentMentionedNotification", "TaskDueSoonNotification", "TaskOverdueNotification", "TaskCompletedNotification"],
+    "broadcasts": ["tenant.{tenantId}.tasks", "user.{userId}.tasks"],
+    "observers": ["TaskObserver", "TaskAssignmentObserver", "TaskCommentObserver"],
+    "rules": ["valid_task_status", "valid_task_priority", "valid_assignment_role", "future_due_date_or_null"],
+    "casts": ["TaskStatus", "TaskPriority", "TaskAssignmentRole"],
+    "views": [],
+    "lang": ["tasks"],
+    "config": ["tasks"],
+    "macros": [],
+    "bindings": ["TaskRepository", "TaskAssignmentRepository", "TaskCommentRepository", "TaskSubjectResolver", "TaskAutomationEngine", "TaskInterface"],
+    "resources": ["task", "task-assignment", "task-comment"]
+  },
+  "wraps": {
+    "packages": ["spatie/laravel-tags ^4", "spatie/laravel-mediable ^0"],
+    "rationale": "Tags for labels_json substrate + mediable pattern re-used for attachments (references platform/storage.files, not stored inline)."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing task queue.",
+      "routes": [
+        "GET /api/v1/tasks",
+        "POST /api/v1/tasks",
+        "GET /api/v1/tasks/{task}",
+        "PATCH /api/v1/tasks/{task}",
+        "DELETE /api/v1/tasks/{task}",
+        "POST /api/v1/tasks/{task}/complete",
+        "POST /api/v1/tasks/{task}/cancel",
+        "POST /api/v1/tasks/{task}/assignments",
+        "PATCH /api/v1/tasks/{task}/assignments/{assignment}",
+        "DELETE /api/v1/tasks/{task}/assignments/{assignment}",
+        "POST /api/v1/tasks/{task}/assignments/{assignment}/accept",
+        "POST /api/v1/tasks/{task}/assignments/{assignment}/decline",
+        "GET /api/v1/tasks/{task}/comments",
+        "POST /api/v1/tasks/{task}/comments",
+        "PATCH /api/v1/tasks/{task}/comments/{comment}",
+        "DELETE /api/v1/tasks/{task}/comments/{comment}"
+      ]
+    }
+  }
+}

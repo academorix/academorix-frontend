@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/tasks/schemas/task-comment",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TaskComment",
+  "description": "Chronological comment thread on a Task. Belongs to Tenant + Task (cascade) + User (author, restrict). Editable within 15 minutes of creation; immutable thereafter. NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "tasks",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "task_comments",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "tcm_",
+    "incrementing": false,
+    "model": "Academorix\\Workflow\\Tasks\\Models\\TaskComment",
+    "interface": "Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskCommentInterface",
+    "implements": ["Academorix\\Workflow\\Tasks\\Contracts\\Data\\TaskCommentInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "casts": {
+      "mentioned_user_ids": "array",
+      "attachments_json": "array",
+      "edited_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["TaskCommentObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `tcm_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "task_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tasks", "column": "id", "onDelete": "cascade" } },
+      "user_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }, "description": "Author. Restrict on delete so we never orphan authorship." },
+      "body": { "type": "text", "nullable": false, "description": "Markdown-friendly comment body." },
+      "mentioned_user_ids": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "Array of user IDs @-mentioned in this comment. Drives TaskCommentMentionedNotification." },
+      "attachments_json": { "type": "jsonb", "nullable": false, "default": "'[]'::jsonb", "description": "References to platform/storage.files: [{'file_id': 'fil_...', 'name': 'invoice.pdf'}]." },
+      "edited_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "task_id", "created_at"], "name": "task_comments_task_time_idx" },
+      { "columns": ["tenant_id", "user_id"], "name": "task_comments_user_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "task_id", "user_id", "body", "mentioned_user_ids", "attachments_json", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tcm_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "task_id": { "type": "string", "pattern": "^tsk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "body": { "type": "string", "minLength": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

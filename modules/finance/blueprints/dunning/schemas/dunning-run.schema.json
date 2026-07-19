@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/dunning/schemas/dunning-run",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "DunningRun",
+  "description": "One row per triggered dunning cycle. Polymorphic subject: membership / tenant_subscription / fee_payout. Belongs to Tenant + DunningPlan (restrict). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "dunning",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "dunning_runs",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "drn_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Dunning\\Models\\DunningRun",
+    "interface": "Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningRunInterface",
+    "implements": ["Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningRunInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "status": "DunningRunStatus",
+      "amount_due_minor": "bigint",
+      "started_at": "datetime",
+      "next_step_at": "datetime",
+      "resolved_at": "datetime",
+      "exhausted_at": "datetime",
+      "cancelled_at": "datetime",
+      "paused_at": "datetime",
+      "plan_snapshot": "array",
+      "metadata": "array"
+    },
+    "observers": ["DunningRunObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `drn_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "dunning_plan_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "dunning_plans", "column": "id", "onDelete": "restrict" } },
+      "subject_type": { "type": "string", "length": 32, "nullable": false, "description": "Polymorphic: membership / tenant_subscription / fee_payout." },
+      "subject_id": { "type": "string", "length": 64, "nullable": false },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'active'", "description": "Enum: active / paused / resolved / exhausted / cancelled." },
+      "current_step": { "type": "integer", "nullable": false, "default": 0, "description": "0-indexed pointer into plan's steps_json array." },
+      "amount_due_minor": { "type": "bigint", "nullable": false, "description": "Amount that failed to charge. Static — dunning does not chase moving targets." },
+      "currency": { "type": "string", "length": 3, "nullable": false },
+      "started_at": { "type": "timestamptz", "nullable": false },
+      "next_step_at": { "type": "timestamptz", "nullable": true, "description": "When the next step should fire. NULL = terminal state." },
+      "resolved_at": { "type": "timestamptz", "nullable": true, "description": "Payment succeeded — run terminated cleanly." },
+      "exhausted_at": { "type": "timestamptz", "nullable": true, "description": "All retries failed — run terminated in default state." },
+      "cancelled_at": { "type": "timestamptz", "nullable": true },
+      "paused_at": { "type": "timestamptz", "nullable": true, "description": "Manually paused (support case, disputed charge, etc.)." },
+      "plan_snapshot": { "type": "jsonb", "nullable": true, "description": "Full plan snapshot at run start. Freezes against plan edits." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "subject_type", "subject_id"], "name": "dunning_runs_subject_idx" },
+      { "columns": ["tenant_id", "subject_type", "subject_id", "status"], "unique": true, "name": "dunning_runs_active_unique", "predicate": "status = 'active'", "description": "At most one active run per subject." },
+      { "columns": ["tenant_id", "status", "next_step_at"], "name": "dunning_runs_tick_idx", "predicate": "status = 'active' AND next_step_at IS NOT NULL" }
+    ]
+  },
+  "required": ["id", "tenant_id", "dunning_plan_id", "subject_type", "subject_id", "status", "current_step", "amount_due_minor", "currency", "started_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^drn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "dunning_plan_id": { "type": "string", "pattern": "^dpl_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "subject_type": { "type": "string", "enum": ["membership", "tenant_subscription", "fee_payout"] },
+    "status": { "type": "string", "enum": ["active", "paused", "resolved", "exhausted", "cancelled"] },
+    "amount_due_minor": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

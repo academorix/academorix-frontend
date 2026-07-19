@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/dunning/schemas/dunning-plan",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "DunningPlan",
+  "description": "Reusable retry-schedule + escalation-ladder template. Per tenant. Referenced by memberships / subscriptions at charge time. Belongs to Tenant (cascade). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "dunning",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "dunning_plans",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "dpl_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Dunning\\Models\\DunningPlan",
+    "interface": "Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningPlanInterface",
+    "implements": ["Academorix\\Finance\\Dunning\\Contracts\\Data\\DunningPlanInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "casts": {
+      "steps_json": "array",
+      "is_default": "boolean",
+      "is_active": "boolean",
+      "metadata": "array"
+    },
+    "observers": ["DunningPlanObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `dpl_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "name": { "type": "string", "length": 255, "nullable": false, "description": "Human name (e.g. 'Standard Membership Retry')." },
+      "slug": { "type": "string", "length": 128, "nullable": false, "description": "URL-friendly key. Unique per tenant." },
+      "description": { "type": "text", "nullable": true },
+      "steps_json": { "type": "jsonb", "nullable": false, "description": "Ordered array of steps: [{'day_offset': 0, 'action': 'notify', 'template': 'first_email'}, {'day_offset': 3, 'action': 'retry_and_notify', 'template': 'reminder'}, {'day_offset': 15, 'action': 'exhaust', 'template': 'final'}]. Each step is one iteration of the tick job." },
+      "is_default": { "type": "boolean", "nullable": false, "default": false, "description": "One default plan per tenant enforced at policy level. Used when a subject doesn't specify a plan." },
+      "is_active": { "type": "boolean", "nullable": false, "default": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "slug"], "unique": true, "name": "dunning_plans_tenant_slug_unique" },
+      { "columns": ["tenant_id", "is_default"], "unique": true, "name": "dunning_plans_default_unique", "predicate": "is_default = TRUE AND deleted_at IS NULL" },
+      { "columns": ["tenant_id", "is_active"], "name": "dunning_plans_active_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "name", "slug", "steps_json", "is_default", "is_active", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dpl_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "maxLength": 255 },
+    "slug": { "type": "string", "maxLength": 128, "pattern": "^[a-z0-9-]+$" },
+    "steps_json": { "type": "array", "minItems": 1 },
+    "is_default": { "type": "boolean" },
+    "is_active": { "type": "boolean" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}
