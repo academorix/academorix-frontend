@@ -43,10 +43,15 @@ REPO_ROOT = Path(__file__).resolve().parents[5]
 # ---------------------------------------------------------------------------
 
 def _split_words(s: str) -> list[str]:
-    """Split kebab / snake / camel into lowercase word chunks."""
+    """Split kebab / snake / camel and any non-alphanumeric run into word chunks.
+
+    Every character that isn't `[a-zA-Z0-9]` is a separator — so route
+    segments like `jwks.json`, `well-known/foo`, or `checks[id]` produce
+    valid PHP identifiers when passed to `studly()`.
+    """
     return [
         w.lower()
-        for w in re.split(r"[-_\s]+|(?<=[a-z0-9])(?=[A-Z])", s)
+        for w in re.split(r"[^A-Za-z0-9]+|(?<=[a-z0-9])(?=[A-Z])", s)
         if w
     ]
 
@@ -253,7 +258,13 @@ def _extract_columns(schema: dict[str, Any]) -> list[Column]:
     props: dict[str, Any] = schema.get("properties", {}) or {}
     required = set(schema.get("required", []))
     hidden = set((schema.get("x-wire", {}) or {}).get("hidden", []))
-    computed = set((schema.get("x-wire", {}) or {}).get("computed", []))
+    # `x-wire.computed` may be a list of column names OR a list of rich
+    # column-definition dicts (`{"name": "...", "expression": "..."}`).
+    # Normalise to a set of column names either way.
+    raw_computed = (schema.get("x-wire", {}) or {}).get("computed", []) or []
+    computed = {
+        (c.get("name") if isinstance(c, dict) else c) for c in raw_computed
+    } - {None}
 
     columns: list[Column] = []
     # Iterate db columns first; fall back to properties for pure JSON-Schema
