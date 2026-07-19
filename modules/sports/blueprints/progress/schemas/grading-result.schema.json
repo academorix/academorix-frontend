@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/progress/schemas/grading-result",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "GradingResult",
+  "description": "Per-athlete outcome at a GradingEvent — from_belt_id + to_belt_id + result (pass/fail/deferred) + examiner_notes. Successful pass fires BeltRankPromoted.",
+  "type": "object",
+  "x-module": "progress",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "grading_results",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "grr_",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthleteEnrollment",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": { "result": "GradingResultStatus", "graded_at": "datetime", "metadata": "array" }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "grading_event_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "grading_events", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athlete_enrollments", "column": "id", "onDelete": "restrict" }
+      },
+      "from_belt_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "belt_ranks", "column": "id", "onDelete": "restrict" },
+        "description": "Current belt at grading time. NULL for candidates being graded for their first belt."
+      },
+      "to_belt_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "belt_ranks", "column": "id", "onDelete": "restrict" },
+        "description": "Target belt for the exam."
+      },
+      "result": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "pending / pass / fail / deferred."
+      },
+      "graded_at": { "type": "timestamptz", "nullable": true },
+      "examiner_notes": { "type": "text", "nullable": true },
+      "score": { "type": "decimal", "precision": 5, "scale": 2, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "grading_event_id", "athlete_enrollment_id"],
+        "unique": true,
+        "name": "grading_results_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "grading_event_id",
+    "athlete_enrollment_id",
+    "to_belt_id",
+    "result",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^grr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "result": { "type": "string", "enum": ["pending", "pass", "fail", "deferred"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One GradingResult per (grading_event, athlete_enrollment) via partial unique.",
+    "to_belt_id.rank_order > from_belt_id.rank_order — enforced by BeltProgressionValidator.",
+    "result = 'pass' fires BeltRankPromoted event."
+  ]
+}

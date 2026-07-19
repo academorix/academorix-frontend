@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/crm-leads/schemas/task",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Task",
+  "type": "object",
+  "x-module": "crm-leads",
+  "x-eloquent": {
+    "table": "tasks",
+    "keyPrefix": "tsk_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "lead_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "leads", "column": "id", "onDelete": "cascade" }
+      },
+      "assignee_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "title": { "type": "string", "length": 200, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "kind": { "type": "string", "length": 24, "nullable": false, "default": "'follow_up'" },
+      "due_at": { "type": "timestamptz", "nullable": true },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'open'" },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "priority": { "type": "string", "length": 16, "nullable": false, "default": "'normal'" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "assignee_user_id", "status", "due_at"],
+        "name": "tasks_assignee_due_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "assignee_user_id",
+    "title",
+    "kind",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tsk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["open", "in_progress", "completed", "cancelled"] }
+  },
+  "additionalProperties": false
+}

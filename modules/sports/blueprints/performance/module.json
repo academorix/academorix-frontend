@@ -1,0 +1,88 @@
+{
+  "$version": 1,
+  "name": "performance",
+  "alias": "performance",
+  "namespace": "Academorix\\Sports\\Performance",
+  "description": "Physical benchmarks + fitness testing per blueprint §14.2. Ships FOUR owned entities: `TestBattery` (named collection of PerformanceTests — e.g. 'U12 Football Physical Q1' bundles 40m sprint + VO2 + vertical jump; per sport_key; versioned), `PerformanceTest` (single physical test definition — name / unit / better_direction higher/lower / age_bands; reusable across batteries), `PerformanceTestResult` (one athlete_enrollment's test outcome — captured_at + value + tester_user_id; metrics JSONB attribute-driven when applicable; percentile computed vs Benchmark), `Benchmark` (age-band × sport_key × test percentile reference p10/p25/p50/p75/p90; seeded from research defaults, tenant-overridable). Distinct from Progress (skill assessment) — this module is OBJECTIVE physical measurement.",
+  "keywords": [
+    "performance",
+    "fitness",
+    "test-battery",
+    "benchmark",
+    "percentile",
+    "sprint",
+    "vo2",
+    "vertical-jump",
+    "objective-measurement",
+    "wave-3"
+  ],
+  "priority": 79,
+  "providers": ["Academorix\\Sports\\Performance\\Providers\\PerformanceServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "attributes",
+    "athlete",
+    "athlete-enrollment",
+    "coaching"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["progress", "development", "reporting", "ai", "awards"],
+  "contributes": {
+    "traits": ["HasPerformanceResults"],
+    "attributes": [],
+    "blueprints": ["test-battery", "performance-test", "performance-test-result", "benchmark"],
+    "middleware": [],
+    "events": [
+      "TestBatteryCreated",
+      "PerformanceTestDefined",
+      "PerformanceTestResultRecorded",
+      "BenchmarkBroken",
+      "BenchmarkImported"
+    ],
+    "policies": [
+      "TestBatteryPolicy",
+      "PerformanceTestPolicy",
+      "PerformanceTestResultPolicy",
+      "BenchmarkPolicy"
+    ],
+    "hooks": ["ComputePercentileOnResult", "FireBenchmarkBrokenOnPersonalBest"],
+    "commands": ["performance:list", "performance:seed-benchmarks", "performance:generate-report"],
+    "jobs": ["RecomputePercentilesJob", "ImportBenchmarksFromCsvJob"],
+    "notifications": ["PersonalBestNotification", "BenchmarkBrokenNotification"],
+    "broadcasts": ["athlete.{athleteId}.performance"],
+    "observers": ["TestBatteryObserver", "PerformanceTestResultObserver"],
+    "rules": ["valid_test_unit", "valid_better_direction", "positive_test_value"],
+    "casts": ["BetterDirection"],
+    "views": [],
+    "lang": ["performance"],
+    "config": ["performance"],
+    "macros": [],
+    "bindings": [
+      "PerformanceTestRepository",
+      "TestBatteryRepository",
+      "BenchmarkRepository",
+      "PercentileCalculator"
+    ],
+    "resources": ["test-battery", "performance-test", "performance-test-result", "benchmark"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/test-batteries",
+        "POST /api/v1/test-batteries",
+        "GET /api/v1/performance-tests",
+        "POST /api/v1/performance-tests",
+        "GET /api/v1/athletes/{athlete}/performance-results",
+        "POST /api/v1/performance-test-results",
+        "GET /api/v1/benchmarks",
+        "POST /api/v1/reports/performance"
+      ]
+    },
+    "platform-admin": {
+      "routes": ["GET /api/v1/platform/performance-test-results", "GET /api/v1/platform/benchmarks"]
+    }
+  }
+}

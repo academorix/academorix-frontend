@@ -1,0 +1,167 @@
+{
+  "id": "academorix://modules/attributes/schemas/attribute-set",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AttributeSet",
+  "description": "A versioned collection of AttributeDefinitions bound to an entity_type + discriminator. Selected at runtime by (entity_type, discriminator_field, discriminator_value). Historic renders resolve by version_number frozen on the host at capture time. NEVER carries application_id / region_id / organization_id / scope_node_id directly.",
+  "type": "object",
+  "x-module": "attributes",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "attribute_sets",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "asg_",
+    "incrementing": false,
+    "model": "Academorix\\Attributes\\Models\\AttributeSet",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "AttributeSetStatus",
+      "definition_order": "array",
+      "metadata": "array",
+      "is_active": "boolean",
+      "activated_at": "datetime",
+      "deactivated_at": "datetime"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `asg_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Machine identifier — snake_case. Namespaced within tenant + entity_type."
+      },
+      "entity_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Canonical host entity (athlete_enrollment, progress_assessment, performance_test_result)."
+      },
+      "discriminator_field": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Host column carrying the discriminator (sport_key, program_key)."
+      },
+      "discriminator_value": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Value that selects this set (football, swimming, karate, generic)."
+      },
+      "version_number": {
+        "type": "integer",
+        "nullable": false,
+        "default": "1",
+        "description": "Monotonic version — bumped on breaking change. Historic values keep resolving via captured version_snapshot on host."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "draft / active / superseded / archived."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Active flag — one active set per (entity_type, discriminator_value) at any time."
+      },
+      "activated_at": { "type": "timestamptz", "nullable": true },
+      "deactivated_at": { "type": "timestamptz", "nullable": true },
+      "labels": { "type": "jsonb", "nullable": false, "default": "'{}'" },
+      "definition_order": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'",
+        "description": "Ordered array of {group_id, definition_id, sort_order}."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "entity_type", "discriminator_value", "version_number"],
+        "unique": true,
+        "name": "attribute_sets_versioned_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "entity_type", "discriminator_value"],
+        "unique": true,
+        "name": "attribute_sets_active_unique",
+        "predicate": "is_active = true AND deleted_at IS NULL",
+        "description": "Exactly one active set per (entity_type, discriminator_value)."
+      },
+      { "columns": ["tenant_id", "status"], "name": "attribute_sets_status_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "code",
+    "entity_type",
+    "discriminator_field",
+    "discriminator_value",
+    "version_number",
+    "status",
+    "is_active",
+    "labels",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^asg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "code": { "type": "string", "maxLength": 64 },
+    "entity_type": { "type": "string", "maxLength": 64 },
+    "discriminator_field": { "type": "string", "maxLength": 64 },
+    "discriminator_value": { "type": "string", "maxLength": 64 },
+    "version_number": { "type": "integer", "minimum": 1 },
+    "status": { "type": "string", "enum": ["draft", "active", "superseded", "archived"] },
+    "is_active": { "type": "boolean" },
+    "labels": { "type": "object" },
+    "definition_order": { "type": "array" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Only ONE set with is_active=true per (tenant_id, entity_type, discriminator_value) via partial unique index",
+    "Version numbers monotonic per (entity_type, discriminator_value); no gaps enforced by application",
+    "Breaking change (adding required attribute, removing attribute, changing type) MUST create a new version — the old version stays for historic rendering",
+    "Activation refused when it would create a collision at the same (entity_type, discriminator_value)"
+  ]
+}

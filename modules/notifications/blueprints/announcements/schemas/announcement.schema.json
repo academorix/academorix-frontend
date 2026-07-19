@@ -1,0 +1,117 @@
+{
+  "id": "academorix://modules/announcements/schemas/announcement",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Announcement",
+  "type": "object",
+  "x-module": "announcements",
+  "x-eloquent": {
+    "table": "announcements",
+    "keyPrefix": "ann_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "title": { "type": "string", "length": 200, "nullable": false },
+      "body": { "type": "text", "nullable": false },
+      "audience_scope": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "tenant / organization / branch / team / role."
+      },
+      "audience_ref_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "The organization/branch/team ID when scope is not 'tenant'."
+      },
+      "audience_role": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "When scope='role' — the role key."
+      },
+      "publish_at": { "type": "timestamptz", "nullable": true },
+      "expires_at": { "type": "timestamptz", "nullable": true },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'draft'" },
+      "authored_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "requires_acknowledgement": { "type": "boolean", "nullable": false, "default": "false" },
+      "priority": { "type": "string", "length": 16, "nullable": false, "default": "'normal'" },
+      "attachments": { "type": "jsonb", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "audience_scope", "audience_ref_id", "status", "publish_at"],
+        "name": "announcements_audience_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "publish_at"],
+        "name": "announcements_scheduled_idx",
+        "predicate": "status = 'scheduled'"
+      },
+      {
+        "columns": ["tenant_id", "expires_at"],
+        "name": "announcements_expiring_idx",
+        "predicate": "status = 'published' AND expires_at IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "title",
+    "body",
+    "audience_scope",
+    "status",
+    "authored_by_user_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ann_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "audience_scope": {
+      "type": "string",
+      "enum": ["tenant", "organization", "branch", "team", "role"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "scheduled", "published", "expired", "cancelled"]
+    },
+    "priority": { "type": "string", "enum": ["low", "normal", "high", "urgent"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "audience_ref_id REQUIRED when audience_scope IN ('organization', 'branch', 'team').",
+    "audience_role REQUIRED when audience_scope = 'role'.",
+    "publish_at REQUIRED when status = 'scheduled'.",
+    "expires_at > publish_at when both set."
+  ]
+}

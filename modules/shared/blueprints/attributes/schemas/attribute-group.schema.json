@@ -1,0 +1,126 @@
+{
+  "id": "academorix://modules/attributes/schemas/attribute-group",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AttributeGroup",
+  "description": "Visual grouping of AttributeDefinitions within an AttributeSet — e.g. 'Primary Stats' / 'Position' / 'Physical Profile'. Ordered display; collapsible. NEVER carries application_id / region_id / organization_id / scope_node_id directly.",
+  "type": "object",
+  "x-module": "attributes",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "attribute_groups",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "atg_",
+    "incrementing": false,
+    "model": "Academorix\\Attributes\\Models\\AttributeGroup",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "labels": "array",
+      "is_collapsible": "boolean",
+      "is_collapsed_default": "boolean",
+      "metadata": "array"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `atg_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "attribute_set_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "attribute_sets",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Machine identifier — snake_case. Namespaced within set."
+      },
+      "labels": { "type": "jsonb", "nullable": false, "default": "'{}'" },
+      "icon": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Optional icon key for the UI."
+      },
+      "sort_order": { "type": "integer", "nullable": false, "default": "0" },
+      "is_collapsible": { "type": "boolean", "nullable": false, "default": "true" },
+      "is_collapsed_default": { "type": "boolean", "nullable": false, "default": "false" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "attribute_set_id", "code"],
+        "unique": true,
+        "name": "attribute_groups_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "attribute_set_id", "sort_order"],
+        "name": "attribute_groups_order_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "attribute_set_id",
+    "code",
+    "labels",
+    "sort_order",
+    "is_collapsible",
+    "is_collapsed_default",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^atg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "attribute_set_id": { "type": "string", "pattern": "^asg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "code": { "type": "string", "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$" },
+    "labels": { "type": "object" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "code unique per (tenant_id, attribute_set_id) via partial unique index",
+    "sort_order determines display order — ties allowed but discouraged"
+  ]
+}

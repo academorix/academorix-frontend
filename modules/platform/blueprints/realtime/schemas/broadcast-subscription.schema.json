@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/realtime/schemas/broadcast-subscription",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "BroadcastSubscription",
+  "description": "Active WebSocket subscription of a User to a BroadcastChannel. State machine: pending_auth → active → disconnected. Auto-purge on disconnected + last_seen > 15m.",
+  "type": "object",
+  "x-module": "realtime",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "broadcast_subscriptions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "bsn_",
+    "incrementing": false,
+    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToTenant", "HasMetadata", "Filterable"],
+    "casts": {
+      "status": "SubscriptionStatus",
+      "connected_at": "datetime",
+      "disconnected_at": "datetime",
+      "last_seen_at": "datetime"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "channel_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "broadcast_channels", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'pending_auth'" },
+      "connected_at": { "type": "timestamptz", "nullable": true },
+      "disconnected_at": { "type": "timestamptz", "nullable": true },
+      "last_seen_at": { "type": "timestamptz", "nullable": true },
+      "connection_id": {
+        "type": "string",
+        "length": 100,
+        "nullable": true,
+        "description": "Reverb-assigned socket id."
+      },
+      "user_agent": { "type": "string", "length": 200, "nullable": true },
+      "ip_address": { "type": "inet", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "channel_id", "user_id", "status"],
+        "name": "broadcast_subscriptions_channel_user_idx"
+      },
+      { "columns": ["tenant_id", "last_seen_at"], "name": "broadcast_subscriptions_stale_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "channel_id", "user_id", "status", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^bsn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["pending_auth", "active", "disconnected"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Status transitions: pending_auth → active → disconnected (terminal). Direct pending_auth → disconnected allowed on auth refusal.",
+    "disconnected + last_seen_at > 15m stale — reaped by PurgeDisconnectedSubscriptionsJob."
+  ]
+}

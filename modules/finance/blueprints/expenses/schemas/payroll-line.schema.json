@@ -1,0 +1,85 @@
+{
+  "id": "academorix://modules/expenses/schemas/payroll-line",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PayrollLine",
+  "description": "Per-staff line in a PayrollRun. branch_allocations JSONB carries per-branch split for multi-branch staff (locked D2 — split by delivered sessions).",
+  "type": "object",
+  "x-module": "expenses",
+  "x-eloquent": {
+    "table": "payroll_lines",
+    "keyPrefix": "pll_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToStaff",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "payroll_run_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "payroll_runs", "column": "id", "onDelete": "cascade" }
+      },
+      "staff_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "staff", "column": "id", "onDelete": "restrict" }
+      },
+      "sessions_delivered": { "type": "integer", "nullable": false, "default": "0" },
+      "hours_worked": { "type": "decimal", "precision": 8, "scale": 2, "nullable": true },
+      "gross_amount_minor": { "type": "bigint", "nullable": false },
+      "bonus_amount_minor": { "type": "bigint", "nullable": false, "default": "0" },
+      "deductions_amount_minor": { "type": "bigint", "nullable": false, "default": "0" },
+      "net_amount_minor": { "type": "bigint", "nullable": false },
+      "currency": { "type": "string", "length": 3, "nullable": false },
+      "branch_allocations": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Multi-branch split — [{branch_id, ratio, amount_minor}]. Locked D2 per hierarchy.md — split by delivered sessions."
+      },
+      "computed_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "payroll_run_id"], "name": "payroll_lines_run_idx" },
+      { "columns": ["tenant_id", "staff_id"], "name": "payroll_lines_staff_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "payroll_run_id",
+    "staff_id",
+    "gross_amount_minor",
+    "net_amount_minor",
+    "currency",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pll_[0-9A-HJKMNP-TV-Z]{26}$" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "net_amount_minor = gross_amount_minor + bonus_amount_minor - deductions_amount_minor.",
+    "branch_allocations sum ratio = 1.0 when present (multi-branch split)."
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "$version": 1,
+  "name": "crm-leads",
+  "alias": "crm-leads",
+  "namespace": "Academorix\\Growth\\CrmLeads",
+  "description": "Pre-enrollment sales pipeline per blueprint §16.8. Ships THREE owned entities: `Lead` (source + stage + owner_user_id + first_contact_at + converted_athlete_id?; state NEW → CONTACTED → TRIAL → WON / LOST), `LeadActivity` (per-lead activity log — kind IN call/email/note + user + timestamp + description), `Task` (follow-up task on a lead — assignee + due_at + status + description). Complements sports/registrations (enrollment funnel) with the SALES side: capture leads from web forms / referrals / walk-ins; pipeline stages; conversion tracking + source attribution; hand-off to Enrollment on WON. Distinct from `growth/marketing` (campaigns) and `growth/attribution` (touch tracking).",
+  "keywords": [
+    "crm",
+    "leads",
+    "sales-pipeline",
+    "trial",
+    "conversion",
+    "attribution",
+    "task",
+    "wave-3"
+  ],
+  "priority": 74,
+  "providers": ["Academorix\\Growth\\CrmLeads\\Providers\\CrmLeadsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "athlete",
+    "marketing",
+    "attribution",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["reporting", "ai"],
+  "contributes": {
+    "traits": [],
+    "attributes": [],
+    "blueprints": ["lead", "lead-activity", "task"],
+    "middleware": [],
+    "events": [
+      "LeadCaptured",
+      "LeadContacted",
+      "LeadTrialScheduled",
+      "LeadConverted",
+      "LeadLost",
+      "LeadActivityLogged",
+      "TaskCreated",
+      "TaskCompleted",
+      "TaskOverdue"
+    ],
+    "policies": ["LeadPolicy", "LeadActivityPolicy", "TaskPolicy"],
+    "hooks": ["AutoAssignLead", "AlertOnOverdueTasks", "AttributeOnLeadCapture"],
+    "commands": ["crm:list-leads", "crm:convert", "crm:overdue-tasks-report"],
+    "jobs": ["AlertOverdueTasksJob", "AutoConvertOnEnrollmentJob"],
+    "notifications": [
+      "LeadCapturedNotification",
+      "TaskAssignedNotification",
+      "TaskOverdueNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.crm.leads"],
+    "observers": ["LeadObserver", "TaskObserver"],
+    "rules": ["valid_lead_stage", "valid_task_status"],
+    "casts": ["LeadStage", "TaskStatus"],
+    "views": [],
+    "lang": ["crm"],
+    "config": ["crm"],
+    "macros": [],
+    "bindings": ["LeadRepository", "TaskRepository", "LeadPipelineOrchestrator"],
+    "resources": ["lead", "lead-activity", "task"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/leads",
+        "POST /api/v1/leads",
+        "GET /api/v1/leads/{lead}",
+        "PATCH /api/v1/leads/{lead}",
+        "POST /api/v1/leads/{lead}/convert",
+        "POST /api/v1/leads/{lead}/lose",
+        "GET /api/v1/leads/{lead}/activities",
+        "POST /api/v1/leads/{lead}/activities",
+        "GET /api/v1/tasks",
+        "POST /api/v1/tasks",
+        "POST /api/v1/tasks/{task}/complete"
+      ]
+    },
+    "central": {
+      "routes": ["POST /public/leads/capture"]
+    }
+  }
+}

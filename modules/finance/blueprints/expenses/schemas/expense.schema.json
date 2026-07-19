@@ -1,0 +1,147 @@
+{
+  "id": "academorix://modules/expenses/schemas/expense",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Expense",
+  "type": "object",
+  "x-module": "expenses",
+  "x-eloquent": {
+    "table": "expenses",
+    "keyPrefix": "exp_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "BelongsToRegion",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "set null" }
+      },
+      "region_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "regions", "column": "id", "onDelete": "restrict" }
+      },
+      "expense_category_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "expense_categories", "column": "id", "onDelete": "restrict" }
+      },
+      "cost_center_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "cost_centers", "column": "id", "onDelete": "set null" }
+      },
+      "description": { "type": "string", "length": 500, "nullable": false },
+      "amount_minor": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Amount in minor units (cents). Positive."
+      },
+      "currency": { "type": "string", "length": 3, "nullable": false, "description": "ISO 4217." },
+      "vendor": { "type": "string", "length": 200, "nullable": true },
+      "is_recurring": { "type": "boolean", "nullable": false, "default": "false" },
+      "recurrence": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "monthly / quarterly / yearly / weekly."
+      },
+      "recurring_parent_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "expenses", "column": "id", "onDelete": "set null" }
+      },
+      "expense_date": { "type": "date", "nullable": false },
+      "due_date": { "type": "date", "nullable": true },
+      "receipt_document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" }
+      },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'draft'" },
+      "approved_at": { "type": "timestamptz", "nullable": true },
+      "approved_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "paid_at": { "type": "timestamptz", "nullable": true },
+      "paid_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "expense_category_id", "expense_date"],
+        "name": "expenses_category_time_idx"
+      },
+      { "columns": ["tenant_id", "branch_id", "expense_date"], "name": "expenses_branch_time_idx" },
+      { "columns": ["tenant_id", "status", "due_date"], "name": "expenses_status_due_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "region_id",
+    "expense_category_id",
+    "description",
+    "amount_minor",
+    "currency",
+    "is_recurring",
+    "expense_date",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^exp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["draft", "approved", "paid", "cancelled"] },
+    "recurrence": {
+      "type": ["string", "null"],
+      "enum": ["monthly", "quarterly", "yearly", "weekly", null]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "receipt_document_id STRONGLY RECOMMENDED — every approved expense should trace to a source document.",
+    "recurrence REQUIRED when is_recurring = true.",
+    "approved_at + approved_by_user_id REQUIRED when status IN ('approved', 'paid').",
+    "paid_at + paid_by_user_id REQUIRED when status = 'paid'."
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/safeguarding/schemas/policy-acknowledgement",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PolicyAcknowledgement",
+  "description": "Staff acknowledged safeguarding policy version X on date Y. Immutable audit trail — never mutable. Refresh cadence per policy version.",
+  "type": "object",
+  "x-module": "safeguarding",
+  "x-eloquent": {
+    "table": "policy_acknowledgements",
+    "keyPrefix": "pak_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToStaff",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "staff_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "staff", "column": "id", "onDelete": "cascade" }
+      },
+      "policy_key": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "safeguarding.child_protection / safeguarding.code_of_conduct / gdpr.data_protection / …"
+      },
+      "policy_version": { "type": "string", "length": 32, "nullable": false },
+      "acknowledged_at": { "type": "timestamptz", "nullable": false },
+      "ip_address": { "type": "inet", "nullable": true },
+      "user_agent": { "type": "string", "length": 512, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "staff_id", "policy_key", "policy_version"],
+        "unique": true,
+        "name": "policy_acks_unique"
+      },
+      {
+        "columns": ["tenant_id", "policy_key", "policy_version"],
+        "name": "policy_acks_by_policy_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "staff_id",
+    "policy_key",
+    "policy_version",
+    "acknowledged_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pak_[0-9A-HJKMNP-TV-Z]{26}$" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "IMMUTABLE post-create — no updates or deletes.",
+    "One acknowledgement per (staff, policy_key, policy_version)."
+  ]
+}

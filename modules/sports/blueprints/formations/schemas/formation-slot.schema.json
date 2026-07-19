@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/formations/schemas/formation-slot",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "FormationSlot",
+  "type": "object",
+  "x-module": "formations",
+  "x-eloquent": {
+    "table": "formation_slots",
+    "keyPrefix": "fsl_",
+    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToTenant", "HasMetadata", "Filterable"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "formation_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "formations", "column": "id", "onDelete": "cascade" }
+      },
+      "position_code": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "goalkeeper / center-back / left-wing / point-guard / shooting-guard / lane-1 / lane-4."
+      },
+      "x_coord": {
+        "type": "decimal",
+        "precision": 5,
+        "scale": 2,
+        "nullable": false,
+        "description": "0-100 field horizontal render coordinate."
+      },
+      "y_coord": { "type": "decimal", "precision": 5, "scale": 2, "nullable": false },
+      "sort_order": { "type": "integer", "nullable": false, "default": "0" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["formation_id", "position_code"],
+        "unique": true,
+        "name": "formation_slots_position_unique"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "formation_id",
+    "position_code",
+    "x_coord",
+    "y_coord",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^fsl_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "x_coord": { "type": "number", "minimum": 0, "maximum": 100 },
+    "y_coord": { "type": "number", "minimum": 0, "maximum": 100 }
+  },
+  "additionalProperties": false
+}

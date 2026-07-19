@@ -1,0 +1,104 @@
+{
+  "$version": 1,
+  "name": "safeguarding",
+  "alias": "safeguarding",
+  "namespace": "Academorix\\Safeguarding",
+  "description": "Staff vetting + policy compliance per blueprint §14.6. YOUTH-SPORTS MANDATORY. Complements compliance/compliance (which owns SafeguardingIncident report intake); this module owns the STAFF-SIDE — background checks + policy acknowledgements + assignment gate. Ships TWO owned entities: `BackgroundCheck` (per Staff — type IN DBS enhanced/DBS basic/state-BCI/SafeSport/custom; status IN pending/verified/expired; issued_at + expires_at + verification_url; block-assignment gate consumed by coaching/team when unverified), `PolicyAcknowledgement` (Staff acknowledged safeguarding policy version X on date Y — audit-material, never mutable, refresh cadence per policy_version). Emits `CHECK_VERIFIED` / `CHECK_EXPIRING` (90d/30d/7d) / `INCIDENT_REPORTED` (bridges to compliance) / `STAFF_ASSIGNMENT_BLOCKED`.",
+  "keywords": [
+    "safeguarding",
+    "dbs",
+    "background-check",
+    "vetting",
+    "policy-acknowledgement",
+    "child-protection",
+    "coppa",
+    "ferpa",
+    "assignment-gate",
+    "wave-3"
+  ],
+  "priority": 80,
+  "providers": ["Academorix\\Safeguarding\\Providers\\SafeguardingServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "staff",
+    "coaching",
+    "compliance",
+    "storage",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["reporting", "ai"],
+  "contributes": {
+    "traits": ["RequiresBackgroundCheck", "MustAcknowledgePolicy"],
+    "attributes": [],
+    "blueprints": ["background-check", "policy-acknowledgement"],
+    "middleware": ["safeguarding.assignment-gate"],
+    "events": [
+      "CheckVerified",
+      "CheckExpiring",
+      "CheckExpired",
+      "AssignmentBlocked",
+      "PolicyAcknowledged",
+      "PolicyReleased"
+    ],
+    "policies": ["BackgroundCheckPolicy", "PolicyAcknowledgementPolicy"],
+    "hooks": [
+      "BlockAssignmentOnMissingCheck",
+      "NotifyOnCheckExpiring",
+      "BlockAssignmentOnStalePolicy"
+    ],
+    "commands": [
+      "safeguarding:list",
+      "safeguarding:verify",
+      "safeguarding:seed-policies",
+      "safeguarding:audit-checks"
+    ],
+    "jobs": [
+      "NotifyCheckExpiringJob",
+      "AutoTransitionCheckToExpiredJob",
+      "ReleasePolicyToStaffJob"
+    ],
+    "notifications": [
+      "CheckVerifiedNotification",
+      "CheckExpiringNotification",
+      "CheckExpiredNotification",
+      "AssignmentBlockedNotification",
+      "PolicyReleasedNotification"
+    ],
+    "broadcasts": [],
+    "observers": ["BackgroundCheckObserver", "PolicyAcknowledgementObserver"],
+    "rules": ["valid_check_type", "valid_check_status", "expiry_after_issuance"],
+    "casts": ["CheckStatus", "CheckType"],
+    "views": [],
+    "lang": ["safeguarding"],
+    "config": ["safeguarding"],
+    "macros": [],
+    "bindings": ["BackgroundCheckRepository", "AssignmentGate", "PolicyRepository"],
+    "resources": ["background-check", "policy-acknowledgement"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/background-checks",
+        "POST /api/v1/background-checks",
+        "GET /api/v1/background-checks/{check}",
+        "PATCH /api/v1/background-checks/{check}",
+        "POST /api/v1/background-checks/{check}/verify",
+        "GET /api/v1/staff/{staff}/checks",
+        "GET /api/v1/policies",
+        "POST /api/v1/policies/{policy}/acknowledge",
+        "GET /api/v1/policy-acknowledgements"
+      ]
+    },
+    "platform-admin": {
+      "routes": [
+        "GET /api/v1/platform/background-checks",
+        "POST /api/v1/platform/background-checks/{check}/audit"
+      ]
+    }
+  }
+}

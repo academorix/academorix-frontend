@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/ai/schemas/ai-tool-call",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AiToolCall",
+  "type": "object",
+  "x-module": "ai",
+  "x-eloquent": {
+    "table": "ai_tool_calls",
+    "keyPrefix": "atc_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "Auditable",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "ai_run_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "ai_runs", "column": "id", "onDelete": "cascade" }
+      },
+      "tool_name": { "type": "string", "length": 128, "nullable": false },
+      "args_hash": { "type": "string", "length": 64, "nullable": false },
+      "result_summary": { "type": "text", "nullable": true },
+      "duration_ms": { "type": "integer", "nullable": true },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'running'" },
+      "error_message": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "ai_run_id"], "name": "ai_tool_calls_run_idx" },
+      { "columns": ["tenant_id", "tool_name", "status"], "name": "ai_tool_calls_tool_status_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "ai_run_id",
+    "tool_name",
+    "args_hash",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^atc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["running", "completed", "failed", "refused"] }
+  },
+  "additionalProperties": false
+}

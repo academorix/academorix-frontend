@@ -1,0 +1,117 @@
+{
+  "id": "academorix://modules/digital-passes/schemas/wallet-pass",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "WalletPass",
+  "description": "Apple/Google Wallet pass. Serial + kind + status. Auto-updates on membership renewal via push notifications.",
+  "type": "object",
+  "x-module": "digital-passes",
+  "x-eloquent": {
+    "table": "wallet_passes",
+    "keyPrefix": "wpp_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "holder_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "athletes / staff / users."
+      },
+      "holder_id": { "type": "string", "length": 30, "nullable": false },
+      "membership_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "memberships", "column": "id", "onDelete": "cascade" }
+      },
+      "kind": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "membership_card / event_ticket / day_pass_card."
+      },
+      "provider": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "apple / google / generic_qr."
+      },
+      "serial": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Provider-side pass serial."
+      },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'issued'" },
+      "installed_at": { "type": "timestamptz", "nullable": true },
+      "device_id": { "type": "string", "length": 200, "nullable": true },
+      "push_token": { "type": "string", "length": 500, "nullable": true },
+      "expires_at": { "type": "timestamptz", "nullable": true },
+      "revoked_at": { "type": "timestamptz", "nullable": true },
+      "revoked_reason": { "type": "string", "length": 200, "nullable": true },
+      "qr_payload": {
+        "type": "text",
+        "nullable": true,
+        "description": "Signed JWT for QR check-in — verified at gate."
+      },
+      "pass_document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" }
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "serial"],
+        "unique": true,
+        "name": "wallet_passes_serial_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "holder_type", "holder_id"], "name": "wallet_passes_holder_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "holder_type",
+    "holder_id",
+    "kind",
+    "provider",
+    "serial",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^wpp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": { "type": "string", "enum": ["membership_card", "event_ticket", "day_pass_card"] },
+    "provider": { "type": "string", "enum": ["apple", "google", "generic_qr"] },
+    "status": { "type": "string", "enum": ["issued", "installed", "updated", "revoked", "expired"] }
+  },
+  "additionalProperties": false
+}

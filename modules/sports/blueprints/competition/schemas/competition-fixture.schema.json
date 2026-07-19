@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/competition/schemas/competition-fixture",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "CompetitionFixture",
+  "type": "object",
+  "x-module": "competition",
+  "x-eloquent": {
+    "table": "competition_fixtures",
+    "keyPrefix": "cmf_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "competition_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "competitions", "column": "id", "onDelete": "cascade" }
+      },
+      "event_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "events", "column": "id", "onDelete": "set null" },
+        "description": "sports/event materialising the fixture."
+      },
+      "round_number": { "type": "integer", "nullable": true },
+      "bracket_node_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "bracket_nodes", "column": "id", "onDelete": "set null" }
+      },
+      "home_team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" }
+      },
+      "away_team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" }
+      },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'scheduled'" },
+      "home_score": { "type": "integer", "nullable": true },
+      "away_score": { "type": "integer", "nullable": true },
+      "winner_team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "set null" }
+      },
+      "result_recorded_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "competition_id", "round_number"],
+        "name": "competition_fixtures_round_idx"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "competition_id", "status", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cmf_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["scheduled", "in_progress", "completed", "cancelled", "postponed"]
+    }
+  },
+  "additionalProperties": false
+}

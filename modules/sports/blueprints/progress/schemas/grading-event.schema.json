@@ -1,0 +1,105 @@
+{
+  "id": "academorix://modules/progress/schemas/grading-event",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "GradingEvent",
+  "description": "Formal belt-grading examination event distinct from a Session. Date + venue + examiner_coach + list of candidate athletes (via GradingResult rows).",
+  "type": "object",
+  "x-module": "progress",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "grading_events",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "gre_",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": { "scheduled_at": "datetime", "completed_at": "datetime", "metadata": "array" }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": false },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "scheduled_at": { "type": "timestamptz", "nullable": false },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "examiner_coach_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "coaching_profiles", "column": "id", "onDelete": "restrict" }
+      },
+      "venue_facility_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "facilities", "column": "id", "onDelete": "set null" }
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'scheduled'",
+        "description": "scheduled / in_progress / completed / cancelled."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "branch_id", "scheduled_at"],
+        "name": "grading_events_branch_time_idx"
+      },
+      { "columns": ["tenant_id", "sport_key", "status"], "name": "grading_events_status_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "branch_id",
+    "sport_key",
+    "name",
+    "scheduled_at",
+    "examiner_coach_id",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^gre_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["scheduled", "in_progress", "completed", "cancelled"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "completed_at REQUIRED when status = 'completed'.",
+    "Status transitions: scheduled → in_progress → completed; scheduled → cancelled; in_progress → cancelled."
+  ]
+}

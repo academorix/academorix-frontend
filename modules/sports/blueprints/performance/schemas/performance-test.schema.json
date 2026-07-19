@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/performance/schemas/performance-test",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PerformanceTest",
+  "description": "A single physical test definition — reusable across batteries. Name + unit + better_direction + age_bands.",
+  "type": "object",
+  "x-module": "performance",
+  "x-eloquent": {
+    "table": "performance_tests",
+    "keyPrefix": "ptt_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "sport_key": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Sport-agnostic tests carry NULL — apply to any sport."
+      },
+      "code": { "type": "string", "length": 64, "nullable": false },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "unit": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "seconds / meters / centimeters / ml_per_kg_per_min / count / percent."
+      },
+      "better_direction": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "description": "higher / lower — is a higher value better?"
+      },
+      "age_bands": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Applicable age bands (e.g. ['U10', 'U12', 'U14', 'Senior'])."
+      },
+      "description": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "code"],
+        "unique": true,
+        "name": "performance_tests_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": ["id", "code", "name", "unit", "better_direction", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ptt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "unit": {
+      "type": "string",
+      "enum": [
+        "seconds",
+        "meters",
+        "centimeters",
+        "ml_per_kg_per_min",
+        "count",
+        "percent",
+        "kilograms",
+        "watts"
+      ]
+    },
+    "better_direction": { "type": "string", "enum": ["higher", "lower"] }
+  },
+  "additionalProperties": false
+}

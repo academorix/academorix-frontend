@@ -1,0 +1,94 @@
+{
+  "$version": 1,
+  "name": "private-sessions",
+  "alias": "private-sessions",
+  "namespace": "Academorix\\Sports\\PrivateSessions",
+  "description": "1:1 coaching sessions per blueprint §13.4. Ships TWO owned entities: `PrivateSessionRequest` (request → approve → schedule → completed / no_show / cancelled; athlete + coach + preferred slots), `SessionCredit` (session-pack credit ledger — parent buys 10-pack; each private-session consume atomically decrements). Request flow: parent submits preferred slots → coach approves + picks slot → scheduled via sports/session → completed → invoice via finance/invoice (or credit consumed if pack purchased). Distinct from sports/session (regular team practice) — this is 1:1 paid coaching with per-session monetary tracking.",
+  "keywords": [
+    "private-sessions",
+    "one-on-one",
+    "coaching",
+    "credit-pack",
+    "session-request",
+    "wave-2"
+  ],
+  "priority": 71,
+  "providers": ["Academorix\\Sports\\PrivateSessions\\Providers\\PrivateSessionsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "athlete",
+    "coaching",
+    "session",
+    "invoice",
+    "payment",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["reporting", "attendance", "ai"],
+  "contributes": {
+    "traits": ["HasSessionCredits"],
+    "attributes": [],
+    "blueprints": ["private-session-request", "session-credit"],
+    "middleware": [],
+    "events": [
+      "SessionRequested",
+      "SessionApproved",
+      "SessionRejected",
+      "SessionScheduled",
+      "SessionCompleted",
+      "SessionNoShow",
+      "SessionCancelled",
+      "CreditPackPurchased",
+      "CreditConsumed",
+      "CreditRefunded"
+    ],
+    "policies": ["PrivateSessionRequestPolicy", "SessionCreditPolicy"],
+    "hooks": [
+      "ConsumeCreditAtomicallyOnComplete",
+      "RefundCreditOnCancel",
+      "AutoInvoiceOnCompleteWithoutCredit"
+    ],
+    "commands": [
+      "private-sessions:list",
+      "private-sessions:list-credits",
+      "private-sessions:reconcile-ledger"
+    ],
+    "jobs": ["ExpireStaleRequestsJob", "ChargeNoShowFeeJob", "ReconcileCreditLedgerJob"],
+    "notifications": [
+      "SessionRequestedNotification",
+      "SessionApprovedNotification",
+      "SessionRejectedNotification",
+      "SessionScheduledNotification",
+      "CreditLowBalanceNotification",
+      "CreditPackPurchasedNotification"
+    ],
+    "broadcasts": ["athlete.{athleteId}.private-sessions"],
+    "observers": ["PrivateSessionRequestObserver", "SessionCreditObserver"],
+    "rules": ["valid_request_status", "positive_credit_balance"],
+    "casts": ["PrivateSessionStatus", "CreditKind"],
+    "views": [],
+    "lang": ["private-sessions"],
+    "config": ["private-sessions"],
+    "macros": [],
+    "bindings": ["PrivateSessionOrchestrator", "SessionCreditLedger", "CoachMatchmaker"],
+    "resources": ["private-session-request", "session-credit"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/private-session-requests",
+        "POST /api/v1/private-session-requests",
+        "GET /api/v1/private-session-requests/{request}",
+        "POST /api/v1/private-session-requests/{request}/approve",
+        "POST /api/v1/private-session-requests/{request}/reject",
+        "POST /api/v1/private-session-requests/{request}/cancel",
+        "GET /api/v1/athletes/{athlete}/credits",
+        "POST /api/v1/session-credits/purchase",
+        "POST /api/v1/session-credits/{credit}/refund"
+      ]
+    }
+  }
+}

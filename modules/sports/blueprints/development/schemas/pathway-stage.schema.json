@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/development/schemas/pathway-stage",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PathwayStage",
+  "type": "object",
+  "x-module": "development",
+  "x-eloquent": {
+    "table": "pathway_stages",
+    "keyPrefix": "dvs_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasAttributeSet",
+      "HasSchemalessAttributes",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "development_pathway_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "development_pathways", "column": "id", "onDelete": "cascade" }
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "order": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Ordered progression within a pathway."
+      },
+      "criteria": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Attribute-driven promotion criteria."
+      },
+      "attribute_set_snapshot_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "attribute_sets", "column": "id", "onDelete": "set null" }
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "development_pathway_id", "order"],
+        "unique": true,
+        "name": "pathway_stages_order_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "development_pathway_id",
+    "name",
+    "order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^dvs_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

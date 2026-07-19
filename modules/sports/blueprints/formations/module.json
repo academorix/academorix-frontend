@@ -1,0 +1,56 @@
+{
+  "$version": 1,
+  "name": "formations",
+  "alias": "formations",
+  "namespace": "Academorix\\Sports\\Formations",
+  "description": "Formation templates + tactical board coordinates per blueprint §11.2. Ships TWO owned entities: `Formation` (named template — 4-3-3 / 4-4-2 / basketball zone / tennis singles/doubles / swim lane layout; sport-scoped; slot count validated vs sport team size from registry), `FormationSlot` (individual slot — position kebab-case + x/y coordinates 0-100 for field render + ordered). Consumed by sports/event lineup builder to place athletes into slots. Sports without FORMATIONS capability simply don't expose this feature.",
+  "keywords": [
+    "formations",
+    "tactics",
+    "lineup",
+    "field",
+    "slot",
+    "capability-formations",
+    "wave-3"
+  ],
+  "priority": 83,
+  "providers": ["Academorix\\Sports\\Formations\\Providers\\FormationsServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application", "registry", "coaching"],
+  "extendedBy": [],
+  "planned_consumers": ["event", "session", "public-site"],
+  "contributes": {
+    "traits": ["HasFormation"],
+    "attributes": [],
+    "blueprints": ["formation", "formation-slot"],
+    "middleware": [],
+    "events": ["FormationCreated", "FormationUpdated", "FormationCloned"],
+    "policies": ["FormationPolicy", "FormationSlotPolicy"],
+    "hooks": ["ValidateSlotCountVsTeamSize"],
+    "commands": ["formations:list", "formations:seed-defaults"],
+    "jobs": ["ImportFormationLibraryJob"],
+    "notifications": [],
+    "broadcasts": [],
+    "observers": ["FormationObserver", "FormationSlotObserver"],
+    "rules": ["valid_position_code", "valid_coordinates", "unique_slots_per_formation"],
+    "casts": [],
+    "views": [],
+    "lang": ["formations"],
+    "config": ["formations"],
+    "macros": [],
+    "bindings": ["FormationRepository", "SlotValidator"],
+    "resources": ["formation", "formation-slot"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/formations",
+        "POST /api/v1/formations",
+        "GET /api/v1/formations/{formation}",
+        "PATCH /api/v1/formations/{formation}",
+        "POST /api/v1/formations/{formation}/clone",
+        "GET /api/v1/formations/{formation}/slots"
+      ]
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "$version": 1,
+  "name": "messaging",
+  "alias": "messaging",
+  "namespace": "Academorix\\Messaging",
+  "description": "Direct messaging + group threads per blueprint §16.1. Ships THREE owned entities: `Conversation` (1:1 or group thread — scope IN branch/team/adhoc + subject + last_message_at; retention per tenant policy), `ConversationParticipant` (User in a Conversation with per-user state — muted_until + last_read_at + role in the thread), `Message` (single message — body / attachments / sent_at / read_by JSONB of user_id → read_at). Live typing indicator + presence via realtime channel `tenant.{id}.conversation.{convId}`. Distinct from Notifications (system → user) and Announcements (admin → many); this is USER ↔ USER DM.",
+  "keywords": [
+    "messaging",
+    "dm",
+    "conversation",
+    "thread",
+    "typing-indicator",
+    "presence",
+    "wave-2"
+  ],
+  "priority": 73,
+  "providers": ["Academorix\\Messaging\\Providers\\MessagingServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "notifications",
+    "realtime",
+    "storage"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["ai", "reporting"],
+  "contributes": {
+    "traits": ["ParticipatesInConversation"],
+    "attributes": [],
+    "blueprints": ["conversation", "conversation-participant", "message"],
+    "middleware": ["messaging.throttle"],
+    "events": [
+      "ConversationStarted",
+      "ConversationArchived",
+      "ParticipantAdded",
+      "ParticipantRemoved",
+      "ParticipantMuted",
+      "MessageSent",
+      "MessageDelivered",
+      "MessageRead",
+      "MessageDeleted"
+    ],
+    "policies": ["ConversationPolicy", "ConversationParticipantPolicy", "MessagePolicy"],
+    "hooks": ["UpdateLastMessageAtOnMessage", "BroadcastMessageOnSend"],
+    "commands": ["messaging:list", "messaging:purge-abandoned"],
+    "jobs": [
+      "FanoutMessageDeliveryJob",
+      "PurgeAbandonedConversationsJob",
+      "IndexMessagesForSearchJob"
+    ],
+    "notifications": ["NewMessageNotification"],
+    "broadcasts": ["tenant.{tenantId}.conversation.{conversationId}"],
+    "observers": ["ConversationObserver", "MessageObserver"],
+    "rules": ["valid_conversation_scope", "at_least_one_participant"],
+    "casts": ["ConversationScope"],
+    "views": [],
+    "lang": ["messaging"],
+    "config": ["messaging"],
+    "macros": [],
+    "bindings": ["ConversationRepository", "MessageRepository", "MessagingBroadcaster"],
+    "resources": ["conversation", "conversation-participant", "message"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/conversations",
+        "POST /api/v1/conversations",
+        "GET /api/v1/conversations/{conversation}",
+        "PATCH /api/v1/conversations/{conversation}",
+        "POST /api/v1/conversations/{conversation}/participants",
+        "DELETE /api/v1/conversations/{conversation}/participants/{user}",
+        "POST /api/v1/conversations/{conversation}/mute",
+        "GET /api/v1/conversations/{conversation}/messages",
+        "POST /api/v1/conversations/{conversation}/messages",
+        "PATCH /api/v1/messages/{message}",
+        "POST /api/v1/messages/{message}/read"
+      ]
+    }
+  }
+}

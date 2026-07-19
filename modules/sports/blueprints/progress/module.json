@@ -1,0 +1,157 @@
+{
+  "$version": 1,
+  "name": "progress",
+  "alias": "progress",
+  "namespace": "Academorix\\Sports\\Progress",
+  "description": "Athlete skill development — the biggest Attributes consumer per blueprint §14.1. Ships SIX owned entities: `ProgressAssessment` (attribute-driven per-enrollment × capture_date; values JSONB validated against active AttributeSet, snapshot version_number frozen at capture for historic render; overall score computed via sport-config weighting to tier bronze/silver/gold/diamond), `ProgressCard` (snapshot render of an assessment as a shareable card — card_type IN fifa_card/attribute_card/radar/time_trial/apparatus_scores per sport config; public shareable via signed URL), `CoachNote` (coach observation on an athlete_enrollment; visibility IN coach_only/shared_with_parent/shared_with_athlete; immutable — edits create new revisions), `BeltRank` (martial-arts belt ordering per sport_key — karate white→black×5dan, judo, taekwondo; ordered progression), `GradingEvent` (formal belt-grading exam distinct from Session — date + venue + examiner_coach_id + candidates via GradingResult), `GradingResult` (per-athlete exam outcome — from_belt_id + to_belt_id + result pass/fail/deferred + examiner_notes). Reads `athlete-enrollment` via attribute-driven `sport_key` discriminator; the FIFA-card fields ARE the sport's active AttributeSet.",
+  "keywords": [
+    "progress",
+    "skill-card",
+    "assessment",
+    "belt-grading",
+    "coach-note",
+    "fifa-card",
+    "radar",
+    "attribute-driven",
+    "wave-3"
+  ],
+  "priority": 78,
+  "providers": ["Academorix\\Sports\\Progress\\Providers\\ProgressServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "attributes",
+    "athlete",
+    "athlete-enrollment",
+    "attendance",
+    "coaching",
+    "storage"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["awards", "development", "reporting", "ai", "public-site"],
+  "contributes": {
+    "traits": ["HasProgressCard", "HasCoachNotes", "HasBeltProgression"],
+    "attributes": [],
+    "blueprints": [
+      "progress-assessment",
+      "progress-card",
+      "coach-note",
+      "belt-rank",
+      "grading-event",
+      "grading-result"
+    ],
+    "middleware": ["progress.enrollment-scope", "progress.medical-view-mask"],
+    "events": [
+      "ProgressAssessmentRecorded",
+      "ProgressCardGenerated",
+      "ProgressCardShared",
+      "CoachNoteCreated",
+      "CoachNoteRevised",
+      "CoachNoteShared",
+      "GradingEventScheduled",
+      "GradingResultRecorded",
+      "BeltRankPromoted"
+    ],
+    "policies": [
+      "ProgressAssessmentPolicy",
+      "ProgressCardPolicy",
+      "CoachNotePolicy",
+      "BeltRankPolicy",
+      "GradingEventPolicy",
+      "GradingResultPolicy"
+    ],
+    "hooks": [
+      "SnapshotAttributeSetVersionOnAssessment",
+      "AutoGrantAwardOnBeltPromotion",
+      "InvalidateProgressCacheOnAssessment"
+    ],
+    "commands": [
+      "progress:list",
+      "progress:describe",
+      "progress:seed-belts",
+      "progress:reindex-cards",
+      "grading:list",
+      "grading:schedule"
+    ],
+    "jobs": [
+      "RegenerateProgressCardJob",
+      "ComputeOverallScoreJob",
+      "NotifyGradingEventJob",
+      "PurgeExpiredShareableUrlsJob"
+    ],
+    "notifications": [
+      "ProgressAssessmentRecordedNotification",
+      "CoachNoteSharedNotification",
+      "GradingResultNotification",
+      "BeltPromotedNotification"
+    ],
+    "broadcasts": ["athlete.{athleteId}.progress", "tenant.{tenantId}.gradings"],
+    "observers": [
+      "ProgressAssessmentObserver",
+      "ProgressCardObserver",
+      "CoachNoteObserver",
+      "GradingEventObserver",
+      "GradingResultObserver"
+    ],
+    "rules": [
+      "valid_card_type",
+      "valid_visibility",
+      "valid_belt_progression",
+      "valid_overall_weighting",
+      "positive_assessment_values"
+    ],
+    "casts": ["CardType", "NoteVisibility", "GradingResultStatus", "OverallTier"],
+    "views": [],
+    "lang": ["progress"],
+    "config": ["progress"],
+    "macros": [],
+    "bindings": [
+      "ProgressAssessmentRepository",
+      "ProgressCardRenderer",
+      "OverallScoreCalculator",
+      "BeltProgressionValidator",
+      "GradingScheduler"
+    ],
+    "resources": [
+      "progress-assessment",
+      "progress-card",
+      "coach-note",
+      "belt-rank",
+      "grading-event",
+      "grading-result"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Coach-facing assessment CRUD + athlete/parent-facing card view + grading admin.",
+      "routes": [
+        "GET /api/v1/athletes/{athlete}/progress",
+        "POST /api/v1/athletes/{athlete}/progress-assessments",
+        "GET /api/v1/progress-assessments/{assessment}",
+        "PATCH /api/v1/progress-assessments/{assessment}",
+        "POST /api/v1/progress-assessments/{assessment}/regenerate-card",
+        "GET /api/v1/progress-cards/{card}",
+        "POST /api/v1/progress-cards/{card}/share",
+        "GET /api/v1/coach-notes",
+        "POST /api/v1/coach-notes",
+        "PATCH /api/v1/coach-notes/{note}",
+        "GET /api/v1/belt-ranks",
+        "GET /api/v1/grading-events",
+        "POST /api/v1/grading-events",
+        "GET /api/v1/grading-events/{event}",
+        "POST /api/v1/grading-events/{event}/results",
+        "GET /api/v1/grading-results/{result}"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read of progress records for support.",
+      "routes": ["GET /api/v1/platform/progress-assessments", "GET /api/v1/platform/grading-events"]
+    },
+    "central": {
+      "description": "Public shareable card render via signed URL.",
+      "routes": ["GET /progress-cards/{signature}"]
+    }
+  }
+}

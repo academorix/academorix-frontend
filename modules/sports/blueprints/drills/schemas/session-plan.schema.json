@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/drills/schemas/session-plan",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "SessionPlan",
+  "type": "object",
+  "x-module": "drills",
+  "x-eloquent": {
+    "table": "session_plans",
+    "keyPrefix": "spl_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": false },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "objective": { "type": "text", "nullable": true },
+      "duration_minutes": { "type": "integer", "nullable": true },
+      "curriculum_week_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "curriculum_weeks", "column": "id", "onDelete": "set null" }
+      },
+      "published_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "sport_key", "published_at"], "name": "session_plans_sport_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "sport_key", "name", "created_at", "updated_at"],
+  "properties": { "id": { "type": "string", "pattern": "^spl_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

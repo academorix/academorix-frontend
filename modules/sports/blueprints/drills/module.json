@@ -1,0 +1,112 @@
+{
+  "$version": 1,
+  "name": "drills",
+  "alias": "drills",
+  "namespace": "Academorix\\Sports\\Drills",
+  "description": "Drill library + curriculum per blueprint §14.5. Ships SIX owned entities: `Drill` (coaching drill — objective / age_band / duration / equipment / difficulty / diagram_url / coaching_points; sport-scoped via sport_key; search-indexed), `DrillCategory` (categorization — passing/shooting/defense/conditioning; tenant-authorable), `SessionPlan` (ordered collection of drills for a training session — sport + duration + objective + optional curriculum_week_id linkage), `SessionPlanItem` (drill entry in a plan — drill_id + duration + notes + sort_order), `Curriculum` (multi-week structured plan for a Team+Season — 6-16 weeks; cloneable across seasons), `CurriculumWeek` (weekly slot in a curriculum with linked SessionPlans + learning objectives). Feeds sports/session `training_session.session_plan_id` for structured practice sessions.",
+  "keywords": [
+    "drills",
+    "session-plan",
+    "curriculum",
+    "coaching-library",
+    "capability-drill-library",
+    "wave-3"
+  ],
+  "priority": 84,
+  "providers": ["Academorix\\Sports\\Drills\\Providers\\DrillsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "registry",
+    "session",
+    "coaching",
+    "storage",
+    "search"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["ai", "public-site", "reporting"],
+  "contributes": {
+    "traits": ["HasDrills", "BelongsToCurriculum"],
+    "attributes": [],
+    "blueprints": [
+      "drill",
+      "drill-category",
+      "session-plan",
+      "session-plan-item",
+      "curriculum",
+      "curriculum-week"
+    ],
+    "middleware": [],
+    "events": [
+      "DrillCreated",
+      "DrillPublished",
+      "SessionPlanCreated",
+      "SessionPlanPublished",
+      "CurriculumCreated",
+      "CurriculumCloned",
+      "CurriculumProgressUpdated"
+    ],
+    "policies": [
+      "DrillPolicy",
+      "DrillCategoryPolicy",
+      "SessionPlanPolicy",
+      "SessionPlanItemPolicy",
+      "CurriculumPolicy",
+      "CurriculumWeekPolicy"
+    ],
+    "hooks": ["IndexDrillForSearchOnPublish", "TrackCurriculumProgress"],
+    "commands": [
+      "drills:list",
+      "drills:seed-defaults",
+      "drills:reindex-search",
+      "curriculums:clone"
+    ],
+    "jobs": ["ReindexDrillJob", "SnapshotCurriculumProgressJob"],
+    "notifications": ["DrillPublishedNotification", "CurriculumCompletedNotification"],
+    "broadcasts": [],
+    "observers": ["DrillObserver", "SessionPlanObserver", "CurriculumObserver"],
+    "rules": ["valid_difficulty", "valid_duration", "unique_week_number_per_curriculum"],
+    "casts": ["Difficulty"],
+    "views": [],
+    "lang": ["drills"],
+    "config": ["drills"],
+    "macros": [],
+    "bindings": [
+      "DrillRepository",
+      "SessionPlanRepository",
+      "CurriculumRepository",
+      "DrillSearchIndexer"
+    ],
+    "resources": [
+      "drill",
+      "drill-category",
+      "session-plan",
+      "session-plan-item",
+      "curriculum",
+      "curriculum-week"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/drills",
+        "POST /api/v1/drills",
+        "GET /api/v1/drills/{drill}",
+        "PATCH /api/v1/drills/{drill}",
+        "POST /api/v1/drills/{drill}/publish",
+        "GET /api/v1/drill-categories",
+        "POST /api/v1/drill-categories",
+        "GET /api/v1/session-plans",
+        "POST /api/v1/session-plans",
+        "GET /api/v1/session-plans/{plan}",
+        "POST /api/v1/session-plans/{plan}/items",
+        "GET /api/v1/curriculums",
+        "POST /api/v1/curriculums",
+        "POST /api/v1/curriculums/{curriculum}/clone",
+        "GET /api/v1/curriculums/{curriculum}/weeks"
+      ]
+    }
+  }
+}

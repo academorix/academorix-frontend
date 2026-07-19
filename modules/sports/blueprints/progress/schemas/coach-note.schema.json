@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/progress/schemas/coach-note",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "CoachNote",
+  "description": "Coach observation on an athlete_enrollment. Visibility: coach_only / shared_with_parent / shared_with_athlete. Immutable — edits create new revisions via revision_of_id chain.",
+  "type": "object",
+  "x-module": "progress",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "coach_notes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "cno_",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthleteEnrollment",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": { "visibility": "NoteVisibility", "shared_at": "datetime", "metadata": "array" }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athlete_enrollments", "column": "id", "onDelete": "restrict" }
+      },
+      "coach_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "body": { "type": "text", "nullable": false },
+      "visibility": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'coach_only'"
+      },
+      "revision_of_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "coach_notes", "column": "id", "onDelete": "set null" }
+      },
+      "shared_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "athlete_enrollment_id", "created_at"],
+        "name": "coach_notes_enrollment_time_idx"
+      },
+      { "columns": ["tenant_id", "coach_user_id"], "name": "coach_notes_coach_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "athlete_enrollment_id",
+    "coach_user_id",
+    "body",
+    "visibility",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cno_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "visibility": {
+      "type": "string",
+      "enum": ["coach_only", "shared_with_parent", "shared_with_athlete", "shared_with_both"]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "body IMMUTABLE post-create — mutations create a new coach_note with revision_of_id pointing at the original.",
+    "visibility MAY change post-create (widening only — coach_only → shared_with_parent OK; reverse REFUSED)."
+  ]
+}

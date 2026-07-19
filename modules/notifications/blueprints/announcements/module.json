@@ -1,0 +1,78 @@
+{
+  "$version": 1,
+  "name": "announcements",
+  "alias": "announcements",
+  "namespace": "Academorix\\Announcements",
+  "description": "Academy-wide (or scoped) news feed per blueprint §16.2. Distinct from `notifications/newsletter` (subscription list broadcasts) — this is targeted org/branch/team/role news. Ships TWO owned entities: `Announcement` (audience_scope IN tenant/org/branch/team/role + publish_at + expires_at + rich_content; state draft → scheduled → published → expired), `AnnouncementView` (per-user view record — read_at + acknowledged_at; enables audience delivery metrics + read-receipts). Publisher composes targeting via audience descriptor; scheduler publishes at publish_at; expiry job archives at expires_at. Consumers see announcements filtered by their (org/branch/team) placement + role.",
+  "keywords": ["announcements", "news-feed", "targeted-broadcast", "targeted-audience", "wave-2"],
+  "priority": 72,
+  "providers": ["Academorix\\Announcements\\Providers\\AnnouncementsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "notifications",
+    "realtime",
+    "storage"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["ai", "reporting"],
+  "contributes": {
+    "traits": [],
+    "attributes": [],
+    "blueprints": ["announcement", "announcement-view"],
+    "middleware": [],
+    "events": [
+      "AnnouncementDrafted",
+      "AnnouncementScheduled",
+      "AnnouncementPublished",
+      "AnnouncementExpired",
+      "AnnouncementCancelled",
+      "AnnouncementViewed",
+      "AnnouncementAcknowledged"
+    ],
+    "policies": ["AnnouncementPolicy", "AnnouncementViewPolicy"],
+    "hooks": [
+      "PublishScheduledAnnouncementsJob",
+      "ExpireOverdueAnnouncementsJob",
+      "BroadcastAnnouncementOnPublish"
+    ],
+    "commands": [
+      "announcements:list",
+      "announcements:publish-scheduled",
+      "announcements:expire-overdue"
+    ],
+    "jobs": [
+      "PublishScheduledAnnouncementJob",
+      "ExpireOverdueAnnouncementJob",
+      "FanoutAnnouncementJob"
+    ],
+    "notifications": ["AnnouncementPublishedNotification"],
+    "broadcasts": ["tenant.{tenantId}.announcements"],
+    "observers": ["AnnouncementObserver", "AnnouncementViewObserver"],
+    "rules": ["valid_audience_scope", "publish_before_expiry"],
+    "casts": ["AnnouncementStatus", "AudienceScope"],
+    "views": [],
+    "lang": ["announcements"],
+    "config": ["announcements"],
+    "macros": [],
+    "bindings": ["AnnouncementRepository", "AudienceResolver", "AnnouncementFanoutJob"],
+    "resources": ["announcement", "announcement-view"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/announcements",
+        "POST /api/v1/announcements",
+        "GET /api/v1/announcements/{announcement}",
+        "PATCH /api/v1/announcements/{announcement}",
+        "POST /api/v1/announcements/{announcement}/publish",
+        "POST /api/v1/announcements/{announcement}/cancel",
+        "POST /api/v1/announcements/{announcement}/view",
+        "POST /api/v1/announcements/{announcement}/acknowledge"
+      ]
+    }
+  }
+}

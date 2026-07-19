@@ -1,0 +1,91 @@
+{
+  "$version": 1,
+  "name": "digital-passes",
+  "alias": "digital-passes",
+  "namespace": "Academorix\\Finance\\DigitalPasses",
+  "description": "Apple Wallet + Google Wallet digital membership passes per blueprint §16.6. Ships ONE owned entity: `WalletPass` (per-holder wallet pass — serial + kind IN membership_card/event_ticket + status IN issued/updated/revoked; auto-updates on renewal; tenant branding). Distinct from finance/membership `Pass` (session-consumption ticket) — this is a WALLET credential that carries the membership ID + QR code for entry check-in. Cascades: on `MEMBERSHIP_RENEWED` → auto-update pass; on `MEMBERSHIP_CANCELLED` → revoke pass.",
+  "keywords": [
+    "wallet-pass",
+    "apple-wallet",
+    "google-wallet",
+    "membership-card",
+    "digital-credential",
+    "wave-4"
+  ],
+  "priority": 88,
+  "providers": ["Academorix\\Finance\\DigitalPasses\\Providers\\DigitalPassesServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "athlete",
+    "membership",
+    "credentials",
+    "attendance",
+    "storage",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["ai"],
+  "contributes": {
+    "traits": ["HasWalletPass"],
+    "attributes": [],
+    "blueprints": ["wallet-pass"],
+    "middleware": [],
+    "events": ["PassIssued", "PassUpdated", "PassRevoked", "PassInstalled", "PassRemovedByUser"],
+    "policies": ["WalletPassPolicy"],
+    "hooks": [
+      "AutoUpdatePassOnMembershipRenewed",
+      "RevokePassOnMembershipCancelled",
+      "RegeneratePassOnBrandingChange"
+    ],
+    "commands": ["passes:list", "passes:issue", "passes:revoke", "passes:regenerate-all"],
+    "jobs": [
+      "IssueWalletPassJob",
+      "UpdateWalletPassJob",
+      "RevokeWalletPassJob",
+      "RegeneratePassesOnBrandingChangeJob"
+    ],
+    "notifications": [
+      "PassIssuedNotification",
+      "PassUpdatedNotification",
+      "PassRevokedNotification"
+    ],
+    "broadcasts": [],
+    "observers": ["WalletPassObserver"],
+    "rules": ["valid_pass_status", "unique_serial"],
+    "casts": ["PassStatus", "PassKind"],
+    "views": [],
+    "lang": ["digital-passes"],
+    "config": ["digital-passes"],
+    "macros": [],
+    "bindings": [
+      "WalletPassRepository",
+      "AppleWalletProvider",
+      "GoogleWalletProvider",
+      "PassRenderer"
+    ],
+    "resources": ["wallet-pass"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/wallet-passes",
+        "POST /api/v1/wallet-passes",
+        "GET /api/v1/wallet-passes/{pass}",
+        "POST /api/v1/wallet-passes/{pass}/regenerate",
+        "POST /api/v1/wallet-passes/{pass}/revoke"
+      ]
+    },
+    "central": {
+      "description": "Apple/Google Wallet callbacks + pass download.",
+      "routes": [
+        "GET /wallet/passes/{serial}.pkpass",
+        "POST /wallet/passes/register",
+        "POST /wallet/passes/unregister"
+      ]
+    }
+  }
+}

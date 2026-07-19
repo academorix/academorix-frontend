@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/expenses/schemas/budget",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Budget",
+  "type": "object",
+  "x-module": "expenses",
+  "x-eloquent": {
+    "table": "budgets",
+    "keyPrefix": "bdg_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "cascade" }
+      },
+      "expense_category_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "expense_categories", "column": "id", "onDelete": "cascade" }
+      },
+      "cost_center_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "cost_centers", "column": "id", "onDelete": "cascade" }
+      },
+      "period_start": { "type": "date", "nullable": false },
+      "period_end": { "type": "date", "nullable": false },
+      "amount_minor": { "type": "bigint", "nullable": false },
+      "used_amount_minor": { "type": "bigint", "nullable": false, "default": "0" },
+      "currency": { "type": "string", "length": 3, "nullable": false },
+      "alert_threshold_percent": { "type": "integer", "nullable": true, "default": "80" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "branch_id", "expense_category_id", "period_start"],
+        "name": "budgets_scope_period_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "period_start",
+    "period_end",
+    "amount_minor",
+    "currency",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^bdg_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/drills/schemas/drill",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Drill",
+  "type": "object",
+  "x-module": "drills",
+  "x-eloquent": {
+    "table": "drills",
+    "keyPrefix": "dri_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Searchable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "drill_category_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "drill_categories", "column": "id", "onDelete": "set null" }
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": false },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "objective": { "type": "text", "nullable": true },
+      "age_band": { "type": "string", "length": 32, "nullable": true },
+      "duration_minutes": { "type": "integer", "nullable": true },
+      "difficulty": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "beginner / intermediate / advanced / expert."
+      },
+      "equipment": { "type": "jsonb", "nullable": true },
+      "coaching_points": { "type": "jsonb", "nullable": true },
+      "diagram_document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" }
+      },
+      "video_document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" }
+      },
+      "published_at": { "type": "timestamptz", "nullable": true },
+      "tags": { "type": "jsonb", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "sport_key", "age_band", "published_at"],
+        "name": "drills_search_idx"
+      },
+      { "columns": ["tenant_id", "drill_category_id"], "name": "drills_category_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "sport_key", "name", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^dri_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "difficulty": {
+      "type": ["string", "null"],
+      "enum": ["beginner", "intermediate", "advanced", "expert", null]
+    }
+  },
+  "additionalProperties": false
+}

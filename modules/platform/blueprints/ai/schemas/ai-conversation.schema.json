@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/ai/schemas/ai-conversation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AiConversation",
+  "type": "object",
+  "x-module": "ai",
+  "x-eloquent": {
+    "table": "ai_conversations",
+    "keyPrefix": "aic_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "persona": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "CoachAssistant / ParentAssistant / AdminAssistant / MedicalAssistant / …"
+      },
+      "title": { "type": "string", "length": 200, "nullable": true },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'active'" },
+      "message_count": { "type": "integer", "nullable": false, "default": "0" },
+      "total_cost_minor": { "type": "bigint", "nullable": false, "default": "0" },
+      "total_tokens_in": { "type": "bigint", "nullable": false, "default": "0" },
+      "total_tokens_out": { "type": "bigint", "nullable": false, "default": "0" },
+      "last_message_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "user_id", "last_message_at"],
+        "name": "ai_conversations_user_recent_idx"
+      },
+      { "columns": ["tenant_id", "persona"], "name": "ai_conversations_persona_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "user_id", "persona", "status", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^aic_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["active", "archived", "flagged", "deleted"] }
+  },
+  "additionalProperties": false
+}

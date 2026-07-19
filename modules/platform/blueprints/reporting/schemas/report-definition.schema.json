@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/reporting/schemas/report-definition",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ReportDefinition",
+  "type": "object",
+  "x-module": "reporting",
+  "x-eloquent": {
+    "table": "report_definitions",
+    "keyPrefix": "rpt_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "attendance_by_branch / revenue_monthly / retention_cohort / roster."
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "kind": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "attendance / revenue / retention / roster / performance / financial / custom."
+      },
+      "description": { "type": "text", "nullable": true },
+      "parameters_schema": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "JSON schema for the run parameters."
+      },
+      "output_columns": { "type": "jsonb", "nullable": false, "default": "'[]'" },
+      "sql_template_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256 of the versioned SQL template."
+      },
+      "refresh_cadence": { "type": "string", "length": 16, "nullable": true },
+      "audience_scope": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'tenant_admin'"
+      },
+      "is_system": { "type": "boolean", "nullable": false, "default": "false" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "code"],
+        "unique": true,
+        "name": "report_definitions_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": ["id", "code", "name", "kind", "audience_scope", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rpt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "audience_scope": {
+      "type": "string",
+      "enum": ["tenant_admin", "branch_manager", "hr", "finance", "coach", "public"]
+    }
+  },
+  "additionalProperties": false
+}

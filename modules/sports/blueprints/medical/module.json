@@ -1,0 +1,133 @@
+{
+  "$version": 1,
+  "name": "medical",
+  "alias": "medical",
+  "namespace": "Academorix\\Sports\\Medical",
+  "description": "Health records + return-to-play gating per blueprint §14.3. Sensitive-data module — restricted RBAC (medical role + admin only) + encrypted at rest. Ships SIX owned entities: `MedicalRecord` (root health record per athlete; container for downstream), `Injury` (per-athlete injury event — body_part / mechanism / severity / onset_at / status reported→under_treatment→recovering→cleared), `Treatment` (treatment record linked to an Injury — provider / date / notes / follow_up_at; encrypted), `MedicalClearance` (certificate — issued_by_user + issued_at + expires_at + scope IN all_activities/limited/pending_review; ELIGIBILITY GATE consumed by match squad selection + attendance check-in), `Allergy` (allergen / severity / notes; surfaced to coaches via safe read only), `Medication` (name / dosage / frequency / prescribing_provider / expires_at; medical role restricted). Eligibility gate blocks squad selection when clearance expired OR injury active. Emits `RETURN_TO_PLAY_CLEARED` event on cleared status. All records subject to strict RBAC + encrypted columns + GDPR export-before-delete.",
+  "keywords": [
+    "medical",
+    "injury",
+    "treatment",
+    "clearance",
+    "return-to-play",
+    "allergies",
+    "medications",
+    "restricted-rbac",
+    "encrypted",
+    "wave-3"
+  ],
+  "priority": 80,
+  "providers": ["Academorix\\Sports\\Medical\\Providers\\MedicalServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "athlete",
+    "athlete-enrollment",
+    "storage",
+    "notifications",
+    "compliance"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["event", "session", "attendance", "safeguarding", "reporting", "ai"],
+  "contributes": {
+    "traits": ["HasMedicalRecord", "IsEligibilityGated"],
+    "attributes": [],
+    "blueprints": [
+      "medical-record",
+      "injury",
+      "treatment",
+      "medical-clearance",
+      "allergy",
+      "medication"
+    ],
+    "middleware": ["medical.role-gate", "medical.encryption-at-rest"],
+    "events": [
+      "MedicalRecordCreated",
+      "InjuryReported",
+      "TreatmentAdministered",
+      "ClearanceIssued",
+      "ClearanceExpiring",
+      "ClearanceExpired",
+      "ReturnToPlayCleared",
+      "AllergyAdded",
+      "MedicationAdded",
+      "MedicationDiscontinued"
+    ],
+    "policies": [
+      "MedicalRecordPolicy",
+      "InjuryPolicy",
+      "TreatmentPolicy",
+      "MedicalClearancePolicy",
+      "AllergyPolicy",
+      "MedicationPolicy"
+    ],
+    "hooks": [
+      "BlockSquadSelectionOnActiveInjury",
+      "AlertMedicalOnClearanceExpiring",
+      "PurgeMedicalOnDsarErase"
+    ],
+    "commands": ["medical:list", "medical:seed-injury-catalog", "medical:audit-access"],
+    "jobs": [
+      "NotifyClearanceExpiringJob",
+      "AutoTransitionInjuryStatusJob",
+      "PurgeExpiredMedicationsJob"
+    ],
+    "notifications": [
+      "InjuryReportedNotification",
+      "ClearanceIssuedNotification",
+      "ClearanceExpiringNotification",
+      "ClearanceExpiredNotification",
+      "ReturnToPlayClearedNotification"
+    ],
+    "broadcasts": ["athlete.{athleteId}.medical"],
+    "observers": ["MedicalRecordObserver", "InjuryObserver", "MedicalClearanceObserver"],
+    "rules": [
+      "valid_injury_status",
+      "valid_clearance_scope",
+      "valid_severity",
+      "clearance_expiry_after_issuance"
+    ],
+    "casts": ["InjuryStatus", "InjurySeverity", "ClearanceScope", "MedicationStatus"],
+    "views": [],
+    "lang": ["medical"],
+    "config": ["medical"],
+    "macros": [],
+    "bindings": [
+      "MedicalRecordRepository",
+      "InjuryRepository",
+      "ClearanceRepository",
+      "EligibilityGate"
+    ],
+    "resources": [
+      "medical-record",
+      "injury",
+      "treatment",
+      "medical-clearance",
+      "allergy",
+      "medication"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/athletes/{athlete}/medical",
+        "POST /api/v1/athletes/{athlete}/injuries",
+        "GET /api/v1/injuries/{injury}",
+        "PATCH /api/v1/injuries/{injury}",
+        "POST /api/v1/injuries/{injury}/treatments",
+        "GET /api/v1/medical-clearances",
+        "POST /api/v1/medical-clearances",
+        "POST /api/v1/medical-clearances/{clearance}/renew",
+        "GET /api/v1/athletes/{athlete}/allergies",
+        "POST /api/v1/athletes/{athlete}/allergies",
+        "GET /api/v1/athletes/{athlete}/medications",
+        "POST /api/v1/athletes/{athlete}/medications"
+      ]
+    },
+    "platform-admin": {
+      "routes": ["GET /api/v1/platform/medical/injuries", "GET /api/v1/platform/medical/clearances"]
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/reporting/schemas/report-run",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ReportRun",
+  "type": "object",
+  "x-module": "reporting",
+  "x-eloquent": {
+    "table": "report_runs",
+    "keyPrefix": "rre_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "Auditable",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "report_definition_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "report_definitions", "column": "id", "onDelete": "cascade" }
+      },
+      "saved_report_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "saved_reports", "column": "id", "onDelete": "set null" }
+      },
+      "requested_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "parameters": { "type": "jsonb", "nullable": true },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'queued'" },
+      "started_at": { "type": "timestamptz", "nullable": true },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "rows_count": { "type": "integer", "nullable": true },
+      "output_document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" }
+      },
+      "error_message": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "report_definition_id", "created_at"],
+        "name": "report_runs_definition_time_idx"
+      },
+      { "columns": ["tenant_id", "status", "created_at"], "name": "report_runs_status_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "report_definition_id", "status", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rre_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["queued", "running", "completed", "failed", "cancelled"]
+    }
+  },
+  "additionalProperties": false
+}

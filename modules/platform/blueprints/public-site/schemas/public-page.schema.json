@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/public-site/schemas/public-page",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PublicPage",
+  "type": "object",
+  "x-module": "public-site",
+  "x-eloquent": {
+    "table": "public_pages",
+    "keyPrefix": "pge_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Searchable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "slug": { "type": "string", "length": 200, "nullable": false },
+      "title": { "type": "string", "length": 200, "nullable": false },
+      "kind": { "type": "string", "length": 24, "nullable": false, "default": "'page'" },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'draft'" },
+      "published_at": { "type": "timestamptz", "nullable": true },
+      "seo_title": { "type": "string", "length": 200, "nullable": true },
+      "seo_description": { "type": "string", "length": 500, "nullable": true },
+      "seo_og_image_document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" }
+      },
+      "content_blocks_order": { "type": "jsonb", "nullable": false, "default": "'[]'" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "slug"],
+        "unique": true,
+        "name": "public_pages_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "slug",
+    "title",
+    "kind",
+    "status",
+    "content_blocks_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pge_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "slug": { "type": "string", "pattern": "^[a-z0-9-/]+$" },
+    "status": { "type": "string", "enum": ["draft", "published", "archived"] },
+    "kind": { "type": "string", "enum": ["page", "landing", "post"] }
+  },
+  "additionalProperties": false
+}

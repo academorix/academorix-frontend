@@ -1,0 +1,107 @@
+{
+  "id": "academorix://modules/progress/schemas/progress-card",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ProgressCard",
+  "description": "Rendered snapshot of a ProgressAssessment as a shareable card. Card type (fifa_card / attribute_card / radar / time_trial / apparatus_scores) resolved from sport-config. Public shareable via signed URL with configurable expiry.",
+  "type": "object",
+  "x-module": "progress",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "progress_cards",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pcd_",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "card_type": "CardType",
+      "share_expires_at": "datetime",
+      "rendered_at": "datetime",
+      "metadata": "array"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "progress_assessment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "progress_assessments", "column": "id", "onDelete": "cascade" }
+      },
+      "card_type": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "fifa_card / attribute_card / radar / time_trial / apparatus_scores."
+      },
+      "rendered_at": { "type": "timestamptz", "nullable": false },
+      "rendered_document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" },
+        "description": "PDF / PNG render via storage module."
+      },
+      "share_signature": { "type": "string", "length": 128, "nullable": true },
+      "share_expires_at": { "type": "timestamptz", "nullable": true },
+      "share_views": { "type": "integer", "nullable": false, "default": "0" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "progress_assessment_id"],
+        "name": "progress_cards_assessment_idx"
+      },
+      {
+        "columns": ["share_signature"],
+        "unique": true,
+        "name": "progress_cards_share_signature_unique",
+        "predicate": "share_signature IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "progress_assessment_id",
+    "card_type",
+    "rendered_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pcd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "card_type": {
+      "type": "string",
+      "enum": ["fifa_card", "attribute_card", "radar", "time_trial", "apparatus_scores"]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "share_expires_at REQUIRED when share_signature is set.",
+    "share_views incremented atomically on each public view."
+  ]
+}

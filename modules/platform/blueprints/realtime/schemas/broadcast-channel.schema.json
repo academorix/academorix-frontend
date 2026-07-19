@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/realtime/schemas/broadcast-channel",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "BroadcastChannel",
+  "description": "Registered WebSocket channel — namespace + type + authorization callback. Discovered at boot via #[AsBroadcastChannel]. NEVER carries application_id / region_id / organization_id / scope_node_id directly.",
+  "type": "object",
+  "x-module": "realtime",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "broadcast_channels",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "bch_",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": { "channel_type": "ChannelType", "metadata": "array" }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "namespace": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "Channel namespace (Laravel channel string). MUST start with `tenant.{tenantId}.`."
+      },
+      "channel_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "public / private / presence."
+      },
+      "authorize_callback": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "FQCN + method for private/presence authorization."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "namespace"],
+        "unique": true,
+        "name": "broadcast_channels_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "namespace", "channel_type", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^bch_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "namespace": { "type": "string", "pattern": "^tenant\\.[^.]+\\..+$" },
+    "channel_type": { "type": "string", "enum": ["public", "private", "presence"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "namespace MUST start with tenant.{tenantId}. — enforced by TenantBoundaryEnforcer",
+    "authorize_callback REQUIRED when channel_type IN ('private', 'presence')"
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "id": "academorix://modules/awards/schemas/award",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Award",
+  "type": "object",
+  "x-module": "awards",
+  "x-eloquent": {
+    "table": "awards",
+    "keyPrefix": "awd_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthlete",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "restrict" }
+      },
+      "award_type_code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "motm / most_improved / attendance_streak_10 / belt_promotion / tournament_winner / benchmark_broken / goal_achieved / custom."
+      },
+      "title": { "type": "string", "length": 200, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "granted_at": { "type": "timestamptz", "nullable": false },
+      "granted_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "evidence_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "event / attendance_streak / benchmark / grading_result / goal."
+      },
+      "evidence_id": { "type": "string", "length": 30, "nullable": true },
+      "is_auto_granted": { "type": "boolean", "nullable": false, "default": "false" },
+      "auto_grant_rule": { "type": "string", "length": 64, "nullable": true },
+      "revoked_at": { "type": "timestamptz", "nullable": true },
+      "revoked_reason": { "type": "string", "length": 200, "nullable": true },
+      "certificate_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "certificates", "column": "id", "onDelete": "set null" }
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "athlete_id", "granted_at"], "name": "awards_athlete_time_idx" },
+      { "columns": ["tenant_id", "award_type_code"], "name": "awards_type_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "athlete_id",
+    "award_type_code",
+    "title",
+    "granted_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^awd_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/ai/schemas/ai-embedding",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AiEmbedding",
+  "description": "Vector embedding for RAG search. Tenant-namespaced. Stored in pgvector.",
+  "type": "object",
+  "x-module": "ai",
+  "x-eloquent": {
+    "table": "ai_embeddings",
+    "keyPrefix": "aie_",
+    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToTenant", "HasMetadata", "Filterable"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "source_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "drill / coach_note / progress_assessment / file / conversation_message."
+      },
+      "source_id": { "type": "string", "length": 30, "nullable": false },
+      "vector": {
+        "type": "vector",
+        "nullable": false,
+        "description": "pgvector column, 1536 dims (openai-3) or 3072 dims (openai-3-large)."
+      },
+      "model": { "type": "string", "length": 64, "nullable": false },
+      "text_content_hash": { "type": "string", "length": 64, "nullable": false },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "source_type", "source_id"],
+        "unique": true,
+        "name": "ai_embeddings_source_unique"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "source_type",
+    "source_id",
+    "vector",
+    "model",
+    "text_content_hash",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^aie_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

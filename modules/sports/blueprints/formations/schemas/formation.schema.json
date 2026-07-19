@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/formations/schemas/formation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Formation",
+  "type": "object",
+  "x-module": "formations",
+  "x-eloquent": {
+    "table": "formations",
+    "keyPrefix": "frm_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Platform defaults tenant_id=NULL."
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": false },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "4-3-3 / 4-4-2 / 3-5-2 / triangle-offense / zone-2-3 / singles / lane-lineup."
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "expected_slot_count": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Total slots — validated vs sport-config team_size on save."
+      },
+      "is_active": { "type": "boolean", "nullable": false, "default": "true" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "sport_key", "code"],
+        "unique": true,
+        "name": "formations_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "sport_key",
+    "code",
+    "name",
+    "expected_slot_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^frm_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

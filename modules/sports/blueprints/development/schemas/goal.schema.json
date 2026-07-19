@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/development/schemas/goal",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Goal",
+  "description": "Individual Development Plan goal — description + target_date + status. Reviewable each term.",
+  "type": "object",
+  "x-module": "development",
+  "x-eloquent": {
+    "table": "goals",
+    "keyPrefix": "gol_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthleteEnrollment",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athlete_enrollments", "column": "id", "onDelete": "restrict" }
+      },
+      "created_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "title": { "type": "string", "length": 200, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "target_date": { "type": "date", "nullable": true },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'open'" },
+      "achieved_at": { "type": "timestamptz", "nullable": true },
+      "achievement_notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "athlete_enrollment_id", "status"],
+        "name": "goals_enrollment_status_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "athlete_enrollment_id",
+    "created_by_user_id",
+    "title",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^gol_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["open", "achieved", "deferred", "dropped"] }
+  },
+  "additionalProperties": false
+}

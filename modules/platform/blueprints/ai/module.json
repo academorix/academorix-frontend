@@ -1,0 +1,112 @@
+{
+  "$version": 1,
+  "name": "ai",
+  "alias": "ai",
+  "namespace": "Academorix\\Ai",
+  "description": "Backend-first AI substrate per blueprint §10.21 (D6 locked). Wraps `laravel/ai` (first-party). Ships FOUR owned entities: `AiConversation` (persona-scoped chat — user_id + persona + title + status; message history tenant-scoped), `AiRun` (single model invocation — model / tokens_in / tokens_out / latency_ms / cost_minor; audit trail per conversation), `AiToolCall` (individual tool invocation inside an AiRun — tool_name + args_hash + result_summary + ms + error?), `AiEmbedding` (vector embedding for RAG search — source_type + source_id + vector; tenant-namespaced). Three layers: (1) AI module owns tools/agents/provider calls, (2) domain modules contribute tools via `#[AsAiTool]`, (3) personas bundle tool set + system prompt + guardrails. Nine built-in personas including CoachAssistant / ParentAssistant / AdminAssistant / MedicalAssistant. All prompts + responses + tool calls audited. Per-tenant AI-token pool via entitlements. Medical/safeguarding data NEVER sent without explicit consent. Write-back tools default to draft-then-confirm. Frontend uses Vercel AI SDK useChat streaming — browser NEVER holds provider keys.",
+  "keywords": [
+    "ai",
+    "assistant",
+    "persona",
+    "tools",
+    "rag",
+    "embeddings",
+    "laravel-ai",
+    "backend-first",
+    "wave-4"
+  ],
+  "priority": 92,
+  "providers": ["Academorix\\Ai\\Providers\\AiServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "entitlements",
+    "storage",
+    "search",
+    "audit",
+    "activity",
+    "compliance",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [],
+  "contributes": {
+    "traits": ["CanUseAi"],
+    "attributes": ["AsAiTool", "AsAiPersona"],
+    "blueprints": ["ai-conversation", "ai-run", "ai-tool-call", "ai-embedding"],
+    "middleware": ["ai.persona-role", "ai.token-pool", "ai.sensitive-data-gate", "ai.rate-limit"],
+    "events": [
+      "ConversationStarted",
+      "RunStarted",
+      "RunCompleted",
+      "RunFailed",
+      "ToolCalled",
+      "ToolFailed",
+      "EmbeddingIndexed",
+      "SensitiveDataBlocked",
+      "TokenPoolExhausted"
+    ],
+    "policies": ["AiConversationPolicy", "AiRunPolicy", "AiToolCallPolicy"],
+    "hooks": ["EnforceSensitiveDataGate", "AuditPromptResponse", "TrackTokenUsage"],
+    "commands": [
+      "ai:describe",
+      "ai:list-tools",
+      "ai:list-personas",
+      "ai:test-tool",
+      "ai:reindex-embeddings"
+    ],
+    "jobs": [
+      "ReindexEmbeddingsJob",
+      "PurgeOrphanEmbeddingsJob",
+      "RunBackgroundPersonaJob",
+      "AlertOnTokenPoolExhaustionJob"
+    ],
+    "notifications": ["AnomalyDetectedNotification", "WeeklyDigestNotification"],
+    "broadcasts": ["user.{userId}.ai.{conversationId}"],
+    "observers": ["AiConversationObserver", "AiRunObserver", "AiToolCallObserver"],
+    "rules": ["valid_persona", "valid_model", "positive_token_count"],
+    "casts": ["Persona", "ConversationStatus", "RunStatus"],
+    "views": [],
+    "lang": ["ai"],
+    "config": ["ai"],
+    "macros": [],
+    "bindings": [
+      "AiProvider",
+      "PersonaRegistry",
+      "AiToolRegistry",
+      "SensitiveDataGate",
+      "EmbeddingIndexer",
+      "AiRunAuditor",
+      "AiTokenGate"
+    ],
+    "resources": ["ai-conversation", "ai-run", "ai-tool-call"]
+  },
+  "attribute_driven": {
+    "description": "Domain modules contribute tools + personas via attributes discovered at boot.",
+    "attributes": {
+      "AsAiTool": "Marks a class as an AI tool. `#[AsAiTool(name: 'find_athlete', sensitivity: 'pii', personas: ['CoachAssistant', 'AdminAssistant'])]`.",
+      "AsAiPersona": "Marks a class as an AI persona. `#[AsAiPersona(name: 'CoachAssistant', model: 'gpt-4', tools: [...])]`."
+    }
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Backend-first streaming — POST /api/ai/chat/{persona} with Vercel AI SDK data-stream protocol.",
+      "routes": [
+        "GET /api/v1/ai/personas",
+        "POST /api/v1/ai/chat/{persona}",
+        "GET /api/v1/ai/conversations",
+        "GET /api/v1/ai/conversations/{conversation}",
+        "DELETE /api/v1/ai/conversations/{conversation}",
+        "GET /api/v1/ai/conversations/{conversation}/runs",
+        "GET /api/v1/ai/runs/{run}",
+        "POST /api/v1/ai/tools/{tool}/test"
+      ]
+    },
+    "platform-admin": {
+      "routes": ["GET /api/v1/platform/ai/token-usage", "GET /api/v1/platform/ai/audit-runs"]
+    }
+  }
+}

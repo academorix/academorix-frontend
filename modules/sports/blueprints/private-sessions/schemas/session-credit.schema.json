@@ -1,0 +1,102 @@
+{
+  "id": "academorix://modules/private-sessions/schemas/session-credit",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "SessionCredit",
+  "description": "Session-pack credit ledger — parent bought 10-pack; each private-session consume atomically decrements via SELECT FOR UPDATE.",
+  "type": "object",
+  "x-module": "private-sessions",
+  "x-eloquent": {
+    "table": "session_credits",
+    "keyPrefix": "scr_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthlete",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "restrict" }
+      },
+      "purchased_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "kind": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "single / pack_5 / pack_10 / pack_20 / unlimited_period."
+      },
+      "total_purchased": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Total credits in this ledger row."
+      },
+      "total_consumed": { "type": "integer", "nullable": false, "default": "0" },
+      "expires_at": { "type": "timestamptz", "nullable": true },
+      "invoice_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "invoices", "column": "id", "onDelete": "set null" }
+      },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'active'" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "athlete_id", "status", "expires_at"],
+        "name": "session_credits_athlete_active_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "athlete_id",
+    "purchased_by_user_id",
+    "kind",
+    "total_purchased",
+    "total_consumed",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^scr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": {
+      "type": "string",
+      "enum": ["single", "pack_5", "pack_10", "pack_20", "unlimited_period"]
+    },
+    "status": { "type": "string", "enum": ["active", "exhausted", "expired", "refunded"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "total_consumed <= total_purchased (unless kind = 'unlimited_period').",
+    "Consumption ATOMIC via SELECT FOR UPDATE on this row + increment total_consumed in same transaction as PrivateSessionRequest.status → 'completed'."
+  ]
+}

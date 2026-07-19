@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/crm-leads/schemas/lead-activity",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "LeadActivity",
+  "type": "object",
+  "x-module": "crm-leads",
+  "x-eloquent": {
+    "table": "lead_activities",
+    "keyPrefix": "lac_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "lead_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "leads", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "kind": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "call / email / sms / note / meeting / demo / stage_change."
+      },
+      "occurred_at": { "type": "timestamptz", "nullable": false },
+      "description": { "type": "text", "nullable": false },
+      "outcome": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "left_voicemail / no_answer / talked / interested / not_interested."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "lead_id", "occurred_at"],
+        "name": "lead_activities_lead_time_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "lead_id",
+    "user_id",
+    "kind",
+    "occurred_at",
+    "description",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^lac_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

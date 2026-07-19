@@ -1,0 +1,124 @@
+{
+  "id": "academorix://modules/people/schemas/person-identity",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PersonIdentity",
+  "description": "CENTRAL-plane global identity carrying the Academorix ID. NO tenant_id — this table lives on the central connection. Minimal PII by design (legal_name, dob, nationality). Extended fields live on tenant Athlete/Staff records via person_identity_id FK.",
+  "type": "object",
+  "x-module": "people",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "person_identities",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pin_",
+    "connection": "central",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "verification_status": "PersonVerificationStatus",
+      "date_of_birth": "date",
+      "verified_at": "datetime",
+      "frozen_at": "datetime",
+      "metadata": "array"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `pin_<26>`."
+      },
+      "academorix_id": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Human-readable ID: AX-XXXX-YYYY (Crockford base32 segments)."
+      },
+      "legal_name": { "type": "string", "length": 200, "nullable": false },
+      "date_of_birth": { "type": "date", "nullable": false },
+      "nationality": {
+        "type": "string",
+        "length": 2,
+        "nullable": true,
+        "description": "ISO 3166-1 alpha-2."
+      },
+      "verification_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'unverified'",
+        "description": "unverified / verified / disputed / frozen."
+      },
+      "verified_at": { "type": "timestamptz", "nullable": true },
+      "verified_by_platform_user_id": { "type": "string", "length": 30, "nullable": true },
+      "frozen_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Fraud freeze — active links read-only + new links refused."
+      },
+      "frozen_reason": { "type": "string", "length": 200, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["academorix_id"],
+        "unique": true,
+        "name": "person_identities_academorix_id_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["legal_name", "date_of_birth"],
+        "name": "person_identities_lookup_idx",
+        "description": "Composite index for consent-gated lookup by (name, DOB) proximity match."
+      },
+      { "columns": ["verification_status"], "name": "person_identities_verification_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "academorix_id",
+    "legal_name",
+    "date_of_birth",
+    "verification_status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pin_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "academorix_id": {
+      "type": "string",
+      "pattern": "^AX-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$"
+    },
+    "legal_name": { "type": "string", "maxLength": 200 },
+    "date_of_birth": { "type": "string", "format": "date" },
+    "nationality": { "type": ["string", "null"], "pattern": "^[A-Z]{2}$" },
+    "verification_status": {
+      "type": "string",
+      "enum": ["unverified", "verified", "disputed", "frozen"]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "academorix_id globally unique across the platform via central-connection unique index",
+    "date_of_birth cannot be in the future",
+    "frozen state locks all active TenantLinkRequests read-only + refuses new link requests",
+    "NO tenant_id — this is a central-plane entity by design"
+  ]
+}

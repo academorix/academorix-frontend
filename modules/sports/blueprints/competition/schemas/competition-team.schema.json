@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/competition/schemas/competition-team",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "CompetitionTeam",
+  "type": "object",
+  "x-module": "competition",
+  "x-eloquent": {
+    "table": "competition_teams",
+    "keyPrefix": "cmt_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "competition_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "competitions", "column": "id", "onDelete": "cascade" }
+      },
+      "team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" }
+      },
+      "seed": { "type": "integer", "nullable": true },
+      "group_code": { "type": "string", "length": 8, "nullable": true },
+      "registration_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'"
+      },
+      "withdrew_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "competition_id", "team_id"],
+        "unique": true,
+        "name": "competition_teams_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "competition_id",
+    "team_id",
+    "registration_status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cmt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "registration_status": {
+      "type": "string",
+      "enum": ["pending", "confirmed", "withdrew", "disqualified"]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,72 @@
+{
+  "$version": 1,
+  "name": "public-site",
+  "alias": "public-site",
+  "namespace": "Academorix\\PublicSite",
+  "description": "Tenant public-facing pages per blueprint §16.9. Ships TWO owned entities: `PublicPage` (slug + title + content_blocks + SEO metadata; route-mounted on tenant public host), `ContentBlock` (reusable block — kind IN hero/text/gallery/cta + payload + order). White-label branding via `platform/branding`; public read-models via Match/Competition/Registration; SEO metadata for rich previews. Registration entry point cascades into `sports/registrations` (Wave 1).",
+  "keywords": ["public-site", "cms", "landing", "seo", "content-block", "public-results", "wave-4"],
+  "priority": 90,
+  "providers": ["Academorix\\PublicSite\\Providers\\PublicSiteServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "branding",
+    "storage",
+    "event",
+    "competition",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["ai"],
+  "contributes": {
+    "traits": [],
+    "attributes": [],
+    "blueprints": ["public-page", "content-block"],
+    "middleware": ["public-site.cache", "public-site.rate-limit"],
+    "events": ["PagePublished", "PageUpdated", "PageArchived", "ContentBlockAdded"],
+    "policies": ["PublicPagePolicy", "ContentBlockPolicy"],
+    "hooks": ["InvalidateCacheOnPagePublish", "GenerateSitemapOnPagePublish"],
+    "commands": [
+      "public-site:list",
+      "public-site:generate-sitemap",
+      "public-site:invalidate-cache"
+    ],
+    "jobs": ["GenerateSitemapJob", "InvalidatePageCacheJob"],
+    "notifications": ["PagePublishedNotification"],
+    "broadcasts": [],
+    "observers": ["PublicPageObserver", "ContentBlockObserver"],
+    "rules": ["valid_slug", "valid_content_block_kind", "unique_slug_per_tenant"],
+    "casts": ["ContentBlockKind"],
+    "views": [],
+    "lang": ["public-site"],
+    "config": ["public-site"],
+    "macros": [],
+    "bindings": ["PublicPageRepository", "ContentBlockRepository", "SitemapGenerator"],
+    "resources": ["public-page", "content-block"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/public-pages",
+        "POST /api/v1/public-pages",
+        "GET /api/v1/public-pages/{page}",
+        "PATCH /api/v1/public-pages/{page}",
+        "POST /api/v1/public-pages/{page}/publish"
+      ]
+    },
+    "central": {
+      "description": "Public reader — served on tenant subdomain with edge caching.",
+      "routes": [
+        "GET /pages/{slug}",
+        "GET /sitemap.xml",
+        "GET /robots.txt",
+        "GET /public/results",
+        "GET /public/standings",
+        "GET /public/teams/{team}"
+      ]
+    }
+  }
+}

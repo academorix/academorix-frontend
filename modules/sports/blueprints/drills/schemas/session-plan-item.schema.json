@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/drills/schemas/session-plan-item",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "SessionPlanItem",
+  "type": "object",
+  "x-module": "drills",
+  "x-eloquent": {
+    "table": "session_plan_items",
+    "keyPrefix": "spi_",
+    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToTenant", "HasMetadata"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "session_plan_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "session_plans", "column": "id", "onDelete": "cascade" }
+      },
+      "drill_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "drills", "column": "id", "onDelete": "restrict" }
+      },
+      "sort_order": { "type": "integer", "nullable": false, "default": "0" },
+      "duration_minutes": { "type": "integer", "nullable": true },
+      "notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["session_plan_id", "sort_order"], "name": "session_plan_items_order_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "session_plan_id",
+    "drill_id",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^spi_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

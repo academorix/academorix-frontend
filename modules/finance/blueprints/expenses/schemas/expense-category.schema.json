@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/expenses/schemas/expense-category",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ExpenseCategory",
+  "type": "object",
+  "x-module": "expenses",
+  "x-eloquent": {
+    "table": "expense_categories",
+    "keyPrefix": "exc_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "rent / utilities / equipment / maintenance / salaries / marketing / insurance / travel / office_supplies / other."
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "sort_order": { "type": "integer", "nullable": false, "default": "0" },
+      "is_system": { "type": "boolean", "nullable": false, "default": "false" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "code"],
+        "unique": true,
+        "name": "expense_categories_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "code", "name", "created_at", "updated_at"],
+  "properties": { "id": { "type": "string", "pattern": "^exc_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

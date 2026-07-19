@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/reception/schemas/reception-visit",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ReceptionVisit",
+  "description": "Walk-in visitor record at a reception desk. Auto-checkout stale visitors after expected_end_at.",
+  "type": "object",
+  "x-module": "reception",
+  "x-eloquent": {
+    "table": "reception_visits",
+    "keyPrefix": "rvs_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "cascade" }
+      },
+      "visitor_name": { "type": "string", "length": 200, "nullable": false },
+      "visitor_phone": { "type": "string", "length": 32, "nullable": true },
+      "visitor_email": { "type": "string", "length": 200, "nullable": true },
+      "purpose": {
+        "type": "string",
+        "length": 200,
+        "nullable": false,
+        "description": "trial / drop_in / meeting / delivery / prospect / other."
+      },
+      "host_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "expected_end_at": { "type": "timestamptz", "nullable": true },
+      "checked_in_at": { "type": "timestamptz", "nullable": false },
+      "checked_out_at": { "type": "timestamptz", "nullable": true },
+      "checked_in_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "checked_out_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "issued_credential_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "credentials", "column": "id", "onDelete": "set null" }
+      },
+      "day_pass_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "day_passes", "column": "id", "onDelete": "set null" }
+      },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'checked_in'" },
+      "notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "branch_id", "checked_in_at"],
+        "name": "reception_visits_branch_time_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "expected_end_at"],
+        "name": "reception_visits_stale_idx",
+        "predicate": "status = 'checked_in'"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "branch_id",
+    "visitor_name",
+    "purpose",
+    "checked_in_at",
+    "checked_in_by_user_id",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rvs_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["checked_in", "checked_out", "auto_checked_out", "no_show"]
+    }
+  },
+  "additionalProperties": false
+}

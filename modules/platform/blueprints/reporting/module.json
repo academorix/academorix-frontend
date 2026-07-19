@@ -1,0 +1,97 @@
+{
+  "$version": 1,
+  "name": "reporting",
+  "alias": "reporting",
+  "namespace": "Academorix\\Reporting",
+  "description": "Cross-module analytics + dashboards per blueprint §16.7. Ships FOUR owned entities: `ReportDefinition` (analytics definition — kind IN attendance/revenue/retention/roster + parameters + refresh_cadence + audience_scope), `SavedReport` (user-saved parameterization — filters + column selection + delivery schedule), `ReportRun` (one materialized output — output_document_id + rows_count + run_started/completed; retention 90d unless attached to Dashboard), `Dashboard` (widget-composed dashboard — role-scoped + layout JSONB; widgets reference SavedReports). Cross-region roll-up via reporting_currency FX conversion. Role-scoped visibility (owner sees all; branch_manager sees own branch). Scheduled + on-demand exports to CSV/Excel/PDF via storage.",
+  "keywords": ["reporting", "dashboard", "kpi", "cross-module-analytics", "export", "wave-3"],
+  "priority": 87,
+  "providers": ["Academorix\\Reporting\\Providers\\ReportingServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "storage",
+    "search",
+    "analytics",
+    "invoice",
+    "payment",
+    "attendance",
+    "membership",
+    "athlete",
+    "athlete-enrollment",
+    "coaching",
+    "staff"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["admin-console", "ai", "public-site"],
+  "contributes": {
+    "traits": [],
+    "attributes": [],
+    "blueprints": ["report-definition", "saved-report", "report-run", "dashboard"],
+    "middleware": ["reporting.rbac-scope"],
+    "events": [
+      "ReportDefined",
+      "ReportRunStarted",
+      "ReportRunCompleted",
+      "ReportRunFailed",
+      "ReportExported",
+      "DashboardCreated",
+      "DashboardShared"
+    ],
+    "policies": [
+      "ReportDefinitionPolicy",
+      "SavedReportPolicy",
+      "ReportRunPolicy",
+      "DashboardPolicy"
+    ],
+    "hooks": ["PurgeExpiredReportRuns", "AggregateCrossRegionInReportingCurrency"],
+    "commands": [
+      "reporting:list",
+      "reporting:run",
+      "reporting:seed-definitions",
+      "reporting:purge-stale-runs"
+    ],
+    "jobs": [
+      "RunReportJob",
+      "PurgeStaleReportRunsJob",
+      "DeliverScheduledReportJob",
+      "SnapshotDashboardJob"
+    ],
+    "notifications": ["ScheduledReportDeliveredNotification", "ReportRunFailedNotification"],
+    "broadcasts": [],
+    "observers": ["ReportRunObserver", "DashboardObserver"],
+    "rules": ["valid_report_kind", "valid_audience_scope", "valid_refresh_cadence"],
+    "casts": ["ReportKind", "ReportRunStatus", "RefreshCadence"],
+    "views": [],
+    "lang": ["reporting"],
+    "config": ["reporting"],
+    "macros": [],
+    "bindings": [
+      "ReportDefinitionRepository",
+      "ReportRunner",
+      "DashboardRepository",
+      "CurrencyConverter"
+    ],
+    "resources": ["report-definition", "saved-report", "report-run", "dashboard"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/reports",
+        "GET /api/v1/reports/definitions",
+        "POST /api/v1/reports/{definition}/run",
+        "GET /api/v1/reports/runs/{run}",
+        "GET /api/v1/reports/saved",
+        "POST /api/v1/reports/saved",
+        "GET /api/v1/dashboards",
+        "POST /api/v1/dashboards",
+        "GET /api/v1/dashboards/{dashboard}",
+        "PATCH /api/v1/dashboards/{dashboard}",
+        "POST /api/v1/dashboards/{dashboard}/snapshot"
+      ]
+    }
+  }
+}

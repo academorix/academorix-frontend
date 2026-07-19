@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/awards/schemas/certificate",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Certificate",
+  "type": "object",
+  "x-module": "awards",
+  "x-eloquent": {
+    "table": "certificates",
+    "keyPrefix": "crt_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "award_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "awards", "column": "id", "onDelete": "cascade" }
+      },
+      "template_key": { "type": "string", "length": 64, "nullable": false },
+      "issued_to_name": { "type": "string", "length": 200, "nullable": false },
+      "issued_at": { "type": "timestamptz", "nullable": false },
+      "issued_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "document_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" }
+      },
+      "share_signature": { "type": "string", "length": 128, "nullable": true },
+      "share_expires_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "award_id"],
+        "unique": true,
+        "name": "certificates_award_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["share_signature"],
+        "unique": true,
+        "name": "certificates_share_unique",
+        "predicate": "share_signature IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "award_id",
+    "template_key",
+    "issued_to_name",
+    "issued_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^crt_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

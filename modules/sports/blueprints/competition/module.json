@@ -1,0 +1,123 @@
+{
+  "$version": 1,
+  "name": "competition",
+  "alias": "competition",
+  "namespace": "Academorix\\Sports\\Competition",
+  "description": "Leagues + tournaments + standings per blueprint §15.1. Ships FIVE owned entities: `Competition` (league/knockout root — season + status + scoring_strategy from sport registry; round-robin OR bracket format), `CompetitionTeam` (team registration — seed + registration_status; feeds standings + bracket), `CompetitionFixture` (scheduled matchup — realized via sports/event; round_number + bracket_position; standings recompute triggered on result), `StandingRow` (denormalised league table row — games_played + wins + draws + losses + goals_for + goals_against + points; recomputed on result), `BracketNode` (knockout bracket node — round + position + participant refs + winner_advances_to_node_id). Realizes LEAGUE_TABLE + BRACKET_TOURNAMENT capabilities from the sport registry. Uses scoring strategy per ScoringType (goals/points/sets/time/distance/apparatus).",
+  "keywords": [
+    "competition",
+    "league",
+    "tournament",
+    "bracket",
+    "standings",
+    "scoring-strategy",
+    "wave-3"
+  ],
+  "priority": 85,
+  "providers": ["Academorix\\Sports\\Competition\\Providers\\CompetitionServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "athlete",
+    "athlete-enrollment",
+    "season",
+    "event",
+    "coaching",
+    "teams"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["public-site", "reporting", "awards", "ai"],
+  "contributes": {
+    "traits": ["ContributesToStandings"],
+    "attributes": [],
+    "blueprints": [
+      "competition",
+      "competition-team",
+      "competition-fixture",
+      "standing-row",
+      "bracket-node"
+    ],
+    "middleware": [],
+    "events": [
+      "CompetitionCreated",
+      "CompetitionStarted",
+      "CompetitionCompleted",
+      "TeamRegistered",
+      "FixtureScheduled",
+      "FixtureResultRecorded",
+      "StandingsUpdated",
+      "BracketAdvanced"
+    ],
+    "policies": [
+      "CompetitionPolicy",
+      "CompetitionTeamPolicy",
+      "CompetitionFixturePolicy",
+      "StandingRowPolicy",
+      "BracketNodePolicy"
+    ],
+    "hooks": [
+      "RecomputeStandingsOnFixtureResult",
+      "AdvanceBracketOnResult",
+      "AwardOnCompetitionWin"
+    ],
+    "commands": [
+      "competition:list",
+      "competition:generate-fixtures",
+      "competition:generate-bracket",
+      "competition:recompute-standings"
+    ],
+    "jobs": ["RecomputeStandingsJob", "AdvanceBracketJob", "PublishStandingsToPublicSiteJob"],
+    "notifications": [
+      "FixtureScheduledNotification",
+      "StandingsUpdatedNotification",
+      "CompetitionCompletedNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.competitions.{competitionId}"],
+    "observers": ["CompetitionObserver", "CompetitionFixtureObserver", "StandingRowObserver"],
+    "rules": ["valid_scoring_strategy", "valid_bracket_position"],
+    "casts": ["CompetitionStatus", "CompetitionFormat"],
+    "views": [],
+    "lang": ["competition"],
+    "config": ["competition"],
+    "macros": [],
+    "bindings": [
+      "CompetitionRepository",
+      "StandingsCalculator",
+      "BracketGenerator",
+      "FixtureScheduler",
+      "ScoringStrategyResolver"
+    ],
+    "resources": [
+      "competition",
+      "competition-team",
+      "competition-fixture",
+      "standing-row",
+      "bracket-node"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/competitions",
+        "POST /api/v1/competitions",
+        "GET /api/v1/competitions/{competition}",
+        "POST /api/v1/competitions/{competition}/teams",
+        "POST /api/v1/competitions/{competition}/generate-fixtures",
+        "POST /api/v1/competitions/{competition}/generate-bracket",
+        "GET /api/v1/competitions/{competition}/standings",
+        "GET /api/v1/competitions/{competition}/bracket",
+        "GET /api/v1/competition-fixtures/{fixture}"
+      ]
+    },
+    "central": {
+      "description": "Public standings + bracket read (opt-in per competition).",
+      "routes": [
+        "GET /competitions/{signature}",
+        "GET /competitions/{signature}/standings",
+        "GET /competitions/{signature}/bracket"
+      ]
+    }
+  }
+}

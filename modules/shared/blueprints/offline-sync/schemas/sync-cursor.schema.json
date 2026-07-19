@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/offline-sync/schemas/sync-cursor",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "SyncCursor",
+  "description": "Per-device per-entity high-water-mark cursor. Ephemeral 30-day rolling.",
+  "type": "object",
+  "x-module": "offline-sync",
+  "x-eloquent": {
+    "table": "sync_cursors",
+    "keyPrefix": "syc_",
+    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToTenant", "HasMetadata", "Filterable"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "device_id": { "type": "string", "length": 200, "nullable": false },
+      "entity_type": { "type": "string", "length": 64, "nullable": false },
+      "last_synced_at": { "type": "timestamptz", "nullable": true },
+      "last_synced_id": { "type": "string", "length": 30, "nullable": true },
+      "records_synced_count": { "type": "integer", "nullable": false, "default": "0" },
+      "conflict_count": { "type": "integer", "nullable": false, "default": "0" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "user_id", "device_id", "entity_type"],
+        "unique": true,
+        "name": "sync_cursors_unique"
+      },
+      { "columns": ["tenant_id", "last_synced_at"], "name": "sync_cursors_stale_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "user_id",
+    "device_id",
+    "entity_type",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^syc_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

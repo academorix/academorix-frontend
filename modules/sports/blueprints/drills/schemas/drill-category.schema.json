@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/drills/schemas/drill-category",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "DrillCategory",
+  "type": "object",
+  "x-module": "drills",
+  "x-eloquent": {
+    "table": "drill_categories",
+    "keyPrefix": "dcg_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": true },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "passing / shooting / defense / conditioning / ..."
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "sort_order": { "type": "integer", "nullable": false, "default": "0" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "sport_key", "code"],
+        "unique": true,
+        "name": "drill_categories_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": ["id", "code", "name", "sort_order", "created_at", "updated_at"],
+  "properties": { "id": { "type": "string", "pattern": "^dcg_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

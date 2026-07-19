@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/competition/schemas/standing-row",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "StandingRow",
+  "description": "Denormalised league table row — recomputed on every fixture result via RecomputeStandingsJob.",
+  "type": "object",
+  "x-module": "competition",
+  "x-eloquent": {
+    "table": "standing_rows",
+    "keyPrefix": "std_",
+    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToTenant", "HasMetadata", "Filterable"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "competition_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "competitions", "column": "id", "onDelete": "cascade" }
+      },
+      "team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "cascade" }
+      },
+      "group_code": { "type": "string", "length": 8, "nullable": true },
+      "position": { "type": "integer", "nullable": false, "default": "0" },
+      "games_played": { "type": "integer", "nullable": false, "default": "0" },
+      "wins": { "type": "integer", "nullable": false, "default": "0" },
+      "draws": { "type": "integer", "nullable": false, "default": "0" },
+      "losses": { "type": "integer", "nullable": false, "default": "0" },
+      "goals_for": { "type": "integer", "nullable": false, "default": "0" },
+      "goals_against": { "type": "integer", "nullable": false, "default": "0" },
+      "goal_difference": { "type": "integer", "nullable": false, "default": "0" },
+      "points": { "type": "integer", "nullable": false, "default": "0" },
+      "recomputed_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "competition_id", "team_id"],
+        "unique": true,
+        "name": "standing_rows_unique"
+      },
+      {
+        "columns": ["tenant_id", "competition_id", "position"],
+        "name": "standing_rows_position_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "competition_id",
+    "team_id",
+    "games_played",
+    "wins",
+    "draws",
+    "losses",
+    "points",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^std_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

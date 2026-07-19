@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/development/schemas/talent-flag",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TalentFlag",
+  "type": "object",
+  "x-module": "development",
+  "x-eloquent": {
+    "table": "talent_flags",
+    "keyPrefix": "tfg_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthlete",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "cascade" }
+      },
+      "flagged_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "reason": { "type": "string", "length": 500, "nullable": false },
+      "priority": { "type": "string", "length": 16, "nullable": false, "default": "'medium'" },
+      "resolved_at": { "type": "timestamptz", "nullable": true },
+      "resolution_notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "athlete_id", "resolved_at"],
+        "name": "talent_flags_athlete_status_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "athlete_id",
+    "flagged_by_user_id",
+    "reason",
+    "priority",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tfg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "priority": { "type": "string", "enum": ["low", "medium", "high", "critical"] }
+  },
+  "additionalProperties": false
+}

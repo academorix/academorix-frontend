@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/expenses/schemas/cost-center",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "CostCenter",
+  "type": "object",
+  "x-module": "expenses",
+  "x-eloquent": {
+    "table": "cost_centers",
+    "keyPrefix": "ctr_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "code": { "type": "string", "length": 32, "nullable": false },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "parent_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "cost_centers", "column": "id", "onDelete": "cascade" }
+      },
+      "is_active": { "type": "boolean", "nullable": false, "default": "true" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "code"],
+        "unique": true,
+        "name": "cost_centers_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "code", "name", "is_active", "created_at", "updated_at"],
+  "properties": { "id": { "type": "string", "pattern": "^ctr_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

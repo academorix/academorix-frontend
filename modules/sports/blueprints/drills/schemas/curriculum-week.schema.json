@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/drills/schemas/curriculum-week",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "CurriculumWeek",
+  "type": "object",
+  "x-module": "drills",
+  "x-eloquent": {
+    "table": "curriculum_weeks",
+    "keyPrefix": "cwk_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "curriculum_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "curriculums", "column": "id", "onDelete": "cascade" }
+      },
+      "week_number": { "type": "integer", "nullable": false },
+      "theme": { "type": "string", "length": 200, "nullable": true },
+      "learning_objectives": { "type": "jsonb", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "curriculum_id", "week_number"],
+        "unique": true,
+        "name": "curriculum_weeks_unique"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "curriculum_id", "week_number", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cwk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "week_number": { "type": "integer", "minimum": 1, "maximum": 52 }
+  },
+  "additionalProperties": false
+}

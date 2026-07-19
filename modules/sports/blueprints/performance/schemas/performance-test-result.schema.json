@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/performance/schemas/performance-test-result",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PerformanceTestResult",
+  "description": "One athlete's outcome on a single test — captured_at + value + tester + percentile against Benchmark.",
+  "type": "object",
+  "x-module": "performance",
+  "x-eloquent": {
+    "table": "performance_test_results",
+    "keyPrefix": "ptr_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthleteEnrollment",
+      "HasAttributeSet",
+      "HasSchemalessAttributes",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athlete_enrollments", "column": "id", "onDelete": "restrict" }
+      },
+      "performance_test_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "performance_tests", "column": "id", "onDelete": "restrict" }
+      },
+      "test_battery_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "test_batteries", "column": "id", "onDelete": "set null" }
+      },
+      "captured_at": { "type": "timestamptz", "nullable": false },
+      "value": { "type": "decimal", "precision": 12, "scale": 4, "nullable": false },
+      "unit": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Denormalised from test.unit at capture."
+      },
+      "percentile": {
+        "type": "decimal",
+        "precision": 5,
+        "scale": 2,
+        "nullable": true,
+        "description": "Computed vs Benchmark for the athlete's age_band."
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": true },
+      "tester_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "notes": { "type": "text", "nullable": true },
+      "metrics": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Optional attribute-driven auxiliary metrics."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "athlete_enrollment_id", "performance_test_id", "captured_at"],
+        "name": "ptr_athlete_test_time_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "athlete_enrollment_id",
+    "performance_test_id",
+    "captured_at",
+    "value",
+    "unit",
+    "tester_user_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ptr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "value": { "type": "number" }
+  },
+  "additionalProperties": false
+}

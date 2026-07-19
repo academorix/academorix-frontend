@@ -1,0 +1,85 @@
+{
+  "$version": 1,
+  "name": "awards",
+  "alias": "awards",
+  "namespace": "Academorix\\Sports\\Awards",
+  "description": "Recognition + certificates per blueprint §14.7. Ships TWO owned entities: `Award` (recognition instance granted to an athlete — type + granted_at + evidence event/attendance/etc; auto-grant rules subscribe to domain events like RTP/BENCHMARK_BROKEN/attendance streaks/BELT_PROMOTED), `Certificate` (PDF certificate rendered for an Award — signed URL + branded template + issued_to + issued_at). Auto-grant rules define award triggers as event listeners; manual awards created via admin UI. Shareable badge wall on athlete profile.",
+  "keywords": [
+    "awards",
+    "recognition",
+    "certificate",
+    "badge",
+    "achievement",
+    "auto-grant",
+    "wave-4"
+  ],
+  "priority": 89,
+  "providers": ["Academorix\\Sports\\Awards\\Providers\\AwardsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "athlete",
+    "athlete-enrollment",
+    "attendance",
+    "event",
+    "progress",
+    "performance",
+    "development",
+    "storage",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["ai", "public-site"],
+  "contributes": {
+    "traits": ["CanReceiveAwards", "AutoGrantsAwards"],
+    "attributes": [],
+    "blueprints": ["award", "certificate"],
+    "middleware": [],
+    "events": [
+      "AwardGranted",
+      "AwardRevoked",
+      "CertificateIssued",
+      "CertificateShared",
+      "AutoGrantRuleTriggered"
+    ],
+    "policies": ["AwardPolicy", "CertificatePolicy"],
+    "hooks": [
+      "AutoGrantOnBeltPromoted",
+      "AutoGrantOnAttendanceStreak",
+      "AutoGrantOnBenchmarkBroken",
+      "AutoGrantOnGoalAchieved",
+      "RenderCertificateOnAward"
+    ],
+    "commands": ["awards:list", "awards:grant", "awards:revoke", "certificates:regenerate"],
+    "jobs": ["RenderCertificateJob", "AutoGrantEvaluateJob", "PurgeExpiredCertificateShareUrlsJob"],
+    "notifications": ["AwardGrantedNotification", "CertificateIssuedNotification"],
+    "broadcasts": ["athlete.{athleteId}.awards"],
+    "observers": ["AwardObserver", "CertificateObserver"],
+    "rules": ["valid_award_type", "valid_evidence_reference"],
+    "casts": ["AwardKind"],
+    "views": [],
+    "lang": ["awards"],
+    "config": ["awards"],
+    "macros": [],
+    "bindings": ["AwardRepository", "CertificateRenderer", "AutoGrantEvaluator"],
+    "resources": ["award", "certificate"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/athletes/{athlete}/awards",
+        "POST /api/v1/awards",
+        "GET /api/v1/awards/{award}",
+        "POST /api/v1/awards/{award}/revoke",
+        "GET /api/v1/certificates/{certificate}",
+        "POST /api/v1/certificates/{certificate}/share"
+      ]
+    },
+    "central": {
+      "routes": ["GET /certificates/{signature}"]
+    }
+  }
+}

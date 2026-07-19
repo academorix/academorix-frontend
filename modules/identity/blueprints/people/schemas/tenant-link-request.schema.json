@@ -1,0 +1,153 @@
+{
+  "id": "academorix://modules/people/schemas/tenant-link-request",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TenantLinkRequest",
+  "description": "Consent-gated request from a tenant to link a local Athlete/Staff to a central PersonIdentity. State: requested → approved / declined → revoked. NO PII shared before approval. Signature-based public URL for the guardian's approval flow.",
+  "type": "object",
+  "x-module": "people",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "tenant_link_requests",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "tlr_",
+    "connection": "central",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "TenantLinkRequestStatus",
+      "requested_at": "datetime",
+      "approved_at": "datetime",
+      "declined_at": "datetime",
+      "revoked_at": "datetime",
+      "expires_at": "datetime",
+      "shared_fields": "array",
+      "metadata": "array"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "person_identity_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "person_identities", "column": "id", "onDelete": "cascade" }
+      },
+      "requesting_tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "description": "Central-side FK to the tenant asking. Not a hard FK (tenants live in the central tenants table)."
+      },
+      "purpose": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "enroll_athlete / hire_staff / register_guardian."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'requested'",
+        "description": "requested / approved / declined / revoked / expired."
+      },
+      "signature": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Signed URL segment for the guardian's approval endpoint. Not enumerable."
+      },
+      "requested_at": { "type": "timestamptz", "nullable": false },
+      "approved_at": { "type": "timestamptz", "nullable": true },
+      "declined_at": { "type": "timestamptz", "nullable": true },
+      "revoked_at": { "type": "timestamptz", "nullable": true },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "requested_at + 30d default. Auto-declined by ExpireStaleLinkRequestsJob at expiry."
+      },
+      "requester_user_id": { "type": "string", "length": 30, "nullable": true },
+      "shared_fields": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "On approval — array of field names the guardian consented to share."
+      },
+      "consenting_guardian_person_identity_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "person_identities", "column": "id", "onDelete": "set null" },
+        "description": "The PersonIdentity of the guardian who approved."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["person_identity_id", "requesting_tenant_id", "status"],
+        "name": "tenant_link_requests_person_tenant_idx"
+      },
+      { "columns": ["signature"], "unique": true, "name": "tenant_link_requests_signature_unique" },
+      {
+        "columns": ["expires_at"],
+        "name": "tenant_link_requests_expiry_idx",
+        "predicate": "status = 'requested'"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "person_identity_id",
+    "requesting_tenant_id",
+    "purpose",
+    "status",
+    "signature",
+    "requested_at",
+    "expires_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tlr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["requested", "approved", "declined", "revoked", "expired"]
+    },
+    "purpose": { "type": "string", "enum": ["enroll_athlete", "hire_staff", "register_guardian"] },
+    "shared_fields": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string",
+        "enum": [
+          "legal_name",
+          "date_of_birth",
+          "nationality",
+          "emergency_contact_json",
+          "allergies_summary",
+          "passport_document_id"
+        ]
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Transitions: requested → approved / declined / revoked / expired. Only approved → revoked further.",
+    "PII fields (email, phone, national_id, medical, financial) NEVER accepted in shared_fields — refused by ShareableFieldFilter.",
+    "expires_at auto-declines the request 30d after requested_at unless approved."
+  ]
+}

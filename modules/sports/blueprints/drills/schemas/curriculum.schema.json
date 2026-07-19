@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/drills/schemas/curriculum",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Curriculum",
+  "type": "object",
+  "x-module": "drills",
+  "x-eloquent": {
+    "table": "curriculums",
+    "keyPrefix": "cur_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": false },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "age_band": { "type": "string", "length": 32, "nullable": true },
+      "total_weeks": { "type": "integer", "nullable": false, "description": "6-16 typical range." },
+      "objective": { "type": "text", "nullable": true },
+      "cloned_from_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "curriculums", "column": "id", "onDelete": "set null" }
+      },
+      "is_active": { "type": "boolean", "nullable": false, "default": "true" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "sport_key", "age_band"], "name": "curriculums_sport_age_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "sport_key",
+    "name",
+    "total_weeks",
+    "is_active",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cur_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "total_weeks": { "type": "integer", "minimum": 1, "maximum": 52 }
+  },
+  "additionalProperties": false
+}

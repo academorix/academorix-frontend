@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/performance/schemas/benchmark",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Benchmark",
+  "description": "Age-band × sport_key × test percentile reference. p10/p25/p50/p75/p90 stored as decimal. Seeded from research defaults; tenants may override.",
+  "type": "object",
+  "x-module": "performance",
+  "x-eloquent": {
+    "table": "benchmarks",
+    "keyPrefix": "bmk_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "Nullable — platform defaults tenant_id=NULL."
+      },
+      "performance_test_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "performance_tests", "column": "id", "onDelete": "cascade" }
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": true },
+      "age_band": { "type": "string", "length": 32, "nullable": false },
+      "sex": {
+        "type": "string",
+        "length": 8,
+        "nullable": true,
+        "description": "male / female / mixed / null."
+      },
+      "p10": { "type": "decimal", "precision": 12, "scale": 4, "nullable": true },
+      "p25": { "type": "decimal", "precision": 12, "scale": 4, "nullable": true },
+      "p50": { "type": "decimal", "precision": 12, "scale": 4, "nullable": true },
+      "p75": { "type": "decimal", "precision": 12, "scale": 4, "nullable": true },
+      "p90": { "type": "decimal", "precision": 12, "scale": 4, "nullable": true },
+      "source": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "Research reference — 'NBA Combine 2022', 'FIFA U12 Norms', 'tenant custom'."
+      },
+      "sample_size": { "type": "integer", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["performance_test_id", "sport_key", "age_band", "sex"],
+        "unique": true,
+        "name": "benchmarks_key_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": ["id", "performance_test_id", "age_band", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^bmk_[0-9A-HJKMNP-TV-Z]{26}$" }
+  },
+  "additionalProperties": false
+}

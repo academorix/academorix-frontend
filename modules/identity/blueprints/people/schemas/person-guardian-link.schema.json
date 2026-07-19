@@ -1,0 +1,100 @@
+{
+  "id": "academorix://modules/people/schemas/person-guardian-link",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PersonGuardianLink",
+  "description": "CENTRAL-plane guardian↔minor link that survives cross-tenant. Enables a parent's identity to be portable — one Guardian at Academy A remains the guardian for the same child at Academy B. Consent flows use this to route notifications.",
+  "type": "object",
+  "x-module": "people",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "person_guardian_links",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pgl_",
+    "connection": "central",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "SoftDeletes"
+    ],
+    "casts": { "verified_at": "datetime", "revoked_at": "datetime", "metadata": "array" }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "minor_person_identity_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "person_identities", "column": "id", "onDelete": "cascade" }
+      },
+      "guardian_person_identity_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "person_identities", "column": "id", "onDelete": "cascade" }
+      },
+      "relationship": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "parent / step_parent / legal_guardian / grandparent / other."
+      },
+      "verified_at": { "type": "timestamptz", "nullable": true },
+      "verification_method": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "birth_certificate / court_order / self_declared / verified_by_original_tenant."
+      },
+      "revoked_at": { "type": "timestamptz", "nullable": true },
+      "revoked_reason": { "type": "string", "length": 200, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["minor_person_identity_id", "guardian_person_identity_id"],
+        "unique": true,
+        "name": "person_guardian_links_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["guardian_person_identity_id"],
+        "name": "person_guardian_links_by_guardian_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "minor_person_identity_id",
+    "guardian_person_identity_id",
+    "relationship",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pgl_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "minor_person_identity_id": { "type": "string", "pattern": "^pin_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "guardian_person_identity_id": { "type": "string", "pattern": "^pin_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "relationship": {
+      "type": "string",
+      "enum": ["parent", "step_parent", "legal_guardian", "grandparent", "other"]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "minor and guardian MUST be distinct PersonIdentities.",
+    "One active link per (minor, guardian) via partial unique index."
+  ]
+}

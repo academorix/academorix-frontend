@@ -1,0 +1,138 @@
+{
+  "$version": 1,
+  "name": "attributes",
+  "alias": "attributes",
+  "namespace": "Academorix\\Attributes",
+  "description": "The sport-agnostic EAV substrate — Attribute Sets bound to entity_type × discriminator (e.g. `athlete_enrollment` × `sport_key=football`). Ships THREE owned entities: `AttributeDefinition` (typed field: code, type IN (integer/decimal/select/boolean/date/text/slider), widget hints, validation, bilingual i18n labels), `AttributeSet` (versioned collection of definitions grouped for a host entity; selected by discriminator; ships `is_active` + `version_number` for historic-render integrity — historic assessments render with the set version that was live at capture time), `AttributeGroup` (visual grouping within a set — Primary Stats / Detailed Skills / Position / Physical Profile). Values are NOT a row-per-value table — they live in a `JSONB` column on the host entity via `spatie/laravel-schemaless-attributes` (host: `athlete_enrollments.attributes`, `progress_assessments.values`, `performance_test_results.metrics`). Ships the `HasAttributeSet` trait for hosts, the `#[AttributableEntity]` PHP attribute for discoverable entity-type registration, and the `AttributeSetResolver` + `AttributeValidator` + `AttributeRenderer` services. Filterable attributes projected via generated columns / search index as needed by consumers. Foundational for §6 (mechanism #3) sport-agnosticism — every sport variance in athlete stats / progress cards / performance batteries resolves here.",
+  "keywords": [
+    "attributes",
+    "eav",
+    "attribute-set",
+    "attribute-group",
+    "attribute-definition",
+    "jsonb-values",
+    "spatie-schemaless",
+    "sport-agnostic",
+    "versioned-set",
+    "widget-select",
+    "widget-slider",
+    "bilingual-labels",
+    "discriminator-driven",
+    "tenant",
+    "wave-0"
+  ],
+  "priority": 11,
+  "providers": ["Academorix\\Attributes\\Providers\\AttributesServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application"],
+  "extendedBy": [],
+  "planned_consumers": [
+    "athlete-enrollment",
+    "progress",
+    "performance",
+    "development",
+    "safeguarding",
+    "drills",
+    "medical",
+    "sports/registry"
+  ],
+  "contributes": {
+    "traits": ["HasAttributeSet", "HasSchemalessAttributes", "BelongsToAttributeSet"],
+    "attributes": ["AttributableEntity"],
+    "blueprints": ["attribute-definition", "attribute-set", "attribute-group"],
+    "middleware": ["attributes.set-version-lock"],
+    "events": [
+      "AttributeDefinitionCreated",
+      "AttributeDefinitionUpdated",
+      "AttributeDefinitionDeprecated",
+      "AttributeSetCreated",
+      "AttributeSetVersioned",
+      "AttributeSetActivated",
+      "AttributeSetDeactivated",
+      "AttributeGroupCreated",
+      "AttributeGroupReordered",
+      "AttributeValuesValidated",
+      "AttributeValuesRejected"
+    ],
+    "policies": ["AttributeDefinitionPolicy", "AttributeSetPolicy", "AttributeGroupPolicy"],
+    "hooks": [
+      "VersionOnBreakingChange",
+      "RefuseDefinitionDeleteWithRecordedValues",
+      "RefuseSetActivateWithCollision",
+      "CascadeGroupOrderOnSetVersioning"
+    ],
+    "commands": [
+      "attributes:list",
+      "attributes:describe",
+      "attributes:seed-set",
+      "attributes:version-set",
+      "attributes:validate-host"
+    ],
+    "jobs": [
+      "ReindexAttributeValuesJob",
+      "MigrateSchemalessJsonJob",
+      "PurgeOrphanAttributeDefinitionJob"
+    ],
+    "notifications": [
+      "AttributeSetVersionedNotification",
+      "AttributeSetActivationBlockedNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.attributes"],
+    "observers": ["AttributeDefinitionObserver", "AttributeSetObserver", "AttributeGroupObserver"],
+    "rules": [
+      "valid_attribute_type",
+      "valid_widget_hint",
+      "valid_discriminator_pair",
+      "valid_set_version_progression",
+      "unique_active_set_per_discriminator"
+    ],
+    "casts": ["AttributeType", "AttributeWidget", "AttributeSetStatus"],
+    "views": [],
+    "lang": ["attributes"],
+    "config": ["attributes"],
+    "macros": [],
+    "bindings": [
+      "AttributeDefinitionRepository",
+      "AttributeSetRepository",
+      "AttributeGroupRepository",
+      "AttributeSetResolver",
+      "AttributeValidator",
+      "AttributeRenderer",
+      "AttributableEntityRegistry"
+    ],
+    "resources": ["attribute-definition", "attribute-set", "attribute-group"]
+  },
+  "attribute_driven": {
+    "description": "Host modules declare their attributable entity via `#[AttributableEntity(discriminator: 'sport_key', valuesColumn: 'attributes')]` on the host model. Boot-time compiler registers the entity → discriminator column mapping into `AttributableEntityRegistry`. Runtime resolution: given a host record, look up its entity_type + discriminator value, resolve the active AttributeSet, validate + render its values.",
+    "attributes": {
+      "AttributableEntity": "Marks a model as an attribute-set host. `#[AttributableEntity(entityType: 'athlete_enrollment', discriminator: 'sport_key', valuesColumn: 'attributes')]`. Params: entityType (canonical string, defaults to snake_case class name), discriminator (column name on the host, e.g. `sport_key`), valuesColumn (JSONB column name where values persist — defaults to `attributes`), setResolver (optional callable name for custom resolution)."
+    }
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing attribute administration — define custom attributes / sets / groups, version on breaking change, activate / deactivate. Values are edited on the HOST entity's own routes (e.g. `PATCH /api/v1/athlete-enrollments/{aen}.attributes`); this module only owns definitions + validation contracts.",
+      "routes": [
+        "GET /api/v1/attribute-definitions",
+        "POST /api/v1/attribute-definitions",
+        "GET /api/v1/attribute-definitions/{def}",
+        "PATCH /api/v1/attribute-definitions/{def}",
+        "POST /api/v1/attribute-definitions/{def}/deprecate",
+        "GET /api/v1/attribute-sets",
+        "POST /api/v1/attribute-sets",
+        "GET /api/v1/attribute-sets/{set}",
+        "PATCH /api/v1/attribute-sets/{set}",
+        "POST /api/v1/attribute-sets/{set}/version",
+        "POST /api/v1/attribute-sets/{set}/activate",
+        "POST /api/v1/attribute-sets/{set}/deactivate",
+        "GET /api/v1/attribute-groups",
+        "POST /api/v1/attribute-groups",
+        "PATCH /api/v1/attribute-groups/{group}",
+        "POST /api/v1/attributes/validate"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read of the attribute registry for support tooling — no PII lives here so exposure is minimal.",
+      "routes": ["GET /api/v1/platform/attribute-sets", "GET /api/v1/platform/attribute-sets/{set}"]
+    }
+  }
+}

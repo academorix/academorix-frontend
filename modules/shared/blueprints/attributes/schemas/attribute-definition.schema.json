@@ -1,0 +1,170 @@
+{
+  "id": "academorix://modules/attributes/schemas/attribute-definition",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AttributeDefinition",
+  "description": "A single typed attribute definition — the atomic unit an AttributeSet groups. Carries tenant_id (CASCADE) + code + type + widget + validation + bilingual labels + deprecation flag. NEVER carries application_id, organization_id, region_id, or scope_node_id directly.",
+  "type": "object",
+  "x-module": "attributes",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "attribute_definitions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "ads_",
+    "incrementing": false,
+    "model": "Academorix\\Attributes\\Models\\AttributeDefinition",
+    "interface": "Academorix\\Attributes\\Contracts\\Data\\AttributeDefinitionInterface",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "type": "AttributeType",
+      "widget": "AttributeWidget",
+      "validation": "array",
+      "widget_config": "array",
+      "labels": "array",
+      "is_deprecated": "boolean",
+      "metadata": "array"
+    },
+    "observers": ["AttributeDefinitionObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `ads_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Machine identifier — snake_case. Immutable post-create. Namespaced within tenant."
+      },
+      "type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: integer / decimal / select / boolean / date / text / slider / percentage."
+      },
+      "widget": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Rendering hint: select / slider / number / date / input / switch / textarea / radio."
+      },
+      "widget_config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Widget-specific config: {min, max, step, options[], placeholder, ...}."
+      },
+      "validation": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Validation rules: {required, min, max, pattern, options[], nullable}."
+      },
+      "labels": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'",
+        "description": "Bilingual labels: {en: 'Pace', ar: 'السرعة'}. RTL-aware in UI."
+      },
+      "description": {
+        "type": "text",
+        "nullable": true,
+        "description": "Long-form field description shown in help text."
+      },
+      "is_deprecated": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "When true — hidden from new sets but preserved for historic rendering."
+      },
+      "deprecated_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "code"],
+        "unique": true,
+        "name": "attribute_definitions_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "type"], "name": "attribute_definitions_type_idx" },
+      {
+        "columns": ["tenant_id", "is_deprecated"],
+        "name": "attribute_definitions_active_idx",
+        "predicate": "is_deprecated = false"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "code",
+    "type",
+    "widget",
+    "labels",
+    "is_deprecated",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ads_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "code": { "type": "string", "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$" },
+    "type": {
+      "type": "string",
+      "enum": ["integer", "decimal", "select", "boolean", "date", "text", "slider", "percentage"]
+    },
+    "widget": {
+      "type": "string",
+      "enum": ["select", "slider", "number", "date", "input", "switch", "textarea", "radio"]
+    },
+    "widget_config": { "type": ["object", "null"] },
+    "validation": { "type": ["object", "null"] },
+    "labels": {
+      "type": "object",
+      "properties": { "en": { "type": "string" }, "ar": { "type": "string" } },
+      "required": ["en"]
+    },
+    "description": { "type": ["string", "null"] },
+    "is_deprecated": { "type": "boolean" },
+    "deprecated_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "code is IMMUTABLE post-create — a rename requires deprecate + new definition",
+    "type + widget must be compatible (integer + slider OK; boolean + slider REFUSED)",
+    "Deletion refused when the definition is referenced by any AttributeSet",
+    "Deprecation flags the definition as read-only for new sets but preserves it for historic-render lookups"
+  ]
+}

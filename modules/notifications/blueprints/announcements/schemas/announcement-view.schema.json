@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/announcements/schemas/announcement-view",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AnnouncementView",
+  "description": "Per-user view record — read_at + acknowledged_at. Enables delivery metrics + read-receipts.",
+  "type": "object",
+  "x-module": "announcements",
+  "x-eloquent": {
+    "table": "announcement_views",
+    "keyPrefix": "anv_",
+    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToTenant", "HasMetadata"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "announcement_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "announcements", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "read_at": { "type": "timestamptz", "nullable": true },
+      "acknowledged_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "announcement_id", "user_id"],
+        "unique": true,
+        "name": "announcement_views_unique"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "announcement_id", "user_id", "created_at", "updated_at"],
+  "properties": { "id": { "type": "string", "pattern": "^anv_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/messaging/schemas/message",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Message",
+  "type": "object",
+  "x-module": "messaging",
+  "x-eloquent": {
+    "table": "messages",
+    "keyPrefix": "msg_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "conversation_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "conversations", "column": "id", "onDelete": "cascade" }
+      },
+      "sender_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "body": {
+        "type": "text",
+        "nullable": true,
+        "description": "NULL when message is attachment-only."
+      },
+      "attachments": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of {file_id, kind, size} pointing at storage::File."
+      },
+      "read_by": {
+        "type": "jsonb",
+        "nullable": true,
+        "default": "'{}'",
+        "description": "Map user_id → read_at timestamp."
+      },
+      "reply_to_message_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "messages", "column": "id", "onDelete": "set null" }
+      },
+      "edited_at": { "type": "timestamptz", "nullable": true },
+      "sent_at": { "type": "timestamptz", "nullable": false },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "conversation_id", "sent_at"],
+        "name": "messages_conversation_time_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "conversation_id",
+    "sender_user_id",
+    "sent_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^msg_[0-9A-HJKMNP-TV-Z]{26}$" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Either body OR attachments (or both) must be present.",
+    "edited_at nullable — set only on edit.",
+    "read_by monotonic per user — never removed once set."
+  ]
+}

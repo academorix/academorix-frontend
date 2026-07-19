@@ -1,0 +1,76 @@
+{
+  "$version": 1,
+  "name": "admin-console",
+  "alias": "admin-console",
+  "namespace": "Academorix\\AdminConsole",
+  "description": "Tenant admin dashboard + platform-staff console orchestration per blueprint §16.4. Ships ONE owned entity: `AdminDashboardConfig` (per-tenant admin dashboard configuration — enabled_widgets + layout + recent_actions cache). Tenant admin: cross-module dashboards + staff management + settings + reports/exports. Platform staff (central): tenant provisioning + plan/billing oversight + impersonation (audited) + support. Impersonation delegates to `identity/platform-user` module which owns the identity. This module owns the DASHBOARD ORCHESTRATION LAYER.",
+  "keywords": [
+    "admin",
+    "dashboard",
+    "console",
+    "widget",
+    "impersonation-orchestrator",
+    "platform-staff",
+    "wave-2"
+  ],
+  "priority": 89,
+  "providers": ["Academorix\\AdminConsole\\Providers\\AdminConsoleServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "platform-user",
+    "rbac",
+    "delegation",
+    "audit",
+    "activity",
+    "reporting",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["ai"],
+  "contributes": {
+    "traits": [],
+    "attributes": [],
+    "blueprints": ["admin-dashboard-config"],
+    "middleware": ["admin.audit-touch"],
+    "events": ["DashboardConfigured", "ImpersonationStarted", "ImpersonationEnded"],
+    "policies": ["AdminDashboardConfigPolicy"],
+    "hooks": ["AuditImpersonationSessions"],
+    "commands": ["admin:describe", "admin:seed-defaults", "admin:test-impersonation"],
+    "jobs": ["PurgeStaleDashboardConfigsJob"],
+    "notifications": ["ImpersonationStartedNotification"],
+    "broadcasts": ["tenant.{tenantId}.admin"],
+    "observers": ["AdminDashboardConfigObserver"],
+    "rules": ["valid_widget_key"],
+    "casts": [],
+    "views": [],
+    "lang": ["admin"],
+    "config": ["admin"],
+    "macros": [],
+    "bindings": ["AdminDashboardRepository", "WidgetRegistry", "PlatformConsoleAggregator"],
+    "resources": ["admin-dashboard-config"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/admin/dashboard",
+        "PATCH /api/v1/admin/dashboard/config",
+        "GET /api/v1/admin/widgets",
+        "GET /api/v1/admin/recent-actions"
+      ]
+    },
+    "platform-admin": {
+      "routes": [
+        "GET /api/v1/platform/console/tenants",
+        "GET /api/v1/platform/console/tenants/{tenant}",
+        "POST /api/v1/platform/console/tenants/{tenant}/impersonate",
+        "POST /api/v1/platform/console/tenants/{tenant}/end-impersonation",
+        "GET /api/v1/platform/console/billing-overview",
+        "GET /api/v1/platform/console/system-health"
+      ]
+    }
+  }
+}

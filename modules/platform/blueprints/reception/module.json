@@ -1,0 +1,78 @@
+{
+  "$version": 1,
+  "name": "reception",
+  "alias": "reception",
+  "namespace": "Academorix\\Reception",
+  "description": "Front-desk operational surface per blueprint §10.20. Ships ONE owned entity: `ReceptionVisit` (walk-in visitor record — visitor name + purpose + expected_end_at + host_user_id + check_in/out timestamps; wristband issued via credentials linkage). Coordinates walk-in registration + trial signup + day-pass sale + wristband issuance + check-in monitor + reception approval queue. The APPROVAL QUEUE lives in `workflow/approvals` — this module composes it. DAY PASSES live in `platform/facility` — this module surfaces them for reception UI. The reception module owns the FRONT-DESK VIEW + operational workflows, not the domain data.",
+  "keywords": [
+    "reception",
+    "front-desk",
+    "walk-in",
+    "visitor",
+    "wristband",
+    "day-pass",
+    "check-in-monitor",
+    "wave-2"
+  ],
+  "priority": 75,
+  "providers": ["Academorix\\Reception\\Providers\\ReceptionServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "branch",
+    "facility",
+    "approvals",
+    "athlete",
+    "membership",
+    "credentials",
+    "invoice",
+    "payment",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["reporting", "ai"],
+  "contributes": {
+    "traits": [],
+    "attributes": [],
+    "blueprints": ["reception-visit"],
+    "middleware": ["reception.branch-scope"],
+    "events": [
+      "VisitorCheckedIn",
+      "VisitorCheckedOut",
+      "WalkInRegistrationApproved",
+      "DayPassSold",
+      "WristbandIssued"
+    ],
+    "policies": ["ReceptionVisitPolicy"],
+    "hooks": ["AutoCheckoutStaleVisitors"],
+    "commands": ["reception:list-visitors", "reception:auto-checkout", "reception:daily-report"],
+    "jobs": ["AutoCheckoutStaleVisitorsJob", "DailyReceptionSummaryJob"],
+    "notifications": ["WalkInRegistrationNotification", "WristbandIssuedNotification"],
+    "broadcasts": ["tenant.{tenantId}.branch.{branchId}.reception"],
+    "observers": ["ReceptionVisitObserver"],
+    "rules": ["valid_visit_status"],
+    "casts": ["VisitStatus"],
+    "views": [],
+    "lang": ["reception"],
+    "config": ["reception"],
+    "macros": [],
+    "bindings": ["ReceptionVisitRepository", "CheckInMonitor"],
+    "resources": ["reception-visit"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/reception/visits",
+        "POST /api/v1/reception/visits",
+        "POST /api/v1/reception/visits/{visit}/checkout",
+        "GET /api/v1/reception/daily-summary",
+        "POST /api/v1/reception/walk-in-register",
+        "POST /api/v1/reception/day-pass",
+        "POST /api/v1/reception/issue-wristband"
+      ]
+    }
+  }
+}

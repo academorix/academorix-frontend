@@ -1,0 +1,94 @@
+{
+  "$version": 1,
+  "name": "realtime",
+  "alias": "realtime",
+  "namespace": "Academorix\\Realtime",
+  "description": "The WebSocket transport substrate — wraps Laravel Reverb behind attribute-driven channel registration. Ships THREE owned entities: `BroadcastChannel` (registered namespace + type IN public/private/presence + authorization_callback FQCN — discovered at boot via `#[AsBroadcastChannel]`), `BroadcastSubscription` (active WS subscription of a User to a channel; state machine pending_auth → active → disconnected; auto-purge on disconnected+last_seen>15m), `Presence` (ephemeral Redis-backed row per (channel, user) tracking who's online with periodic snapshot). Every tenant broadcasts on `tenant.{id}.*` prefix — cross-tenant channel names refused at broadcast time by TenantBoundaryEnforcer middleware. Publish contract: domain modules emit typed events, the compiler discovers `implements ShouldBroadcast` at boot, and each event auto-registers on its declared channel. Consumer contract: frontend `useSubscribe(channelName, handler)` hooks in the `@stackra/realtime` package handle authentication + reconnect + presence roster. Auth flow: sanctum token exchanged for Reverb channel signed URL at `POST /broadcasting/auth` (bundled). NOT a message bus — for ephemeral live updates only (RSVP counts, live attendance, standings). Durable messaging → notifications; audit trail → activity/audit.",
+  "keywords": [
+    "realtime",
+    "reverb",
+    "websockets",
+    "broadcast",
+    "presence",
+    "live-updates",
+    "channel",
+    "subscription",
+    "tenant-namespace",
+    "attribute-driven",
+    "wave-0"
+  ],
+  "priority": 26,
+  "providers": ["Academorix\\Realtime\\Providers\\RealtimeServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application", "auth"],
+  "extendedBy": [],
+  "planned_consumers": [
+    "attendance",
+    "event",
+    "session",
+    "competition",
+    "messaging",
+    "announcements",
+    "notifications",
+    "notifications-in-app",
+    "ai"
+  ],
+  "contributes": {
+    "traits": ["BroadcastsOnChannel"],
+    "attributes": ["AsBroadcastChannel"],
+    "blueprints": ["broadcast-channel", "broadcast-subscription", "presence"],
+    "middleware": ["realtime.tenant-boundary", "realtime.channel-auth"],
+    "events": [
+      "BroadcastChannelRegistered",
+      "SubscriptionAuthorized",
+      "SubscriptionRefused",
+      "SubscriptionDisconnected",
+      "PresenceJoined",
+      "PresenceLeft",
+      "PresenceHeartbeat"
+    ],
+    "policies": ["BroadcastChannelPolicy", "BroadcastSubscriptionPolicy"],
+    "hooks": ["EnforceTenantChannelPrefix", "PurgeStalePresenceRows"],
+    "commands": ["realtime:describe", "realtime:test-broadcast", "realtime:purge-stale"],
+    "jobs": ["PurgeDisconnectedSubscriptionsJob", "SnapshotPresenceToPostgresJob"],
+    "notifications": [],
+    "broadcasts": ["tenant.{tenantId}.system", "tenant.{tenantId}.presence"],
+    "observers": ["BroadcastChannelObserver", "BroadcastSubscriptionObserver"],
+    "rules": ["valid_channel_namespace", "valid_channel_type"],
+    "casts": ["ChannelType", "SubscriptionStatus"],
+    "views": [],
+    "lang": ["realtime"],
+    "config": ["realtime", "broadcasting.connections.reverb"],
+    "macros": [],
+    "bindings": [
+      "BroadcastChannelRegistry",
+      "PresenceStore",
+      "ChannelAuthorizer",
+      "TenantBoundaryEnforcer"
+    ],
+    "resources": ["broadcast-channel"]
+  },
+  "attribute_driven": {
+    "description": "Domain modules register broadcast channels via `#[AsBroadcastChannel]` on a class or method. Boot-time compiler adds the channel + its authorization callback to `BroadcastChannelRegistry`.",
+    "attributes": {
+      "AsBroadcastChannel": "Marks a class as a channel registrar. `#[AsBroadcastChannel(namespace: 'tenant.{tenantId}.attendance', type: 'private', authorize: [AttendanceChannelAuth::class, 'authorize'])]`. Params: namespace (Laravel channel string with placeholders), type (public/private/presence), authorize (callable FQCN + method resolving to bool)."
+    }
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Broadcast auth endpoint + presence roster read.",
+      "routes": [
+        "POST /broadcasting/auth",
+        "GET /api/v1/realtime/channels",
+        "GET /api/v1/realtime/channels/{channel}/presence"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant broadcast-channel inventory + subscription monitoring.",
+      "routes": [
+        "GET /api/v1/platform/realtime/channels",
+        "GET /api/v1/platform/realtime/subscriptions"
+      ]
+    }
+  }
+}

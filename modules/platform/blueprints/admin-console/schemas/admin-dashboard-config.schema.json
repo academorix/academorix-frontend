@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/admin-console/schemas/admin-dashboard-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AdminDashboardConfig",
+  "description": "Per-user or per-tenant admin dashboard configuration.",
+  "type": "object",
+  "x-module": "admin-console",
+  "x-eloquent": {
+    "table": "admin_dashboard_configs",
+    "keyPrefix": "adc_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" },
+        "description": "NULL = tenant default; otherwise user-specific override."
+      },
+      "layout": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'",
+        "description": "Grid layout {widgets: [{key, x, y, w, h}]}."
+      },
+      "enabled_widgets": { "type": "jsonb", "nullable": false, "default": "'[]'" },
+      "theme_preference": { "type": "string", "length": 16, "nullable": true },
+      "recent_actions_cache": { "type": "jsonb", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "user_id"],
+        "unique": true,
+        "name": "admin_dashboard_configs_unique",
+        "predicate": "deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "layout", "enabled_widgets", "created_at", "updated_at"],
+  "properties": { "id": { "type": "string", "pattern": "^adc_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

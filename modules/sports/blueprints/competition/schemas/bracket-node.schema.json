@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/competition/schemas/bracket-node",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "BracketNode",
+  "description": "Knockout tournament bracket node — round + position + participant refs + winner_advances_to_node_id.",
+  "type": "object",
+  "x-module": "competition",
+  "x-eloquent": {
+    "table": "bracket_nodes",
+    "keyPrefix": "bkt_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "Auditable",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "competition_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "competitions", "column": "id", "onDelete": "cascade" }
+      },
+      "round": { "type": "integer", "nullable": false },
+      "position": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Position within the round (0-indexed left-to-right)."
+      },
+      "team_a_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "set null" }
+      },
+      "team_b_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "set null" }
+      },
+      "winner_team_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "set null" }
+      },
+      "advances_to_node_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "bracket_nodes", "column": "id", "onDelete": "set null" }
+      },
+      "fixture_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "competition_fixtures", "column": "id", "onDelete": "set null" }
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "competition_id", "round", "position"],
+        "unique": true,
+        "name": "bracket_nodes_position_unique"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "competition_id",
+    "round",
+    "position",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^bkt_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

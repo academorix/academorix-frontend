@@ -1,0 +1,95 @@
+{
+  "id": "academorix://modules/competition/schemas/competition",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Competition",
+  "type": "object",
+  "x-module": "competition",
+  "x-eloquent": {
+    "table": "competitions",
+    "keyPrefix": "cmp_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToSeason",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "season_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "seasons", "column": "id", "onDelete": "restrict" }
+      },
+      "sport_key": { "type": "string", "length": 32, "nullable": false },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "format": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "round_robin / single_elimination / double_elimination / group_then_knockout."
+      },
+      "scoring_strategy": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "From sport registry — goals / points / sets / time / distance / apparatus / belt."
+      },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'draft'" },
+      "starts_on": { "type": "date", "nullable": true },
+      "ends_on": { "type": "date", "nullable": true },
+      "config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Format-specific config: {points_win: 3, points_draw: 1, points_loss: 0, tiebreakers: [...], group_size: ...}."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "season_id", "status"], "name": "competitions_season_status_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "season_id",
+    "sport_key",
+    "name",
+    "format",
+    "scoring_strategy",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cmp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "registration", "in_progress", "completed", "cancelled"]
+    },
+    "format": {
+      "type": "string",
+      "enum": ["round_robin", "single_elimination", "double_elimination", "group_then_knockout"]
+    }
+  },
+  "additionalProperties": false
+}

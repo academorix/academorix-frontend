@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/realtime/schemas/presence",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Presence",
+  "description": "Ephemeral row per (channel, user) tracking who is online on a presence channel. Backed primarily by Redis; periodic snapshot to postgres for platform-admin visibility. Purged 15m after last heartbeat.",
+  "type": "object",
+  "x-module": "realtime",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "presence_snapshots",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "prs_",
+    "incrementing": false,
+    "traits": ["HasFactory", "HasPrefixedUlid", "BelongsToTenant", "Filterable"],
+    "casts": { "joined_at": "datetime", "last_heartbeat_at": "datetime", "user_info": "array" }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "channel_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "broadcast_channels", "column": "id", "onDelete": "cascade" }
+      },
+      "user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "joined_at": { "type": "timestamptz", "nullable": false },
+      "last_heartbeat_at": { "type": "timestamptz", "nullable": false },
+      "user_info": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Presence payload published to the channel (name, avatar_url, etc)."
+      },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "channel_id", "user_id"],
+        "unique": true,
+        "name": "presence_unique"
+      },
+      { "columns": ["tenant_id", "last_heartbeat_at"], "name": "presence_heartbeat_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "channel_id",
+    "user_id",
+    "joined_at",
+    "last_heartbeat_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^prs_[0-9A-HJKMNP-TV-Z]{26}$" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One row per (tenant_id, channel_id, user_id).",
+    "last_heartbeat_at > 15m ago → row evicted by PurgeStalePresenceRows hook."
+  ]
+}

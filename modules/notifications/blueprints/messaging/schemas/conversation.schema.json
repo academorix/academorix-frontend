@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/messaging/schemas/conversation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Conversation",
+  "type": "object",
+  "x-module": "messaging",
+  "x-eloquent": {
+    "table": "conversations",
+    "keyPrefix": "cnv_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "scope": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "adhoc / branch / team."
+      },
+      "scope_ref_id": { "type": "string", "length": 30, "nullable": true },
+      "subject": { "type": "string", "length": 500, "nullable": true },
+      "is_group": { "type": "boolean", "nullable": false, "default": "false" },
+      "last_message_at": { "type": "timestamptz", "nullable": true },
+      "archived_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "last_message_at"], "name": "conversations_recent_idx" },
+      { "columns": ["tenant_id", "scope", "scope_ref_id"], "name": "conversations_scope_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "scope", "is_group", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cnv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "scope": { "type": "string", "enum": ["adhoc", "branch", "team"] }
+  },
+  "additionalProperties": false
+}

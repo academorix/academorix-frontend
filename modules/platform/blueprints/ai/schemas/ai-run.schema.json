@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/ai/schemas/ai-run",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AiRun",
+  "type": "object",
+  "x-module": "ai",
+  "x-eloquent": {
+    "table": "ai_runs",
+    "keyPrefix": "arv_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "Auditable",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "conversation_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "ai_conversations", "column": "id", "onDelete": "cascade" }
+      },
+      "persona": { "type": "string", "length": 32, "nullable": false },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "openai / anthropic / gemini / groq / xai / ollama."
+      },
+      "model": { "type": "string", "length": 64, "nullable": false },
+      "prompt_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "SHA-256 of the prompt payload for reproducibility."
+      },
+      "response_hash": { "type": "string", "length": 64, "nullable": true },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'running'" },
+      "started_at": { "type": "timestamptz", "nullable": false },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "latency_ms": { "type": "integer", "nullable": true },
+      "tokens_in": { "type": "integer", "nullable": true },
+      "tokens_out": { "type": "integer", "nullable": true },
+      "cost_minor": { "type": "bigint", "nullable": true },
+      "error_message": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "conversation_id", "started_at"],
+        "name": "ai_runs_conversation_time_idx"
+      },
+      { "columns": ["tenant_id", "persona", "status"], "name": "ai_runs_persona_status_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "persona",
+    "provider",
+    "model",
+    "prompt_hash",
+    "status",
+    "started_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^arv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["running", "completed", "failed", "cancelled", "blocked"]
+    }
+  },
+  "additionalProperties": false
+}

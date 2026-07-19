@@ -1,0 +1,112 @@
+{
+  "$version": 1,
+  "name": "development",
+  "alias": "development",
+  "namespace": "Academorix\\Sports\\Development",
+  "description": "Talent pathways + scouting + IDP per blueprint §14.4. Ships FIVE owned entities: `DevelopmentPathway` (Foundation → Youth Development → Youth Team → Senior; sport-scoped), `PathwayStage` (ordered stage in a pathway; promotion_criteria JSONB validated against active AttributeSet; feeds progress+performance readings), `ScoutingReport` (coach/scout observation on trialist or existing athlete — narrative + rating + tags; distinct from ProgressAssessment which is attribute-structured), `TalentFlag` (talent identification signal — flagged_by_user + reason + flagged_at; feeds pathway promotion queue), `Goal` (Individual Development Plan goal — description + target_date + status; reviewable each term). Promotion criteria read Progress + Performance results — attribute-driven so pathways stay sport-agnostic.",
+  "keywords": [
+    "development",
+    "pathway",
+    "scouting",
+    "talent",
+    "idp",
+    "goal",
+    "promotion",
+    "wave-3"
+  ],
+  "priority": 82,
+  "providers": ["Academorix\\Sports\\Development\\Providers\\DevelopmentServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "attributes",
+    "athlete",
+    "athlete-enrollment",
+    "progress",
+    "performance",
+    "coaching"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["reporting", "ai", "awards"],
+  "contributes": {
+    "traits": ["HasPathwayProgression", "HasGoals"],
+    "attributes": [],
+    "blueprints": [
+      "development-pathway",
+      "pathway-stage",
+      "scouting-report",
+      "talent-flag",
+      "goal"
+    ],
+    "middleware": [],
+    "events": [
+      "PathwayCreated",
+      "StageAdded",
+      "AthletePromoted",
+      "AthleteDemoted",
+      "ScoutingReportFiled",
+      "TalentFlagged",
+      "GoalCreated",
+      "GoalAchieved",
+      "GoalDeferred"
+    ],
+    "policies": [
+      "DevelopmentPathwayPolicy",
+      "PathwayStagePolicy",
+      "ScoutingReportPolicy",
+      "TalentFlagPolicy",
+      "GoalPolicy"
+    ],
+    "hooks": ["EvaluatePromotionCriteriaOnAssessment", "AwardOnGoalAchieved"],
+    "commands": [
+      "development:list",
+      "development:evaluate-promotions",
+      "development:seed-pathways"
+    ],
+    "jobs": ["EvaluatePromotionsJob", "RemindGoalsDueSoonJob"],
+    "notifications": [
+      "AthletePromotedNotification",
+      "ScoutingReportSharedNotification",
+      "GoalReviewDueNotification"
+    ],
+    "broadcasts": [],
+    "observers": ["DevelopmentPathwayObserver", "GoalObserver"],
+    "rules": ["valid_pathway_stage_order", "valid_goal_status"],
+    "casts": ["GoalStatus"],
+    "views": [],
+    "lang": ["development"],
+    "config": ["development"],
+    "macros": [],
+    "bindings": [
+      "PathwayRepository",
+      "PromotionEvaluator",
+      "ScoutingReportRepository",
+      "GoalRepository"
+    ],
+    "resources": ["development-pathway", "pathway-stage", "scouting-report", "talent-flag", "goal"]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/development-pathways",
+        "POST /api/v1/development-pathways",
+        "GET /api/v1/pathway-stages",
+        "POST /api/v1/pathway-stages",
+        "POST /api/v1/athletes/{athlete}/promote",
+        "GET /api/v1/scouting-reports",
+        "POST /api/v1/scouting-reports",
+        "GET /api/v1/talent-flags",
+        "POST /api/v1/talent-flags",
+        "GET /api/v1/athletes/{athlete}/goals",
+        "POST /api/v1/goals",
+        "PATCH /api/v1/goals/{goal}",
+        "POST /api/v1/goals/{goal}/review"
+      ]
+    },
+    "platform-admin": {
+      "routes": ["GET /api/v1/platform/scouting-reports"]
+    }
+  }
+}

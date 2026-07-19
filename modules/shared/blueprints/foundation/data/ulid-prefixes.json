@@ -899,6 +899,406 @@
       "module": "transfer",
       "entity": "TransferSchedule",
       "description": "Recurring transfer schedule."
+    },
+    "ads_": {
+      "module": "attributes",
+      "entity": "AttributeDefinition",
+      "description": "Typed field: code, type (integer/decimal/select/boolean/date/text/slider/percentage), widget hints, validation, bilingual labels, deprecation flag. Immutable code. Delete refused when referenced by any AttributeSet."
+    },
+    "asg_": {
+      "module": "attributes",
+      "entity": "AttributeSet",
+      "description": "Versioned collection of AttributeDefinitions for (entity_type, discriminator_value). One active set per (entity_type, discriminator_value) via partial unique. Historic values render via captured version_snapshot on host."
+    },
+    "atg_": {
+      "module": "attributes",
+      "entity": "AttributeGroup",
+      "description": "Visual grouping within an AttributeSet (Primary Stats / Position / Physical Profile). code unique per (tenant, set). Cascade delete with parent set."
+    },
+    "bch_": {
+      "module": "realtime",
+      "entity": "BroadcastChannel",
+      "description": "Registered WebSocket channel via Reverb — namespace + type (public/private/presence) + authorization callback FQCN. Composite unique (tenant_id, namespace). Discovered via #[AsBroadcastChannel] scan."
+    },
+    "bsn_": {
+      "module": "realtime",
+      "entity": "BroadcastSubscription",
+      "description": "Active subscription of a User to a BroadcastChannel. State: pending_auth then active then disconnected. Auto-purge on disconnected + last_seen_at > 15m."
+    },
+    "prs_": {
+      "module": "realtime",
+      "entity": "Presence",
+      "description": "Ephemeral row per (channel, user) tracking who's online. Redis-backed with periodic snapshot. Purged 15m after last heartbeat."
+    },
+    "pin_": {
+      "module": "people",
+      "entity": "PersonIdentity",
+      "description": "CENTRAL-PLANE global identity carrying the Academorix ID (AX-XXXX-XXXX). Cross-academy shared profile substrate (blueprint 2.2). NO tenant_id — central connection. Minimal PII. Tenant Athletes + Staff optionally reference via person_identity_id."
+    },
+    "pgl_": {
+      "module": "people",
+      "entity": "PersonGuardianLink",
+      "description": "CENTRAL-PLANE guardian to minor link on the global identity. Cross-tenant shape so a parent identity is portable. Consent-gated."
+    },
+    "tlr_": {
+      "module": "people",
+      "entity": "TenantLinkRequest",
+      "description": "Consent-gated request from a tenant to link a local Athlete/Staff to a global PersonIdentity. State: requested then approved / declined then revoked. Enumeration-resistant lookup (ID + DOB required; no PII revealed pre-consent)."
+    },
+    "pra_": {
+      "module": "progress",
+      "entity": "ProgressAssessment",
+      "description": "Attribute-driven skill assessment per athlete_enrollment plus capture_date. values JSONB validated against ActiveAttributeSet (frozen at assessment via attribute_set_snapshot_id). Overall score computed via sport-config weighting to tier (bronze/silver/gold/diamond)."
+    },
+    "pcd_": {
+      "module": "progress",
+      "entity": "ProgressCard",
+      "description": "Snapshot render of a ProgressAssessment as a shareable card. Card_type: fifa_card / attribute_card / radar / time_trial / apparatus_scores (per sport-config). Public shareable via signed URL."
+    },
+    "cno_": {
+      "module": "progress",
+      "entity": "CoachNote",
+      "description": "Coach observation on an athlete_enrollment. visibility: coach_only / shared_with_parent / shared_with_athlete. Immutable audit trail — edits create new revisions."
+    },
+    "blt_": {
+      "module": "progress",
+      "entity": "BeltRank",
+      "description": "Martial-arts belt ordering per sport_key (karate white to black 5dan, judo, taekwondo). Ordered progression. Referenced by grading events."
+    },
+    "gre_": {
+      "module": "progress",
+      "entity": "GradingEvent",
+      "description": "Belt-grading examination event (martial arts) — date + venue + examiner_coach_id + candidates (via GradingResult). Distinct from Session (this is a formal exam, not practice)."
+    },
+    "grr_": {
+      "module": "progress",
+      "entity": "GradingResult",
+      "description": "Per-athlete outcome at a GradingEvent — from_belt_id + to_belt_id + result (pass/fail/deferred) + examiner_notes."
+    },
+    "ptb_": {
+      "module": "performance",
+      "entity": "TestBattery",
+      "description": "Named collection of PerformanceTests (e.g. U12 Football Physical Q1 — 40m sprint + VO2 + vertical jump). Per sport_key. Versioned like attribute sets."
+    },
+    "ptt_": {
+      "module": "performance",
+      "entity": "PerformanceTest",
+      "description": "A single physical test definition — name / unit / better_direction (higher/lower) / age_bands. Reusable across batteries."
+    },
+    "ptr_": {
+      "module": "performance",
+      "entity": "PerformanceTestResult",
+      "description": "One athlete_enrollment test outcome — captured_at + value + tester_user_id. metrics JSONB validated against active AttributeSet if attribute-driven. Percentile computed vs Benchmark."
+    },
+    "bmk_": {
+      "module": "performance",
+      "entity": "Benchmark",
+      "description": "Age-band + sport_key + test percentile reference (p10/p25/p50/p75/p90). Tenant-configurable but seeded from research defaults."
+    },
+    "mrc_": {
+      "module": "medical",
+      "entity": "MedicalRecord",
+      "description": "Root health record per athlete. Extremely restricted RBAC (medical role only). Composed via encrypted fields."
+    },
+    "inj_": {
+      "module": "medical",
+      "entity": "Injury",
+      "description": "Injury event — body_part / mechanism / severity / onset_at / status (reported/under_treatment/recovering/cleared). Return-to-play gate consumed by matches."
+    },
+    "trt_": {
+      "module": "medical",
+      "entity": "Treatment",
+      "description": "Treatment record linked to an Injury — provider / date / notes / follow_up_at. Encrypted at rest."
+    },
+    "mcl_": {
+      "module": "medical",
+      "entity": "MedicalClearance",
+      "description": "Clearance certificate — issued_by_user + issued_at + expires_at + scope (all_activities / limited / pending_review). Eligibility gate: blocks squad selection when expired or injury active."
+    },
+    "alg_": {
+      "module": "medical",
+      "entity": "Allergy",
+      "description": "Allergy record — allergen / severity / notes / reported_by. Surfaced to coaches via allergy-summary read (not raw details)."
+    },
+    "med_": {
+      "module": "medical",
+      "entity": "Medication",
+      "description": "Active medication record — name / dosage / frequency / prescribing_provider / expires_at. Restricted to medical role + admin."
+    },
+    "bgc_": {
+      "module": "safeguarding",
+      "entity": "BackgroundCheck",
+      "description": "Staff DBS / clearance record — type (DBS enhanced / DBS basic / state-BCI / SafeSport / custom) / status (pending/verified/expired) / issued_at + expires_at + verification_url. Block-assignment gate in coaching/team."
+    },
+    "pak_": {
+      "module": "safeguarding",
+      "entity": "PolicyAcknowledgement",
+      "description": "Staff acknowledged safeguarding policy X on date Y. Audit-material — never mutable. Refresh cadence per policy_version."
+    },
+    "dvp_": {
+      "module": "development",
+      "entity": "DevelopmentPathway",
+      "description": "Named talent pathway — Foundation to Youth Development to Youth Team to Senior. Sport-scoped."
+    },
+    "dvs_": {
+      "module": "development",
+      "entity": "PathwayStage",
+      "description": "A stage in a DevelopmentPathway — promotion_criteria JSONB validated against active AttributeSet. Ordered progression."
+    },
+    "sct_": {
+      "module": "development",
+      "entity": "ScoutingReport",
+      "description": "Coach/scout observation on a trialist or existing athlete — narrative + rating + tags. Distinct from ProgressAssessment (that is the structured attribute-driven view)."
+    },
+    "tfg_": {
+      "module": "development",
+      "entity": "TalentFlag",
+      "description": "Talent identification signal — flagged_by_user + reason + flagged_at. Feeds pathway promotion queue."
+    },
+    "gol_": {
+      "module": "development",
+      "entity": "Goal",
+      "description": "Individual Development Plan goal — description + target_date + status (open/achieved/deferred/dropped). Reviewable each term."
+    },
+    "cmp_": {
+      "module": "competition",
+      "entity": "Competition",
+      "description": "League / knockout tournament root — season + status + scoring_strategy (from sport registry). Round-robin or bracket format."
+    },
+    "cmt_": {
+      "module": "competition",
+      "entity": "CompetitionTeam",
+      "description": "Team registration in a Competition. seed + registration_status. Feeds standings + bracket."
+    },
+    "cmf_": {
+      "module": "competition",
+      "entity": "CompetitionFixture",
+      "description": "Scheduled matchup — realized via sports/event. round_number + bracket_position. Standings recompute triggered on fixture result."
+    },
+    "std_": {
+      "module": "competition",
+      "entity": "StandingRow",
+      "description": "Denormalised league table row — team_id + games_played + wins + draws + losses + goals_for + goals_against + points. Recomputed on result."
+    },
+    "bkt_": {
+      "module": "competition",
+      "entity": "BracketNode",
+      "description": "Knockout tournament bracket node — round + position + participant refs + winner_advances_to_node_id."
+    },
+    "frm_": {
+      "module": "formations",
+      "entity": "Formation",
+      "description": "Named formation template — 4-3-3, 4-4-2, basketball zone, tennis singles/doubles. Sport-scoped. Slot count validates vs sport team size."
+    },
+    "fsl_": {
+      "module": "formations",
+      "entity": "FormationSlot",
+      "description": "Individual slot in a formation — position (kebab-case) + x/y coordinates (0-100 for field render). Ordered."
+    },
+    "dri_": {
+      "module": "drills",
+      "entity": "Drill",
+      "description": "Coaching drill — objective / age_band / duration / equipment / difficulty / diagram_url / coaching_points. Sport-scoped via sport_key. Search-indexed."
+    },
+    "dcg_": {
+      "module": "drills",
+      "entity": "DrillCategory",
+      "description": "Drill categorization — passing / shooting / defense / conditioning. Tenant-authorable."
+    },
+    "spl_": {
+      "module": "drills",
+      "entity": "SessionPlan",
+      "description": "Ordered collection of drills for a training session — sport + duration + objective + optional curriculum_week_id linkage."
+    },
+    "spi_": {
+      "module": "drills",
+      "entity": "SessionPlanItem",
+      "description": "Drill entry in a plan — drill_id + duration + notes + sort_order."
+    },
+    "cur_": {
+      "module": "drills",
+      "entity": "Curriculum",
+      "description": "Multi-week structured plan for a Team+Season — 6-16 weeks. Cloneable across seasons."
+    },
+    "cwk_": {
+      "module": "drills",
+      "entity": "CurriculumWeek",
+      "description": "Weekly slot in a Curriculum with linked SessionPlans + learning objectives."
+    },
+    "psq_": {
+      "module": "private-sessions",
+      "entity": "PrivateSessionRequest",
+      "description": "1:1 coaching request — athlete + coach + preferred slots. State: requested then approved then scheduled then completed / no_show / cancelled."
+    },
+    "scr_": {
+      "module": "private-sessions",
+      "entity": "SessionCredit",
+      "description": "Session-pack credit ledger — parent bought 10-pack; each private-session consume decrements. Atomic consume in same transaction."
+    },
+    "cnl_": {
+      "module": "credentials",
+      "entity": "Credential",
+      "description": "NFC/RFID wristband or QR card registered to a member — UID (MIFARE/NTAG) + holder polymorphic (Athlete/Staff). Status: issued then active then lost/revoked then replaced."
+    },
+    "gte_": {
+      "module": "credentials",
+      "entity": "Gate",
+      "description": "NFC/RFID reader/gate at a branch — label + branch_id + last_heartbeat_at."
+    },
+    "chl_": {
+      "module": "credentials",
+      "entity": "CheckinLog",
+      "description": "Raw check-in event — UID + gate_id + timestamp. Debounced (2s repeat suppression). Feeds attendance ingest."
+    },
+    "exp_": {
+      "module": "expenses",
+      "entity": "Expense",
+      "description": "Money-out record — category + amount + currency + is_recurring + recurrence + receipt_document_id. State: draft then approved then paid."
+    },
+    "exc_": {
+      "module": "expenses",
+      "entity": "ExpenseCategory",
+      "description": "Tenant expense category — rent / utilities / equipment / maintenance / salaries / marketing / other. Ordered display."
+    },
+    "plr_": {
+      "module": "expenses",
+      "entity": "PayrollRun",
+      "description": "Periodic payroll job — computes staff pay from delivered sessions + bonuses + hourly. State: draft then approved then paid."
+    },
+    "pll_": {
+      "module": "expenses",
+      "entity": "PayrollLine",
+      "description": "Per-staff line in a PayrollRun — staff_id + gross + deductions + net + branch_allocations (JSONB when multi-branch)."
+    },
+    "bdg_": {
+      "module": "expenses",
+      "entity": "Budget",
+      "description": "Per-branch or per-category budget — period + amount + used_amount + variance."
+    },
+    "ctr_": {
+      "module": "expenses",
+      "entity": "CostCenter",
+      "description": "Optional cost-center grouping for expense analytics — code + name."
+    },
+    "ann_": {
+      "module": "announcements",
+      "entity": "Announcement",
+      "description": "Academy-wide (or scoped) news item — audience_scope (tenant/org/branch/team/role) + publish_at + expires_at + rich_content. State: draft then scheduled then published then expired."
+    },
+    "anv_": {
+      "module": "announcements",
+      "entity": "AnnouncementView",
+      "description": "Per-user view record — read_at + acknowledged_at. Enables audience delivery metrics."
+    },
+    "cnv_": {
+      "module": "messaging",
+      "entity": "Conversation",
+      "description": "1:1 or group thread — scope (branch/team/adhoc) + subject + last_message_at. Retention per tenant policy."
+    },
+    "cvp_": {
+      "module": "messaging",
+      "entity": "ConversationParticipant",
+      "description": "User in a Conversation with per-user state — muted_until + last_read_at."
+    },
+    "msg_": {
+      "module": "messaging",
+      "entity": "Message",
+      "description": "Single message in a Conversation — body / attachments / sent_at / read_by (jsonb of user_id to read_at)."
+    },
+    "rpt_": {
+      "module": "reporting",
+      "entity": "ReportDefinition",
+      "description": "Cross-module analytics definition — kind (attendance/revenue/retention/roster) + parameters + refresh_cadence + audience_scope."
+    },
+    "svr_": {
+      "module": "reporting",
+      "entity": "SavedReport",
+      "description": "User-saved parameterization of a ReportDefinition — includes filters + column selection + delivery schedule."
+    },
+    "rre_": {
+      "module": "reporting",
+      "entity": "ReportRun",
+      "description": "One materialized output — output_document_id + rows_count + run_started/completed. Retention 90d unless attached to a Dashboard."
+    },
+    "dsh_": {
+      "module": "reporting",
+      "entity": "Dashboard",
+      "description": "Widget-composed dashboard — role-scoped + layout JSONB. Widgets reference SavedReports."
+    },
+    "rvs_": {
+      "module": "reception",
+      "entity": "ReceptionVisit",
+      "description": "Walk-in visitor record — visitor name + purpose + expected_end_at + host_user_id + check-in/out timestamps. Wristband issued via credentials linkage."
+    },
+    "wpp_": {
+      "module": "digital-passes",
+      "entity": "WalletPass",
+      "description": "Apple Wallet / Google Wallet pass issued to a membership holder — serial + kind (membership_card / event_ticket) + status (issued/updated/revoked). Auto-updates on renewal."
+    },
+    "awd_": {
+      "module": "awards",
+      "entity": "Award",
+      "description": "Recognition instance granted to an athlete — type + granted_at + evidence (event/attendance/etc). Auto-grant rules subscribe to domain events."
+    },
+    "crt_": {
+      "module": "awards",
+      "entity": "Certificate",
+      "description": "PDF certificate rendered for an Award — signed URL + branded template + issued_to + issued_at."
+    },
+    "pge_": {
+      "module": "public-site",
+      "entity": "PublicPage",
+      "description": "Tenant public page — slug + title + content_blocks[] + SEO metadata. Route-mounted on public tenant site."
+    },
+    "syc_": {
+      "module": "offline-sync",
+      "entity": "SyncCursor",
+      "description": "Per-device per-entity high-water-mark cursor for offline sync. Ephemeral 30-day rolling."
+    },
+    "aic_": {
+      "module": "ai",
+      "entity": "AiConversation",
+      "description": "Persona-scoped chat conversation — user_id + persona + title + status. Message history tenant-scoped."
+    },
+    "arv_": {
+      "module": "ai",
+      "entity": "AiRun",
+      "description": "Single model invocation — model / tokens_in / tokens_out / latency_ms / cost_minor. Audit trail per conversation."
+    },
+    "atc_": {
+      "module": "ai",
+      "entity": "AiToolCall",
+      "description": "Individual tool invocation inside an AiRun — tool_name + args_hash + result_summary + ms + error?"
+    },
+    "aie_": {
+      "module": "ai",
+      "entity": "AiEmbedding",
+      "description": "Vector embedding for RAG search — source_type + source_id + vector. Tenant-namespaced."
+    },
+    "lea_": {
+      "module": "crm-leads",
+      "entity": "Lead",
+      "description": "Pre-enrollment sales record — source + stage + owner_user_id + first_contact_at + converted_athlete_id?"
+    },
+    "lac_": {
+      "module": "crm-leads",
+      "entity": "LeadActivity",
+      "description": "Per-lead activity log entry — kind (call/email/note) + user + timestamp + description."
+    },
+    "tsk_": {
+      "module": "crm-leads",
+      "entity": "Task",
+      "description": "Follow-up task on a lead — assignee + due_at + status + description."
+    },
+    "cnb_": {
+      "module": "public-site",
+      "entity": "ContentBlock",
+      "description": "Reusable content block on a PublicPage — kind (hero/text/gallery/cta) + payload + order."
+    },
+    "adc_": {
+      "module": "admin-console",
+      "entity": "AdminDashboardConfig",
+      "description": "Per-tenant admin dashboard configuration — enabled_widgets + layout + recent_actions cache."
     }
   },
   "renaming_history": [

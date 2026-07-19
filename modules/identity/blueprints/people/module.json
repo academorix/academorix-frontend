@@ -1,0 +1,153 @@
+{
+  "$version": 1,
+  "name": "people",
+  "alias": "people",
+  "namespace": "Academorix\\People",
+  "description": "The CENTRAL-plane person registry — cross-academy shared profile substrate per blueprint 2.2. Owns the human-readable Academorix ID (AX-XXXX-XXXX) and issues one PersonIdentity row per real human GLOBAL across tenants + Applications. Ships THREE owned entities: `PersonIdentity` (central; minimal PII — legal_name, dob, nationality, verified_at; NO tenant_id), `PersonGuardianLink` (central; guardian↔minor link that survives cross-tenant), `TenantLinkRequest` (consent-gated request from a tenant to link a local Athlete/Staff to a global PersonIdentity — state requested → approved / declined → revoked; enumeration-resistant lookup requires ID + DOB and reveals no PII pre-consent). Tenant `athletes` / `staff` rows carry a NULLABLE `person_identity_id` FK back into this central registry — this is the ONLY cross-DB reference in the platform, and it points from tenant DBs INTO central (never the reverse). Consent flow: guardian receives notification of link request → picks a shareable subset (e.g. emergency contact, allergies, passport doc) → tenant B receives a local Athlete pre-filled with only consented fields → adds its own sport enrollment + cards which stay 100% tenant-local. Revoking a link stops future sync, but each academy keeps the local data it created (subject to retention/GDPR). Rate-limited lookup (10/hr per IP + 100/day per originating tenant) + monotonic 3-of-5 sliding-window failed-attempts lockout.",
+  "keywords": [
+    "people",
+    "person",
+    "global-identity",
+    "academorix-id",
+    "central-plane",
+    "cross-tenant",
+    "cross-academy",
+    "shared-profile",
+    "guardian",
+    "consent",
+    "link-request",
+    "portability",
+    "wave-1"
+  ],
+  "priority": 14,
+  "providers": ["Academorix\\People\\Providers\\PeopleServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application"],
+  "extendedBy": [],
+  "planned_consumers": ["athlete", "athlete-guardian", "staff", "identity", "user"],
+  "contributes": {
+    "traits": ["ReferencesPersonIdentity"],
+    "attributes": [],
+    "blueprints": ["person-identity", "person-guardian-link", "tenant-link-request"],
+    "middleware": ["people.rate-limit-lookup", "people.enumeration-resistant"],
+    "events": [
+      "PersonRegistered",
+      "PersonVerified",
+      "PersonUpdated",
+      "LinkRequested",
+      "LinkApproved",
+      "LinkDeclined",
+      "LinkRevoked",
+      "GuardianLinkAdded",
+      "GuardianLinkRemoved"
+    ],
+    "policies": ["PersonIdentityPolicy", "TenantLinkRequestPolicy", "PersonGuardianLinkPolicy"],
+    "hooks": [
+      "AssignAcademorixIdOnCreate",
+      "PurgeLookupAttemptsOnLockout",
+      "RevokeLinkOnPersonErased",
+      "RefuseCrossTenantMerge"
+    ],
+    "commands": [
+      "people:describe",
+      "people:issue-id",
+      "people:seed-lookup-fixtures",
+      "people:verify",
+      "people:audit-lookups"
+    ],
+    "jobs": [
+      "SendLinkConsentNotificationJob",
+      "ExpireStaleLinkRequestsJob",
+      "PropagateVerificationJob",
+      "PurgeLookupAttemptLogJob"
+    ],
+    "notifications": [
+      "LinkConsentRequestedNotification",
+      "LinkApprovedNotification",
+      "LinkDeclinedNotification",
+      "LinkRevokedNotification",
+      "PersonVerifiedNotification"
+    ],
+    "broadcasts": ["person.{personIdentityId}.link-requests"],
+    "observers": [
+      "PersonIdentityObserver",
+      "TenantLinkRequestObserver",
+      "PersonGuardianLinkObserver"
+    ],
+    "rules": [
+      "valid_academorix_id_format",
+      "valid_iso_country_code",
+      "valid_dob_not_future",
+      "valid_shareable_field_subset",
+      "no_pii_pre_consent"
+    ],
+    "casts": ["TenantLinkRequestStatus", "PersonVerificationStatus"],
+    "views": [],
+    "lang": ["people"],
+    "config": ["people"],
+    "macros": [],
+    "bindings": [
+      "AcademorixIdIssuer",
+      "PersonLookupService",
+      "LinkRequestOrchestrator",
+      "LookupAttemptLogger",
+      "ShareableFieldFilter"
+    ],
+    "resources": ["person-identity", "tenant-link-request", "person-guardian-link"]
+  },
+  "consent_architecture": {
+    "description": "Consent to link a local tenant record to a global PersonIdentity is per-tenant and REVOCABLE. Revocation stops future sync but preserves the local data the receiving tenant already created (subject to its own retention/GDPR policies).",
+    "shareable_field_subset": [
+      "legal_name",
+      "date_of_birth",
+      "nationality",
+      "emergency_contact_json",
+      "allergies_summary",
+      "passport_document_id (points at storage::File on origin tenant with cross-tenant signed URL)"
+    ],
+    "never_shared": [
+      "email",
+      "phone",
+      "national_id_full",
+      "medical_records",
+      "financial_records",
+      "scoring / cards / attendance / progress (100% tenant-local per blueprint 2.2)"
+    ],
+    "lookup_rate_limit": "10 lookups / hour / IP; 100 / day / originating tenant; 3-of-5 sliding-window failed attempts trigger 24h lockout"
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing surface: search for existing PersonIdentity (ID + DOB), file a link request, view + revoke existing links for the tenant.",
+      "routes": [
+        "POST /api/v1/people/lookup",
+        "POST /api/v1/people/link-requests",
+        "GET /api/v1/people/link-requests",
+        "GET /api/v1/people/link-requests/{request}",
+        "DELETE /api/v1/people/link-requests/{request}",
+        "GET /api/v1/people/{person}/links"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-plane CRUD on the PersonIdentity registry — issue verification, resolve disputes, freeze fraudulent identities.",
+      "routes": [
+        "GET /api/v1/platform/people",
+        "POST /api/v1/platform/people",
+        "GET /api/v1/platform/people/{person}",
+        "PATCH /api/v1/platform/people/{person}",
+        "POST /api/v1/platform/people/{person}/verify",
+        "POST /api/v1/platform/people/{person}/freeze",
+        "GET /api/v1/platform/people/link-requests",
+        "POST /api/v1/platform/people/link-requests/{request}/approve",
+        "POST /api/v1/platform/people/link-requests/{request}/decline"
+      ]
+    },
+    "central": {
+      "description": "Public consent-approval surface — guardian receives a link like /people/link-requests/{signature}, reviews, picks shareable fields, approves or declines.",
+      "routes": [
+        "GET /people/link-requests/{signature}",
+        "POST /people/link-requests/{signature}/approve",
+        "POST /people/link-requests/{signature}/decline"
+      ]
+    }
+  }
+}

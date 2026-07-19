@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/attributes/relations",
+  "$version": 1,
+  "title": "attributes — model relationships",
+  "description": "Three owned entities. Internal graph: AttributeGroup belongsTo AttributeSet (cascade); AttributeSet references definitions via ordered JSONB array (definition_order), not FK. External graph: hosts opt in via traits — no FK from host to AttributeSet by default (except when historic rendering demands set_id snapshot on the host).",
+  "internal": [
+    {
+      "from": "AttributeGroup",
+      "kind": "belongsTo",
+      "to": "AttributeSet",
+      "foreignKey": "attribute_set_id",
+      "onUpdate": "cascade",
+      "onDelete": "cascade",
+      "description": "Groups cascade with their set. Superseding a set (creating a new version) creates a new set of groups; old groups stay via SoftDeletes."
+    },
+    {
+      "from": "AttributeSet",
+      "kind": "definition_order_reference",
+      "to": "AttributeDefinition",
+      "foreignKey": "definition_order (JSONB array of {group_id, definition_id, sort_order})",
+      "description": "Ordered reference in a JSONB column. Enforced by application logic — RefuseDefinitionDeleteWithRecordedValues hook refuses delete when any set references it."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "AttributeDefinition",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "AttributeSet",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "AttributeGroup",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules attach via TRAITS + ATTRIBUTES, not FKs. Hosts compose `HasAttributeSet` and declare `#[AttributableEntity]`.",
+    "consumer_patterns": [
+      "any model with `#[AttributableEntity(entityType: X, discriminator: sport_key)]` — registered as a host at boot",
+      "any model with `use HasAttributeSet` — resolves the active set at read + validates values on save"
+    ],
+    "consumer_examples_planned": [
+      "athlete-enrollment::AthleteEnrollment — `#[AttributableEntity('athlete_enrollment', 'sport_key', 'attributes')]`",
+      "progress::ProgressAssessment — `#[AttributableEntity('progress_assessment', 'sport_key', 'values')]`",
+      "performance::PerformanceTestResult — `#[AttributableEntity('performance_test_result', 'sport_key', 'metrics')]`",
+      "development::PathwayStage — `#[AttributableEntity('pathway_stage', 'sport_key', 'criteria')]`"
+    ]
+  },
+  "consumed": [
+    { "from": "tenancy::Tenant", "usage": "BelongsToTenant on every owned entity." },
+    {
+      "from": "audit::AuditLog",
+      "usage": "HasAuditable on definitions + sets + groups — every change is audit-material."
+    },
+    {
+      "from": "entitlements::Entitlement",
+      "usage": "attributes.custom_definitions.max slot per tenant (Medium+ can define custom attributes; Small uses seeded defaults only)."
+    }
+  ]
+}

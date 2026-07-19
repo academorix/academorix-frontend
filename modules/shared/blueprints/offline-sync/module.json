@@ -1,0 +1,74 @@
+{
+  "$version": 1,
+  "name": "offline-sync",
+  "alias": "offline-sync",
+  "namespace": "Academorix\\OfflineSync",
+  "description": "Sync engine for offline-first mobile flows (pitch-side attendance) per blueprint §10.16. Ships ONE owned entity: `SyncCursor` (per-device per-entity high-water-mark; ephemeral 30-day rolling). Client-side change queue + pull/push sync + conflict resolution (last-write-wins for scalar; merge for attendance). Per-tenant sync tokens; idempotent replay. Primary consumer is sports/attendance for coach offline check-in on the field. Mobile app (Capacitor) consumes REST + this sync channel.",
+  "keywords": [
+    "offline-sync",
+    "mobile",
+    "capacitor",
+    "conflict-resolution",
+    "cursor",
+    "attendance-offline",
+    "wave-4"
+  ],
+  "priority": 91,
+  "providers": ["Academorix\\OfflineSync\\Providers\\OfflineSyncServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "auth",
+    "attendance",
+    "session",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["ai"],
+  "contributes": {
+    "traits": ["IsSyncable"],
+    "attributes": ["AsSyncableEntity"],
+    "blueprints": ["sync-cursor"],
+    "middleware": ["offline-sync.token", "offline-sync.tenant-scope"],
+    "events": ["SyncPulled", "SyncPushed", "SyncConflictDetected", "SyncConflictResolved"],
+    "policies": ["SyncCursorPolicy"],
+    "hooks": ["ResolveConflictsOnPush", "UpdateCursorOnSync"],
+    "commands": ["offline-sync:list", "offline-sync:reset-device", "offline-sync:purge-stale"],
+    "jobs": ["PurgeStaleCursorsJob", "AlertOnRepeatConflictsJob"],
+    "notifications": ["SyncConflictDetectedNotification"],
+    "broadcasts": [],
+    "observers": ["SyncCursorObserver"],
+    "rules": ["valid_entity_type", "valid_device_id"],
+    "casts": [],
+    "views": [],
+    "lang": ["offline-sync"],
+    "config": ["offline-sync"],
+    "macros": [],
+    "bindings": [
+      "SyncCursorRepository",
+      "SyncOrchestrator",
+      "ConflictResolver",
+      "SyncableEntityRegistry"
+    ],
+    "resources": ["sync-cursor"]
+  },
+  "attribute_driven": {
+    "description": "Entities opt into offline sync via `#[AsSyncableEntity]`. Boot-time compiler registers the entity in SyncableEntityRegistry so the sync endpoints know how to pull/push.",
+    "attributes": {
+      "AsSyncableEntity": "Marks a model as syncable. `#[AsSyncableEntity(entityType: 'attendance_record', conflictStrategy: 'last_write_wins')]`."
+    }
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "POST /api/v1/sync/pull",
+        "POST /api/v1/sync/push",
+        "GET /api/v1/sync/cursors",
+        "POST /api/v1/sync/reset"
+      ]
+    }
+  }
+}

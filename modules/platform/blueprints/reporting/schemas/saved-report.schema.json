@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/reporting/schemas/saved-report",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "SavedReport",
+  "type": "object",
+  "x-module": "reporting",
+  "x-eloquent": {
+    "table": "saved_reports",
+    "keyPrefix": "svr_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "report_definition_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "report_definitions", "column": "id", "onDelete": "cascade" }
+      },
+      "owner_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "cascade" }
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "parameters": { "type": "jsonb", "nullable": true },
+      "column_selection": { "type": "jsonb", "nullable": true },
+      "delivery_schedule": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "{cadence: 'weekly', day_of_week: 1, hour: 9, recipients: [user_id, ...]}."
+      },
+      "is_shared": { "type": "boolean", "nullable": false, "default": "false" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [{ "columns": ["tenant_id", "owner_user_id"], "name": "saved_reports_owner_idx" }]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "report_definition_id",
+    "owner_user_id",
+    "name",
+    "is_shared",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": { "id": { "type": "string", "pattern": "^svr_[0-9A-HJKMNP-TV-Z]{26}$" } },
+  "additionalProperties": false
+}

@@ -1,0 +1,146 @@
+{
+  "id": "academorix://modules/progress/schemas/progress-assessment",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ProgressAssessment",
+  "description": "Attribute-driven skill assessment per (athlete_enrollment, capture_date). values JSONB validated against active AttributeSet; version_number frozen at capture for historic-render. Overall score computed via sport-config weighting → tier (bronze/silver/gold/diamond).",
+  "type": "object",
+  "x-module": "progress",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "progress_assessments",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pra_",
+    "incrementing": false,
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthleteEnrollment",
+      "HasAttributeSet",
+      "HasSchemalessAttributes",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "values": "SchemalessAttributes",
+      "overall_tier": "OverallTier",
+      "capture_date": "date",
+      "assessed_at": "datetime",
+      "shared_at": "datetime",
+      "metadata": "array"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athlete_enrollments", "column": "id", "onDelete": "restrict" }
+      },
+      "capture_date": { "type": "date", "nullable": false },
+      "assessed_at": { "type": "timestamptz", "nullable": false },
+      "assessed_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "values": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'",
+        "description": "Attribute values keyed by definition code. Validated against attribute_set_snapshot_id's definitions."
+      },
+      "attribute_set_snapshot_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "attribute_sets", "column": "id", "onDelete": "restrict" },
+        "description": "The AttributeSet version this assessment was captured against. Never rewritten."
+      },
+      "sport_key": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Denormalised from athlete_enrollment.sport_key for indexed filtering."
+      },
+      "overall_score": {
+        "type": "decimal",
+        "precision": 6,
+        "scale": 2,
+        "nullable": true,
+        "description": "Computed weighted overall (0-100 typical range)."
+      },
+      "overall_tier": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "bronze / silver / gold / diamond."
+      },
+      "notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "athlete_enrollment_id", "capture_date"],
+        "name": "progress_assessments_enrollment_date_idx"
+      },
+      {
+        "columns": ["tenant_id", "sport_key", "capture_date"],
+        "name": "progress_assessments_sport_idx"
+      },
+      { "columns": ["tenant_id", "overall_tier"], "name": "progress_assessments_tier_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "athlete_enrollment_id",
+    "capture_date",
+    "assessed_at",
+    "assessed_by_user_id",
+    "values",
+    "attribute_set_snapshot_id",
+    "sport_key",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pra_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "athlete_enrollment_id": { "type": "string", "pattern": "^aen_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "attribute_set_snapshot_id": { "type": "string", "pattern": "^asg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "sport_key": { "type": "string", "maxLength": 32 },
+    "overall_tier": {
+      "type": ["string", "null"],
+      "enum": ["bronze", "silver", "gold", "diamond", null]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "values JSONB validates against attribute_set_snapshot_id's definitions at save (via HasSchemalessAttributes + AttributeValidator).",
+    "attribute_set_snapshot_id IMMUTABLE post-create — historic assessments always render with the set version they were captured against.",
+    "capture_date cannot be in the future.",
+    "overall_score + overall_tier recomputed by observer on values change."
+  ]
+}

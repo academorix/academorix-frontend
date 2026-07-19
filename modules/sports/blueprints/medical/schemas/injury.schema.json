@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/medical/schemas/injury",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Injury",
+  "description": "Injury event — body_part / mechanism / severity / onset_at / status. Active injury blocks squad selection. Return-to-play gate consumed by matches + attendance.",
+  "type": "object",
+  "x-module": "medical",
+  "x-eloquent": {
+    "table": "injuries",
+    "keyPrefix": "inj_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthlete",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "EncryptsSensitiveFields",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "restrict" }
+      },
+      "medical_record_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "medical_records", "column": "id", "onDelete": "set null" }
+      },
+      "body_part": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "hamstring / knee / shoulder / ankle / …"
+      },
+      "mechanism": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "contact / non_contact / overuse / recurrence."
+      },
+      "severity": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "minor / moderate / severe / critical."
+      },
+      "onset_at": { "type": "timestamptz", "nullable": false },
+      "reported_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "status": { "type": "string", "length": 24, "nullable": false, "default": "'reported'" },
+      "cleared_at": { "type": "timestamptz", "nullable": true },
+      "cleared_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "notes_encrypted": { "type": "text", "nullable": true, "description": "Encrypted at rest." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false },
+      "deleted_at": { "type": "timestamptz", "nullable": true }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "athlete_id", "status"], "name": "injuries_athlete_status_idx" },
+      { "columns": ["tenant_id", "onset_at"], "name": "injuries_onset_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "athlete_id",
+    "body_part",
+    "severity",
+    "onset_at",
+    "reported_by_user_id",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^inj_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "severity": { "type": "string", "enum": ["minor", "moderate", "severe", "critical"] },
+    "status": { "type": "string", "enum": ["reported", "under_treatment", "recovering", "cleared"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "status transitions: reported → under_treatment → recovering → cleared. Setbacks: recovering → under_treatment.",
+    "cleared_at + cleared_by_user_id REQUIRED when status = 'cleared'."
+  ]
+}

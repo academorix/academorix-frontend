@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/attributes/attributes",
+  "$version": 1,
+  "title": "attributes — PHP attribute contracts",
+  "description": "One class-level attribute discovered at boot. `AttributableEntity` binds a host model to the (entity_type, discriminator, values_column) triple so the AttributableEntityRegistry can resolve the active AttributeSet at runtime.",
+  "namespace": "Academorix\\Attributes\\Attributes",
+  "attributes": [
+    {
+      "name": "AttributableEntity",
+      "class": "Academorix\\Attributes\\Attributes\\AttributableEntity",
+      "targets": ["class"],
+      "description": "Marks a model class as an AttributeSet host. Boot-time compiler adds it to `AttributableEntityRegistry` so runtime resolution is a hash-map lookup.",
+      "params": [
+        {
+          "name": "entityType",
+          "type": "string",
+          "required": true,
+          "description": "Canonical host identifier. e.g. `athlete_enrollment`, `progress_assessment`."
+        },
+        {
+          "name": "discriminator",
+          "type": "string",
+          "required": true,
+          "description": "Column name on the host carrying the discriminator (typically `sport_key`)."
+        },
+        {
+          "name": "valuesColumn",
+          "type": "string",
+          "default": "attributes",
+          "description": "JSONB column name where attribute values persist. Defaults to `attributes`; hosts may override (e.g. `values`, `metrics`)."
+        },
+        {
+          "name": "setResolver",
+          "type": "string",
+          "default": null,
+          "description": "Optional FQCN of a custom `AttributeSetResolver` implementation for the host. Defaults to the registry-driven resolver."
+        }
+      ],
+      "example": "#[AttributableEntity(entityType: 'athlete_enrollment', discriminator: 'sport_key', valuesColumn: 'attributes')]\nfinal class AthleteEnrollment extends Model { use HasAttributeSet; }"
+    }
+  ],
+  "discovery": {
+    "loader": "Academorix\\Attributes\\Discovery\\CompileAttributableEntityRegistry",
+    "runs_at": "boot (after ContainerBooted event)",
+    "output_registries": [
+      "AttributableEntityRegistry — map of model FQCN → {entityType, discriminator, valuesColumn, setResolver}"
+    ],
+    "cache": "Redis, keyed on `attributes:registry:<sha256-of-scan>`. Invalidated on `artisan attributes:describe --refresh`."
+  }
+}

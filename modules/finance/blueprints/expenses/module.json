@@ -1,0 +1,129 @@
+{
+  "$version": 1,
+  "name": "expenses",
+  "alias": "expenses",
+  "namespace": "Academorix\\Finance\\Expenses",
+  "description": "Money-out + payroll per blueprint §10.19. V1 keeps deliberately simple manual expense tracking; leaves upgrade path to automated operational-cost analysis. Ships SIX owned entities: `Expense` (category + amount + currency + is_recurring + recurrence + attached receipt storage::File; state draft → approved → paid), `ExpenseCategory` (tenant taxonomy — rent / utilities / equipment / maintenance / salaries / marketing / other), `PayrollRun` (periodic payroll job — computes staff pay from delivered sessions + bonuses + hourly; state draft → approved → paid), `PayrollLine` (per-staff line — staff_id + gross + deductions + net + branch_allocations JSONB when multi-branch per D2 locked), `Budget` (per-branch or per-category budget — period + amount + used_amount + variance), `CostCenter` (optional grouping for expense analytics). Every expense MUST attach a receipt document — finance team can trace to source PDF/image via storage.",
+  "keywords": [
+    "expenses",
+    "payroll",
+    "money-out",
+    "receipt",
+    "recurring",
+    "budget",
+    "cost-center",
+    "wave-2"
+  ],
+  "priority": 74,
+  "providers": ["Academorix\\Finance\\Expenses\\Providers\\ExpensesServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "staff",
+    "branch",
+    "region",
+    "storage",
+    "invoice",
+    "payment",
+    "notifications",
+    "integrations"
+  ],
+  "extendedBy": [],
+  "planned_consumers": ["reporting", "ai"],
+  "contributes": {
+    "traits": ["HasReceipt", "AllocatesAcrossBranches"],
+    "attributes": [],
+    "blueprints": [
+      "expense",
+      "expense-category",
+      "payroll-run",
+      "payroll-line",
+      "budget",
+      "cost-center"
+    ],
+    "middleware": [],
+    "events": [
+      "ExpenseCreated",
+      "ExpenseApproved",
+      "ExpensePaid",
+      "RecurringExpenseGenerated",
+      "PayrollRunStarted",
+      "PayrollRunCompleted",
+      "PayrollLineCreated",
+      "BudgetExceeded"
+    ],
+    "policies": [
+      "ExpensePolicy",
+      "ExpenseCategoryPolicy",
+      "PayrollRunPolicy",
+      "PayrollLinePolicy",
+      "BudgetPolicy",
+      "CostCenterPolicy"
+    ],
+    "hooks": [
+      "GenerateRecurringExpensesJob",
+      "AllocatePayrollAcrossBranches",
+      "AlertOnBudgetOverrun"
+    ],
+    "commands": [
+      "expenses:list",
+      "expenses:generate-recurring",
+      "expenses:seed-categories",
+      "payroll:run",
+      "payroll:list"
+    ],
+    "jobs": [
+      "GenerateRecurringExpensesJob",
+      "RunPayrollJob",
+      "AlertOnBudgetOverrunJob",
+      "SyncToAccountingJob"
+    ],
+    "notifications": [
+      "ExpenseApprovedNotification",
+      "ExpensePaidNotification",
+      "PayrollCompletedNotification",
+      "BudgetExceededNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.finance.expenses"],
+    "observers": ["ExpenseObserver", "PayrollRunObserver"],
+    "rules": ["valid_expense_state", "positive_amount", "valid_recurrence", "receipt_attached"],
+    "casts": ["ExpenseStatus", "PayrollStatus", "Recurrence"],
+    "views": [],
+    "lang": ["expenses"],
+    "config": ["expenses"],
+    "macros": [],
+    "bindings": ["ExpenseRepository", "PayrollRunner", "BudgetTracker", "AccountingSyncer"],
+    "resources": [
+      "expense",
+      "expense-category",
+      "payroll-run",
+      "payroll-line",
+      "budget",
+      "cost-center"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "routes": [
+        "GET /api/v1/expenses",
+        "POST /api/v1/expenses",
+        "GET /api/v1/expenses/{expense}",
+        "PATCH /api/v1/expenses/{expense}",
+        "POST /api/v1/expenses/{expense}/approve",
+        "POST /api/v1/expenses/{expense}/mark-paid",
+        "GET /api/v1/expense-categories",
+        "POST /api/v1/expense-categories",
+        "GET /api/v1/payroll-runs",
+        "POST /api/v1/payroll-runs",
+        "GET /api/v1/payroll-runs/{run}",
+        "POST /api/v1/payroll-runs/{run}/approve",
+        "POST /api/v1/payroll-runs/{run}/pay",
+        "GET /api/v1/budgets",
+        "POST /api/v1/budgets",
+        "GET /api/v1/cost-centers"
+      ]
+    }
+  }
+}
