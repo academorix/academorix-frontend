@@ -14,7 +14,10 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Payout\Contracts\Data\PayoutItemInterface;
 use Academorix\Payout\Database\Factories\PayoutItemFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Payout\Enums\PayoutItemKind;
+use Academorix\Payout\Policies\PayoutItemPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -47,6 +50,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(PayoutItemFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(PayoutItemPolicy::class)]
 final class PayoutItem extends Model implements PayoutItemInterface, AuditableContract
 {
     use HasFactory;
@@ -63,9 +67,9 @@ final class PayoutItem extends Model implements PayoutItemInterface, AuditableCo
      */
     protected $casts = [
         PayoutItemInterface::ATTR_KIND => PayoutItemKind::class,
-        PayoutItemInterface::ATTR_AMOUNT_MINOR => bigint::class,
-        PayoutItemInterface::ATTR_FEE_MINOR => bigint::class,
-        PayoutItemInterface::ATTR_NET_MINOR => bigint::class,
+        PayoutItemInterface::ATTR_AMOUNT_MINOR => 'integer',
+        PayoutItemInterface::ATTR_FEE_MINOR => 'integer',
+        PayoutItemInterface::ATTR_NET_MINOR => 'integer',
         PayoutItemInterface::ATTR_PROVIDER_SNAPSHOT => 'array',
         PayoutItemInterface::ATTR_METADATA => 'array',
     ];

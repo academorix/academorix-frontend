@@ -14,7 +14,10 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Tasks\Contracts\Data\TaskAssignmentInterface;
 use Academorix\Tasks\Database\Factories\TaskAssignmentFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Tasks\Enums\TaskAssignmentRole;
+use Academorix\Tasks\Policies\TaskAssignmentPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -44,6 +47,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(TaskAssignmentFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(TaskAssignmentPolicy::class)]
 final class TaskAssignment extends Model implements TaskAssignmentInterface, AuditableContract
 {
     use HasFactory;

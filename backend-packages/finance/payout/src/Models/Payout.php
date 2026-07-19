@@ -14,7 +14,10 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Payout\Contracts\Data\PayoutInterface;
 use Academorix\Payout\Database\Factories\PayoutFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Payout\Enums\PayoutStatus;
+use Academorix\Payout\Policies\PayoutPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -52,6 +55,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(PayoutFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(PayoutPolicy::class)]
 final class Payout extends Model implements PayoutInterface, AuditableContract
 {
     use HasFactory;
@@ -68,9 +72,9 @@ final class Payout extends Model implements PayoutInterface, AuditableContract
      */
     protected $casts = [
         PayoutInterface::ATTR_STATUS => PayoutStatus::class,
-        PayoutInterface::ATTR_AMOUNT_MINOR => bigint::class,
-        PayoutInterface::ATTR_FEE_MINOR => bigint::class,
-        PayoutInterface::ATTR_NET_MINOR => bigint::class,
+        PayoutInterface::ATTR_AMOUNT_MINOR => 'integer',
+        PayoutInterface::ATTR_FEE_MINOR => 'integer',
+        PayoutInterface::ATTR_NET_MINOR => 'integer',
         PayoutInterface::ATTR_ARRIVAL_AT => 'datetime',
         PayoutInterface::ATTR_PAID_AT => 'datetime',
         PayoutInterface::ATTR_FAILED_AT => 'datetime',

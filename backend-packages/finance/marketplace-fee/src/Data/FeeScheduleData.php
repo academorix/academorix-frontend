@@ -28,7 +28,6 @@ final class FeeScheduleData extends Data
     public function __construct(
         public string $id,
         public string $tenantId,
-        public string $applicationId,
         public int $version,
         public string $status,
         public string $currency,

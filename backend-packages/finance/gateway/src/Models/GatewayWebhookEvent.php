@@ -14,7 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Gateway\Contracts\Data\GatewayWebhookEventInterface;
 use Academorix\Gateway\Database\Factories\GatewayWebhookEventFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Gateway\Policies\GatewayWebhookEventPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -46,6 +48,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(GatewayWebhookEventFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(GatewayWebhookEventPolicy::class)]
 final class GatewayWebhookEvent extends Model implements GatewayWebhookEventInterface, AuditableContract
 {
     use HasFactory;

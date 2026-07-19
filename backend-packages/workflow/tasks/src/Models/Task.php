@@ -15,7 +15,11 @@ use Academorix\Tasks\Contracts\Data\TaskInterface;
 use Academorix\Tasks\Database\Factories\TaskFactory;
 use Academorix\Branch\Concerns\BelongsToBranch;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Tasks\Enums\TaskPriority;
+use Academorix\Tasks\Enums\TaskStatus;
+use Academorix\Tasks\Policies\TaskPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,6 +55,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(TaskFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(TaskPolicy::class)]
 final class Task extends Model implements TaskInterface, AuditableContract
 {
     use HasFactory;

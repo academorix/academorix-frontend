@@ -13,8 +13,10 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Dunning\Contracts\Data\DunningPlanInterface;
 use Academorix\Dunning\Database\Factories\DunningPlanFactory;
+use Academorix\Dunning\Policies\DunningPlanPolicy;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -44,6 +46,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(DunningPlanFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(DunningPlanPolicy::class)]
 final class DunningPlan extends Model implements DunningPlanInterface, AuditableContract
 {
     use HasFactory;

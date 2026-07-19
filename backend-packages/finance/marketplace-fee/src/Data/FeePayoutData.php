@@ -28,7 +28,6 @@ final class FeePayoutData extends Data
     public function __construct(
         public string $id,
         public string $tenantId,
-        public string $applicationId,
         public string $referenceNumber,
         public string $status,
         public string $currency,

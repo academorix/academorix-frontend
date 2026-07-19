@@ -15,6 +15,9 @@ use Academorix\Wallet\Contracts\Data\WalletHoldInterface;
 use Academorix\Wallet\Database\Factories\WalletHoldFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Academorix\Wallet\Enums\WalletHoldStatus;
+use Academorix\Wallet\Policies\WalletHoldPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -46,6 +49,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(WalletHoldFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(WalletHoldPolicy::class)]
 final class WalletHold extends Model implements WalletHoldInterface, AuditableContract
 {
     use HasFactory;
@@ -62,7 +66,7 @@ final class WalletHold extends Model implements WalletHoldInterface, AuditableCo
      */
     protected $casts = [
         WalletHoldInterface::ATTR_STATUS => WalletHoldStatus::class,
-        WalletHoldInterface::ATTR_AMOUNT_MINOR => bigint::class,
+        WalletHoldInterface::ATTR_AMOUNT_MINOR => 'integer',
         WalletHoldInterface::ATTR_EXPIRES_AT => 'datetime',
         WalletHoldInterface::ATTR_SETTLED_AT => 'datetime',
         WalletHoldInterface::ATTR_RELEASED_AT => 'datetime',

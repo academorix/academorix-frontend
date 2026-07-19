@@ -15,6 +15,9 @@ use Academorix\Wallet\Contracts\Data\WalletInterface;
 use Academorix\Wallet\Database\Factories\WalletFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Academorix\Wallet\Enums\WalletKind;
+use Academorix\Wallet\Policies\WalletPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -48,6 +51,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(WalletFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(WalletPolicy::class)]
 final class Wallet extends Model implements WalletInterface, AuditableContract
 {
     use HasFactory;

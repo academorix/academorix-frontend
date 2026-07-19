@@ -14,7 +14,10 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Order\Contracts\Data\OrderAdjustmentInterface;
 use Academorix\Order\Database\Factories\OrderAdjustmentFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Order\Enums\OrderAdjustmentKind;
+use Academorix\Order\Policies\OrderAdjustmentPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -46,6 +49,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(OrderAdjustmentFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(OrderAdjustmentPolicy::class)]
 final class OrderAdjustment extends Model implements OrderAdjustmentInterface, AuditableContract
 {
     use HasFactory;

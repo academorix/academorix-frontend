@@ -13,8 +13,11 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Dunning\Contracts\Data\DunningEventInterface;
 use Academorix\Dunning\Database\Factories\DunningEventFactory;
+use Academorix\Dunning\Enums\DunningEventKind;
+use Academorix\Dunning\Policies\DunningEventPolicy;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -42,6 +45,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(DunningEventFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(DunningEventPolicy::class)]
 final class DunningEvent extends Model implements DunningEventInterface, AuditableContract
 {
     use HasFactory;

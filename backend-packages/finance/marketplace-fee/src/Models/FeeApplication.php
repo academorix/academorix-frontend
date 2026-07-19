@@ -14,7 +14,10 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\MarketplaceFee\Contracts\Data\FeeApplicationInterface;
 use Academorix\MarketplaceFee\Database\Factories\FeeApplicationFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\MarketplaceFee\Enums\FeeApplicationStatus;
+use Academorix\MarketplaceFee\Policies\FeeApplicationPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -51,6 +54,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(FeeApplicationFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(FeeApplicationPolicy::class)]
 final class FeeApplication extends Model implements FeeApplicationInterface, AuditableContract
 {
     use HasFactory;
@@ -67,9 +71,9 @@ final class FeeApplication extends Model implements FeeApplicationInterface, Aud
      */
     protected $casts = [
         FeeApplicationInterface::ATTR_STATUS => FeeApplicationStatus::class,
-        FeeApplicationInterface::ATTR_GROSS_AMOUNT_MINOR => bigint::class,
+        FeeApplicationInterface::ATTR_GROSS_AMOUNT_MINOR => 'integer',
         FeeApplicationInterface::ATTR_FEE_RATE_APPLIED => 'decimal:4',
-        FeeApplicationInterface::ATTR_FEE_AMOUNT_MINOR => bigint::class,
+        FeeApplicationInterface::ATTR_FEE_AMOUNT_MINOR => 'integer',
         FeeApplicationInterface::ATTR_FLAT_FEE_MINOR => 'integer',
         FeeApplicationInterface::ATTR_APPLIED_AT => 'datetime',
         FeeApplicationInterface::ATTR_REVERSED_AT => 'datetime',

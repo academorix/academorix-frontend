@@ -39,7 +39,6 @@ final class FeeScheduleFactory extends Factory
     public function definition(): array
     {
         return [
-            FeeScheduleInterface::ATTR_APPLICATION_ID => fake()->sentence(3),
             FeeScheduleInterface::ATTR_VERSION => fake()->numberBetween(1, 1000),
             FeeScheduleInterface::ATTR_STATUS => fake()->randomElement(['draft', 'active', 'superseded', 'archived']),
             FeeScheduleInterface::ATTR_CURRENCY => fake()->sentence(3),

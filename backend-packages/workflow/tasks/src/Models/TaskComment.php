@@ -14,7 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Tasks\Contracts\Data\TaskCommentInterface;
 use Academorix\Tasks\Database\Factories\TaskCommentFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Tasks\Policies\TaskCommentPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -44,6 +46,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(TaskCommentFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(TaskCommentPolicy::class)]
 final class TaskComment extends Model implements TaskCommentInterface, AuditableContract
 {
     use HasFactory;

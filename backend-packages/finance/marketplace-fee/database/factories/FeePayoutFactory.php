@@ -39,7 +39,6 @@ final class FeePayoutFactory extends Factory
     public function definition(): array
     {
         return [
-            FeePayoutInterface::ATTR_APPLICATION_ID => fake()->sentence(3),
             FeePayoutInterface::ATTR_REFERENCE_NUMBER => fake()->sentence(3),
             FeePayoutInterface::ATTR_STATUS => fake()->randomElement(['pending', 'settled', 'failed', 'cancelled']),
             FeePayoutInterface::ATTR_CURRENCY => fake()->sentence(3),

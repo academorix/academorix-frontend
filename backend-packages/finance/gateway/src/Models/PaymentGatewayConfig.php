@@ -14,7 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Gateway\Contracts\Data\PaymentGatewayConfigInterface;
 use Academorix\Gateway\Database\Factories\PaymentGatewayConfigFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Gateway\Policies\PaymentGatewayConfigPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -47,6 +49,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(PaymentGatewayConfigFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(PaymentGatewayConfigPolicy::class)]
 final class PaymentGatewayConfig extends Model implements PaymentGatewayConfigInterface, AuditableContract
 {
     use HasFactory;

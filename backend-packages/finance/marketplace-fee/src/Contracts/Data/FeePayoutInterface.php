@@ -40,7 +40,6 @@ interface FeePayoutInterface
 
     public const string ATTR_ID                     = 'id';
     public const string ATTR_TENANT_ID              = 'tenant_id';
-    public const string ATTR_APPLICATION_ID         = 'application_id';
     public const string ATTR_REFERENCE_NUMBER       = 'reference_number';
     public const string ATTR_STATUS                 = 'status';
     public const string ATTR_CURRENCY               = 'currency';

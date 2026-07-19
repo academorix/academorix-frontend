@@ -3,7 +3,7 @@
   "draft": "https://json-schema.org/draft/2020-12/schema",
   "$version": 1,
   "title": "FeePayout",
-  "description": "Academorix-facing payout of fees to the platform account. Roll-up over fee_applications in a period. Belongs to Tenant (cascade) + Application (restrict). NEVER carries organization_id, region_id, or scope_node_id.",
+  "description": "Academorix-facing payout of fees to the platform account. Roll-up over fee_applications in a period. Belongs to Tenant (cascade). Application cascades through tenant_id → tenants.application_id per the tenancy-columns.md §2 mandate (fee_payouts is NOT one of the 8 rows that may carry application_id directly). NEVER carries application_id, organization_id, region_id, or scope_node_id.",
   "type": "object",
   "x-module": "marketplace-fee",
   "x-eloquent": {
@@ -16,13 +16,20 @@
     "model": "Academorix\\Finance\\MarketplaceFee\\Models\\FeePayout",
     "interface": "Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface",
     "implements": ["Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeePayoutInterface"],
-    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "BelongsToApplication", "HasMetadata", "HasUserstamps", "Auditable"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ],
     "casts": {
       "status": "FeePayoutStatus",
       "period_start": "datetime",
       "period_end": "datetime",
-      "total_gross_minor": "bigint",
-      "total_fee_minor": "bigint",
+      "total_gross_minor": "integer",
+      "total_fee_minor": "integer",
       "application_count": "integer",
       "settled_at": "datetime",
       "metadata": "array"
@@ -33,10 +40,25 @@
     "engine": "postgres",
     "columns": {
       "id": { "type": "string", "length": 64, "primary": true },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "application_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" }, "description": "Aggregated per Application." },
-      "reference_number": { "type": "string", "length": 32, "nullable": false, "description": "Human reference (e.g. FEE-2026-06-ACME)." },
-      "status": { "type": "string", "length": 16, "nullable": false, "default": "'pending'", "description": "Enum: pending / settled / failed / cancelled." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "reference_number": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Human reference (e.g. FEE-2026-06-ACME)."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / settled / failed / cancelled."
+      },
       "currency": { "type": "string", "length": 3, "nullable": false },
       "period_start": { "type": "timestamptz", "nullable": false },
       "period_end": { "type": "timestamptz", "nullable": false },
@@ -44,7 +66,12 @@
       "total_fee_minor": { "type": "bigint", "nullable": false, "default": 0 },
       "application_count": { "type": "integer", "nullable": false, "default": 0 },
       "settled_at": { "type": "timestamptz", "nullable": true },
-      "settlement_transfer_id": { "type": "string", "length": 255, "nullable": true, "description": "Stripe tr_* for the settlement transfer." },
+      "settlement_transfer_id": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Stripe tr_* for the settlement transfer."
+      },
       "notes": { "type": "text", "nullable": true },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
@@ -53,15 +80,31 @@
       "updated_at": { "type": "timestamptz", "nullable": false }
     },
     "indexes": [
-      { "columns": ["tenant_id", "application_id", "reference_number"], "unique": true, "name": "fee_payouts_reference_unique" },
-      { "columns": ["tenant_id", "application_id", "status", "period_end"], "name": "fee_payouts_period_idx" }
+      {
+        "columns": ["tenant_id", "reference_number"],
+        "unique": true,
+        "name": "fee_payouts_reference_unique"
+      },
+      { "columns": ["tenant_id", "status", "period_end"], "name": "fee_payouts_period_idx" }
     ]
   },
-  "required": ["id", "tenant_id", "application_id", "reference_number", "status", "currency", "period_start", "period_end", "total_gross_minor", "total_fee_minor", "application_count", "created_at", "updated_at"],
+  "required": [
+    "id",
+    "tenant_id",
+    "reference_number",
+    "status",
+    "currency",
+    "period_start",
+    "period_end",
+    "total_gross_minor",
+    "total_fee_minor",
+    "application_count",
+    "created_at",
+    "updated_at"
+  ],
   "properties": {
     "id": { "type": "string", "pattern": "^fpo_[0-9A-HJKMNP-TV-Z]{26}$" },
     "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
-    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
     "status": { "type": "string", "enum": ["pending", "settled", "failed", "cancelled"] },
     "total_fee_minor": { "type": "integer" },
     "created_at": { "type": "string", "format": "date-time" },

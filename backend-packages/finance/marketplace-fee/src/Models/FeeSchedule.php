@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\MarketplaceFee\Contracts\Data\FeeScheduleInterface;
 use Academorix\MarketplaceFee\Database\Factories\FeeScheduleFactory;
-use Academorix\Application\Concerns\BelongsToApplication;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\MarketplaceFee\Enums\FeeScheduleStatus;
+use Academorix\MarketplaceFee\Policies\FeeSchedulePolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,7 +37,6 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 #[Table(name: FeeScheduleInterface::TABLE, key: FeeScheduleInterface::PRIMARY_KEY, keyType: FeeScheduleInterface::KEY_TYPE)]
 #[Fillable([
     FeeScheduleInterface::ATTR_TENANT_ID,
-        FeeScheduleInterface::ATTR_APPLICATION_ID,
         FeeScheduleInterface::ATTR_VERSION,
         FeeScheduleInterface::ATTR_STATUS,
         FeeScheduleInterface::ATTR_CURRENCY,
@@ -51,12 +52,12 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(FeeScheduleFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(FeeSchedulePolicy::class)]
 final class FeeSchedule extends Model implements FeeScheduleInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    use BelongsToApplication;
     use HasMetadata;
     use Userstamps;
     use Auditable;

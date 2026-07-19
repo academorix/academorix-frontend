@@ -869,6 +869,16 @@ _PRIMITIVE_CAST_TYPES = {
     "encrypted:object", "hashed",
 }
 
+# Blueprint alias → Eloquent cast name. `bigint` is a SQL storage type,
+# not an Eloquent cast — Eloquent handles 64-bit integers natively via
+# the `integer` cast on 64-bit systems. Blueprint authors write `bigint`
+# to distinguish column widths; the model cast collapses to `integer`.
+_CAST_ALIASES = {
+    "bigint": "integer",
+    "smallint": "integer",
+    "tinyint": "integer",
+}
+
 
 def _resolve_cast(m: Module, cast_type: str) -> str:
     """Return the PHP expression for a cast RHS.
@@ -880,8 +890,12 @@ def _resolve_cast(m: Module, cast_type: str) -> str:
       Enums / Casts folder so PHPStan can chase the type.
     - Fully-qualified class strings (`\\Foo\\Bar`) pass through as `::class`
       references without namespace mangling.
+    - Blueprint-only aliases (`bigint`, `smallint`, `tinyint`) collapse
+      to `'integer'` — those are SQL column widths, not Eloquent casts.
     """
     cleaned = cast_type.strip()
+    if cleaned in _CAST_ALIASES:
+        return f"'{_CAST_ALIASES[cleaned]}'"
     if cleaned in _PRIMITIVE_CAST_TYPES:
         return f"'{cleaned}'"
     # Parameterized primitive casts (`decimal:2`, `datetime:Y-m-d`, ...).

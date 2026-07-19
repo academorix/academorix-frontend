@@ -14,7 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Gateway\Contracts\Data\PaymentMethodInterface;
 use Academorix\Gateway\Database\Factories\PaymentMethodFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Gateway\Policies\PaymentMethodPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -48,6 +50,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(PaymentMethodFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(PaymentMethodPolicy::class)]
 final class PaymentMethod extends Model implements PaymentMethodInterface, AuditableContract
 {
     use HasFactory;

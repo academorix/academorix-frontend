@@ -40,7 +40,6 @@ interface FeeScheduleInterface
 
     public const string ATTR_ID             = 'id';
     public const string ATTR_TENANT_ID      = 'tenant_id';
-    public const string ATTR_APPLICATION_ID = 'application_id';
     public const string ATTR_VERSION        = 'version';
     public const string ATTR_STATUS         = 'status';
     public const string ATTR_CURRENCY       = 'currency';

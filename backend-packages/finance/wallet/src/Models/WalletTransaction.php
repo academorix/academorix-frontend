@@ -15,6 +15,9 @@ use Academorix\Wallet\Contracts\Data\WalletTransactionInterface;
 use Academorix\Wallet\Database\Factories\WalletTransactionFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Academorix\Wallet\Enums\WalletTransactionKind;
+use Academorix\Wallet\Policies\WalletTransactionPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -46,6 +49,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(WalletTransactionFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(WalletTransactionPolicy::class)]
 final class WalletTransaction extends Model implements WalletTransactionInterface, AuditableContract
 {
     use HasFactory;
@@ -62,8 +66,8 @@ final class WalletTransaction extends Model implements WalletTransactionInterfac
      */
     protected $casts = [
         WalletTransactionInterface::ATTR_KIND => WalletTransactionKind::class,
-        WalletTransactionInterface::ATTR_AMOUNT_MINOR => bigint::class,
-        WalletTransactionInterface::ATTR_BALANCE_AFTER_MINOR => bigint::class,
+        WalletTransactionInterface::ATTR_AMOUNT_MINOR => 'integer',
+        WalletTransactionInterface::ATTR_BALANCE_AFTER_MINOR => 'integer',
         WalletTransactionInterface::ATTR_SOURCE_SNAPSHOT => 'array',
         WalletTransactionInterface::ATTR_METADATA => 'array',
         WalletTransactionInterface::ATTR_EXPIRES_AT => 'datetime',

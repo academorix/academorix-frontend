@@ -13,8 +13,11 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Dunning\Contracts\Data\DunningRunInterface;
 use Academorix\Dunning\Database\Factories\DunningRunFactory;
+use Academorix\Dunning\Enums\DunningRunStatus;
+use Academorix\Dunning\Policies\DunningRunPolicy;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -51,6 +54,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(DunningRunFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(DunningRunPolicy::class)]
 final class DunningRun extends Model implements DunningRunInterface, AuditableContract
 {
     use HasFactory;
@@ -67,7 +71,7 @@ final class DunningRun extends Model implements DunningRunInterface, AuditableCo
      */
     protected $casts = [
         DunningRunInterface::ATTR_STATUS => DunningRunStatus::class,
-        DunningRunInterface::ATTR_AMOUNT_DUE_MINOR => bigint::class,
+        DunningRunInterface::ATTR_AMOUNT_DUE_MINOR => 'integer',
         DunningRunInterface::ATTR_STARTED_AT => 'datetime',
         DunningRunInterface::ATTR_NEXT_STEP_AT => 'datetime',
         DunningRunInterface::ATTR_RESOLVED_AT => 'datetime',

@@ -14,7 +14,10 @@ use Illuminate\Database\Eloquent\Model;
 use Academorix\Payout\Contracts\Data\PayoutReconciliationInterface;
 use Academorix\Payout\Database\Factories\PayoutReconciliationFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Payout\Enums\PayoutReconciliationStatus;
+use Academorix\Payout\Policies\PayoutReconciliationPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -46,6 +49,7 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(PayoutReconciliationFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(PayoutReconciliationPolicy::class)]
 final class PayoutReconciliation extends Model implements PayoutReconciliationInterface, AuditableContract
 {
     use HasFactory;
@@ -62,9 +66,9 @@ final class PayoutReconciliation extends Model implements PayoutReconciliationIn
      */
     protected $casts = [
         PayoutReconciliationInterface::ATTR_STATUS => PayoutReconciliationStatus::class,
-        PayoutReconciliationInterface::ATTR_LOCAL_TOTAL_MINOR => bigint::class,
-        PayoutReconciliationInterface::ATTR_PROVIDER_TOTAL_MINOR => bigint::class,
-        PayoutReconciliationInterface::ATTR_DRIFT_MINOR => bigint::class,
+        PayoutReconciliationInterface::ATTR_LOCAL_TOTAL_MINOR => 'integer',
+        PayoutReconciliationInterface::ATTR_PROVIDER_TOTAL_MINOR => 'integer',
+        PayoutReconciliationInterface::ATTR_DRIFT_MINOR => 'integer',
         PayoutReconciliationInterface::ATTR_RECONCILED_AT => 'datetime',
         PayoutReconciliationInterface::ATTR_RESOLVED_AT => 'datetime',
         PayoutReconciliationInterface::ATTR_NOTES => 'array',

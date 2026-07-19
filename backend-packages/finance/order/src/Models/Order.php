@@ -15,7 +15,11 @@ use Academorix\Order\Contracts\Data\OrderInterface;
 use Academorix\Order\Database\Factories\OrderFactory;
 use Academorix\Branch\Concerns\BelongsToBranch;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Order\Enums\OrderChannel;
+use Academorix\Order\Enums\OrderStatus;
+use Academorix\Order\Policies\OrderPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -60,6 +64,7 @@ use Spatie\ModelStates\HasStates;
 ])]
 #[UseFactory(OrderFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(OrderPolicy::class)]
 final class Order extends Model implements OrderInterface, AuditableContract
 {
     use HasFactory;

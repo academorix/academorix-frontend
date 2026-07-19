@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\MarketplaceFee\Contracts\Data\FeePayoutInterface;
 use Academorix\MarketplaceFee\Database\Factories\FeePayoutFactory;
-use Academorix\Application\Concerns\BelongsToApplication;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\MarketplaceFee\Enums\FeePayoutStatus;
+use Academorix\MarketplaceFee\Policies\FeePayoutPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -34,7 +36,6 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 #[Table(name: FeePayoutInterface::TABLE, key: FeePayoutInterface::PRIMARY_KEY, keyType: FeePayoutInterface::KEY_TYPE)]
 #[Fillable([
     FeePayoutInterface::ATTR_TENANT_ID,
-        FeePayoutInterface::ATTR_APPLICATION_ID,
         FeePayoutInterface::ATTR_REFERENCE_NUMBER,
         FeePayoutInterface::ATTR_STATUS,
         FeePayoutInterface::ATTR_CURRENCY,
@@ -50,12 +51,12 @@ use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 ])]
 #[UseFactory(FeePayoutFactory::class)]
 #[WithoutIncrementing]
+#[UsePolicy(FeePayoutPolicy::class)]
 final class FeePayout extends Model implements FeePayoutInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    use BelongsToApplication;
     use HasMetadata;
     use Userstamps;
     use Auditable;
@@ -69,8 +70,8 @@ final class FeePayout extends Model implements FeePayoutInterface, AuditableCont
         FeePayoutInterface::ATTR_STATUS => FeePayoutStatus::class,
         FeePayoutInterface::ATTR_PERIOD_START => 'datetime',
         FeePayoutInterface::ATTR_PERIOD_END => 'datetime',
-        FeePayoutInterface::ATTR_TOTAL_GROSS_MINOR => bigint::class,
-        FeePayoutInterface::ATTR_TOTAL_FEE_MINOR => bigint::class,
+        FeePayoutInterface::ATTR_TOTAL_GROSS_MINOR => 'integer',
+        FeePayoutInterface::ATTR_TOTAL_FEE_MINOR => 'integer',
         FeePayoutInterface::ATTR_APPLICATION_COUNT => 'integer',
         FeePayoutInterface::ATTR_SETTLED_AT => 'datetime',
         FeePayoutInterface::ATTR_METADATA => 'array',

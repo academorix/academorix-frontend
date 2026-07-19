@@ -28,8 +28,6 @@ return new class() extends Migration {
             $table->string(FeePayoutInterface::ATTR_ID, 64)->primary();
             $table->string(FeePayoutInterface::ATTR_TENANT_ID, 64);
             $table->foreign(FeePayoutInterface::ATTR_TENANT_ID)->references('id')->on('tenants')->onDelete('cascade');
-            $table->string(FeePayoutInterface::ATTR_APPLICATION_ID, 64);
-            $table->foreign(FeePayoutInterface::ATTR_APPLICATION_ID)->references('id')->on('applications')->onDelete('restrict');
             $table->string(FeePayoutInterface::ATTR_REFERENCE_NUMBER, 32);
             $table->string(FeePayoutInterface::ATTR_STATUS, 16)->default('pending');
             $table->string(FeePayoutInterface::ATTR_CURRENCY, 3);
@@ -46,8 +44,8 @@ return new class() extends Migration {
             $table->string(FeePayoutInterface::ATTR_UPDATED_BY, 64)->nullable();
             $table->timestampTz(FeePayoutInterface::ATTR_CREATED_AT);
             $table->timestampTz(FeePayoutInterface::ATTR_UPDATED_AT);
-            $table->unique([FeePayoutInterface::ATTR_TENANT_ID, FeePayoutInterface::ATTR_APPLICATION_ID, FeePayoutInterface::ATTR_REFERENCE_NUMBER], 'fee_payouts_reference_unique');
-            $table->index([FeePayoutInterface::ATTR_TENANT_ID, FeePayoutInterface::ATTR_APPLICATION_ID, FeePayoutInterface::ATTR_STATUS, FeePayoutInterface::ATTR_PERIOD_END], 'fee_payouts_period_idx');
+            $table->unique([FeePayoutInterface::ATTR_TENANT_ID, FeePayoutInterface::ATTR_REFERENCE_NUMBER], 'fee_payouts_reference_unique');
+            $table->index([FeePayoutInterface::ATTR_TENANT_ID, FeePayoutInterface::ATTR_STATUS, FeePayoutInterface::ATTR_PERIOD_END], 'fee_payouts_period_idx');
         });
     }
 

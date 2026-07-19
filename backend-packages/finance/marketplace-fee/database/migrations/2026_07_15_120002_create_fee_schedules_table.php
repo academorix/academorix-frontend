@@ -29,8 +29,6 @@ return new class() extends Migration {
             $table->string(FeeScheduleInterface::ATTR_ID, 64)->primary();
             $table->string(FeeScheduleInterface::ATTR_TENANT_ID, 64);
             $table->foreign(FeeScheduleInterface::ATTR_TENANT_ID)->references('id')->on('tenants')->onDelete('cascade');
-            $table->string(FeeScheduleInterface::ATTR_APPLICATION_ID, 64);
-            $table->foreign(FeeScheduleInterface::ATTR_APPLICATION_ID)->references('id')->on('applications')->onDelete('restrict');
             $table->integer(FeeScheduleInterface::ATTR_VERSION)->default(1);
             $table->string(FeeScheduleInterface::ATTR_STATUS, 16)->default('draft');
             $table->string(FeeScheduleInterface::ATTR_CURRENCY, 3);
@@ -49,11 +47,11 @@ return new class() extends Migration {
             $table->timestampTz(FeeScheduleInterface::ATTR_DELETED_AT)->nullable();
             $table->timestampTz(FeeScheduleInterface::ATTR_CREATED_AT);
             $table->timestampTz(FeeScheduleInterface::ATTR_UPDATED_AT);
-            $table->unique([FeeScheduleInterface::ATTR_TENANT_ID, FeeScheduleInterface::ATTR_APPLICATION_ID, FeeScheduleInterface::ATTR_VERSION], 'fee_schedules_version_unique');
-            $table->index([FeeScheduleInterface::ATTR_TENANT_ID, FeeScheduleInterface::ATTR_APPLICATION_ID, FeeScheduleInterface::ATTR_STATUS, FeeScheduleInterface::ATTR_EFFECTIVE_FROM], 'fee_schedules_lookup_idx');
+            $table->unique([FeeScheduleInterface::ATTR_TENANT_ID, FeeScheduleInterface::ATTR_VERSION], 'fee_schedules_version_unique');
+            $table->index([FeeScheduleInterface::ATTR_TENANT_ID, FeeScheduleInterface::ATTR_STATUS, FeeScheduleInterface::ATTR_EFFECTIVE_FROM], 'fee_schedules_lookup_idx');
         });
 
-        DB::statement('CREATE UNIQUE INDEX fee_schedules_active_unique ON ' . FeeScheduleInterface::TABLE . ' (' . FeeScheduleInterface::ATTR_TENANT_ID . ', ' . FeeScheduleInterface::ATTR_APPLICATION_ID . ', ' . FeeScheduleInterface::ATTR_IS_ACTIVE . ') WHERE is_active = TRUE AND deleted_at IS NULL');
+        DB::statement('CREATE UNIQUE INDEX fee_schedules_active_unique ON ' . FeeScheduleInterface::TABLE . ' (' . FeeScheduleInterface::ATTR_TENANT_ID . ', ' . FeeScheduleInterface::ATTR_IS_ACTIVE . ') WHERE is_active = TRUE AND deleted_at IS NULL');
     }
 
     /**
