@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Registry\Actions\Platform;
 
+use Academorix\Registry\Contracts\Repositories\SportRepositoryInterface;
+use Academorix\Registry\Data\SportData;
+use Academorix\Registry\Data\Requests\CreateSportRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/platform/sports` — create action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Registry
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/platform/sports')]
 final class CreateSportAction
 {
+    public function __construct(
+        private readonly SportRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `sport` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateSportRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateSportRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(SportData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

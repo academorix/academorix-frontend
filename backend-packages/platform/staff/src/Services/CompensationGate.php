@@ -8,14 +8,15 @@ namespace Academorix\Staff\Services;
 
 use Academorix\Staff\Contracts\Services\CompensationGateInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Staff\Contracts\Repositories\CoachRepositoryInterface;
 
 /**
  * Concrete service — CompensationGate.
  *
  * Implements {@see CompensationGateInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Staff
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class CompensationGate implements CompensationGateInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  CoachRepositoryInterface  $coachRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly CoachRepositoryInterface $coachRepository,
+    ) {
+    }
 }

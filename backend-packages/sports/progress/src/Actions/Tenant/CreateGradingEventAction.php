@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Progress\Actions\Tenant;
 
+use Academorix\Progress\Contracts\Repositories\GradingEventRepositoryInterface;
+use Academorix\Progress\Data\GradingEventData;
+use Academorix\Progress\Data\Requests\CreateGradingEventRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/grading-events` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Progress
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/grading-events')]
 final class CreateGradingEventAction
 {
+    public function __construct(
+        private readonly GradingEventRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `grading-event` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateGradingEventRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateGradingEventRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(GradingEventData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

@@ -9,6 +9,7 @@ namespace Academorix\Messaging\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Messaging\Contracts\Data\ConversationParticipantInterface;
 use Academorix\Messaging\Database\Factories\ConversationParticipantFactory;
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: ConversationParticipantInterface::TABLE, keyType: ConversationParticipantInterface::KEY_TYPE)]
+#[Table(name: ConversationParticipantInterface::TABLE, key: ConversationParticipantInterface::PRIMARY_KEY, keyType: ConversationParticipantInterface::KEY_TYPE)]
 #[Fillable([
     ConversationParticipantInterface::ATTR_TENANT_ID,
         ConversationParticipantInterface::ATTR_CONVERSATION_ID,
@@ -39,18 +40,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         ConversationParticipantInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ConversationParticipantFactory::class)]
+#[WithoutIncrementing]
 final class ConversationParticipant extends Model implements ConversationParticipantInterface
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

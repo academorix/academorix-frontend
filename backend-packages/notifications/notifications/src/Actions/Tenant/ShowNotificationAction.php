@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Notifications\Actions\Tenant;
 
+use Academorix\Notifications\Contracts\Repositories\NotificationRepositoryInterface;
+use Academorix\Notifications\Data\NotificationData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/tenant/notifications/{notification}` — show action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Notifications
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/tenant/notifications/{notification}')]
 final class ShowNotificationAction
 {
+    public function __construct(
+        private readonly NotificationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `notification` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): NotificationData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return NotificationData::from($this->repository->findOrFail($id));
     }
 }

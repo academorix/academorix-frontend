@@ -9,6 +9,7 @@ namespace Academorix\Auth\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Auth\Contracts\Data\AuthMfaChallengeInterface;
 use Academorix\Auth\Database\Factories\AuthMfaChallengeFactory;
@@ -27,7 +28,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: AuthMfaChallengeInterface::TABLE, keyType: AuthMfaChallengeInterface::KEY_TYPE)]
+#[Table(name: AuthMfaChallengeInterface::TABLE, key: AuthMfaChallengeInterface::PRIMARY_KEY, keyType: AuthMfaChallengeInterface::KEY_TYPE)]
 #[Fillable([
     AuthMfaChallengeInterface::ATTR_IDENTITY_ID,
         AuthMfaChallengeInterface::ATTR_CHALLENGE_TYPE,
@@ -37,23 +38,17 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         AuthMfaChallengeInterface::ATTR_CONSUMED_AT,
 ])]
 #[UseFactory(AuthMfaChallengeFactory::class)]
+#[WithoutIncrementing]
 final class AuthMfaChallenge extends Model implements AuthMfaChallengeInterface
 {
     use HasFactory;
     use HasUlids;
-    use HasUserstamps;
+    use Userstamps;
     use HasMetadata;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

@@ -9,16 +9,22 @@ namespace Academorix\Audit\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Audit\Contracts\Data\AuditRetentionPolicyInterface;
 use Academorix\Audit\Database\Factories\AuditRetentionPolicyFactory;
+use Academorix\Audit\Policies\AuditRetentionPolicyPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Foundation\Concerns\IsRetentionAware;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AuditRetentionPolicy.
@@ -29,7 +35,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: AuditRetentionPolicyInterface::TABLE, keyType: AuditRetentionPolicyInterface::KEY_TYPE)]
+#[Table(name: AuditRetentionPolicyInterface::TABLE, key: AuditRetentionPolicyInterface::PRIMARY_KEY, keyType: AuditRetentionPolicyInterface::KEY_TYPE)]
 #[Fillable([
     AuditRetentionPolicyInterface::ATTR_TENANT_ID,
         AuditRetentionPolicyInterface::ATTR_RETENTION_YEARS,
@@ -41,27 +47,22 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         AuditRetentionPolicyInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AuditRetentionPolicyFactory::class)]
-final class AuditRetentionPolicy extends Model implements AuditRetentionPolicyInterface
+#[WithoutIncrementing]
+#[UsePolicy(AuditRetentionPolicyPolicy::class)]
+final class AuditRetentionPolicy extends Model implements AuditRetentionPolicyInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
-    // TODO(gen): resolve unknown trait `HasAuditable` — add its import + use line.
-    // TODO(gen): resolve unknown trait `IsRetentionAware` — add its import + use line.
+    use Userstamps;
+    use Auditable;
+    use IsRetentionAware;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

@@ -8,14 +8,15 @@ namespace Academorix\Auth\Services;
 
 use Academorix\Auth\Contracts\Services\MfaChallengeDispatcherInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Auth\Contracts\Repositories\AuthCrossAppGrantRepositoryInterface;
 
 /**
  * Concrete service — MfaChallengeDispatcher.
  *
  * Implements {@see MfaChallengeDispatcherInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Auth
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class MfaChallengeDispatcher implements MfaChallengeDispatcherInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AuthCrossAppGrantRepositoryInterface  $authCrossAppGrantRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AuthCrossAppGrantRepositoryInterface $authCrossAppGrantRepository,
+    ) {
+    }
 }

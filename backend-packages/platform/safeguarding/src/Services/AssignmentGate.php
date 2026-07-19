@@ -8,14 +8,15 @@ namespace Academorix\Safeguarding\Services;
 
 use Academorix\Safeguarding\Contracts\Services\AssignmentGateInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Safeguarding\Contracts\Repositories\BackgroundCheckRepositoryInterface;
 
 /**
  * Concrete service — AssignmentGate.
  *
  * Implements {@see AssignmentGateInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Safeguarding
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AssignmentGate implements AssignmentGateInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  BackgroundCheckRepositoryInterface  $backgroundCheckRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly BackgroundCheckRepositoryInterface $backgroundCheckRepository,
+    ) {
+    }
 }

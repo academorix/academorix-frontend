@@ -9,12 +9,15 @@ namespace Academorix\Approvals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Approvals\Contracts\Data\ApprovalDecisionInterface;
 use Academorix\Approvals\Database\Factories\ApprovalDecisionFactory;
+use Academorix\Approvals\Policies\ApprovalDecisionPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -27,7 +30,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: ApprovalDecisionInterface::TABLE, keyType: ApprovalDecisionInterface::KEY_TYPE)]
+#[Table(name: ApprovalDecisionInterface::TABLE, key: ApprovalDecisionInterface::PRIMARY_KEY, keyType: ApprovalDecisionInterface::KEY_TYPE)]
 #[Fillable([
     ApprovalDecisionInterface::ATTR_APPROVAL_REQUIREMENT_ID,
         ApprovalDecisionInterface::ATTR_TENANT_ID,
@@ -40,6 +43,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         ApprovalDecisionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ApprovalDecisionFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(ApprovalDecisionPolicy::class)]
 final class ApprovalDecision extends Model implements ApprovalDecisionInterface
 {
     use HasFactory;
@@ -49,19 +54,12 @@ final class ApprovalDecision extends Model implements ApprovalDecisionInterface
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ApprovalDecisionInterface::ATTR_DECISION => 'ApprovalDecisionType',
+        ApprovalDecisionInterface::ATTR_DECISION => ApprovalDecisionType::class,
         ApprovalDecisionInterface::ATTR_DECIDED_AT => 'datetime',
         ApprovalDecisionInterface::ATTR_METADATA => 'array',
     ];

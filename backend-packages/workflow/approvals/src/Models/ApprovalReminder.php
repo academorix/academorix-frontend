@@ -9,6 +9,7 @@ namespace Academorix\Approvals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Approvals\Contracts\Data\ApprovalReminderInterface;
 use Academorix\Approvals\Database\Factories\ApprovalReminderFactory;
@@ -25,7 +26,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: ApprovalReminderInterface::TABLE, keyType: ApprovalReminderInterface::KEY_TYPE)]
+#[Table(name: ApprovalReminderInterface::TABLE, key: ApprovalReminderInterface::PRIMARY_KEY, keyType: ApprovalReminderInterface::KEY_TYPE)]
 #[Fillable([
     ApprovalReminderInterface::ATTR_APPROVAL_REQUIREMENT_ID,
         ApprovalReminderInterface::ATTR_TENANT_ID,
@@ -34,6 +35,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         ApprovalReminderInterface::ATTR_SENT_AT,
 ])]
 #[UseFactory(ApprovalReminderFactory::class)]
+#[WithoutIncrementing]
 final class ApprovalReminder extends Model implements ApprovalReminderInterface
 {
     use HasFactory;
@@ -41,14 +43,7 @@ final class ApprovalReminder extends Model implements ApprovalReminderInterface
     use BelongsToTenant;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

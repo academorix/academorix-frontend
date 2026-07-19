@@ -9,15 +9,20 @@ namespace Academorix\People\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\People\Contracts\Data\TenantLinkRequestInterface;
 use Academorix\People\Database\Factories\TenantLinkRequestFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\People\Enums\TenantLinkRequestStatus;
+use Academorix\People\Policies\TenantLinkRequestPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a TenantLinkRequest.
@@ -28,7 +33,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: TenantLinkRequestInterface::TABLE, keyType: TenantLinkRequestInterface::KEY_TYPE)]
+#[Table(name: TenantLinkRequestInterface::TABLE, key: TenantLinkRequestInterface::PRIMARY_KEY, keyType: TenantLinkRequestInterface::KEY_TYPE)]
 #[Fillable([
     TenantLinkRequestInterface::ATTR_PERSON_IDENTITY_ID,
         TenantLinkRequestInterface::ATTR_REQUESTING_TENANT_ID,
@@ -46,29 +51,24 @@ use OwenIt\Auditing\Auditable;
         TenantLinkRequestInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TenantLinkRequestFactory::class)]
-final class TenantLinkRequest extends Model implements TenantLinkRequestInterface
+#[WithoutIncrementing]
+#[UsePolicy(TenantLinkRequestPolicy::class)]
+final class TenantLinkRequest extends Model implements TenantLinkRequestInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        TenantLinkRequestInterface::ATTR_STATUS => 'TenantLinkRequestStatus',
+        TenantLinkRequestInterface::ATTR_STATUS => TenantLinkRequestStatus::class,
         TenantLinkRequestInterface::ATTR_REQUESTED_AT => 'datetime',
         TenantLinkRequestInterface::ATTR_APPROVED_AT => 'datetime',
         TenantLinkRequestInterface::ATTR_DECLINED_AT => 'datetime',

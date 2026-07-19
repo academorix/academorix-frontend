@@ -9,13 +9,16 @@ namespace Academorix\Realtime\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Realtime\Contracts\Data\BroadcastSubscriptionInterface;
 use Academorix\Realtime\Database\Factories\BroadcastSubscriptionFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Realtime\Policies\BroadcastSubscriptionPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -27,7 +30,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: BroadcastSubscriptionInterface::TABLE, keyType: BroadcastSubscriptionInterface::KEY_TYPE)]
+#[Table(name: BroadcastSubscriptionInterface::TABLE, key: BroadcastSubscriptionInterface::PRIMARY_KEY, keyType: BroadcastSubscriptionInterface::KEY_TYPE)]
 #[Fillable([
     BroadcastSubscriptionInterface::ATTR_TENANT_ID,
         BroadcastSubscriptionInterface::ATTR_CHANNEL_ID,
@@ -42,6 +45,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         BroadcastSubscriptionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(BroadcastSubscriptionFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(BroadcastSubscriptionPolicy::class)]
 final class BroadcastSubscription extends Model implements BroadcastSubscriptionInterface
 {
     use HasFactory;
@@ -51,19 +56,12 @@ final class BroadcastSubscription extends Model implements BroadcastSubscription
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        BroadcastSubscriptionInterface::ATTR_STATUS => 'SubscriptionStatus',
+        BroadcastSubscriptionInterface::ATTR_STATUS => SubscriptionStatus::class,
         BroadcastSubscriptionInterface::ATTR_CONNECTED_AT => 'datetime',
         BroadcastSubscriptionInterface::ATTR_DISCONNECTED_AT => 'datetime',
         BroadcastSubscriptionInterface::ATTR_LAST_SEEN_AT => 'datetime',

@@ -9,6 +9,7 @@ namespace Academorix\Reporting\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Reporting\Contracts\Data\ReportRunInterface;
 use Academorix\Reporting\Database\Factories\ReportRunFactory;
@@ -18,6 +19,7 @@ use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ReportRun.
@@ -28,7 +30,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: ReportRunInterface::TABLE, keyType: ReportRunInterface::KEY_TYPE)]
+#[Table(name: ReportRunInterface::TABLE, key: ReportRunInterface::PRIMARY_KEY, keyType: ReportRunInterface::KEY_TYPE)]
 #[Fillable([
     ReportRunInterface::ATTR_TENANT_ID,
         ReportRunInterface::ATTR_REPORT_DEFINITION_ID,
@@ -44,7 +46,8 @@ use OwenIt\Auditing\Auditable;
         ReportRunInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ReportRunFactory::class)]
-final class ReportRun extends Model implements ReportRunInterface
+#[WithoutIncrementing]
+final class ReportRun extends Model implements ReportRunInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
@@ -52,12 +55,4 @@ final class ReportRun extends Model implements ReportRunInterface
     use HasMetadata;
     use Auditable;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

@@ -9,11 +9,14 @@ namespace Academorix\Mfa\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Mfa\Contracts\Data\WebauthnCredentialInterface;
 use Academorix\Mfa\Database\Factories\WebauthnCredentialFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Mfa\Policies\WebauthnCredentialPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -30,7 +33,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: WebauthnCredentialInterface::TABLE, keyType: WebauthnCredentialInterface::KEY_TYPE)]
+#[Table(name: WebauthnCredentialInterface::TABLE, key: WebauthnCredentialInterface::PRIMARY_KEY, keyType: WebauthnCredentialInterface::KEY_TYPE)]
 #[Fillable([
     WebauthnCredentialInterface::ATTR_IDENTITY_ID,
         WebauthnCredentialInterface::ATTR_CREDENTIAL_ID,
@@ -47,32 +50,27 @@ use Spatie\Activitylog\Traits\LogsActivity;
         WebauthnCredentialInterface::ATTR_METADATA,
 ])]
 #[UseFactory(WebauthnCredentialFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(WebauthnCredentialPolicy::class)]
 final class WebauthnCredential extends Model implements WebauthnCredentialInterface
 {
     use HasFactory;
     use HasUlids;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        WebauthnCredentialInterface::ATTR_CREDENTIAL_ID => 'WebauthnCredentialId',
-        WebauthnCredentialInterface::ATTR_PUBLIC_KEY => 'WebauthnPublicKey',
+        WebauthnCredentialInterface::ATTR_CREDENTIAL_ID => WebauthnCredentialId::class,
+        WebauthnCredentialInterface::ATTR_PUBLIC_KEY => WebauthnPublicKey::class,
         WebauthnCredentialInterface::ATTR_TRANSPORTS => 'array',
         WebauthnCredentialInterface::ATTR_SIGN_COUNT => 'integer',
         WebauthnCredentialInterface::ATTR_BACKUP_ELIGIBLE => 'boolean',

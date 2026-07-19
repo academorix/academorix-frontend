@@ -8,14 +8,15 @@ namespace Academorix\Credentials\Services;
 
 use Academorix\Credentials\Contracts\Services\CheckinDebouncerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Credentials\Contracts\Repositories\CheckinLogRepositoryInterface;
 
 /**
  * Concrete service — CheckinDebouncer.
  *
  * Implements {@see CheckinDebouncerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Credentials
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class CheckinDebouncer implements CheckinDebouncerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  CheckinLogRepositoryInterface  $checkinLogRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly CheckinLogRepositoryInterface $checkinLogRepository,
+    ) {
+    }
 }

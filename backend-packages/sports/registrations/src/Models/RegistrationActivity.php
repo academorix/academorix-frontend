@@ -9,6 +9,7 @@ namespace Academorix\Registrations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Registrations\Contracts\Data\RegistrationActivityInterface;
 use Academorix\Registrations\Database\Factories\RegistrationActivityFactory;
@@ -19,6 +20,7 @@ use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a RegistrationActivity.
@@ -29,7 +31,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: RegistrationActivityInterface::TABLE, keyType: RegistrationActivityInterface::KEY_TYPE)]
+#[Table(name: RegistrationActivityInterface::TABLE, key: RegistrationActivityInterface::PRIMARY_KEY, keyType: RegistrationActivityInterface::KEY_TYPE)]
 #[Fillable([
     RegistrationActivityInterface::ATTR_TENANT_ID,
         RegistrationActivityInterface::ATTR_REGISTRATION_ID,
@@ -41,21 +43,14 @@ use OwenIt\Auditing\Auditable;
         RegistrationActivityInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RegistrationActivityFactory::class)]
-final class RegistrationActivity extends Model implements RegistrationActivityInterface
+#[WithoutIncrementing]
+final class RegistrationActivity extends Model implements RegistrationActivityInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

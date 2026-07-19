@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Compliance\Actions\Platform;
 
+use Academorix\Compliance\Contracts\Repositories\LegalHoldRepositoryInterface;
+use Academorix\Compliance\Data\LegalHoldData;
+use Academorix\Compliance\Data\Requests\CreateLegalHoldRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/platform/compliance/legal-holds` — create action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Compliance
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/platform/compliance/legal-holds')]
 final class CreateLegalHoldAction
 {
+    public function __construct(
+        private readonly LegalHoldRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `legal-hold` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateLegalHoldRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateLegalHoldRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(LegalHoldData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

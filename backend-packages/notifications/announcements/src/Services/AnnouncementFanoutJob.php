@@ -8,14 +8,15 @@ namespace Academorix\Announcements\Services;
 
 use Academorix\Announcements\Contracts\Services\AnnouncementFanoutJobInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Announcements\Contracts\Repositories\AnnouncementViewRepositoryInterface;
 
 /**
  * Concrete service — AnnouncementFanoutJob.
  *
  * Implements {@see AnnouncementFanoutJobInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Announcements
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AnnouncementFanoutJob implements AnnouncementFanoutJobInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AnnouncementViewRepositoryInterface  $announcementViewRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AnnouncementViewRepositoryInterface $announcementViewRepository,
+    ) {
+    }
 }

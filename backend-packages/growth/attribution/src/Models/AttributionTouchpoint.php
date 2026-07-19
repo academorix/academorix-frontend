@@ -9,12 +9,15 @@ namespace Academorix\Attribution\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Attribution\Contracts\Data\AttributionTouchpointInterface;
 use Academorix\Attribution\Database\Factories\AttributionTouchpointFactory;
+use Academorix\Attribution\Policies\AttributionTouchpointPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -28,7 +31,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: AttributionTouchpointInterface::TABLE, keyType: AttributionTouchpointInterface::KEY_TYPE)]
+#[Table(name: AttributionTouchpointInterface::TABLE, key: AttributionTouchpointInterface::PRIMARY_KEY, keyType: AttributionTouchpointInterface::KEY_TYPE)]
 #[Fillable([
     AttributionTouchpointInterface::ATTR_TENANT_ID,
         AttributionTouchpointInterface::ATTR_ATTRIBUTION_ID,
@@ -53,30 +56,25 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         AttributionTouchpointInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AttributionTouchpointFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(AttributionTouchpointPolicy::class)]
 final class AttributionTouchpoint extends Model implements AttributionTouchpointInterface
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToAttribution` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToAttribution` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AttributionTouchpointInterface::ATTR_TOUCHPOINT_TYPE => 'AttributionTouchpointType',
+        AttributionTouchpointInterface::ATTR_TOUCHPOINT_TYPE => AttributionTouchpointType::class,
         AttributionTouchpointInterface::ATTR_CLICK_ID => 'array',
         AttributionTouchpointInterface::ATTR_DEVICE_SNAPSHOT => 'array',
         AttributionTouchpointInterface::ATTR_CONSENT_SNAPSHOT => 'array',

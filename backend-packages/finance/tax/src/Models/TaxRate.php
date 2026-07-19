@@ -9,17 +9,23 @@ namespace Academorix\Tax\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Tax\Contracts\Data\TaxRateInterface;
 use Academorix\Tax\Database\Factories\TaxRateFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Tax\Enums\TaxRateAppliesTo;
+use Academorix\Tax\Enums\TaxRateSource;
+use Academorix\Tax\Policies\TaxRatePolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a TaxRate.
@@ -30,7 +36,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: TaxRateInterface::TABLE, keyType: TaxRateInterface::KEY_TYPE)]
+#[Table(name: TaxRateInterface::TABLE, key: TaxRateInterface::PRIMARY_KEY, keyType: TaxRateInterface::KEY_TYPE)]
 #[Fillable([
     TaxRateInterface::ATTR_TENANT_ID,
         TaxRateInterface::ATTR_TAX_JURISDICTION_ID,
@@ -46,38 +52,33 @@ use OwenIt\Auditing\Auditable;
         TaxRateInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TaxRateFactory::class)]
-final class TaxRate extends Model implements TaxRateInterface
+#[WithoutIncrementing]
+#[UsePolicy(TaxRatePolicy::class)]
+final class TaxRate extends Model implements TaxRateInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToTaxJurisdiction` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToTaxJurisdiction` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        TaxRateInterface::ATTR_RATE_TYPE => 'TaxRateType',
+        TaxRateInterface::ATTR_RATE_TYPE => TaxRateType::class,
         TaxRateInterface::ATTR_PERCENTAGE => 'decimal:4',
         TaxRateInterface::ATTR_IS_INCLUSIVE => 'boolean',
-        TaxRateInterface::ATTR_APPLIES_TO => 'TaxRateAppliesTo',
+        TaxRateInterface::ATTR_APPLIES_TO => TaxRateAppliesTo::class,
         TaxRateInterface::ATTR_EFFECTIVE_FROM => 'date',
         TaxRateInterface::ATTR_EFFECTIVE_TO => 'date',
-        TaxRateInterface::ATTR_SOURCE => 'TaxRateSource',
+        TaxRateInterface::ATTR_SOURCE => TaxRateSource::class,
         TaxRateInterface::ATTR_METADATA => 'array',
     ];
 }

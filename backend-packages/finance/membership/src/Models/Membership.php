@@ -9,21 +9,26 @@ namespace Academorix\Membership\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Membership\Contracts\Data\MembershipInterface;
 use Academorix\Membership\Database\Factories\MembershipFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Academorix\Branch\Concerns\BelongsToBranch;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Membership\Enums\MembershipStatus;
+use Academorix\Membership\Policies\MembershipPolicy;
 use Academorix\Region\Concerns\BelongsToRegion;
-use Academorix\Sports\Athlete\Concerns\BelongsToAthlete;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -35,7 +40,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: MembershipInterface::TABLE, keyType: MembershipInterface::KEY_TYPE)]
+#[Table(name: MembershipInterface::TABLE, key: MembershipInterface::PRIMARY_KEY, keyType: MembershipInterface::KEY_TYPE)]
 #[Fillable([
     MembershipInterface::ATTR_TENANT_ID,
         MembershipInterface::ATTR_REGION_ID,
@@ -64,7 +69,9 @@ use Spatie\Activitylog\Traits\LogsActivity;
         MembershipInterface::ATTR_METADATA,
 ])]
 #[UseFactory(MembershipFactory::class)]
-final class Membership extends Model implements MembershipInterface
+#[WithoutIncrementing]
+#[UsePolicy(MembershipPolicy::class)]
+final class Membership extends Model implements MembershipInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
@@ -72,31 +79,24 @@ final class Membership extends Model implements MembershipInterface
     use BelongsToRegion;
     use BelongsToBranch;
     use BelongsToAthlete;
-    // TODO(gen): resolve unknown trait `BelongsToMembershipPlan` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToMembershipPlan` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        MembershipInterface::ATTR_STATUS => 'MembershipStatus',
+        MembershipInterface::ATTR_STATUS => MembershipStatus::class,
         MembershipInterface::ATTR_STATE_REASON => 'string',
-        MembershipInterface::ATTR_BILLING_INTERVAL => 'BillingInterval',
+        MembershipInterface::ATTR_BILLING_INTERVAL => BillingInterval::class,
         MembershipInterface::ATTR_PRICE_SNAPSHOT_CENTS => 'integer',
         MembershipInterface::ATTR_COUPON_SNAPSHOT => 'array',
         MembershipInterface::ATTR_TAX_CALCULATION_SNAPSHOT => 'array',

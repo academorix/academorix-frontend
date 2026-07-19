@@ -9,16 +9,18 @@ namespace Academorix\Development\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Development\Contracts\Data\TalentFlagInterface;
 use Academorix\Development\Database\Factories\TalentFlagFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Sports\Athlete\Concerns\BelongsToAthlete;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a TalentFlag.
@@ -29,7 +31,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: TalentFlagInterface::TABLE, keyType: TalentFlagInterface::KEY_TYPE)]
+#[Table(name: TalentFlagInterface::TABLE, key: TalentFlagInterface::PRIMARY_KEY, keyType: TalentFlagInterface::KEY_TYPE)]
 #[Fillable([
     TalentFlagInterface::ATTR_TENANT_ID,
         TalentFlagInterface::ATTR_ATHLETE_ID,
@@ -41,21 +43,14 @@ use OwenIt\Auditing\Auditable;
         TalentFlagInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TalentFlagFactory::class)]
-final class TalentFlag extends Model implements TalentFlagInterface
+#[WithoutIncrementing]
+final class TalentFlag extends Model implements TalentFlagInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToAthlete;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

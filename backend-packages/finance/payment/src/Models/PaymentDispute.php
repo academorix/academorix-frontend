@@ -9,17 +9,25 @@ namespace Academorix\Payment\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Payment\Contracts\Data\PaymentDisputeInterface;
 use Academorix\Payment\Database\Factories\PaymentDisputeFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Payment\Enums\PaymentDisputeOutcome;
+use Academorix\Payment\Enums\PaymentDisputeReason;
+use Academorix\Payment\Enums\PaymentDisputeStatus;
+use Academorix\Payment\Enums\PaymentProvider;
+use Academorix\Payment\Policies\PaymentDisputePolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +39,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PaymentDisputeInterface::TABLE, keyType: PaymentDisputeInterface::KEY_TYPE)]
+#[Table(name: PaymentDisputeInterface::TABLE, key: PaymentDisputeInterface::PRIMARY_KEY, keyType: PaymentDisputeInterface::KEY_TYPE)]
 #[Fillable([
     PaymentDisputeInterface::ATTR_TENANT_ID,
         PaymentDisputeInterface::ATTR_PAYMENT_ID,
@@ -52,42 +60,37 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PaymentDisputeInterface::ATTR_CHARGEBACK_ID,
 ])]
 #[UseFactory(PaymentDisputeFactory::class)]
-final class PaymentDispute extends Model implements PaymentDisputeInterface
+#[WithoutIncrementing]
+#[UsePolicy(PaymentDisputePolicy::class)]
+final class PaymentDispute extends Model implements PaymentDisputeInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToPayment` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToPayment` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        PaymentDisputeInterface::ATTR_PROVIDER => 'PaymentProvider',
+        PaymentDisputeInterface::ATTR_PROVIDER => PaymentProvider::class,
         PaymentDisputeInterface::ATTR_PROVIDER_REFERENCE_ID => 'encrypted:string',
-        PaymentDisputeInterface::ATTR_REASON => 'PaymentDisputeReason',
-        PaymentDisputeInterface::ATTR_STATUS => 'PaymentDisputeStatus',
+        PaymentDisputeInterface::ATTR_REASON => PaymentDisputeReason::class,
+        PaymentDisputeInterface::ATTR_STATUS => PaymentDisputeStatus::class,
         PaymentDisputeInterface::ATTR_AMOUNT_CENTS => 'integer',
         PaymentDisputeInterface::ATTR_EVIDENCE_DUE_BY => 'datetime',
         PaymentDisputeInterface::ATTR_EVIDENCE_SUBMITTED_AT => 'datetime',
         PaymentDisputeInterface::ATTR_EVIDENCE => 'encrypted:array',
         PaymentDisputeInterface::ATTR_OPENED_AT => 'datetime',
         PaymentDisputeInterface::ATTR_CLOSED_AT => 'datetime',
-        PaymentDisputeInterface::ATTR_OUTCOME => 'PaymentDisputeOutcome',
+        PaymentDisputeInterface::ATTR_OUTCOME => PaymentDisputeOutcome::class,
     ];
 }

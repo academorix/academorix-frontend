@@ -9,17 +9,21 @@ namespace Academorix\Registrations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Registrations\Contracts\Data\TrialBookingInterface;
 use Academorix\Registrations\Database\Factories\TrialBookingFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Registrations\Policies\TrialBookingPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +35,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: TrialBookingInterface::TABLE, keyType: TrialBookingInterface::KEY_TYPE)]
+#[Table(name: TrialBookingInterface::TABLE, key: TrialBookingInterface::PRIMARY_KEY, keyType: TrialBookingInterface::KEY_TYPE)]
 #[Fillable([
     TrialBookingInterface::ATTR_TENANT_ID,
         TrialBookingInterface::ATTR_REGISTRATION_ID,
@@ -47,23 +51,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         TrialBookingInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TrialBookingFactory::class)]
-final class TrialBooking extends Model implements TrialBookingInterface
+#[WithoutIncrementing]
+#[UsePolicy(TrialBookingPolicy::class)]
+final class TrialBooking extends Model implements TrialBookingInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

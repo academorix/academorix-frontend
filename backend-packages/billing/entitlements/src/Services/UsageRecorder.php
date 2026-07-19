@@ -8,14 +8,15 @@ namespace Academorix\Entitlements\Services;
 
 use Academorix\Entitlements\Contracts\Services\UsageRecorderInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Entitlements\Contracts\Repositories\EntitlementUsageRepositoryInterface;
 
 /**
  * Concrete service — UsageRecorder.
  *
  * Implements {@see UsageRecorderInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Entitlements
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class UsageRecorder implements UsageRecorderInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  EntitlementUsageRepositoryInterface  $entitlementUsageRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly EntitlementUsageRepositoryInterface $entitlementUsageRepository,
+    ) {
+    }
 }

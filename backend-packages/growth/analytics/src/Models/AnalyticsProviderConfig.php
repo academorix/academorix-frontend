@@ -9,16 +9,21 @@ namespace Academorix\Analytics\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Analytics\Contracts\Data\AnalyticsProviderConfigInterface;
 use Academorix\Analytics\Database\Factories\AnalyticsProviderConfigFactory;
+use Academorix\Analytics\Policies\AnalyticsProviderConfigPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AnalyticsProviderConfig.
@@ -29,7 +34,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: AnalyticsProviderConfigInterface::TABLE, keyType: AnalyticsProviderConfigInterface::KEY_TYPE)]
+#[Table(name: AnalyticsProviderConfigInterface::TABLE, key: AnalyticsProviderConfigInterface::PRIMARY_KEY, keyType: AnalyticsProviderConfigInterface::KEY_TYPE)]
 #[Fillable([
     AnalyticsProviderConfigInterface::ATTR_TENANT_ID,
         AnalyticsProviderConfigInterface::ATTR_PROVIDER,
@@ -50,35 +55,30 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         AnalyticsProviderConfigInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AnalyticsProviderConfigFactory::class)]
-final class AnalyticsProviderConfig extends Model implements AnalyticsProviderConfigInterface
+#[WithoutIncrementing]
+#[UsePolicy(AnalyticsProviderConfigPolicy::class)]
+final class AnalyticsProviderConfig extends Model implements AnalyticsProviderConfigInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
-    // TODO(gen): resolve unknown trait `HasAuditable` — add its import + use line.
+    use Userstamps;
+    use Auditable;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AnalyticsProviderConfigInterface::ATTR_PROVIDER => 'AnalyticsProvider',
+        AnalyticsProviderConfigInterface::ATTR_PROVIDER => AnalyticsProvider::class,
         AnalyticsProviderConfigInterface::ATTR_CONFIG => 'encrypted:AnalyticsProviderConfigShape',
         AnalyticsProviderConfigInterface::ATTR_ENABLED_EVENT_TYPES => 'array',
         AnalyticsProviderConfigInterface::ATTR_SAMPLING_RATE => 'float',
-        AnalyticsProviderConfigInterface::ATTR_BATCH_CONFIG => 'AnalyticsBatchConfig',
+        AnalyticsProviderConfigInterface::ATTR_BATCH_CONFIG => AnalyticsBatchConfig::class,
         AnalyticsProviderConfigInterface::ATTR_CIRCUIT_BREAKER_CONFIG => 'array',
         AnalyticsProviderConfigInterface::ATTR_CIRCUIT_BREAKER_STATE => 'array',
         AnalyticsProviderConfigInterface::ATTR_RETRY_CONFIG => 'array',

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Messaging\Actions\Tenant;
 
+use Academorix\Messaging\Contracts\Repositories\ConversationRepositoryInterface;
+use Academorix\Messaging\Data\ConversationData;
+use Academorix\Messaging\Data\Requests\CreateConversationRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/conversations` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Messaging
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/conversations')]
 final class CreateConversationAction
 {
+    public function __construct(
+        private readonly ConversationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `conversation` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateConversationRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateConversationRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(ConversationData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

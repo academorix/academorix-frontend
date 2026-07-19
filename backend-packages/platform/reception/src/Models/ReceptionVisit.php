@@ -9,6 +9,7 @@ namespace Academorix\Reception\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Reception\Contracts\Data\ReceptionVisitInterface;
 use Academorix\Reception\Database\Factories\ReceptionVisitFactory;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ReceptionVisitInterface::TABLE, keyType: ReceptionVisitInterface::KEY_TYPE)]
+#[Table(name: ReceptionVisitInterface::TABLE, key: ReceptionVisitInterface::PRIMARY_KEY, keyType: ReceptionVisitInterface::KEY_TYPE)]
 #[Fillable([
     ReceptionVisitInterface::ATTR_TENANT_ID,
         ReceptionVisitInterface::ATTR_BRANCH_ID,
@@ -53,24 +55,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ReceptionVisitInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ReceptionVisitFactory::class)]
-final class ReceptionVisit extends Model implements ReceptionVisitInterface
+#[WithoutIncrementing]
+final class ReceptionVisit extends Model implements ReceptionVisitInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToBranch;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

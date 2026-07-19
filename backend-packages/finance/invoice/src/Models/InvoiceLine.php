@@ -9,17 +9,23 @@ namespace Academorix\Invoice\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Invoice\Contracts\Data\InvoiceLineInterface;
 use Academorix\Invoice\Database\Factories\InvoiceLineFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Invoice\Concerns\BelongsToInvoice;
+use Academorix\Invoice\Enums\InvoiceLineItemType;
+use Academorix\Invoice\Policies\InvoiceLinePolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a InvoiceLine.
@@ -30,7 +36,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: InvoiceLineInterface::TABLE, keyType: InvoiceLineInterface::KEY_TYPE)]
+#[Table(name: InvoiceLineInterface::TABLE, key: InvoiceLineInterface::PRIMARY_KEY, keyType: InvoiceLineInterface::KEY_TYPE)]
 #[Fillable([
     InvoiceLineInterface::ATTR_TENANT_ID,
         InvoiceLineInterface::ATTR_INVOICE_ID,
@@ -51,32 +57,27 @@ use OwenIt\Auditing\Auditable;
         InvoiceLineInterface::ATTR_METADATA,
 ])]
 #[UseFactory(InvoiceLineFactory::class)]
-final class InvoiceLine extends Model implements InvoiceLineInterface
+#[WithoutIncrementing]
+#[UsePolicy(InvoiceLinePolicy::class)]
+final class InvoiceLine extends Model implements InvoiceLineInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToInvoice` — add its import + use line.
+    use BelongsToInvoice;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        InvoiceLineInterface::ATTR_ITEM_TYPE => 'InvoiceLineItemType',
+        InvoiceLineInterface::ATTR_ITEM_TYPE => InvoiceLineItemType::class,
         InvoiceLineInterface::ATTR_QUANTITY => 'decimal:4',
         InvoiceLineInterface::ATTR_UNIT_PRICE_CENTS => 'integer',
         InvoiceLineInterface::ATTR_SUBTOTAL_CENTS => 'integer',

@@ -9,18 +9,25 @@ namespace Academorix\User\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\User\Contracts\Data\UserInterface;
 use Academorix\User\Database\Factories\UserFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Academorix\User\Enums\UserStatus;
+use Academorix\User\Policies\UserPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +39,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: UserInterface::TABLE, keyType: UserInterface::KEY_TYPE)]
+#[Table(name: UserInterface::TABLE, key: UserInterface::PRIMARY_KEY, keyType: UserInterface::KEY_TYPE)]
 #[Fillable([
     UserInterface::ATTR_IDENTITY_ID,
         UserInterface::ATTR_APPLICATION_ID,
@@ -45,37 +52,32 @@ use Spatie\Activitylog\Traits\LogsActivity;
         UserInterface::ATTR_METADATA,
 ])]
 #[UseFactory(UserFactory::class)]
-final class User extends Model implements UserInterface
+#[WithoutIncrementing]
+#[UsePolicy(UserPolicy::class)]
+final class User extends Model implements UserInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasProfile` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasApiTokens` — add its import + use line.
-    // TODO(gen): resolve unknown trait `Notifiable` — add its import + use line.
-    // TODO(gen): resolve unknown trait `MustVerifyEmail` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasProfile` — add its import + `use` line.
+    use HasApiTokens;
+    use Notifiable;
+    // TODO(gen): resolve unknown trait `MustVerifyEmail` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        UserInterface::ATTR_STATUS => 'UserStatus',
+        UserInterface::ATTR_STATUS => UserStatus::class,
         UserInterface::ATTR_LAST_LOGIN_AT => 'datetime',
         UserInterface::ATTR_METADATA => 'array',
     ];

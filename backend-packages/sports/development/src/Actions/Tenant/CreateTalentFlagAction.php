@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Development\Actions\Tenant;
 
+use Academorix\Development\Contracts\Repositories\TalentFlagRepositoryInterface;
+use Academorix\Development\Data\TalentFlagData;
+use Academorix\Development\Data\Requests\CreateTalentFlagRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/talent-flags` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Development
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/talent-flags')]
 final class CreateTalentFlagAction
 {
+    public function __construct(
+        private readonly TalentFlagRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `talent-flag` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateTalentFlagRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateTalentFlagRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(TalentFlagData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

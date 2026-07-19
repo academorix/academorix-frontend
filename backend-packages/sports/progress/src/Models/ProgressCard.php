@@ -9,17 +9,21 @@ namespace Academorix\Progress\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Progress\Contracts\Data\ProgressCardInterface;
 use Academorix\Progress\Database\Factories\ProgressCardFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Progress\Policies\ProgressCardPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ProgressCard.
@@ -30,7 +34,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: ProgressCardInterface::TABLE, keyType: ProgressCardInterface::KEY_TYPE)]
+#[Table(name: ProgressCardInterface::TABLE, key: ProgressCardInterface::PRIMARY_KEY, keyType: ProgressCardInterface::KEY_TYPE)]
 #[Fillable([
     ProgressCardInterface::ATTR_TENANT_ID,
         ProgressCardInterface::ATTR_PROGRESS_ASSESSMENT_ID,
@@ -43,31 +47,26 @@ use OwenIt\Auditing\Auditable;
         ProgressCardInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ProgressCardFactory::class)]
-final class ProgressCard extends Model implements ProgressCardInterface
+#[WithoutIncrementing]
+#[UsePolicy(ProgressCardPolicy::class)]
+final class ProgressCard extends Model implements ProgressCardInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ProgressCardInterface::ATTR_CARD_TYPE => 'CardType',
+        ProgressCardInterface::ATTR_CARD_TYPE => CardType::class,
         ProgressCardInterface::ATTR_SHARE_EXPIRES_AT => 'datetime',
         ProgressCardInterface::ATTR_RENDERED_AT => 'datetime',
         ProgressCardInterface::ATTR_METADATA => 'array',

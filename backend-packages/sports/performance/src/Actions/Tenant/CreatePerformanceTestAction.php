@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Performance\Actions\Tenant;
 
+use Academorix\Performance\Contracts\Repositories\PerformanceTestRepositoryInterface;
+use Academorix\Performance\Data\PerformanceTestData;
+use Academorix\Performance\Data\Requests\CreatePerformanceTestRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/performance-tests` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Performance
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/performance-tests')]
 final class CreatePerformanceTestAction
 {
+    public function __construct(
+        private readonly PerformanceTestRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `performance-test` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreatePerformanceTestRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreatePerformanceTestRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(PerformanceTestData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Forms\Services;
 
 use Academorix\Forms\Contracts\Services\SessionSignatureMinterInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Forms\Contracts\Repositories\FormSubmissionRepositoryInterface;
 
 /**
  * Concrete service — SessionSignatureMinter.
  *
  * Implements {@see SessionSignatureMinterInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Forms
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SessionSignatureMinter implements SessionSignatureMinterInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  FormSubmissionRepositoryInterface  $formSubmissionRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly FormSubmissionRepositoryInterface $formSubmissionRepository,
+    ) {
+    }
 }

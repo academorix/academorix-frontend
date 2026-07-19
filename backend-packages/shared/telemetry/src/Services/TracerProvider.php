@@ -9,13 +9,14 @@ namespace Academorix\Telemetry\Services;
 use Academorix\Telemetry\Contracts\Services\TracerProviderInterface;
 use Illuminate\Container\Attributes\Scoped;
 
+
 /**
  * Concrete service — TracerProvider.
  *
  * Implements {@see TracerProviderInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Telemetry
  *
@@ -24,5 +25,4 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class TracerProvider implements TracerProviderInterface
 {
-    // TODO(gen): implement the interface methods.
 }

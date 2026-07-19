@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\DigitalPasses\Actions\Tenant;
 
+use Academorix\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
+use Academorix\DigitalPasses\Data\WalletPassData;
+use Academorix\DigitalPasses\Data\Requests\CreateWalletPassRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/wallet-passes` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category DigitalPasses
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/wallet-passes')]
 final class CreateWalletPasseAction
 {
+    public function __construct(
+        private readonly WalletPassRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `wallet-passe` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateWalletPassRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateWalletPassRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(WalletPassData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

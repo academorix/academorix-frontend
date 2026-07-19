@@ -9,18 +9,22 @@ namespace Academorix\Organization\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Organization\Contracts\Data\OrganizationInterface;
 use Academorix\Organization\Database\Factories\OrganizationFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Organization\Policies\OrganizationPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 
@@ -33,7 +37,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: OrganizationInterface::TABLE, keyType: OrganizationInterface::KEY_TYPE)]
+#[Table(name: OrganizationInterface::TABLE, key: OrganizationInterface::PRIMARY_KEY, keyType: OrganizationInterface::KEY_TYPE)]
 #[Fillable([
     OrganizationInterface::ATTR_TENANT_ID,
         OrganizationInterface::ATTR_PARENT_ID,
@@ -59,30 +63,25 @@ use Spatie\Sluggable\HasSlug;
         OrganizationInterface::ATTR_METADATA,
 ])]
 #[UseFactory(OrganizationFactory::class)]
-final class Organization extends Model implements OrganizationInterface
+#[WithoutIncrementing]
+#[UsePolicy(OrganizationPolicy::class)]
+final class Organization extends Model implements OrganizationInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasOrganizationHierarchy` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasOrganizationHierarchy` — add its import + `use` line.
     use HasSlug;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -91,8 +90,8 @@ final class Organization extends Model implements OrganizationInterface
         OrganizationInterface::ATTR_SORT_ORDER => 'integer',
         OrganizationInterface::ATTR_TREE_DEPTH => 'integer',
         OrganizationInterface::ATTR_ESTABLISHED_DATE => 'date',
-        OrganizationInterface::ATTR_CATEGORY => 'Academorix\Organization\Enums\OrganizationCategory',
-        OrganizationInterface::ATTR_STATUS => 'Academorix\Organization\Enums\OrganizationStatus',
+        OrganizationInterface::ATTR_CATEGORY => \Academorix\Organization\Enums\OrganizationCategory::class,
+        OrganizationInterface::ATTR_STATUS => \Academorix\Organization\Enums\OrganizationStatus::class,
         OrganizationInterface::ATTR_METADATA => 'array',
     ];
 }

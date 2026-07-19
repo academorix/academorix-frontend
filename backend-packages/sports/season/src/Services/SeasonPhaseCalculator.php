@@ -8,14 +8,15 @@ namespace Academorix\Season\Services;
 
 use Academorix\Season\Contracts\Services\SeasonPhaseCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Season\Contracts\Repositories\SeasonRepositoryInterface;
 
 /**
  * Concrete service — SeasonPhaseCalculator.
  *
  * Implements {@see SeasonPhaseCalculatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Season
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SeasonPhaseCalculator implements SeasonPhaseCalculatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  SeasonRepositoryInterface  $seasonRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly SeasonRepositoryInterface $seasonRepository,
+    ) {
+    }
 }

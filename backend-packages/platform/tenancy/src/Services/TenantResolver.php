@@ -8,14 +8,15 @@ namespace Academorix\Tenancy\Services;
 
 use Academorix\Tenancy\Contracts\Services\TenantResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
 
 /**
  * Concrete service — TenantResolver.
  *
  * Implements {@see TenantResolverInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Tenancy
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class TenantResolver implements TenantResolverInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  TenantContactRepositoryInterface  $tenantContactRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly TenantContactRepositoryInterface $tenantContactRepository,
+    ) {
+    }
 }

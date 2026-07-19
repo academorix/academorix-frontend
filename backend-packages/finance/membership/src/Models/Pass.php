@@ -9,18 +9,23 @@ namespace Academorix\Membership\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Membership\Contracts\Data\PassInterface;
 use Academorix\Membership\Database\Factories\PassFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Membership\Concerns\BelongsToMembership;
+use Academorix\Membership\Policies\PassPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PassInterface::TABLE, keyType: PassInterface::KEY_TYPE)]
+#[Table(name: PassInterface::TABLE, key: PassInterface::PRIMARY_KEY, keyType: PassInterface::KEY_TYPE)]
 #[Fillable([
     PassInterface::ATTR_TENANT_ID,
         PassInterface::ATTR_MEMBERSHIP_ID,
@@ -46,34 +51,29 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PassInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PassFactory::class)]
-final class Pass extends Model implements PassInterface
+#[WithoutIncrementing]
+#[UsePolicy(PassPolicy::class)]
+final class Pass extends Model implements PassInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToMembership` — add its import + use line.
+    use BelongsToMembership;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        PassInterface::ATTR_PASS_TYPE => 'PassType',
+        PassInterface::ATTR_PASS_TYPE => PassType::class,
         PassInterface::ATTR_VALID_FROM => 'datetime',
         PassInterface::ATTR_VALID_UNTIL => 'datetime',
         PassInterface::ATTR_CONSUMED_AT => 'datetime',

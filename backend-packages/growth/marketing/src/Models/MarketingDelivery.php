@@ -9,16 +9,21 @@ namespace Academorix\Marketing\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Marketing\Contracts\Data\MarketingDeliveryInterface;
 use Academorix\Marketing\Database\Factories\MarketingDeliveryFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Marketing\Enums\MarketingDeliveryStatus;
+use Academorix\Marketing\Policies\MarketingDeliveryPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a MarketingDelivery.
@@ -29,7 +34,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: MarketingDeliveryInterface::TABLE, keyType: MarketingDeliveryInterface::KEY_TYPE)]
+#[Table(name: MarketingDeliveryInterface::TABLE, key: MarketingDeliveryInterface::PRIMARY_KEY, keyType: MarketingDeliveryInterface::KEY_TYPE)]
 #[Fillable([
     MarketingDeliveryInterface::ATTR_TENANT_ID,
         MarketingDeliveryInterface::ATTR_MARKETING_EVENT_ID,
@@ -51,32 +56,27 @@ use OwenIt\Auditing\Auditable;
         MarketingDeliveryInterface::ATTR_METADATA,
 ])]
 #[UseFactory(MarketingDeliveryFactory::class)]
-final class MarketingDelivery extends Model implements MarketingDeliveryInterface
+#[WithoutIncrementing]
+#[UsePolicy(MarketingDeliveryPolicy::class)]
+final class MarketingDelivery extends Model implements MarketingDeliveryInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToMarketingEvent` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToMarketingEvent` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        MarketingDeliveryInterface::ATTR_PROVIDER => 'MarketingProvider',
-        MarketingDeliveryInterface::ATTR_STATUS => 'MarketingDeliveryStatus',
+        MarketingDeliveryInterface::ATTR_PROVIDER => MarketingProvider::class,
+        MarketingDeliveryInterface::ATTR_STATUS => MarketingDeliveryStatus::class,
         MarketingDeliveryInterface::ATTR_ATTEMPT_NUMBER => 'integer',
         MarketingDeliveryInterface::ATTR_REQUEST_PAYLOAD => 'encrypted:array',
         MarketingDeliveryInterface::ATTR_RESPONSE_HEADERS => 'array',

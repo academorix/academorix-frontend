@@ -6,26 +6,50 @@ declare(strict_types=1);
 
 namespace Academorix\Activity\Actions\Tenant;
 
+use Academorix\Activity\Contracts\Repositories\ActivityRepositoryInterface;
+use Academorix\Activity\Data\ActivityData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\LaravelData\PaginatedDataCollection;
+
 /**
  * `GET /api/v1/activities` — list action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Activity
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/activities')]
 final class ListActivitieAction
 {
+    public function __construct(
+        private readonly ActivityRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * List `activities` for the current caller.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * The `Repository` base picks up `filter[...]` / `sort=...` /
+     * `include=...` query parameters via the `#[Filterable]` attribute
+     * on the concrete repository — no per-Action wiring needed.
+     *
+     * @return PaginatedDataCollection<int, ActivityData>  Paginated wire-visible DTOs.
      */
-    public function __invoke(): mixed
+    public function __invoke(Request $request): PaginatedDataCollection
     {
-        // Hand-implement the domain logic here.
-        return null;
+        /** @var LengthAwarePaginator<int, \Academorix\Activity\Models\Activity> $page */
+        $page = $this->repository->paginate(
+            perPage: (int) $request->integer('per_page', 15),
+        );
+
+        return ActivityData::collect($page, PaginatedDataCollection::class);
     }
 }

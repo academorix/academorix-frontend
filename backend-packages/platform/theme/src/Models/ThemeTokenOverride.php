@@ -9,14 +9,19 @@ namespace Academorix\Theme\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Theme\Contracts\Data\ThemeTokenOverrideInterface;
 use Academorix\Theme\Database\Factories\ThemeTokenOverrideFactory;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Academorix\Theme\Policies\ThemeTokenOverridePolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ThemeTokenOverride.
@@ -27,7 +32,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: ThemeTokenOverrideInterface::TABLE, keyType: ThemeTokenOverrideInterface::KEY_TYPE)]
+#[Table(name: ThemeTokenOverrideInterface::TABLE, key: ThemeTokenOverrideInterface::PRIMARY_KEY, keyType: ThemeTokenOverrideInterface::KEY_TYPE)]
 #[Fillable([
     ThemeTokenOverrideInterface::ATTR_TENANT_ID,
         ThemeTokenOverrideInterface::ATTR_THEME_ID,
@@ -38,30 +43,25 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         ThemeTokenOverrideInterface::ATTR_APPLIED_AT,
 ])]
 #[UseFactory(ThemeTokenOverrideFactory::class)]
-final class ThemeTokenOverride extends Model implements ThemeTokenOverrideInterface
+#[WithoutIncrementing]
+#[UsePolicy(ThemeTokenOverridePolicy::class)]
+final class ThemeTokenOverride extends Model implements ThemeTokenOverrideInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToTheme` — add its import + use line.
-    use HasUserstamps;
-    // TODO(gen): resolve unknown trait `HasAuditable` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToTheme` — add its import + `use` line.
+    use Userstamps;
+    use Auditable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ThemeTokenOverrideInterface::ATTR_TOKEN_TYPE => 'ThemeTokenType',
+        ThemeTokenOverrideInterface::ATTR_TOKEN_TYPE => ThemeTokenType::class,
         ThemeTokenOverrideInterface::ATTR_APPLIED_AT => 'datetime',
     ];
 }

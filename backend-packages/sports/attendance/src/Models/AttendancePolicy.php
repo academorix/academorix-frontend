@@ -9,18 +9,22 @@ namespace Academorix\Attendance\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Attendance\Contracts\Data\AttendancePolicyInterface;
 use Academorix\Attendance\Database\Factories\AttendancePolicyFactory;
+use Academorix\Attendance\Policies\AttendancePolicyPolicy;
 use Academorix\Branch\Concerns\BelongsToBranch;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AttendancePolicyInterface::TABLE, keyType: AttendancePolicyInterface::KEY_TYPE)]
+#[Table(name: AttendancePolicyInterface::TABLE, key: AttendancePolicyInterface::PRIMARY_KEY, keyType: AttendancePolicyInterface::KEY_TYPE)]
 #[Fillable([
     AttendancePolicyInterface::ATTR_TENANT_ID,
         AttendancePolicyInterface::ATTR_BRANCH_ID,
@@ -53,33 +57,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AttendancePolicyInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AttendancePolicyFactory::class)]
-final class AttendancePolicy extends Model implements AttendancePolicyInterface
+#[WithoutIncrementing]
+#[UsePolicy(AttendancePolicyPolicy::class)]
+final class AttendancePolicy extends Model implements AttendancePolicyInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToBranch;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AttendancePolicyInterface::ATTR_LATE_ARRIVAL_PENALTY_TYPE => 'LatePenaltyType',
+        AttendancePolicyInterface::ATTR_LATE_ARRIVAL_PENALTY_TYPE => LatePenaltyType::class,
         AttendancePolicyInterface::ATTR_GRACE_PERIOD_MINUTES => 'integer',
         AttendancePolicyInterface::ATTR_LATE_AFTER_MINUTES => 'integer',
         AttendancePolicyInterface::ATTR_NO_SHOW_FEE_CENTS => 'integer',

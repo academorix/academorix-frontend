@@ -9,6 +9,7 @@ namespace Academorix\Realtime\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Realtime\Contracts\Data\PresenceInterface;
 use Academorix\Realtime\Database\Factories\PresenceFactory;
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: PresenceInterface::TABLE, keyType: PresenceInterface::KEY_TYPE)]
+#[Table(name: PresenceInterface::TABLE, key: PresenceInterface::PRIMARY_KEY, keyType: PresenceInterface::KEY_TYPE)]
 #[Fillable([
     PresenceInterface::ATTR_TENANT_ID,
         PresenceInterface::ATTR_CHANNEL_ID,
@@ -36,6 +37,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         PresenceInterface::ATTR_USER_INFO,
 ])]
 #[UseFactory(PresenceFactory::class)]
+#[WithoutIncrementing]
 final class Presence extends Model implements PresenceInterface
 {
     use HasFactory;
@@ -44,14 +46,7 @@ final class Presence extends Model implements PresenceInterface
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

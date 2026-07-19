@@ -8,14 +8,15 @@ namespace Academorix\Performance\Services;
 
 use Academorix\Performance\Contracts\Services\PercentileCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Performance\Contracts\Repositories\BenchmarkRepositoryInterface;
 
 /**
  * Concrete service — PercentileCalculator.
  *
  * Implements {@see PercentileCalculatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Performance
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class PercentileCalculator implements PercentileCalculatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  BenchmarkRepositoryInterface  $benchmarkRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly BenchmarkRepositoryInterface $benchmarkRepository,
+    ) {
+    }
 }

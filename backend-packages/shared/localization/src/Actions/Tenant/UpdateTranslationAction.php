@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Localization\Actions\Tenant;
 
+use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Academorix\Localization\Data\TranslationData;
+use Academorix\Localization\Data\Requests\UpdateTranslationRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/v1/translations/{translation}` — update action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Localization
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/v1/translations/{translation}')]
 final class UpdateTranslationAction
 {
+    public function __construct(
+        private readonly TranslationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `translation` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateTranslationRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateTranslationRequestData $data): TranslationData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return TranslationData::from($model);
     }
 }

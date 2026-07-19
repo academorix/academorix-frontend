@@ -9,16 +9,22 @@ namespace Academorix\Coupon\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Coupon\Contracts\Data\CouponRedemptionInterface;
 use Academorix\Coupon\Database\Factories\CouponRedemptionFactory;
+use Academorix\Coupon\Enums\CouponRedemptionAppliedToType;
+use Academorix\Coupon\Enums\CouponRedemptionCustomerType;
+use Academorix\Coupon\Policies\CouponRedemptionPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a CouponRedemption.
@@ -29,7 +35,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: CouponRedemptionInterface::TABLE, keyType: CouponRedemptionInterface::KEY_TYPE)]
+#[Table(name: CouponRedemptionInterface::TABLE, key: CouponRedemptionInterface::PRIMARY_KEY, keyType: CouponRedemptionInterface::KEY_TYPE)]
 #[Fillable([
     CouponRedemptionInterface::ATTR_TENANT_ID,
         CouponRedemptionInterface::ATTR_COUPON_ID,
@@ -50,33 +56,28 @@ use OwenIt\Auditing\Auditable;
         CouponRedemptionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(CouponRedemptionFactory::class)]
-final class CouponRedemption extends Model implements CouponRedemptionInterface
+#[WithoutIncrementing]
+#[UsePolicy(CouponRedemptionPolicy::class)]
+final class CouponRedemption extends Model implements CouponRedemptionInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToCoupon` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToCoupon` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        CouponRedemptionInterface::ATTR_CUSTOMER_TYPE => 'CouponRedemptionCustomerType',
-        CouponRedemptionInterface::ATTR_APPLIED_TO_TYPE => 'CouponRedemptionAppliedToType',
-        CouponRedemptionInterface::ATTR_CLAWBACK_REASON => 'CouponClawbackReason',
+        CouponRedemptionInterface::ATTR_CUSTOMER_TYPE => CouponRedemptionCustomerType::class,
+        CouponRedemptionInterface::ATTR_APPLIED_TO_TYPE => CouponRedemptionAppliedToType::class,
+        CouponRedemptionInterface::ATTR_CLAWBACK_REASON => CouponClawbackReason::class,
         CouponRedemptionInterface::ATTR_SOURCE_AMOUNT_CENTS => 'integer',
         CouponRedemptionInterface::ATTR_DISCOUNT_AMOUNT_CENTS => 'integer',
         CouponRedemptionInterface::ATTR_FINAL_AMOUNT_CENTS => 'integer',

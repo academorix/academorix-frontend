@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Integrations\Actions\Tenant;
 
+use Academorix\Integrations\Contracts\Repositories\AppInstallationRepositoryInterface;
+use Academorix\Integrations\Data\AppInstallationData;
+use Academorix\Integrations\Data\Requests\CreateAppInstallationRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/app-installations` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Integrations
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/app-installations')]
 final class CreateAppInstallationAction
 {
+    public function __construct(
+        private readonly AppInstallationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `app-installation` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateAppInstallationRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateAppInstallationRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(AppInstallationData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

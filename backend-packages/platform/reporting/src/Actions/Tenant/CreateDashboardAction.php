@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Reporting\Actions\Tenant;
 
+use Academorix\Reporting\Contracts\Repositories\DashboardRepositoryInterface;
+use Academorix\Reporting\Data\DashboardData;
+use Academorix\Reporting\Data\Requests\CreateDashboardRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/dashboards` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Reporting
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/dashboards')]
 final class CreateDashboardAction
 {
+    public function __construct(
+        private readonly DashboardRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `dashboard` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateDashboardRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateDashboardRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(DashboardData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

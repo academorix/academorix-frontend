@@ -9,18 +9,23 @@ namespace Academorix\Registrations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Registrations\Contracts\Data\RegistrationInterface;
 use Academorix\Registrations\Database\Factories\RegistrationFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Sports\Season\Concerns\BelongsToSeason;
+use Academorix\Registrations\Enums\RegistrationStage;
+use Academorix\Registrations\Policies\RegistrationPolicy;
+use Academorix\Season\Concerns\BelongsToSeason;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: RegistrationInterface::TABLE, keyType: RegistrationInterface::KEY_TYPE)]
+#[Table(name: RegistrationInterface::TABLE, key: RegistrationInterface::PRIMARY_KEY, keyType: RegistrationInterface::KEY_TYPE)]
 #[Fillable([
     RegistrationInterface::ATTR_TENANT_ID,
         RegistrationInterface::ATTR_SEASON_ID,
@@ -65,33 +70,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         RegistrationInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RegistrationFactory::class)]
-final class Registration extends Model implements RegistrationInterface
+#[WithoutIncrementing]
+#[UsePolicy(RegistrationPolicy::class)]
+final class Registration extends Model implements RegistrationInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToSeason;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        RegistrationInterface::ATTR_STAGE => 'RegistrationStage',
+        RegistrationInterface::ATTR_STAGE => RegistrationStage::class,
         RegistrationInterface::ATTR_SUBMITTED_AT => 'datetime',
         RegistrationInterface::ATTR_EXPIRES_AT => 'datetime',
         RegistrationInterface::ATTR_DECLINED_AT => 'datetime',

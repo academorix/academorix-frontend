@@ -9,6 +9,7 @@ namespace Academorix\Performance\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Performance\Contracts\Data\BenchmarkInterface;
 use Academorix\Performance\Database\Factories\BenchmarkFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a Benchmark.
@@ -30,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: BenchmarkInterface::TABLE, keyType: BenchmarkInterface::KEY_TYPE)]
+#[Table(name: BenchmarkInterface::TABLE, key: BenchmarkInterface::PRIMARY_KEY, keyType: BenchmarkInterface::KEY_TYPE)]
 #[Fillable([
     BenchmarkInterface::ATTR_TENANT_ID,
         BenchmarkInterface::ATTR_PERFORMANCE_TEST_ID,
@@ -47,22 +49,15 @@ use OwenIt\Auditing\Auditable;
         BenchmarkInterface::ATTR_METADATA,
 ])]
 #[UseFactory(BenchmarkFactory::class)]
-final class Benchmark extends Model implements BenchmarkInterface
+#[WithoutIncrementing]
+final class Benchmark extends Model implements BenchmarkInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

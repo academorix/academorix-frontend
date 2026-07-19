@@ -9,19 +9,24 @@ namespace Academorix\Registry\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Registry\Contracts\Data\PositionInterface;
 use Academorix\Registry\Database\Factories\PositionFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Registry\Policies\PositionPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * Eloquent model for a Position.
@@ -32,7 +37,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: PositionInterface::TABLE, keyType: PositionInterface::KEY_TYPE)]
+#[Table(name: PositionInterface::TABLE, key: PositionInterface::PRIMARY_KEY, keyType: PositionInterface::KEY_TYPE)]
 #[Fillable([
     PositionInterface::ATTR_TENANT_ID,
         PositionInterface::ATTR_DISCIPLINE_ID,
@@ -50,29 +55,24 @@ use Spatie\Sluggable\HasSlug;
         PositionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PositionFactory::class)]
-final class Position extends Model implements PositionInterface
+#[WithoutIncrementing]
+#[UsePolicy(PositionPolicy::class)]
+final class Position extends Model implements PositionInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasSlug;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `HasTranslations` — add its import + use line.
+    use LogsActivity;
+    use HasTranslations;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

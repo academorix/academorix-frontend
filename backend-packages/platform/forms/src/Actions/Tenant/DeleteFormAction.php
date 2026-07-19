@@ -6,26 +6,42 @@ declare(strict_types=1);
 
 namespace Academorix\Forms\Actions\Tenant;
 
+use Academorix\Forms\Contracts\Repositories\FormRepositoryInterface;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Delete;
+use Illuminate\Http\Response;
+
 /**
  * `DELETE /api/v1/forms/{form}` — delete action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Delete(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Forms
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Delete('/api/v1/forms/{form}')]
 final class DeleteFormAction
 {
+    public function __construct(
+        private readonly FormRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Soft-delete one `form` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): Response
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $this->repository->delete($id);
+
+        return response()->noContent();
     }
 }

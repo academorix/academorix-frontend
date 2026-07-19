@@ -9,6 +9,7 @@ namespace Academorix\Rbac\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Rbac\Contracts\Data\ModelHasPermissionsInterface;
 use Academorix\Rbac\Database\Factories\ModelHasPermissionsFactory;
@@ -23,7 +24,7 @@ use Academorix\Rbac\Database\Factories\ModelHasPermissionsFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: ModelHasPermissionsInterface::TABLE, keyType: ModelHasPermissionsInterface::KEY_TYPE)]
+#[Table(name: ModelHasPermissionsInterface::TABLE, key: ModelHasPermissionsInterface::PRIMARY_KEY, keyType: ModelHasPermissionsInterface::KEY_TYPE)]
 #[Fillable([
     ModelHasPermissionsInterface::ATTR_PERMISSION_ID,
         ModelHasPermissionsInterface::ATTR_MODEL_TYPE,
@@ -32,15 +33,8 @@ use Academorix\Rbac\Database\Factories\ModelHasPermissionsFactory;
         ModelHasPermissionsInterface::ATTR_TENANT_ID,
 ])]
 #[UseFactory(ModelHasPermissionsFactory::class)]
+#[WithoutIncrementing]
 final class ModelHasPermissions extends Model implements ModelHasPermissionsInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

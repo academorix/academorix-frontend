@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Performance\Actions\Tenant;
 
+use Academorix\Performance\Contracts\Repositories\TestBatteryRepositoryInterface;
+use Academorix\Performance\Data\TestBatteryData;
+use Academorix\Performance\Data\Requests\CreateTestBatteryRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/test-batteries` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Performance
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/test-batteries')]
 final class CreateTestBatterieAction
 {
+    public function __construct(
+        private readonly TestBatteryRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `test-batterie` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateTestBatteryRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateTestBatteryRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(TestBatteryData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

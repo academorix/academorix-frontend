@@ -8,14 +8,15 @@ namespace Academorix\Attendance\Services;
 
 use Academorix\Attendance\Contracts\Services\GeofenceValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Attendance\Contracts\Repositories\AbsenceRecordRepositoryInterface;
 
 /**
  * Concrete service — GeofenceValidator.
  *
  * Implements {@see GeofenceValidatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Attendance
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class GeofenceValidator implements GeofenceValidatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AbsenceRecordRepositoryInterface  $absenceRecordRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AbsenceRecordRepositoryInterface $absenceRecordRepository,
+    ) {
+    }
 }

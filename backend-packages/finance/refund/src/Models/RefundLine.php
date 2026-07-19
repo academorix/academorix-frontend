@@ -9,16 +9,20 @@ namespace Academorix\Refund\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Refund\Contracts\Data\RefundLineInterface;
 use Academorix\Refund\Database\Factories\RefundLineFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Refund\Policies\RefundLinePolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a RefundLine.
@@ -29,7 +33,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: RefundLineInterface::TABLE, keyType: RefundLineInterface::KEY_TYPE)]
+#[Table(name: RefundLineInterface::TABLE, key: RefundLineInterface::PRIMARY_KEY, keyType: RefundLineInterface::KEY_TYPE)]
 #[Fillable([
     RefundLineInterface::ATTR_TENANT_ID,
         RefundLineInterface::ATTR_REFUND_ID,
@@ -41,26 +45,21 @@ use OwenIt\Auditing\Auditable;
         RefundLineInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RefundLineFactory::class)]
-final class RefundLine extends Model implements RefundLineInterface
+#[WithoutIncrementing]
+#[UsePolicy(RefundLinePolicy::class)]
+final class RefundLine extends Model implements RefundLineInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToRefund` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToRefund` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

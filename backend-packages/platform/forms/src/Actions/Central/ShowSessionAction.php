@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\Forms\Actions\Central;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /forms/{signature}/session/{sessionSignature}` — show action (central audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Forms
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/forms/{signature}/session/{sessionSignature}')]
 final class ShowSessionAction
 {
     /**

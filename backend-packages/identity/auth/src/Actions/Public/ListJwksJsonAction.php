@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\Auth\Actions\Public;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /.well-known/jwks.json` — list action (public audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Auth
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/.well-known/jwks.json')]
 final class ListJwksJsonAction
 {
     /**

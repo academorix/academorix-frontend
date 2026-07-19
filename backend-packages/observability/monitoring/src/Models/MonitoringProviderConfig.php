@@ -9,17 +9,21 @@ namespace Academorix\Monitoring\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Monitoring\Contracts\Data\MonitoringProviderConfigInterface;
 use Academorix\Monitoring\Database\Factories\MonitoringProviderConfigFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Monitoring\Policies\MonitoringProviderConfigPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +35,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: MonitoringProviderConfigInterface::TABLE, keyType: MonitoringProviderConfigInterface::KEY_TYPE)]
+#[Table(name: MonitoringProviderConfigInterface::TABLE, key: MonitoringProviderConfigInterface::PRIMARY_KEY, keyType: MonitoringProviderConfigInterface::KEY_TYPE)]
 #[Fillable([
     MonitoringProviderConfigInterface::ATTR_TENANT_ID,
         MonitoringProviderConfigInterface::ATTR_PROVIDER,
@@ -50,32 +54,27 @@ use Spatie\Activitylog\Traits\LogsActivity;
         MonitoringProviderConfigInterface::ATTR_METADATA,
 ])]
 #[UseFactory(MonitoringProviderConfigFactory::class)]
-final class MonitoringProviderConfig extends Model implements MonitoringProviderConfigInterface
+#[WithoutIncrementing]
+#[UsePolicy(MonitoringProviderConfigPolicy::class)]
+final class MonitoringProviderConfig extends Model implements MonitoringProviderConfigInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        MonitoringProviderConfigInterface::ATTR_PROVIDER => 'MonitoringProvider',
+        MonitoringProviderConfigInterface::ATTR_PROVIDER => MonitoringProvider::class,
         MonitoringProviderConfigInterface::ATTR_IS_ACTIVE => 'boolean',
         MonitoringProviderConfigInterface::ATTR_CONFIG => 'encrypted:array',
         MonitoringProviderConfigInterface::ATTR_ENABLED_SEVERITIES => 'array',

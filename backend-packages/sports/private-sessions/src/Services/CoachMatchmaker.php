@@ -8,14 +8,15 @@ namespace Academorix\PrivateSessions\Services;
 
 use Academorix\PrivateSessions\Contracts\Services\CoachMatchmakerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\PrivateSessions\Contracts\Repositories\PrivateSessionRequestRepositoryInterface;
 
 /**
  * Concrete service — CoachMatchmaker.
  *
  * Implements {@see CoachMatchmakerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category PrivateSessions
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class CoachMatchmaker implements CoachMatchmakerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  PrivateSessionRequestRepositoryInterface  $privateSessionRequestRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly PrivateSessionRequestRepositoryInterface $privateSessionRequestRepository,
+    ) {
+    }
 }

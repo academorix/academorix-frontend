@@ -9,16 +9,23 @@ namespace Academorix\ServiceAccounts\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\ServiceAccounts\Contracts\Data\ServiceAccountInterface;
 use Academorix\ServiceAccounts\Database\Factories\ServiceAccountFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\ServiceAccounts\Enums\ServiceAccountStatus;
+use Academorix\ServiceAccounts\Policies\ServiceAccountPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -30,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ServiceAccountInterface::TABLE, keyType: ServiceAccountInterface::KEY_TYPE)]
+#[Table(name: ServiceAccountInterface::TABLE, key: ServiceAccountInterface::PRIMARY_KEY, keyType: ServiceAccountInterface::KEY_TYPE)]
 #[Fillable([
     ServiceAccountInterface::ATTR_APPLICATION_ID,
         ServiceAccountInterface::ATTR_TENANT_ID,
@@ -47,29 +54,24 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ServiceAccountInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ServiceAccountFactory::class)]
-final class ServiceAccount extends Model implements ServiceAccountInterface
+#[WithoutIncrementing]
+#[UsePolicy(ServiceAccountPolicy::class)]
+final class ServiceAccount extends Model implements ServiceAccountInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
-    // TODO(gen): resolve unknown trait `Notifiable` — add its import + use line.
-    // TODO(gen): resolve unknown trait `IsServiceAccount` — add its import + use line.
+    use Notifiable;
+    // TODO(gen): resolve unknown trait `IsServiceAccount` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `HasAudit` — add its import + use line.
+    use Userstamps;
+    use LogsActivity;
+    use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -78,7 +80,7 @@ final class ServiceAccount extends Model implements ServiceAccountInterface
         ServiceAccountInterface::ATTR_EXPIRES_AT => 'immutable_datetime',
         ServiceAccountInterface::ATTR_SECRET_ROTATED_AT => 'immutable_datetime',
         ServiceAccountInterface::ATTR_LAST_USED_AT => 'datetime',
-        ServiceAccountInterface::ATTR_STATUS => 'ServiceAccountStatus',
+        ServiceAccountInterface::ATTR_STATUS => ServiceAccountStatus::class,
         ServiceAccountInterface::ATTR_METADATA => 'array',
     ];
 }

@@ -9,18 +9,22 @@ namespace Academorix\PrivateSessions\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\PrivateSessions\Contracts\Data\PrivateSessionRequestInterface;
 use Academorix\PrivateSessions\Database\Factories\PrivateSessionRequestFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Sports\Athlete\Concerns\BelongsToAthlete;
+use Academorix\PrivateSessions\Policies\PrivateSessionRequestPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PrivateSessionRequestInterface::TABLE, keyType: PrivateSessionRequestInterface::KEY_TYPE)]
+#[Table(name: PrivateSessionRequestInterface::TABLE, key: PrivateSessionRequestInterface::PRIMARY_KEY, keyType: PrivateSessionRequestInterface::KEY_TYPE)]
 #[Fillable([
     PrivateSessionRequestInterface::ATTR_TENANT_ID,
         PrivateSessionRequestInterface::ATTR_ATHLETE_ID,
@@ -51,24 +55,18 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PrivateSessionRequestInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PrivateSessionRequestFactory::class)]
-final class PrivateSessionRequest extends Model implements PrivateSessionRequestInterface
+#[WithoutIncrementing]
+#[UsePolicy(PrivateSessionRequestPolicy::class)]
+final class PrivateSessionRequest extends Model implements PrivateSessionRequestInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToAthlete;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

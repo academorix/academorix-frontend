@@ -9,17 +9,21 @@ namespace Academorix\Competition\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Competition\Contracts\Data\CompetitionTeamInterface;
 use Academorix\Competition\Database\Factories\CompetitionTeamFactory;
+use Academorix\Competition\Policies\CompetitionTeamPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a CompetitionTeam.
@@ -30,7 +34,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: CompetitionTeamInterface::TABLE, keyType: CompetitionTeamInterface::KEY_TYPE)]
+#[Table(name: CompetitionTeamInterface::TABLE, key: CompetitionTeamInterface::PRIMARY_KEY, keyType: CompetitionTeamInterface::KEY_TYPE)]
 #[Fillable([
     CompetitionTeamInterface::ATTR_TENANT_ID,
         CompetitionTeamInterface::ATTR_COMPETITION_ID,
@@ -42,22 +46,16 @@ use OwenIt\Auditing\Auditable;
         CompetitionTeamInterface::ATTR_METADATA,
 ])]
 #[UseFactory(CompetitionTeamFactory::class)]
-final class CompetitionTeam extends Model implements CompetitionTeamInterface
+#[WithoutIncrementing]
+#[UsePolicy(CompetitionTeamPolicy::class)]
+final class CompetitionTeam extends Model implements CompetitionTeamInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

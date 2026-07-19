@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Formations\Actions\Tenant;
 
+use Academorix\Formations\Contracts\Repositories\FormationRepositoryInterface;
+use Academorix\Formations\Data\FormationData;
+use Academorix\Formations\Data\Requests\UpdateFormationRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/v1/formations/{formation}` — update action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Formations
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/v1/formations/{formation}')]
 final class UpdateFormationAction
 {
+    public function __construct(
+        private readonly FormationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `formation` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateFormationRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateFormationRequestData $data): FormationData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return FormationData::from($model);
     }
 }

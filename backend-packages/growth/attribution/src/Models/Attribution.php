@@ -9,18 +9,23 @@ namespace Academorix\Attribution\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Attribution\Contracts\Data\AttributionInterface;
 use Academorix\Attribution\Database\Factories\AttributionFactory;
+use Academorix\Attribution\Enums\AttributionLifecycleState;
+use Academorix\Attribution\Policies\AttributionPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AttributionInterface::TABLE, keyType: AttributionInterface::KEY_TYPE)]
+#[Table(name: AttributionInterface::TABLE, key: AttributionInterface::PRIMARY_KEY, keyType: AttributionInterface::KEY_TYPE)]
 #[Fillable([
     AttributionInterface::ATTR_TENANT_ID,
         AttributionInterface::ATTR_SUBJECT_TYPE,
@@ -66,33 +71,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AttributionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AttributionFactory::class)]
-final class Attribution extends Model implements AttributionInterface
+#[WithoutIncrementing]
+#[UsePolicy(AttributionPolicy::class)]
+final class Attribution extends Model implements AttributionInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AttributionInterface::ATTR_LIFECYCLE_STATE => 'AttributionLifecycleState',
+        AttributionInterface::ATTR_LIFECYCLE_STATE => AttributionLifecycleState::class,
         AttributionInterface::ATTR_FIRST_TOUCH_AT => 'datetime',
         AttributionInterface::ATTR_LAST_TOUCH_AT => 'datetime',
         AttributionInterface::ATTR_LIFECYCLE_CONVERTED_AT => 'datetime',

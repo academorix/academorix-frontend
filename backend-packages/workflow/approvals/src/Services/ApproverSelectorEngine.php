@@ -8,14 +8,15 @@ namespace Academorix\Approvals\Services;
 
 use Academorix\Approvals\Contracts\Services\ApproverSelectorEngineInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Approvals\Contracts\Repositories\ApprovableActionRepositoryInterface;
 
 /**
  * Concrete service — ApproverSelectorEngine.
  *
  * Implements {@see ApproverSelectorEngineInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Approvals
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ApproverSelectorEngine implements ApproverSelectorEngineInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ApprovableActionRepositoryInterface  $approvableActionRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ApprovableActionRepositoryInterface $approvableActionRepository,
+    ) {
+    }
 }

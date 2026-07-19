@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\Entitlements\Actions\CentralAdmin;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+
 /**
  * `POST /api/v1/platform/entitlements/{tenant}/reset/{key}` — custom action (central_admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Entitlements
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/platform/entitlements/{tenant}/reset/{key}')]
 final class ResetResetAction
 {
     /**

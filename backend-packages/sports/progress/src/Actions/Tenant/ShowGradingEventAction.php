@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Progress\Actions\Tenant;
 
+use Academorix\Progress\Contracts\Repositories\GradingEventRepositoryInterface;
+use Academorix\Progress\Data\GradingEventData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/grading-events/{event}` — show action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Progress
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/grading-events/{event}')]
 final class ShowGradingEventAction
 {
+    public function __construct(
+        private readonly GradingEventRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `grading-event` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): GradingEventData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return GradingEventData::from($this->repository->findOrFail($id));
     }
 }

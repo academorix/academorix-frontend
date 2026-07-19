@@ -9,6 +9,7 @@ namespace Academorix\Geofencing\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Geofencing\Contracts\Data\FenceableGeometryInterface;
 use Academorix\Geofencing\Database\Factories\FenceableGeometryFactory;
@@ -23,7 +24,7 @@ use Academorix\Geofencing\Database\Factories\FenceableGeometryFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: FenceableGeometryInterface::TABLE, keyType: FenceableGeometryInterface::KEY_TYPE)]
+#[Table(name: FenceableGeometryInterface::TABLE, key: FenceableGeometryInterface::PRIMARY_KEY, keyType: FenceableGeometryInterface::KEY_TYPE)]
 #[Fillable([
     FenceableGeometryInterface::ATTR_FENCEABLETYPE,
         FenceableGeometryInterface::ATTR_FENCEABLEID,
@@ -36,15 +37,8 @@ use Academorix\Geofencing\Database\Factories\FenceableGeometryFactory;
         FenceableGeometryInterface::ATTR_GEOFENCEUPDATEDAT,
 ])]
 #[UseFactory(FenceableGeometryFactory::class)]
+#[WithoutIncrementing]
 final class FenceableGeometry extends Model implements FenceableGeometryInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

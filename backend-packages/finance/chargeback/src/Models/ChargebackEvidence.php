@@ -9,16 +9,21 @@ namespace Academorix\Chargeback\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Chargeback\Contracts\Data\ChargebackEvidenceInterface;
 use Academorix\Chargeback\Database\Factories\ChargebackEvidenceFactory;
+use Academorix\Chargeback\Policies\ChargebackEvidencePolicy;
+use Academorix\Foundation\Concerns\EncryptsSensitiveFields;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ChargebackEvidence.
@@ -29,7 +34,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: ChargebackEvidenceInterface::TABLE, keyType: ChargebackEvidenceInterface::KEY_TYPE)]
+#[Table(name: ChargebackEvidenceInterface::TABLE, key: ChargebackEvidenceInterface::PRIMARY_KEY, keyType: ChargebackEvidenceInterface::KEY_TYPE)]
 #[Fillable([
     ChargebackEvidenceInterface::ATTR_TENANT_ID,
         ChargebackEvidenceInterface::ATTR_CHARGEBACK_ID,
@@ -48,27 +53,22 @@ use OwenIt\Auditing\Auditable;
         ChargebackEvidenceInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ChargebackEvidenceFactory::class)]
-final class ChargebackEvidence extends Model implements ChargebackEvidenceInterface
+#[WithoutIncrementing]
+#[UsePolicy(ChargebackEvidencePolicy::class)]
+final class ChargebackEvidence extends Model implements ChargebackEvidenceInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToChargeback` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToChargeback` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    // TODO(gen): resolve unknown trait `EncryptsSensitiveFields` — add its import + use line.
+    use EncryptsSensitiveFields;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

@@ -8,14 +8,15 @@ namespace Academorix\Compliance\Services;
 
 use Academorix\Compliance\Contracts\Services\RetentionRunnerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Compliance\Contracts\Repositories\ConsentCategoryRepositoryInterface;
 
 /**
  * Concrete service — RetentionRunner.
  *
  * Implements {@see RetentionRunnerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Compliance
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class RetentionRunner implements RetentionRunnerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ConsentCategoryRepositoryInterface  $consentCategoryRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ConsentCategoryRepositoryInterface $consentCategoryRepository,
+    ) {
+    }
 }

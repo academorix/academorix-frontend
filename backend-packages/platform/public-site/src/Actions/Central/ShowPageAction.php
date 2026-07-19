@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\PublicSite\Actions\Central;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /pages/{slug}` — show action (central audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category PublicSite
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/pages/{slug}')]
 final class ShowPageAction
 {
     /**

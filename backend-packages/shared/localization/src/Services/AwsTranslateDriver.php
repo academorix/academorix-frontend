@@ -8,14 +8,15 @@ namespace Academorix\Localization\Services;
 
 use Academorix\Localization\Contracts\Services\AwsTranslateDriverInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Localization\Contracts\Repositories\PlatformLanguageRepositoryInterface;
 
 /**
  * Concrete service — AwsTranslateDriver.
  *
  * Implements {@see AwsTranslateDriverInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Localization
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AwsTranslateDriver implements AwsTranslateDriverInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  PlatformLanguageRepositoryInterface  $platformLanguageRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly PlatformLanguageRepositoryInterface $platformLanguageRepository,
+    ) {
+    }
 }

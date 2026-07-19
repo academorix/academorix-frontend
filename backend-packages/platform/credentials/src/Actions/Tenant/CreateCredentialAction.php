@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Credentials\Actions\Tenant;
 
+use Academorix\Credentials\Contracts\Repositories\CredentialRepositoryInterface;
+use Academorix\Credentials\Data\CredentialData;
+use Academorix\Credentials\Data\Requests\CreateCredentialRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/credentials` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Credentials
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/credentials')]
 final class CreateCredentialAction
 {
+    public function __construct(
+        private readonly CredentialRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `credential` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateCredentialRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateCredentialRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(CredentialData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

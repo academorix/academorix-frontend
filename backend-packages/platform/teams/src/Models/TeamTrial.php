@@ -9,17 +9,22 @@ namespace Academorix\Teams\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Teams\Contracts\Data\TeamTrialInterface;
 use Academorix\Teams\Database\Factories\TeamTrialFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Teams\Concerns\BelongsToTeam;
+use Academorix\Teams\Policies\TeamTrialPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: TeamTrialInterface::TABLE, keyType: TeamTrialInterface::KEY_TYPE)]
+#[Table(name: TeamTrialInterface::TABLE, key: TeamTrialInterface::PRIMARY_KEY, keyType: TeamTrialInterface::KEY_TYPE)]
 #[Fillable([
     TeamTrialInterface::ATTR_TENANT_ID,
         TeamTrialInterface::ATTR_TEAM_ID,
@@ -59,37 +64,32 @@ use Spatie\Activitylog\Traits\LogsActivity;
         TeamTrialInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TeamTrialFactory::class)]
-final class TeamTrial extends Model implements TeamTrialInterface
+#[WithoutIncrementing]
+#[UsePolicy(TeamTrialPolicy::class)]
+final class TeamTrial extends Model implements TeamTrialInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToTeam` — add its import + use line.
+    use BelongsToTeam;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        TeamTrialInterface::ATTR_TRIALIST_TYPE => 'TrialistType',
-        TeamTrialInterface::ATTR_TRIAL_TYPE => 'TrialType',
+        TeamTrialInterface::ATTR_TRIALIST_TYPE => TrialistType::class,
+        TeamTrialInterface::ATTR_TRIAL_TYPE => TrialType::class,
         TeamTrialInterface::ATTR_SESSION_COUNT => 'integer',
-        TeamTrialInterface::ATTR_STATUS => 'TrialStatus',
-        TeamTrialInterface::ATTR_PAYMENT_STATUS => 'TrialPaymentStatus',
+        TeamTrialInterface::ATTR_STATUS => TrialStatus::class,
+        TeamTrialInterface::ATTR_PAYMENT_STATUS => TrialPaymentStatus::class,
         TeamTrialInterface::ATTR_PRICE_AMOUNT_CENTS => 'integer',
         TeamTrialInterface::ATTR_STARTS_AT => 'datetime',
         TeamTrialInterface::ATTR_ENDS_AT => 'datetime',

@@ -9,6 +9,7 @@ namespace Academorix\Auth\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Auth\Contracts\Data\AuthEmailVerificationInterface;
 use Academorix\Auth\Database\Factories\AuthEmailVerificationFactory;
@@ -27,7 +28,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AuthEmailVerificationInterface::TABLE, keyType: AuthEmailVerificationInterface::KEY_TYPE)]
+#[Table(name: AuthEmailVerificationInterface::TABLE, key: AuthEmailVerificationInterface::PRIMARY_KEY, keyType: AuthEmailVerificationInterface::KEY_TYPE)]
 #[Fillable([
     AuthEmailVerificationInterface::ATTR_IDENTITY_ID,
         AuthEmailVerificationInterface::ATTR_TOKEN_HASH,
@@ -36,23 +37,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AuthEmailVerificationInterface::ATTR_CONSUMED_AT,
 ])]
 #[UseFactory(AuthEmailVerificationFactory::class)]
+#[WithoutIncrementing]
 final class AuthEmailVerification extends Model implements AuthEmailVerificationInterface
 {
     use HasFactory;
     use HasUlids;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

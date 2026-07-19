@@ -9,16 +9,20 @@ namespace Academorix\Tax\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Tax\Contracts\Data\TaxCalculationInterface;
 use Academorix\Tax\Database\Factories\TaxCalculationFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Tax\Policies\TaxCalculationPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a TaxCalculation.
@@ -29,7 +33,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: TaxCalculationInterface::TABLE, keyType: TaxCalculationInterface::KEY_TYPE)]
+#[Table(name: TaxCalculationInterface::TABLE, key: TaxCalculationInterface::PRIMARY_KEY, keyType: TaxCalculationInterface::KEY_TYPE)]
 #[Fillable([
     TaxCalculationInterface::ATTR_TENANT_ID,
         TaxCalculationInterface::ATTR_INVOICE_LINE_ID,
@@ -45,25 +49,20 @@ use OwenIt\Auditing\Auditable;
         TaxCalculationInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TaxCalculationFactory::class)]
-final class TaxCalculation extends Model implements TaxCalculationInterface
+#[WithoutIncrementing]
+#[UsePolicy(TaxCalculationPolicy::class)]
+final class TaxCalculation extends Model implements TaxCalculationInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -72,7 +71,7 @@ final class TaxCalculation extends Model implements TaxCalculationInterface
         TaxCalculationInterface::ATTR_TAX_AMOUNT_CENTS => 'integer',
         TaxCalculationInterface::ATTR_TAX_RATE_SNAPSHOT => 'array',
         TaxCalculationInterface::ATTR_EXEMPTION_APPLIED => 'array',
-        TaxCalculationInterface::ATTR_PROVIDER => 'TaxProvider',
+        TaxCalculationInterface::ATTR_PROVIDER => TaxProvider::class,
         TaxCalculationInterface::ATTR_PROVIDER_METADATA => 'array',
         TaxCalculationInterface::ATTR_CALCULATED_AT => 'datetime',
         TaxCalculationInterface::ATTR_METADATA => 'array',

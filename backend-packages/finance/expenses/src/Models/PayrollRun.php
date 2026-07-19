@@ -9,6 +9,7 @@ namespace Academorix\Expenses\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Expenses\Contracts\Data\PayrollRunInterface;
 use Academorix\Expenses\Database\Factories\PayrollRunFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +33,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PayrollRunInterface::TABLE, keyType: PayrollRunInterface::KEY_TYPE)]
+#[Table(name: PayrollRunInterface::TABLE, key: PayrollRunInterface::PRIMARY_KEY, keyType: PayrollRunInterface::KEY_TYPE)]
 #[Fillable([
     PayrollRunInterface::ATTR_TENANT_ID,
         PayrollRunInterface::ATTR_PERIOD_START,
@@ -48,23 +50,16 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PayrollRunInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PayrollRunFactory::class)]
-final class PayrollRun extends Model implements PayrollRunInterface
+#[WithoutIncrementing]
+final class PayrollRun extends Model implements PayrollRunInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

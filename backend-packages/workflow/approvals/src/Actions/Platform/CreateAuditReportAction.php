@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\Approvals\Actions\Platform;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+
 /**
  * `POST /api/v1/platform/approvals/audit-report` — create action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Approvals
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/platform/approvals/audit-report')]
 final class CreateAuditReportAction
 {
     /**

@@ -9,15 +9,19 @@ namespace Academorix\Transaction\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Transaction\Contracts\Data\TransactionLedgerEntryInterface;
 use Academorix\Transaction\Database\Factories\TransactionLedgerEntryFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Academorix\Transaction\Policies\TransactionLedgerEntryPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a TransactionLedgerEntry.
@@ -28,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: TransactionLedgerEntryInterface::TABLE, keyType: TransactionLedgerEntryInterface::KEY_TYPE)]
+#[Table(name: TransactionLedgerEntryInterface::TABLE, key: TransactionLedgerEntryInterface::PRIMARY_KEY, keyType: TransactionLedgerEntryInterface::KEY_TYPE)]
 #[Fillable([
     TransactionLedgerEntryInterface::ATTR_TENANT_ID,
         TransactionLedgerEntryInterface::ATTR_TRANSACTION_ID,
@@ -40,30 +44,25 @@ use OwenIt\Auditing\Auditable;
         TransactionLedgerEntryInterface::ATTR_CREATED_BY_USER_ID,
 ])]
 #[UseFactory(TransactionLedgerEntryFactory::class)]
-final class TransactionLedgerEntry extends Model implements TransactionLedgerEntryInterface
+#[WithoutIncrementing]
+#[UsePolicy(TransactionLedgerEntryPolicy::class)]
+final class TransactionLedgerEntry extends Model implements TransactionLedgerEntryInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToTransaction` — add its import + use line.
-    use HasUserstamps;
+    // TODO(gen): resolve unknown trait `BelongsToTransaction` — add its import + `use` line.
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        TransactionLedgerEntryInterface::ATTR_ACCOUNT => 'LedgerAccount',
+        TransactionLedgerEntryInterface::ATTR_ACCOUNT => LedgerAccount::class,
         TransactionLedgerEntryInterface::ATTR_DEBIT_CENTS => 'integer',
         TransactionLedgerEntryInterface::ATTR_CREDIT_CENTS => 'integer',
     ];

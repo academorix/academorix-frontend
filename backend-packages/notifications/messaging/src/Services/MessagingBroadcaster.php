@@ -8,14 +8,15 @@ namespace Academorix\Messaging\Services;
 
 use Academorix\Messaging\Contracts\Services\MessagingBroadcasterInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Messaging\Contracts\Repositories\ConversationParticipantRepositoryInterface;
 
 /**
  * Concrete service — MessagingBroadcaster.
  *
  * Implements {@see MessagingBroadcasterInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Messaging
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class MessagingBroadcaster implements MessagingBroadcasterInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ConversationParticipantRepositoryInterface  $conversationParticipantRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ConversationParticipantRepositoryInterface $conversationParticipantRepository,
+    ) {
+    }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Notifications\Services;
 
 use Academorix\Notifications\Contracts\Services\DispatchGatewayInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Notifications\Contracts\Repositories\NotificationCategoryRepositoryInterface;
 
 /**
  * Concrete service — DispatchGateway.
  *
  * Implements {@see DispatchGatewayInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Notifications
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class DispatchGateway implements DispatchGatewayInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  NotificationCategoryRepositoryInterface  $notificationCategoryRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly NotificationCategoryRepositoryInterface $notificationCategoryRepository,
+    ) {
+    }
 }

@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Rbac\Actions\Platform;
 
+use Academorix\Rbac\Contracts\Repositories\RoleDefinitionRepositoryInterface;
+use Academorix\Rbac\Data\RoleDefinitionData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/platform/rbac/role-definitions/{roleDefinition}` — show action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Rbac
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/platform/rbac/role-definitions/{roleDefinition}')]
 final class ShowRoleDefinitionAction
 {
+    public function __construct(
+        private readonly RoleDefinitionRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `role-definition` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): RoleDefinitionData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return RoleDefinitionData::from($this->repository->findOrFail($id));
     }
 }

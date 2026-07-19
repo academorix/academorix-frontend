@@ -9,18 +9,25 @@ namespace Academorix\Progress\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Progress\Contracts\Data\ProgressAssessmentInterface;
 use Academorix\Progress\Database\Factories\ProgressAssessmentFactory;
+use Academorix\AthleteEnrollment\Concerns\BelongsToAthleteEnrollment;
+use Academorix\Attributes\Concerns\HasAttributeSet;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Progress\Policies\ProgressAssessmentPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\SchemalessAttributes\SchemalessAttributesTrait;
 
 /**
  * Eloquent model for a ProgressAssessment.
@@ -31,7 +38,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ProgressAssessmentInterface::TABLE, keyType: ProgressAssessmentInterface::KEY_TYPE)]
+#[Table(name: ProgressAssessmentInterface::TABLE, key: ProgressAssessmentInterface::PRIMARY_KEY, keyType: ProgressAssessmentInterface::KEY_TYPE)]
 #[Fillable([
     ProgressAssessmentInterface::ATTR_TENANT_ID,
         ProgressAssessmentInterface::ATTR_ATHLETE_ENROLLMENT_ID,
@@ -47,36 +54,31 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ProgressAssessmentInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ProgressAssessmentFactory::class)]
-final class ProgressAssessment extends Model implements ProgressAssessmentInterface
+#[WithoutIncrementing]
+#[UsePolicy(ProgressAssessmentPolicy::class)]
+final class ProgressAssessment extends Model implements ProgressAssessmentInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToAthleteEnrollment` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasAttributeSet` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasSchemalessAttributes` — add its import + use line.
+    use BelongsToAthleteEnrollment;
+    use HasAttributeSet;
+    use SchemalessAttributesTrait;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ProgressAssessmentInterface::ATTR_VALUES => 'SchemalessAttributes',
-        ProgressAssessmentInterface::ATTR_OVERALL_TIER => 'OverallTier',
+        ProgressAssessmentInterface::ATTR_VALUES => SchemalessAttributes::class,
+        ProgressAssessmentInterface::ATTR_OVERALL_TIER => OverallTier::class,
         ProgressAssessmentInterface::ATTR_CAPTURE_DATE => 'date',
         ProgressAssessmentInterface::ATTR_ASSESSED_AT => 'datetime',
         ProgressAssessmentInterface::ATTR_SHARED_AT => 'datetime',

@@ -9,6 +9,7 @@ namespace Academorix\Expenses\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Expenses\Contracts\Data\ExpenseCategoryInterface;
 use Academorix\Expenses\Database\Factories\ExpenseCategoryFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ExpenseCategory.
@@ -30,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: ExpenseCategoryInterface::TABLE, keyType: ExpenseCategoryInterface::KEY_TYPE)]
+#[Table(name: ExpenseCategoryInterface::TABLE, key: ExpenseCategoryInterface::PRIMARY_KEY, keyType: ExpenseCategoryInterface::KEY_TYPE)]
 #[Fillable([
     ExpenseCategoryInterface::ATTR_TENANT_ID,
         ExpenseCategoryInterface::ATTR_CODE,
@@ -40,22 +42,15 @@ use OwenIt\Auditing\Auditable;
         ExpenseCategoryInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ExpenseCategoryFactory::class)]
-final class ExpenseCategory extends Model implements ExpenseCategoryInterface
+#[WithoutIncrementing]
+final class ExpenseCategory extends Model implements ExpenseCategoryInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

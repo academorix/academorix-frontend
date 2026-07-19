@@ -6,26 +6,50 @@ declare(strict_types=1);
 
 namespace Academorix\Safeguarding\Actions\Platform;
 
+use Academorix\Safeguarding\Contracts\Repositories\BackgroundCheckRepositoryInterface;
+use Academorix\Safeguarding\Data\BackgroundCheckData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\LaravelData\PaginatedDataCollection;
+
 /**
  * `GET /api/v1/platform/background-checks` — list action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Safeguarding
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/platform/background-checks')]
 final class ListBackgroundCheckAction
 {
+    public function __construct(
+        private readonly BackgroundCheckRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * List `background-checks` for the current caller.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * The `Repository` base picks up `filter[...]` / `sort=...` /
+     * `include=...` query parameters via the `#[Filterable]` attribute
+     * on the concrete repository — no per-Action wiring needed.
+     *
+     * @return PaginatedDataCollection<int, BackgroundCheckData>  Paginated wire-visible DTOs.
      */
-    public function __invoke(): mixed
+    public function __invoke(Request $request): PaginatedDataCollection
     {
-        // Hand-implement the domain logic here.
-        return null;
+        /** @var LengthAwarePaginator<int, \Academorix\Safeguarding\Models\BackgroundCheck> $page */
+        $page = $this->repository->paginate(
+            perPage: (int) $request->integer('per_page', 15),
+        );
+
+        return BackgroundCheckData::collect($page, PaginatedDataCollection::class);
     }
 }

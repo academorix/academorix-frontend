@@ -8,14 +8,15 @@ namespace Academorix\Formations\Services;
 
 use Academorix\Formations\Contracts\Services\SlotValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Formations\Contracts\Repositories\FormationSlotRepositoryInterface;
 
 /**
  * Concrete service — SlotValidator.
  *
  * Implements {@see SlotValidatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Formations
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SlotValidator implements SlotValidatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  FormationSlotRepositoryInterface  $formationSlotRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly FormationSlotRepositoryInterface $formationSlotRepository,
+    ) {
+    }
 }

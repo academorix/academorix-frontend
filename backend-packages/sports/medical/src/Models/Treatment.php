@@ -9,17 +9,22 @@ namespace Academorix\Medical\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Medical\Contracts\Data\TreatmentInterface;
 use Academorix\Medical\Database\Factories\TreatmentFactory;
+use Academorix\Foundation\Concerns\EncryptsSensitiveFields;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Medical\Policies\TreatmentPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a Treatment.
@@ -30,7 +35,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: TreatmentInterface::TABLE, keyType: TreatmentInterface::KEY_TYPE)]
+#[Table(name: TreatmentInterface::TABLE, key: TreatmentInterface::PRIMARY_KEY, keyType: TreatmentInterface::KEY_TYPE)]
 #[Fillable([
     TreatmentInterface::ATTR_TENANT_ID,
         TreatmentInterface::ATTR_INJURY_ID,
@@ -42,23 +47,17 @@ use OwenIt\Auditing\Auditable;
         TreatmentInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TreatmentFactory::class)]
-final class Treatment extends Model implements TreatmentInterface
+#[WithoutIncrementing]
+#[UsePolicy(TreatmentPolicy::class)]
+final class Treatment extends Model implements TreatmentInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    // TODO(gen): resolve unknown trait `EncryptsSensitiveFields` — add its import + use line.
+    use EncryptsSensitiveFields;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

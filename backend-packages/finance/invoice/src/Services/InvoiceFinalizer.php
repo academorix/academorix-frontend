@@ -8,14 +8,15 @@ namespace Academorix\Invoice\Services;
 
 use Academorix\Invoice\Contracts\Services\InvoiceFinalizerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Invoice\Contracts\Repositories\CreditNoteRepositoryInterface;
 
 /**
  * Concrete service — InvoiceFinalizer.
  *
  * Implements {@see InvoiceFinalizerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Invoice
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class InvoiceFinalizer implements InvoiceFinalizerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  CreditNoteRepositoryInterface  $creditNoteRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly CreditNoteRepositoryInterface $creditNoteRepository,
+    ) {
+    }
 }

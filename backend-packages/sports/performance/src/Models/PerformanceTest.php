@@ -9,6 +9,7 @@ namespace Academorix\Performance\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Performance\Contracts\Data\PerformanceTestInterface;
 use Academorix\Performance\Database\Factories\PerformanceTestFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a PerformanceTest.
@@ -30,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: PerformanceTestInterface::TABLE, keyType: PerformanceTestInterface::KEY_TYPE)]
+#[Table(name: PerformanceTestInterface::TABLE, key: PerformanceTestInterface::PRIMARY_KEY, keyType: PerformanceTestInterface::KEY_TYPE)]
 #[Fillable([
     PerformanceTestInterface::ATTR_TENANT_ID,
         PerformanceTestInterface::ATTR_SPORT_KEY,
@@ -43,22 +45,15 @@ use OwenIt\Auditing\Auditable;
         PerformanceTestInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PerformanceTestFactory::class)]
-final class PerformanceTest extends Model implements PerformanceTestInterface
+#[WithoutIncrementing]
+final class PerformanceTest extends Model implements PerformanceTestInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

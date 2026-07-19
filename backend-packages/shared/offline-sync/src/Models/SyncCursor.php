@@ -9,6 +9,7 @@ namespace Academorix\OfflineSync\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\OfflineSync\Contracts\Data\SyncCursorInterface;
 use Academorix\OfflineSync\Database\Factories\SyncCursorFactory;
@@ -27,7 +28,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: SyncCursorInterface::TABLE, keyType: SyncCursorInterface::KEY_TYPE)]
+#[Table(name: SyncCursorInterface::TABLE, key: SyncCursorInterface::PRIMARY_KEY, keyType: SyncCursorInterface::KEY_TYPE)]
 #[Fillable([
     SyncCursorInterface::ATTR_TENANT_ID,
         SyncCursorInterface::ATTR_USER_ID,
@@ -40,6 +41,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         SyncCursorInterface::ATTR_METADATA,
 ])]
 #[UseFactory(SyncCursorFactory::class)]
+#[WithoutIncrementing]
 final class SyncCursor extends Model implements SyncCursorInterface
 {
     use HasFactory;
@@ -47,12 +49,4 @@ final class SyncCursor extends Model implements SyncCursorInterface
     use BelongsToTenant;
     use HasMetadata;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

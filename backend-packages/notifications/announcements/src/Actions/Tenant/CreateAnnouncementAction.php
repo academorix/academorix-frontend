@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Announcements\Actions\Tenant;
 
+use Academorix\Announcements\Contracts\Repositories\AnnouncementRepositoryInterface;
+use Academorix\Announcements\Data\AnnouncementData;
+use Academorix\Announcements\Data\Requests\CreateAnnouncementRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/announcements` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Announcements
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/announcements')]
 final class CreateAnnouncementAction
 {
+    public function __construct(
+        private readonly AnnouncementRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `announcement` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateAnnouncementRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateAnnouncementRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(AnnouncementData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

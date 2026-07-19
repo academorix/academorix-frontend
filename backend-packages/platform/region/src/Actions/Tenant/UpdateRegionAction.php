@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Region\Actions\Tenant;
 
+use Academorix\Region\Contracts\Repositories\RegionRepositoryInterface;
+use Academorix\Region\Data\RegionData;
+use Academorix\Region\Data\Requests\UpdateRegionRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/v1/regions/{region}` — update action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Region
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/v1/regions/{region}')]
 final class UpdateRegionAction
 {
+    public function __construct(
+        private readonly RegionRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `region` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateRegionRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateRegionRequestData $data): RegionData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return RegionData::from($model);
     }
 }

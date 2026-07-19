@@ -9,18 +9,23 @@ namespace Academorix\Tax\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Tax\Contracts\Data\TaxExemptionInterface;
 use Academorix\Tax\Database\Factories\TaxExemptionFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Tax\Enums\TaxExemptionVerificationStatus;
+use Academorix\Tax\Policies\TaxExemptionPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: TaxExemptionInterface::TABLE, keyType: TaxExemptionInterface::KEY_TYPE)]
+#[Table(name: TaxExemptionInterface::TABLE, key: TaxExemptionInterface::PRIMARY_KEY, keyType: TaxExemptionInterface::KEY_TYPE)]
 #[Fillable([
     TaxExemptionInterface::ATTR_TENANT_ID,
         TaxExemptionInterface::ATTR_CUSTOMER_TYPE,
@@ -49,38 +54,33 @@ use Spatie\Activitylog\Traits\LogsActivity;
         TaxExemptionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TaxExemptionFactory::class)]
-final class TaxExemption extends Model implements TaxExemptionInterface
+#[WithoutIncrementing]
+#[UsePolicy(TaxExemptionPolicy::class)]
+final class TaxExemption extends Model implements TaxExemptionInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToTaxJurisdiction` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToTaxJurisdiction` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        TaxExemptionInterface::ATTR_EXEMPTION_TYPE => 'TaxExemptionType',
+        TaxExemptionInterface::ATTR_EXEMPTION_TYPE => TaxExemptionType::class,
         TaxExemptionInterface::ATTR_CERTIFICATE_DOCUMENT_URL => 'encrypted:string',
         TaxExemptionInterface::ATTR_VALID_FROM => 'date',
         TaxExemptionInterface::ATTR_VALID_UNTIL => 'date',
-        TaxExemptionInterface::ATTR_VERIFICATION_STATUS => 'TaxExemptionVerificationStatus',
+        TaxExemptionInterface::ATTR_VERIFICATION_STATUS => TaxExemptionVerificationStatus::class,
         TaxExemptionInterface::ATTR_VERIFIED_AT => 'datetime',
         TaxExemptionInterface::ATTR_METADATA => 'array',
     ];

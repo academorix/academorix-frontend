@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Referrals\Actions\Platform;
 
+use Academorix\Referrals\Contracts\Repositories\ReferralRepositoryInterface;
+use Academorix\Referrals\Data\ReferralData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/platform/referrals/{referral}` — show action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Referrals
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/platform/referrals/{referral}')]
 final class ShowReferralAction
 {
+    public function __construct(
+        private readonly ReferralRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `referral` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): ReferralData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return ReferralData::from($this->repository->findOrFail($id));
     }
 }

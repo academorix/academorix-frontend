@@ -9,6 +9,7 @@ namespace Academorix\Auth\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Auth\Contracts\Data\JwtPayloadInterface;
 use Academorix\Auth\Database\Factories\JwtPayloadFactory;
@@ -23,7 +24,7 @@ use Academorix\Auth\Database\Factories\JwtPayloadFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: JwtPayloadInterface::TABLE, keyType: JwtPayloadInterface::KEY_TYPE)]
+#[Table(name: JwtPayloadInterface::TABLE, key: JwtPayloadInterface::PRIMARY_KEY, keyType: JwtPayloadInterface::KEY_TYPE)]
 #[Fillable([
     JwtPayloadInterface::ATTR_ISS,
         JwtPayloadInterface::ATTR_AUD,
@@ -40,15 +41,8 @@ use Academorix\Auth\Database\Factories\JwtPayloadFactory;
         JwtPayloadInterface::ATTR_PURPOSE,
 ])]
 #[UseFactory(JwtPayloadFactory::class)]
+#[WithoutIncrementing]
 final class JwtPayload extends Model implements JwtPayloadInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

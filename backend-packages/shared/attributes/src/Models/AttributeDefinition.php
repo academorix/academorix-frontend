@@ -9,17 +9,21 @@ namespace Academorix\Attributes\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Attributes\Contracts\Data\AttributeDefinitionInterface;
 use Academorix\Attributes\Database\Factories\AttributeDefinitionFactory;
+use Academorix\Attributes\Policies\AttributeDefinitionPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AttributeDefinition.
@@ -30,7 +34,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: AttributeDefinitionInterface::TABLE, keyType: AttributeDefinitionInterface::KEY_TYPE)]
+#[Table(name: AttributeDefinitionInterface::TABLE, key: AttributeDefinitionInterface::PRIMARY_KEY, keyType: AttributeDefinitionInterface::KEY_TYPE)]
 #[Fillable([
     AttributeDefinitionInterface::ATTR_TENANT_ID,
         AttributeDefinitionInterface::ATTR_CODE,
@@ -45,32 +49,27 @@ use OwenIt\Auditing\Auditable;
         AttributeDefinitionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AttributeDefinitionFactory::class)]
-final class AttributeDefinition extends Model implements AttributeDefinitionInterface
+#[WithoutIncrementing]
+#[UsePolicy(AttributeDefinitionPolicy::class)]
+final class AttributeDefinition extends Model implements AttributeDefinitionInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AttributeDefinitionInterface::ATTR_TYPE => 'AttributeType',
-        AttributeDefinitionInterface::ATTR_WIDGET => 'AttributeWidget',
+        AttributeDefinitionInterface::ATTR_TYPE => AttributeType::class,
+        AttributeDefinitionInterface::ATTR_WIDGET => AttributeWidget::class,
         AttributeDefinitionInterface::ATTR_VALIDATION => 'array',
         AttributeDefinitionInterface::ATTR_WIDGET_CONFIG => 'array',
         AttributeDefinitionInterface::ATTR_LABELS => 'array',

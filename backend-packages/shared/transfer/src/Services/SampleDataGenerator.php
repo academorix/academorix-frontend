@@ -8,14 +8,15 @@ namespace Academorix\Transfer\Services;
 
 use Academorix\Transfer\Contracts\Services\SampleDataGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Transfer\Contracts\Repositories\XferArtifactRepositoryInterface;
 
 /**
  * Concrete service — SampleDataGenerator.
  *
  * Implements {@see SampleDataGeneratorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Transfer
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SampleDataGenerator implements SampleDataGeneratorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  XferArtifactRepositoryInterface  $xferArtifactRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly XferArtifactRepositoryInterface $xferArtifactRepository,
+    ) {
+    }
 }

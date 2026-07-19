@@ -8,14 +8,15 @@ namespace Academorix\Chargeback\Services;
 
 use Academorix\Chargeback\Contracts\Services\ChargebackNumberGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Chargeback\Contracts\Repositories\ChargebackEvidenceRepositoryInterface;
 
 /**
  * Concrete service — ChargebackNumberGenerator.
  *
  * Implements {@see ChargebackNumberGeneratorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Chargeback
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ChargebackNumberGenerator implements ChargebackNumberGeneratorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ChargebackEvidenceRepositoryInterface  $chargebackEvidenceRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ChargebackEvidenceRepositoryInterface $chargebackEvidenceRepository,
+    ) {
+    }
 }

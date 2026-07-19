@@ -9,6 +9,7 @@ namespace Academorix\Drills\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Drills\Contracts\Data\SessionPlanItemInterface;
 use Academorix\Drills\Database\Factories\SessionPlanItemFactory;
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: SessionPlanItemInterface::TABLE, keyType: SessionPlanItemInterface::KEY_TYPE)]
+#[Table(name: SessionPlanItemInterface::TABLE, key: SessionPlanItemInterface::PRIMARY_KEY, keyType: SessionPlanItemInterface::KEY_TYPE)]
 #[Fillable([
     SessionPlanItemInterface::ATTR_TENANT_ID,
         SessionPlanItemInterface::ATTR_SESSION_PLAN_ID,
@@ -37,18 +38,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         SessionPlanItemInterface::ATTR_METADATA,
 ])]
 #[UseFactory(SessionPlanItemFactory::class)]
+#[WithoutIncrementing]
 final class SessionPlanItem extends Model implements SessionPlanItemInterface
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

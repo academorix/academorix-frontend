@@ -9,18 +9,23 @@ namespace Academorix\Event\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Event\Contracts\Data\EventFacilityInterface;
 use Academorix\Event\Database\Factories\EventFacilityFactory;
+use Academorix\Event\Concerns\BelongsToEvent;
+use Academorix\Event\Enums\EventFacilityPurpose;
+use Academorix\Event\Policies\EventFacilityPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Sports\Event\Concerns\BelongsToEvent;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: EventFacilityInterface::TABLE, keyType: EventFacilityInterface::KEY_TYPE)]
+#[Table(name: EventFacilityInterface::TABLE, key: EventFacilityInterface::PRIMARY_KEY, keyType: EventFacilityInterface::KEY_TYPE)]
 #[Fillable([
     EventFacilityInterface::ATTR_TENANT_ID,
         EventFacilityInterface::ATTR_EVENT_ID,
@@ -44,33 +49,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         EventFacilityInterface::ATTR_METADATA,
 ])]
 #[UseFactory(EventFacilityFactory::class)]
-final class EventFacility extends Model implements EventFacilityInterface
+#[WithoutIncrementing]
+#[UsePolicy(EventFacilityPolicy::class)]
+final class EventFacility extends Model implements EventFacilityInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use BelongsToEvent;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        EventFacilityInterface::ATTR_PURPOSE => 'EventFacilityPurpose',
+        EventFacilityInterface::ATTR_PURPOSE => EventFacilityPurpose::class,
         EventFacilityInterface::ATTR_IS_PRIMARY => 'boolean',
         EventFacilityInterface::ATTR_METADATA => 'array',
     ];

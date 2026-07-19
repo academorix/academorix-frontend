@@ -9,20 +9,25 @@ namespace Academorix\Staff\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Staff\Contracts\Data\StaffInterface;
 use Academorix\Staff\Database\Factories\StaffFactory;
 use Academorix\Branch\Concerns\BelongsToBranch;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Staff\Policies\StaffPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Academorix\User\Concerns\BelongsToUser;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -34,7 +39,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: StaffInterface::TABLE, keyType: StaffInterface::KEY_TYPE)]
+#[Table(name: StaffInterface::TABLE, key: StaffInterface::PRIMARY_KEY, keyType: StaffInterface::KEY_TYPE)]
 #[Fillable([
     StaffInterface::ATTR_TENANT_ID,
         StaffInterface::ATTR_BRANCH_ID,
@@ -64,42 +69,37 @@ use Spatie\Activitylog\Traits\LogsActivity;
         StaffInterface::ATTR_METADATA,
 ])]
 #[UseFactory(StaffFactory::class)]
-final class Staff extends Model implements StaffInterface
+#[WithoutIncrementing]
+#[UsePolicy(StaffPolicy::class)]
+final class Staff extends Model implements StaffInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use BelongsToBranch;
     use BelongsToUser;
-    // TODO(gen): resolve unknown trait `WrapsUser` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasCoachProfile` — add its import + use line.
+    // TODO(gen): resolve unknown trait `WrapsUser` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasCoachProfile` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
-    // TODO(gen): resolve unknown trait `Notifiable` — add its import + use line.
+    use Userstamps;
+    use Notifiable;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        StaffInterface::ATTR_EMPLOYMENT_TYPE => 'EmploymentType',
-        StaffInterface::ATTR_EMPLOYMENT_STATUS => 'EmploymentStatus',
-        StaffInterface::ATTR_COMPENSATION_TYPE => 'CompensationType',
-        StaffInterface::ATTR_PAY_FREQUENCY => 'PayFrequency',
-        StaffInterface::ATTR_TERMINATION_REASON => 'TerminationReason',
+        StaffInterface::ATTR_EMPLOYMENT_TYPE => EmploymentType::class,
+        StaffInterface::ATTR_EMPLOYMENT_STATUS => EmploymentStatus::class,
+        StaffInterface::ATTR_COMPENSATION_TYPE => CompensationType::class,
+        StaffInterface::ATTR_PAY_FREQUENCY => PayFrequency::class,
+        StaffInterface::ATTR_TERMINATION_REASON => TerminationReason::class,
         StaffInterface::ATTR_IS_BRANCH_MANAGER => 'boolean',
         StaffInterface::ATTR_COMPENSATION_AMOUNT_CENTS => 'integer',
         StaffInterface::ATTR_WEEKLY_HOURS => 'integer',

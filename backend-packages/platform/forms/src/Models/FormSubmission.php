@@ -9,17 +9,21 @@ namespace Academorix\Forms\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Forms\Contracts\Data\FormSubmissionInterface;
 use Academorix\Forms\Database\Factories\FormSubmissionFactory;
+use Academorix\Forms\Policies\FormSubmissionPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +35,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: FormSubmissionInterface::TABLE, keyType: FormSubmissionInterface::KEY_TYPE)]
+#[Table(name: FormSubmissionInterface::TABLE, key: FormSubmissionInterface::PRIMARY_KEY, keyType: FormSubmissionInterface::KEY_TYPE)]
 #[Fillable([
     FormSubmissionInterface::ATTR_TENANT_ID,
         FormSubmissionInterface::ATTR_FORM_ID,
@@ -62,23 +66,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         FormSubmissionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(FormSubmissionFactory::class)]
-final class FormSubmission extends Model implements FormSubmissionInterface
+#[WithoutIncrementing]
+#[UsePolicy(FormSubmissionPolicy::class)]
+final class FormSubmission extends Model implements FormSubmissionInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

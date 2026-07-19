@@ -9,18 +9,23 @@ namespace Academorix\Medical\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Medical\Contracts\Data\MedicalRecordInterface;
 use Academorix\Medical\Database\Factories\MedicalRecordFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Foundation\Concerns\EncryptsSensitiveFields;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Sports\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Medical\Policies\MedicalRecordPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: MedicalRecordInterface::TABLE, keyType: MedicalRecordInterface::KEY_TYPE)]
+#[Table(name: MedicalRecordInterface::TABLE, key: MedicalRecordInterface::PRIMARY_KEY, keyType: MedicalRecordInterface::KEY_TYPE)]
 #[Fillable([
     MedicalRecordInterface::ATTR_TENANT_ID,
         MedicalRecordInterface::ATTR_ATHLETE_ID,
@@ -42,25 +47,19 @@ use Spatie\Activitylog\Traits\LogsActivity;
         MedicalRecordInterface::ATTR_METADATA,
 ])]
 #[UseFactory(MedicalRecordFactory::class)]
-final class MedicalRecord extends Model implements MedicalRecordInterface
+#[WithoutIncrementing]
+#[UsePolicy(MedicalRecordPolicy::class)]
+final class MedicalRecord extends Model implements MedicalRecordInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToAthlete;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `EncryptsSensitiveFields` — add its import + use line.
+    use LogsActivity;
+    use EncryptsSensitiveFields;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

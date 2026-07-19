@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Drills\Actions\Tenant;
 
+use Academorix\Drills\Contracts\Repositories\DrillCategoryRepositoryInterface;
+use Academorix\Drills\Data\DrillCategoryData;
+use Academorix\Drills\Data\Requests\CreateDrillCategoryRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/drill-categories` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Drills
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/drill-categories')]
 final class CreateDrillCategorieAction
 {
+    public function __construct(
+        private readonly DrillCategoryRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `drill-categorie` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateDrillCategoryRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateDrillCategoryRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(DrillCategoryData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

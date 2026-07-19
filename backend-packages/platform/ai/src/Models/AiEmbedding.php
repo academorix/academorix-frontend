@@ -9,6 +9,7 @@ namespace Academorix\Ai\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Ai\Contracts\Data\AiEmbeddingInterface;
 use Academorix\Ai\Database\Factories\AiEmbeddingFactory;
@@ -27,7 +28,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: AiEmbeddingInterface::TABLE, keyType: AiEmbeddingInterface::KEY_TYPE)]
+#[Table(name: AiEmbeddingInterface::TABLE, key: AiEmbeddingInterface::PRIMARY_KEY, keyType: AiEmbeddingInterface::KEY_TYPE)]
 #[Fillable([
     AiEmbeddingInterface::ATTR_TENANT_ID,
         AiEmbeddingInterface::ATTR_SOURCE_TYPE,
@@ -38,6 +39,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         AiEmbeddingInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AiEmbeddingFactory::class)]
+#[WithoutIncrementing]
 final class AiEmbedding extends Model implements AiEmbeddingInterface
 {
     use HasFactory;
@@ -45,12 +47,4 @@ final class AiEmbedding extends Model implements AiEmbeddingInterface
     use BelongsToTenant;
     use HasMetadata;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

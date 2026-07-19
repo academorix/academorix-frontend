@@ -9,6 +9,7 @@ namespace Academorix\Safeguarding\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Safeguarding\Contracts\Data\PolicyAcknowledgementInterface;
 use Academorix\Safeguarding\Database\Factories\PolicyAcknowledgementFactory;
@@ -19,6 +20,7 @@ use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a PolicyAcknowledgement.
@@ -29,7 +31,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: PolicyAcknowledgementInterface::TABLE, keyType: PolicyAcknowledgementInterface::KEY_TYPE)]
+#[Table(name: PolicyAcknowledgementInterface::TABLE, key: PolicyAcknowledgementInterface::PRIMARY_KEY, keyType: PolicyAcknowledgementInterface::KEY_TYPE)]
 #[Fillable([
     PolicyAcknowledgementInterface::ATTR_TENANT_ID,
         PolicyAcknowledgementInterface::ATTR_STAFF_ID,
@@ -41,21 +43,14 @@ use OwenIt\Auditing\Auditable;
         PolicyAcknowledgementInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PolicyAcknowledgementFactory::class)]
-final class PolicyAcknowledgement extends Model implements PolicyAcknowledgementInterface
+#[WithoutIncrementing]
+final class PolicyAcknowledgement extends Model implements PolicyAcknowledgementInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToStaff;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

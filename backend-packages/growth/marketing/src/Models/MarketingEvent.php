@@ -9,18 +9,24 @@ namespace Academorix\Marketing\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Marketing\Contracts\Data\MarketingEventInterface;
 use Academorix\Marketing\Database\Factories\MarketingEventFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Marketing\Enums\MarketingEventSource;
+use Academorix\Marketing\Enums\MarketingEventStatus;
+use Academorix\Marketing\Policies\MarketingEventPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a MarketingEvent.
@@ -31,7 +37,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: MarketingEventInterface::TABLE, keyType: MarketingEventInterface::KEY_TYPE)]
+#[Table(name: MarketingEventInterface::TABLE, key: MarketingEventInterface::PRIMARY_KEY, keyType: MarketingEventInterface::KEY_TYPE)]
 #[Fillable([
     MarketingEventInterface::ATTR_TENANT_ID,
         MarketingEventInterface::ATTR_EVENT_TYPE,
@@ -52,36 +58,31 @@ use OwenIt\Auditing\Auditable;
         MarketingEventInterface::ATTR_DEDUPLICATION_KEY,
 ])]
 #[UseFactory(MarketingEventFactory::class)]
-final class MarketingEvent extends Model implements MarketingEventInterface
+#[WithoutIncrementing]
+#[UsePolicy(MarketingEventPolicy::class)]
+final class MarketingEvent extends Model implements MarketingEventInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasMarketingDeliveries` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasMarketingDeadLetters` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasMarketingDeliveries` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasMarketingDeadLetters` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        MarketingEventInterface::ATTR_EVENT_TYPE => 'MarketingEventType',
-        MarketingEventInterface::ATTR_SOURCE => 'MarketingEventSource',
-        MarketingEventInterface::ATTR_STATUS => 'MarketingEventStatus',
+        MarketingEventInterface::ATTR_EVENT_TYPE => MarketingEventType::class,
+        MarketingEventInterface::ATTR_SOURCE => MarketingEventSource::class,
+        MarketingEventInterface::ATTR_STATUS => MarketingEventStatus::class,
         MarketingEventInterface::ATTR_VALUE_AMOUNT_CENTS => 'integer',
         MarketingEventInterface::ATTR_ATTRIBUTION => 'array',
         MarketingEventInterface::ATTR_CONSENT_SNAPSHOT => 'array',

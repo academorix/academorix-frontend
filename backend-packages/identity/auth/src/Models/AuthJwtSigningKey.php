@@ -9,6 +9,7 @@ namespace Academorix\Auth\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Auth\Contracts\Data\AuthJwtSigningKeyInterface;
 use Academorix\Auth\Database\Factories\AuthJwtSigningKeyFactory;
@@ -29,7 +30,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AuthJwtSigningKeyInterface::TABLE, keyType: AuthJwtSigningKeyInterface::KEY_TYPE)]
+#[Table(name: AuthJwtSigningKeyInterface::TABLE, key: AuthJwtSigningKeyInterface::PRIMARY_KEY, keyType: AuthJwtSigningKeyInterface::KEY_TYPE)]
 #[Fillable([
     AuthJwtSigningKeyInterface::ATTR_KID,
         AuthJwtSigningKeyInterface::ATTR_APPLICATION_ID,
@@ -42,25 +43,19 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AuthJwtSigningKeyInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AuthJwtSigningKeyFactory::class)]
+#[WithoutIncrementing]
 final class AuthJwtSigningKey extends Model implements AuthJwtSigningKeyInterface
 {
     use HasFactory;
     use HasUlids;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

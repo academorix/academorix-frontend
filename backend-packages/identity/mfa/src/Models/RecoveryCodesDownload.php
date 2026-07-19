@@ -9,6 +9,7 @@ namespace Academorix\Mfa\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Mfa\Contracts\Data\RecoveryCodesDownloadInterface;
 use Academorix\Mfa\Database\Factories\RecoveryCodesDownloadFactory;
@@ -23,7 +24,7 @@ use Academorix\Mfa\Database\Factories\RecoveryCodesDownloadFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: RecoveryCodesDownloadInterface::TABLE, keyType: RecoveryCodesDownloadInterface::KEY_TYPE)]
+#[Table(name: RecoveryCodesDownloadInterface::TABLE, key: RecoveryCodesDownloadInterface::PRIMARY_KEY, keyType: RecoveryCodesDownloadInterface::KEY_TYPE)]
 #[Fillable([
     RecoveryCodesDownloadInterface::ATTR_CODES,
         RecoveryCodesDownloadInterface::ATTR_GENERATED_AT,
@@ -32,15 +33,8 @@ use Academorix\Mfa\Database\Factories\RecoveryCodesDownloadFactory;
         RecoveryCodesDownloadInterface::ATTR_REGENERATE_URL,
 ])]
 #[UseFactory(RecoveryCodesDownloadFactory::class)]
+#[WithoutIncrementing]
 final class RecoveryCodesDownload extends Model implements RecoveryCodesDownloadInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

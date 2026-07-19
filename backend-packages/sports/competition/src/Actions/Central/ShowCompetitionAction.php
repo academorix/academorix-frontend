@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Competition\Actions\Central;
 
+use Academorix\Competition\Contracts\Repositories\CompetitionRepositoryInterface;
+use Academorix\Competition\Data\CompetitionData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /competitions/{signature}` — show action (central audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Competition
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/competitions/{signature}')]
 final class ShowCompetitionAction
 {
+    public function __construct(
+        private readonly CompetitionRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `competition` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): CompetitionData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return CompetitionData::from($this->repository->findOrFail($id));
     }
 }

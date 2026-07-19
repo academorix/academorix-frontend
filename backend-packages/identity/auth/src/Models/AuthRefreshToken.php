@@ -9,6 +9,7 @@ namespace Academorix\Auth\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Auth\Contracts\Data\AuthRefreshTokenInterface;
 use Academorix\Auth\Database\Factories\AuthRefreshTokenFactory;
@@ -29,7 +30,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AuthRefreshTokenInterface::TABLE, keyType: AuthRefreshTokenInterface::KEY_TYPE)]
+#[Table(name: AuthRefreshTokenInterface::TABLE, key: AuthRefreshTokenInterface::PRIMARY_KEY, keyType: AuthRefreshTokenInterface::KEY_TYPE)]
 #[Fillable([
     AuthRefreshTokenInterface::ATTR_TOKENABLE_TYPE,
         AuthRefreshTokenInterface::ATTR_TOKENABLE_ID,
@@ -45,25 +46,19 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AuthRefreshTokenInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AuthRefreshTokenFactory::class)]
+#[WithoutIncrementing]
 final class AuthRefreshToken extends Model implements AuthRefreshTokenInterface
 {
     use HasFactory;
     use HasUlids;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

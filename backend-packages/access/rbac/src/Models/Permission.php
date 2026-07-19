@@ -9,11 +9,15 @@ namespace Academorix\Rbac\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Rbac\Contracts\Data\PermissionInterface;
 use Academorix\Rbac\Database\Factories\PermissionFactory;
+use Academorix\Database\Concerns\HasSystemFlag;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Rbac\Policies\PermissionPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -30,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PermissionInterface::TABLE, keyType: PermissionInterface::KEY_TYPE)]
+#[Table(name: PermissionInterface::TABLE, key: PermissionInterface::PRIMARY_KEY, keyType: PermissionInterface::KEY_TYPE)]
 #[Fillable([
     PermissionInterface::ATTR_APPLICATION_ID,
         PermissionInterface::ATTR_TENANT_ID,
@@ -43,27 +47,22 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PermissionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PermissionFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(PermissionPolicy::class)]
 final class Permission extends Model implements PermissionInterface
 {
     use HasFactory;
     use HasUlids;
-    // TODO(gen): resolve unknown trait `HasSystemFlag` — add its import + use line.
+    use HasSystemFlag;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Awards\Actions\Tenant;
 
+use Academorix\Awards\Contracts\Repositories\AwardRepositoryInterface;
+use Academorix\Awards\Data\AwardData;
+use Academorix\Awards\Data\Requests\CreateAwardRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/awards` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Awards
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/awards')]
 final class CreateAwardAction
 {
+    public function __construct(
+        private readonly AwardRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `award` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateAwardRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateAwardRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(AwardData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

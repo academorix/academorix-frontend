@@ -8,14 +8,15 @@ namespace Academorix\Credentials\Services;
 
 use Academorix\Credentials\Contracts\Services\GateHeartbeatMonitorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Credentials\Contracts\Repositories\CheckinLogRepositoryInterface;
 
 /**
  * Concrete service — GateHeartbeatMonitor.
  *
  * Implements {@see GateHeartbeatMonitorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Credentials
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class GateHeartbeatMonitor implements GateHeartbeatMonitorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  CheckinLogRepositoryInterface  $checkinLogRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly CheckinLogRepositoryInterface $checkinLogRepository,
+    ) {
+    }
 }

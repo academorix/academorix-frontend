@@ -8,14 +8,15 @@ namespace Academorix\Region\Services;
 
 use Academorix\Region\Contracts\Services\CurrencyFormatterInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Region\Contracts\Repositories\RegionRepositoryInterface;
 
 /**
  * Concrete service — CurrencyFormatter.
  *
  * Implements {@see CurrencyFormatterInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Region
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class CurrencyFormatter implements CurrencyFormatterInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  RegionRepositoryInterface  $regionRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly RegionRepositoryInterface $regionRepository,
+    ) {
+    }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Storage\Services;
 
 use Academorix\Storage\Contracts\Services\SignedUrlAuditorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Storage\Contracts\Repositories\ChunkedUploadRepositoryInterface;
 
 /**
  * Concrete service — SignedUrlAuditor.
  *
  * Implements {@see SignedUrlAuditorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Storage
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SignedUrlAuditor implements SignedUrlAuditorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ChunkedUploadRepositoryInterface  $chunkedUploadRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ChunkedUploadRepositoryInterface $chunkedUploadRepository,
+    ) {
+    }
 }

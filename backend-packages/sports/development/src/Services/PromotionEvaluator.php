@@ -8,14 +8,15 @@ namespace Academorix\Development\Services;
 
 use Academorix\Development\Contracts\Services\PromotionEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
 
 /**
  * Concrete service — PromotionEvaluator.
  *
  * Implements {@see PromotionEvaluatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Development
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class PromotionEvaluator implements PromotionEvaluatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  DevelopmentPathwayRepositoryInterface  $developmentPathwayRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly DevelopmentPathwayRepositoryInterface $developmentPathwayRepository,
+    ) {
+    }
 }

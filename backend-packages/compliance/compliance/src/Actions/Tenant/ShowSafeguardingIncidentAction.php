@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Compliance\Actions\Tenant;
 
+use Academorix\Compliance\Contracts\Repositories\SafeguardingIncidentRepositoryInterface;
+use Academorix\Compliance\Data\SafeguardingIncidentData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/compliance/safeguarding-incidents/{incident}` — show action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Compliance
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/compliance/safeguarding-incidents/{incident}')]
 final class ShowSafeguardingIncidentAction
 {
+    public function __construct(
+        private readonly SafeguardingIncidentRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `safeguarding-incident` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): SafeguardingIncidentData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return SafeguardingIncidentData::from($this->repository->findOrFail($id));
     }
 }

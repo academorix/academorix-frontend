@@ -8,14 +8,15 @@ namespace Academorix\Domains\Services;
 
 use Academorix\Domains\Contracts\Services\DomainVerifierInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Domains\Contracts\Repositories\DomainRecordRepositoryInterface;
 
 /**
  * Concrete service — DomainVerifier.
  *
  * Implements {@see DomainVerifierInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Domains
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class DomainVerifier implements DomainVerifierInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  DomainRecordRepositoryInterface  $domainRecordRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly DomainRecordRepositoryInterface $domainRecordRepository,
+    ) {
+    }
 }

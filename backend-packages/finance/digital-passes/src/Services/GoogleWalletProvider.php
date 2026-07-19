@@ -8,14 +8,15 @@ namespace Academorix\DigitalPasses\Services;
 
 use Academorix\DigitalPasses\Contracts\Services\GoogleWalletProviderInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\DigitalPasses\Contracts\Repositories\WalletPassRepositoryInterface;
 
 /**
  * Concrete service — GoogleWalletProvider.
  *
  * Implements {@see GoogleWalletProviderInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category DigitalPasses
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class GoogleWalletProvider implements GoogleWalletProviderInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  WalletPassRepositoryInterface  $walletPassRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly WalletPassRepositoryInterface $walletPassRepository,
+    ) {
+    }
 }

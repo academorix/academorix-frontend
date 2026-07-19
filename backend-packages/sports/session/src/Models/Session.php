@@ -9,21 +9,27 @@ namespace Academorix\Session\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Session\Contracts\Data\SessionInterface;
 use Academorix\Session\Database\Factories\SessionFactory;
 use Academorix\Branch\Concerns\BelongsToBranch;
+use Academorix\Event\Concerns\BelongsToEvent;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
-use Academorix\Sports\Event\Concerns\BelongsToEvent;
-use Academorix\Sports\Season\Concerns\BelongsToSeason;
+use Academorix\Season\Concerns\BelongsToSeason;
+use Academorix\Session\Enums\SessionGenderCategory;
+use Academorix\Session\Enums\SessionStatus;
+use Academorix\Session\Policies\SessionPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 
@@ -36,7 +42,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: SessionInterface::TABLE, keyType: SessionInterface::KEY_TYPE)]
+#[Table(name: SessionInterface::TABLE, key: SessionInterface::PRIMARY_KEY, keyType: SessionInterface::KEY_TYPE)]
 #[Fillable([
     SessionInterface::ATTR_TENANT_ID,
         SessionInterface::ATTR_BRANCH_ID,
@@ -72,7 +78,9 @@ use Spatie\Sluggable\HasSlug;
         SessionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(SessionFactory::class)]
-final class Session extends Model implements SessionInterface
+#[WithoutIncrementing]
+#[UsePolicy(SessionPolicy::class)]
+final class Session extends Model implements SessionInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
@@ -80,32 +88,25 @@ final class Session extends Model implements SessionInterface
     use BelongsToBranch;
     use BelongsToSeason;
     use BelongsToEvent;
-    // TODO(gen): resolve unknown trait `HasSessionAttendance` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasSessionAttendance` — add its import + `use` line.
     use HasSlug;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        SessionInterface::ATTR_SESSION_TYPE => 'SessionType',
-        SessionInterface::ATTR_STATUS => 'SessionStatus',
-        SessionInterface::ATTR_GENDER_CATEGORY => 'SessionGenderCategory',
+        SessionInterface::ATTR_SESSION_TYPE => SessionType::class,
+        SessionInterface::ATTR_STATUS => SessionStatus::class,
+        SessionInterface::ATTR_GENDER_CATEGORY => SessionGenderCategory::class,
         SessionInterface::ATTR_ATTENDANCE_CAPACITY => 'integer',
         SessionInterface::ATTR_ATTENDANCE_MIN => 'integer',
         SessionInterface::ATTR_CHECKED_IN_ATHLETES_COUNT => 'integer',

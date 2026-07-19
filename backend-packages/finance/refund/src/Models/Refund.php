@@ -9,18 +9,25 @@ namespace Academorix\Refund\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Refund\Contracts\Data\RefundInterface;
 use Academorix\Refund\Database\Factories\RefundFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Refund\Enums\RefundProvider;
+use Academorix\Refund\Enums\RefundReason;
+use Academorix\Refund\Enums\RefundStatus;
+use Academorix\Refund\Policies\RefundPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +39,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: RefundInterface::TABLE, keyType: RefundInterface::KEY_TYPE)]
+#[Table(name: RefundInterface::TABLE, key: RefundInterface::PRIMARY_KEY, keyType: RefundInterface::KEY_TYPE)]
 #[Fillable([
     RefundInterface::ATTR_TENANT_ID,
         RefundInterface::ATTR_REFUND_NUMBER,
@@ -65,38 +72,33 @@ use Spatie\Activitylog\Traits\LogsActivity;
         RefundInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RefundFactory::class)]
-final class Refund extends Model implements RefundInterface
+#[WithoutIncrementing]
+#[UsePolicy(RefundPolicy::class)]
+final class Refund extends Model implements RefundInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasRefundLines` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasRefundLines` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        RefundInterface::ATTR_REASON => 'RefundReason',
-        RefundInterface::ATTR_REFUND_TYPE => 'RefundType',
-        RefundInterface::ATTR_STATUS => 'RefundStatus',
-        RefundInterface::ATTR_REFUNDED_TO => 'RefundedTo',
-        RefundInterface::ATTR_PROVIDER => 'RefundProvider',
+        RefundInterface::ATTR_REASON => RefundReason::class,
+        RefundInterface::ATTR_REFUND_TYPE => RefundType::class,
+        RefundInterface::ATTR_STATUS => RefundStatus::class,
+        RefundInterface::ATTR_REFUNDED_TO => RefundedTo::class,
+        RefundInterface::ATTR_PROVIDER => RefundProvider::class,
         RefundInterface::ATTR_AMOUNT_CENTS => 'integer',
         RefundInterface::ATTR_PROVIDER_FEE_REVERSAL_CENTS => 'integer',
         RefundInterface::ATTR_REQUIRES_APPROVAL => 'boolean',

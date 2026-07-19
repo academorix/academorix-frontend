@@ -8,14 +8,15 @@ namespace Academorix\PlatformUser\Services;
 
 use Academorix\PlatformUser\Contracts\Services\OnCallResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\PlatformUser\Contracts\Repositories\PlatformProfileRepositoryInterface;
 
 /**
  * Concrete service — OnCallResolver.
  *
  * Implements {@see OnCallResolverInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category PlatformUser
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class OnCallResolver implements OnCallResolverInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  PlatformProfileRepositoryInterface  $platformProfileRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly PlatformProfileRepositoryInterface $platformProfileRepository,
+    ) {
+    }
 }

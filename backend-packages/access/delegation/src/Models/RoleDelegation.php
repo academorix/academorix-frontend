@@ -9,18 +9,23 @@ namespace Academorix\Delegation\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Delegation\Contracts\Data\RoleDelegationInterface;
 use Academorix\Delegation\Database\Factories\RoleDelegationFactory;
 use Academorix\Application\Concerns\BelongsToApplication;
+use Academorix\Delegation\Policies\RoleDelegationPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: RoleDelegationInterface::TABLE, keyType: RoleDelegationInterface::KEY_TYPE)]
+#[Table(name: RoleDelegationInterface::TABLE, key: RoleDelegationInterface::PRIMARY_KEY, keyType: RoleDelegationInterface::KEY_TYPE)]
 #[Fillable([
     RoleDelegationInterface::ATTR_TENANT_ID,
         RoleDelegationInterface::ATTR_APPLICATION_ID,
@@ -49,34 +54,29 @@ use Spatie\Activitylog\Traits\LogsActivity;
         RoleDelegationInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RoleDelegationFactory::class)]
-final class RoleDelegation extends Model implements RoleDelegationInterface
+#[WithoutIncrementing]
+#[UsePolicy(RoleDelegationPolicy::class)]
+final class RoleDelegation extends Model implements RoleDelegationInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use BelongsToApplication;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `HasAudit` — add its import + use line.
+    use Userstamps;
+    use LogsActivity;
+    use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        RoleDelegationInterface::ATTR_DELEGATION_TYPE => 'DelegationType',
+        RoleDelegationInterface::ATTR_DELEGATION_TYPE => DelegationType::class,
         RoleDelegationInterface::ATTR_STARTS_AT => 'datetime',
         RoleDelegationInterface::ATTR_ENDS_AT => 'datetime',
         RoleDelegationInterface::ATTR_REVOKED_AT => 'datetime',

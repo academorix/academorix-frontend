@@ -8,14 +8,15 @@ namespace Academorix\Analytics\Services;
 
 use Academorix\Analytics\Contracts\Services\AnalyticsConsentSnapshotterInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
 
 /**
  * Concrete service — AnalyticsConsentSnapshotter.
  *
  * Implements {@see AnalyticsConsentSnapshotterInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Analytics
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AnalyticsConsentSnapshotter implements AnalyticsConsentSnapshotterInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AnalyticsDeliveryRepositoryInterface  $analyticsDeliveryRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AnalyticsDeliveryRepositoryInterface $analyticsDeliveryRepository,
+    ) {
+    }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Tax\Services;
 
 use Academorix\Tax\Contracts\Services\ExemptionValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Tax\Contracts\Repositories\TaxCalculationRepositoryInterface;
 
 /**
  * Concrete service — ExemptionValidator.
  *
  * Implements {@see ExemptionValidatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Tax
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ExemptionValidator implements ExemptionValidatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  TaxCalculationRepositoryInterface  $taxCalculationRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly TaxCalculationRepositoryInterface $taxCalculationRepository,
+    ) {
+    }
 }

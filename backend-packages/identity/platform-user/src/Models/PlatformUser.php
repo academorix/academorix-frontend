@@ -9,16 +9,24 @@ namespace Academorix\PlatformUser\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\PlatformUser\Contracts\Data\PlatformUserInterface;
 use Academorix\PlatformUser\Database\Factories\PlatformUserFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\PlatformUser\Enums\PlatformUserStatus;
+use Academorix\PlatformUser\Policies\PlatformUserPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -30,7 +38,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PlatformUserInterface::TABLE, keyType: PlatformUserInterface::KEY_TYPE)]
+#[Table(name: PlatformUserInterface::TABLE, key: PlatformUserInterface::PRIMARY_KEY, keyType: PlatformUserInterface::KEY_TYPE)]
 #[Fillable([
     PlatformUserInterface::ATTR_IDENTITY_ID,
         PlatformUserInterface::ATTR_PROFILE_ID,
@@ -46,40 +54,35 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PlatformUserInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PlatformUserFactory::class)]
-final class PlatformUser extends Model implements PlatformUserInterface
+#[WithoutIncrementing]
+#[UsePolicy(PlatformUserPolicy::class)]
+final class PlatformUser extends Model implements PlatformUserInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
-    // TODO(gen): resolve unknown trait `Notifiable` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasApiTokens` — add its import + use line.
-    // TODO(gen): resolve unknown trait `IsPlatformUser` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasEmploymentLifecycle` — add its import + use line.
+    use Notifiable;
+    use HasApiTokens;
+    // TODO(gen): resolve unknown trait `IsPlatformUser` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasEmploymentLifecycle` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `HasAudit` — add its import + use line.
+    use Userstamps;
+    use LogsActivity;
+    use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        PlatformUserInterface::ATTR_STATUS => 'PlatformUserStatus',
+        PlatformUserInterface::ATTR_STATUS => PlatformUserStatus::class,
         PlatformUserInterface::ATTR_HIRE_DATE => 'date',
         PlatformUserInterface::ATTR_OFFBOARDED_AT => 'immutable_datetime',
-        PlatformUserInterface::ATTR_DEPARTMENT => 'PlatformDepartment',
-        PlatformUserInterface::ATTR_EMPLOYMENT_TYPE => 'EmploymentType',
+        PlatformUserInterface::ATTR_DEPARTMENT => PlatformDepartment::class,
+        PlatformUserInterface::ATTR_EMPLOYMENT_TYPE => EmploymentType::class,
         PlatformUserInterface::ATTR_METADATA => 'array',
     ];
 }

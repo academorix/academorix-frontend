@@ -9,13 +9,14 @@ namespace Academorix\Telemetry\Services;
 use Academorix\Telemetry\Contracts\Services\MeterProviderInterface;
 use Illuminate\Container\Attributes\Scoped;
 
+
 /**
  * Concrete service — MeterProvider.
  *
  * Implements {@see MeterProviderInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Telemetry
  *
@@ -24,5 +25,4 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class MeterProvider implements MeterProviderInterface
 {
-    // TODO(gen): implement the interface methods.
 }

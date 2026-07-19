@@ -9,16 +9,20 @@ namespace Academorix\Monitoring\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Monitoring\Contracts\Data\HealthCheckRunInterface;
 use Academorix\Monitoring\Database\Factories\HealthCheckRunFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Monitoring\Policies\HealthCheckRunPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a HealthCheckRun.
@@ -29,7 +33,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: HealthCheckRunInterface::TABLE, keyType: HealthCheckRunInterface::KEY_TYPE)]
+#[Table(name: HealthCheckRunInterface::TABLE, key: HealthCheckRunInterface::PRIMARY_KEY, keyType: HealthCheckRunInterface::KEY_TYPE)]
 #[Fillable([
     HealthCheckRunInterface::ATTR_TENANT_ID,
         HealthCheckRunInterface::ATTR_HEALTH_CHECK_ID,
@@ -41,31 +45,26 @@ use OwenIt\Auditing\Auditable;
         HealthCheckRunInterface::ATTR_METADATA,
 ])]
 #[UseFactory(HealthCheckRunFactory::class)]
-final class HealthCheckRun extends Model implements HealthCheckRunInterface
+#[WithoutIncrementing]
+#[UsePolicy(HealthCheckRunPolicy::class)]
+final class HealthCheckRun extends Model implements HealthCheckRunInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToHealthCheck` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToHealthCheck` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        HealthCheckRunInterface::ATTR_STATUS => 'HealthCheckStatus',
+        HealthCheckRunInterface::ATTR_STATUS => HealthCheckStatus::class,
         HealthCheckRunInterface::ATTR_LATENCY_MS => 'integer',
         HealthCheckRunInterface::ATTR_RESPONSE_BODY => 'array',
         HealthCheckRunInterface::ATTR_ERROR_DETAILS => 'array',

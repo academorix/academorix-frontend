@@ -8,14 +8,15 @@ namespace Academorix\Analytics\Services;
 
 use Academorix\Analytics\Contracts\Services\AnalyticsEventCapturerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Analytics\Contracts\Repositories\AnalyticsDeliveryRepositoryInterface;
 
 /**
  * Concrete service — AnalyticsEventCapturer.
  *
  * Implements {@see AnalyticsEventCapturerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Analytics
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AnalyticsEventCapturer implements AnalyticsEventCapturerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AnalyticsDeliveryRepositoryInterface  $analyticsDeliveryRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AnalyticsDeliveryRepositoryInterface $analyticsDeliveryRepository,
+    ) {
+    }
 }

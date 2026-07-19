@@ -9,17 +9,22 @@ namespace Academorix\Session\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Session\Contracts\Data\SessionAttendanceInterface;
 use Academorix\Session\Database\Factories\SessionAttendanceFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Session\Concerns\BelongsToSession;
+use Academorix\Session\Policies\SessionAttendancePolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: SessionAttendanceInterface::TABLE, keyType: SessionAttendanceInterface::KEY_TYPE)]
+#[Table(name: SessionAttendanceInterface::TABLE, key: SessionAttendanceInterface::PRIMARY_KEY, keyType: SessionAttendanceInterface::KEY_TYPE)]
 #[Fillable([
     SessionAttendanceInterface::ATTR_TENANT_ID,
         SessionAttendanceInterface::ATTR_SESSION_ID,
@@ -45,33 +50,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         SessionAttendanceInterface::ATTR_METADATA,
 ])]
 #[UseFactory(SessionAttendanceFactory::class)]
-final class SessionAttendance extends Model implements SessionAttendanceInterface
+#[WithoutIncrementing]
+#[UsePolicy(SessionAttendancePolicy::class)]
+final class SessionAttendance extends Model implements SessionAttendanceInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToSession` — add its import + use line.
+    use BelongsToSession;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        SessionAttendanceInterface::ATTR_STATUS => 'AttendanceStatus',
+        SessionAttendanceInterface::ATTR_STATUS => AttendanceStatus::class,
         SessionAttendanceInterface::ATTR_CHECKED_IN_AT => 'datetime',
         SessionAttendanceInterface::ATTR_CHECKED_OUT_AT => 'datetime',
         SessionAttendanceInterface::ATTR_LATE_MINUTES => 'integer',

@@ -9,6 +9,7 @@ namespace Academorix\Reporting\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Reporting\Contracts\Data\SavedReportInterface;
 use Academorix\Reporting\Database\Factories\SavedReportFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a SavedReport.
@@ -30,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: SavedReportInterface::TABLE, keyType: SavedReportInterface::KEY_TYPE)]
+#[Table(name: SavedReportInterface::TABLE, key: SavedReportInterface::PRIMARY_KEY, keyType: SavedReportInterface::KEY_TYPE)]
 #[Fillable([
     SavedReportInterface::ATTR_TENANT_ID,
         SavedReportInterface::ATTR_REPORT_DEFINITION_ID,
@@ -43,22 +45,15 @@ use OwenIt\Auditing\Auditable;
         SavedReportInterface::ATTR_METADATA,
 ])]
 #[UseFactory(SavedReportFactory::class)]
-final class SavedReport extends Model implements SavedReportInterface
+#[WithoutIncrementing]
+final class SavedReport extends Model implements SavedReportInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

@@ -9,17 +9,21 @@ namespace Academorix\Registrations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Registrations\Contracts\Data\OfferInterface;
 use Academorix\Registrations\Database\Factories\OfferFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Registrations\Policies\OfferPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +35,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: OfferInterface::TABLE, keyType: OfferInterface::KEY_TYPE)]
+#[Table(name: OfferInterface::TABLE, key: OfferInterface::PRIMARY_KEY, keyType: OfferInterface::KEY_TYPE)]
 #[Fillable([
     OfferInterface::ATTR_TENANT_ID,
         OfferInterface::ATTR_REGISTRATION_ID,
@@ -54,23 +58,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         OfferInterface::ATTR_METADATA,
 ])]
 #[UseFactory(OfferFactory::class)]
-final class Offer extends Model implements OfferInterface
+#[WithoutIncrementing]
+#[UsePolicy(OfferPolicy::class)]
+final class Offer extends Model implements OfferInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

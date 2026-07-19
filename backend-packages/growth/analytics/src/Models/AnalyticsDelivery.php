@@ -9,12 +9,16 @@ namespace Academorix\Analytics\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Analytics\Contracts\Data\AnalyticsDeliveryInterface;
 use Academorix\Analytics\Database\Factories\AnalyticsDeliveryFactory;
+use Academorix\Analytics\Enums\AnalyticsDeliveryStatus;
+use Academorix\Analytics\Policies\AnalyticsDeliveryPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
@@ -28,7 +32,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: AnalyticsDeliveryInterface::TABLE, keyType: AnalyticsDeliveryInterface::KEY_TYPE)]
+#[Table(name: AnalyticsDeliveryInterface::TABLE, key: AnalyticsDeliveryInterface::PRIMARY_KEY, keyType: AnalyticsDeliveryInterface::KEY_TYPE)]
 #[Fillable([
     AnalyticsDeliveryInterface::ATTR_TENANT_ID,
         AnalyticsDeliveryInterface::ATTR_ANALYTICS_EVENT_ID,
@@ -48,30 +52,25 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         AnalyticsDeliveryInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AnalyticsDeliveryFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(AnalyticsDeliveryPolicy::class)]
 final class AnalyticsDelivery extends Model implements AnalyticsDeliveryInterface
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AnalyticsDeliveryInterface::ATTR_PROVIDER => 'AnalyticsProvider',
-        AnalyticsDeliveryInterface::ATTR_STATUS => 'AnalyticsDeliveryStatus',
+        AnalyticsDeliveryInterface::ATTR_PROVIDER => AnalyticsProvider::class,
+        AnalyticsDeliveryInterface::ATTR_STATUS => AnalyticsDeliveryStatus::class,
         AnalyticsDeliveryInterface::ATTR_REQUEST_PAYLOAD => 'array',
         AnalyticsDeliveryInterface::ATTR_RESPONSE => 'array',
         AnalyticsDeliveryInterface::ATTR_NEXT_RETRY_AT => 'datetime',

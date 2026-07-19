@@ -9,11 +9,15 @@ namespace Academorix\Rbac\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Rbac\Contracts\Data\RoleInterface;
 use Academorix\Rbac\Database\Factories\RoleFactory;
+use Academorix\Database\Concerns\HasSystemFlag;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Rbac\Policies\RolePolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -30,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: RoleInterface::TABLE, keyType: RoleInterface::KEY_TYPE)]
+#[Table(name: RoleInterface::TABLE, key: RoleInterface::PRIMARY_KEY, keyType: RoleInterface::KEY_TYPE)]
 #[Fillable([
     RoleInterface::ATTR_APPLICATION_ID,
         RoleInterface::ATTR_TENANT_ID,
@@ -42,27 +46,22 @@ use Spatie\Activitylog\Traits\LogsActivity;
         RoleInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RoleFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(RolePolicy::class)]
 final class Role extends Model implements RoleInterface
 {
     use HasFactory;
     use HasUlids;
-    // TODO(gen): resolve unknown trait `HasSystemFlag` — add its import + use line.
+    use HasSystemFlag;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

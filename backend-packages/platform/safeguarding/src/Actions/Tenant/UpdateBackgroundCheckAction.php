@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Safeguarding\Actions\Tenant;
 
+use Academorix\Safeguarding\Contracts\Repositories\BackgroundCheckRepositoryInterface;
+use Academorix\Safeguarding\Data\BackgroundCheckData;
+use Academorix\Safeguarding\Data\Requests\UpdateBackgroundCheckRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/v1/background-checks/{check}` — update action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Safeguarding
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/v1/background-checks/{check}')]
 final class UpdateBackgroundCheckAction
 {
+    public function __construct(
+        private readonly BackgroundCheckRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `background-check` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateBackgroundCheckRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateBackgroundCheckRequestData $data): BackgroundCheckData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return BackgroundCheckData::from($model);
     }
 }

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Localization\Actions\Tenant;
 
+use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Academorix\Localization\Data\TranslationData;
+use Academorix\Localization\Data\Requests\CreateTranslationRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/translations` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Localization
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/translations')]
 final class CreateTranslationAction
 {
+    public function __construct(
+        private readonly TranslationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `translation` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateTranslationRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateTranslationRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(TranslationData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

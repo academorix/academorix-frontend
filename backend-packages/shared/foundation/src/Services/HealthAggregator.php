@@ -9,13 +9,14 @@ namespace Academorix\Foundation\Services;
 use Academorix\Foundation\Contracts\Services\HealthAggregatorInterface;
 use Illuminate\Container\Attributes\Scoped;
 
+
 /**
  * Concrete service — HealthAggregator.
  *
  * Implements {@see HealthAggregatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Foundation
  *
@@ -24,5 +25,4 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class HealthAggregator implements HealthAggregatorInterface
 {
-    // TODO(gen): implement the interface methods.
 }

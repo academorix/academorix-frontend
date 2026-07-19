@@ -9,9 +9,11 @@ namespace Academorix\Development\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Development\Contracts\Data\PathwayStageInterface;
 use Academorix\Development\Database\Factories\PathwayStageFactory;
+use Academorix\Attributes\Concerns\HasAttributeSet;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
@@ -20,6 +22,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use Spatie\SchemalessAttributes\SchemalessAttributesTrait;
 
 /**
  * Eloquent model for a PathwayStage.
@@ -30,7 +34,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: PathwayStageInterface::TABLE, keyType: PathwayStageInterface::KEY_TYPE)]
+#[Table(name: PathwayStageInterface::TABLE, key: PathwayStageInterface::PRIMARY_KEY, keyType: PathwayStageInterface::KEY_TYPE)]
 #[Fillable([
     PathwayStageInterface::ATTR_TENANT_ID,
         PathwayStageInterface::ATTR_DEVELOPMENT_PATHWAY_ID,
@@ -41,24 +45,17 @@ use OwenIt\Auditing\Auditable;
         PathwayStageInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PathwayStageFactory::class)]
-final class PathwayStage extends Model implements PathwayStageInterface
+#[WithoutIncrementing]
+final class PathwayStage extends Model implements PathwayStageInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasAttributeSet` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasSchemalessAttributes` — add its import + use line.
+    use HasAttributeSet;
+    use SchemalessAttributesTrait;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

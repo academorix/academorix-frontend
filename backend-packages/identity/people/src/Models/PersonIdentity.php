@@ -9,16 +9,20 @@ namespace Academorix\People\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\People\Contracts\Data\PersonIdentityInterface;
 use Academorix\People\Database\Factories\PersonIdentityFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\People\Policies\PersonIdentityPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a PersonIdentity.
@@ -29,7 +33,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: PersonIdentityInterface::TABLE, keyType: PersonIdentityInterface::KEY_TYPE)]
+#[Table(name: PersonIdentityInterface::TABLE, key: PersonIdentityInterface::PRIMARY_KEY, keyType: PersonIdentityInterface::KEY_TYPE)]
 #[Fillable([
     PersonIdentityInterface::ATTR_ACADEMORIX_ID,
         PersonIdentityInterface::ATTR_LEGAL_NAME,
@@ -43,30 +47,25 @@ use OwenIt\Auditing\Auditable;
         PersonIdentityInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PersonIdentityFactory::class)]
-final class PersonIdentity extends Model implements PersonIdentityInterface
+#[WithoutIncrementing]
+#[UsePolicy(PersonIdentityPolicy::class)]
+final class PersonIdentity extends Model implements PersonIdentityInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        PersonIdentityInterface::ATTR_VERIFICATION_STATUS => 'PersonVerificationStatus',
+        PersonIdentityInterface::ATTR_VERIFICATION_STATUS => PersonVerificationStatus::class,
         PersonIdentityInterface::ATTR_DATE_OF_BIRTH => 'date',
         PersonIdentityInterface::ATTR_VERIFIED_AT => 'datetime',
         PersonIdentityInterface::ATTR_FROZEN_AT => 'datetime',

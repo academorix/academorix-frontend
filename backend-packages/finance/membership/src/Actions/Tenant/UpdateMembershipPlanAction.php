@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Membership\Actions\Tenant;
 
+use Academorix\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
+use Academorix\Membership\Data\MembershipPlanData;
+use Academorix\Membership\Data\Requests\UpdateMembershipPlanRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/v1/membership-plans/{plan}` — update action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Membership
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/v1/membership-plans/{plan}')]
 final class UpdateMembershipPlanAction
 {
+    public function __construct(
+        private readonly MembershipPlanRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `membership-plan` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateMembershipPlanRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateMembershipPlanRequestData $data): MembershipPlanData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return MembershipPlanData::from($model);
     }
 }

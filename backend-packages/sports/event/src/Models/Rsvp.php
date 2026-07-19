@@ -9,6 +9,7 @@ namespace Academorix\Event\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Event\Contracts\Data\RsvpInterface;
 use Academorix\Event\Database\Factories\RsvpFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +33,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: RsvpInterface::TABLE, keyType: RsvpInterface::KEY_TYPE)]
+#[Table(name: RsvpInterface::TABLE, key: RsvpInterface::PRIMARY_KEY, keyType: RsvpInterface::KEY_TYPE)]
 #[Fillable([
     RsvpInterface::ATTR_TENANT_ID,
         RsvpInterface::ATTR_EVENT_INVITATION_ID,
@@ -46,23 +48,16 @@ use Spatie\Activitylog\Traits\LogsActivity;
         RsvpInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RsvpFactory::class)]
-final class Rsvp extends Model implements RsvpInterface
+#[WithoutIncrementing]
+final class Rsvp extends Model implements RsvpInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

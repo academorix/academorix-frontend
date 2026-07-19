@@ -8,14 +8,15 @@ namespace Academorix\Requests\Services;
 
 use Academorix\Requests\Contracts\Services\AccessRequestGrantMaterializerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Requests\Contracts\Repositories\AccessRequestProjectionRepositoryInterface;
 
 /**
  * Concrete service — AccessRequestGrantMaterializer.
  *
  * Implements {@see AccessRequestGrantMaterializerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Requests
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AccessRequestGrantMaterializer implements AccessRequestGrantMaterializerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AccessRequestProjectionRepositoryInterface  $accessRequestProjectionRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AccessRequestProjectionRepositoryInterface $accessRequestProjectionRepository,
+    ) {
+    }
 }

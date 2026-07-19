@@ -8,14 +8,15 @@ namespace Academorix\AgeGroup\Services;
 
 use Academorix\AgeGroup\Contracts\Services\AgeGroupResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\AgeGroup\Contracts\Repositories\AgeGroupRepositoryInterface;
 
 /**
  * Concrete service — AgeGroupResolver.
  *
  * Implements {@see AgeGroupResolverInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category AgeGroup
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AgeGroupResolver implements AgeGroupResolverInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AgeGroupRepositoryInterface  $ageGroupRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AgeGroupRepositoryInterface $ageGroupRepository,
+    ) {
+    }
 }

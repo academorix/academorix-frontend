@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Entitlements\Actions\Tenant;
 
+use Academorix\Entitlements\Contracts\Repositories\EntitlementRepositoryInterface;
+use Academorix\Entitlements\Data\EntitlementData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/entitlements/{key}` — show action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Entitlements
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/entitlements/{key}')]
 final class ShowEntitlementAction
 {
+    public function __construct(
+        private readonly EntitlementRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `entitlement` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): EntitlementData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return EntitlementData::from($this->repository->findOrFail($id));
     }
 }

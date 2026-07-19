@@ -9,6 +9,7 @@ namespace Academorix\Mfa\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Mfa\Contracts\Data\TotpEnrollmentPreviewInterface;
 use Academorix\Mfa\Database\Factories\TotpEnrollmentPreviewFactory;
@@ -23,7 +24,7 @@ use Academorix\Mfa\Database\Factories\TotpEnrollmentPreviewFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: TotpEnrollmentPreviewInterface::TABLE, keyType: TotpEnrollmentPreviewInterface::KEY_TYPE)]
+#[Table(name: TotpEnrollmentPreviewInterface::TABLE, key: TotpEnrollmentPreviewInterface::PRIMARY_KEY, keyType: TotpEnrollmentPreviewInterface::KEY_TYPE)]
 #[Fillable([
     TotpEnrollmentPreviewInterface::ATTR_TOTP_SECRET,
         TotpEnrollmentPreviewInterface::ATTR_TOTP_URI,
@@ -33,15 +34,8 @@ use Academorix\Mfa\Database\Factories\TotpEnrollmentPreviewFactory;
         TotpEnrollmentPreviewInterface::ATTR_PREVIEW_ID,
 ])]
 #[UseFactory(TotpEnrollmentPreviewFactory::class)]
+#[WithoutIncrementing]
 final class TotpEnrollmentPreview extends Model implements TotpEnrollmentPreviewInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Attributes\Actions\Tenant;
 
+use Academorix\Attributes\Contracts\Repositories\AttributeDefinitionRepositoryInterface;
+use Academorix\Attributes\Data\AttributeDefinitionData;
+use Academorix\Attributes\Data\Requests\CreateAttributeDefinitionRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/attribute-definitions` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Attributes
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/attribute-definitions')]
 final class CreateAttributeDefinitionAction
 {
+    public function __construct(
+        private readonly AttributeDefinitionRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `attribute-definition` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateAttributeDefinitionRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateAttributeDefinitionRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(AttributeDefinitionData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

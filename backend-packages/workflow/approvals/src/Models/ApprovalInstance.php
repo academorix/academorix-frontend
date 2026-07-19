@@ -9,18 +9,23 @@ namespace Academorix\Approvals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Approvals\Contracts\Data\ApprovalInstanceInterface;
 use Academorix\Approvals\Database\Factories\ApprovalInstanceFactory;
+use Academorix\Approvals\Enums\ApprovalInstanceStatus;
+use Academorix\Approvals\Policies\ApprovalInstancePolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ApprovalInstanceInterface::TABLE, keyType: ApprovalInstanceInterface::KEY_TYPE)]
+#[Table(name: ApprovalInstanceInterface::TABLE, key: ApprovalInstanceInterface::PRIMARY_KEY, keyType: ApprovalInstanceInterface::KEY_TYPE)]
 #[Fillable([
     ApprovalInstanceInterface::ATTR_TENANT_ID,
         ApprovalInstanceInterface::ATTR_APPLICATION_ID,
@@ -58,33 +63,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ApprovalInstanceInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ApprovalInstanceFactory::class)]
-final class ApprovalInstance extends Model implements ApprovalInstanceInterface
+#[WithoutIncrementing]
+#[UsePolicy(ApprovalInstancePolicy::class)]
+final class ApprovalInstance extends Model implements ApprovalInstanceInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ApprovalInstanceInterface::ATTR_STATUS => 'ApprovalInstanceStatus',
+        ApprovalInstanceInterface::ATTR_STATUS => ApprovalInstanceStatus::class,
         ApprovalInstanceInterface::ATTR_TEMPLATE_VERSION => 'integer',
         ApprovalInstanceInterface::ATTR_CONTEXT_JSON => 'array',
         ApprovalInstanceInterface::ATTR_PAYLOAD_JSON => 'encrypted:array',

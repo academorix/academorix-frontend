@@ -8,14 +8,15 @@ namespace Academorix\Mfa\Services;
 
 use Academorix\Mfa\Contracts\Services\TotpSecretGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Mfa\Contracts\Repositories\MfaChallengeRepositoryInterface;
 
 /**
  * Concrete service — TotpSecretGenerator.
  *
  * Implements {@see TotpSecretGeneratorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Mfa
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class TotpSecretGenerator implements TotpSecretGeneratorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  MfaChallengeRepositoryInterface  $mfaChallengeRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly MfaChallengeRepositoryInterface $mfaChallengeRepository,
+    ) {
+    }
 }

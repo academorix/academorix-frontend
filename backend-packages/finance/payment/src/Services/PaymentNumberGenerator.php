@@ -8,14 +8,15 @@ namespace Academorix\Payment\Services;
 
 use Academorix\Payment\Contracts\Services\PaymentNumberGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Payment\Contracts\Repositories\PaymentDisputeRepositoryInterface;
 
 /**
  * Concrete service — PaymentNumberGenerator.
  *
  * Implements {@see PaymentNumberGeneratorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Payment
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class PaymentNumberGenerator implements PaymentNumberGeneratorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  PaymentDisputeRepositoryInterface  $paymentDisputeRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly PaymentDisputeRepositoryInterface $paymentDisputeRepository,
+    ) {
+    }
 }

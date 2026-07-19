@@ -9,15 +9,22 @@ namespace Academorix\Analytics\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Analytics\Contracts\Data\AnalyticsEventInterface;
 use Academorix\Analytics\Database\Factories\AnalyticsEventFactory;
+use Academorix\Analytics\Enums\AnalyticsEventCategory;
+use Academorix\Analytics\Enums\AnalyticsEventStatus;
+use Academorix\Analytics\Policies\AnalyticsEventPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AnalyticsEvent.
@@ -28,7 +35,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: AnalyticsEventInterface::TABLE, keyType: AnalyticsEventInterface::KEY_TYPE)]
+#[Table(name: AnalyticsEventInterface::TABLE, key: AnalyticsEventInterface::PRIMARY_KEY, keyType: AnalyticsEventInterface::KEY_TYPE)]
 #[Fillable([
     AnalyticsEventInterface::ATTR_TENANT_ID,
         AnalyticsEventInterface::ATTR_EVENT_NAME,
@@ -50,36 +57,31 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         AnalyticsEventInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AnalyticsEventFactory::class)]
-final class AnalyticsEvent extends Model implements AnalyticsEventInterface
+#[WithoutIncrementing]
+#[UsePolicy(AnalyticsEventPolicy::class)]
+final class AnalyticsEvent extends Model implements AnalyticsEventInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
-    // TODO(gen): resolve unknown trait `HasAuditable` — add its import + use line.
+    use Userstamps;
+    use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AnalyticsEventInterface::ATTR_EVENT_KIND => 'AnalyticsEventKind',
-        AnalyticsEventInterface::ATTR_CATEGORY => 'AnalyticsEventCategory',
-        AnalyticsEventInterface::ATTR_STATUS => 'AnalyticsEventStatus',
-        AnalyticsEventInterface::ATTR_PROPERTIES => 'AnalyticsPropertiesBag',
-        AnalyticsEventInterface::ATTR_CONTEXT => 'AnalyticsContext',
+        AnalyticsEventInterface::ATTR_EVENT_KIND => AnalyticsEventKind::class,
+        AnalyticsEventInterface::ATTR_CATEGORY => AnalyticsEventCategory::class,
+        AnalyticsEventInterface::ATTR_STATUS => AnalyticsEventStatus::class,
+        AnalyticsEventInterface::ATTR_PROPERTIES => AnalyticsPropertiesBag::class,
+        AnalyticsEventInterface::ATTR_CONTEXT => AnalyticsContext::class,
         AnalyticsEventInterface::ATTR_ATTRIBUTION => 'array',
-        AnalyticsEventInterface::ATTR_CONSENT_SNAPSHOT => 'AnalyticsConsentSnapshot',
+        AnalyticsEventInterface::ATTR_CONSENT_SNAPSHOT => AnalyticsConsentSnapshot::class,
         AnalyticsEventInterface::ATTR_EVENT_TIME => 'datetime',
     ];
 }

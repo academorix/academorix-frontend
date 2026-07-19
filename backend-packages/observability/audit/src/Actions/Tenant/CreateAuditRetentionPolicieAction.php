@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Audit\Actions\Tenant;
 
+use Academorix\Audit\Contracts\Repositories\AuditRetentionPolicyRepositoryInterface;
+use Academorix\Audit\Data\AuditRetentionPolicyData;
+use Academorix\Audit\Data\Requests\CreateAuditRetentionPolicyRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/audit-retention-policies` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Audit
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/audit-retention-policies')]
 final class CreateAuditRetentionPolicieAction
 {
+    public function __construct(
+        private readonly AuditRetentionPolicyRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `audit-retention-policie` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateAuditRetentionPolicyRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateAuditRetentionPolicyRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(AuditRetentionPolicyData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

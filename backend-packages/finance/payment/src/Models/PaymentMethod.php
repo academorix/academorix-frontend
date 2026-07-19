@@ -9,17 +9,23 @@ namespace Academorix\Payment\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Payment\Contracts\Data\PaymentMethodInterface;
 use Academorix\Payment\Database\Factories\PaymentMethodFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Payment\Enums\PaymentMethodDeactivatedReason;
+use Academorix\Payment\Enums\PaymentProvider;
+use Academorix\Payment\Policies\PaymentMethodPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PaymentMethodInterface::TABLE, keyType: PaymentMethodInterface::KEY_TYPE)]
+#[Table(name: PaymentMethodInterface::TABLE, key: PaymentMethodInterface::PRIMARY_KEY, keyType: PaymentMethodInterface::KEY_TYPE)]
 #[Fillable([
     PaymentMethodInterface::ATTR_TENANT_ID,
         PaymentMethodInterface::ATTR_CUSTOMER_TYPE,
@@ -53,34 +59,29 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PaymentMethodInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PaymentMethodFactory::class)]
-final class PaymentMethod extends Model implements PaymentMethodInterface
+#[WithoutIncrementing]
+#[UsePolicy(PaymentMethodPolicy::class)]
+final class PaymentMethod extends Model implements PaymentMethodInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        PaymentMethodInterface::ATTR_PROVIDER => 'PaymentProvider',
+        PaymentMethodInterface::ATTR_PROVIDER => PaymentProvider::class,
         PaymentMethodInterface::ATTR_PROVIDER_REFERENCE_ID => 'encrypted:string',
-        PaymentMethodInterface::ATTR_METHOD_TYPE => 'PaymentMethodType',
+        PaymentMethodInterface::ATTR_METHOD_TYPE => PaymentMethodType::class,
         PaymentMethodInterface::ATTR_EXP_MONTH => 'integer',
         PaymentMethodInterface::ATTR_EXP_YEAR => 'integer',
         PaymentMethodInterface::ATTR_BILLING_ADDRESS => 'array',
@@ -88,7 +89,7 @@ final class PaymentMethod extends Model implements PaymentMethodInterface
         PaymentMethodInterface::ATTR_IS_ACTIVE => 'boolean',
         PaymentMethodInterface::ATTR_LAST_USED_AT => 'datetime',
         PaymentMethodInterface::ATTR_VERIFIED_AT => 'datetime',
-        PaymentMethodInterface::ATTR_DEACTIVATED_REASON => 'PaymentMethodDeactivatedReason',
+        PaymentMethodInterface::ATTR_DEACTIVATED_REASON => PaymentMethodDeactivatedReason::class,
         PaymentMethodInterface::ATTR_METADATA => 'array',
     ];
 }

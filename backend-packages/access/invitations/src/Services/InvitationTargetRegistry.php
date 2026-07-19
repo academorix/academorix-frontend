@@ -8,14 +8,15 @@ namespace Academorix\Invitations\Services;
 
 use Academorix\Invitations\Contracts\Services\InvitationTargetRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Invitations\Contracts\Repositories\InvitationEventRepositoryInterface;
 
 /**
  * Concrete service — InvitationTargetRegistry.
  *
  * Implements {@see InvitationTargetRegistryInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Invitations
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class InvitationTargetRegistry implements InvitationTargetRegistryInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  InvitationEventRepositoryInterface  $invitationEventRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly InvitationEventRepositoryInterface $invitationEventRepository,
+    ) {
+    }
 }

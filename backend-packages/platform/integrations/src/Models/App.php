@@ -9,6 +9,7 @@ namespace Academorix\Integrations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Integrations\Contracts\Data\AppInterface;
 use Academorix\Integrations\Database\Factories\AppFactory;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -30,7 +32,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AppInterface::TABLE, keyType: AppInterface::KEY_TYPE)]
+#[Table(name: AppInterface::TABLE, key: AppInterface::PRIMARY_KEY, keyType: AppInterface::KEY_TYPE)]
 #[Fillable([
     AppInterface::ATTR_SLUG,
         AppInterface::ATTR_NAME,
@@ -61,22 +63,15 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AppInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AppFactory::class)]
-final class App extends Model implements AppInterface
+#[WithoutIncrementing]
+final class App extends Model implements AppInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

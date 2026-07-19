@@ -8,14 +8,15 @@ namespace Academorix\Session\Services;
 
 use Academorix\Session\Contracts\Services\AttendanceEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Session\Contracts\Repositories\SessionAttendanceRepositoryInterface;
 
 /**
  * Concrete service — AttendanceEvaluator.
  *
  * Implements {@see AttendanceEvaluatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Session
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AttendanceEvaluator implements AttendanceEvaluatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  SessionAttendanceRepositoryInterface  $sessionAttendanceRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly SessionAttendanceRepositoryInterface $sessionAttendanceRepository,
+    ) {
+    }
 }

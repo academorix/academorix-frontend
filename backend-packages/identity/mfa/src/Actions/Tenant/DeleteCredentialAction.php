@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\Mfa\Actions\Tenant;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Delete;
+
 /**
  * `DELETE /api/v1/me/mfa/webauthn/credentials/{id}` — delete action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Delete(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Mfa
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Delete('/api/v1/me/mfa/webauthn/credentials/{id}')]
 final class DeleteCredentialAction
 {
     /**

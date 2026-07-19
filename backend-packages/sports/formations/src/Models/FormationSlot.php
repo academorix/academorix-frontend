@@ -9,6 +9,7 @@ namespace Academorix\Formations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Formations\Contracts\Data\FormationSlotInterface;
 use Academorix\Formations\Database\Factories\FormationSlotFactory;
@@ -27,7 +28,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: FormationSlotInterface::TABLE, keyType: FormationSlotInterface::KEY_TYPE)]
+#[Table(name: FormationSlotInterface::TABLE, key: FormationSlotInterface::PRIMARY_KEY, keyType: FormationSlotInterface::KEY_TYPE)]
 #[Fillable([
     FormationSlotInterface::ATTR_TENANT_ID,
         FormationSlotInterface::ATTR_FORMATION_ID,
@@ -38,6 +39,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         FormationSlotInterface::ATTR_METADATA,
 ])]
 #[UseFactory(FormationSlotFactory::class)]
+#[WithoutIncrementing]
 final class FormationSlot extends Model implements FormationSlotInterface
 {
     use HasFactory;
@@ -45,12 +47,4 @@ final class FormationSlot extends Model implements FormationSlotInterface
     use BelongsToTenant;
     use HasMetadata;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Messaging\Actions\Tenant;
 
+use Academorix\Messaging\Contracts\Repositories\MessageRepositoryInterface;
+use Academorix\Messaging\Data\MessageData;
+use Academorix\Messaging\Data\Requests\UpdateMessageRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/v1/messages/{message}` — update action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Messaging
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/v1/messages/{message}')]
 final class UpdateMessageAction
 {
+    public function __construct(
+        private readonly MessageRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `message` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateMessageRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateMessageRequestData $data): MessageData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return MessageData::from($model);
     }
 }

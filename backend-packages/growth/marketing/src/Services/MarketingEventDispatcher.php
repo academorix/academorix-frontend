@@ -8,14 +8,15 @@ namespace Academorix\Marketing\Services;
 
 use Academorix\Marketing\Contracts\Services\MarketingEventDispatcherInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Marketing\Contracts\Repositories\MarketingDeadLetterRepositoryInterface;
 
 /**
  * Concrete service — MarketingEventDispatcher.
  *
  * Implements {@see MarketingEventDispatcherInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Marketing
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class MarketingEventDispatcher implements MarketingEventDispatcherInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  MarketingDeadLetterRepositoryInterface  $marketingDeadLetterRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly MarketingDeadLetterRepositoryInterface $marketingDeadLetterRepository,
+    ) {
+    }
 }

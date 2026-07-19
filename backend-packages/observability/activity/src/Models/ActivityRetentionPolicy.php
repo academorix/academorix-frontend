@@ -9,6 +9,7 @@ namespace Academorix\Activity\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Activity\Contracts\Data\ActivityRetentionPolicyInterface;
 use Academorix\Activity\Database\Factories\ActivityRetentionPolicyFactory;
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ActivityRetentionPolicy.
@@ -29,7 +31,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: ActivityRetentionPolicyInterface::TABLE, keyType: ActivityRetentionPolicyInterface::KEY_TYPE)]
+#[Table(name: ActivityRetentionPolicyInterface::TABLE, key: ActivityRetentionPolicyInterface::PRIMARY_KEY, keyType: ActivityRetentionPolicyInterface::KEY_TYPE)]
 #[Fillable([
     ActivityRetentionPolicyInterface::ATTR_TENANT_ID,
         ActivityRetentionPolicyInterface::ATTR_LOG_NAME,
@@ -38,25 +40,19 @@ use OwenIt\Auditing\Auditable;
         ActivityRetentionPolicyInterface::ATTR_EXPIRES_AT,
 ])]
 #[UseFactory(ActivityRetentionPolicyFactory::class)]
-final class ActivityRetentionPolicy extends Model implements ActivityRetentionPolicyInterface
+#[WithoutIncrementing]
+final class ActivityRetentionPolicy extends Model implements ActivityRetentionPolicyInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

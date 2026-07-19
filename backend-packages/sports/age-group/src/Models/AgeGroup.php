@@ -9,19 +9,23 @@ namespace Academorix\AgeGroup\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\AgeGroup\Contracts\Data\AgeGroupInterface;
 use Academorix\AgeGroup\Database\Factories\AgeGroupFactory;
+use Academorix\AgeGroup\Policies\AgeGroupPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Organization\Concerns\BelongsToOrganization;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 
@@ -34,7 +38,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: AgeGroupInterface::TABLE, keyType: AgeGroupInterface::KEY_TYPE)]
+#[Table(name: AgeGroupInterface::TABLE, key: AgeGroupInterface::PRIMARY_KEY, keyType: AgeGroupInterface::KEY_TYPE)]
 #[Fillable([
     AgeGroupInterface::ATTR_TENANT_ID,
         AgeGroupInterface::ATTR_ORGANIZATION_ID,
@@ -56,7 +60,9 @@ use Spatie\Sluggable\HasSlug;
         AgeGroupInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AgeGroupFactory::class)]
-final class AgeGroup extends Model implements AgeGroupInterface
+#[WithoutIncrementing]
+#[UsePolicy(AgeGroupPolicy::class)]
+final class AgeGroup extends Model implements AgeGroupInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
@@ -64,22 +70,15 @@ final class AgeGroup extends Model implements AgeGroupInterface
     use BelongsToOrganization;
     use HasSlug;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -92,9 +91,9 @@ final class AgeGroup extends Model implements AgeGroupInterface
         AgeGroupInterface::ATTR_IS_YOUTH => 'boolean',
         AgeGroupInterface::ATTR_IS_DEFAULT => 'boolean',
         AgeGroupInterface::ATTR_IS_SEEDED => 'boolean',
-        AgeGroupInterface::ATTR_CUTOFF_DATE_KIND => 'Academorix\Sports\AgeGroup\Enums\CutoffDateKind',
-        AgeGroupInterface::ATTR_GENDER_CATEGORY => 'Academorix\Sports\AgeGroup\Enums\GenderCategory',
-        AgeGroupInterface::ATTR_COLOR => 'Academorix\Sports\AgeGroup\Casts\HexColor',
+        AgeGroupInterface::ATTR_CUTOFF_DATE_KIND => \Academorix\Sports\AgeGroup\Enums\CutoffDateKind::class,
+        AgeGroupInterface::ATTR_GENDER_CATEGORY => \Academorix\Sports\AgeGroup\Enums\GenderCategory::class,
+        AgeGroupInterface::ATTR_COLOR => \Academorix\Sports\AgeGroup\Casts\HexColor::class,
         AgeGroupInterface::ATTR_METADATA => 'array',
     ];
 }

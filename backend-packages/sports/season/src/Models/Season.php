@@ -9,18 +9,23 @@ namespace Academorix\Season\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Season\Contracts\Data\SeasonInterface;
 use Academorix\Season\Database\Factories\SeasonFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Season\Enums\SeasonStatus;
+use Academorix\Season\Policies\SeasonPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 
@@ -33,7 +38,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: SeasonInterface::TABLE, keyType: SeasonInterface::KEY_TYPE)]
+#[Table(name: SeasonInterface::TABLE, key: SeasonInterface::PRIMARY_KEY, keyType: SeasonInterface::KEY_TYPE)]
 #[Fillable([
     SeasonInterface::ATTR_TENANT_ID,
         SeasonInterface::ATTR_ORGANIZATION_ID,
@@ -64,35 +69,30 @@ use Spatie\Sluggable\HasSlug;
         SeasonInterface::ATTR_METADATA,
 ])]
 #[UseFactory(SeasonFactory::class)]
-final class Season extends Model implements SeasonInterface
+#[WithoutIncrementing]
+#[UsePolicy(SeasonPolicy::class)]
+final class Season extends Model implements SeasonInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasSlug;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        SeasonInterface::ATTR_SEASON_TYPE => 'SeasonType',
-        SeasonInterface::ATTR_STATUS => 'SeasonStatus',
+        SeasonInterface::ATTR_SEASON_TYPE => SeasonType::class,
+        SeasonInterface::ATTR_STATUS => SeasonStatus::class,
         SeasonInterface::ATTR_IS_CURRENT => 'boolean',
         SeasonInterface::ATTR_HAS_PLAYOFFS => 'boolean',
         SeasonInterface::ATTR_ALLOWS_LATE_REGISTRATION => 'boolean',

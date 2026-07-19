@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Organization\Actions\Tenant;
 
+use Academorix\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
+use Academorix\Organization\Data\OrganizationData;
+use Academorix\Organization\Data\Requests\CreateOrganizationRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/organizations` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Organization
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/organizations')]
 final class CreateOrganizationAction
 {
+    public function __construct(
+        private readonly OrganizationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `organization` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateOrganizationRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateOrganizationRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(OrganizationData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

@@ -9,17 +9,24 @@ namespace Academorix\Teams\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Teams\Contracts\Data\TeamMemberInterface;
 use Academorix\Teams\Database\Factories\TeamMemberFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Teams\Concerns\BelongsToTeam;
+use Academorix\Teams\Enums\TeamMemberLeftReason;
+use Academorix\Teams\Enums\TeamMemberStatus;
+use Academorix\Teams\Policies\TeamMemberPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +38,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: TeamMemberInterface::TABLE, keyType: TeamMemberInterface::KEY_TYPE)]
+#[Table(name: TeamMemberInterface::TABLE, key: TeamMemberInterface::PRIMARY_KEY, keyType: TeamMemberInterface::KEY_TYPE)]
 #[Fillable([
     TeamMemberInterface::ATTR_TENANT_ID,
         TeamMemberInterface::ATTR_TEAM_ID,
@@ -48,36 +55,31 @@ use Spatie\Activitylog\Traits\LogsActivity;
         TeamMemberInterface::ATTR_METADATA,
 ])]
 #[UseFactory(TeamMemberFactory::class)]
-final class TeamMember extends Model implements TeamMemberInterface
+#[WithoutIncrementing]
+#[UsePolicy(TeamMemberPolicy::class)]
+final class TeamMember extends Model implements TeamMemberInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToTeam` — add its import + use line.
+    use BelongsToTeam;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        TeamMemberInterface::ATTR_MEMBER_TYPE => 'TeamMemberType',
-        TeamMemberInterface::ATTR_ROLE_ON_TEAM => 'TeamMemberRole',
-        TeamMemberInterface::ATTR_STATUS => 'TeamMemberStatus',
-        TeamMemberInterface::ATTR_LEFT_REASON => 'TeamMemberLeftReason',
+        TeamMemberInterface::ATTR_MEMBER_TYPE => TeamMemberType::class,
+        TeamMemberInterface::ATTR_ROLE_ON_TEAM => TeamMemberRole::class,
+        TeamMemberInterface::ATTR_STATUS => TeamMemberStatus::class,
+        TeamMemberInterface::ATTR_LEFT_REASON => TeamMemberLeftReason::class,
         TeamMemberInterface::ATTR_JERSEY_NUMBER => 'integer',
         TeamMemberInterface::ATTR_METADATA => 'array',
         TeamMemberInterface::ATTR_JOINED_AT => 'datetime',

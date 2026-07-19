@@ -9,6 +9,7 @@ namespace Academorix\Auth\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Auth\Contracts\Data\JwksResponseInterface;
 use Academorix\Auth\Database\Factories\JwksResponseFactory;
@@ -23,20 +24,13 @@ use Academorix\Auth\Database\Factories\JwksResponseFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: JwksResponseInterface::TABLE, keyType: JwksResponseInterface::KEY_TYPE)]
+#[Table(name: JwksResponseInterface::TABLE, key: JwksResponseInterface::PRIMARY_KEY, keyType: JwksResponseInterface::KEY_TYPE)]
 #[Fillable([
     JwksResponseInterface::ATTR_KEYS,
 ])]
 #[UseFactory(JwksResponseFactory::class)]
+#[WithoutIncrementing]
 final class JwksResponse extends Model implements JwksResponseInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

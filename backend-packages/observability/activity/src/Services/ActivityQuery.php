@@ -8,14 +8,15 @@ namespace Academorix\Activity\Services;
 
 use Academorix\Activity\Contracts\Services\ActivityQueryInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Activity\Contracts\Repositories\ActivityRetentionPolicyRepositoryInterface;
 
 /**
  * Concrete service — ActivityQuery.
  *
  * Implements {@see ActivityQueryInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Activity
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ActivityQuery implements ActivityQueryInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ActivityRetentionPolicyRepositoryInterface  $activityRetentionPolicyRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ActivityRetentionPolicyRepositoryInterface $activityRetentionPolicyRepository,
+    ) {
+    }
 }

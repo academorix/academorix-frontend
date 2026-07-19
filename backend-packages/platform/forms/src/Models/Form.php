@@ -9,17 +9,21 @@ namespace Academorix\Forms\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Forms\Contracts\Data\FormInterface;
 use Academorix\Forms\Database\Factories\FormFactory;
+use Academorix\Forms\Policies\FormPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +35,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: FormInterface::TABLE, keyType: FormInterface::KEY_TYPE)]
+#[Table(name: FormInterface::TABLE, key: FormInterface::PRIMARY_KEY, keyType: FormInterface::KEY_TYPE)]
 #[Fillable([
     FormInterface::ATTR_TENANT_ID,
         FormInterface::ATTR_SLUG,
@@ -54,23 +58,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         FormInterface::ATTR_METADATA,
 ])]
 #[UseFactory(FormFactory::class)]
-final class Form extends Model implements FormInterface
+#[WithoutIncrementing]
+#[UsePolicy(FormPolicy::class)]
+final class Form extends Model implements FormInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

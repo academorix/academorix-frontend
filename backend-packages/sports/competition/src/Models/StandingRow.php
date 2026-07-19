@@ -9,13 +9,16 @@ namespace Academorix\Competition\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Competition\Contracts\Data\StandingRowInterface;
 use Academorix\Competition\Database\Factories\StandingRowFactory;
+use Academorix\Competition\Policies\StandingRowPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -27,7 +30,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: StandingRowInterface::TABLE, keyType: StandingRowInterface::KEY_TYPE)]
+#[Table(name: StandingRowInterface::TABLE, key: StandingRowInterface::PRIMARY_KEY, keyType: StandingRowInterface::KEY_TYPE)]
 #[Fillable([
     StandingRowInterface::ATTR_TENANT_ID,
         StandingRowInterface::ATTR_COMPETITION_ID,
@@ -46,6 +49,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         StandingRowInterface::ATTR_METADATA,
 ])]
 #[UseFactory(StandingRowFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(StandingRowPolicy::class)]
 final class StandingRow extends Model implements StandingRowInterface
 {
     use HasFactory;
@@ -53,12 +58,4 @@ final class StandingRow extends Model implements StandingRowInterface
     use BelongsToTenant;
     use HasMetadata;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

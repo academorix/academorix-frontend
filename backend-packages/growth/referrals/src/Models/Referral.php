@@ -9,17 +9,23 @@ namespace Academorix\Referrals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Referrals\Contracts\Data\ReferralInterface;
 use Academorix\Referrals\Database\Factories\ReferralFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Referrals\Enums\ReferralCancellationReason;
+use Academorix\Referrals\Enums\ReferralStatus;
+use Academorix\Referrals\Policies\ReferralPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ReferralInterface::TABLE, keyType: ReferralInterface::KEY_TYPE)]
+#[Table(name: ReferralInterface::TABLE, key: ReferralInterface::PRIMARY_KEY, keyType: ReferralInterface::KEY_TYPE)]
 #[Fillable([
     ReferralInterface::ATTR_TENANT_ID,
         ReferralInterface::ATTR_REFERRAL_PROGRAM_ID,
@@ -55,36 +61,31 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ReferralInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ReferralFactory::class)]
-final class Referral extends Model implements ReferralInterface
+#[WithoutIncrementing]
+#[UsePolicy(ReferralPolicy::class)]
+final class Referral extends Model implements ReferralInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToReferralProgram` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasReferralRewards` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasReferralFraudFlags` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToReferralProgram` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasReferralRewards` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasReferralFraudFlags` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ReferralInterface::ATTR_STATUS => 'ReferralStatus',
-        ReferralInterface::ATTR_CANCELLATION_REASON => 'ReferralCancellationReason',
+        ReferralInterface::ATTR_STATUS => ReferralStatus::class,
+        ReferralInterface::ATTR_CANCELLATION_REASON => ReferralCancellationReason::class,
         ReferralInterface::ATTR_ATTRIBUTION_SNAPSHOT => 'array',
         ReferralInterface::ATTR_DEVICE_SNAPSHOT => 'array',
         ReferralInterface::ATTR_FRAUD_SCORE => 'integer',

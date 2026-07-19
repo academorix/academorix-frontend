@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Reporting\Actions\Tenant;
 
+use Academorix\Reporting\Contracts\Repositories\DashboardRepositoryInterface;
+use Academorix\Reporting\Data\DashboardData;
+use Academorix\Reporting\Data\Requests\UpdateDashboardRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/v1/dashboards/{dashboard}` — update action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Reporting
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/v1/dashboards/{dashboard}')]
 final class UpdateDashboardAction
 {
+    public function __construct(
+        private readonly DashboardRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `dashboard` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateDashboardRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateDashboardRequestData $data): DashboardData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return DashboardData::from($model);
     }
 }

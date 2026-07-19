@@ -9,6 +9,7 @@ namespace Academorix\Grants\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Grants\Contracts\Data\AccessGrantInterface;
 use Academorix\Grants\Database\Factories\AccessGrantFactory;
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AccessGrantInterface::TABLE, keyType: AccessGrantInterface::KEY_TYPE)]
+#[Table(name: AccessGrantInterface::TABLE, key: AccessGrantInterface::PRIMARY_KEY, keyType: AccessGrantInterface::KEY_TYPE)]
 #[Fillable([
     AccessGrantInterface::ATTR_TENANT_ID,
         AccessGrantInterface::ATTR_SUBJECT_TYPE,
@@ -52,34 +55,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AccessGrantInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AccessGrantFactory::class)]
-final class AccessGrant extends Model implements AccessGrantInterface
+#[WithoutIncrementing]
+final class AccessGrant extends Model implements AccessGrantInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `HasAudit` — add its import + use line.
+    use Userstamps;
+    use LogsActivity;
+    use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AccessGrantInterface::ATTR_DECISION => 'GrantDecision',
-        AccessGrantInterface::ATTR_SOURCE => 'GrantSource',
+        AccessGrantInterface::ATTR_DECISION => GrantDecision::class,
+        AccessGrantInterface::ATTR_SOURCE => GrantSource::class,
         AccessGrantInterface::ATTR_PERMISSIONS => 'array',
         AccessGrantInterface::ATTR_GRANTS => 'array',
         AccessGrantInterface::ATTR_METADATA => 'array',

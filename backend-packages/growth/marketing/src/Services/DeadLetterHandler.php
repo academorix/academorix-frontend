@@ -8,14 +8,15 @@ namespace Academorix\Marketing\Services;
 
 use Academorix\Marketing\Contracts\Services\DeadLetterHandlerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Marketing\Contracts\Repositories\MarketingDeadLetterRepositoryInterface;
 
 /**
  * Concrete service — DeadLetterHandler.
  *
  * Implements {@see DeadLetterHandlerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Marketing
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class DeadLetterHandler implements DeadLetterHandlerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  MarketingDeadLetterRepositoryInterface  $marketingDeadLetterRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly MarketingDeadLetterRepositoryInterface $marketingDeadLetterRepository,
+    ) {
+    }
 }

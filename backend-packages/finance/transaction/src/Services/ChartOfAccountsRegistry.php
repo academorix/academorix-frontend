@@ -8,14 +8,15 @@ namespace Academorix\Transaction\Services;
 
 use Academorix\Transaction\Contracts\Services\ChartOfAccountsRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Transaction\Contracts\Repositories\TransactionLedgerEntryRepositoryInterface;
 
 /**
  * Concrete service — ChartOfAccountsRegistry.
  *
  * Implements {@see ChartOfAccountsRegistryInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Transaction
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ChartOfAccountsRegistry implements ChartOfAccountsRegistryInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  TransactionLedgerEntryRepositoryInterface  $transactionLedgerEntryRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly TransactionLedgerEntryRepositoryInterface $transactionLedgerEntryRepository,
+    ) {
+    }
 }

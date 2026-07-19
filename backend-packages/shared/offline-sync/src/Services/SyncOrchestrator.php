@@ -8,14 +8,15 @@ namespace Academorix\OfflineSync\Services;
 
 use Academorix\OfflineSync\Contracts\Services\SyncOrchestratorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\OfflineSync\Contracts\Repositories\SyncCursorRepositoryInterface;
 
 /**
  * Concrete service — SyncOrchestrator.
  *
  * Implements {@see SyncOrchestratorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category OfflineSync
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SyncOrchestrator implements SyncOrchestratorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  SyncCursorRepositoryInterface  $syncCursorRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly SyncCursorRepositoryInterface $syncCursorRepository,
+    ) {
+    }
 }

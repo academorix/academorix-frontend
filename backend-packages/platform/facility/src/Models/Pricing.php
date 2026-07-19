@@ -9,6 +9,7 @@ namespace Academorix\Facility\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Facility\Contracts\Data\PricingInterface;
 use Academorix\Facility\Database\Factories\PricingFactory;
@@ -23,7 +24,7 @@ use Academorix\Facility\Database\Factories\PricingFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: PricingInterface::TABLE, keyType: PricingInterface::KEY_TYPE)]
+#[Table(name: PricingInterface::TABLE, key: PricingInterface::PRIMARY_KEY, keyType: PricingInterface::KEY_TYPE)]
 #[Fillable([
     PricingInterface::ATTR_MODEL,
         PricingInterface::ATTR_CURRENCY,
@@ -32,15 +33,8 @@ use Academorix\Facility\Database\Factories\PricingFactory;
         PricingInterface::ATTR_NOTES,
 ])]
 #[UseFactory(PricingFactory::class)]
+#[WithoutIncrementing]
 final class Pricing extends Model implements PricingInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

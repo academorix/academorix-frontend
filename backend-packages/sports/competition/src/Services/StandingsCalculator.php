@@ -8,14 +8,15 @@ namespace Academorix\Competition\Services;
 
 use Academorix\Competition\Contracts\Services\StandingsCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Competition\Contracts\Repositories\BracketNodeRepositoryInterface;
 
 /**
  * Concrete service — StandingsCalculator.
  *
  * Implements {@see StandingsCalculatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Competition
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class StandingsCalculator implements StandingsCalculatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  BracketNodeRepositoryInterface  $bracketNodeRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly BracketNodeRepositoryInterface $bracketNodeRepository,
+    ) {
+    }
 }

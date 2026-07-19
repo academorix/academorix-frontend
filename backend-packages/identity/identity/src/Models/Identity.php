@@ -9,14 +9,18 @@ namespace Academorix\Identity\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Identity\Contracts\Data\IdentityInterface;
 use Academorix\Identity\Database\Factories\IdentityFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Identity\Policies\IdentityPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -30,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: IdentityInterface::TABLE, keyType: IdentityInterface::KEY_TYPE)]
+#[Table(name: IdentityInterface::TABLE, key: IdentityInterface::PRIMARY_KEY, keyType: IdentityInterface::KEY_TYPE)]
 #[Fillable([
     IdentityInterface::ATTR_EMAIL,
         IdentityInterface::ATTR_PASSWORD_HASH,
@@ -49,30 +53,25 @@ use Spatie\Activitylog\Traits\LogsActivity;
         IdentityInterface::ATTR_METADATA,
 ])]
 #[UseFactory(IdentityFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(IdentityPolicy::class)]
 final class Identity extends Model implements IdentityInterface
 {
     use HasFactory;
     use HasUlids;
-    // TODO(gen): resolve unknown trait `Notifiable` — add its import + use line.
-    // TODO(gen): resolve unknown trait `CanResetPassword` — add its import + use line.
-    // TODO(gen): resolve unknown trait `IsIdentity` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasCredentialLifecycle` — add its import + use line.
+    use Notifiable;
+    // TODO(gen): resolve unknown trait `CanResetPassword` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `IsIdentity` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasCredentialLifecycle` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -85,8 +84,8 @@ final class Identity extends Model implements IdentityInterface
         IdentityInterface::ATTR_LOCKED_UNTIL => 'datetime',
         IdentityInterface::ATTR_FAILED_ATTEMPTS_COUNT => 'integer',
         IdentityInterface::ATTR_DOB => 'date',
-        IdentityInterface::ATTR_MFA_SECRET_ENCRYPTED => 'EncryptedMfaSecret',
-        IdentityInterface::ATTR_MFA_RECOVERY_CODES_HASHED => 'HashedRecoveryCodes',
+        IdentityInterface::ATTR_MFA_SECRET_ENCRYPTED => EncryptedMfaSecret::class,
+        IdentityInterface::ATTR_MFA_RECOVERY_CODES_HASHED => HashedRecoveryCodes::class,
         IdentityInterface::ATTR_PASSWORD_HISTORY_HASHED => 'array',
     ];
 }

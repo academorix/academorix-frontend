@@ -6,26 +6,50 @@ declare(strict_types=1);
 
 namespace Academorix\Subscription\Actions\Tenant;
 
+use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
+use Academorix\Subscription\Data\PlanData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\LaravelData\PaginatedDataCollection;
+
 /**
  * `GET /api/v1/plans` — list action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Subscription
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/plans')]
 final class ListPlanAction
 {
+    public function __construct(
+        private readonly PlanRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * List `plans` for the current caller.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * The `Repository` base picks up `filter[...]` / `sort=...` /
+     * `include=...` query parameters via the `#[Filterable]` attribute
+     * on the concrete repository — no per-Action wiring needed.
+     *
+     * @return PaginatedDataCollection<int, PlanData>  Paginated wire-visible DTOs.
      */
-    public function __invoke(): mixed
+    public function __invoke(Request $request): PaginatedDataCollection
     {
-        // Hand-implement the domain logic here.
-        return null;
+        /** @var LengthAwarePaginator<int, \Academorix\Subscription\Models\Plan> $page */
+        $page = $this->repository->paginate(
+            perPage: (int) $request->integer('per_page', 15),
+        );
+
+        return PlanData::collect($page, PaginatedDataCollection::class);
     }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Geofencing\Services;
 
 use Academorix\Geofencing\Contracts\Services\FenceableResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Geofencing\Contracts\Repositories\FenceableGeometryRepositoryInterface;
 
 /**
  * Concrete service — FenceableResolver.
  *
  * Implements {@see FenceableResolverInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Geofencing
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class FenceableResolver implements FenceableResolverInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  FenceableGeometryRepositoryInterface  $fenceableGeometryRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly FenceableGeometryRepositoryInterface $fenceableGeometryRepository,
+    ) {
+    }
 }

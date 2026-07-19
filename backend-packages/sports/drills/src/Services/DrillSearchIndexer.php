@@ -8,14 +8,15 @@ namespace Academorix\Drills\Services;
 
 use Academorix\Drills\Contracts\Services\DrillSearchIndexerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Drills\Contracts\Repositories\CurriculumWeekRepositoryInterface;
 
 /**
  * Concrete service — DrillSearchIndexer.
  *
  * Implements {@see DrillSearchIndexerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Drills
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class DrillSearchIndexer implements DrillSearchIndexerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  CurriculumWeekRepositoryInterface  $curriculumWeekRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly CurriculumWeekRepositoryInterface $curriculumWeekRepository,
+    ) {
+    }
 }

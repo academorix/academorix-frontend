@@ -9,6 +9,7 @@ namespace Academorix\Membership\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Membership\Contracts\Data\MembershipPlanInterface;
 use Academorix\Membership\Database\Factories\MembershipPlanFactory;
@@ -16,12 +17,15 @@ use Academorix\Branch\Concerns\BelongsToBranch;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Membership\Policies\MembershipPlanPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 
@@ -34,7 +38,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: MembershipPlanInterface::TABLE, keyType: MembershipPlanInterface::KEY_TYPE)]
+#[Table(name: MembershipPlanInterface::TABLE, key: MembershipPlanInterface::PRIMARY_KEY, keyType: MembershipPlanInterface::KEY_TYPE)]
 #[Fillable([
     MembershipPlanInterface::ATTR_TENANT_ID,
         MembershipPlanInterface::ATTR_BRANCH_ID,
@@ -61,7 +65,9 @@ use Spatie\Sluggable\HasSlug;
         MembershipPlanInterface::ATTR_METADATA,
 ])]
 #[UseFactory(MembershipPlanFactory::class)]
-final class MembershipPlan extends Model implements MembershipPlanInterface
+#[WithoutIncrementing]
+#[UsePolicy(MembershipPlanPolicy::class)]
+final class MembershipPlan extends Model implements MembershipPlanInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
@@ -69,34 +75,27 @@ final class MembershipPlan extends Model implements MembershipPlanInterface
     use BelongsToTenant;
     use BelongsToBranch;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        MembershipPlanInterface::ATTR_BILLING_INTERVAL => 'BillingInterval',
+        MembershipPlanInterface::ATTR_BILLING_INTERVAL => BillingInterval::class,
         MembershipPlanInterface::ATTR_BILLING_INTERVAL_COUNT => 'integer',
         MembershipPlanInterface::ATTR_TRIAL_DAYS => 'integer',
         MembershipPlanInterface::ATTR_PASSES_PER_PERIOD => 'integer',
         MembershipPlanInterface::ATTR_PASSES_CARRY_OVER => 'boolean',
         MembershipPlanInterface::ATTR_PREREQUISITES => 'array',
         MembershipPlanInterface::ATTR_ADDON_CONFIG => 'array',
-        MembershipPlanInterface::ATTR_REFUND_POLICY => 'RefundPolicy',
+        MembershipPlanInterface::ATTR_REFUND_POLICY => RefundPolicy::class,
         MembershipPlanInterface::ATTR_REFUND_GRACE_DAYS => 'integer',
         MembershipPlanInterface::ATTR_IS_ACTIVE => 'boolean',
         MembershipPlanInterface::ATTR_EFFECTIVE_FROM => 'datetime',

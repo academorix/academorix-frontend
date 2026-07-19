@@ -9,17 +9,21 @@ namespace Academorix\Attributes\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Attributes\Contracts\Data\AttributeGroupInterface;
 use Academorix\Attributes\Database\Factories\AttributeGroupFactory;
+use Academorix\Attributes\Policies\AttributeGroupPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AttributeGroup.
@@ -30,7 +34,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: AttributeGroupInterface::TABLE, keyType: AttributeGroupInterface::KEY_TYPE)]
+#[Table(name: AttributeGroupInterface::TABLE, key: AttributeGroupInterface::PRIMARY_KEY, keyType: AttributeGroupInterface::KEY_TYPE)]
 #[Fillable([
     AttributeGroupInterface::ATTR_TENANT_ID,
         AttributeGroupInterface::ATTR_ATTRIBUTE_SET_ID,
@@ -43,26 +47,21 @@ use OwenIt\Auditing\Auditable;
         AttributeGroupInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AttributeGroupFactory::class)]
-final class AttributeGroup extends Model implements AttributeGroupInterface
+#[WithoutIncrementing]
+#[UsePolicy(AttributeGroupPolicy::class)]
+final class AttributeGroup extends Model implements AttributeGroupInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

@@ -9,9 +9,12 @@ namespace Academorix\Performance\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Performance\Contracts\Data\PerformanceTestResultInterface;
 use Academorix\Performance\Database\Factories\PerformanceTestResultFactory;
+use Academorix\AthleteEnrollment\Concerns\BelongsToAthleteEnrollment;
+use Academorix\Attributes\Concerns\HasAttributeSet;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
@@ -20,7 +23,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\SchemalessAttributes\SchemalessAttributesTrait;
 
 /**
  * Eloquent model for a PerformanceTestResult.
@@ -31,7 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PerformanceTestResultInterface::TABLE, keyType: PerformanceTestResultInterface::KEY_TYPE)]
+#[Table(name: PerformanceTestResultInterface::TABLE, key: PerformanceTestResultInterface::PRIMARY_KEY, keyType: PerformanceTestResultInterface::KEY_TYPE)]
 #[Fillable([
     PerformanceTestResultInterface::ATTR_TENANT_ID,
         PerformanceTestResultInterface::ATTR_ATHLETE_ENROLLMENT_ID,
@@ -48,26 +53,19 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PerformanceTestResultInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PerformanceTestResultFactory::class)]
-final class PerformanceTestResult extends Model implements PerformanceTestResultInterface
+#[WithoutIncrementing]
+final class PerformanceTestResult extends Model implements PerformanceTestResultInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToAthleteEnrollment` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasAttributeSet` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasSchemalessAttributes` — add its import + use line.
+    use BelongsToAthleteEnrollment;
+    use HasAttributeSet;
+    use SchemalessAttributesTrait;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

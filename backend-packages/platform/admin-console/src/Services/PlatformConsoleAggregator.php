@@ -8,14 +8,15 @@ namespace Academorix\AdminConsole\Services;
 
 use Academorix\AdminConsole\Contracts\Services\PlatformConsoleAggregatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\AdminConsole\Contracts\Repositories\AdminDashboardConfigRepositoryInterface;
 
 /**
  * Concrete service — PlatformConsoleAggregator.
  *
  * Implements {@see PlatformConsoleAggregatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category AdminConsole
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class PlatformConsoleAggregator implements PlatformConsoleAggregatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AdminDashboardConfigRepositoryInterface  $adminDashboardConfigRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AdminDashboardConfigRepositoryInterface $adminDashboardConfigRepository,
+    ) {
+    }
 }

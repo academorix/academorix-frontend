@@ -9,15 +9,19 @@ namespace Academorix\Competition\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Competition\Contracts\Data\BracketNodeInterface;
 use Academorix\Competition\Database\Factories\BracketNodeFactory;
+use Academorix\Competition\Policies\BracketNodePolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a BracketNode.
@@ -28,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: BracketNodeInterface::TABLE, keyType: BracketNodeInterface::KEY_TYPE)]
+#[Table(name: BracketNodeInterface::TABLE, key: BracketNodeInterface::PRIMARY_KEY, keyType: BracketNodeInterface::KEY_TYPE)]
 #[Fillable([
     BracketNodeInterface::ATTR_TENANT_ID,
         BracketNodeInterface::ATTR_COMPETITION_ID,
@@ -42,7 +46,9 @@ use OwenIt\Auditing\Auditable;
         BracketNodeInterface::ATTR_METADATA,
 ])]
 #[UseFactory(BracketNodeFactory::class)]
-final class BracketNode extends Model implements BracketNodeInterface
+#[WithoutIncrementing]
+#[UsePolicy(BracketNodePolicy::class)]
+final class BracketNode extends Model implements BracketNodeInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
@@ -50,12 +56,4 @@ final class BracketNode extends Model implements BracketNodeInterface
     use HasMetadata;
     use Auditable;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

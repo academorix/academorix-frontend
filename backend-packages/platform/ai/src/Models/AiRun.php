@@ -9,15 +9,19 @@ namespace Academorix\Ai\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Ai\Contracts\Data\AiRunInterface;
 use Academorix\Ai\Database\Factories\AiRunFactory;
+use Academorix\Ai\Policies\AiRunPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AiRun.
@@ -28,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: AiRunInterface::TABLE, keyType: AiRunInterface::KEY_TYPE)]
+#[Table(name: AiRunInterface::TABLE, key: AiRunInterface::PRIMARY_KEY, keyType: AiRunInterface::KEY_TYPE)]
 #[Fillable([
     AiRunInterface::ATTR_TENANT_ID,
         AiRunInterface::ATTR_CONVERSATION_ID,
@@ -48,7 +52,9 @@ use OwenIt\Auditing\Auditable;
         AiRunInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AiRunFactory::class)]
-final class AiRun extends Model implements AiRunInterface
+#[WithoutIncrementing]
+#[UsePolicy(AiRunPolicy::class)]
+final class AiRun extends Model implements AiRunInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
@@ -56,12 +62,4 @@ final class AiRun extends Model implements AiRunInterface
     use HasMetadata;
     use Auditable;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

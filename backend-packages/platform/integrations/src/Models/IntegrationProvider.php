@@ -9,6 +9,7 @@ namespace Academorix\Integrations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Integrations\Contracts\Data\IntegrationProviderInterface;
 use Academorix\Integrations\Database\Factories\IntegrationProviderFactory;
@@ -17,6 +18,7 @@ use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a IntegrationProvider.
@@ -27,7 +29,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: IntegrationProviderInterface::TABLE, keyType: IntegrationProviderInterface::KEY_TYPE)]
+#[Table(name: IntegrationProviderInterface::TABLE, key: IntegrationProviderInterface::PRIMARY_KEY, keyType: IntegrationProviderInterface::KEY_TYPE)]
 #[Fillable([
     IntegrationProviderInterface::ATTR_SLUG,
         IntegrationProviderInterface::ATTR_NAME,
@@ -46,19 +48,12 @@ use OwenIt\Auditing\Auditable;
         IntegrationProviderInterface::ATTR_METADATA,
 ])]
 #[UseFactory(IntegrationProviderFactory::class)]
-final class IntegrationProvider extends Model implements IntegrationProviderInterface
+#[WithoutIncrementing]
+final class IntegrationProvider extends Model implements IntegrationProviderInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

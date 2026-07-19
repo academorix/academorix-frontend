@@ -9,19 +9,24 @@ namespace Academorix\Registry\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Registry\Contracts\Data\DisciplineInterface;
 use Academorix\Registry\Database\Factories\DisciplineFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Registry\Policies\DisciplinePolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
+use Spatie\Translatable\HasTranslations;
 
 /**
  * Eloquent model for a Discipline.
@@ -32,7 +37,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: DisciplineInterface::TABLE, keyType: DisciplineInterface::KEY_TYPE)]
+#[Table(name: DisciplineInterface::TABLE, key: DisciplineInterface::PRIMARY_KEY, keyType: DisciplineInterface::KEY_TYPE)]
 #[Fillable([
     DisciplineInterface::ATTR_TENANT_ID,
         DisciplineInterface::ATTR_SPORT_ID,
@@ -49,29 +54,24 @@ use Spatie\Sluggable\HasSlug;
         DisciplineInterface::ATTR_METADATA,
 ])]
 #[UseFactory(DisciplineFactory::class)]
-final class Discipline extends Model implements DisciplineInterface
+#[WithoutIncrementing]
+#[UsePolicy(DisciplinePolicy::class)]
+final class Discipline extends Model implements DisciplineInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasSlug;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `HasTranslations` — add its import + use line.
+    use LogsActivity;
+    use HasTranslations;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -82,7 +82,7 @@ final class Discipline extends Model implements DisciplineInterface
         DisciplineInterface::ATTR_PLAYER_COUNT_MAX => 'integer',
         DisciplineInterface::ATTR_SESSION_DURATION_DEFAULT_MINUTES => 'integer',
         DisciplineInterface::ATTR_SORT_ORDER => 'integer',
-        DisciplineInterface::ATTR_FORMAT_TYPE => 'Academorix\Sports\Registry\Enums\FormatType',
+        DisciplineInterface::ATTR_FORMAT_TYPE => \Academorix\Sports\Registry\Enums\FormatType::class,
         DisciplineInterface::ATTR_METADATA => 'array',
     ];
 }

@@ -9,17 +9,23 @@ namespace Academorix\Coaching\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Coaching\Contracts\Data\CoachCertificationInterface;
 use Academorix\Coaching\Database\Factories\CoachCertificationFactory;
+use Academorix\Coaching\Concerns\BelongsToCoachingProfile;
+use Academorix\Coaching\Enums\CoachCertificationLevel;
+use Academorix\Coaching\Policies\CoachCertificationPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: CoachCertificationInterface::TABLE, keyType: CoachCertificationInterface::KEY_TYPE)]
+#[Table(name: CoachCertificationInterface::TABLE, key: CoachCertificationInterface::PRIMARY_KEY, keyType: CoachCertificationInterface::KEY_TYPE)]
 #[Fillable([
     CoachCertificationInterface::ATTR_TENANT_ID,
         CoachCertificationInterface::ATTR_COACHING_PROFILE_ID,
@@ -48,33 +54,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         CoachCertificationInterface::ATTR_METADATA,
 ])]
 #[UseFactory(CoachCertificationFactory::class)]
-final class CoachCertification extends Model implements CoachCertificationInterface
+#[WithoutIncrementing]
+#[UsePolicy(CoachCertificationPolicy::class)]
+final class CoachCertification extends Model implements CoachCertificationInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToCoachingProfile` — add its import + use line.
+    use BelongsToCoachingProfile;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        CoachCertificationInterface::ATTR_LEVEL => 'CoachCertificationLevel',
+        CoachCertificationInterface::ATTR_LEVEL => CoachCertificationLevel::class,
         CoachCertificationInterface::ATTR_ISSUED_AT => 'date',
         CoachCertificationInterface::ATTR_EXPIRES_AT => 'date',
         CoachCertificationInterface::ATTR_VERIFIED_AT => 'datetime',

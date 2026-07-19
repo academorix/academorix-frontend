@@ -9,6 +9,7 @@ namespace Academorix\Drills\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Drills\Contracts\Data\CurriculumWeekInterface;
 use Academorix\Drills\Database\Factories\CurriculumWeekFactory;
@@ -19,6 +20,7 @@ use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a CurriculumWeek.
@@ -29,7 +31,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: CurriculumWeekInterface::TABLE, keyType: CurriculumWeekInterface::KEY_TYPE)]
+#[Table(name: CurriculumWeekInterface::TABLE, key: CurriculumWeekInterface::PRIMARY_KEY, keyType: CurriculumWeekInterface::KEY_TYPE)]
 #[Fillable([
     CurriculumWeekInterface::ATTR_TENANT_ID,
         CurriculumWeekInterface::ATTR_CURRICULUM_ID,
@@ -39,21 +41,14 @@ use OwenIt\Auditing\Auditable;
         CurriculumWeekInterface::ATTR_METADATA,
 ])]
 #[UseFactory(CurriculumWeekFactory::class)]
-final class CurriculumWeek extends Model implements CurriculumWeekInterface
+#[WithoutIncrementing]
+final class CurriculumWeek extends Model implements CurriculumWeekInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

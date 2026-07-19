@@ -9,17 +9,28 @@ namespace Academorix\Payment\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Payment\Contracts\Data\PaymentIntentInterface;
 use Academorix\Payment\Database\Factories\PaymentIntentFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Invoice\Concerns\BelongsToInvoice;
+use Academorix\Payment\Enums\PaymentIntentCaptureMethod;
+use Academorix\Payment\Enums\PaymentIntentConfirmationMethod;
+use Academorix\Payment\Enums\PaymentIntentLastErrorType;
+use Academorix\Payment\Enums\PaymentIntentNextActionType;
+use Academorix\Payment\Enums\PaymentIntentStatus;
+use Academorix\Payment\Enums\PaymentProvider;
+use Academorix\Payment\Policies\PaymentIntentPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +42,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PaymentIntentInterface::TABLE, keyType: PaymentIntentInterface::KEY_TYPE)]
+#[Table(name: PaymentIntentInterface::TABLE, key: PaymentIntentInterface::PRIMARY_KEY, keyType: PaymentIntentInterface::KEY_TYPE)]
 #[Fillable([
     PaymentIntentInterface::ATTR_TENANT_ID,
         PaymentIntentInterface::ATTR_INVOICE_ID,
@@ -56,43 +67,38 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PaymentIntentInterface::ATTR_PROVIDER_METADATA,
 ])]
 #[UseFactory(PaymentIntentFactory::class)]
-final class PaymentIntent extends Model implements PaymentIntentInterface
+#[WithoutIncrementing]
+#[UsePolicy(PaymentIntentPolicy::class)]
+final class PaymentIntent extends Model implements PaymentIntentInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToInvoice` — add its import + use line.
-    // TODO(gen): resolve unknown trait `BelongsToPaymentMethod` — add its import + use line.
+    use BelongsToInvoice;
+    // TODO(gen): resolve unknown trait `BelongsToPaymentMethod` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        PaymentIntentInterface::ATTR_PROVIDER => 'PaymentProvider',
+        PaymentIntentInterface::ATTR_PROVIDER => PaymentProvider::class,
         PaymentIntentInterface::ATTR_PROVIDER_REFERENCE_ID => 'encrypted:string',
         PaymentIntentInterface::ATTR_AMOUNT_CENTS => 'integer',
-        PaymentIntentInterface::ATTR_STATUS => 'PaymentIntentStatus',
-        PaymentIntentInterface::ATTR_CAPTURE_METHOD => 'PaymentIntentCaptureMethod',
-        PaymentIntentInterface::ATTR_CONFIRMATION_METHOD => 'PaymentIntentConfirmationMethod',
-        PaymentIntentInterface::ATTR_NEXT_ACTION_TYPE => 'PaymentIntentNextActionType',
+        PaymentIntentInterface::ATTR_STATUS => PaymentIntentStatus::class,
+        PaymentIntentInterface::ATTR_CAPTURE_METHOD => PaymentIntentCaptureMethod::class,
+        PaymentIntentInterface::ATTR_CONFIRMATION_METHOD => PaymentIntentConfirmationMethod::class,
+        PaymentIntentInterface::ATTR_NEXT_ACTION_TYPE => PaymentIntentNextActionType::class,
         PaymentIntentInterface::ATTR_NEXT_ACTION_DATA => 'array',
         PaymentIntentInterface::ATTR_CLIENT_SECRET => 'encrypted:string',
-        PaymentIntentInterface::ATTR_LAST_ERROR_TYPE => 'PaymentIntentLastErrorType',
+        PaymentIntentInterface::ATTR_LAST_ERROR_TYPE => PaymentIntentLastErrorType::class,
         PaymentIntentInterface::ATTR_SUCCEEDED_AT => 'datetime',
         PaymentIntentInterface::ATTR_CANCELLED_AT => 'datetime',
         PaymentIntentInterface::ATTR_PROVIDER_METADATA => 'encrypted:array',

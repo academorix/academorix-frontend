@@ -8,14 +8,15 @@ namespace Academorix\Facility\Services;
 
 use Academorix\Facility\Contracts\Services\PricingCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Facility\Contracts\Repositories\AvailabilityRepositoryInterface;
 
 /**
  * Concrete service — PricingCalculator.
  *
  * Implements {@see PricingCalculatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Facility
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class PricingCalculator implements PricingCalculatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AvailabilityRepositoryInterface  $availabilityRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AvailabilityRepositoryInterface $availabilityRepository,
+    ) {
+    }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Rbac\Services;
 
 use Academorix\Rbac\Contracts\Services\RoleDefinitionRegistryInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Rbac\Contracts\Repositories\ModelHasPermissionsRepositoryInterface;
 
 /**
  * Concrete service — RoleDefinitionRegistry.
  *
  * Implements {@see RoleDefinitionRegistryInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Rbac
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class RoleDefinitionRegistry implements RoleDefinitionRegistryInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ModelHasPermissionsRepositoryInterface  $modelHasPermissionsRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ModelHasPermissionsRepositoryInterface $modelHasPermissionsRepository,
+    ) {
+    }
 }

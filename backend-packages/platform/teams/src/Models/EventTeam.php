@@ -9,17 +9,23 @@ namespace Academorix\Teams\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Teams\Contracts\Data\EventTeamInterface;
 use Academorix\Teams\Database\Factories\EventTeamFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Teams\Concerns\BelongsToTeam;
+use Academorix\Teams\Enums\EventTeamParticipationType;
+use Academorix\Teams\Policies\EventTeamPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: EventTeamInterface::TABLE, keyType: EventTeamInterface::KEY_TYPE)]
+#[Table(name: EventTeamInterface::TABLE, key: EventTeamInterface::PRIMARY_KEY, keyType: EventTeamInterface::KEY_TYPE)]
 #[Fillable([
     EventTeamInterface::ATTR_TENANT_ID,
         EventTeamInterface::ATTR_TEAM_ID,
@@ -46,34 +52,29 @@ use Spatie\Activitylog\Traits\LogsActivity;
         EventTeamInterface::ATTR_METADATA,
 ])]
 #[UseFactory(EventTeamFactory::class)]
-final class EventTeam extends Model implements EventTeamInterface
+#[WithoutIncrementing]
+#[UsePolicy(EventTeamPolicy::class)]
+final class EventTeam extends Model implements EventTeamInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToTeam` — add its import + use line.
+    use BelongsToTeam;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        EventTeamInterface::ATTR_PARTICIPATION_TYPE => 'EventTeamParticipationType',
-        EventTeamInterface::ATTR_RESULT => 'EventResult',
+        EventTeamInterface::ATTR_PARTICIPATION_TYPE => EventTeamParticipationType::class,
+        EventTeamInterface::ATTR_RESULT => EventResult::class,
         EventTeamInterface::ATTR_ATTENDANCE_COUNT => 'integer',
         EventTeamInterface::ATTR_REGISTERED_AT => 'datetime',
         EventTeamInterface::ATTR_WITHDREW_AT => 'datetime',

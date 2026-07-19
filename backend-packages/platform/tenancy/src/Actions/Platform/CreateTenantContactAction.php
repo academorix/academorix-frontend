@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Tenancy\Actions\Platform;
 
+use Academorix\Tenancy\Contracts\Repositories\TenantContactRepositoryInterface;
+use Academorix\Tenancy\Data\TenantContactData;
+use Academorix\Tenancy\Data\Requests\CreateTenantContactRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/tenant-contacts` — create action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Tenancy
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/tenant-contacts')]
 final class CreateTenantContactAction
 {
+    public function __construct(
+        private readonly TenantContactRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `tenant-contact` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateTenantContactRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateTenantContactRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(TenantContactData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

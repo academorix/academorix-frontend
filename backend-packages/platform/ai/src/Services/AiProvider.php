@@ -8,14 +8,15 @@ namespace Academorix\Ai\Services;
 
 use Academorix\Ai\Contracts\Services\AiProviderInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Ai\Contracts\Repositories\AiConversationRepositoryInterface;
 
 /**
  * Concrete service — AiProvider.
  *
  * Implements {@see AiProviderInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Ai
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AiProvider implements AiProviderInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AiConversationRepositoryInterface  $aiConversationRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AiConversationRepositoryInterface $aiConversationRepository,
+    ) {
+    }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Identity\Services;
 
 use Academorix\Identity\Contracts\Services\AccountLockoutPolicyInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Identity\Contracts\Repositories\IdentityRepositoryInterface;
 
 /**
  * Concrete service — AccountLockoutPolicy.
  *
  * Implements {@see AccountLockoutPolicyInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Identity
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AccountLockoutPolicy implements AccountLockoutPolicyInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  IdentityRepositoryInterface  $identityRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly IdentityRepositoryInterface $identityRepository,
+    ) {
+    }
 }

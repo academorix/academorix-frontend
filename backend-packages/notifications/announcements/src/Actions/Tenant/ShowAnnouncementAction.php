@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Announcements\Actions\Tenant;
 
+use Academorix\Announcements\Contracts\Repositories\AnnouncementRepositoryInterface;
+use Academorix\Announcements\Data\AnnouncementData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/announcements/{announcement}` — show action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Announcements
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/announcements/{announcement}')]
 final class ShowAnnouncementAction
 {
+    public function __construct(
+        private readonly AnnouncementRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `announcement` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): AnnouncementData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return AnnouncementData::from($this->repository->findOrFail($id));
     }
 }

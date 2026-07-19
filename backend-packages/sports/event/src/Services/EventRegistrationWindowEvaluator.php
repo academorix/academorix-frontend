@@ -8,14 +8,15 @@ namespace Academorix\Event\Services;
 
 use Academorix\Event\Contracts\Services\EventRegistrationWindowEvaluatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Event\Contracts\Repositories\CalendarSubscriptionRepositoryInterface;
 
 /**
  * Concrete service — EventRegistrationWindowEvaluator.
  *
  * Implements {@see EventRegistrationWindowEvaluatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Event
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class EventRegistrationWindowEvaluator implements EventRegistrationWindowEvaluatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  CalendarSubscriptionRepositoryInterface  $calendarSubscriptionRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly CalendarSubscriptionRepositoryInterface $calendarSubscriptionRepository,
+    ) {
+    }
 }

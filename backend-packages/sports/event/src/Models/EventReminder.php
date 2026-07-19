@@ -9,6 +9,7 @@ namespace Academorix\Event\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Event\Contracts\Data\EventReminderInterface;
 use Academorix\Event\Database\Factories\EventReminderFactory;
@@ -28,7 +29,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: EventReminderInterface::TABLE, keyType: EventReminderInterface::KEY_TYPE)]
+#[Table(name: EventReminderInterface::TABLE, key: EventReminderInterface::PRIMARY_KEY, keyType: EventReminderInterface::KEY_TYPE)]
 #[Fillable([
     EventReminderInterface::ATTR_TENANT_ID,
         EventReminderInterface::ATTR_EVENT_INVITATION_ID,
@@ -39,20 +40,13 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         EventReminderInterface::ATTR_METADATA,
 ])]
 #[UseFactory(EventReminderFactory::class)]
+#[WithoutIncrementing]
 final class EventReminder extends Model implements EventReminderInterface
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

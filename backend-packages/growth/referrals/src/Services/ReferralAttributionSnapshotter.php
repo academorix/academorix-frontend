@@ -8,14 +8,15 @@ namespace Academorix\Referrals\Services;
 
 use Academorix\Referrals\Contracts\Services\ReferralAttributionSnapshotterInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Referrals\Contracts\Repositories\ReferralCodeRepositoryInterface;
 
 /**
  * Concrete service — ReferralAttributionSnapshotter.
  *
  * Implements {@see ReferralAttributionSnapshotterInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Referrals
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ReferralAttributionSnapshotter implements ReferralAttributionSnapshotterInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ReferralCodeRepositoryInterface  $referralCodeRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ReferralCodeRepositoryInterface $referralCodeRepository,
+    ) {
+    }
 }

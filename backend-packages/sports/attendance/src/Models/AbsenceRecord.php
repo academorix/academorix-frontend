@@ -9,19 +9,25 @@ namespace Academorix\Attendance\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Attendance\Contracts\Data\AbsenceRecordInterface;
 use Academorix\Attendance\Database\Factories\AbsenceRecordFactory;
+use Academorix\AthleteEnrollment\Concerns\BelongsToAthleteEnrollment;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Attendance\Policies\AbsenceRecordPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Sports\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Session\Concerns\BelongsToSession;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -33,7 +39,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AbsenceRecordInterface::TABLE, keyType: AbsenceRecordInterface::KEY_TYPE)]
+#[Table(name: AbsenceRecordInterface::TABLE, key: AbsenceRecordInterface::PRIMARY_KEY, keyType: AbsenceRecordInterface::KEY_TYPE)]
 #[Fillable([
     AbsenceRecordInterface::ATTR_TENANT_ID,
         AbsenceRecordInterface::ATTR_SESSION_ID,
@@ -51,36 +57,31 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AbsenceRecordInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AbsenceRecordFactory::class)]
-final class AbsenceRecord extends Model implements AbsenceRecordInterface
+#[WithoutIncrementing]
+#[UsePolicy(AbsenceRecordPolicy::class)]
+final class AbsenceRecord extends Model implements AbsenceRecordInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToAthlete;
-    // TODO(gen): resolve unknown trait `BelongsToAthleteEnrollment` — add its import + use line.
-    // TODO(gen): resolve unknown trait `BelongsToSession` — add its import + use line.
+    use BelongsToAthleteEnrollment;
+    use BelongsToSession;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AbsenceRecordInterface::ATTR_STATUS => 'AbsenceStatus',
+        AbsenceRecordInterface::ATTR_STATUS => AbsenceStatus::class,
         AbsenceRecordInterface::ATTR_COUNTED_TOWARD_FREEZE => 'boolean',
         AbsenceRecordInterface::ATTR_REPORTED_AT => 'datetime',
         AbsenceRecordInterface::ATTR_EXCUSED_AT => 'datetime',

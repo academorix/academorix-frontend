@@ -9,11 +9,15 @@ namespace Academorix\Audit\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Audit\Contracts\Data\AuditInterface;
 use Academorix\Audit\Database\Factories\AuditFactory;
+use Academorix\Audit\Policies\AuditPolicy;
 use Academorix\Foundation\Concerns\Filterable;
+use Academorix\Foundation\Concerns\IsRetentionAware;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -25,7 +29,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: AuditInterface::TABLE, keyType: AuditInterface::KEY_TYPE)]
+#[Table(name: AuditInterface::TABLE, key: AuditInterface::PRIMARY_KEY, keyType: AuditInterface::KEY_TYPE)]
 #[Fillable([
     AuditInterface::ATTR_USER_TYPE,
         AuditInterface::ATTR_USER_ID,
@@ -42,29 +46,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         AuditInterface::ATTR_APPLICATION_ID,
 ])]
 #[UseFactory(AuditFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(AuditPolicy::class)]
 final class Audit extends Model implements AuditInterface
 {
     use HasFactory;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `IsRetentionAware` — add its import + use line.
+    use IsRetentionAware;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AuditInterface::ATTR_EVENT => 'AuditEventType',
-        AuditInterface::ATTR_OLD_VALUES => 'AuditFieldDiff',
-        AuditInterface::ATTR_NEW_VALUES => 'AuditFieldDiff',
+        AuditInterface::ATTR_EVENT => AuditEventType::class,
+        AuditInterface::ATTR_OLD_VALUES => AuditFieldDiff::class,
+        AuditInterface::ATTR_NEW_VALUES => AuditFieldDiff::class,
         AuditInterface::ATTR_TAGS => 'string',
     ];
 }

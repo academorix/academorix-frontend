@@ -9,16 +9,22 @@ namespace Academorix\Referrals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Referrals\Contracts\Data\ReferralFraudFlagInterface;
 use Academorix\Referrals\Database\Factories\ReferralFraudFlagFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Referrals\Enums\ReferralFraudFlagDisposition;
+use Academorix\Referrals\Enums\ReferralFraudFlagSeverity;
+use Academorix\Referrals\Policies\ReferralFraudFlagPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ReferralFraudFlag.
@@ -29,7 +35,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: ReferralFraudFlagInterface::TABLE, keyType: ReferralFraudFlagInterface::KEY_TYPE)]
+#[Table(name: ReferralFraudFlagInterface::TABLE, key: ReferralFraudFlagInterface::PRIMARY_KEY, keyType: ReferralFraudFlagInterface::KEY_TYPE)]
 #[Fillable([
     ReferralFraudFlagInterface::ATTR_TENANT_ID,
         ReferralFraudFlagInterface::ATTR_REFERRAL_ID,
@@ -43,35 +49,30 @@ use OwenIt\Auditing\Auditable;
         ReferralFraudFlagInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ReferralFraudFlagFactory::class)]
-final class ReferralFraudFlag extends Model implements ReferralFraudFlagInterface
+#[WithoutIncrementing]
+#[UsePolicy(ReferralFraudFlagPolicy::class)]
+final class ReferralFraudFlag extends Model implements ReferralFraudFlagInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToReferral` — add its import + use line.
+    // TODO(gen): resolve unknown trait `BelongsToReferral` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ReferralFraudFlagInterface::ATTR_FLAG_TYPE => 'ReferralFraudFlagType',
-        ReferralFraudFlagInterface::ATTR_SEVERITY => 'ReferralFraudFlagSeverity',
+        ReferralFraudFlagInterface::ATTR_FLAG_TYPE => ReferralFraudFlagType::class,
+        ReferralFraudFlagInterface::ATTR_SEVERITY => ReferralFraudFlagSeverity::class,
         ReferralFraudFlagInterface::ATTR_CONFIDENCE => 'integer',
         ReferralFraudFlagInterface::ATTR_DETAILS => 'array',
-        ReferralFraudFlagInterface::ATTR_DISPOSITION => 'ReferralFraudFlagDisposition',
+        ReferralFraudFlagInterface::ATTR_DISPOSITION => ReferralFraudFlagDisposition::class,
         ReferralFraudFlagInterface::ATTR_REVIEWED_AT => 'datetime',
         ReferralFraudFlagInterface::ATTR_METADATA => 'array',
     ];

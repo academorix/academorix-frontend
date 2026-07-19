@@ -8,14 +8,15 @@ namespace Academorix\ServiceAccounts\Services;
 
 use Academorix\ServiceAccounts\Contracts\Services\RotationSchedulerServiceInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
 
 /**
  * Concrete service — RotationSchedulerService.
  *
  * Implements {@see RotationSchedulerServiceInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category ServiceAccounts
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class RotationSchedulerService implements RotationSchedulerServiceInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ServiceAccountRepositoryInterface  $serviceAccountRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ServiceAccountRepositoryInterface $serviceAccountRepository,
+    ) {
+    }
 }

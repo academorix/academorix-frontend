@@ -9,6 +9,7 @@ namespace Academorix\Auth\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Auth\Contracts\Data\AuthCrossAppGrantInterface;
 use Academorix\Auth\Database\Factories\AuthCrossAppGrantFactory;
@@ -27,7 +28,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AuthCrossAppGrantInterface::TABLE, keyType: AuthCrossAppGrantInterface::KEY_TYPE)]
+#[Table(name: AuthCrossAppGrantInterface::TABLE, key: AuthCrossAppGrantInterface::PRIMARY_KEY, keyType: AuthCrossAppGrantInterface::KEY_TYPE)]
 #[Fillable([
     AuthCrossAppGrantInterface::ATTR_IDENTITY_ID,
         AuthCrossAppGrantInterface::ATTR_SOURCE_APPLICATION_ID,
@@ -37,23 +38,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AuthCrossAppGrantInterface::ATTR_CONSUMED_AT,
 ])]
 #[UseFactory(AuthCrossAppGrantFactory::class)]
+#[WithoutIncrementing]
 final class AuthCrossAppGrant extends Model implements AuthCrossAppGrantInterface
 {
     use HasFactory;
     use HasUlids;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

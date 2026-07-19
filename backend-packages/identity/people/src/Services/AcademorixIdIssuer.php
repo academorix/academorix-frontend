@@ -8,14 +8,15 @@ namespace Academorix\People\Services;
 
 use Academorix\People\Contracts\Services\AcademorixIdIssuerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\People\Contracts\Repositories\PersonGuardianLinkRepositoryInterface;
 
 /**
  * Concrete service — AcademorixIdIssuer.
  *
  * Implements {@see AcademorixIdIssuerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category People
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AcademorixIdIssuer implements AcademorixIdIssuerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  PersonGuardianLinkRepositoryInterface  $personGuardianLinkRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly PersonGuardianLinkRepositoryInterface $personGuardianLinkRepository,
+    ) {
+    }
 }

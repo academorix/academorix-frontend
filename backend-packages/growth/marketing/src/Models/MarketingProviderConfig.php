@@ -9,17 +9,21 @@ namespace Academorix\Marketing\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Marketing\Contracts\Data\MarketingProviderConfigInterface;
 use Academorix\Marketing\Database\Factories\MarketingProviderConfigFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Marketing\Policies\MarketingProviderConfigPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +35,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: MarketingProviderConfigInterface::TABLE, keyType: MarketingProviderConfigInterface::KEY_TYPE)]
+#[Table(name: MarketingProviderConfigInterface::TABLE, key: MarketingProviderConfigInterface::PRIMARY_KEY, keyType: MarketingProviderConfigInterface::KEY_TYPE)]
 #[Fillable([
     MarketingProviderConfigInterface::ATTR_TENANT_ID,
         MarketingProviderConfigInterface::ATTR_PROVIDER,
@@ -51,32 +55,27 @@ use Spatie\Activitylog\Traits\LogsActivity;
         MarketingProviderConfigInterface::ATTR_METADATA,
 ])]
 #[UseFactory(MarketingProviderConfigFactory::class)]
-final class MarketingProviderConfig extends Model implements MarketingProviderConfigInterface
+#[WithoutIncrementing]
+#[UsePolicy(MarketingProviderConfigPolicy::class)]
+final class MarketingProviderConfig extends Model implements MarketingProviderConfigInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        MarketingProviderConfigInterface::ATTR_PROVIDER => 'MarketingProvider',
+        MarketingProviderConfigInterface::ATTR_PROVIDER => MarketingProvider::class,
         MarketingProviderConfigInterface::ATTR_IS_ACTIVE => 'boolean',
         MarketingProviderConfigInterface::ATTR_CONFIG => 'encrypted:array',
         MarketingProviderConfigInterface::ATTR_ENABLED_EVENT_TYPES => 'array',

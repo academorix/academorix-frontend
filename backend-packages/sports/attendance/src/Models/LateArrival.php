@@ -9,17 +9,22 @@ namespace Academorix\Attendance\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Attendance\Contracts\Data\LateArrivalInterface;
 use Academorix\Attendance\Database\Factories\LateArrivalFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Attendance\Policies\LateArrivalPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Sports\Athlete\Concerns\BelongsToAthlete;
+use Academorix\Session\Concerns\BelongsToSession;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a LateArrival.
@@ -30,7 +35,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: LateArrivalInterface::TABLE, keyType: LateArrivalInterface::KEY_TYPE)]
+#[Table(name: LateArrivalInterface::TABLE, key: LateArrivalInterface::PRIMARY_KEY, keyType: LateArrivalInterface::KEY_TYPE)]
 #[Fillable([
     LateArrivalInterface::ATTR_TENANT_ID,
         LateArrivalInterface::ATTR_ATTENDANCE_RECORD_ID,
@@ -42,35 +47,30 @@ use OwenIt\Auditing\Auditable;
         LateArrivalInterface::ATTR_METADATA,
 ])]
 #[UseFactory(LateArrivalFactory::class)]
-final class LateArrival extends Model implements LateArrivalInterface
+#[WithoutIncrementing]
+#[UsePolicy(LateArrivalPolicy::class)]
+final class LateArrival extends Model implements LateArrivalInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToAthlete;
-    // TODO(gen): resolve unknown trait `BelongsToSession` — add its import + use line.
-    // TODO(gen): resolve unknown trait `BelongsToAttendanceRecord` — add its import + use line.
-    // TODO(gen): resolve unknown trait `BelongsToAttendancePolicy` — add its import + use line.
+    use BelongsToSession;
+    // TODO(gen): resolve unknown trait `BelongsToAttendanceRecord` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `BelongsToAttendancePolicy` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
         LateArrivalInterface::ATTR_MINUTES_LATE => 'integer',
-        LateArrivalInterface::ATTR_PENALTY_APPLIED => 'LatePenaltyType',
+        LateArrivalInterface::ATTR_PENALTY_APPLIED => LatePenaltyType::class,
         LateArrivalInterface::ATTR_METADATA => 'array',
     ];
 }

@@ -9,18 +9,22 @@ namespace Academorix\Region\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Region\Contracts\Data\RegionInterface;
 use Academorix\Region\Database\Factories\RegionFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Region\Policies\RegionPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 
@@ -33,7 +37,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: RegionInterface::TABLE, keyType: RegionInterface::KEY_TYPE)]
+#[Table(name: RegionInterface::TABLE, key: RegionInterface::PRIMARY_KEY, keyType: RegionInterface::KEY_TYPE)]
 #[Fillable([
     RegionInterface::ATTR_TENANT_ID,
         RegionInterface::ATTR_NAME,
@@ -55,29 +59,24 @@ use Spatie\Sluggable\HasSlug;
         RegionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RegionFactory::class)]
-final class Region extends Model implements RegionInterface
+#[WithoutIncrementing]
+#[UsePolicy(RegionPolicy::class)]
+final class Region extends Model implements RegionInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasSlug;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -86,13 +85,13 @@ final class Region extends Model implements RegionInterface
         RegionInterface::ATTR_RTL => 'boolean',
         RegionInterface::ATTR_SORT_ORDER => 'integer',
         RegionInterface::ATTR_FISCAL_YEAR_START_MONTH => 'integer',
-        RegionInterface::ATTR_STATUS => 'Academorix\Region\Enums\RegionStatus',
-        RegionInterface::ATTR_COUNTRY_CODE => 'Academorix\Region\Casts\CountryCode',
-        RegionInterface::ATTR_CURRENCY => 'Academorix\Region\Casts\CurrencyCode',
-        RegionInterface::ATTR_TIMEZONE => 'Academorix\Region\Casts\IanaTimezone',
-        RegionInterface::ATTR_LOCALE => 'Academorix\Region\Casts\Bcp47Locale',
+        RegionInterface::ATTR_STATUS => \Academorix\Region\Enums\RegionStatus::class,
+        RegionInterface::ATTR_COUNTRY_CODE => \Academorix\Region\Casts\CountryCode::class,
+        RegionInterface::ATTR_CURRENCY => \Academorix\Region\Casts\CurrencyCode::class,
+        RegionInterface::ATTR_TIMEZONE => \Academorix\Region\Casts\IanaTimezone::class,
+        RegionInterface::ATTR_LOCALE => \Academorix\Region\Casts\Bcp47Locale::class,
         RegionInterface::ATTR_WEEKEND_DAYS => 'array',
-        RegionInterface::ATTR_TAX_CONFIG => 'Academorix\Region\Casts\TaxConfig',
+        RegionInterface::ATTR_TAX_CONFIG => \Academorix\Region\Casts\TaxConfig::class,
         RegionInterface::ATTR_METADATA => 'array',
     ];
 }

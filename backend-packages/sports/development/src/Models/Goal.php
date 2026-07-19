@@ -9,9 +9,11 @@ namespace Academorix\Development\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Development\Contracts\Data\GoalInterface;
 use Academorix\Development\Database\Factories\GoalFactory;
+use Academorix\AthleteEnrollment\Concerns\BelongsToAthleteEnrollment;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
@@ -20,6 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: GoalInterface::TABLE, keyType: GoalInterface::KEY_TYPE)]
+#[Table(name: GoalInterface::TABLE, key: GoalInterface::PRIMARY_KEY, keyType: GoalInterface::KEY_TYPE)]
 #[Fillable([
     GoalInterface::ATTR_TENANT_ID,
         GoalInterface::ATTR_ATHLETE_ENROLLMENT_ID,
@@ -45,24 +48,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         GoalInterface::ATTR_METADATA,
 ])]
 #[UseFactory(GoalFactory::class)]
-final class Goal extends Model implements GoalInterface
+#[WithoutIncrementing]
+final class Goal extends Model implements GoalInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToAthleteEnrollment` — add its import + use line.
+    use BelongsToAthleteEnrollment;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

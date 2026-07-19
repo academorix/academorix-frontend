@@ -9,15 +9,21 @@ namespace Academorix\Theme\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Theme\Contracts\Data\ThemeInterface;
 use Academorix\Theme\Database\Factories\ThemeFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Academorix\Theme\Enums\ThemeMode;
+use Academorix\Theme\Policies\ThemePolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -29,7 +35,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ThemeInterface::TABLE, keyType: ThemeInterface::KEY_TYPE)]
+#[Table(name: ThemeInterface::TABLE, key: ThemeInterface::PRIMARY_KEY, keyType: ThemeInterface::KEY_TYPE)]
 #[Fillable([
     ThemeInterface::ATTR_TENANT_ID,
         ThemeInterface::ATTR_MODE,
@@ -43,34 +49,29 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ThemeInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ThemeFactory::class)]
-final class Theme extends Model implements ThemeInterface
+#[WithoutIncrementing]
+#[UsePolicy(ThemePolicy::class)]
+final class Theme extends Model implements ThemeInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasThemeSnapshot` — add its import + use line.
-    use HasUserstamps;
-    // TODO(gen): resolve unknown trait `HasAuditable` — add its import + use line.
-    use HasActivityLog;
+    // TODO(gen): resolve unknown trait `HasThemeSnapshot` — add its import + `use` line.
+    use Userstamps;
+    use Auditable;
+    use LogsActivity;
     use HasMetadata;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ThemeInterface::ATTR_MODE => 'ThemeMode',
-        ThemeInterface::ATTR_TOKENS_SNAPSHOT => 'TokenMapPayload',
-        ThemeInterface::ATTR_ACCESSIBILITY_FLAGS => 'AccessibilityFlagsPayload',
+        ThemeInterface::ATTR_MODE => ThemeMode::class,
+        ThemeInterface::ATTR_TOKENS_SNAPSHOT => TokenMapPayload::class,
+        ThemeInterface::ATTR_ACCESSIBILITY_FLAGS => AccessibilityFlagsPayload::class,
         ThemeInterface::ATTR_IS_ACTIVE => 'boolean',
         ThemeInterface::ATTR_ACTIVATED_AT => 'datetime',
         ThemeInterface::ATTR_DEACTIVATED_AT => 'datetime',

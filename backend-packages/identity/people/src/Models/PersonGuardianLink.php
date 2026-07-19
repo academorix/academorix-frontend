@@ -9,15 +9,19 @@ namespace Academorix\People\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\People\Contracts\Data\PersonGuardianLinkInterface;
 use Academorix\People\Database\Factories\PersonGuardianLinkFactory;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\People\Policies\PersonGuardianLinkPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a PersonGuardianLink.
@@ -28,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: PersonGuardianLinkInterface::TABLE, keyType: PersonGuardianLinkInterface::KEY_TYPE)]
+#[Table(name: PersonGuardianLinkInterface::TABLE, key: PersonGuardianLinkInterface::PRIMARY_KEY, keyType: PersonGuardianLinkInterface::KEY_TYPE)]
 #[Fillable([
     PersonGuardianLinkInterface::ATTR_MINOR_PERSON_IDENTITY_ID,
         PersonGuardianLinkInterface::ATTR_GUARDIAN_PERSON_IDENTITY_ID,
@@ -40,24 +44,19 @@ use OwenIt\Auditing\Auditable;
         PersonGuardianLinkInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PersonGuardianLinkFactory::class)]
-final class PersonGuardianLink extends Model implements PersonGuardianLinkInterface
+#[WithoutIncrementing]
+#[UsePolicy(PersonGuardianLinkPolicy::class)]
+final class PersonGuardianLink extends Model implements PersonGuardianLinkInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

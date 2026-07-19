@@ -8,14 +8,15 @@ namespace Academorix\NotificationsSms\Services;
 
 use Academorix\NotificationsSms\Contracts\Services\SmsChannelInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\NotificationsSms\Contracts\Repositories\SmsOptOutRepositoryInterface;
 
 /**
  * Concrete service — SmsChannel.
  *
  * Implements {@see SmsChannelInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category NotificationsSms
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SmsChannel implements SmsChannelInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  SmsOptOutRepositoryInterface  $smsOptOutRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly SmsOptOutRepositoryInterface $smsOptOutRepository,
+    ) {
+    }
 }

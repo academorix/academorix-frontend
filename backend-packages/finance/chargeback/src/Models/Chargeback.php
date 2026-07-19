@@ -9,18 +9,27 @@ namespace Academorix\Chargeback\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Chargeback\Contracts\Data\ChargebackInterface;
 use Academorix\Chargeback\Database\Factories\ChargebackFactory;
+use Academorix\Chargeback\Enums\ChargebackNetwork;
+use Academorix\Chargeback\Enums\ChargebackProvider;
+use Academorix\Chargeback\Enums\ChargebackReasonCategory;
+use Academorix\Chargeback\Enums\ChargebackStatus;
+use Academorix\Chargeback\Policies\ChargebackPolicy;
+use Academorix\Foundation\Concerns\EncryptsSensitiveFields;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +41,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ChargebackInterface::TABLE, keyType: ChargebackInterface::KEY_TYPE)]
+#[Table(name: ChargebackInterface::TABLE, key: ChargebackInterface::PRIMARY_KEY, keyType: ChargebackInterface::KEY_TYPE)]
 #[Fillable([
     ChargebackInterface::ATTR_TENANT_ID,
         ChargebackInterface::ATTR_CHARGEBACK_NUMBER,
@@ -67,38 +76,33 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ChargebackInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ChargebackFactory::class)]
-final class Chargeback extends Model implements ChargebackInterface
+#[WithoutIncrementing]
+#[UsePolicy(ChargebackPolicy::class)]
+final class Chargeback extends Model implements ChargebackInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasChargebackEvidence` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasChargebackEvidence` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `EncryptsSensitiveFields` — add its import + use line.
+    use LogsActivity;
+    use EncryptsSensitiveFields;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ChargebackInterface::ATTR_NETWORK => 'ChargebackNetwork',
-        ChargebackInterface::ATTR_REASON_CATEGORY => 'ChargebackReasonCategory',
-        ChargebackInterface::ATTR_STATUS => 'ChargebackStatus',
-        ChargebackInterface::ATTR_PROVIDER => 'ChargebackProvider',
+        ChargebackInterface::ATTR_NETWORK => ChargebackNetwork::class,
+        ChargebackInterface::ATTR_REASON_CATEGORY => ChargebackReasonCategory::class,
+        ChargebackInterface::ATTR_STATUS => ChargebackStatus::class,
+        ChargebackInterface::ATTR_PROVIDER => ChargebackProvider::class,
         ChargebackInterface::ATTR_AMOUNT_CENTS => 'integer',
         ChargebackInterface::ATTR_FEE_CENTS => 'integer',
         ChargebackInterface::ATTR_EVIDENCE_DUE_BY => 'datetime',

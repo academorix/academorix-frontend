@@ -9,15 +9,19 @@ namespace Academorix\Ai\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Ai\Contracts\Data\AiToolCallInterface;
 use Academorix\Ai\Database\Factories\AiToolCallFactory;
+use Academorix\Ai\Policies\AiToolCallPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AiToolCall.
@@ -28,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: AiToolCallInterface::TABLE, keyType: AiToolCallInterface::KEY_TYPE)]
+#[Table(name: AiToolCallInterface::TABLE, key: AiToolCallInterface::PRIMARY_KEY, keyType: AiToolCallInterface::KEY_TYPE)]
 #[Fillable([
     AiToolCallInterface::ATTR_TENANT_ID,
         AiToolCallInterface::ATTR_AI_RUN_ID,
@@ -41,7 +45,9 @@ use OwenIt\Auditing\Auditable;
         AiToolCallInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AiToolCallFactory::class)]
-final class AiToolCall extends Model implements AiToolCallInterface
+#[WithoutIncrementing]
+#[UsePolicy(AiToolCallPolicy::class)]
+final class AiToolCall extends Model implements AiToolCallInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
@@ -49,12 +55,4 @@ final class AiToolCall extends Model implements AiToolCallInterface
     use HasMetadata;
     use Auditable;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Storage\Actions\Tenant;
 
+use Academorix\Storage\Contracts\Repositories\FileRepositoryInterface;
+use Academorix\Storage\Data\FileData;
+use Academorix\Storage\Data\Requests\CreateFileRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/files` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Storage
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/files')]
 final class CreateFileAction
 {
+    public function __construct(
+        private readonly FileRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `file` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateFileRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateFileRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(FileData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

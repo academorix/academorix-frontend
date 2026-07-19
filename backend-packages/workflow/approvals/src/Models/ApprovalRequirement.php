@@ -9,9 +9,11 @@ namespace Academorix\Approvals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Approvals\Contracts\Data\ApprovalRequirementInterface;
 use Academorix\Approvals\Database\Factories\ApprovalRequirementFactory;
+use Academorix\Approvals\Enums\ApprovalRequirementStatus;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
@@ -27,7 +29,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: ApprovalRequirementInterface::TABLE, keyType: ApprovalRequirementInterface::KEY_TYPE)]
+#[Table(name: ApprovalRequirementInterface::TABLE, key: ApprovalRequirementInterface::PRIMARY_KEY, keyType: ApprovalRequirementInterface::KEY_TYPE)]
 #[Fillable([
     ApprovalRequirementInterface::ATTR_APPROVAL_INSTANCE_ID,
         ApprovalRequirementInterface::ATTR_TENANT_ID,
@@ -43,6 +45,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         ApprovalRequirementInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ApprovalRequirementFactory::class)]
+#[WithoutIncrementing]
 final class ApprovalRequirement extends Model implements ApprovalRequirementInterface
 {
     use HasFactory;
@@ -52,14 +55,7 @@ final class ApprovalRequirement extends Model implements ApprovalRequirementInte
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -67,9 +63,9 @@ final class ApprovalRequirement extends Model implements ApprovalRequirementInte
         ApprovalRequirementInterface::ATTR_SORT_ORDER => 'integer',
         ApprovalRequirementInterface::ATTR_RESOLVED_APPROVERS => 'array',
         ApprovalRequirementInterface::ATTR_SELECTOR_SNAPSHOT_JSON => 'array',
-        ApprovalRequirementInterface::ATTR_QUORUM_TYPE => 'QuorumType',
+        ApprovalRequirementInterface::ATTR_QUORUM_TYPE => QuorumType::class,
         ApprovalRequirementInterface::ATTR_QUORUM_N => 'integer',
-        ApprovalRequirementInterface::ATTR_STATUS => 'ApprovalRequirementStatus',
+        ApprovalRequirementInterface::ATTR_STATUS => ApprovalRequirementStatus::class,
         ApprovalRequirementInterface::ATTR_SATISFIED_AT => 'datetime',
         ApprovalRequirementInterface::ATTR_METADATA => 'array',
     ];

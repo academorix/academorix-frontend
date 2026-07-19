@@ -8,14 +8,15 @@ namespace Academorix\Realtime\Services;
 
 use Academorix\Realtime\Contracts\Services\ChannelAuthorizerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Realtime\Contracts\Repositories\BroadcastChannelRepositoryInterface;
 
 /**
  * Concrete service — ChannelAuthorizer.
  *
  * Implements {@see ChannelAuthorizerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Realtime
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ChannelAuthorizer implements ChannelAuthorizerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  BroadcastChannelRepositoryInterface  $broadcastChannelRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly BroadcastChannelRepositoryInterface $broadcastChannelRepository,
+    ) {
+    }
 }

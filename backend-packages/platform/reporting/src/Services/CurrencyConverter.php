@@ -8,14 +8,15 @@ namespace Academorix\Reporting\Services;
 
 use Academorix\Reporting\Contracts\Services\CurrencyConverterInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Reporting\Contracts\Repositories\DashboardRepositoryInterface;
 
 /**
  * Concrete service — CurrencyConverter.
  *
  * Implements {@see CurrencyConverterInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Reporting
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class CurrencyConverter implements CurrencyConverterInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  DashboardRepositoryInterface  $dashboardRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly DashboardRepositoryInterface $dashboardRepository,
+    ) {
+    }
 }

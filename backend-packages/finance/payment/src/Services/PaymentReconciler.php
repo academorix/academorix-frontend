@@ -8,14 +8,15 @@ namespace Academorix\Payment\Services;
 
 use Academorix\Payment\Contracts\Services\PaymentReconcilerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Payment\Contracts\Repositories\PaymentDisputeRepositoryInterface;
 
 /**
  * Concrete service — PaymentReconciler.
  *
  * Implements {@see PaymentReconcilerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Payment
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class PaymentReconciler implements PaymentReconcilerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  PaymentDisputeRepositoryInterface  $paymentDisputeRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly PaymentDisputeRepositoryInterface $paymentDisputeRepository,
+    ) {
+    }
 }

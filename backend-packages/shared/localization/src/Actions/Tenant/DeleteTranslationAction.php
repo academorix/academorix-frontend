@@ -6,26 +6,42 @@ declare(strict_types=1);
 
 namespace Academorix\Localization\Actions\Tenant;
 
+use Academorix\Localization\Contracts\Repositories\TranslationRepositoryInterface;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Delete;
+use Illuminate\Http\Response;
+
 /**
  * `DELETE /api/v1/translations/{translation}` — delete action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Delete(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Localization
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Delete('/api/v1/translations/{translation}')]
 final class DeleteTranslationAction
 {
+    public function __construct(
+        private readonly TranslationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Soft-delete one `translation` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): Response
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $this->repository->delete($id);
+
+        return response()->noContent();
     }
 }

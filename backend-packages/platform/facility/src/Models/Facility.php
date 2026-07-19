@@ -9,19 +9,24 @@ namespace Academorix\Facility\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Facility\Contracts\Data\FacilityInterface;
 use Academorix\Facility\Database\Factories\FacilityFactory;
 use Academorix\Branch\Concerns\BelongsToBranch;
+use Academorix\Facility\Enums\FacilityStatus;
+use Academorix\Facility\Policies\FacilityPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Sluggable\HasSlug;
 
@@ -34,7 +39,7 @@ use Spatie\Sluggable\HasSlug;
  *
  * @since    0.1.0
  */
-#[Table(name: FacilityInterface::TABLE, keyType: FacilityInterface::KEY_TYPE)]
+#[Table(name: FacilityInterface::TABLE, key: FacilityInterface::PRIMARY_KEY, keyType: FacilityInterface::KEY_TYPE)]
 #[Fillable([
     FacilityInterface::ATTR_TENANT_ID,
         FacilityInterface::ATTR_BRANCH_ID,
@@ -60,38 +65,33 @@ use Spatie\Sluggable\HasSlug;
         FacilityInterface::ATTR_METADATA,
 ])]
 #[UseFactory(FacilityFactory::class)]
-final class Facility extends Model implements FacilityInterface
+#[WithoutIncrementing]
+#[UsePolicy(FacilityPolicy::class)]
+final class Facility extends Model implements FacilityInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use BelongsToBranch;
     use HasSlug;
-    // TODO(gen): resolve unknown trait `HasBookings` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasPasses` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasBookings` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasPasses` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        FacilityInterface::ATTR_FACILITY_TYPE => 'FacilityType',
-        FacilityInterface::ATTR_STATUS => 'FacilityStatus',
+        FacilityInterface::ATTR_FACILITY_TYPE => FacilityType::class,
+        FacilityInterface::ATTR_STATUS => FacilityStatus::class,
         FacilityInterface::ATTR_CAPACITY_PERSONS => 'integer',
         FacilityInterface::ATTR_MIN_BOOKING_DURATION_MINUTES => 'integer',
         FacilityInterface::ATTR_MAX_BOOKING_DURATION_MINUTES => 'integer',

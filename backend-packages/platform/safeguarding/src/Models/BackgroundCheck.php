@@ -9,6 +9,7 @@ namespace Academorix\Safeguarding\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Safeguarding\Contracts\Data\BackgroundCheckInterface;
 use Academorix\Safeguarding\Database\Factories\BackgroundCheckFactory;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: BackgroundCheckInterface::TABLE, keyType: BackgroundCheckInterface::KEY_TYPE)]
+#[Table(name: BackgroundCheckInterface::TABLE, key: BackgroundCheckInterface::PRIMARY_KEY, keyType: BackgroundCheckInterface::KEY_TYPE)]
 #[Fillable([
     BackgroundCheckInterface::ATTR_TENANT_ID,
         BackgroundCheckInterface::ATTR_STAFF_ID,
@@ -49,24 +51,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         BackgroundCheckInterface::ATTR_METADATA,
 ])]
 #[UseFactory(BackgroundCheckFactory::class)]
-final class BackgroundCheck extends Model implements BackgroundCheckInterface
+#[WithoutIncrementing]
+final class BackgroundCheck extends Model implements BackgroundCheckInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToStaff;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

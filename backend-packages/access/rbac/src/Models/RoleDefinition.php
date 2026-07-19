@@ -9,6 +9,7 @@ namespace Academorix\Rbac\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Rbac\Contracts\Data\RoleDefinitionInterface;
 use Academorix\Rbac\Database\Factories\RoleDefinitionFactory;
@@ -29,7 +30,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: RoleDefinitionInterface::TABLE, keyType: RoleDefinitionInterface::KEY_TYPE)]
+#[Table(name: RoleDefinitionInterface::TABLE, key: RoleDefinitionInterface::PRIMARY_KEY, keyType: RoleDefinitionInterface::KEY_TYPE)]
 #[Fillable([
     RoleDefinitionInterface::ATTR_ROLE_ID,
         RoleDefinitionInterface::ATTR_BUSINESS_TYPE_SLUGS,
@@ -43,25 +44,19 @@ use Spatie\Activitylog\Traits\LogsActivity;
         RoleDefinitionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RoleDefinitionFactory::class)]
+#[WithoutIncrementing]
 final class RoleDefinition extends Model implements RoleDefinitionInterface
 {
     use HasFactory;
     use HasUlids;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

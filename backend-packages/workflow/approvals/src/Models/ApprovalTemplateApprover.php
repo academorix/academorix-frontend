@@ -9,6 +9,7 @@ namespace Academorix\Approvals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Approvals\Contracts\Data\ApprovalTemplateApproverInterface;
 use Academorix\Approvals\Database\Factories\ApprovalTemplateApproverFactory;
@@ -29,7 +30,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ApprovalTemplateApproverInterface::TABLE, keyType: ApprovalTemplateApproverInterface::KEY_TYPE)]
+#[Table(name: ApprovalTemplateApproverInterface::TABLE, key: ApprovalTemplateApproverInterface::PRIMARY_KEY, keyType: ApprovalTemplateApproverInterface::KEY_TYPE)]
 #[Fillable([
     ApprovalTemplateApproverInterface::ATTR_APPROVAL_TEMPLATE_ID,
         ApprovalTemplateApproverInterface::ATTR_TENANT_ID,
@@ -43,31 +44,25 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ApprovalTemplateApproverInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ApprovalTemplateApproverFactory::class)]
+#[WithoutIncrementing]
 final class ApprovalTemplateApprover extends Model implements ApprovalTemplateApproverInterface
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
         ApprovalTemplateApproverInterface::ATTR_SORT_ORDER => 'integer',
-        ApprovalTemplateApproverInterface::ATTR_QUORUM_TYPE => 'QuorumType',
+        ApprovalTemplateApproverInterface::ATTR_QUORUM_TYPE => QuorumType::class,
         ApprovalTemplateApproverInterface::ATTR_QUORUM_N => 'integer',
         ApprovalTemplateApproverInterface::ATTR_ALLOWS_SELF_APPROVE => 'boolean',
         ApprovalTemplateApproverInterface::ATTR_METADATA => 'array',

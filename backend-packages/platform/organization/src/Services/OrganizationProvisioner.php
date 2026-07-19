@@ -8,14 +8,15 @@ namespace Academorix\Organization\Services;
 
 use Academorix\Organization\Contracts\Services\OrganizationProvisionerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Organization\Contracts\Repositories\OrganizationRepositoryInterface;
 
 /**
  * Concrete service — OrganizationProvisioner.
  *
  * Implements {@see OrganizationProvisionerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Organization
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class OrganizationProvisioner implements OrganizationProvisionerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  OrganizationRepositoryInterface  $organizationRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly OrganizationRepositoryInterface $organizationRepository,
+    ) {
+    }
 }

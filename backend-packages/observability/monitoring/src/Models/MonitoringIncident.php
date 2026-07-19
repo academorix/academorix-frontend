@@ -9,18 +9,23 @@ namespace Academorix\Monitoring\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Monitoring\Contracts\Data\MonitoringIncidentInterface;
 use Academorix\Monitoring\Database\Factories\MonitoringIncidentFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Monitoring\Enums\MonitoringIncidentStatus;
+use Academorix\Monitoring\Policies\MonitoringIncidentPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: MonitoringIncidentInterface::TABLE, keyType: MonitoringIncidentInterface::KEY_TYPE)]
+#[Table(name: MonitoringIncidentInterface::TABLE, key: MonitoringIncidentInterface::PRIMARY_KEY, keyType: MonitoringIncidentInterface::KEY_TYPE)]
 #[Fillable([
     MonitoringIncidentInterface::ATTR_TENANT_ID,
         MonitoringIncidentInterface::ATTR_TITLE,
@@ -54,35 +59,30 @@ use Spatie\Activitylog\Traits\LogsActivity;
         MonitoringIncidentInterface::ATTR_METADATA,
 ])]
 #[UseFactory(MonitoringIncidentFactory::class)]
-final class MonitoringIncident extends Model implements MonitoringIncidentInterface
+#[WithoutIncrementing]
+#[UsePolicy(MonitoringIncidentPolicy::class)]
+final class MonitoringIncident extends Model implements MonitoringIncidentInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasMonitoringAlerts` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasMonitoringAlerts` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        MonitoringIncidentInterface::ATTR_SEVERITY => 'MonitoringSeverity',
-        MonitoringIncidentInterface::ATTR_STATUS => 'MonitoringIncidentStatus',
+        MonitoringIncidentInterface::ATTR_SEVERITY => MonitoringSeverity::class,
+        MonitoringIncidentInterface::ATTR_STATUS => MonitoringIncidentStatus::class,
         MonitoringIncidentInterface::ATTR_OPENED_AT => 'datetime',
         MonitoringIncidentInterface::ATTR_ACKNOWLEDGED_AT => 'datetime',
         MonitoringIncidentInterface::ATTR_RESOLVED_AT => 'datetime',

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Rbac\Actions\Tenant;
 
+use Academorix\Rbac\Contracts\Repositories\RoleRepositoryInterface;
+use Academorix\Rbac\Data\RoleData;
+use Academorix\Rbac\Data\Requests\CreateRoleRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/rbac/roles` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Rbac
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/rbac/roles')]
 final class CreateRoleAction
 {
+    public function __construct(
+        private readonly RoleRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `role` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateRoleRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateRoleRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(RoleData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

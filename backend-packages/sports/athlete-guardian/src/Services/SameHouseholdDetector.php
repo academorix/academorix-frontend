@@ -8,14 +8,15 @@ namespace Academorix\AthleteGuardian\Services;
 
 use Academorix\AthleteGuardian\Contracts\Services\SameHouseholdDetectorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\AthleteGuardian\Contracts\Repositories\AthleteGuardianRepositoryInterface;
 
 /**
  * Concrete service — SameHouseholdDetector.
  *
  * Implements {@see SameHouseholdDetectorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category AthleteGuardian
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SameHouseholdDetector implements SameHouseholdDetectorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AthleteGuardianRepositoryInterface  $athleteGuardianRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AthleteGuardianRepositoryInterface $athleteGuardianRepository,
+    ) {
+    }
 }

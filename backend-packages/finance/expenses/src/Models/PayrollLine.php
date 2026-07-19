@@ -9,6 +9,7 @@ namespace Academorix\Expenses\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Expenses\Contracts\Data\PayrollLineInterface;
 use Academorix\Expenses\Database\Factories\PayrollLineFactory;
@@ -19,6 +20,7 @@ use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a PayrollLine.
@@ -29,7 +31,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: PayrollLineInterface::TABLE, keyType: PayrollLineInterface::KEY_TYPE)]
+#[Table(name: PayrollLineInterface::TABLE, key: PayrollLineInterface::PRIMARY_KEY, keyType: PayrollLineInterface::KEY_TYPE)]
 #[Fillable([
     PayrollLineInterface::ATTR_TENANT_ID,
         PayrollLineInterface::ATTR_PAYROLL_RUN_ID,
@@ -46,21 +48,14 @@ use OwenIt\Auditing\Auditable;
         PayrollLineInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PayrollLineFactory::class)]
-final class PayrollLine extends Model implements PayrollLineInterface
+#[WithoutIncrementing]
+final class PayrollLine extends Model implements PayrollLineInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToStaff;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

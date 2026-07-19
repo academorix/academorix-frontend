@@ -9,18 +9,22 @@ namespace Academorix\Approvals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Approvals\Contracts\Data\ApprovalTemplateInterface;
 use Academorix\Approvals\Database\Factories\ApprovalTemplateFactory;
+use Academorix\Approvals\Policies\ApprovalTemplatePolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: ApprovalTemplateInterface::TABLE, keyType: ApprovalTemplateInterface::KEY_TYPE)]
+#[Table(name: ApprovalTemplateInterface::TABLE, key: ApprovalTemplateInterface::PRIMARY_KEY, keyType: ApprovalTemplateInterface::KEY_TYPE)]
 #[Fillable([
     ApprovalTemplateInterface::ATTR_TENANT_ID,
         ApprovalTemplateInterface::ATTR_APPLICATION_ID,
@@ -50,35 +54,30 @@ use Spatie\Activitylog\Traits\LogsActivity;
         ApprovalTemplateInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ApprovalTemplateFactory::class)]
-final class ApprovalTemplate extends Model implements ApprovalTemplateInterface
+#[WithoutIncrementing]
+#[UsePolicy(ApprovalTemplatePolicy::class)]
+final class ApprovalTemplate extends Model implements ApprovalTemplateInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
+    use Userstamps;
+    use LogsActivity;
     use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
         ApprovalTemplateInterface::ATTR_PRIORITY => 'integer',
         ApprovalTemplateInterface::ATTR_EXPIRES_AFTER_HOURS => 'integer',
-        ApprovalTemplateInterface::ATTR_ON_TIMEOUT => 'OnTimeoutBehaviour',
+        ApprovalTemplateInterface::ATTR_ON_TIMEOUT => OnTimeoutBehaviour::class,
         ApprovalTemplateInterface::ATTR_REMINDER_CONFIG => 'array',
         ApprovalTemplateInterface::ATTR_ALLOWS_RECALL => 'boolean',
         ApprovalTemplateInterface::ATTR_VERSION => 'integer',

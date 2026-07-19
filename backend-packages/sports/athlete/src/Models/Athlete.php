@@ -9,20 +9,28 @@ namespace Academorix\Athlete\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Athlete\Contracts\Data\AthleteInterface;
 use Academorix\Athlete\Database\Factories\AthleteFactory;
+use Academorix\Athlete\Enums\AthleteDominantHand;
+use Academorix\Athlete\Enums\AthleteGender;
+use Academorix\Athlete\Enums\AthleteStatus;
+use Academorix\Athlete\Policies\AthletePolicy;
 use Academorix\Branch\Concerns\BelongsToBranch;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Academorix\User\Concerns\BelongsToUser;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -34,7 +42,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AthleteInterface::TABLE, keyType: AthleteInterface::KEY_TYPE)]
+#[Table(name: AthleteInterface::TABLE, key: AthleteInterface::PRIMARY_KEY, keyType: AthleteInterface::KEY_TYPE)]
 #[Fillable([
     AthleteInterface::ATTR_TENANT_ID,
         AthleteInterface::ATTR_BRANCH_ID,
@@ -77,41 +85,36 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AthleteInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AthleteFactory::class)]
-final class Athlete extends Model implements AthleteInterface
+#[WithoutIncrementing]
+#[UsePolicy(AthletePolicy::class)]
+final class Athlete extends Model implements AthleteInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToBranch;
     use BelongsToUser;
-    // TODO(gen): resolve unknown trait `HasAthleteHealthProfile` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasAthleteHealthProfile` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
-    // TODO(gen): resolve unknown trait `Notifiable` — add its import + use line.
+    use Userstamps;
+    use Notifiable;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
         AthleteInterface::ATTR_DATE_OF_BIRTH => 'date',
-        AthleteInterface::ATTR_GENDER => 'AthleteGender',
-        AthleteInterface::ATTR_DOMINANT_HAND => 'AthleteDominantHand',
-        AthleteInterface::ATTR_STATUS => 'AthleteStatus',
-        AthleteInterface::ATTR_WITHDRAWAL_REASON => 'WithdrawalReason',
+        AthleteInterface::ATTR_GENDER => AthleteGender::class,
+        AthleteInterface::ATTR_DOMINANT_HAND => AthleteDominantHand::class,
+        AthleteInterface::ATTR_STATUS => AthleteStatus::class,
+        AthleteInterface::ATTR_WITHDRAWAL_REASON => WithdrawalReason::class,
         AthleteInterface::ATTR_HEIGHT_CM => 'integer',
         AthleteInterface::ATTR_WEIGHT_KG => 'integer',
         AthleteInterface::ATTR_CURRENT_AGE_GROUP_SNAPSHOT_AT => 'datetime',

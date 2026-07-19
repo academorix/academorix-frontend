@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Audit\Actions\Tenant;
 
+use Academorix\Audit\Contracts\Repositories\AuditRepositoryInterface;
+use Academorix\Audit\Data\AuditData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/audits/{audit}` — show action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Audit
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/audits/{audit}')]
 final class ShowAuditAction
 {
+    public function __construct(
+        private readonly AuditRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `audit` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): AuditData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return AuditData::from($this->repository->findOrFail($id));
     }
 }

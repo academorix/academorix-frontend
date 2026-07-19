@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Transaction\Actions\Tenant;
 
+use Academorix\Transaction\Contracts\Repositories\TransactionRepositoryInterface;
+use Academorix\Transaction\Data\TransactionData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/transactions/{transaction}` — show action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Transaction
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/transactions/{transaction}')]
 final class ShowTransactionAction
 {
+    public function __construct(
+        private readonly TransactionRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `transaction` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): TransactionData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return TransactionData::from($this->repository->findOrFail($id));
     }
 }

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Drills\Actions\Tenant;
 
+use Academorix\Drills\Contracts\Repositories\SessionPlanRepositoryInterface;
+use Academorix\Drills\Data\SessionPlanData;
+use Academorix\Drills\Data\Requests\CreateSessionPlanRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/session-plans` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Drills
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/session-plans')]
 final class CreateSessionPlanAction
 {
+    public function __construct(
+        private readonly SessionPlanRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `session-plan` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateSessionPlanRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateSessionPlanRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(SessionPlanData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Referrals\Actions\Tenant;
 
+use Academorix\Referrals\Contracts\Repositories\ReferralProgramRepositoryInterface;
+use Academorix\Referrals\Data\ReferralProgramData;
+use Academorix\Referrals\Data\Requests\CreateReferralProgramRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/referral-programs` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Referrals
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/referral-programs')]
 final class CreateReferralProgramAction
 {
+    public function __construct(
+        private readonly ReferralProgramRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `referral-program` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateReferralProgramRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateReferralProgramRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(ReferralProgramData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

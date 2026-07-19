@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Facility\Actions\Tenant;
 
+use Academorix\Facility\Contracts\Repositories\FacilityRepositoryInterface;
+use Academorix\Facility\Data\FacilityData;
+use Academorix\Facility\Data\Requests\CreateFacilityRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/facilities` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Facility
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/facilities')]
 final class CreateFacilitieAction
 {
+    public function __construct(
+        private readonly FacilityRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `facilitie` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateFacilityRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateFacilityRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(FacilityData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

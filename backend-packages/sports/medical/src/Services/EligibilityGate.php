@@ -8,14 +8,15 @@ namespace Academorix\Medical\Services;
 
 use Academorix\Medical\Contracts\Services\EligibilityGateInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Medical\Contracts\Repositories\AllergyRepositoryInterface;
 
 /**
  * Concrete service — EligibilityGate.
  *
  * Implements {@see EligibilityGateInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Medical
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class EligibilityGate implements EligibilityGateInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AllergyRepositoryInterface  $allergyRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AllergyRepositoryInterface $allergyRepository,
+    ) {
+    }
 }

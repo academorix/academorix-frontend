@@ -9,19 +9,23 @@ namespace Academorix\Coaching\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Coaching\Contracts\Data\CoachingProfileInterface;
 use Academorix\Coaching\Database\Factories\CoachingProfileFactory;
 use Academorix\Branch\Concerns\BelongsToBranch;
+use Academorix\Coaching\Policies\CoachingProfilePolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Staff\Concerns\BelongsToStaff;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -33,7 +37,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: CoachingProfileInterface::TABLE, keyType: CoachingProfileInterface::KEY_TYPE)]
+#[Table(name: CoachingProfileInterface::TABLE, key: CoachingProfileInterface::PRIMARY_KEY, keyType: CoachingProfileInterface::KEY_TYPE)]
 #[Fillable([
     CoachingProfileInterface::ATTR_TENANT_ID,
         CoachingProfileInterface::ATTR_STAFF_ID,
@@ -55,32 +59,27 @@ use Spatie\Activitylog\Traits\LogsActivity;
         CoachingProfileInterface::ATTR_METADATA,
 ])]
 #[UseFactory(CoachingProfileFactory::class)]
-final class CoachingProfile extends Model implements CoachingProfileInterface
+#[WithoutIncrementing]
+#[UsePolicy(CoachingProfilePolicy::class)]
+final class CoachingProfile extends Model implements CoachingProfileInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToStaff;
     use BelongsToBranch;
-    // TODO(gen): resolve unknown trait `HasCoachAssignments` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasCoachCertifications` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasCoachSkillRatings` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasCoachAssignments` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasCoachCertifications` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasCoachSkillRatings` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

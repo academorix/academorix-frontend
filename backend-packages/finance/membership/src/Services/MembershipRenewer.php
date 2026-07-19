@@ -8,14 +8,15 @@ namespace Academorix\Membership\Services;
 
 use Academorix\Membership\Contracts\Services\MembershipRenewerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Membership\Contracts\Repositories\MembershipPlanRepositoryInterface;
 
 /**
  * Concrete service — MembershipRenewer.
  *
  * Implements {@see MembershipRenewerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Membership
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class MembershipRenewer implements MembershipRenewerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  MembershipPlanRepositoryInterface  $membershipPlanRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly MembershipPlanRepositoryInterface $membershipPlanRepository,
+    ) {
+    }
 }

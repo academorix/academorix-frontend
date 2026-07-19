@@ -8,14 +8,15 @@ namespace Academorix\Coaching\Services;
 
 use Academorix\Coaching\Contracts\Services\ExpirationSchedulerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Coaching\Contracts\Repositories\CoachAssignmentRepositoryInterface;
 
 /**
  * Concrete service — ExpirationScheduler.
  *
  * Implements {@see ExpirationSchedulerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Coaching
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ExpirationScheduler implements ExpirationSchedulerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  CoachAssignmentRepositoryInterface  $coachAssignmentRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly CoachAssignmentRepositoryInterface $coachAssignmentRepository,
+    ) {
+    }
 }

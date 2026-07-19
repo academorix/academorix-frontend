@@ -592,55 +592,214 @@ def _extract_traits(schema: dict[str, Any]) -> list[str]:
     return list(x_el.get("traits", []) or [])
 
 
+# Trait alias -> (FQCN, in-class alias). The schema alias is what appears
+# in the blueprint's `x-eloquent.traits[]`; the FQCN is what we import;
+# the in-class alias is what the `use <X>;` line inside the class body
+# references. When the schema alias matches the FQCN's last segment the
+# in-class alias is the same as the schema alias; when the schema uses
+# a legacy `Has*`-style alias (`HasUserstamps`, `HasActivityLog`,
+# `HasAuditable`) the FQCN's real class name (`Userstamps`,
+# `LogsActivity`, `Auditable`) is what goes on the `use` line.
+_TRAIT_MAP: dict[str, tuple[str, str]] = {
+    # Framework — Laravel core.
+    "HasFactory":     ("Illuminate\\Database\\Eloquent\\Factories\\HasFactory", "HasFactory"),
+    "HasUlids":       ("Illuminate\\Database\\Eloquent\\Concerns\\HasUlids", "HasUlids"),
+    "SoftDeletes":    ("Illuminate\\Database\\Eloquent\\SoftDeletes", "SoftDeletes"),
+    "Notifiable":     ("Illuminate\\Notifications\\Notifiable", "Notifiable"),
+    "HasApiTokens":   ("Laravel\\Sanctum\\HasApiTokens", "HasApiTokens"),
+    # Framework — Academorix.
+    "HasPrefixedUlid":     ("Academorix\\Foundation\\Concerns\\HasPrefixedUlid", "HasPrefixedUlid"),
+    "HasMetadata":         ("Academorix\\Foundation\\Concerns\\HasMetadata", "HasMetadata"),
+    "Filterable":          ("Academorix\\Foundation\\Concerns\\Filterable", "Filterable"),
+    "HasSystemFlag":       ("Academorix\\Database\\Concerns\\HasSystemFlag", "HasSystemFlag"),
+    "EncryptsSensitiveFields": ("Academorix\\Foundation\\Concerns\\EncryptsSensitiveFields", "EncryptsSensitiveFields"),
+    "IsRetentionAware":    ("Academorix\\Foundation\\Concerns\\IsRetentionAware", "IsRetentionAware"),
+    # Third-party — Spatie, OwenIt, Mattiverse.
+    "HasSlug":             ("Spatie\\Sluggable\\HasSlug", "HasSlug"),
+    "Sluggable":           ("Spatie\\Sluggable\\HasSlug", "HasSlug"),
+    "HasTranslations":     ("Spatie\\Translatable\\HasTranslations", "HasTranslations"),
+    "HasStates":           ("Spatie\\ModelStates\\HasStates", "HasStates"),
+    "Searchable":          ("Laravel\\Scout\\Searchable", "Searchable"),
+    "Sortable":            ("Spatie\\EloquentSortable\\SortableTrait", "SortableTrait"),
+    "HasSchemalessAttributes": (
+        "Spatie\\SchemalessAttributes\\SchemalessAttributesTrait",
+        "SchemalessAttributesTrait",
+    ),
+    "Exportable":          ("Maatwebsite\\Excel\\Concerns\\Exportable", "Exportable"),
+    "Importable":          ("Maatwebsite\\Excel\\Concerns\\Importable", "Importable"),
+    # Audit + userstamps — legacy `Has*` schema aliases map to the real class names.
+    "HasUserstamps":       ("Mattiverse\\Userstamps\\Traits\\Userstamps", "Userstamps"),
+    "Userstamps":          ("Mattiverse\\Userstamps\\Traits\\Userstamps", "Userstamps"),
+    "Auditable":           ("OwenIt\\Auditing\\Auditable", "Auditable"),
+    "HasAuditable":        ("OwenIt\\Auditing\\Auditable", "Auditable"),
+    "HasAudit":            ("OwenIt\\Auditing\\Auditable", "Auditable"),
+    "HasActivityLog":      ("Spatie\\Activitylog\\Traits\\LogsActivity", "LogsActivity"),
+    "LogsActivity":        ("Spatie\\Activitylog\\Traits\\LogsActivity", "LogsActivity"),
+    # Tenancy + hierarchy.
+    "BelongsToTenant":         ("Academorix\\Tenancy\\Concerns\\BelongsToTenant", "BelongsToTenant"),
+    "BelongsToTenantOptional": ("Academorix\\Tenancy\\Concerns\\BelongsToTenantOptional", "BelongsToTenantOptional"),
+    "BelongsToApplication":    ("Academorix\\Application\\Concerns\\BelongsToApplication", "BelongsToApplication"),
+    "BelongsToOrganization":   ("Academorix\\Organization\\Concerns\\BelongsToOrganization", "BelongsToOrganization"),
+    "BelongsToBranch":         ("Academorix\\Branch\\Concerns\\BelongsToBranch", "BelongsToBranch"),
+    "BelongsToRegion":         ("Academorix\\Region\\Concerns\\BelongsToRegion", "BelongsToRegion"),
+    "BelongsToUser":           ("Academorix\\User\\Concerns\\BelongsToUser", "BelongsToUser"),
+    # Sports.
+    "BelongsToAthlete":            ("Academorix\\Athlete\\Concerns\\BelongsToAthlete", "BelongsToAthlete"),
+    "BelongsToAthleteEnrollment":  ("Academorix\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment", "BelongsToAthleteEnrollment"),
+    "BelongsToStaff":              ("Academorix\\Staff\\Concerns\\BelongsToStaff", "BelongsToStaff"),
+    "BelongsToSeason":             ("Academorix\\Season\\Concerns\\BelongsToSeason", "BelongsToSeason"),
+    "BelongsToEvent":              ("Academorix\\Event\\Concerns\\BelongsToEvent", "BelongsToEvent"),
+    "BelongsToSession":            ("Academorix\\Session\\Concerns\\BelongsToSession", "BelongsToSession"),
+    "BelongsToTeam":               ("Academorix\\Teams\\Concerns\\BelongsToTeam", "BelongsToTeam"),
+    "BelongsToMembership":         ("Academorix\\Membership\\Concerns\\BelongsToMembership", "BelongsToMembership"),
+    "BelongsToInvoice":            ("Academorix\\Invoice\\Concerns\\BelongsToInvoice", "BelongsToInvoice"),
+    "HasEventFacilities":          ("Academorix\\Event\\Concerns\\HasEventFacilities", "HasEventFacilities"),
+    "BelongsToCoachingProfile":    ("Academorix\\Coaching\\Concerns\\BelongsToCoachingProfile", "BelongsToCoachingProfile"),
+    "HasAttributeSet":             ("Academorix\\Attributes\\Concerns\\HasAttributeSet", "HasAttributeSet"),
+}
+
+# Traits that require the model to `implements` a contract in addition
+# to `use`-ing the trait. Keyed by the schema alias.
+_TRAIT_CONTRACTS: dict[str, tuple[str, str]] = {
+    # Auditable trait pairs with the AuditableContract interface — every
+    # model that composes it MUST implement the contract or `owen-it`'s
+    # observer refuses to record.
+    "Auditable":     ("OwenIt\\Auditing\\Contracts\\Auditable", "AuditableContract"),
+    "HasAuditable":  ("OwenIt\\Auditing\\Contracts\\Auditable", "AuditableContract"),
+    "HasAudit":      ("OwenIt\\Auditing\\Contracts\\Auditable", "AuditableContract"),
+}
+
+
+def _trait_resolve(trait: str) -> tuple[str, str] | None:
+    """Return `(fqcn, in-class alias)` for one schema trait name.
+
+    The schema uses friendly aliases (`HasUserstamps`, `HasActivityLog`,
+    `HasAuditable`) that map to real Laravel/PHP class names
+    (`Userstamps`, `LogsActivity`, `Auditable`) via the alias map.
+    """
+    return _TRAIT_MAP.get(trait)
+
+
+# Legacy shim kept for older callers.
 def _trait_import(trait: str) -> str | None:
-    """Map a trait short name to its fully-qualified import."""
-    trait_map = {
-        "HasFactory": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory",
-        "HasUlids": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
-        "HasPrefixedUlid": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid",
-        "HasSlug": "Spatie\\Sluggable\\HasSlug",
-        "HasMetadata": "Academorix\\Foundation\\Concerns\\HasMetadata",
-        "HasUserstamps": "Mattiverse\\Userstamps\\Traits\\Userstamps",
-        "Auditable": "OwenIt\\Auditing\\Auditable",
-        "HasActivityLog": "Spatie\\Activitylog\\Traits\\LogsActivity",
-        "Filterable": "Academorix\\Foundation\\Concerns\\Filterable",
-        "Searchable": "Laravel\\Scout\\Searchable",
-        "SoftDeletes": "Illuminate\\Database\\Eloquent\\SoftDeletes",
-        "BelongsToTenant": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
-        "BelongsToApplication": "Academorix\\Application\\Concerns\\BelongsToApplication",
-        "BelongsToOrganization": "Academorix\\Organization\\Concerns\\BelongsToOrganization",
-        "BelongsToBranch": "Academorix\\Branch\\Concerns\\BelongsToBranch",
-        "BelongsToRegion": "Academorix\\Region\\Concerns\\BelongsToRegion",
-        "BelongsToUser": "Academorix\\User\\Concerns\\BelongsToUser",
-        "BelongsToAthlete": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete",
-        "BelongsToStaff": "Academorix\\Staff\\Concerns\\BelongsToStaff",
-        "BelongsToSeason": "Academorix\\Sports\\Season\\Concerns\\BelongsToSeason",
-        "BelongsToEvent": "Academorix\\Sports\\Event\\Concerns\\BelongsToEvent",
-        "HasEventFacilities": "Academorix\\Sports\\Event\\Concerns\\HasEventFacilities",
-    }
-    return trait_map.get(trait)
+    resolved = _trait_resolve(trait)
+    return resolved[0] if resolved else None
+
+
+# Model-cast primitive types that pass through untouched. Anything else
+# is treated as a class-string reference and rendered as `::class` when
+# the emitter finds a matching class in the module's `Enums/` folder or
+# in `Illuminate\Database\Eloquent\Casts\`. Falls back to a raw string
+# literal so the migration still parses even when the class hasn't been
+# emitted yet.
+_PRIMITIVE_CAST_TYPES = {
+    # Scalars.
+    "string", "bool", "boolean", "int", "integer", "float", "double", "real",
+    "decimal",
+    # Structured.
+    "array", "object", "collection", "json",
+    # Date + time (both mutable + immutable forms).
+    "date", "datetime", "timestamp", "immutable_date", "immutable_datetime",
+    # Security.
+    "encrypted", "encrypted:array", "encrypted:collection", "encrypted:json",
+    "encrypted:object", "hashed",
+}
+
+
+def _resolve_cast(m: Module, cast_type: str) -> str:
+    """Return the PHP expression for a cast RHS.
+
+    - Primitive casts (`'string'`, `'bool'`, `'datetime'`, ...) stay as
+      quoted strings — Eloquent's cast system reads them directly.
+    - Enum / value-object casts (`'ThemeMode'`, `'AccessibilityFlagsPayload'`,
+      etc.) are rendered as `ClassName::class` referencing the module's
+      Enums / Casts folder so PHPStan can chase the type.
+    - Fully-qualified class strings (`\\Foo\\Bar`) pass through as `::class`
+      references without namespace mangling.
+    """
+    cleaned = cast_type.strip()
+    if cleaned in _PRIMITIVE_CAST_TYPES:
+        return f"'{cleaned}'"
+    # Parameterized primitive casts (`decimal:2`, `datetime:Y-m-d`, ...).
+    base = cleaned.split(":", 1)[0]
+    if base in _PRIMITIVE_CAST_TYPES:
+        return f"'{cleaned}'"
+    # `\\Fully\\Qualified\\Class` → import + `::class`.
+    if "\\" in cleaned:
+        return f"\\{cleaned.lstrip(chr(92))}::class"
+    # Bare class name — assume module-local enum / cast class.
+    return f"{cleaned}::class"
+
+
+def _module_has_class(m: Module, subfolder: str, class_name: str) -> bool:
+    """True when `src/<subfolder>/<class_name>.php` exists on disk."""
+    module_dir = module_dir_path(m.tier, m.name)
+    # `module_dir` is `modules/<tier>/blueprints/<name>` — the emitted
+    # package sits under `backend-packages/<tier>/<name>`. We use the
+    # blueprint-relative path only to know the module; the on-disk
+    # check runs against the package.
+    pkg_dir = Path(m.module_pkg_path) / "src" / subfolder / f"{class_name}.php"
+    return pkg_dir.is_file()
 
 
 def emit_model(m: Module, e: Entity) -> str:
-    """Emit `src/Models/<Model>.php` — attribute-first Eloquent model."""
+    """Emit `src/Models/<Model>.php` — attribute-first Eloquent model.
+
+    Trait aliases in `x-eloquent.traits[]` are resolved through
+    `_TRAIT_MAP`; unknown traits degrade to a `TODO(gen)` comment. Casts
+    reference `::class` for module-local enums / cast classes so PHPStan
+    resolves them. `#[UsePolicy]` and `#[ObservedBy]` are auto-attached
+    when the matching `src/Policies/<Model>Policy.php` /
+    `src/Observers/<Model>Observer.php` files exist on disk.
+    """
     ns = f"{m.ns_module_root}\\Models"
     module_dir = module_dir_path(m.tier, m.name)
     schema_path = module_dir / "schemas" / f"{e.name}.schema.json"
     schema = json.loads(schema_path.read_text()) if schema_path.is_file() else {}
 
+    # ── Trait resolution ────────────────────────────────────────
     traits = _extract_traits(schema)
-    trait_imports = []
-    trait_use_lines = []
-    for trait in traits:
-        fqcn = _trait_import(trait)
-        if fqcn:
-            trait_imports.append(f"use {fqcn};")
-            trait_use_lines.append(f"    use {trait};")
-        else:
-            # Unknown trait — hand-tune post-generation.
-            trait_use_lines.append(f"    // TODO(gen): resolve unknown trait `{trait}` — add its import + use line.")
+    trait_imports: list[str] = []
+    trait_use_lines: list[str] = []
+    contract_imports: list[str] = []
+    contract_names: list[str] = []
+    seen_aliases: set[str] = set()
 
-    # Fillable = every non-primary, non-audit column.
+    for trait in traits:
+        resolved = _trait_resolve(trait)
+        if resolved is None:
+            trait_use_lines.append(
+                f"    // TODO(gen): resolve unknown trait `{trait}` — "
+                f"add its import + `use` line."
+            )
+            continue
+        fqcn, alias = resolved
+        if alias in seen_aliases:
+            continue
+        seen_aliases.add(alias)
+        # Import — use `as <alias>` only when the FQCN's last segment
+        # differs from the alias (e.g. mattiverse's `Userstamps`).
+        last = fqcn.rsplit("\\", 1)[-1]
+        if last == alias:
+            trait_imports.append(f"use {fqcn};")
+        else:
+            trait_imports.append(f"use {fqcn} as {alias};")
+        trait_use_lines.append(f"    use {alias};")
+        # Contract-implementing trait?
+        contract = _TRAIT_CONTRACTS.get(trait)
+        if contract is not None:
+            c_fqcn, c_alias = contract
+            c_last = c_fqcn.rsplit("\\", 1)[-1]
+            import_line = (
+                f"use {c_fqcn};" if c_last == c_alias
+                else f"use {c_fqcn} as {c_alias};"
+            )
+            if import_line not in contract_imports:
+                contract_imports.append(import_line)
+            if c_alias not in contract_names:
+                contract_names.append(c_alias)
+
+    # ── Fillable — every non-primary, non-audit column ──────────
     audit_cols = {"id", "created_at", "updated_at", "deleted_at",
                   "created_by", "updated_by", "deleted_by"}
     fillable = [c.name for c in e.columns if c.name not in audit_cols]
@@ -648,16 +807,56 @@ def emit_model(m: Module, e: Entity) -> str:
         f"{e.class_name}Interface::ATTR_{c.upper()}" for c in fillable
     )
 
-    # Casts from x-eloquent.casts if present.
+    # ── Casts — module-local enum classes render as `::class` ───
     x_el = schema.get("x-eloquent", {}) or {}
     casts = x_el.get("casts", {}) or {}
-    casts_lines = ",\n        ".join(
-        f"{e.class_name}Interface::ATTR_{col.upper()} => '{ctype}'"
-        for col, ctype in casts.items()
-    ) if casts else ""
+    cast_class_imports: list[str] = []
+    casts_lines = []
+    for col, ctype in casts.items():
+        rhs = _resolve_cast(m, ctype)
+        if rhs.endswith("::class") and "\\" not in rhs:
+            # Bare `ClassName::class` — import from module's `Enums/`
+            # when the class lives there, otherwise from `Casts/`.
+            class_name = rhs[: -len("::class")]
+            if _module_has_class(m, "Enums", class_name):
+                cast_class_imports.append(f"use {m.ns_module_root}\\Enums\\{class_name};")
+            elif _module_has_class(m, "Casts", class_name):
+                cast_class_imports.append(f"use {m.ns_module_root}\\Casts\\{class_name};")
+            # If neither exists we still emit `ClassName::class` and let
+            # PHPStan surface the missing import — safer than emitting
+            # a broken string literal that Eloquent would silently
+            # accept then fail at cast time.
+        casts_lines.append(
+            f"        {e.class_name}Interface::ATTR_{col.upper()} => {rhs},"
+        )
+    casts_body = "\n".join(casts_lines)
 
-    table_name = e.aggregate.replace("-", "_")
+    # ── Class-level attributes: UsePolicy, ObservedBy ───────────
+    extra_attribute_imports: list[str] = []
+    extra_class_attributes: list[str] = []
+    extra_class_use_imports: list[str] = []
 
+    policy_class = f"{e.class_name}Policy"
+    if _module_has_class(m, "Policies", policy_class):
+        extra_attribute_imports.append(
+            "use Illuminate\\Database\\Eloquent\\Attributes\\UsePolicy;"
+        )
+        extra_class_use_imports.append(
+            f"use {m.ns_module_root}\\Policies\\{policy_class};"
+        )
+        extra_class_attributes.append(f"#[UsePolicy({policy_class}::class)]")
+
+    observer_class = f"{e.class_name}Observer"
+    if _module_has_class(m, "Observers", observer_class):
+        extra_attribute_imports.append(
+            "use Illuminate\\Database\\Eloquent\\Attributes\\ObservedBy;"
+        )
+        extra_class_use_imports.append(
+            f"use {m.ns_module_root}\\Observers\\{observer_class};"
+        )
+        extra_class_attributes.append(f"#[ObservedBy([{observer_class}::class])]")
+
+    # ── Class docblock ──────────────────────────────────────────
     class_doc = _php_docblock([
         f"Eloquent model for a {e.class_name}.",
         "",
@@ -668,7 +867,15 @@ def emit_model(m: Module, e: Entity) -> str:
         "@since    0.1.0",
     ])
 
-    trait_imports_block = "\n".join(sorted(set(trait_imports)))
+    # ── Compose imports ─────────────────────────────────────────
+    all_imports = sorted(set(
+        trait_imports
+        + contract_imports
+        + cast_class_imports
+        + extra_attribute_imports
+        + extra_class_use_imports
+    ))
+    trait_imports_block = "\n".join(all_imports)
     trait_use_block = "\n".join(trait_use_lines) if trait_use_lines else ""
 
     interface_import = f"use {m.ns_module_root}\\Contracts\\Data\\{e.class_name}Interface;"
@@ -678,15 +885,24 @@ def emit_model(m: Module, e: Entity) -> str:
     {fillable_lines},
 ])]""" if fillable else "#[Unguarded]"
 
-    casts_block = f"""    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+    # `implements` clause — always the interface, plus every contract
+    # required by composed traits (Auditable → AuditableContract).
+    implements_list = [f"{e.class_name}Interface"] + contract_names
+    implements_clause = ", ".join(implements_list)
+
+    class_attributes_block = "\n".join(extra_class_attributes)
+    class_attributes_prefix = (class_attributes_block + "\n") if class_attributes_block else ""
+
+    casts_block = f"""
+    /**
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        {casts_lines},
+{casts_body}
     ];
-""" if casts else ""
+""" if casts_lines else ""
 
     return f"""<?php
 
@@ -699,26 +915,20 @@ namespace {ns};
 use Illuminate\\Database\\Eloquent\\Attributes\\Fillable;
 use Illuminate\\Database\\Eloquent\\Attributes\\Table;
 use Illuminate\\Database\\Eloquent\\Attributes\\UseFactory;
+use Illuminate\\Database\\Eloquent\\Attributes\\WithoutIncrementing;
 use Illuminate\\Database\\Eloquent\\Model;
 {interface_import}
 {factory_import}
 {trait_imports_block}
 
 {class_doc}
-#[Table(name: {e.class_name}Interface::TABLE, keyType: {e.class_name}Interface::KEY_TYPE)]
+#[Table(name: {e.class_name}Interface::TABLE, key: {e.class_name}Interface::PRIMARY_KEY, keyType: {e.class_name}Interface::KEY_TYPE)]
 {fillable_block}
 #[UseFactory({e.class_name}Factory::class)]
-final class {e.class_name} extends Model implements {e.class_name}Interface
+#[WithoutIncrementing]
+{class_attributes_prefix}final class {e.class_name} extends Model implements {implements_clause}
 {{
 {trait_use_block}
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 {casts_block}}}
 """
 
@@ -1125,31 +1335,143 @@ _AUDIENCE_SUBDIR = {
 }
 
 
+# Verb + prefix constants for the Routing package's controller attributes.
+_ROUTING_VERB_ATTR = {
+    "GET":    "Get",
+    "POST":   "Post",
+    "PUT":    "Put",
+    "PATCH":  "Patch",
+    "DELETE": "Delete",
+}
+
+
+def _entity_for_aggregate(m: Module, aggregate: str) -> Entity | None:
+    """Look up the entity matching a route aggregate."""
+    for e in m.entities:
+        if e.aggregate == aggregate:
+            return e
+    return None
+
+
+def _singular_from_aggregate(aggregate: str) -> str:
+    """Best-effort singularisation — drop trailing `s`."""
+    return aggregate[:-1] if aggregate.endswith("s") else aggregate
+
+
 def emit_action(m: Module, route: Route) -> tuple[str, str]:
-    """Emit one Action from a route. Returns (path, body).
+    """Emit one Action from a route with a real production body.
 
     Actions are split by audience: platform-admin → `Actions/Platform/`,
     tenant → `Actions/Tenant/`, central → `Actions/Central/`, ...
-    Matches the pattern the real implementations use (see
-    `backend-packages/shared/activity/src/Actions/{Platform,Tenant}`).
+    (see `backend-packages/shared/activity/src/Actions/{Platform,Tenant}`
+    for the reference shape).
+
+    Body shape by op:
+      - list   → paginate through the repository, return output DTO collection
+      - show   → find or 404, return output DTO
+      - create → create via repository, return output DTO with 201
+      - update → find, update, return output DTO
+      - delete → delete, return 204 no-content
+      - custom → TODO(gen) marker (varies per route)
     """
     subdir = _AUDIENCE_SUBDIR.get(route.audience, studly(route.audience or "Custom"))
     ns = f"{m.ns_module_root}\\Actions\\{subdir}"
     op = route.op
     agg = studly(route.aggregate)
     verb = route.verb
-    class_name = f"{studly(op) if op != 'custom' else studly(route.custom_name or 'custom')}{agg[:-1] if agg.endswith('s') else agg}Action"
+    op_studly = studly(op) if op != "custom" else studly(route.custom_name or "custom")
+    class_name = f"{op_studly}{agg[:-1] if agg.endswith('s') else agg}Action"
 
-    doc = _php_docblock([
+    entity = _entity_for_aggregate(m, route.aggregate)
+    verb_attr = _ROUTING_VERB_ATTR.get(verb.upper())
+
+    # Docblock is shared across every body shape.
+    doc_lines = [
         f"`{verb} {route.path}` — {op} action ({route.audience or 'unscoped'} audience).",
         "",
-        f"Single-invoke controller. Wire via `#[AsController]` +",
-        f"the appropriate HTTP-verb attribute from `Academorix\\Routing`.",
+        f"Single-invoke controller wired via `#[AsController]` + `#[{verb_attr}(...)]`",
+        f"attributes from `Academorix\\Routing`. Discovered by the routing package's",
+        f"boot-time `RouteRegistrar` — no route file needed.",
         "",
         f"@category {m.studly_name}",
         "",
         "@since    0.1.0",
-    ])
+    ]
+    doc = _php_docblock(doc_lines)
+
+    # If we can't match a route to an entity, or op is custom, fall
+    # back to the TODO(gen) skeleton. This preserves the shape but
+    # marks the file for hand-tuning.
+    if entity is None or op == "custom":
+        return _emit_action_stub(m, ns, subdir, class_name, verb_attr, verb, route, doc)
+
+    # Route paths for the CRUD ops the generator recognises. The URL
+    # shape isn't strictly bound but matches
+    # `_expand_module_routes` (list=GET base, show=GET base/{id}, ...).
+    routing_use = _routing_uses_for(verb_attr)
+    controller_attrs = _controller_attrs(route)
+
+    if op == "list":
+        return path_for(subdir, class_name), _emit_list_action(
+            m, entity, ns, class_name, verb_attr, route, doc, routing_use, controller_attrs,
+        )
+    if op == "show":
+        return path_for(subdir, class_name), _emit_show_action(
+            m, entity, ns, class_name, verb_attr, route, doc, routing_use, controller_attrs,
+        )
+    if op == "create":
+        return path_for(subdir, class_name), _emit_create_action(
+            m, entity, ns, class_name, verb_attr, route, doc, routing_use, controller_attrs,
+        )
+    if op == "update":
+        return path_for(subdir, class_name), _emit_update_action(
+            m, entity, ns, class_name, verb_attr, route, doc, routing_use, controller_attrs,
+        )
+    if op == "delete":
+        return path_for(subdir, class_name), _emit_delete_action(
+            m, entity, ns, class_name, verb_attr, route, doc, routing_use, controller_attrs,
+        )
+
+    # Unrecognised op — stub with TODO(gen).
+    return _emit_action_stub(m, ns, subdir, class_name, verb_attr, verb, route, doc)
+
+
+def path_for(subdir: str, class_name: str) -> str:
+    """Return the on-disk path for an emitted Action file."""
+    return f"src/Actions/{subdir}/{class_name}.php"
+
+
+def _routing_uses_for(verb_attr: str | None) -> str:
+    """Import lines for the routing attributes an Action uses."""
+    imports = ["use Academorix\\Routing\\Attributes\\AsController;"]
+    if verb_attr:
+        imports.append(f"use Academorix\\Routing\\Attributes\\{verb_attr};")
+    return "\n".join(imports)
+
+
+def _controller_attrs(route: Route) -> str:
+    """Emit `#[AsController]` + verb attribute for a route."""
+    verb_attr = _ROUTING_VERB_ATTR.get(route.verb.upper())
+    if not verb_attr:
+        return "#[AsController]"
+    # Escape any single-quotes in the URL (unlikely but defensive).
+    path_escaped = route.path.replace("'", "\\'")
+    return f"#[AsController]\n#[{verb_attr}('{path_escaped}')]"
+
+
+def _emit_action_stub(
+    m: Module,
+    ns: str,
+    subdir: str,
+    class_name: str,
+    verb_attr: str | None,
+    verb: str,
+    route: Route,
+    doc: str,
+) -> tuple[str, str]:
+    """Fallback skeleton for custom / unrecognised routes."""
+    routing_use = _routing_uses_for(verb_attr)
+    controller_attrs = _controller_attrs(route)
     body = f"""<?php
 
 // {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
@@ -1158,7 +1480,10 @@ declare(strict_types=1);
 
 namespace {ns};
 
+{routing_use}
+
 {doc}
+{controller_attrs}
 final class {class_name}
 {{
     /**
@@ -1173,7 +1498,284 @@ final class {class_name}
     }}
 }}
 """
-    return f"src/Actions/{subdir}/{class_name}.php", body
+    return path_for(subdir, class_name), body
+
+
+def _emit_list_action(
+    m: Module,
+    e: Entity,
+    ns: str,
+    class_name: str,
+    verb_attr: str | None,
+    route: Route,
+    doc: str,
+    routing_use: str,
+    controller_attrs: str,
+) -> str:
+    """`list` — paginate through the repository + return a Data collection.
+
+    Runtime contract: reads `page` / `per_page` from the request and
+    returns a paginated response. The repository handles filter /
+    sort / include parsing per the `spatie/laravel-query-builder`
+    conventions the workspace uses.
+    """
+    repo_iface = f"{e.class_name}RepositoryInterface"
+    data_class = f"{e.class_name}Data"
+    return f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use {m.ns_module_root}\\Contracts\\Repositories\\{repo_iface};
+use {m.ns_module_root}\\Data\\{data_class};
+{routing_use}
+use Illuminate\\Http\\Request;
+use Illuminate\\Pagination\\LengthAwarePaginator;
+use Spatie\\LaravelData\\PaginatedDataCollection;
+
+{doc}
+{controller_attrs}
+final class {class_name}
+{{
+    public function __construct(
+        private readonly {repo_iface} $repository,
+    ) {{
+    }}
+
+    /**
+     * List `{e.aggregate}` for the current caller.
+     *
+     * The `Repository` base picks up `filter[...]` / `sort=...` /
+     * `include=...` query parameters via the `#[Filterable]` attribute
+     * on the concrete repository — no per-Action wiring needed.
+     *
+     * @return PaginatedDataCollection<int, {data_class}>  Paginated wire-visible DTOs.
+     */
+    public function __invoke(Request $request): PaginatedDataCollection
+    {{
+        /** @var LengthAwarePaginator<int, \\{m.ns_module_root}\\Models\\{e.class_name}> $page */
+        $page = $this->repository->paginate(
+            perPage: (int) $request->integer('per_page', 15),
+        );
+
+        return {data_class}::collect($page, PaginatedDataCollection::class);
+    }}
+}}
+"""
+
+
+def _emit_show_action(
+    m: Module,
+    e: Entity,
+    ns: str,
+    class_name: str,
+    verb_attr: str | None,
+    route: Route,
+    doc: str,
+    routing_use: str,
+    controller_attrs: str,
+) -> str:
+    """`show` — find-or-404, return one Data DTO."""
+    repo_iface = f"{e.class_name}RepositoryInterface"
+    data_class = f"{e.class_name}Data"
+    return f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use {m.ns_module_root}\\Contracts\\Repositories\\{repo_iface};
+use {m.ns_module_root}\\Data\\{data_class};
+{routing_use}
+
+{doc}
+{controller_attrs}
+final class {class_name}
+{{
+    public function __construct(
+        private readonly {repo_iface} $repository,
+    ) {{
+    }}
+
+    /**
+     * Fetch one `{e.aggregate[:-1] if e.aggregate.endswith('s') else e.aggregate}` by id.
+     *
+     * @param  string  $id  Primary key.
+     *
+     * @throws \\Illuminate\\Database\\Eloquent\\ModelNotFoundException  When the row is absent or hidden by scoping.
+     */
+    public function __invoke(string $id): {data_class}
+    {{
+        return {data_class}::from($this->repository->findOrFail($id));
+    }}
+}}
+"""
+
+
+def _emit_create_action(
+    m: Module,
+    e: Entity,
+    ns: str,
+    class_name: str,
+    verb_attr: str | None,
+    route: Route,
+    doc: str,
+    routing_use: str,
+    controller_attrs: str,
+) -> str:
+    """`create` — validate via request DTO, persist, return 201 + Data DTO."""
+    repo_iface = f"{e.class_name}RepositoryInterface"
+    data_class = f"{e.class_name}Data"
+    request_class = f"Create{e.class_name}RequestData"
+    return f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use {m.ns_module_root}\\Contracts\\Repositories\\{repo_iface};
+use {m.ns_module_root}\\Data\\{data_class};
+use {m.ns_module_root}\\Data\\Requests\\{request_class};
+{routing_use}
+use Illuminate\\Http\\JsonResponse;
+
+{doc}
+{controller_attrs}
+final class {class_name}
+{{
+    public function __construct(
+        private readonly {repo_iface} $repository,
+    ) {{
+    }}
+
+    /**
+     * Create a `{e.aggregate[:-1] if e.aggregate.endswith('s') else e.aggregate}` from the validated request payload.
+     *
+     * @param  {request_class}  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
+     */
+    public function __invoke({request_class} $data): JsonResponse
+    {{
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json({data_class}::from($model), JsonResponse::HTTP_CREATED);
+    }}
+}}
+"""
+
+
+def _emit_update_action(
+    m: Module,
+    e: Entity,
+    ns: str,
+    class_name: str,
+    verb_attr: str | None,
+    route: Route,
+    doc: str,
+    routing_use: str,
+    controller_attrs: str,
+) -> str:
+    """`update` — find-or-404, apply diff, return Data DTO."""
+    repo_iface = f"{e.class_name}RepositoryInterface"
+    data_class = f"{e.class_name}Data"
+    request_class = f"Update{e.class_name}RequestData"
+    return f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use {m.ns_module_root}\\Contracts\\Repositories\\{repo_iface};
+use {m.ns_module_root}\\Data\\{data_class};
+use {m.ns_module_root}\\Data\\Requests\\{request_class};
+{routing_use}
+
+{doc}
+{controller_attrs}
+final class {class_name}
+{{
+    public function __construct(
+        private readonly {repo_iface} $repository,
+    ) {{
+    }}
+
+    /**
+     * Update one `{e.aggregate[:-1] if e.aggregate.endswith('s') else e.aggregate}` and return the wire DTO.
+     *
+     * @param  string  $id  Primary key.
+     * @param  {request_class}  $data  Validated payload.
+     *
+     * @throws \\Illuminate\\Database\\Eloquent\\ModelNotFoundException  When the row is absent or hidden by scoping.
+     */
+    public function __invoke(string $id, {request_class} $data): {data_class}
+    {{
+        $model = $this->repository->update($id, $data->toArray());
+
+        return {data_class}::from($model);
+    }}
+}}
+"""
+
+
+def _emit_delete_action(
+    m: Module,
+    e: Entity,
+    ns: str,
+    class_name: str,
+    verb_attr: str | None,
+    route: Route,
+    doc: str,
+    routing_use: str,
+    controller_attrs: str,
+) -> str:
+    """`delete` — delete the row, return 204 No Content."""
+    repo_iface = f"{e.class_name}RepositoryInterface"
+    return f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use {m.ns_module_root}\\Contracts\\Repositories\\{repo_iface};
+{routing_use}
+use Illuminate\\Http\\Response;
+
+{doc}
+{controller_attrs}
+final class {class_name}
+{{
+    public function __construct(
+        private readonly {repo_iface} $repository,
+    ) {{
+    }}
+
+    /**
+     * Soft-delete one `{e.aggregate[:-1] if e.aggregate.endswith('s') else e.aggregate}` by id.
+     *
+     * @param  string  $id  Primary key.
+     *
+     * @throws \\Illuminate\\Database\\Eloquent\\ModelNotFoundException  When the row is absent or hidden by scoping.
+     */
+    public function __invoke(string $id): Response
+    {{
+        $this->repository->delete($id);
+
+        return response()->noContent();
+    }}
+}}
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -1486,7 +2088,17 @@ interface {iface_name}
 
 
 def emit_service_concrete(m: Module, name: str) -> tuple[str, str]:
-    """Emit `src/Services/<Name>.php` — concrete service implementation."""
+    """Emit `src/Services/<Name>.php` — concrete service implementation.
+
+    Services orchestrate — they call repositories, dispatch events,
+    coordinate cross-module bridges. The emitter injects the module's
+    primary repository (the first entity's repository interface) into
+    the constructor by default so the service has a real starting
+    point instead of an empty class body. Domain methods are added by
+    hand — the blueprint doesn't declare method signatures for
+    services, so the generator can't produce meaningful bodies for
+    them.
+    """
     ns = f"{m.ns_module_root}\\Services"
     iface_ns = f"{m.ns_module_root}\\Contracts\\Services"
     class_name = studly(name)
@@ -1494,18 +2106,42 @@ def emit_service_concrete(m: Module, name: str) -> tuple[str, str]:
     if class_name.endswith("Interface"):
         iface_name = class_name
         class_name = class_name[: -len("Interface")]
+
+    # Pick the module's primary entity to seed the constructor. The
+    # first entity in the module is the anchor — every other entity
+    # sits below it (chargeback anchors chargeback_evidence, etc.).
+    primary_entity = m.entities[0] if m.entities else None
+    ctor_imports: list[str] = []
+    ctor_params_block = ""
+    if primary_entity is not None:
+        repo_iface = f"{primary_entity.class_name}RepositoryInterface"
+        ctor_imports.append(
+            f"use {m.ns_module_root}\\Contracts\\Repositories\\{repo_iface};"
+        )
+        ctor_params_block = f"""    /**
+     * @param  {repo_iface}  ${camel(primary_entity.class_name)}Repository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly {repo_iface} ${camel(primary_entity.class_name)}Repository,
+    ) {{
+    }}
+"""
+
     doc = _php_docblock([
         f"Concrete service — {class_name}.",
         "",
         f"Implements {{@see {iface_name}}}. `#[Scoped]` because most",
         f"services touch request state (current tenant, current user,",
-        f"correlation id) — see `.kiro/steering/octane-first-di.md`. If the",
-        f"service is provably stateless, promote to `#[Singleton]`.",
+        f"correlation id) — see `.kiro/steering/octane-first-di.md`. If",
+        f"the service is provably stateless, promote to `#[Singleton]`.",
         "",
         f"@category {m.studly_name}",
         "",
         "@since    0.1.0",
     ])
+
+    imports_block = "\n".join(sorted(set(ctor_imports)))
+
     body = f"""<?php
 
 // {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
@@ -1516,13 +2152,13 @@ namespace {ns};
 
 use {iface_ns}\\{iface_name};
 use Illuminate\\Container\\Attributes\\Scoped;
+{imports_block}
 
 {doc}
 #[Scoped]
 final class {class_name} implements {iface_name}
 {{
-    // TODO(gen): implement the interface methods.
-}}
+{ctor_params_block}}}
 """
     return f"src/Services/{class_name}.php", body
 

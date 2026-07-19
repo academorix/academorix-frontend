@@ -9,6 +9,7 @@ namespace Academorix\Activity\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Activity\Contracts\Data\ActivityInterface;
 use Academorix\Activity\Database\Factories\ActivityFactory;
@@ -26,7 +27,7 @@ use Laravel\Scout\Searchable;
  *
  * @since    0.1.0
  */
-#[Table(name: ActivityInterface::TABLE, keyType: ActivityInterface::KEY_TYPE)]
+#[Table(name: ActivityInterface::TABLE, key: ActivityInterface::PRIMARY_KEY, keyType: ActivityInterface::KEY_TYPE)]
 #[Fillable([
     ActivityInterface::ATTR_LOG_NAME,
         ActivityInterface::ATTR_DESCRIPTION,
@@ -41,6 +42,7 @@ use Laravel\Scout\Searchable;
         ActivityInterface::ATTR_APPLICATION_ID,
 ])]
 #[UseFactory(ActivityFactory::class)]
+#[WithoutIncrementing]
 final class Activity extends Model implements ActivityInterface
 {
     use HasFactory;
@@ -49,14 +51,7 @@ final class Activity extends Model implements ActivityInterface
     use Searchable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

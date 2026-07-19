@@ -9,6 +9,7 @@ namespace Academorix\Requests\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Requests\Contracts\Data\AccessRequestProjectionInterface;
 use Academorix\Requests\Database\Factories\AccessRequestProjectionFactory;
@@ -23,7 +24,7 @@ use Academorix\Requests\Database\Factories\AccessRequestProjectionFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: AccessRequestProjectionInterface::TABLE, keyType: AccessRequestProjectionInterface::KEY_TYPE)]
+#[Table(name: AccessRequestProjectionInterface::TABLE, key: AccessRequestProjectionInterface::PRIMARY_KEY, keyType: AccessRequestProjectionInterface::KEY_TYPE)]
 #[Fillable([
     AccessRequestProjectionInterface::ATTR_TENANT_ID,
         AccessRequestProjectionInterface::ATTR_APPLICATION_ID,
@@ -44,15 +45,8 @@ use Academorix\Requests\Database\Factories\AccessRequestProjectionFactory;
         AccessRequestProjectionInterface::ATTR_AUDIT_TRAIL,
 ])]
 #[UseFactory(AccessRequestProjectionFactory::class)]
+#[WithoutIncrementing]
 final class AccessRequestProjection extends Model implements AccessRequestProjectionInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

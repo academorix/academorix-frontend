@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Competition\Actions\Tenant;
 
+use Academorix\Competition\Contracts\Repositories\CompetitionRepositoryInterface;
+use Academorix\Competition\Data\CompetitionData;
+use Academorix\Competition\Data\Requests\CreateCompetitionRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
+
 /**
  * `POST /api/v1/competitions` — create action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Competition
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/api/v1/competitions')]
 final class CreateCompetitionAction
 {
+    public function __construct(
+        private readonly CompetitionRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `competition` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateCompetitionRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateCompetitionRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(CompetitionData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

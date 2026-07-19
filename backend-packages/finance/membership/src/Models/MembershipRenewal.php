@@ -9,17 +9,22 @@ namespace Academorix\Membership\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Membership\Contracts\Data\MembershipRenewalInterface;
 use Academorix\Membership\Database\Factories\MembershipRenewalFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
+use Academorix\Membership\Concerns\BelongsToMembership;
+use Academorix\Membership\Policies\MembershipRenewalPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a MembershipRenewal.
@@ -30,7 +35,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: MembershipRenewalInterface::TABLE, keyType: MembershipRenewalInterface::KEY_TYPE)]
+#[Table(name: MembershipRenewalInterface::TABLE, key: MembershipRenewalInterface::PRIMARY_KEY, keyType: MembershipRenewalInterface::KEY_TYPE)]
 #[Fillable([
     MembershipRenewalInterface::ATTR_TENANT_ID,
         MembershipRenewalInterface::ATTR_MEMBERSHIP_ID,
@@ -53,27 +58,22 @@ use OwenIt\Auditing\Auditable;
         MembershipRenewalInterface::ATTR_NEXT_ATTEMPT_AT,
 ])]
 #[UseFactory(MembershipRenewalFactory::class)]
-final class MembershipRenewal extends Model implements MembershipRenewalInterface
+#[WithoutIncrementing]
+#[UsePolicy(MembershipRenewalPolicy::class)]
+final class MembershipRenewal extends Model implements MembershipRenewalInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToMembership` — add its import + use line.
+    use BelongsToMembership;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use Searchable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
@@ -86,7 +86,7 @@ final class MembershipRenewal extends Model implements MembershipRenewalInterfac
         MembershipRenewalInterface::ATTR_TAX_AMOUNT_CENTS => 'integer',
         MembershipRenewalInterface::ATTR_TOTAL_AMOUNT_CENTS => 'integer',
         MembershipRenewalInterface::ATTR_ATTEMPT_NUMBER => 'integer',
-        MembershipRenewalInterface::ATTR_STATUS => 'RenewalStatus',
+        MembershipRenewalInterface::ATTR_STATUS => RenewalStatus::class,
         MembershipRenewalInterface::ATTR_ATTEMPTED_AT => 'datetime',
         MembershipRenewalInterface::ATTR_SUCCEEDED_AT => 'datetime',
         MembershipRenewalInterface::ATTR_FAILED_AT => 'datetime',

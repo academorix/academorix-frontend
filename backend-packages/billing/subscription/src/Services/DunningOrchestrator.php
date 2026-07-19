@@ -8,14 +8,15 @@ namespace Academorix\Subscription\Services;
 
 use Academorix\Subscription\Contracts\Services\DunningOrchestratorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Subscription\Contracts\Repositories\PlanRepositoryInterface;
 
 /**
  * Concrete service — DunningOrchestrator.
  *
  * Implements {@see DunningOrchestratorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Subscription
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class DunningOrchestrator implements DunningOrchestratorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  PlanRepositoryInterface  $planRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly PlanRepositoryInterface $planRepository,
+    ) {
+    }
 }

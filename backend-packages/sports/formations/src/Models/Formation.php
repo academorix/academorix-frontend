@@ -9,17 +9,21 @@ namespace Academorix\Formations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Formations\Contracts\Data\FormationInterface;
 use Academorix\Formations\Database\Factories\FormationFactory;
+use Academorix\Formations\Policies\FormationPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a Formation.
@@ -30,7 +34,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: FormationInterface::TABLE, keyType: FormationInterface::KEY_TYPE)]
+#[Table(name: FormationInterface::TABLE, key: FormationInterface::PRIMARY_KEY, keyType: FormationInterface::KEY_TYPE)]
 #[Fillable([
     FormationInterface::ATTR_TENANT_ID,
         FormationInterface::ATTR_SPORT_KEY,
@@ -41,22 +45,16 @@ use OwenIt\Auditing\Auditable;
         FormationInterface::ATTR_METADATA,
 ])]
 #[UseFactory(FormationFactory::class)]
-final class Formation extends Model implements FormationInterface
+#[WithoutIncrementing]
+#[UsePolicy(FormationPolicy::class)]
+final class Formation extends Model implements FormationInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

@@ -8,14 +8,15 @@ namespace Academorix\NotificationsMail\Services;
 
 use Academorix\NotificationsMail\Contracts\Services\MailChannelInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\NotificationsMail\Contracts\Repositories\MailSuppressionRepositoryInterface;
 
 /**
  * Concrete service — MailChannel.
  *
  * Implements {@see MailChannelInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category NotificationsMail
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class MailChannel implements MailChannelInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  MailSuppressionRepositoryInterface  $mailSuppressionRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly MailSuppressionRepositoryInterface $mailSuppressionRepository,
+    ) {
+    }
 }

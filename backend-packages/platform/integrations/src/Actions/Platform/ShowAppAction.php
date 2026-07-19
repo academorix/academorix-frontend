@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Integrations\Actions\Platform;
 
+use Academorix\Integrations\Contracts\Repositories\AppRepositoryInterface;
+use Academorix\Integrations\Data\AppData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/platform/apps/{app}` — show action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Integrations
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/platform/apps/{app}')]
 final class ShowAppAction
 {
+    public function __construct(
+        private readonly AppRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `app` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): AppData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return AppData::from($this->repository->findOrFail($id));
     }
 }

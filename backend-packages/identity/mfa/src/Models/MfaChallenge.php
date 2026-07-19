@@ -9,6 +9,7 @@ namespace Academorix\Mfa\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Mfa\Contracts\Data\MfaChallengeInterface;
 use Academorix\Mfa\Database\Factories\MfaChallengeFactory;
@@ -23,7 +24,7 @@ use Academorix\Mfa\Database\Factories\MfaChallengeFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: MfaChallengeInterface::TABLE, keyType: MfaChallengeInterface::KEY_TYPE)]
+#[Table(name: MfaChallengeInterface::TABLE, key: MfaChallengeInterface::PRIMARY_KEY, keyType: MfaChallengeInterface::KEY_TYPE)]
 #[Fillable([
     MfaChallengeInterface::ATTR_IDENTITY_ID,
         MfaChallengeInterface::ATTR_METHOD,
@@ -38,15 +39,8 @@ use Academorix\Mfa\Database\Factories\MfaChallengeFactory;
         MfaChallengeInterface::ATTR_CONSUMED_AT,
 ])]
 #[UseFactory(MfaChallengeFactory::class)]
+#[WithoutIncrementing]
 final class MfaChallenge extends Model implements MfaChallengeInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

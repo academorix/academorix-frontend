@@ -9,6 +9,7 @@ namespace Academorix\Announcements\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Announcements\Contracts\Data\AnnouncementViewInterface;
 use Academorix\Announcements\Database\Factories\AnnouncementViewFactory;
@@ -26,7 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: AnnouncementViewInterface::TABLE, keyType: AnnouncementViewInterface::KEY_TYPE)]
+#[Table(name: AnnouncementViewInterface::TABLE, key: AnnouncementViewInterface::PRIMARY_KEY, keyType: AnnouncementViewInterface::KEY_TYPE)]
 #[Fillable([
     AnnouncementViewInterface::ATTR_TENANT_ID,
         AnnouncementViewInterface::ATTR_ANNOUNCEMENT_ID,
@@ -36,18 +37,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         AnnouncementViewInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AnnouncementViewFactory::class)]
+#[WithoutIncrementing]
 final class AnnouncementView extends Model implements AnnouncementViewInterface
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

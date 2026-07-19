@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\NotificationsMail\Actions\Central;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Post;
+
 /**
  * `POST /webhooks/notifications/mail/{provider}` — custom action (central audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Post(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category NotificationsMail
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Post('/webhooks/notifications/mail/{provider}')]
 final class MailMailAction
 {
     /**

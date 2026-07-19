@@ -8,14 +8,15 @@ namespace Academorix\Webhook\Services;
 
 use Academorix\Webhook\Contracts\Services\SecretRotatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Webhook\Contracts\Repositories\WebhookDeliveryRepositoryInterface;
 
 /**
  * Concrete service — SecretRotator.
  *
  * Implements {@see SecretRotatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Webhook
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SecretRotator implements SecretRotatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  WebhookDeliveryRepositoryInterface  $webhookDeliveryRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly WebhookDeliveryRepositoryInterface $webhookDeliveryRepository,
+    ) {
+    }
 }

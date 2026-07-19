@@ -9,16 +9,21 @@ namespace Academorix\Delegation\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Delegation\Contracts\Data\ImpersonationSessionInterface;
 use Academorix\Delegation\Database\Factories\ImpersonationSessionFactory;
 use Academorix\Application\Concerns\BelongsToApplication;
+use Academorix\Delegation\Policies\ImpersonationSessionPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ImpersonationSession.
@@ -29,7 +34,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: ImpersonationSessionInterface::TABLE, keyType: ImpersonationSessionInterface::KEY_TYPE)]
+#[Table(name: ImpersonationSessionInterface::TABLE, key: ImpersonationSessionInterface::PRIMARY_KEY, keyType: ImpersonationSessionInterface::KEY_TYPE)]
 #[Fillable([
     ImpersonationSessionInterface::ATTR_IMPERSONATOR_PLATFORM_USER_ID,
         ImpersonationSessionInterface::ATTR_IMPERSONATED_USER_ID,
@@ -48,31 +53,26 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         ImpersonationSessionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ImpersonationSessionFactory::class)]
-final class ImpersonationSession extends Model implements ImpersonationSessionInterface
+#[WithoutIncrementing]
+#[UsePolicy(ImpersonationSessionPolicy::class)]
+final class ImpersonationSession extends Model implements ImpersonationSessionInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use BelongsToApplication;
     use HasMetadata;
-    use HasUserstamps;
-    // TODO(gen): resolve unknown trait `HasAudit` — add its import + use line.
+    use Userstamps;
+    use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        ImpersonationSessionInterface::ATTR_END_TRIGGER => 'ImpersonationEndTrigger',
+        ImpersonationSessionInterface::ATTR_END_TRIGGER => ImpersonationEndTrigger::class,
         ImpersonationSessionInterface::ATTR_STARTED_AT => 'immutable_datetime',
         ImpersonationSessionInterface::ATTR_ENDS_AT => 'datetime',
         ImpersonationSessionInterface::ATTR_ENDED_AT => 'datetime',

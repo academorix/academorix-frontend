@@ -9,6 +9,7 @@ namespace Academorix\Auth\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Auth\Contracts\Data\AuthJwtDenyListInterface;
 use Academorix\Auth\Database\Factories\AuthJwtDenyListFactory;
@@ -26,7 +27,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AuthJwtDenyListInterface::TABLE, keyType: AuthJwtDenyListInterface::KEY_TYPE)]
+#[Table(name: AuthJwtDenyListInterface::TABLE, key: AuthJwtDenyListInterface::PRIMARY_KEY, keyType: AuthJwtDenyListInterface::KEY_TYPE)]
 #[Fillable([
     AuthJwtDenyListInterface::ATTR_JTI,
         AuthJwtDenyListInterface::ATTR_REASON,
@@ -34,22 +35,16 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AuthJwtDenyListInterface::ATTR_EXPIRES_AT,
 ])]
 #[UseFactory(AuthJwtDenyListFactory::class)]
+#[WithoutIncrementing]
 final class AuthJwtDenyList extends Model implements AuthJwtDenyListInterface
 {
     use HasFactory;
     use HasUlids;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

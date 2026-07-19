@@ -8,14 +8,15 @@ namespace Academorix\Refund\Services;
 
 use Academorix\Refund\Contracts\Services\RefundApprovalManagerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Refund\Contracts\Repositories\RefundLineRepositoryInterface;
 
 /**
  * Concrete service — RefundApprovalManager.
  *
  * Implements {@see RefundApprovalManagerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Refund
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class RefundApprovalManager implements RefundApprovalManagerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  RefundLineRepositoryInterface  $refundLineRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly RefundLineRepositoryInterface $refundLineRepository,
+    ) {
+    }
 }

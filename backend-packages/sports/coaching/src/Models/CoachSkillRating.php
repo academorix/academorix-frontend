@@ -9,17 +9,22 @@ namespace Academorix\Coaching\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Coaching\Contracts\Data\CoachSkillRatingInterface;
 use Academorix\Coaching\Database\Factories\CoachSkillRatingFactory;
+use Academorix\Coaching\Concerns\BelongsToCoachingProfile;
+use Academorix\Coaching\Policies\CoachSkillRatingPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: CoachSkillRatingInterface::TABLE, keyType: CoachSkillRatingInterface::KEY_TYPE)]
+#[Table(name: CoachSkillRatingInterface::TABLE, key: CoachSkillRatingInterface::PRIMARY_KEY, keyType: CoachSkillRatingInterface::KEY_TYPE)]
 #[Fillable([
     CoachSkillRatingInterface::ATTR_TENANT_ID,
         CoachSkillRatingInterface::ATTR_COACHING_PROFILE_ID,
@@ -46,34 +51,29 @@ use Spatie\Activitylog\Traits\LogsActivity;
         CoachSkillRatingInterface::ATTR_METADATA,
 ])]
 #[UseFactory(CoachSkillRatingFactory::class)]
-final class CoachSkillRating extends Model implements CoachSkillRatingInterface
+#[WithoutIncrementing]
+#[UsePolicy(CoachSkillRatingPolicy::class)]
+final class CoachSkillRating extends Model implements CoachSkillRatingInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToCoachingProfile` — add its import + use line.
+    use BelongsToCoachingProfile;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        CoachSkillRatingInterface::ATTR_RATING_SCALE => 'CoachRatingScale',
-        CoachSkillRatingInterface::ATTR_RATABLE_TYPE => 'CoachRatableType',
+        CoachSkillRatingInterface::ATTR_RATING_SCALE => CoachRatingScale::class,
+        CoachSkillRatingInterface::ATTR_RATABLE_TYPE => CoachRatableType::class,
         CoachSkillRatingInterface::ATTR_RATING_VALUE => 'integer',
         CoachSkillRatingInterface::ATTR_RATED_AT => 'datetime',
         CoachSkillRatingInterface::ATTR_EXPIRES_AT => 'date',

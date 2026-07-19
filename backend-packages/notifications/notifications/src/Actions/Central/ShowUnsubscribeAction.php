@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\Notifications\Actions\Central;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/notifications/unsubscribe/{token}` — show action (central audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Notifications
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/notifications/unsubscribe/{token}')]
 final class ShowUnsubscribeAction
 {
     /**

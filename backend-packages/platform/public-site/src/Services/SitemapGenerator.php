@@ -8,14 +8,15 @@ namespace Academorix\PublicSite\Services;
 
 use Academorix\PublicSite\Contracts\Services\SitemapGeneratorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\PublicSite\Contracts\Repositories\ContentBlockRepositoryInterface;
 
 /**
  * Concrete service — SitemapGenerator.
  *
  * Implements {@see SitemapGeneratorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category PublicSite
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class SitemapGenerator implements SitemapGeneratorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ContentBlockRepositoryInterface  $contentBlockRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ContentBlockRepositoryInterface $contentBlockRepository,
+    ) {
+    }
 }

@@ -9,6 +9,7 @@ namespace Academorix\Rbac\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Rbac\Contracts\Data\ModelHasRolesInterface;
 use Academorix\Rbac\Database\Factories\ModelHasRolesFactory;
@@ -23,7 +24,7 @@ use Academorix\Rbac\Database\Factories\ModelHasRolesFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: ModelHasRolesInterface::TABLE, keyType: ModelHasRolesInterface::KEY_TYPE)]
+#[Table(name: ModelHasRolesInterface::TABLE, key: ModelHasRolesInterface::PRIMARY_KEY, keyType: ModelHasRolesInterface::KEY_TYPE)]
 #[Fillable([
     ModelHasRolesInterface::ATTR_ROLE_ID,
         ModelHasRolesInterface::ATTR_MODEL_TYPE,
@@ -35,15 +36,8 @@ use Academorix\Rbac\Database\Factories\ModelHasRolesFactory;
         ModelHasRolesInterface::ATTR_EXPIRES_AT,
 ])]
 #[UseFactory(ModelHasRolesFactory::class)]
+#[WithoutIncrementing]
 final class ModelHasRoles extends Model implements ModelHasRolesInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

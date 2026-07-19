@@ -9,16 +9,21 @@ namespace Academorix\PlatformUser\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\PlatformUser\Contracts\Data\PlatformProfileInterface;
 use Academorix\PlatformUser\Database\Factories\PlatformProfileFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\PlatformUser\Policies\PlatformProfilePolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -30,7 +35,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PlatformProfileInterface::TABLE, keyType: PlatformProfileInterface::KEY_TYPE)]
+#[Table(name: PlatformProfileInterface::TABLE, key: PlatformProfileInterface::PRIMARY_KEY, keyType: PlatformProfileInterface::KEY_TYPE)]
 #[Fillable([
     PlatformProfileInterface::ATTR_FIRST_NAME,
         PlatformProfileInterface::ATTR_LAST_NAME,
@@ -43,33 +48,28 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PlatformProfileInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PlatformProfileFactory::class)]
-final class PlatformProfile extends Model implements PlatformProfileInterface
+#[WithoutIncrementing]
+#[UsePolicy(PlatformProfilePolicy::class)]
+final class PlatformProfile extends Model implements PlatformProfileInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use HasMetadata;
-    use HasUserstamps;
-    use HasActivityLog;
-    // TODO(gen): resolve unknown trait `HasAudit` — add its import + use line.
+    use Userstamps;
+    use LogsActivity;
+    use Auditable;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        PlatformProfileInterface::ATTR_PHONE_E164 => 'E164Phone',
-        PlatformProfileInterface::ATTR_TIMEZONE => 'IanaTimezone',
+        PlatformProfileInterface::ATTR_PHONE_E164 => E164Phone::class,
+        PlatformProfileInterface::ATTR_TIMEZONE => IanaTimezone::class,
         PlatformProfileInterface::ATTR_METADATA => 'array',
     ];
 }

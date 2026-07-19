@@ -9,6 +9,7 @@ namespace Academorix\Ai\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Ai\Contracts\Data\AiConversationInterface;
 use Academorix\Ai\Database\Factories\AiConversationFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +33,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AiConversationInterface::TABLE, keyType: AiConversationInterface::KEY_TYPE)]
+#[Table(name: AiConversationInterface::TABLE, key: AiConversationInterface::PRIMARY_KEY, keyType: AiConversationInterface::KEY_TYPE)]
 #[Fillable([
     AiConversationInterface::ATTR_TENANT_ID,
         AiConversationInterface::ATTR_USER_ID,
@@ -46,23 +48,16 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AiConversationInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AiConversationFactory::class)]
-final class AiConversation extends Model implements AiConversationInterface
+#[WithoutIncrementing]
+final class AiConversation extends Model implements AiConversationInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

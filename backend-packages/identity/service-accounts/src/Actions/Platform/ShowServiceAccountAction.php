@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\ServiceAccounts\Actions\Platform;
 
+use Academorix\ServiceAccounts\Contracts\Repositories\ServiceAccountRepositoryInterface;
+use Academorix\ServiceAccounts\Data\ServiceAccountData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/platform/service-accounts/{serviceAccount}` — show action (platform-admin audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category ServiceAccounts
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/platform/service-accounts/{serviceAccount}')]
 final class ShowServiceAccountAction
 {
+    public function __construct(
+        private readonly ServiceAccountRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `service-account` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): ServiceAccountData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return ServiceAccountData::from($this->repository->findOrFail($id));
     }
 }

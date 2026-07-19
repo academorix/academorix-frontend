@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Awards\Actions\Central;
 
+use Academorix\Awards\Contracts\Repositories\CertificateRepositoryInterface;
+use Academorix\Awards\Data\CertificateData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /certificates/{signature}` — show action (central audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Awards
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/certificates/{signature}')]
 final class ShowCertificateAction
 {
+    public function __construct(
+        private readonly CertificateRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `certificate` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): CertificateData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return CertificateData::from($this->repository->findOrFail($id));
     }
 }

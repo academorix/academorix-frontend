@@ -8,14 +8,15 @@ namespace Academorix\Delegation\Services;
 
 use Academorix\Delegation\Contracts\Services\ImpersonationEntitlementCheckerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Delegation\Contracts\Repositories\ImpersonationSessionRepositoryInterface;
 
 /**
  * Concrete service — ImpersonationEntitlementChecker.
  *
  * Implements {@see ImpersonationEntitlementCheckerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Delegation
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ImpersonationEntitlementChecker implements ImpersonationEntitlementCheckerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ImpersonationSessionRepositoryInterface  $impersonationSessionRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ImpersonationSessionRepositoryInterface $impersonationSessionRepository,
+    ) {
+    }
 }

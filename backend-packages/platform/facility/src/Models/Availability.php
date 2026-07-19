@@ -9,6 +9,7 @@ namespace Academorix\Facility\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Facility\Contracts\Data\AvailabilityInterface;
 use Academorix\Facility\Database\Factories\AvailabilityFactory;
@@ -23,7 +24,7 @@ use Academorix\Facility\Database\Factories\AvailabilityFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: AvailabilityInterface::TABLE, keyType: AvailabilityInterface::KEY_TYPE)]
+#[Table(name: AvailabilityInterface::TABLE, key: AvailabilityInterface::PRIMARY_KEY, keyType: AvailabilityInterface::KEY_TYPE)]
 #[Fillable([
     AvailabilityInterface::ATTR_MONDAY,
         AvailabilityInterface::ATTR_TUESDAY,
@@ -34,15 +35,8 @@ use Academorix\Facility\Database\Factories\AvailabilityFactory;
         AvailabilityInterface::ATTR_SUNDAY,
 ])]
 #[UseFactory(AvailabilityFactory::class)]
+#[WithoutIncrementing]
 final class Availability extends Model implements AvailabilityInterface
 {
-
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
 
 }

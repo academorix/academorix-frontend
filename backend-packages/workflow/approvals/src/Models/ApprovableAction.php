@@ -9,11 +9,15 @@ namespace Academorix\Approvals\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Approvals\Contracts\Data\ApprovableActionInterface;
 use Academorix\Approvals\Database\Factories\ApprovableActionFactory;
+use Academorix\Approvals\Policies\ApprovableActionPolicy;
+use Academorix\Database\Concerns\HasSystemFlag;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -29,7 +33,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
  *
  * @since    0.1.0
  */
-#[Table(name: ApprovableActionInterface::TABLE, keyType: ApprovableActionInterface::KEY_TYPE)]
+#[Table(name: ApprovableActionInterface::TABLE, key: ApprovableActionInterface::PRIMARY_KEY, keyType: ApprovableActionInterface::KEY_TYPE)]
 #[Fillable([
     ApprovableActionInterface::ATTR_ACTION_KEY,
         ApprovableActionInterface::ATTR_NAMESPACE,
@@ -43,26 +47,21 @@ use Mattiverse\Userstamps\Traits\Userstamps;
         ApprovableActionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(ApprovableActionFactory::class)]
+#[WithoutIncrementing]
+#[UsePolicy(ApprovableActionPolicy::class)]
 final class ApprovableAction extends Model implements ApprovableActionInterface
 {
     use HasFactory;
     use HasUlids;
-    // TODO(gen): resolve unknown trait `HasSystemFlag` — add its import + use line.
+    use HasSystemFlag;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */

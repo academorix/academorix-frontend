@@ -8,14 +8,15 @@ namespace Academorix\Search\Services;
 
 use Academorix\Search\Contracts\Services\AnalyticsRecorderInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Search\Contracts\Repositories\SearchAnalyticsEventRepositoryInterface;
 
 /**
  * Concrete service — AnalyticsRecorder.
  *
  * Implements {@see AnalyticsRecorderInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Search
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class AnalyticsRecorder implements AnalyticsRecorderInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  SearchAnalyticsEventRepositoryInterface  $searchAnalyticsEventRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly SearchAnalyticsEventRepositoryInterface $searchAnalyticsEventRepository,
+    ) {
+    }
 }

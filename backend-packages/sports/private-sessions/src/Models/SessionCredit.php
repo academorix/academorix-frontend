@@ -9,17 +9,19 @@ namespace Academorix\PrivateSessions\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\PrivateSessions\Contracts\Data\SessionCreditInterface;
 use Academorix\PrivateSessions\Database\Factories\SessionCreditFactory;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Sports\Athlete\Concerns\BelongsToAthlete;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +33,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: SessionCreditInterface::TABLE, keyType: SessionCreditInterface::KEY_TYPE)]
+#[Table(name: SessionCreditInterface::TABLE, key: SessionCreditInterface::PRIMARY_KEY, keyType: SessionCreditInterface::KEY_TYPE)]
 #[Fillable([
     SessionCreditInterface::ATTR_TENANT_ID,
         SessionCreditInterface::ATTR_ATHLETE_ID,
@@ -45,23 +47,16 @@ use Spatie\Activitylog\Traits\LogsActivity;
         SessionCreditInterface::ATTR_METADATA,
 ])]
 #[UseFactory(SessionCreditFactory::class)]
-final class SessionCredit extends Model implements SessionCreditInterface
+#[WithoutIncrementing]
+final class SessionCredit extends Model implements SessionCreditInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToAthlete;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

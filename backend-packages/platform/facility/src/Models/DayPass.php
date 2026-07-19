@@ -9,17 +9,22 @@ namespace Academorix\Facility\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Facility\Contracts\Data\DayPassInterface;
 use Academorix\Facility\Database\Factories\DayPassFactory;
 use Academorix\Branch\Concerns\BelongsToBranch;
+use Academorix\Facility\Enums\DayPassPaymentMethod;
+use Academorix\Facility\Policies\DayPassPolicy;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a DayPass.
@@ -30,7 +35,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: DayPassInterface::TABLE, keyType: DayPassInterface::KEY_TYPE)]
+#[Table(name: DayPassInterface::TABLE, key: DayPassInterface::PRIMARY_KEY, keyType: DayPassInterface::KEY_TYPE)]
 #[Fillable([
     DayPassInterface::ATTR_TENANT_ID,
         DayPassInterface::ATTR_BRANCH_ID,
@@ -55,32 +60,27 @@ use OwenIt\Auditing\Auditable;
         DayPassInterface::ATTR_METADATA,
 ])]
 #[UseFactory(DayPassFactory::class)]
-final class DayPass extends Model implements DayPassInterface
+#[WithoutIncrementing]
+#[UsePolicy(DayPassPolicy::class)]
+final class DayPass extends Model implements DayPassInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
     use BelongsToBranch;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        DayPassInterface::ATTR_ISSUED_TO_PROFILE_AGE_BAND => 'DayPassAgeBand',
-        DayPassInterface::ATTR_PAYMENT_METHOD => 'DayPassPaymentMethod',
+        DayPassInterface::ATTR_ISSUED_TO_PROFILE_AGE_BAND => DayPassAgeBand::class,
+        DayPassInterface::ATTR_PAYMENT_METHOD => DayPassPaymentMethod::class,
         DayPassInterface::ATTR_PURCHASED_AT => 'datetime',
         DayPassInterface::ATTR_CONSUMED_AT => 'datetime',
         DayPassInterface::ATTR_EXPIRED_AT => 'datetime',

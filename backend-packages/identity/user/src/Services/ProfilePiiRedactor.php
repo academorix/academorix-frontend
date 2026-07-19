@@ -8,14 +8,15 @@ namespace Academorix\User\Services;
 
 use Academorix\User\Contracts\Services\ProfilePiiRedactorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\User\Contracts\Repositories\ProfileRepositoryInterface;
 
 /**
  * Concrete service — ProfilePiiRedactor.
  *
  * Implements {@see ProfilePiiRedactorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category User
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class ProfilePiiRedactor implements ProfilePiiRedactorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  ProfileRepositoryInterface  $profileRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly ProfileRepositoryInterface $profileRepository,
+    ) {
+    }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Branding\Services;
 
 use Academorix\Branding\Contracts\Services\BrandingResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Branding\Contracts\Repositories\BrandingRepositoryInterface;
 
 /**
  * Concrete service — BrandingResolver.
  *
  * Implements {@see BrandingResolverInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Branding
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class BrandingResolver implements BrandingResolverInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  BrandingRepositoryInterface  $brandingRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly BrandingRepositoryInterface $brandingRepository,
+    ) {
+    }
 }

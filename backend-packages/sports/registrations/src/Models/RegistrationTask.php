@@ -9,6 +9,7 @@ namespace Academorix\Registrations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Registrations\Contracts\Data\RegistrationTaskInterface;
 use Academorix\Registrations\Database\Factories\RegistrationTaskFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +33,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: RegistrationTaskInterface::TABLE, keyType: RegistrationTaskInterface::KEY_TYPE)]
+#[Table(name: RegistrationTaskInterface::TABLE, key: RegistrationTaskInterface::PRIMARY_KEY, keyType: RegistrationTaskInterface::KEY_TYPE)]
 #[Fillable([
     RegistrationTaskInterface::ATTR_TENANT_ID,
         RegistrationTaskInterface::ATTR_REGISTRATION_ID,
@@ -48,23 +50,16 @@ use Spatie\Activitylog\Traits\LogsActivity;
         RegistrationTaskInterface::ATTR_METADATA,
 ])]
 #[UseFactory(RegistrationTaskFactory::class)]
-final class RegistrationTask extends Model implements RegistrationTaskInterface
+#[WithoutIncrementing]
+final class RegistrationTask extends Model implements RegistrationTaskInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

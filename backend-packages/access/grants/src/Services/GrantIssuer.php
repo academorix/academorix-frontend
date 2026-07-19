@@ -8,14 +8,15 @@ namespace Academorix\Grants\Services;
 
 use Academorix\Grants\Contracts\Services\GrantIssuerInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Grants\Contracts\Repositories\AccessGrantRepositoryInterface;
 
 /**
  * Concrete service — GrantIssuer.
  *
  * Implements {@see GrantIssuerInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Grants
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class GrantIssuer implements GrantIssuerInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AccessGrantRepositoryInterface  $accessGrantRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AccessGrantRepositoryInterface $accessGrantRepository,
+    ) {
+    }
 }

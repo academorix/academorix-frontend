@@ -8,14 +8,15 @@ namespace Academorix\Progress\Services;
 
 use Academorix\Progress\Contracts\Services\BeltProgressionValidatorInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Progress\Contracts\Repositories\BeltRankRepositoryInterface;
 
 /**
  * Concrete service — BeltProgressionValidator.
  *
  * Implements {@see BeltProgressionValidatorInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Progress
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class BeltProgressionValidator implements BeltProgressionValidatorInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  BeltRankRepositoryInterface  $beltRankRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly BeltRankRepositoryInterface $beltRankRepository,
+    ) {
+    }
 }

@@ -8,14 +8,15 @@ namespace Academorix\Teams\Services;
 
 use Academorix\Teams\Contracts\Services\CapacityGateInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Teams\Contracts\Repositories\EventTeamRepositoryInterface;
 
 /**
  * Concrete service — CapacityGate.
  *
  * Implements {@see CapacityGateInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Teams
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class CapacityGate implements CapacityGateInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  EventTeamRepositoryInterface  $eventTeamRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly EventTeamRepositoryInterface $eventTeamRepository,
+    ) {
+    }
 }

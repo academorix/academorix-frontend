@@ -9,6 +9,7 @@ namespace Academorix\Integrations\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Integrations\Contracts\Data\AppWebhookSubscriptionInterface;
 use Academorix\Integrations\Database\Factories\AppWebhookSubscriptionFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AppWebhookSubscription.
@@ -30,7 +32,7 @@ use OwenIt\Auditing\Auditable;
  *
  * @since    0.1.0
  */
-#[Table(name: AppWebhookSubscriptionInterface::TABLE, keyType: AppWebhookSubscriptionInterface::KEY_TYPE)]
+#[Table(name: AppWebhookSubscriptionInterface::TABLE, key: AppWebhookSubscriptionInterface::PRIMARY_KEY, keyType: AppWebhookSubscriptionInterface::KEY_TYPE)]
 #[Fillable([
     AppWebhookSubscriptionInterface::ATTR_TENANT_ID,
         AppWebhookSubscriptionInterface::ATTR_APP_INSTALLATION_ID,
@@ -47,22 +49,15 @@ use OwenIt\Auditing\Auditable;
         AppWebhookSubscriptionInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AppWebhookSubscriptionFactory::class)]
-final class AppWebhookSubscription extends Model implements AppWebhookSubscriptionInterface
+#[WithoutIncrementing]
+final class AppWebhookSubscription extends Model implements AppWebhookSubscriptionInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

@@ -9,17 +9,24 @@ namespace Academorix\Payment\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Payment\Contracts\Data\PaymentInterface;
 use Academorix\Payment\Database\Factories\PaymentFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Invoice\Concerns\BelongsToInvoice;
+use Academorix\Payment\Enums\PaymentIntentCaptureMethod;
+use Academorix\Payment\Enums\PaymentProvider;
+use Academorix\Payment\Policies\PaymentPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -31,7 +38,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PaymentInterface::TABLE, keyType: PaymentInterface::KEY_TYPE)]
+#[Table(name: PaymentInterface::TABLE, key: PaymentInterface::PRIMARY_KEY, keyType: PaymentInterface::KEY_TYPE)]
 #[Fillable([
     PaymentInterface::ATTR_TENANT_ID,
         PaymentInterface::ATTR_PAYMENT_NUMBER,
@@ -65,50 +72,45 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PaymentInterface::ATTR_PROVIDER_METADATA,
 ])]
 #[UseFactory(PaymentFactory::class)]
-final class Payment extends Model implements PaymentInterface
+#[WithoutIncrementing]
+#[UsePolicy(PaymentPolicy::class)]
+final class Payment extends Model implements PaymentInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `BelongsToInvoice` — add its import + use line.
-    // TODO(gen): resolve unknown trait `BelongsToPaymentIntent` — add its import + use line.
-    // TODO(gen): resolve unknown trait `BelongsToPaymentMethod` — add its import + use line.
-    // TODO(gen): resolve unknown trait `HasPaymentDisputes` — add its import + use line.
+    use BelongsToInvoice;
+    // TODO(gen): resolve unknown trait `BelongsToPaymentIntent` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `BelongsToPaymentMethod` — add its import + `use` line.
+    // TODO(gen): resolve unknown trait `HasPaymentDisputes` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        PaymentInterface::ATTR_PROVIDER => 'PaymentProvider',
+        PaymentInterface::ATTR_PROVIDER => PaymentProvider::class,
         PaymentInterface::ATTR_AMOUNT_CENTS => 'integer',
         PaymentInterface::ATTR_AMOUNT_REFUNDED_CENTS => 'integer',
         PaymentInterface::ATTR_AMOUNT_DISPUTED_CENTS => 'integer',
         PaymentInterface::ATTR_FEE_CENTS => 'integer',
         PaymentInterface::ATTR_NET_CENTS => 'integer',
         PaymentInterface::ATTR_CAPTURED_AT => 'datetime',
-        PaymentInterface::ATTR_CAPTURE_METHOD => 'PaymentIntentCaptureMethod',
-        PaymentInterface::ATTR_PAYMENT_METHOD_TYPE => 'PaymentMethodType',
+        PaymentInterface::ATTR_CAPTURE_METHOD => PaymentIntentCaptureMethod::class,
+        PaymentInterface::ATTR_PAYMENT_METHOD_TYPE => PaymentMethodType::class,
         PaymentInterface::ATTR_PAYMENT_METHOD_EXP_MONTH => 'integer',
         PaymentInterface::ATTR_PAYMENT_METHOD_EXP_YEAR => 'integer',
         PaymentInterface::ATTR_IP_ADDRESS => 'string',
         PaymentInterface::ATTR_RISK_SCORE => 'integer',
-        PaymentInterface::ATTR_RISK_LEVEL => 'PaymentIntentRiskLevel',
-        PaymentInterface::ATTR_THREE_DS_RESULT => 'PaymentIntentThreeDsResult',
+        PaymentInterface::ATTR_RISK_LEVEL => PaymentIntentRiskLevel::class,
+        PaymentInterface::ATTR_THREE_DS_RESULT => PaymentIntentThreeDsResult::class,
         PaymentInterface::ATTR_BILLING_DETAILS_SNAPSHOT => 'array',
         PaymentInterface::ATTR_PROVIDER_METADATA => 'encrypted:array',
     ];

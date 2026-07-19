@@ -9,18 +9,22 @@ namespace Academorix\Monitoring\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Monitoring\Contracts\Data\MonitoringAlertPolicyInterface;
 use Academorix\Monitoring\Database\Factories\MonitoringAlertPolicyFactory;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
+use Academorix\Monitoring\Policies\MonitoringAlertPolicyPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +36,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: MonitoringAlertPolicyInterface::TABLE, keyType: MonitoringAlertPolicyInterface::KEY_TYPE)]
+#[Table(name: MonitoringAlertPolicyInterface::TABLE, key: MonitoringAlertPolicyInterface::PRIMARY_KEY, keyType: MonitoringAlertPolicyInterface::KEY_TYPE)]
 #[Fillable([
     MonitoringAlertPolicyInterface::ATTR_TENANT_ID,
         MonitoringAlertPolicyInterface::ATTR_NAME,
@@ -50,36 +54,31 @@ use Spatie\Activitylog\Traits\LogsActivity;
         MonitoringAlertPolicyInterface::ATTR_METADATA,
 ])]
 #[UseFactory(MonitoringAlertPolicyFactory::class)]
-final class MonitoringAlertPolicy extends Model implements MonitoringAlertPolicyInterface
+#[WithoutIncrementing]
+#[UsePolicy(MonitoringAlertPolicyPolicy::class)]
+final class MonitoringAlertPolicy extends Model implements MonitoringAlertPolicyInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
-    // TODO(gen): resolve unknown trait `HasMonitoringAlerts` — add its import + use line.
+    // TODO(gen): resolve unknown trait `HasMonitoringAlerts` — add its import + `use` line.
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        MonitoringAlertPolicyInterface::ATTR_SIGNAL_TYPE => 'MonitoringSignalType',
-        MonitoringAlertPolicyInterface::ATTR_SEVERITY => 'MonitoringSeverity',
-        MonitoringAlertPolicyInterface::ATTR_THRESHOLD_OPERATOR => 'MonitoringThresholdOperator',
+        MonitoringAlertPolicyInterface::ATTR_SIGNAL_TYPE => MonitoringSignalType::class,
+        MonitoringAlertPolicyInterface::ATTR_SEVERITY => MonitoringSeverity::class,
+        MonitoringAlertPolicyInterface::ATTR_THRESHOLD_OPERATOR => MonitoringThresholdOperator::class,
         MonitoringAlertPolicyInterface::ATTR_THRESHOLD_VALUE => 'float',
         MonitoringAlertPolicyInterface::ATTR_WINDOW_SECONDS => 'integer',
         MonitoringAlertPolicyInterface::ATTR_CONSECUTIVE_BREACHES_REQUIRED => 'integer',

@@ -9,6 +9,7 @@ namespace Academorix\PublicSite\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\PublicSite\Contracts\Data\PublicPageInterface;
 use Academorix\PublicSite\Database\Factories\PublicPageFactory;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -32,7 +34,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: PublicPageInterface::TABLE, keyType: PublicPageInterface::KEY_TYPE)]
+#[Table(name: PublicPageInterface::TABLE, key: PublicPageInterface::PRIMARY_KEY, keyType: PublicPageInterface::KEY_TYPE)]
 #[Fillable([
     PublicPageInterface::ATTR_TENANT_ID,
         PublicPageInterface::ATTR_SLUG,
@@ -47,24 +49,17 @@ use Spatie\Activitylog\Traits\LogsActivity;
         PublicPageInterface::ATTR_METADATA,
 ])]
 #[UseFactory(PublicPageFactory::class)]
-final class PublicPage extends Model implements PublicPageInterface
+#[WithoutIncrementing]
+final class PublicPage extends Model implements PublicPageInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Searchable;
     use Filterable;
     use SoftDeletes;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

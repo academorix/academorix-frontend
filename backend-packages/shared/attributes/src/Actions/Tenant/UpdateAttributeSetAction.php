@@ -6,26 +6,44 @@ declare(strict_types=1);
 
 namespace Academorix\Attributes\Actions\Tenant;
 
+use Academorix\Attributes\Contracts\Repositories\AttributeSetRepositoryInterface;
+use Academorix\Attributes\Data\AttributeSetData;
+use Academorix\Attributes\Data\Requests\UpdateAttributeSetRequestData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/v1/attribute-sets/{set}` — update action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Attributes
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/v1/attribute-sets/{set}')]
 final class UpdateAttributeSetAction
 {
+    public function __construct(
+        private readonly AttributeSetRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `attribute-set` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateAttributeSetRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateAttributeSetRequestData $data): AttributeSetData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return AttributeSetData::from($model);
     }
 }

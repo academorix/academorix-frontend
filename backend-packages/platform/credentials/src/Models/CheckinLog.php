@@ -9,6 +9,7 @@ namespace Academorix\Credentials\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Credentials\Contracts\Data\CheckinLogInterface;
 use Academorix\Credentials\Database\Factories\CheckinLogFactory;
@@ -27,7 +28,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @since    0.1.0
  */
-#[Table(name: CheckinLogInterface::TABLE, keyType: CheckinLogInterface::KEY_TYPE)]
+#[Table(name: CheckinLogInterface::TABLE, key: CheckinLogInterface::PRIMARY_KEY, keyType: CheckinLogInterface::KEY_TYPE)]
 #[Fillable([
     CheckinLogInterface::ATTR_TENANT_ID,
         CheckinLogInterface::ATTR_GATE_ID,
@@ -41,6 +42,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
         CheckinLogInterface::ATTR_METADATA,
 ])]
 #[UseFactory(CheckinLogFactory::class)]
+#[WithoutIncrementing]
 final class CheckinLog extends Model implements CheckinLogInterface
 {
     use HasFactory;
@@ -48,12 +50,4 @@ final class CheckinLog extends Model implements CheckinLogInterface
     use BelongsToTenant;
     use HasMetadata;
     use Filterable;
-
-    /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
 }

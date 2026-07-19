@@ -6,26 +6,40 @@ declare(strict_types=1);
 
 namespace Academorix\Messaging\Actions\Tenant;
 
+use Academorix\Messaging\Contracts\Repositories\ConversationRepositoryInterface;
+use Academorix\Messaging\Data\ConversationData;
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Get;
+
 /**
  * `GET /api/v1/conversations/{conversation}` — show action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Get(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Messaging
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Get('/api/v1/conversations/{conversation}')]
 final class ShowConversationAction
 {
+    public function __construct(
+        private readonly ConversationRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `conversation` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): ConversationData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return ConversationData::from($this->repository->findOrFail($id));
     }
 }

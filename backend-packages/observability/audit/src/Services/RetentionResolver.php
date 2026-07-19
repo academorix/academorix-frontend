@@ -8,14 +8,15 @@ namespace Academorix\Audit\Services;
 
 use Academorix\Audit\Contracts\Services\RetentionResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
+use Academorix\Audit\Contracts\Repositories\AuditRetentionPolicyRepositoryInterface;
 
 /**
  * Concrete service — RetentionResolver.
  *
  * Implements {@see RetentionResolverInterface}. `#[Scoped]` because most
  * services touch request state (current tenant, current user,
- * correlation id) — see `.kiro/steering/octane-first-di.md`. If the
- * service is provably stateless, promote to `#[Singleton]`.
+ * correlation id) — see `.kiro/steering/octane-first-di.md`. If
+ * the service is provably stateless, promote to `#[Singleton]`.
  *
  * @category Audit
  *
@@ -24,5 +25,11 @@ use Illuminate\Container\Attributes\Scoped;
 #[Scoped]
 final class RetentionResolver implements RetentionResolverInterface
 {
-    // TODO(gen): implement the interface methods.
+    /**
+     * @param  AuditRetentionPolicyRepositoryInterface  $auditRetentionPolicyRepository  Primary persistence boundary.
+     */
+    public function __construct(
+        private readonly AuditRetentionPolicyRepositoryInterface $auditRetentionPolicyRepository,
+    ) {
+    }
 }

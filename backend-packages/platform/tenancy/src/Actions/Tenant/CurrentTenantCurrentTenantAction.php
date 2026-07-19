@@ -6,16 +6,22 @@ declare(strict_types=1);
 
 namespace Academorix\Tenancy\Actions\Tenant;
 
+use Academorix\Routing\Attributes\AsController;
+use Academorix\Routing\Attributes\Patch;
+
 /**
  * `PATCH /api/current-tenant` — custom action (tenant audience).
  *
- * Single-invoke controller. Wire via `#[AsController]` +
- * the appropriate HTTP-verb attribute from `Academorix\Routing`.
+ * Single-invoke controller wired via `#[AsController]` + `#[Patch(...)]`
+ * attributes from `Academorix\Routing`. Discovered by the routing package's
+ * boot-time `RouteRegistrar` — no route file needed.
  *
  * @category Tenancy
  *
  * @since    0.1.0
  */
+#[AsController]
+#[Patch('/api/current-tenant')]
 final class CurrentTenantCurrentTenantAction
 {
     /**

@@ -9,21 +9,26 @@ namespace Academorix\AthleteEnrollment\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\AthleteEnrollment\Contracts\Data\AthleteEnrollmentInterface;
 use Academorix\AthleteEnrollment\Database\Factories\AthleteEnrollmentFactory;
+use Academorix\AthleteEnrollment\Policies\AthleteEnrollmentPolicy;
+use Academorix\Athlete\Concerns\BelongsToAthlete;
 use Academorix\Branch\Concerns\BelongsToBranch;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
-use Academorix\Sports\Athlete\Concerns\BelongsToAthlete;
-use Academorix\Sports\Season\Concerns\BelongsToSeason;
+use Academorix\Season\Concerns\BelongsToSeason;
+use Academorix\Teams\Concerns\BelongsToTeam;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
 use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -35,7 +40,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  *
  * @since    0.1.0
  */
-#[Table(name: AthleteEnrollmentInterface::TABLE, keyType: AthleteEnrollmentInterface::KEY_TYPE)]
+#[Table(name: AthleteEnrollmentInterface::TABLE, key: AthleteEnrollmentInterface::PRIMARY_KEY, keyType: AthleteEnrollmentInterface::KEY_TYPE)]
 #[Fillable([
     AthleteEnrollmentInterface::ATTR_TENANT_ID,
         AthleteEnrollmentInterface::ATTR_BRANCH_ID,
@@ -70,41 +75,36 @@ use Spatie\Activitylog\Traits\LogsActivity;
         AthleteEnrollmentInterface::ATTR_METADATA,
 ])]
 #[UseFactory(AthleteEnrollmentFactory::class)]
-final class AthleteEnrollment extends Model implements AthleteEnrollmentInterface
+#[WithoutIncrementing]
+#[UsePolicy(AthleteEnrollmentPolicy::class)]
+final class AthleteEnrollment extends Model implements AthleteEnrollmentInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use BelongsToBranch;
-    // TODO(gen): resolve unknown trait `BelongsToTeam` — add its import + use line.
+    use BelongsToTeam;
     use BelongsToAthlete;
     use BelongsToSeason;
     use HasMetadata;
-    use HasUserstamps;
+    use Userstamps;
     use Auditable;
-    use HasActivityLog;
+    use LogsActivity;
     use Filterable;
     use Searchable;
     use SoftDeletes;
 
     /**
-     * The primary key IS a string (prefixed ULID); disable auto-increment.
-     *
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * Cast map — from the blueprint's x-eloquent.casts.
+     * Cast map — from the blueprint's `x-eloquent.casts`.
      *
      * @var array<string, string>
      */
     protected $casts = [
-        AthleteEnrollmentInterface::ATTR_ENROLLMENT_SOURCE => 'EnrollmentSource',
-        AthleteEnrollmentInterface::ATTR_ENROLLMENT_TYPE => 'EnrollmentType',
-        AthleteEnrollmentInterface::ATTR_STATUS => 'EnrollmentStatus',
-        AthleteEnrollmentInterface::ATTR_PAYMENT_STATUS => 'EnrollmentPaymentStatus',
-        AthleteEnrollmentInterface::ATTR_WITHDRAWAL_REASON => 'WithdrawalReason',
+        AthleteEnrollmentInterface::ATTR_ENROLLMENT_SOURCE => EnrollmentSource::class,
+        AthleteEnrollmentInterface::ATTR_ENROLLMENT_TYPE => EnrollmentType::class,
+        AthleteEnrollmentInterface::ATTR_STATUS => EnrollmentStatus::class,
+        AthleteEnrollmentInterface::ATTR_PAYMENT_STATUS => EnrollmentPaymentStatus::class,
+        AthleteEnrollmentInterface::ATTR_WITHDRAWAL_REASON => WithdrawalReason::class,
         AthleteEnrollmentInterface::ATTR_PRICE_AMOUNT_CENTS => 'integer',
         AthleteEnrollmentInterface::ATTR_JERSEY_NUMBER_PREFERENCE => 'integer',
         AthleteEnrollmentInterface::ATTR_JERSEY_NUMBER_ASSIGNED => 'integer',
