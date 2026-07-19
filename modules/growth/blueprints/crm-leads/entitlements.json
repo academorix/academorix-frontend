@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/entitlements",
-  "$version": 1,
-  "title": "crm-leads — entitlements consumed",
-  "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",
-  "consumed": []
-}

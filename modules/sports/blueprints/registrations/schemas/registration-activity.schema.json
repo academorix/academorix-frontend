@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/registrations/schemas/registration-activity",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "RegistrationActivity",
+  "description": "Per-Registration activity log entry. Every touchpoint (call, email, SMS, note, in-person visit, stage change) creates one row. Actor + timestamp + body. Feeds the funnel timeline UI + reporting funnel dashboards. Replaces the previously-planned `growth/crm-leads.LeadActivity` (see ADR 0024).",
+  "type": "object",
+  "x-module": "registrations",
+  "x-eloquent": {
+    "table": "registration_activities",
+    "keyPrefix": "ract_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "registration_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "registrations", "column": "id", "onDelete": "cascade" }
+      },
+      "kind": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "call / email / sms / note / visit / stage_change / task_created / task_completed / offer_made / offer_accepted / offer_declined / auto_reminder."
+      },
+      "actor_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "The user who performed the activity. Null for system-generated entries (auto-reminders, expiry events)."
+      },
+      "body": {
+        "type": "text",
+        "nullable": true,
+        "description": "Free-form activity body. Max 5000 chars — reject inline. Redacted for platform-admin audit reads (PII)."
+      },
+      "occurred_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the activity happened — may differ from created_at (e.g. logging a call the user made yesterday)."
+      },
+      "context": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Kind-specific structured data. For stage_change: { from, to }. For email: { subject, template_key, delivery_id }. For call: { duration_seconds, outcome }."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "registration_id", "occurred_at"],
+        "name": "registration_activities_timeline_idx"
+      },
+      {
+        "columns": ["tenant_id", "kind", "occurred_at"],
+        "name": "registration_activities_kind_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "registration_id",
+    "kind",
+    "occurred_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ract_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "call",
+        "email",
+        "sms",
+        "note",
+        "visit",
+        "stage_change",
+        "task_created",
+        "task_completed",
+        "offer_made",
+        "offer_accepted",
+        "offer_declined",
+        "auto_reminder"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Immutable body post-create (append-only timeline).",
+    "occurred_at <= NOW() — no future-dated activities.",
+    "System-generated entries (kind IN stage_change / offer_* / auto_reminder) have actor_user_id NULL when triggered by a job."
+  ]
+}

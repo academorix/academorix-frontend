@@ -3,70 +3,251 @@
   "name": "integrations",
   "alias": "integrations",
   "namespace": "Academorix\\Integrations",
-  "description": "Third-party integration credentials per Tenant (Stripe, Slack, HubSpot, Zapier, custom OAuth2, SCIM, ...). Extracted from tenants at v0.3 because integration credentials carry different sensitivity than a tenant's own configuration — they are encrypted at rest (Doppler-derived KMS key), rotate on their own schedule, and NEVER surface on the tenant-facing wire outside a redacted status shape.",
+  "description": "Two-lane integration substrate per ADR 0025. Lane 1 (SHIPS NOW) — allowlisted native provider integrations via `IntegrationProvider` (allowlist catalog) + `TenantIntegration` (per-tenant configured instance). Providers auto-discovered via `#[AsIntegrationProvider(kind, slug)]` — Stripe, Paddle, Pipedrive, HubSpot, Twilio, Zoom, Google Calendar, Apple Wallet, Google Wallet, Mailchimp, Xero, and every other native integration. Lane 2 (SCHEMA ONLY, MARKETPLACE DEFERRED) — `App` + `AppInstallation` + `AppWebhookSubscription` model the future third-party marketplace. Data model lands day-one to avoid retrofit; no third-party accepted until compliance + review process ships. First-party partner apps may be seeded with `is_first_party: true`. Enhanced consent flow required for any app requesting child-data scopes (athletes / medical / attendance / safeguarding).",
   "keywords": [
     "integration",
     "oauth",
     "scim",
     "credentials",
-    "secrets",
+    "provider",
+    "app",
+    "marketplace",
+    "webhook",
     "third-party",
-    "encrypted"
+    "extension-point",
+    "secrets",
+    "encrypted",
+    "wave-1"
   ],
   "priority": 12,
   "providers": ["Academorix\\Integrations\\Providers\\IntegrationsServiceProvider"],
   "files": [],
   "dependencies": ["foundation", "tenancy"],
   "extendedBy": [],
-  "planned_consumers": ["subscription", "compliance", "audit", "activity", "access"],
+  "planned_consumers": [
+    "subscription",
+    "compliance",
+    "audit",
+    "activity",
+    "access",
+    "registrations",
+    "forms",
+    "digital-passes",
+    "messaging",
+    "announcements"
+  ],
   "contributes": {
     "traits": [],
-    "blueprints": [],
-    "middleware": [],
+    "attributes": ["AsIntegrationProvider", "AsAppExtensionPoint"],
+    "blueprints": [
+      "integration-provider",
+      "tenant-integration",
+      "app",
+      "app-installation",
+      "app-webhook-subscription"
+    ],
+    "middleware": ["integrations.oauth-callback-verify", "integrations.webhook-signature-verify"],
     "events": [
+      "IntegrationProviderRegistered",
+      "IntegrationProviderDisabled",
       "IntegrationConfigured",
       "IntegrationSyncStarted",
       "IntegrationSyncCompleted",
       "IntegrationSyncFailed",
       "IntegrationTokenRefreshed",
       "IntegrationDisabled",
-      "IntegrationRemoved"
+      "IntegrationRemoved",
+      "AppSubmittedForReview",
+      "AppApproved",
+      "AppSuspended",
+      "AppInstalled",
+      "AppInstallationSuspended",
+      "AppInstallationRevoked",
+      "AppWebhookDelivered",
+      "AppWebhookFailed",
+      "AppWebhookAutoDisabled"
     ],
-    "policies": ["TenantIntegrationPolicy"],
-    "hooks": [],
+    "policies": [
+      "IntegrationProviderPolicy",
+      "TenantIntegrationPolicy",
+      "AppPolicy",
+      "AppInstallationPolicy",
+      "AppWebhookSubscriptionPolicy"
+    ],
+    "hooks": [
+      "AutoDisableSubscriptionOnConsecutiveFailures",
+      "RequireChildDataConsentFlow",
+      "RotateAccessTokenOnExpiry"
+    ],
     "commands": [
+      "integrations:providers:list",
+      "integrations:providers:seed",
       "integrations:list",
       "integrations:sync",
       "integrations:rotate-tokens",
-      "integrations:purge-disabled"
+      "integrations:purge-disabled",
+      "apps:list",
+      "apps:approve",
+      "apps:suspend",
+      "apps:installations:list"
     ],
-    "jobs": ["SyncIntegrationJob", "RefreshIntegrationTokenJob", "PurgeDisabledIntegrationJob"],
-    "notifications": ["IntegrationSyncFailedNotification", "IntegrationDisabledNotification"],
-    "broadcasts": ["tenant.{id}.integration"],
-    "observers": ["TenantIntegrationObserver"],
-    "rules": ["valid_integration_provider"],
-    "casts": ["IntegrationConfig"],
+    "jobs": [
+      "SyncIntegrationJob",
+      "RefreshIntegrationTokenJob",
+      "PurgeDisabledIntegrationJob",
+      "DispatchAppWebhookJob",
+      "RetryAppWebhookJob",
+      "AutoDisableAppWebhookJob"
+    ],
+    "notifications": [
+      "IntegrationSyncFailedNotification",
+      "IntegrationDisabledNotification",
+      "AppApprovedNotification",
+      "AppSuspendedNotification",
+      "AppInstalledNotification",
+      "AppWebhookAutoDisabledNotification"
+    ],
+    "broadcasts": ["tenant.{id}.integration", "tenant.{id}.apps"],
+    "observers": [
+      "TenantIntegrationObserver",
+      "IntegrationProviderObserver",
+      "AppObserver",
+      "AppInstallationObserver",
+      "AppWebhookSubscriptionObserver"
+    ],
+    "rules": [
+      "valid_integration_provider_slug",
+      "granted_scopes_subset_of_allowed",
+      "webhook_endpoint_https_only",
+      "child_data_consent_when_scoped"
+    ],
+    "casts": ["IntegrationConfig", "ProviderKind", "AuthKind", "AppStatus", "AppInstallStatus"],
     "views": [],
     "lang": ["integrations"],
     "config": ["integrations"],
     "macros": [],
-    "bindings": ["IntegrationRegistry", "IntegrationSecretsCipher"],
-    "resources": ["tenant-integration"]
+    "bindings": [
+      "IntegrationProviderRegistry",
+      "IntegrationSecretsCipher",
+      "AppRegistry",
+      "AppWebhookDispatcher",
+      "OAuthClientCredentialCipher"
+    ],
+    "resources": [
+      "integration-provider",
+      "tenant-integration",
+      "app",
+      "app-installation",
+      "app-webhook-subscription"
+    ]
+  },
+  "attribute_driven": {
+    "description": "Two class-level attributes drive discovery. IntegrationProviderRegistry hydrated at boot via Foundation's DiscoversAttributes seam. Adding a Lane 1 provider = new class with #[AsIntegrationProvider] + a code deploy — no schema change.",
+    "attributes": {
+      "AsIntegrationProvider": "Marks a class as a Lane 1 integration provider. `#[AsIntegrationProvider(kind: 'crm', slug: 'pipedrive')]`. Class implements `IntegrationProviderInterface` — configureCredentials / verifyConnection / sync / verifyWebhookSignature / handleWebhook / rotateCredentials. Discovered at boot; IntegrationProviderSeeder upserts the matching `integration_providers` row.",
+      "AsAppExtensionPoint": "Declares an extension point that Lane 2 apps may subscribe to. `#[AsAppExtensionPoint(event: 'registrations.enrolled', requiredScopes: ['athletes:read'])]`. Documentation-only until marketplace launches; when apps are accepted, this attribute drives the scope-check + webhook delivery path."
+    }
+  },
+  "lanes": {
+    "description": "See ADR 0025 for the full two-lane rationale.",
+    "lane_1_providers": {
+      "status": "ships_now",
+      "shape": "IntegrationProvider (allowlist) + TenantIntegration (per-tenant configured instance)",
+      "extension_mechanism": "#[AsIntegrationProvider(kind, slug)] on a PHP class implementing IntegrationProviderInterface. Class ships in a package deployed by Academorix or a vetted partner via PR.",
+      "shipped_provider_kinds": [
+        "payment",
+        "crm",
+        "email",
+        "sms",
+        "calendar",
+        "chat",
+        "wallet",
+        "accounting",
+        "webhook",
+        "sso",
+        "video",
+        "storage"
+      ],
+      "first_wave_slugs": [
+        "stripe",
+        "paddle",
+        "pipedrive",
+        "hubspot",
+        "salesforce",
+        "intercom",
+        "twilio",
+        "zoom",
+        "google_calendar",
+        "apple_wallet",
+        "google_wallet",
+        "mailchimp",
+        "active_campaign",
+        "webhook_generic"
+      ]
+    },
+    "lane_2_marketplace": {
+      "status": "schema_only_deferred",
+      "shape": "App (marketplace catalog) + AppInstallation (per-tenant grant) + AppWebhookSubscription (per-install event feed)",
+      "explicitly_deferred": [
+        "marketplace listing UI",
+        "third-party developer onboarding + review process",
+        "app store search / discovery",
+        "per-app billing + revenue share (uses finance/subscription when built)",
+        "iframe sandbox / module federation extension host"
+      ],
+      "first_party_seeding_allowed": true,
+      "child_data_gate": "Apps requesting scopes that read/write minor data (athletes / medical / attendance / safeguarding) require: enhanced app review (compliance sign-off), explicit per-install consent flow, COPPA/GDPR data-processing addendum, per-access audit log."
+    }
   },
   "hosts": {
     "platform-admin": {
-      "description": "Academorix staff surface. Full CRUD (secrets always redacted on read).",
-      "routes": ["* /api/v1/tenant-integrations*"]
+      "description": "Academorix staff surface. Provider catalog CRUD (system rows; guarded), app review, cross-tenant install oversight. All secrets always redacted on read.",
+      "routes": [
+        "GET /api/v1/platform/integration-providers",
+        "POST /api/v1/platform/integration-providers/{slug}/enable",
+        "POST /api/v1/platform/integration-providers/{slug}/disable",
+        "GET /api/v1/platform/tenant-integrations",
+        "GET /api/v1/platform/apps",
+        "POST /api/v1/platform/apps",
+        "GET /api/v1/platform/apps/{app}",
+        "POST /api/v1/platform/apps/{app}/approve",
+        "POST /api/v1/platform/apps/{app}/suspend",
+        "POST /api/v1/platform/apps/{app}/retire",
+        "GET /api/v1/platform/app-installations",
+        "GET /api/v1/platform/app-webhook-subscriptions"
+      ]
     },
     "tenant": {
-      "description": "Tenant-scoped integration management. Configure, sync, disable.",
+      "description": "Tenant admin surface. Browse the provider catalog, configure integrations, install first-party apps (until marketplace launches), manage webhooks + revoke access.",
       "routes": [
-        "GET /api/v1/tenant/integrations",
-        "POST /api/v1/tenant/integrations",
-        "GET /api/v1/tenant/integrations/{id}",
-        "PATCH /api/v1/tenant/integrations/{id}",
-        "POST /api/v1/tenant/integrations/{id}/sync",
-        "DELETE /api/v1/tenant/integrations/{id}"
+        "GET /api/v1/integration-providers",
+        "GET /api/v1/tenant-integrations",
+        "POST /api/v1/tenant-integrations",
+        "GET /api/v1/tenant-integrations/{integration}",
+        "PATCH /api/v1/tenant-integrations/{integration}",
+        "DELETE /api/v1/tenant-integrations/{integration}",
+        "POST /api/v1/tenant-integrations/{integration}/sync",
+        "POST /api/v1/tenant-integrations/{integration}/rotate-token",
+        "GET /api/v1/apps",
+        "GET /api/v1/apps/{app}",
+        "GET /api/v1/app-installations",
+        "POST /api/v1/app-installations",
+        "GET /api/v1/app-installations/{install}",
+        "POST /api/v1/app-installations/{install}/suspend",
+        "POST /api/v1/app-installations/{install}/revoke",
+        "GET /api/v1/app-installations/{install}/webhook-subscriptions",
+        "POST /api/v1/app-installations/{install}/webhook-subscriptions",
+        "DELETE /api/v1/app-installations/{install}/webhook-subscriptions/{sub}"
+      ]
+    },
+    "central": {
+      "description": "OAuth 2.0 callback + webhook receiver surface. Per-provider callback paths + a generic webhook receiver signed by the provider's shared secret.",
+      "routes": [
+        "GET /oauth/callback/{provider_slug}",
+        "POST /webhooks/{provider_slug}/{tenant_integration_id}",
+        "POST /apps/oauth/authorize",
+        "POST /apps/oauth/token",
+        "POST /apps/oauth/revoke"
       ]
     }
   }

@@ -1,0 +1,149 @@
+{
+  "id": "academorix://modules/integrations/schemas/app-installation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AppInstallation",
+  "description": "Per-(tenant, app) install grant. Granted scopes (subset of App.allowed_scopes the tenant approved at install) + OAuth 2.0 access-token hash + optional per-install config. Uninstall soft-deletes (deleted_at set), preserving audit trail. Reinstall creates a new row rather than reviving the old one.",
+  "type": "object",
+  "x-module": "integrations",
+  "x-eloquent": {
+    "table": "app_installations",
+    "keyPrefix": "ain_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "app_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "apps", "column": "id", "onDelete": "restrict" }
+      },
+      "granted_scopes": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'",
+        "description": "Subset of App.allowed_scopes the tenant admin approved at install."
+      },
+      "child_data_consent_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "For apps requiring child-data scopes: snapshot of the enhanced consent flow shown to the installer. Includes: consenting_user_id, consented_at, listed_data_classes, tenant_admin_ip_masked. Required when App.requires_child_data_scopes = true."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'active'",
+        "description": "active / suspended / revoked. Suspended = admin paused; revoked = tenant uninstalled but soft-delete for audit."
+      },
+      "access_token_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256 of the current OAuth access token. Compared at API call time. Rotates on token refresh."
+      },
+      "refresh_token_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256 of the refresh token. Nullable for apps that use short-lived tokens without refresh."
+      },
+      "access_token_expires_at": { "type": "timestamptz", "nullable": true },
+      "config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Per-install app configuration (channel_id for Slack, workspace_id for Notion, etc). Interpreted by the app."
+      },
+      "installed_at": { "type": "timestamptz", "nullable": false },
+      "installed_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "suspended_at": { "type": "timestamptz", "nullable": true },
+      "suspended_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "suspended_reason": { "type": "string", "length": 500, "nullable": true },
+      "revoked_at": { "type": "timestamptz", "nullable": true },
+      "revoked_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "last_used_at": { "type": "timestamptz", "nullable": true },
+      "usage_count": { "type": "integer", "nullable": false, "default": "0" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "app_id"],
+        "unique": true,
+        "name": "app_installations_tenant_app_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "status", "last_used_at"],
+        "name": "app_installations_tenant_status_idx"
+      },
+      {
+        "columns": ["access_token_hash"],
+        "name": "app_installations_token_idx",
+        "predicate": "access_token_hash IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "app_id",
+    "granted_scopes",
+    "status",
+    "installed_at",
+    "installed_by_user_id",
+    "usage_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ain_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["active", "suspended", "revoked"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One active install per (tenant, app) via partial unique index.",
+    "child_data_consent_snapshot REQUIRED (non-null) when the referenced App.requires_child_data_scopes = true.",
+    "granted_scopes MUST be a subset of the referenced App.allowed_scopes (validated at install).",
+    "Transitions: active → suspended / revoked. revoked is terminal + triggers soft delete."
+  ]
+}

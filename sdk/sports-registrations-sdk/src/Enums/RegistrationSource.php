@@ -21,5 +21,5 @@ enum RegistrationSource: string
     case WalkIn = 'walk_in';
     case ColdOutreach = 'cold_outreach';
     case Imported = 'imported';
-    case CrmLead = 'crm_lead';
+    case ExternalCrm = 'external_crm';
 }

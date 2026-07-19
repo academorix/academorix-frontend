@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/forms/feature-flags",
+  "$version": 1,
+  "title": "forms — feature flags",
+  "description": "Kill switches + gradual-rollout flags this module publishes.",
+  "flags": []
+}

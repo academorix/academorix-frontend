@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/caches",
-  "$version": 1,
-  "title": "crm-leads — cache keys",
-  "description": "Cache keys the module owns + TTLs + invalidation triggers + tags.",
-  "keys": []
-}

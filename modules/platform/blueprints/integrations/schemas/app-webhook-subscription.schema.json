@@ -1,0 +1,117 @@
+{
+  "id": "academorix://modules/integrations/schemas/app-webhook-subscription",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AppWebhookSubscription",
+  "description": "Per-install webhook subscription. Which event the app subscribes to, where to deliver it, and the signing secret. On the subscribed domain event firing, DispatchAppWebhookJob signs the payload with the secret and POSTs to endpoint_url — retries with exponential backoff on failure. Enabled flag for soft disable.",
+  "type": "object",
+  "x-module": "integrations",
+  "x-eloquent": {
+    "table": "app_webhook_subscriptions",
+    "keyPrefix": "awh_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "app_installation_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "app_installations", "column": "id", "onDelete": "cascade" }
+      },
+      "event_name": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "Dot-separated event name from any module's events.json (e.g. `registrations.enrolled`, `attendance.recorded`, `medical.clearance_expired`)."
+      },
+      "endpoint_url": {
+        "type": "string",
+        "length": 500,
+        "nullable": false,
+        "description": "HTTPS endpoint on the app's side. HTTPS enforced; HTTP rejected at write time."
+      },
+      "secret_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "SHA-256 of the shared signing secret. The plaintext secret is shown ONCE at subscription creation, never persisted."
+      },
+      "enabled": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "true",
+        "description": "Soft disable. Failed subscriptions after N consecutive failures auto-disable + notify the installer."
+      },
+      "delivery_count_total": { "type": "integer", "nullable": false, "default": "0" },
+      "delivery_count_failed_consecutive": {
+        "type": "integer",
+        "nullable": false,
+        "default": "0",
+        "description": "Reset on any successful delivery. Auto-disable when > 20."
+      },
+      "last_delivery_at": { "type": "timestamptz", "nullable": true },
+      "last_delivery_status_code": { "type": "integer", "nullable": true },
+      "last_delivery_error": { "type": "text", "nullable": true },
+      "auto_disabled_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "app_installation_id", "event_name"],
+        "unique": true,
+        "name": "app_webhook_subs_install_event_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "event_name", "enabled"],
+        "name": "app_webhook_subs_event_enabled_idx",
+        "predicate": "enabled = true AND deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "app_installation_id",
+    "event_name",
+    "endpoint_url",
+    "secret_hash",
+    "enabled",
+    "delivery_count_total",
+    "delivery_count_failed_consecutive",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^awh_[0-9A-HJKMNP-TV-Z]{26}$" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "endpoint_url MUST be HTTPS.",
+    "One subscription per (install, event_name) via partial unique index.",
+    "auto_disabled_at set when delivery_count_failed_consecutive crosses 20 — enabled flipped to false in same write."
+  ]
+}

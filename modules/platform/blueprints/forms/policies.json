@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/forms/policies",
+  "$version": 1,
+  "title": "forms — authorization policies",
+  "description": "Three policies. Public submission bypasses the policy layer entirely (signed session URL is the auth mechanism). Admin CRUD on Form + FormVersion is tenant-admin only. FormSubmission view scoped to authoring user + admin — plus safeguarding officer sees submissions containing medical / safeguarding data.",
+  "policies": [
+    {
+      "model": "Form",
+      "class": "Academorix\\Platform\\Forms\\Policies\\FormPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "forms.viewAny",
+          "scope": "branch_manager + admin + owner"
+        },
+        { "action": "view", "permission": "forms.view" },
+        {
+          "action": "create",
+          "permission": "forms.create",
+          "scope": "admin + owner. branch_manager for branch-scoped custom surveys"
+        },
+        {
+          "action": "update",
+          "permission": "forms.update",
+          "scope": "author + admin + owner. Draft state only for schema fields"
+        },
+        { "action": "publish", "permission": "forms.publish", "scope": "admin + owner" },
+        { "action": "archive", "permission": "forms.archive", "scope": "admin + owner" },
+        {
+          "action": "delete",
+          "permission": "forms.delete",
+          "scope": "admin + owner. Only allowed on archived forms with 0 submissions"
+        }
+      ]
+    },
+    {
+      "model": "FormVersion",
+      "class": "Academorix\\Platform\\Forms\\Policies\\FormVersionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "form-versions.viewAny" },
+        { "action": "view", "permission": "form-versions.view" },
+        { "action": "create", "permission": "form-versions.create", "scope": "admin + owner" },
+        { "action": "publish", "permission": "form-versions.publish", "scope": "admin + owner" },
+        {
+          "action": "rollback",
+          "permission": "form-versions.rollback",
+          "scope": "admin + owner. Reason REQUIRED. Full audit chain"
+        }
+      ]
+    },
+    {
+      "model": "FormSubmission",
+      "class": "Academorix\\Platform\\Forms\\Policies\\FormSubmissionPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "form-submissions.viewAny",
+          "scope": "form owner + branch_manager + admin + owner. Excludes anonymous submissions with medical answers unless viewer has medical role"
+        },
+        {
+          "action": "view",
+          "permission": "form-submissions.view",
+          "scope": "sensitivity-gated. Medical fields blur unless viewer has medical.viewAny"
+        },
+        {
+          "action": "download",
+          "permission": "form-submissions.download",
+          "scope": "admin + owner. Full-body download logs to audit trail"
+        },
+        {
+          "action": "export",
+          "permission": "form-submissions.export",
+          "scope": "admin + owner. Bulk PII exports flagged in reporting audit"
+        },
+        {
+          "action": "delete",
+          "permission": "form-submissions.delete",
+          "scope": "admin + owner. GDPR erasure path — replaces answers with tombstone"
+        }
+      ]
+    }
+  ]
+}

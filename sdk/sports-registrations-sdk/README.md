@@ -7,6 +7,8 @@ Auto-discovered by `academorix/sports-sdk` (the service umbrella) via
 ## Aggregates
 
 - **offers** — Time-boxed enrollment offer
+- **registration-activities** — Per-Registration activity log entry
+- **registration-tasks** — Follow-up task on a Registration
 - **registrations** — The root funnel record
 - **trial-bookings** — Trial (taster) session booked as part of a Registration
 - **waitlist-entries** — Position-ordered waitlist entry when a Team+Season is

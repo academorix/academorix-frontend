@@ -1,0 +1,162 @@
+{
+  "id": "academorix://modules/forms/events",
+  "$version": 1,
+  "title": "forms — published events",
+  "namespace": "Academorix\\Platform\\Forms\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Form authoring lifecycle + public submission stream. FormSubmissionCompleted is the trigger every domain handoff hangs off — most cross-module cascades ride this event. FormFileUploaded is HIGH VOLUME for medical questionnaires — sampled 10% for activity log.",
+  "events": [
+    {
+      "name": "FormCreated",
+      "trigger": "New Form row committed. status='draft'.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "form_id": "ULID (fom_*)",
+        "tenant_id": "ULID",
+        "kind": "string",
+        "slug": "string",
+        "created_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "FormVersionCreated",
+      "trigger": "New FormVersion row (draft). Field schema + label bundle.",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "form_version_id": "ULID (fmv_*)",
+        "form_id": "ULID",
+        "version_number": "int",
+        "field_count": "int"
+      }
+    },
+    {
+      "name": "FormPublished",
+      "trigger": "Form.published_version_id set; Form.status → 'published'. Public URL becomes live.",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::WarmPublicFormCache",
+        "notifications::NotifyFormPublished"
+      ],
+      "payload": {
+        "form_id": "ULID",
+        "form_version_id": "ULID",
+        "published_by_user_id": "ULID",
+        "public_url_signature": "string"
+      }
+    },
+    {
+      "name": "FormVersionRolledBack",
+      "trigger": "P1 event. published_version_id swapped to a prior version. Reason REQUIRED.",
+      "consumers": [
+        "audit::WriteToAuditLog (retention 7yr)",
+        "cache::InvalidatePublicFormCache",
+        "notifications::AlertFormRollback"
+      ],
+      "payload": {
+        "form_id": "ULID",
+        "previous_version_id": "ULID",
+        "new_version_id": "ULID",
+        "rolled_back_by_user_id": "ULID",
+        "reason": "string"
+      }
+    },
+    {
+      "name": "FormArchived",
+      "trigger": "Form.status → 'archived'. Public URL 404s.",
+      "consumers": ["audit::WriteToAuditLog", "cache::PurgePublicFormCache"],
+      "payload": { "form_id": "ULID", "archived_by_user_id": "ULID" }
+    },
+    {
+      "name": "FormSubmissionStarted",
+      "trigger": "Anonymous user opened the form + started answering. FormSubmission row created with status='in_progress'.",
+      "consumers": ["cache::PopulateSessionCache", "reporting::TrackFormFunnel"],
+      "payload": {
+        "submission_id": "ULID (fms_*)",
+        "form_id": "ULID",
+        "form_version_id": "ULID",
+        "locale": "string",
+        "utm_source": "string|null"
+      }
+    },
+    {
+      "name": "FormSubmissionResumed",
+      "trigger": "User clicked the resume-session email link. Same submission, new session slot.",
+      "consumers": ["activity::WriteToActivityLog"],
+      "payload": {
+        "submission_id": "ULID",
+        "resumed_at": "ISO 8601",
+        "session_signature_rotated": "bool"
+      }
+    },
+    {
+      "name": "FormSubmissionCompleted",
+      "trigger": "P0 event. User completed the form. status: in_progress → completed. Handoff fires next (sync or via RunFormHandoffJob).",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::EmailSubmissionReceipt",
+        "jobs::RunFormHandoffJob",
+        "reporting::TrackFormCompletion"
+      ],
+      "payload": {
+        "submission_id": "ULID",
+        "form_id": "ULID",
+        "form_version_id": "ULID",
+        "submitter_email_snapshot": "string|null",
+        "handoff_slug": "string|null"
+      }
+    },
+    {
+      "name": "FormSubmissionAbandoned",
+      "trigger": "Session TTL elapsed without completion. Swept by PurgeAbandonedSessionsJob.",
+      "consumers": ["reporting::TrackFormAbandonment"],
+      "payload": {
+        "submission_id": "ULID",
+        "form_id": "ULID",
+        "answered_field_count": "int",
+        "abandoned_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "FormSubmissionValidationFailed",
+      "trigger": "P1 event. Submit-time validation failed. status: in_progress → failed_validation. User can retry.",
+      "consumers": ["reporting::TrackFormValidationErrors"],
+      "payload": { "submission_id": "ULID", "field_errors": "object", "attempt_count": "int" }
+    },
+    {
+      "name": "FormHandoffFired",
+      "trigger": "P0 event. Handoff handler ran. Downstream domain entity created (Registration / MedicalClearance / WaiverConsent).",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "submission_id": "ULID",
+        "handoff_slug": "string",
+        "target_type": "string",
+        "target_id": "ULID"
+      }
+    },
+    {
+      "name": "FormHandoffFailed",
+      "trigger": "P0 event. Handoff handler threw. Retried per exponential backoff; alerts admin after N failures.",
+      "consumers": ["audit::WriteToAuditLog (retention 7yr)", "notifications::AlertHandoffFailed"],
+      "payload": {
+        "submission_id": "ULID",
+        "handoff_slug": "string",
+        "attempt": "int",
+        "error": "string"
+      }
+    },
+    {
+      "name": "FormFileUploaded",
+      "trigger": "HIGH VOLUME. Medical clearance / signature / photo uploaded through storage module.",
+      "consumers": ["storage::MoveToPermanent", "activity::WriteToActivityLog (sampled 10%)"],
+      "payload": {
+        "submission_id": "ULID",
+        "file_id": "ULID",
+        "field_key": "string",
+        "size_bytes": "bigint",
+        "mime_type": "string"
+      }
+    }
+  ]
+}

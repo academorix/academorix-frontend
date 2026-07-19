@@ -1,0 +1,172 @@
+{
+  "id": "academorix://modules/integrations/schemas/app",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "App",
+  "description": "Marketplace app definition (Lane 2 per ADR 0025). Third-party or first-party app that tenants can install to extend the platform. OAuth 2.0 client + allowed scopes + webhook events + optional admin UI iframe. Schema lands day-one for future marketplace; no third-party accepted until compliance + review process ships. First-party partner apps may be seeded (is_first_party=true).",
+  "type": "object",
+  "x-module": "integrations",
+  "x-eloquent": {
+    "table": "apps",
+    "keyPrefix": "apk_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "slug": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "Globally unique — e.g. `smart-pricing-pro`, `slack-notifier`. Serves as URL segment when the marketplace launches."
+      },
+      "name": { "type": "string", "length": 200, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "developer_name": { "type": "string", "length": 200, "nullable": false },
+      "developer_email": { "type": "string", "length": 200, "nullable": false },
+      "developer_website_url": { "type": "string", "length": 500, "nullable": true },
+      "support_url": { "type": "string", "length": 500, "nullable": true },
+      "privacy_policy_url": { "type": "string", "length": 500, "nullable": true },
+      "terms_url": { "type": "string", "length": 500, "nullable": true },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "draft / in_review / approved / suspended / retired."
+      },
+      "is_first_party": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "True for apps built by Academorix or a vetted partner. Bypasses public app review; still subject to child-data consent flow."
+      },
+      "oauth_client_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "FK to OAuth 2.0 client row when platform/oauth is built. Null during the schema-only phase."
+      },
+      "allowed_scopes": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'",
+        "description": "Array of permission strings the app may request. Tenant approves a subset per install (AppInstallation.granted_scopes)."
+      },
+      "requires_child_data_scopes": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "Computed: true if allowed_scopes intersects with athletes / medical / attendance / safeguarding scopes. Apps with this flag get the enhanced consent flow at install."
+      },
+      "webhook_events": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'",
+        "description": "Array of event names the app subscribes to."
+      },
+      "admin_extension_url": {
+        "type": "string",
+        "length": 500,
+        "nullable": true,
+        "description": "Optional iframe embed URL for the tenant admin UI. Sandboxed with strict CSP. Null for apps that operate purely via webhook + API."
+      },
+      "logo_url": { "type": "string", "length": 500, "nullable": true },
+      "screenshots": { "type": "jsonb", "nullable": true },
+      "pricing_model": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "free / one_time / recurring / usage_based. Drives billing rails wiring."
+      },
+      "pricing_config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Model-specific pricing details. Interpretable when marketplace-billing ships."
+      },
+      "partner_share_bps": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Basis points of app revenue paid to the developer (10000 = 100%). Academorix keeps 10000 - partner_share_bps."
+      },
+      "approved_at": { "type": "timestamptz", "nullable": true },
+      "approved_by_platform_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "platform_users", "column": "id", "onDelete": "set null" }
+      },
+      "suspended_at": { "type": "timestamptz", "nullable": true },
+      "suspended_reason": { "type": "string", "length": 500, "nullable": true },
+      "install_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": "0",
+        "description": "Denormalized count of active (non-uninstalled) AppInstallations."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["slug"],
+        "unique": true,
+        "name": "apps_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["status", "is_first_party"],
+        "name": "apps_status_first_party_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "slug",
+    "name",
+    "developer_name",
+    "developer_email",
+    "status",
+    "is_first_party",
+    "allowed_scopes",
+    "requires_child_data_scopes",
+    "webhook_events",
+    "install_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^apk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "in_review", "approved", "suspended", "retired"]
+    },
+    "pricing_model": {
+      "type": ["string", "null"],
+      "enum": ["free", "one_time", "recurring", "usage_based", null]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Transitions: draft → in_review → approved / rejected. approved → suspended / retired. suspended → approved (post-remediation).",
+    "approved_at + approved_by_platform_user_id REQUIRED (non-null) when status = 'approved'.",
+    "suspended_at + suspended_reason set together on suspension.",
+    "requires_child_data_scopes auto-computed from allowed_scopes at write time.",
+    "partner_share_bps between 0 and 10000."
+  ]
+}

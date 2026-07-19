@@ -1,0 +1,134 @@
+{
+  "id": "academorix://modules/integrations/schemas/integration-provider",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "IntegrationProvider",
+  "description": "Allowlist catalog of every provider Academorix supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / mailchimp / xero / etc). System rows only — added via #[AsIntegrationProvider] discovery + upsert seeder. Adding a provider is a code deploy. Tenants configure a provider by creating a TenantIntegration that points at an IntegrationProvider row.",
+  "type": "object",
+  "x-module": "integrations",
+  "x-eloquent": {
+    "table": "integration_providers",
+    "keyPrefix": "ipd_",
+    "traits": ["HasFactory", "HasPrefixedUlid", "HasMetadata", "HasUserstamps", "Auditable"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Globally unique — matches the #[AsIntegrationProvider(slug: '…')] attribute value. Convention: snake_case. `stripe`, `pipedrive`, `apple_wallet`."
+      },
+      "name": { "type": "string", "length": 100, "nullable": false },
+      "kind": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "payment / crm / email / sms / calendar / chat / wallet / accounting / webhook / sso / video / storage."
+      },
+      "auth_kind": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "oauth2 / api_key / basic / webhook_only. Drives the credential-input flow in the tenant admin UI."
+      },
+      "scopes": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "For OAuth2 providers: array of scope strings the provider offers. Tenants pick a subset when configuring."
+      },
+      "webhook_events": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of event names the provider emits (subscribed to via TenantIntegration.subscribed_events)."
+      },
+      "config_schema": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "JSON schema for TenantIntegration.config. Validates config at configure time."
+      },
+      "docs_url": { "type": "string", "length": 500, "nullable": true },
+      "logo_url": { "type": "string", "length": 500, "nullable": true },
+      "brand_color": { "type": "string", "length": 7, "nullable": true },
+      "is_system": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "true",
+        "description": "Always true. Included for symmetry with the dual-source-catalogue pattern; guardrail prevents non-system rows from being persisted."
+      },
+      "enabled": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "true",
+        "description": "Soft-disable a provider tenant-wide (e.g. Slack integration temporarily paused during a security review)."
+      },
+      "min_plan_tier": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "small / medium / enterprise. Provider requires the tenant to be on this tier or higher."
+      },
+      "sort_order": { "type": "integer", "nullable": false, "default": "0" },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["slug"],
+        "unique": true,
+        "name": "integration_providers_slug_unique"
+      },
+      {
+        "columns": ["kind", "enabled", "sort_order"],
+        "name": "integration_providers_kind_enabled_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "slug",
+    "name",
+    "kind",
+    "auth_kind",
+    "is_system",
+    "enabled",
+    "sort_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^ipd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "payment",
+        "crm",
+        "email",
+        "sms",
+        "calendar",
+        "chat",
+        "wallet",
+        "accounting",
+        "webhook",
+        "sso",
+        "video",
+        "storage"
+      ]
+    },
+    "auth_kind": {
+      "type": "string",
+      "enum": ["oauth2", "api_key", "basic", "webhook_only"]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "System rows only — writes outside IntegrationProvider::allowSystemMutation() throw SystemRowImmutableException per the dual-source-catalogue pattern.",
+    "slug matches the #[AsIntegrationProvider(slug: …)] attribute value on the discovered provider class.",
+    "Removing a row requires zero live TenantIntegration references (validated at delete time)."
+  ]
+}

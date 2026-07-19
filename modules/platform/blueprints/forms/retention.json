@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/forms/retention",
+  "$version": 1,
+  "title": "forms — data retention windows",
+  "description": "Form schemas retained indefinitely (immutable audit trail). Submissions inherit the sensitivity of their most-sensitive answer field — medical / safeguarding submissions retained 7yr; standard submissions 2yr; abandoned sessions swept quickly.",
+  "policies": [
+    {
+      "entity": "Form",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Form definitions retained indefinitely. Audit + rollback lineage needs full history."
+    },
+    {
+      "entity": "FormVersion",
+      "hot_days": null,
+      "on_purge": "keep_indefinitely",
+      "description": "Version snapshots retained indefinitely — every submission points to the version it was submitted against; deleting a version orphans submissions."
+    },
+    {
+      "entity": "FormSubmission",
+      "hot_days": 90,
+      "warm_days": 730,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["status IN ('abandoned', 'failed_validation') AND handoff_status IS NULL"],
+      "description": "Abandoned + never-completed submissions: 90d hot, 2yr warm, purge."
+    },
+    {
+      "entity": "FormSubmission",
+      "hot_days": 365,
+      "warm_days": 730,
+      "cold_days": null,
+      "on_purge": "soft_delete",
+      "conditions": ["status = 'completed' AND (sensitivity IS NULL OR sensitivity = 'public')"],
+      "description": "Completed standard submissions: 2yr full retention. Handoff target references remain."
+    },
+    {
+      "entity": "FormSubmission",
+      "hot_days": null,
+      "warm_days": 2555,
+      "cold_days": null,
+      "on_purge": "keep_indefinitely",
+      "conditions": ["status = 'completed' AND sensitivity IN ('medical', 'safeguarding')"],
+      "description": "Medical + safeguarding submissions: 7yr min under compliance horizon. Legal-hold exception may extend indefinitely."
+    },
+    {
+      "entity": "FormSubmission (in-progress sessions)",
+      "hot_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["status = 'in_progress' AND session_expires_at < NOW()"],
+      "description": "PurgeAbandonedSessionsJob sweeps expired in-progress sessions. Transitions to `abandoned` (which then follows abandoned retention above)."
+    }
+  ],
+  "gdpr_deletion": "On user account deletion, form submissions where the submitter matches the deleted user have `answers` replaced with '[REDACTED]' tombstone. The submission shell (form_id, form_version_id, timestamps, handoff pointers) remains for downstream FK integrity."
+}

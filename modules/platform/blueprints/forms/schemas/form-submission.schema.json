@@ -1,0 +1,199 @@
+{
+  "id": "academorix://modules/forms/schemas/form-submission",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "FormSubmission",
+  "description": "One completed (or in-progress) submission of a FormVersion. `answers` JSONB validated against the version's schema at submit time. Save-and-resume via `session_signature` — the resumer follows an emailed link that carries the signed session URL, so the same person can pause + finish the form without a login. Sensitive answers (medical, safeguarding-adjacent) are encrypted at rest per the tenant's AnswerCipher key. Handoff wiring — on completion, if the parent Form declares a `handoff_slug`, RunFormHandoffJob (or sync path when async=false) executes the registered #[AsFormHandoff] handler → creates the target domain entity (e.g. Registration).",
+  "type": "object",
+  "x-module": "forms",
+  "x-eloquent": {
+    "table": "form_submissions",
+    "keyPrefix": "fms_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "form_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "forms", "column": "id", "onDelete": "restrict" }
+      },
+      "form_version_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "form_versions", "column": "id", "onDelete": "restrict" }
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'in_progress'",
+        "description": "in_progress / completed / abandoned / failed_validation. TTL-swept sessions become `abandoned`."
+      },
+      "session_signature": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Signed URL segment for save-and-resume. Rotates on session-key rotation. Non-enumerable, >= 64 chars entropy."
+      },
+      "session_expires_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Session TTL. Default 72h from start — configurable per form via Form.settings.session_ttl_hours."
+      },
+      "resumer_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Set when a logged-in user submits (staff-assisted intake). Null for pure public submissions."
+      },
+      "submitter_email_snapshot": {
+        "type": "string",
+        "length": 200,
+        "nullable": true,
+        "description": "Snapshot of the primary email captured on the form. Used to send resume-session email + notification email. Redacted for platform-admin audit reads."
+      },
+      "locale": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "default": "'en'",
+        "description": "The locale the form was submitted in (BCP-47)."
+      },
+      "answers": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'",
+        "description": "Field key → value map. Validated against the FormVersion.schema at submit. Sensitive fields (medical / safeguarding-classified) encrypted at rest via AnswerCipher."
+      },
+      "answers_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256 of the answers JSON at submit — for tamper detection + dedup."
+      },
+      "started_at": { "type": "timestamptz", "nullable": false },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "abandoned_at": { "type": "timestamptz", "nullable": true },
+      "validation_errors": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Last-known validation errors (field_key → error_message[]). Retained on status=failed_validation for user retry."
+      },
+      "handoff_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "not_applicable / pending / running / succeeded / failed. Null when Form has no handoff. Failed handoffs retry via RunFormHandoffJob with exponential backoff."
+      },
+      "handoff_target_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic — the module::entity that received the handoff. E.g. `registrations::Registration` or `medical::MedicalClearance`."
+      },
+      "handoff_target_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "The created entity's ID. Null until handoff succeeds."
+      },
+      "handoff_error": { "type": "text", "nullable": true },
+      "handoff_completed_at": { "type": "timestamptz", "nullable": true },
+      "ip_address_masked": {
+        "type": "string",
+        "length": 45,
+        "nullable": true,
+        "description": "GDPR-safe IPv4/IPv6 (last octet zeroed). For abuse detection + rate limiting only."
+      },
+      "user_agent_snapshot": { "type": "string", "length": 500, "nullable": true },
+      "utm_source": { "type": "string", "length": 100, "nullable": true },
+      "utm_medium": { "type": "string", "length": 100, "nullable": true },
+      "utm_campaign": { "type": "string", "length": 100, "nullable": true },
+      "referrer_url": { "type": "string", "length": 500, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["session_signature"],
+        "unique": true,
+        "name": "form_submissions_session_unique"
+      },
+      {
+        "columns": ["tenant_id", "form_id", "status", "created_at"],
+        "name": "form_submissions_form_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "handoff_status", "handoff_completed_at"],
+        "name": "form_submissions_handoff_idx",
+        "predicate": "handoff_status IN ('pending', 'running', 'failed')"
+      },
+      {
+        "columns": ["tenant_id", "session_expires_at"],
+        "name": "form_submissions_session_expiry_idx",
+        "predicate": "status = 'in_progress'"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "form_id",
+    "form_version_id",
+    "status",
+    "session_signature",
+    "session_expires_at",
+    "locale",
+    "answers",
+    "started_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^fms_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "abandoned", "failed_validation"]
+    },
+    "handoff_status": {
+      "type": ["string", "null"],
+      "enum": ["not_applicable", "pending", "running", "succeeded", "failed", null]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "answers IMMUTABLE post-completed — only in_progress submissions accept PATCH.",
+    "Transitions: in_progress → completed / abandoned / failed_validation. completed / abandoned are terminal; failed_validation can retry back to in_progress.",
+    "completed_at REQUIRED (non-null) when status = 'completed'.",
+    "session_expires_at > started_at.",
+    "handoff_target_type + handoff_target_id set together when handoff_status = 'succeeded'.",
+    "session_signature globally unique + non-enumerable.",
+    "answers_hash set at status transition to `completed`."
+  ]
+}

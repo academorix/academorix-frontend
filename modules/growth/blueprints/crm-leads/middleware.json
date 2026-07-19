@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/middleware",
-  "$version": 1,
-  "title": "crm-leads — HTTP middleware",
-  "description": "Middleware aliases this module contributes.",
-  "middleware": []
-}

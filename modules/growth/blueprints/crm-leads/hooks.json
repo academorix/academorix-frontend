@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/hooks",
-  "$version": 1,
-  "title": "crm-leads — tenant hooks",
-  "description": "Per-tenant lifecycle callbacks (log context, cache prefix, cache invalidation).",
-  "hooks": []
-}

@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/errors",
-  "$version": 1,
-  "title": "crm-leads — error catalogue",
-  "description": "Domain exception classes + HTTP status + translation keys.",
-  "errors": []
-}

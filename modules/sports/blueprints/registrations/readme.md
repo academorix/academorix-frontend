@@ -73,8 +73,8 @@ Fire events: OfferMade + WaitlistPositionChanged.
 
 ## Cross-module handoffs
 
-- **In**: `growth/crm-leads` on lead conversion → creates a Registration
-  (source=crm_lead, source_ref_id=lead_id).
+- **In**: `platform/forms` on submission completed → runs the
+  `registrations.create_registration` handoff (see ADR 0024).
 - **In**: `growth/marketing` + `growth/attribution` — first-touch + last-touch
   attribution captured on submission.
 - **Out** (on ENROLLED): `sports/athlete` (creates Athlete),

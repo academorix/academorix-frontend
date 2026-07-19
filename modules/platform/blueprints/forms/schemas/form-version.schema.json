@@ -1,0 +1,136 @@
+{
+  "id": "academorix://modules/forms/schemas/form-version",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "FormVersion",
+  "description": "Immutable snapshot of a Form's schema at a point in time. Captures field definitions, validation rules, conditional-visibility logic, and multi-locale label bundles. Once a FormSubmission exists against a version, the version is version-locked — mutations to the parent Form flow through a new version. Rollback swaps Form.published_version_id back to the previous FormVersion; the current form's fields, validators, and labels ALL come from the version, not the parent Form.",
+  "type": "object",
+  "x-module": "forms",
+  "x-eloquent": {
+    "table": "form_versions",
+    "keyPrefix": "fmv_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "form_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "forms", "column": "id", "onDelete": "cascade" }
+      },
+      "version_number": {
+        "type": "integer",
+        "nullable": false,
+        "description": "Monotonic per-form. First draft = 1; subsequent drafts increment."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "draft / published / superseded / archived. `published` matches Form.published_version_id."
+      },
+      "schema": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "The form schema. Shape: { fields: [{ key, type, label_key, required, validators, conditional_visibility, options?, default? }], sections: [{ title_key, description_key, field_keys }], layout: 'single_page' | 'stepped' | 'wizard' }."
+      },
+      "labels": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Locale bundle. Shape: { <locale>: { <label_key>: string } }. Every label_key referenced in `schema` must resolve in every locale in Form.locales_available."
+      },
+      "validation_rules": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Cross-field + form-level validation rules (e.g. `total_athletes_matches_selected_teams`, `age_gate_athlete_1_matches_selected_team_1`)."
+      },
+      "field_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": "0"
+      },
+      "submission_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": "0",
+        "description": "Number of completed submissions against this version. Locks the version when > 0."
+      },
+      "published_at": { "type": "timestamptz", "nullable": true },
+      "published_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "superseded_at": { "type": "timestamptz", "nullable": true },
+      "superseded_by_version_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "form_versions", "column": "id", "onDelete": "set null" }
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "form_id", "version_number"],
+        "unique": true,
+        "name": "form_versions_form_number_unique"
+      },
+      {
+        "columns": ["tenant_id", "form_id", "status"],
+        "name": "form_versions_form_status_idx"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "form_id",
+    "version_number",
+    "status",
+    "schema",
+    "labels",
+    "field_count",
+    "submission_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^fmv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "published", "superseded", "archived"]
+    },
+    "version_number": { "type": "integer", "minimum": 1 }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "schema is IMMUTABLE once submission_count > 0 — writes rejected inline.",
+    "Transitions: draft → published → superseded / archived. published never goes back to draft.",
+    "Every label_key in schema resolves in every locale in Form.locales_available (validated at publish).",
+    "published_at + published_by_user_id REQUIRED (non-null) when status = 'published'.",
+    "superseded_at + superseded_by_version_id set together on supersession."
+  ]
+}

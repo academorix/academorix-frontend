@@ -27,7 +27,7 @@
     {
       "key": "public-site.public_forms",
       "displayName": "Public forms (contact / trial-request)",
-      "description": "Embed forms on public pages. Handoff to crm-leads or registrations.",
+      "description": "Embed forms on public pages. Handoff to sports/registrations (see ADR 0024).",
       "defaultEnabled": false,
       "planTiers": ["medium", "enterprise"]
     },

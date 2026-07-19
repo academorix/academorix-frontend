@@ -1,0 +1,181 @@
+{
+  "id": "academorix://modules/forms/schemas/form",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Form",
+  "description": "Root form definition. Metadata + which FormVersion is currently `published`. Latest published version renders at the tenant's public URL. Multiple concurrent versions supported (draft + published + archived). Handoff configuration is per-form (not per-version) so promoting a new version doesn't break the domain wiring.",
+  "type": "object",
+  "x-module": "forms",
+  "x-eloquent": {
+    "table": "forms",
+    "keyPrefix": "fom_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "slug": {
+        "type": "string",
+        "length": 100,
+        "nullable": false,
+        "description": "Tenant-unique slug — publishes to /forms/{slug}. Reserved: reserved / admin / preview."
+      },
+      "title": { "type": "string", "length": 200, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "kind": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "season_registration / waiver_update / medical_questionnaire / feedback_survey / trial_request / custom. Drives the default handoff + default field bundle when creating a new form."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "draft / published / archived. `published` requires at least one FormVersion.status = 'published'."
+      },
+      "published_version_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "form_versions", "column": "id", "onDelete": "restrict" },
+        "description": "The currently-live FormVersion. Null on drafts. Rollback swaps this pointer."
+      },
+      "handoff_slug": {
+        "type": "string",
+        "length": 100,
+        "nullable": true,
+        "description": "Registered #[AsFormHandoff] slug — e.g. `registrations.create_registration`. Null = no handoff (feedback survey mode)."
+      },
+      "handoff_config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Handoff-specific configuration. For registrations.create_registration: default_season_id, default_team_id (optional), auto_stage_transitions (bool)."
+      },
+      "opens_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Public URL becomes reachable at this timestamp. NULL = live immediately once published."
+      },
+      "closes_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Public URL stops accepting submissions. NULL = no auto-close."
+      },
+      "requires_authentication": {
+        "type": "boolean",
+        "nullable": false,
+        "default": "false",
+        "description": "When true, only logged-in tenant users can submit (staff-only forms). Default false for public forms."
+      },
+      "public_url_signature": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Signed URL segment. Rotates on regenerate. Null until first publish."
+      },
+      "locale_default": { "type": "string", "length": 8, "nullable": false, "default": "'en'" },
+      "locales_available": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[\"en\"]'",
+        "description": "Array of BCP-47 locale codes the form supports (matches FormVersion label bundles)."
+      },
+      "branding_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Snapshot of tenant branding at last publish (logo, primary color, favicon). Cached so branding changes don't force every form to regenerate."
+      },
+      "submission_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": "0",
+        "description": "Denormalized count for admin list view. Updated by FormObserver on submission events."
+      },
+      "settings": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Per-form settings — save_and_resume_enabled, session_ttl_hours, honeypot_field_name, redirect_url_on_success, email_notification_recipients."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "slug"],
+        "unique": true,
+        "name": "forms_tenant_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "kind", "status"],
+        "name": "forms_kind_status_idx"
+      },
+      {
+        "columns": ["public_url_signature"],
+        "unique": true,
+        "name": "forms_public_signature_unique",
+        "predicate": "public_url_signature IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "slug",
+    "title",
+    "kind",
+    "status",
+    "locale_default",
+    "locales_available",
+    "submission_count",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^fom_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["draft", "published", "archived"] },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "season_registration",
+        "waiver_update",
+        "medical_questionnaire",
+        "feedback_survey",
+        "trial_request",
+        "custom"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "slug tenant-unique via partial unique index.",
+    "status = 'published' → published_version_id NOT NULL.",
+    "public_url_signature globally unique + non-enumerable (>= 64 chars entropy).",
+    "handoff_slug when set MUST reference a registered #[AsFormHandoff] class (validated at write time).",
+    "opens_at < closes_at when both are set."
+  ]
+}

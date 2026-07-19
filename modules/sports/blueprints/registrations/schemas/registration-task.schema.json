@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/registrations/schemas/registration-task",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "RegistrationTask",
+  "description": "Follow-up task on a Registration. Assignee + due_at + status. AlertOverdueTasksJob fires notifications when a task passes due_at + a configurable grace period. Replaces the previously-planned `growth/crm-leads.Task` (see ADR 0024).",
+  "type": "object",
+  "x-module": "registrations",
+  "x-eloquent": {
+    "table": "registration_tasks",
+    "keyPrefix": "rtsk_",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "registration_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "registrations", "column": "id", "onDelete": "cascade" }
+      },
+      "assignee_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" }
+      },
+      "title": { "type": "string", "length": 200, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "due_at": { "type": "timestamptz", "nullable": false },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'open'",
+        "description": "open / done / cancelled. `overdue` is a computed view (status='open' AND due_at < NOW()), not a stored state."
+      },
+      "priority": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "default": "'normal'",
+        "description": "low / normal / high / urgent."
+      },
+      "completed_at": { "type": "timestamptz", "nullable": true },
+      "completed_by_user_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" }
+      },
+      "completion_note": { "type": "string", "length": 500, "nullable": true },
+      "reminder_sent_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Last time AlertOverdueTasksJob fired for this task. Prevents double-notify within 24h."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "assignee_user_id", "status", "due_at"],
+        "name": "registration_tasks_assignee_open_idx"
+      },
+      {
+        "columns": ["tenant_id", "registration_id", "status"],
+        "name": "registration_tasks_registration_idx"
+      },
+      {
+        "columns": ["tenant_id", "status", "due_at"],
+        "name": "registration_tasks_overdue_idx",
+        "predicate": "status = 'open'"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "registration_id",
+    "assignee_user_id",
+    "title",
+    "due_at",
+    "status",
+    "priority",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rtsk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["open", "done", "cancelled"] },
+    "priority": { "type": "string", "enum": ["low", "normal", "high", "urgent"] }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "Transitions: open → done / cancelled (both terminal).",
+    "completed_at + completed_by_user_id REQUIRED (non-null) when status = 'done'.",
+    "reminder_sent_at bumps every fire of AlertOverdueTasksJob — throttle prevents notifying more than once per 24h."
+  ]
+}

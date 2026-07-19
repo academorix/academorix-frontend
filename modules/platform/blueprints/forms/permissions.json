@@ -1,0 +1,94 @@
+{
+  "id": "academorix://modules/forms/permissions",
+  "$version": 1,
+  "title": "forms — permissions",
+  "seeder": "Academorix\\Platform\\Forms\\Database\\Seeders\\FormsPermissionSeeder",
+  "isSystem": true,
+  "description": "Form authoring gated to admin roles. Public submission requires no permission — the signed session URL IS the auth. Submissions carrying medical / safeguarding classified fields require the equivalent role to read.",
+  "permissions": [
+    {
+      "name": "forms.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    { "name": "forms.view", "guard": "sanctum", "seededOn": ["branch_manager", "admin", "owner"] },
+    {
+      "name": "forms.create",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "forms.update",
+      "guard": "sanctum",
+      "description": "Metadata + settings + handoff wiring. Schema changes must go through a new FormVersion.",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    { "name": "forms.publish", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "forms.archive", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "forms.delete",
+      "guard": "sanctum",
+      "description": "Archived form with 0 submissions only.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "form-versions.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "form-versions.view",
+      "guard": "sanctum",
+      "seededOn": ["branch_manager", "admin", "owner"]
+    },
+    { "name": "form-versions.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "form-versions.publish", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "form-versions.rollback",
+      "guard": "sanctum",
+      "description": "Break-glass revert. Reason REQUIRED. Full audit chain, 7yr retention.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "form-submissions.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "form-submissions.view",
+      "guard": "sanctum",
+      "description": "Sensitivity-gated: medical fields blur unless viewer has medical.viewAny.",
+      "seededOn": ["medical", "front_desk", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "form-submissions.download",
+      "guard": "sanctum",
+      "description": "Full-body download. Logs to audit trail.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "form-submissions.export",
+      "guard": "sanctum",
+      "description": "Bulk PII export. AlertOnBulkPiiExport fires above threshold.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "form-submissions.delete",
+      "guard": "sanctum",
+      "description": "GDPR erasure path — replaces answers with tombstone. Full audit chain.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.forms.audit",
+      "guard": "platform_admin",
+      "description": "Cross-tenant form-schema audit + submission volume analytics.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.forms.gdpr-erasure",
+      "guard": "platform_admin",
+      "description": "Force GDPR erasure across a tenant's submissions.",
+      "seededOn": ["super_admin", "compliance"]
+    }
+  ]
+}

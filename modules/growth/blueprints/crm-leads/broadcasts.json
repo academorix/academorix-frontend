@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/broadcasts",
-  "$version": 1,
-  "title": "crm-leads — broadcast channels",
-  "description": "Channels this module publishes to for real-time UI updates.",
-  "channels": []
-}

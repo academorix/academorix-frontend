@@ -3,7 +3,7 @@
   "name": "registrations",
   "alias": "registrations",
   "namespace": "Academorix\\Sports\\Registrations",
-  "description": "Enrollment + waitlist funnel per blueprint §12.4. Ships FOUR owned entities: `Registration` (state LEAD → CONTACTED → TRIAL → OFFERED → ENROLLED with side branches WAITLISTED / DECLINED / EXPIRED), `TrialBooking` (trial/taster session as part of a registration; books a facility slot + coach), `WaitlistEntry` (monotonic position-ordered waitlist per (tenant, season, team); auto-offer on capacity free), `Offer` (time-boxed offer with expires_at + auto_decline_on_expire; on accept → atomic creation of Athlete + AthleteEnrollment + Invoice; on expire → next in waitlist). Convergence point of `growth/crm-leads` (marketing pipeline hands off leads that convert), `sports/athlete` (creates the Athlete on ENROLLED), `sports/athlete-enrollment` (creates the roster attachment), `sports/season` (season windows + age cutoffs), `sports/teams` (team capacity), `finance/invoice` (raises enrollment invoice), and `platform/facility` (books the trial slot).",
+  "description": "Enrollment + waitlist funnel per blueprint §12.4. Ships SIX owned entities: `Registration` (state LEAD → CONTACTED → TRIAL → OFFERED → ENROLLED with side branches WAITLISTED / DECLINED / EXPIRED), `RegistrationActivity` (per-registration timeline entry — call / email / sms / note / visit / stage_change), `RegistrationTask` (follow-up task with assignee + due_at + status), `TrialBooking` (trial/taster session as part of a registration; books a facility slot + coach), `WaitlistEntry` (monotonic position-ordered waitlist per (tenant, season, team); auto-offer on capacity free), `Offer` (time-boxed offer with expires_at + auto_decline_on_expire; on accept → atomic creation of Athlete + AthleteEnrollment + Invoice; on expire → next in waitlist). Convergence point of `platform/forms` (form intake handoff), `sports/athlete` (creates the Athlete on ENROLLED), `sports/athlete-enrollment` (creates the roster attachment), `sports/season` (season windows + age cutoffs), `sports/teams` (team capacity), `finance/invoice` (raises enrollment invoice), and `platform/facility` (books the trial slot). Absorbs the pre-enrollment sales pipeline previously scoped as `growth/crm-leads` — see ADR 0024.",
   "keywords": [
     "registrations",
     "enrollment",
@@ -39,18 +39,25 @@
   ],
   "extendedBy": [],
   "planned_consumers": [
-    "crm-leads",
     "reception",
     "public-site",
     "reporting",
     "ai",
     "growth/marketing",
-    "growth/attribution"
+    "growth/attribution",
+    "forms"
   ],
   "contributes": {
     "traits": ["HasRegistration"],
     "attributes": [],
-    "blueprints": ["registration", "trial-booking", "waitlist-entry", "offer"],
+    "blueprints": [
+      "registration",
+      "registration-activity",
+      "registration-task",
+      "trial-booking",
+      "waitlist-entry",
+      "offer"
+    ],
     "middleware": ["registrations.public-form-rate-limit"],
     "events": [
       "RegistrationSubmitted",

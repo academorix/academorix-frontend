@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/forms/features",
+  "$version": 1,
+  "title": "forms — feature keys",
+  "features": [
+    {
+      "key": "forms.core",
+      "displayName": "Form management",
+      "description": "Master feature. Create + version + publish forms + collect submissions.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "forms.save_and_resume",
+      "displayName": "Save-and-resume",
+      "description": "Emailed resume-session link so guardians can pause + finish a long form. Requires notifications channel.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "forms.multi_language",
+      "displayName": "Multi-language forms",
+      "description": "Locale-scoped label bundles. Each FormVersion carries the label bundle for every locale in Form.locales_available.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "forms.file_upload_medical",
+      "displayName": "Medical file uploads",
+      "description": "Medical clearance PDFs + doctor letters. Encrypted at rest via AnswerCipher.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "forms.file_upload_photo_consent",
+      "displayName": "Photo consent uploads",
+      "description": "Athlete photo + consent form combined field type.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "forms.signature_capture",
+      "displayName": "Signature capture",
+      "description": "Waiver signature capture (draw or type). Signed data URL stored on submission.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "forms.conditional_visibility",
+      "displayName": "Conditional field visibility",
+      "description": "Show/hide fields based on prior answers (e.g. show medical section only if 'has allergies' = true).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "forms.stepped_layout",
+      "displayName": "Multi-step / wizard forms",
+      "description": "Break long forms into sections with progress indicator. Enterprise + long medical questionnaires.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "forms.public_url",
+      "displayName": "Public form URL",
+      "description": "Form publishes to `/forms/{signature}` on the tenant's central + tenant hosts. Signed non-enumerable URL.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "forms.custom_domain_embed",
+      "displayName": "Custom-domain embed",
+      "description": "Embed the form on the tenant's own website via a signed iframe URL. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "forms.utm_capture",
+      "displayName": "UTM parameter capture",
+      "description": "Capture utm_source / utm_medium / utm_campaign on submission. Feeds growth/attribution.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "forms.pdf_receipt",
+      "displayName": "PDF submission receipts",
+      "description": "Auto-email PDF receipt to submitter on completion.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "forms.honeypot_spam_defense",
+      "displayName": "Honeypot spam defense",
+      "description": "Invisible honeypot field + submission-timing heuristic. Free bot defense before touching a CAPTCHA.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "forms.captcha",
+      "displayName": "hCaptcha / Turnstile challenge",
+      "description": "Add a CAPTCHA challenge on high-abuse forms. Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "forms.marketplace_field_types",
+      "displayName": "Marketplace field types",
+      "description": "Third-party apps (Lane 2 per ADR 0025) may contribute custom field types via #[AsFormFieldType]. Enterprise + Marketplace launch.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

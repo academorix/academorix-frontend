@@ -55,32 +55,109 @@
   "x-database": {
     "engine": "postgres",
     "columns": {
-      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `sea_<26>`." },
-      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
-      "organization_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "organizations", "column": "id", "onDelete": "restrict" }, "description": "Nullable = tenant-wide season. Immutable post-create." },
-      "branch_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }, "description": "Nullable = tenant-wide OR org-wide season. Immutable post-create. When set, organization_id MUST equal branch.organization_id." },
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `sea_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "organization_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "organizations", "column": "id", "onDelete": "restrict" },
+        "description": "Nullable = tenant-wide season. Immutable post-create."
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" },
+        "description": "Nullable = tenant-wide OR org-wide season. Immutable post-create. When set, organization_id MUST equal branch.organization_id."
+      },
       "name": { "type": "string", "length": 128, "nullable": false },
-      "slug": { "type": "string", "length": 64, "nullable": false, "description": "Unique per (tenant_id, organization_id, branch_id, slug) partial WHERE deleted_at IS NULL." },
-      "sport_key": { "type": "string", "length": 32, "nullable": true, "description": "Wave 3c sports registry key. Nullable = applies to every sport in the scoping tuple. Free-text pre-Wave-3c." },
+      "slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Unique per (tenant_id, organization_id, branch_id, slug) partial WHERE deleted_at IS NULL."
+      },
+      "sport_key": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Wave 3c sports registry key. Nullable = applies to every sport in the scoping tuple. Free-text pre-Wave-3c."
+      },
       "description": { "type": "text", "nullable": true },
-      "season_type": { "type": "string", "length": 24, "nullable": false, "default": "'annual'", "description": "Enum: annual / academic_year / summer_camp / winter_camp / half_year / quarter / trimester / custom." },
+      "season_type": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'annual'",
+        "description": "Enum: annual / academic_year / summer_camp / winter_camp / half_year / quarter / trimester / custom."
+      },
       "start_date": { "type": "date", "nullable": false },
       "end_date": { "type": "date", "nullable": false, "description": "Must be > start_date." },
       "registration_opens_at": { "type": "timestamptz", "nullable": true },
       "registration_closes_at": { "type": "timestamptz", "nullable": true },
-      "late_registration_ends_at": { "type": "timestamptz", "nullable": true, "description": "Grace window past registration_closes_at; requires allows_late_registration=true." },
-      "competition_starts_at": { "type": "timestamptz", "nullable": true, "description": "When actual competition/session series begins; may differ from start_date for training-first seasons." },
+      "late_registration_ends_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Grace window past registration_closes_at; requires allows_late_registration=true."
+      },
+      "competition_starts_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When actual competition/session series begins; may differ from start_date for training-first seasons."
+      },
       "has_playoffs": { "type": "boolean", "nullable": false, "default": false },
-      "playoff_starts_at": { "type": "timestamptz", "nullable": true, "description": "Required when has_playoffs=true. Within [start_date, end_date]." },
+      "playoff_starts_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Required when has_playoffs=true. Within [start_date, end_date]."
+      },
       "playoff_ends_at": { "type": "timestamptz", "nullable": true },
-      "status": { "type": "string", "length": 24, "nullable": false, "default": "'planned'", "description": "Enum: planned / registration_open / in_progress / playoffs / completed / archived. Transitions auto-flipped by RollSeasonPhaseJob." },
-      "is_current": { "type": "boolean", "nullable": false, "default": false, "description": "Exactly one is_current=true per (tenant, organization, branch, sport_key) tuple." },
+      "status": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "default": "'planned'",
+        "description": "Enum: planned / registration_open / in_progress / playoffs / completed / archived. Transitions auto-flipped by RollSeasonPhaseJob."
+      },
+      "is_current": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one is_current=true per (tenant, organization, branch, sport_key) tuple."
+      },
       "sort_order": { "type": "integer", "nullable": false, "default": 100 },
       "primary_color": { "type": "string", "length": 7, "nullable": true },
-      "capacity_target": { "type": "integer", "nullable": true, "description": "Expected enrollment count for capacity planning. Informational only — not enforced." },
-      "max_enrollments_per_athlete": { "type": "integer", "nullable": false, "default": 1, "description": "How many enrollments a single athlete can have this season (multi-sport athletes)." },
+      "capacity_target": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Expected enrollment count for capacity planning. Informational only — not enforced."
+      },
+      "max_enrollments_per_athlete": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "How many enrollments a single athlete can have this season (multi-sport athletes)."
+      },
       "allows_late_registration": { "type": "boolean", "nullable": false, "default": false },
       "late_registration_fee_cents": { "type": "integer", "nullable": false, "default": 0 },
+      "form_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "forms", "column": "id", "onDelete": "set null" },
+        "description": "Optional binding to a `platform/forms::Form` (kind = season_registration). When set, the form auto-publishes on Season transition to `registration_open` (via PublishFormOnSeasonRegistrationOpen hook) and auto-archives on transition to `registration_closed`. Null = season uses inline / hand-rolled registration flow. See ADR 0024."
+      },
       "metadata": { "type": "jsonb", "nullable": true },
       "created_by": { "type": "string", "length": 64, "nullable": true },
       "updated_by": { "type": "string", "length": 64, "nullable": true },
@@ -108,7 +185,11 @@
       { "columns": ["tenant_id", "start_date"], "name": "seasons_start_date_idx" },
       { "columns": ["tenant_id", "end_date"], "name": "seasons_end_date_idx" },
       { "columns": ["tenant_id", "is_current"], "name": "seasons_current_idx" },
-      { "columns": ["tenant_id", "sport_key"], "name": "seasons_sport_idx", "predicate": "sport_key IS NOT NULL" }
+      {
+        "columns": ["tenant_id", "sport_key"],
+        "name": "seasons_sport_idx",
+        "predicate": "sport_key IS NOT NULL"
+      }
     ]
   },
   "required": [
@@ -135,12 +216,26 @@
     "organization_id": { "type": ["string", "null"], "pattern": "^org_[0-9A-HJKMNP-TV-Z]{26}$" },
     "branch_id": { "type": ["string", "null"], "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
     "name": { "type": "string", "minLength": 2, "maxLength": 128 },
-    "slug": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "slug": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 64,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
     "sport_key": { "type": ["string", "null"], "maxLength": 32 },
     "description": { "type": ["string", "null"] },
     "season_type": {
       "type": "string",
-      "enum": ["annual", "academic_year", "summer_camp", "winter_camp", "half_year", "quarter", "trimester", "custom"]
+      "enum": [
+        "annual",
+        "academic_year",
+        "summer_camp",
+        "winter_camp",
+        "half_year",
+        "quarter",
+        "trimester",
+        "custom"
+      ]
     },
     "start_date": { "type": "string", "format": "date" },
     "end_date": { "type": "string", "format": "date" },
@@ -175,7 +270,10 @@
   },
   "x-route-binding": {
     "strategy": "resolveRouteBinding",
-    "accepts": ["ULID (`sea_<26>`)", "slug (case-insensitive, resolved within active scoping tuple)"]
+    "accepts": [
+      "ULID (`sea_<26>`)",
+      "slug (case-insensitive, resolved within active scoping tuple)"
+    ]
   },
   "invariants": [
     "end_date > start_date",

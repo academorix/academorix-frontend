@@ -51,8 +51,8 @@ final class UpdateRegistrationPayload extends Data
      * @param  Optional|string|null             $convertedEnrollmentId
      * @param  Optional|string|null             $convertedInvoiceId
      * @param  Optional|string|null             $ownerUserId                Sales rep / admin assigned to move this through the funnel.
-     * @param  Optional|string                  $source                     web_form / referral / walk_in / cold_outreach / imported / crm_lead.
-     * @param  Optional|string|null             $sourceRefId                When source=crm_lead — the growth::Lead ID.
+     * @param  Optional|string                  $source                     web_form / referral / walk_in / cold_outreach / imported / external_crm.
+     * @param  Optional|string|null             $sourceRefId                When source=external_crm — the external CRM's deal / opportunity ID.
      * @param  Optional|array|null              $attribution                First-touch + last-touch marketing attribution captured at form submission.
      * @param  Optional|array|null              $consentSnapshot            Consent flags at submission — photo / medical / marketing.
      * @param  Optional|string|null             $notes

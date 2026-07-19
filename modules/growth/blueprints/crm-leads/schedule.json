@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/schedule",
-  "$version": 1,
-  "title": "crm-leads — scheduled tasks",
-  "description": "Artisan / cron entries this module registers.",
-  "schedule": []
-}

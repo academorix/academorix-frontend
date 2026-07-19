@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/subprocessors",
-  "$version": 1,
-  "title": "crm-leads — subprocessors used",
-  "description": "Third-party subprocessors this module uses for its own operation.",
-  "subprocessors": []
-}

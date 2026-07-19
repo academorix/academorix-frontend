@@ -1,0 +1,252 @@
+{
+  "$version": 1,
+  "name": "forms",
+  "alias": "forms",
+  "namespace": "Academorix\\Platform\\Forms",
+  "description": "Serious form management for academy-specific intake — season registrations, medical questionnaires, waiver renewals, custom surveys. Ships THREE owned entities: `Form` (fom_) root, `FormVersion` (fmv_) immutable snapshot per publish, `FormSubmission` (fms_) one completed submission tied to a FormVersion. Sports-native field types (`athlete_data`, `guardian_pair`, `consent_bundle`, `medical_upload`, `team_preference` with age gate, `waiver`, `photo_consent`) — these are the reason the platform builds forms itself rather than delegating to HubSpot / Typeform / Google Forms. Bound to `sports/season` via `season.form_id`: on Season transition to `registration_open`, the bound form goes live at the tenant's public URL. Save-and-resume via signed session URLs. Multi-language + tenant-branded. Bidirectional handoff — a submission carries `handoff_module + handoff_entity_id` (e.g. `registrations::Registration.id`) so the platform can wire form intake into any domain flow. See ADR 0024 (enrollment funnel not a CRM).",
+  "keywords": [
+    "form",
+    "form-management",
+    "form-builder",
+    "public-form",
+    "season-registration",
+    "waiver",
+    "consent",
+    "medical-upload",
+    "age-gate",
+    "save-and-resume",
+    "signed-session-url",
+    "tenant-branded",
+    "i18n",
+    "coppa",
+    "gdpr",
+    "wave-2"
+  ],
+  "priority": 34,
+  "providers": ["Academorix\\Platform\\Forms\\Providers\\FormsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "storage",
+    "branding",
+    "notifications",
+    "audit",
+    "activity",
+    "compliance"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "season",
+    "registrations",
+    "medical",
+    "safeguarding",
+    "public-site",
+    "reception",
+    "ai"
+  ],
+  "contributes": {
+    "traits": ["HasForm"],
+    "attributes": ["AsFormFieldType", "AsFormHandoff"],
+    "blueprints": ["form", "form-version", "form-submission"],
+    "middleware": [
+      "forms.public-submission-rate-limit",
+      "forms.session-signature-guard",
+      "forms.honeypot-guard"
+    ],
+    "events": [
+      "FormCreated",
+      "FormPublished",
+      "FormVersionCreated",
+      "FormVersionRolledBack",
+      "FormArchived",
+      "FormSubmissionStarted",
+      "FormSubmissionResumed",
+      "FormSubmissionCompleted",
+      "FormSubmissionAbandoned",
+      "FormSubmissionValidationFailed",
+      "FormHandoffFired",
+      "FormHandoffFailed",
+      "FormFileUploaded"
+    ],
+    "policies": ["FormPolicy", "FormVersionPolicy", "FormSubmissionPolicy"],
+    "hooks": [
+      "PublishFormOnSeasonRegistrationOpen",
+      "ArchiveFormOnSeasonRegistrationClosed",
+      "ValidateAgeGateOnSubmission",
+      "RunHandoffOnSubmissionCompleted",
+      "EncryptSensitiveAnswersAtRest",
+      "PurgeAbandonedSessionsOnTtl"
+    ],
+    "commands": [
+      "forms:list",
+      "forms:publish",
+      "forms:preview",
+      "forms:archive",
+      "forms:submissions:list",
+      "forms:submissions:export",
+      "forms:sessions:purge-expired",
+      "forms:validate"
+    ],
+    "jobs": [
+      "PurgeAbandonedSessionsJob",
+      "RunFormHandoffJob",
+      "SendResumeSessionEmailJob",
+      "TranscribeMedicalUploadJob"
+    ],
+    "notifications": [
+      "FormSubmissionCompletedNotification",
+      "FormResumeSessionNotification",
+      "FormHandoffFailedNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.forms.{formId}.submissions"],
+    "observers": ["FormObserver", "FormVersionObserver", "FormSubmissionObserver"],
+    "rules": [
+      "valid_form_status",
+      "valid_field_type",
+      "valid_handoff_target",
+      "answer_schema_matches_version"
+    ],
+    "casts": ["FormStatus", "FormSubmissionStatus", "FieldTypeKind"],
+    "views": [],
+    "lang": ["forms"],
+    "config": ["forms"],
+    "macros": [],
+    "bindings": [
+      "FormRepository",
+      "FormVersionRepository",
+      "FormSubmissionRepository",
+      "FormRenderer",
+      "FormValidator",
+      "FieldTypeRegistry",
+      "HandoffRegistry",
+      "SessionSignatureMinter",
+      "AnswerCipher"
+    ],
+    "resources": ["form", "form-version", "form-submission"]
+  },
+  "attribute_driven": {
+    "description": "Two class-level attributes drive discovery. FieldTypeRegistry + HandoffRegistry hydrated at boot via Foundation's DiscoversAttributes seam. Zero runtime reflection on hot paths.",
+    "attributes": {
+      "AsFormFieldType": "Marks a class as a form field type discoverable by FieldTypeRegistry. `#[AsFormFieldType(kind: 'guardian_pair', category: 'sports-native')]`. Provides render + validate + normalize. Built-ins: text / email / phone / date / date_of_birth / number / select / multi_select / boolean / textarea / file_upload / signature / rich_text — plus sports-native: athlete_data / guardian_pair / consent_bundle / medical_upload / team_preference / waiver / photo_consent / emergency_contact.",
+      "AsFormHandoff": "Marks a class as a form handoff target discoverable by HandoffRegistry. `#[AsFormHandoff(slug: 'registrations.create_registration', module: 'sports/registrations')]`. Provides map(submissionAnswers) → domainAction. On FormSubmissionCompleted, the bound handoff runs — typically wrapping an atomic domain write (see ADR 0024 for the enrollment convert-on-accept pattern)."
+    }
+  },
+  "handoff_kinds": {
+    "description": "Every form declares zero or one handoff. The handoff's slug references a registered handler; on completion, the handler receives normalised answers + the FormSubmission + fires the appropriate domain action. Handoffs run in the same request cycle when async is not requested; otherwise queued via RunFormHandoffJob.",
+    "shipped": [
+      {
+        "slug": "registrations.create_registration",
+        "target_module": "sports/registrations",
+        "creates_entity": "srg_",
+        "async": false,
+        "description": "Season registration intake → creates Registration + attaches trial slot preference if collected."
+      },
+      {
+        "slug": "waiver.record_consent",
+        "target_module": "compliance",
+        "creates_entity": "cwv_",
+        "async": false,
+        "description": "Standalone waiver update flow (annual re-consent, policy change)."
+      },
+      {
+        "slug": "medical.update_clearance",
+        "target_module": "sports/medical",
+        "creates_entity": "mcl_",
+        "async": true,
+        "description": "Medical questionnaire → updates athlete clearance record. Async because of OCR on uploaded documents."
+      },
+      {
+        "slug": "custom.raw_survey",
+        "target_module": null,
+        "creates_entity": null,
+        "async": false,
+        "description": "Free-form survey with no domain handoff — answers stored on FormSubmission only. Used for feedback surveys, NPS, tenant-specific research."
+      }
+    ]
+  },
+  "sports_native_field_types": {
+    "description": "Field types that no external form-builder (Typeform / Google Forms / HubSpot Forms) understands. This is where the module differentiates.",
+    "kinds": [
+      {
+        "kind": "athlete_data",
+        "collects": "first_name, last_name, date_of_birth, gender, allergies, medical_conditions, photo_url",
+        "validators": ["age_gate_against_season_cutoff"]
+      },
+      {
+        "kind": "guardian_pair",
+        "collects": "primary_guardian(first_name, last_name, email, phone, relationship), secondary_guardian?(same shape)",
+        "validators": ["at_least_one_guardian_email"]
+      },
+      {
+        "kind": "consent_bundle",
+        "collects": "photo_consent, marketing_consent, medical_release_consent, waiver_signature",
+        "validators": ["waiver_current_version"]
+      },
+      {
+        "kind": "medical_upload",
+        "collects": "medical_clearance_file (via storage), expiry_date, issuing_physician_name",
+        "validators": ["file_kind_pdf_image", "max_size_10mb"]
+      },
+      {
+        "kind": "team_preference",
+        "collects": "preferred_team_id, preferred_practice_day, preferred_time_window",
+        "validators": ["team_matches_age_group", "capacity_available_signal"]
+      },
+      {
+        "kind": "waiver",
+        "collects": "waiver_text_hash, signature_data_url, signed_at",
+        "validators": ["current_waiver_hash_matches"]
+      },
+      {
+        "kind": "photo_consent",
+        "collects": "consented_uses (array — 'internal' / 'marketing' / 'social_media' / 'press'), expires_at",
+        "validators": []
+      },
+      {
+        "kind": "emergency_contact",
+        "collects": "first_name, last_name, phone, relationship",
+        "validators": ["not_same_as_primary_guardian_phone"]
+      }
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing form builder + submissions inbox.",
+      "routes": [
+        "GET /api/v1/forms",
+        "POST /api/v1/forms",
+        "GET /api/v1/forms/{form}",
+        "PATCH /api/v1/forms/{form}",
+        "DELETE /api/v1/forms/{form}",
+        "GET /api/v1/forms/{form}/versions",
+        "POST /api/v1/forms/{form}/versions",
+        "GET /api/v1/forms/{form}/versions/{version}",
+        "POST /api/v1/forms/{form}/versions/{version}/publish",
+        "POST /api/v1/forms/{form}/versions/{version}/rollback",
+        "POST /api/v1/forms/{form}/archive",
+        "GET /api/v1/forms/{form}/preview-url",
+        "GET /api/v1/form-submissions",
+        "GET /api/v1/form-submissions/{submission}",
+        "GET /api/v1/form-submissions/{submission}/download",
+        "GET /api/v1/form-submissions/export",
+        "GET /api/v1/form-field-types",
+        "GET /api/v1/form-handoffs"
+      ]
+    },
+    "central": {
+      "description": "PUBLIC form rendering + submission surface. Signed-session-URL guards save-and-resume. Rate limiting on POST to defend against form spam. Anti-CSRF via signed session token, not cookies (public form has no logged-in user).",
+      "routes": [
+        "GET /forms/{signature}",
+        "POST /forms/{signature}/start",
+        "GET /forms/{signature}/session/{sessionSignature}",
+        "PATCH /forms/{signature}/session/{sessionSignature}",
+        "POST /forms/{signature}/session/{sessionSignature}/submit",
+        "POST /forms/{signature}/session/{sessionSignature}/upload",
+        "GET /forms/resume/{resumeSignature}"
+      ]
+    }
+  }
+}

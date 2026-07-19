@@ -28,9 +28,7 @@
     "wave-3a"
   ],
   "priority": 52,
-  "providers": [
-    "Academorix\\Sports\\Season\\Providers\\SeasonServiceProvider"
-  ],
+  "providers": ["Academorix\\Sports\\Season\\Providers\\SeasonServiceProvider"],
   "files": [],
   "dependencies": [
     "foundation",
@@ -39,7 +37,8 @@
     "organization",
     "region",
     "branch",
-    "entitlements"
+    "entitlements",
+    "forms"
   ],
   "extendedBy": [],
   "planned_consumers": [
@@ -50,21 +49,14 @@
     "teams",
     "finance",
     "notifications",
-    "attendance"
+    "attendance",
+    "forms"
   ],
   "contributes": {
-    "traits": [
-      "BelongsToSeason",
-      "HasSeasonScope"
-    ],
-    "attributes": [
-      "AsSeasonListener"
-    ],
+    "traits": ["BelongsToSeason", "HasSeasonScope"],
+    "attributes": ["AsSeasonListener"],
     "blueprints": [],
-    "middleware": [
-      "season.resolve_active",
-      "season.enforce_registration_open"
-    ],
+    "middleware": ["season.resolve_active", "season.enforce_registration_open"],
     "events": [
       "SeasonCreated",
       "SeasonUpdated",
@@ -85,13 +77,8 @@
       "SeasonLateRegistrationOpened",
       "TenantDefaultSeasonSeeded"
     ],
-    "policies": [
-      "SeasonPolicy"
-    ],
-    "hooks": [
-      "SeedDefaultSeasonOnTenantProvisioned",
-      "PreventSeasonOrphansOnTenantErased"
-    ],
+    "policies": ["SeasonPolicy"],
+    "hooks": ["SeedDefaultSeasonOnTenantProvisioned", "PreventSeasonOrphansOnTenantErased"],
     "commands": [
       "season:list",
       "season:describe",
@@ -124,9 +111,7 @@
       "SeasonDatesShiftedNotification"
     ],
     "broadcasts": [],
-    "observers": [
-      "SeasonObserver"
-    ],
+    "observers": ["SeasonObserver"],
     "rules": [
       "valid_hex_color",
       "valid_date_range",
@@ -136,21 +121,11 @@
       "one_current_per_scope_tuple",
       "valid_sport_key"
     ],
-    "casts": [
-      "SeasonStatus",
-      "SeasonType"
-    ],
+    "casts": ["SeasonStatus", "SeasonType"],
     "views": [],
-    "lang": [
-      "season"
-    ],
-    "config": [
-      "season"
-    ],
-    "macros": [
-      "Request::activeSeason",
-      "Request::activeSeasonId"
-    ],
+    "lang": ["season"],
+    "config": ["season"],
+    "macros": ["Request::activeSeason", "Request::activeSeasonId"],
     "bindings": [
       "SeasonRepository",
       "SeasonProvisioner",
@@ -159,9 +134,7 @@
       "SeasonSeedingStrategy",
       "RegistrationWindowEvaluator"
     ],
-    "resources": [
-      "season"
-    ]
+    "resources": ["season"]
   },
   "hosts": {
     "tenant": {
@@ -185,10 +158,7 @@
     },
     "platform-admin": {
       "description": "Cross-tenant read for support tooling + a per-tenant seasons-summary dashboard endpoint for platform ops.",
-      "routes": [
-        "GET /api/v1/platform/seasons",
-        "GET /api/v1/platform/seasons/{season}"
-      ]
+      "routes": ["GET /api/v1/platform/seasons", "GET /api/v1/platform/seasons/{season}"]
     }
   }
 }

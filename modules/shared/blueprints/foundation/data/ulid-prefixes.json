@@ -1275,21 +1275,6 @@
       "entity": "AiEmbedding",
       "description": "Vector embedding for RAG search — source_type + source_id + vector. Tenant-namespaced."
     },
-    "lea_": {
-      "module": "crm-leads",
-      "entity": "Lead",
-      "description": "Pre-enrollment sales record — source + stage + owner_user_id + first_contact_at + converted_athlete_id?"
-    },
-    "lac_": {
-      "module": "crm-leads",
-      "entity": "LeadActivity",
-      "description": "Per-lead activity log entry — kind (call/email/note) + user + timestamp + description."
-    },
-    "tsk_": {
-      "module": "crm-leads",
-      "entity": "Task",
-      "description": "Follow-up task on a lead — assignee + due_at + status + description."
-    },
     "cnb_": {
       "module": "public-site",
       "entity": "ContentBlock",
@@ -1344,6 +1329,51 @@
       "module": "registrations",
       "entity": "Offer",
       "description": "Time-boxed offer created when a Registration reaches OFFERED (either directly or via waitlist auto-offer). expires_at + auto_decline_on_expire. On accept → creates athlete + athlete-enrollment + invoice atomically. On expire → transition Registration to EXPIRED + trigger next in line."
+    },
+    "ract_": {
+      "module": "registrations",
+      "entity": "RegistrationActivity",
+      "description": "Per-Registration activity log entry (call / email / sms / note / visit / stage_change / offer_* / auto_reminder). Actor + occurred_at + body + context JSONB. Feeds funnel timeline UI + reporting dashboards. Immutable body post-create — append-only timeline."
+    },
+    "rtsk_": {
+      "module": "registrations",
+      "entity": "RegistrationTask",
+      "description": "Follow-up task on a Registration. Assignee + due_at + status (open / done / cancelled). AlertOverdueTasksJob fires notifications throttled to 1/24h. `overdue` is a computed view (open + due_at < NOW), not a stored state."
+    },
+    "fom_": {
+      "module": "forms",
+      "entity": "Form",
+      "description": "Root form definition. One per tenant purpose (season registration, waiver update, medical questionnaire). Latest published FormVersion is what renders publicly."
+    },
+    "fmv_": {
+      "module": "forms",
+      "entity": "FormVersion",
+      "description": "Immutable snapshot of a Form schema at a point in time. Field definitions, validation rules, conditional logic, i18n label bundles. Version-locked once a submission exists against it."
+    },
+    "fms_": {
+      "module": "forms",
+      "entity": "FormSubmission",
+      "description": "One completed submission of a FormVersion. Answers JSONB (validated against the version schema). Signed session URL for save-and-resume. Handoff target module + entity FK (e.g. registrations::Registration) when the form is bound to a domain flow."
+    },
+    "ipd_": {
+      "module": "integrations",
+      "entity": "IntegrationProvider",
+      "description": "Allowlist catalog of every provider Academorix supports (stripe / paddle / pipedrive / hubspot / twilio / zoom / apple_wallet / google_wallet / etc). System rows only — added via #[AsIntegrationProvider] discovery + upsert seeder. Adding a provider is a code deploy."
+    },
+    "apk_": {
+      "module": "integrations",
+      "entity": "App",
+      "description": "Marketplace app schema (Lane 2). OAuth 2.0 client + allowed scopes + webhook events + optional admin UI iframe. Schema lands day-one for future marketplace; no third-party accepted until compliance + review process ships. See ADR 0025."
+    },
+    "ain_": {
+      "module": "integrations",
+      "entity": "AppInstallation",
+      "description": "Per-(tenant, app) install grant. Granted scopes (subset of App.allowed_scopes the tenant approved) + OAuth access-token hash. Uninstall soft-deletes."
+    },
+    "awh_": {
+      "module": "integrations",
+      "entity": "AppWebhookSubscription",
+      "description": "Per-install webhook subscription. Event name + endpoint URL + signing-secret hash. Enabled flag for soft disable."
     }
   },
   "renaming_history": [

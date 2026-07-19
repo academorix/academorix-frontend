@@ -17,6 +17,8 @@ use Academorix\ApiSdk\Resources\BaseSdkResource;
  * ## Peer Resources
  *
  * - OffersResource — peer resource for `offers`.
+ * - RegistrationActivitiesResource — peer resource for `registration-activities`.
+ * - RegistrationTasksResource — peer resource for `registration-tasks`.
  * - RegistrationsResource — peer resource for `registrations`.
  * - TrialBookingsResource — peer resource for `trial-bookings`.
  * - WaitlistEntriesResource — peer resource for `waitlist-entries`.
@@ -29,6 +31,8 @@ use Academorix\ApiSdk\Resources\BaseSdkResource;
 final class RegistrationsSdkResource extends BaseSdkResource
 {
     private ?Resources\OffersResource $offers = null;
+    private ?Resources\RegistrationActivitiesResource $registrationActivities = null;
+    private ?Resources\RegistrationTasksResource $registrationTasks = null;
     private ?Resources\RegistrationsResource $registrations = null;
     private ?Resources\TrialBookingsResource $trialBookings = null;
     private ?Resources\WaitlistEntriesResource $waitlistEntries = null;
@@ -39,6 +43,22 @@ final class RegistrationsSdkResource extends BaseSdkResource
     public function offers(): Resources\OffersResource
     {
         return $this->offers ??= new Resources\OffersResource($this->connector);
+    }
+
+    /**
+     * Access RegistrationActivities peer Resource.
+     */
+    public function registrationActivities(): Resources\RegistrationActivitiesResource
+    {
+        return $this->registrationActivities ??= new Resources\RegistrationActivitiesResource($this->connector);
+    }
+
+    /**
+     * Access RegistrationTasks peer Resource.
+     */
+    public function registrationTasks(): Resources\RegistrationTasksResource
+    {
+        return $this->registrationTasks ??= new Resources\RegistrationTasksResource($this->connector);
     }
 
     /**

@@ -1,7 +1,0 @@
-{
-  "id": "academorix://modules/crm-leads/commands",
-  "$version": 1,
-  "title": "crm-leads — Artisan commands",
-  "description": "Console commands this module ships.",
-  "commands": []
-}

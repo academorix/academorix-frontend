@@ -35,7 +35,7 @@ final class CreateRegistrationPayload extends Data
      * @param  string                       $athleteFirstName
      * @param  string                       $stage
      * @param  string                       $submittedAt
-     * @param  string                       $source                     web_form / referral / walk_in / cold_outreach / imported / crm_lead.
+     * @param  string                       $source                     web_form / referral / walk_in / cold_outreach / imported / external_crm.
      * @param  ?string                      $teamId                     Optional — a registration may target a program rather than a specific team.
      * @param  ?string                      $branchId
      * @param  ?string                      $applicantPhone
@@ -50,7 +50,7 @@ final class CreateRegistrationPayload extends Data
      * @param  ?string                      $convertedEnrollmentId
      * @param  ?string                      $convertedInvoiceId
      * @param  ?string                      $ownerUserId                Sales rep / admin assigned to move this through the funnel.
-     * @param  ?string                      $sourceRefId                When source=crm_lead — the growth::Lead ID.
+     * @param  ?string                      $sourceRefId                When source=external_crm — the external CRM's deal / opportunity ID.
      * @param  ?array                       $attribution                First-touch + last-touch marketing attribution captured at form submission.
      * @param  ?array                       $consentSnapshot            Consent flags at submission — photo / medical / marketing.
      * @param  ?string                      $notes
