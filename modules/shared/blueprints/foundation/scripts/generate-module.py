@@ -1111,16 +1111,32 @@ def _payload_type_to_php(kind: str) -> str:
 # Action emitter.
 # ---------------------------------------------------------------------------
 
+_AUDIENCE_SUBDIR = {
+    "platform-admin": "Platform",
+    "platform": "Platform",
+    "tenant": "Tenant",
+    "central": "Central",
+    "public": "Public",
+}
+
+
 def emit_action(m: Module, route: Route) -> tuple[str, str]:
-    """Emit one Action from a route. Returns (path, body)."""
-    ns = f"{m.ns_module_root}\\Actions"
+    """Emit one Action from a route. Returns (path, body).
+
+    Actions are split by audience: platform-admin → `Actions/Platform/`,
+    tenant → `Actions/Tenant/`, central → `Actions/Central/`, ...
+    Matches the pattern the real implementations use (see
+    `backend-packages/shared/activity/src/Actions/{Platform,Tenant}`).
+    """
+    subdir = _AUDIENCE_SUBDIR.get(route.audience, studly(route.audience or "Custom"))
+    ns = f"{m.ns_module_root}\\Actions\\{subdir}"
     op = route.op
     agg = studly(route.aggregate)
     verb = route.verb
     class_name = f"{studly(op) if op != 'custom' else studly(route.custom_name or 'custom')}{agg[:-1] if agg.endswith('s') else agg}Action"
 
     doc = _php_docblock([
-        f"`{verb} {route.path}` — {op} action.",
+        f"`{verb} {route.path}` — {op} action ({route.audience or 'unscoped'} audience).",
         "",
         f"Single-invoke controller. Wire via `#[AsController]` +",
         f"the appropriate HTTP-verb attribute from `Academorix\\Routing`.",
@@ -1152,7 +1168,477 @@ final class {class_name}
     }}
 }}
 """
-    return f"src/Actions/{class_name}.php", body
+    return f"src/Actions/{subdir}/{class_name}.php", body
+
+
+# ---------------------------------------------------------------------------
+# Enum emitter — one class per schema property with an `enum: [...]` closed set.
+# ---------------------------------------------------------------------------
+
+def emit_enums(m: Module, e: Entity) -> list[tuple[str, str]]:
+    """Emit `src/Enums/<Model><Field>.php` for every closed-set column."""
+    ns = f"{m.ns_module_root}\\Enums"
+    out: list[tuple[str, str]] = []
+    for col in e.columns:
+        if not col.is_enum or not col.enum_values:
+            continue
+        field_studly = studly(col.name)
+        class_name = f"{e.class_name}{field_studly}"
+        cases = []
+        for val in col.enum_values:
+            if not isinstance(val, str):
+                continue
+            case_name = studly(val)
+            cases.append(f"    case {case_name} = '{val}';")
+        if not cases:
+            continue
+        cases_body = "\n".join(cases)
+        doc = _php_docblock([
+            f"Closed-set enum for `{col.name}` on `{e.name}`.",
+            "",
+            _first_sentence(col.description, 200) or f"Backed enum — one case per allowed value.",
+            "",
+            f"@category {m.studly_name}",
+            "",
+            "@since    0.1.0",
+        ])
+        body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Academorix\\Enum\\Enum;
+
+{doc}
+enum {class_name}: string
+{{
+    use Enum;
+
+{cases_body}
+}}
+"""
+        out.append((f"src/Enums/{class_name}.php", body))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Exception emitter — from errors.json.
+# ---------------------------------------------------------------------------
+
+def emit_exception(m: Module, err_spec: dict[str, Any]) -> tuple[str, str] | None:
+    """Emit one exception class per entry in errors.json."""
+    code = err_spec.get("code")
+    if not code or not isinstance(code, str):
+        return None
+    ns = f"{m.ns_module_root}\\Exceptions"
+    last = code.split(".")[-1]
+    class_name = err_spec.get("name") or f"{studly(last)}Exception"
+    if not class_name.endswith("Exception"):
+        class_name += "Exception"
+    description = err_spec.get("description") or f"Raised when the domain rule `{code}` fires."
+    translation_key = err_spec.get("translation_key") or f"{m.name}::errors.{last}"
+    doc = _php_docblock([
+        _first_sentence(description, 200),
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Academorix\\Exceptions\\AcademorixException;
+
+{doc}
+final class {class_name} extends AcademorixException
+{{
+    /**
+     * Stable machine-readable error code emitted on the JSON envelope.
+     */
+    public const CODE = '{code}';
+
+    /**
+     * Translation key for the humanised message.
+     */
+    public const TRANSLATION_KEY = '{translation_key}';
+}}
+"""
+    return f"src/Exceptions/{class_name}.php", body
+
+
+# ---------------------------------------------------------------------------
+# Console command emitter — one class per commands[] entry.
+# ---------------------------------------------------------------------------
+
+def emit_console_command(m: Module, signature: str) -> tuple[str, str]:
+    """Emit `src/Console/<Name>Command.php` for one command entry."""
+    ns = f"{m.ns_module_root}\\Console"
+    parts = signature.split(":", 1)
+    if len(parts) == 2:
+        _, verb_part = parts
+    else:
+        verb_part = parts[0]
+    class_name = f"{studly(verb_part)}Command"
+    doc = _php_docblock([
+        f"`php artisan {signature}` — TODO(gen): describe what this command does.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Academorix\\Console\\Attributes\\AsCommand;
+use Academorix\\Console\\Console\\Commands\\BaseCommand;
+
+{doc}
+#[AsCommand(
+    name: '{signature}',
+    description: 'TODO(gen): one-line description shown by `artisan list`.',
+)]
+final class {class_name} extends BaseCommand
+{{
+    /**
+     * Execute the command.
+     *
+     * TODO(gen): wire the required services + implement the handler body.
+     */
+    public function handle(): int
+    {{
+        return self::SUCCESS;
+    }}
+}}
+"""
+    return f"src/Console/{class_name}.php", body
+
+
+# ---------------------------------------------------------------------------
+# Job emitter — one class per jobs[] entry.
+# ---------------------------------------------------------------------------
+
+def emit_job(m: Module, name: str) -> tuple[str, str]:
+    """Emit `src/Jobs/<Name>.php` for one queued job entry."""
+    ns = f"{m.ns_module_root}\\Jobs"
+    class_name = studly(name)
+    if not class_name.endswith("Job"):
+        class_name += "Job"
+    doc = _php_docblock([
+        f"Queued job — {class_name}.",
+        "",
+        f"TODO(gen): describe the job's trigger, payload, and idempotency",
+        f"contract. Emitted as a skeleton; hand-implement the `handle()` body.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Illuminate\\Bus\\Queueable;
+use Illuminate\\Contracts\\Queue\\ShouldQueue;
+use Illuminate\\Foundation\\Bus\\Dispatchable;
+use Illuminate\\Queue\\Attributes\\Queue;
+use Illuminate\\Queue\\Attributes\\Timeout;
+use Illuminate\\Queue\\Attributes\\Tries;
+use Illuminate\\Queue\\InteractsWithQueue;
+use Illuminate\\Queue\\SerializesModels;
+
+{doc}
+#[Queue('{m.name}')]
+#[Timeout(120)]
+#[Tries(3)]
+final class {class_name} implements ShouldQueue
+{{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    /**
+     * Execute the job.
+     *
+     * TODO(gen): implement the job body.
+     */
+    public function handle(): void
+    {{
+        // Hand-implement.
+    }}
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\\Throwable $e): void
+    {{
+        // TODO(gen): compensate or notify. Never `throw` from here.
+    }}
+}}
+"""
+    return f"src/Jobs/{class_name}.php", body
+
+
+# ---------------------------------------------------------------------------
+# Service emitter — one interface + one concrete per bindings[] entry.
+# ---------------------------------------------------------------------------
+
+def emit_service_interface(m: Module, name: str) -> tuple[str, str]:
+    """Emit `src/Contracts/Services/<Name>Interface.php`."""
+    ns = f"{m.ns_module_root}\\Contracts\\Services"
+    concrete_ns = f"{m.ns_module_root}\\Services"
+    class_name = studly(name)
+    iface_name = f"{class_name}Interface"
+    if class_name.endswith("Interface"):
+        iface_name = class_name
+        class_name = class_name[: -len("Interface")]
+    doc = _php_docblock([
+        f"Service contract for {class_name}.",
+        "",
+        f"Bound to the concrete via `#[Bind({class_name}::class)]`. Consumers",
+        f"type-hint this interface; tests bind a fake through the container.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use {concrete_ns}\\{class_name};
+use Illuminate\\Container\\Attributes\\Bind;
+
+{doc}
+#[Bind({class_name}::class)]
+interface {iface_name}
+{{
+    // TODO(gen): declare the domain methods this service exposes.
+}}
+"""
+    return f"src/Contracts/Services/{iface_name}.php", body
+
+
+def emit_service_concrete(m: Module, name: str) -> tuple[str, str]:
+    """Emit `src/Services/<Name>.php` — concrete service implementation."""
+    ns = f"{m.ns_module_root}\\Services"
+    iface_ns = f"{m.ns_module_root}\\Contracts\\Services"
+    class_name = studly(name)
+    iface_name = f"{class_name}Interface"
+    if class_name.endswith("Interface"):
+        iface_name = class_name
+        class_name = class_name[: -len("Interface")]
+    doc = _php_docblock([
+        f"Concrete service — {class_name}.",
+        "",
+        f"Implements {{@see {iface_name}}}. `#[Scoped]` because most",
+        f"services touch request state (current tenant, current user,",
+        f"correlation id) — see `.kiro/steering/octane-first-di.md`. If the",
+        f"service is provably stateless, promote to `#[Singleton]`.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use {iface_ns}\\{iface_name};
+use Illuminate\\Container\\Attributes\\Scoped;
+
+{doc}
+#[Scoped]
+final class {class_name} implements {iface_name}
+{{
+    // TODO(gen): implement the interface methods.
+}}
+"""
+    return f"src/Services/{class_name}.php", body
+
+
+# ---------------------------------------------------------------------------
+# Concerns (trait) emitter — one per traits[] entry.
+# ---------------------------------------------------------------------------
+
+def emit_trait(m: Module, name: str) -> tuple[str, str]:
+    """Emit `src/Concerns/<Name>.php` — trait skeleton."""
+    ns = f"{m.ns_module_root}\\Concerns"
+    trait_name = studly(name)
+    doc = _php_docblock([
+        f"Trait — {trait_name}.",
+        "",
+        f"TODO(gen): describe the compositional intent. Common patterns:",
+        f"BelongsTo<X> (adds an `$x_id` FK + `x()` relation), Has<X>",
+        f"(inverse — adds a `has<X>()` scope + a `<x>()` relation),",
+        f"Manages<X> (opinionated helpers that operate on <X> children).",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+{doc}
+trait {trait_name}
+{{
+    // TODO(gen): implement the trait's composition surface.
+}}
+"""
+    return f"src/Concerns/{trait_name}.php", body
+
+
+# ---------------------------------------------------------------------------
+# PHP attribute emitter — one per attributes[] entry.
+# ---------------------------------------------------------------------------
+
+def emit_php_attribute(m: Module, name: str) -> tuple[str, str]:
+    """Emit `src/Attributes/<Name>.php` — one PHP `#[Attribute]` class."""
+    ns = f"{m.ns_module_root}\\Attributes"
+    class_name = studly(name)
+    doc = _php_docblock([
+        f"PHP attribute — {class_name}.",
+        "",
+        f"TODO(gen): document the attribute's target + discovery pipeline.",
+        f"Follow the pattern of `#[AsAiTool]` / `#[LoggableActivity]` /",
+        f"`#[AsRepository]` — one attribute per compile-time-declarative",
+        f"concern, scanned at boot via Foundation's `DiscoversAttributes`",
+        f"seam, hydrated into a registry, consumed by a runner.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Attribute;
+
+{doc}
+#[Attribute(Attribute::TARGET_CLASS)]
+final readonly class {class_name}
+{{
+    // TODO(gen): declare the attribute's constructor parameters, if any.
+}}
+"""
+    return f"src/Attributes/{class_name}.php", body
+
+
+# ---------------------------------------------------------------------------
+# Data/Requests emitter — one write-payload DTO per create/update route.
+# ---------------------------------------------------------------------------
+
+def emit_request_data(m: Module, e: Entity, op: str) -> tuple[str, str]:
+    """Emit `src/Data/Requests/<Op><Model>RequestData.php`."""
+    ns = f"{m.ns_module_root}\\Data\\Requests"
+    op_studly = studly(op)
+    class_name = f"{op_studly}{e.class_name}RequestData"
+
+    audit_cols = {"id", "created_at", "updated_at", "deleted_at",
+                  "created_by", "updated_by", "deleted_by"}
+    write_cols = [c for c in e.columns if c.name not in audit_cols and c.name != "tenant_id"]
+
+    is_update = op == "update"
+
+    prop_lines = []
+    imports: set[str] = set()
+
+    for col in write_cols:
+        prop_name = camel(col.name)
+        php_type = ("?" if col.nullable or is_update else "") + col.php_type
+        default = " = null" if col.nullable or is_update else ""
+
+        attrs: list[str] = []
+        if col.php_type == "string":
+            attrs.append("StringType")
+            imports.add("Spatie\\LaravelData\\Attributes\\Validation\\StringType")
+        if col.min_length is not None:
+            attrs.append(f"Min({col.min_length})")
+            imports.add("Spatie\\LaravelData\\Attributes\\Validation\\Min")
+        if col.max_length is not None:
+            attrs.append(f"Max({col.max_length})")
+            imports.add("Spatie\\LaravelData\\Attributes\\Validation\\Max")
+        if col.pattern:
+            escaped = col.pattern.replace("\\", "\\\\").replace("'", "\\'")
+            attrs.append(f"Regex('/{escaped}/')")
+            imports.add("Spatie\\LaravelData\\Attributes\\Validation\\Regex")
+        attrs_block = f"        #[{', '.join(attrs)}]\n" if attrs else ""
+        prop_lines.append(f"{attrs_block}        public {php_type} ${prop_name}{default},")
+
+    props_block = "\n\n".join(prop_lines) if prop_lines else ""
+    imports_block = "\n".join(f"use {i};" for i in sorted(imports))
+
+    doc = _php_docblock([
+        f"Server-side {op} request DTO for `{e.class_name}`.",
+        "",
+        f"Consumed by the corresponding Action; validated on construction",
+        f"through Spatie Data's property-attribute pipeline (no `rules()`",
+        f"method). See `.kiro/steering/data-first.md`.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+
+    return f"src/Data/Requests/{class_name}.php", f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Spatie\\LaravelData\\Attributes\\MapInputName;
+use Spatie\\LaravelData\\Data;
+use Spatie\\LaravelData\\Mappers\\SnakeCaseMapper;
+{imports_block}
+
+{doc}
+#[MapInputName(SnakeCaseMapper::class)]
+final class {class_name} extends Data
+{{
+    public function __construct(
+{props_block}
+    ) {{
+    }}
+}}
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -1280,21 +1766,80 @@ def write_module(m: Module, out_root: Path, *, force: bool, dry_run: bool) -> tu
         path, body = emit_event(m, event)
         files.append((path, body))
 
-    # Actions from routes (dedupe by class name).
+    # Actions from routes (audience-split, dedupe by class name).
     seen_actions: set[str] = set()
     for route in m.routes:
-        if route.op == "custom":
+        if route.op == "custom" or route.op in ("create", "update", "delete", "list", "show"):
             path, body = emit_action(m, route)
             if path in seen_actions:
                 continue
             seen_actions.add(path)
             files.append((path, body))
-        elif route.op in ("create", "update", "delete", "list", "show"):
-            path, body = emit_action(m, route)
-            if path in seen_actions:
+
+    # Enums — one per closed-set column across every entity.
+    for e in m.entities:
+        for enum_path, enum_body in emit_enums(m, e):
+            files.append((enum_path, enum_body))
+
+    # Request DTOs — one per create/update route per entity.
+    for e in m.entities:
+        for op in ("create", "update"):
+            has_op = any(
+                r.op == op and r.aggregate == e.aggregate for r in m.routes
+            )
+            if not has_op:
                 continue
-            seen_actions.add(path)
+            path, body = emit_request_data(m, e, op)
             files.append((path, body))
+
+    # Exceptions from errors.json.
+    errors_raw = _load_aux(module_dir, "errors.json")
+    errors_list = errors_raw.get("errors") or errors_raw.get("classes") or []
+    for err in errors_list:
+        if not isinstance(err, dict):
+            continue
+        emitted = emit_exception(m, err)
+        if emitted is None:
+            continue
+        files.append(emitted)
+
+    # Console commands from module.json → contributes.commands.
+    module_json_path = module_dir / "module.json"
+    module_json = json.loads(module_json_path.read_text())
+    contributes = module_json.get("contributes", {}) or {}
+    for cmd_signature in contributes.get("commands", []) or []:
+        if not isinstance(cmd_signature, str):
+            continue
+        files.append(emit_console_command(m, cmd_signature))
+
+    # Jobs from module.json → contributes.jobs.
+    for job_name in contributes.get("jobs", []) or []:
+        if not isinstance(job_name, str):
+            continue
+        files.append(emit_job(m, job_name))
+
+    # Services + service contracts from module.json → contributes.bindings.
+    # Skip anything ending in `Repository` / `RepositoryInterface` — already
+    # emitted per entity from schemas.
+    for binding_name in contributes.get("bindings", []) or []:
+        if not isinstance(binding_name, str):
+            continue
+        if binding_name.endswith("Repository") or binding_name.endswith("RepositoryInterface"):
+            continue
+        files.append(emit_service_interface(m, binding_name))
+        files.append(emit_service_concrete(m, binding_name))
+
+    # Traits (concerns) from module.json → contributes.traits.
+    for trait_name in contributes.get("traits", []) or []:
+        if not isinstance(trait_name, str):
+            continue
+        files.append(emit_trait(m, trait_name))
+
+    # PHP attributes from module.json → contributes.attributes.
+    for attr_name in contributes.get("attributes", []) or []:
+        if not isinstance(attr_name, str):
+            continue
+        files.append(emit_php_attribute(m, attr_name))
 
     # Test scaffolds.
     files.append(("tests/Pest.php", emit_pest_bootstrap(m)))
