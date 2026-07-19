@@ -1175,6 +1175,46 @@ final class {class_name}
 # Enum emitter — one class per schema property with an `enum: [...]` closed set.
 # ---------------------------------------------------------------------------
 
+# PHP-reserved words that cannot be used as enum case labels. `Class` is
+# rejected outright by the parser (reserved for `::class` name fetching);
+# the rest are class-constant reserved words (T_HALT_COMPILER, etc.) or
+# highly likely to collide with future PHP syntax. When a blueprint uses
+# one of these strings as an enum value we prefix the case label to
+# disambiguate (e.g. `class` -> `ClassKind`, `default` -> `DefaultKind`).
+# The backing wire value stays untouched so external callers are
+# unaffected.
+_PHP_RESERVED_CASE_NAMES = frozenset({
+    "class", "default", "true", "false", "null", "self", "static",
+    "parent", "list", "match", "readonly", "iterable",
+})
+
+
+def _safe_case_name(raw: str, field_studly: str) -> str:
+    """Return a PHP-legal enum case label.
+
+    Handles the two illegal shapes we've seen in real blueprints:
+
+    - Reserved word: `class` on a `team_type` column would emit
+      `case Class` (parser rejects it). We suffix with the field's
+      studly form so the label reads meaningfully.
+    - Digit-first: numeric values like `1.0.2` studly-normalise to
+      `102` which cannot start a PHP identifier. We prefix with `V`
+      (version / value) so the label is legal (`V102`).
+
+    The backing wire value stays untouched so external callers are
+    unaffected in either case.
+    """
+    case_name = studly(raw)
+    if not case_name:
+        # Should never happen for a real enum value; guard anyway.
+        return f"Empty{field_studly}"
+    if raw.lower() in _PHP_RESERVED_CASE_NAMES:
+        return f"{case_name}{field_studly}"
+    if case_name[0].isdigit():
+        return f"V{case_name}"
+    return case_name
+
+
 def emit_enums(m: Module, e: Entity) -> list[tuple[str, str]]:
     """Emit `src/Enums/<Model><Field>.php` for every closed-set column."""
     ns = f"{m.ns_module_root}\\Enums"
@@ -1188,7 +1228,7 @@ def emit_enums(m: Module, e: Entity) -> list[tuple[str, str]]:
         for val in col.enum_values:
             if not isinstance(val, str):
                 continue
-            case_name = studly(val)
+            case_name = _safe_case_name(val, field_studly)
             cases.append(f"    case {case_name} = '{val}';")
         if not cases:
             continue
