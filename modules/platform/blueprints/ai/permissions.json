@@ -2,6 +2,236 @@
   "id": "academorix://modules/ai/permissions",
   "$version": 1,
   "title": "ai — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Ai\\Database\\Seeders\\AiPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences with persona-role binding. Tenant plane — anyone with the appropriate role for a persona can start conversations. Platform plane — PII-masked audit only.",
+  "permissions": [
+    {
+      "name": "ai.conversations.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "ai.conversations.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "ai.conversations.start",
+      "guard": "sanctum",
+      "description": "Gated by ai.persona-role middleware — persona checked against caller's roles.",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "ai.conversations.archive",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "ai.conversations.delete",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    { "name": "ai.conversations.flag", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+
+    {
+      "name": "ai.personas.CoachAssistant",
+      "guard": "sanctum",
+      "description": "Persona binding — required to start CoachAssistant conversations.",
+      "seededOn": ["coach", "head_coach"]
+    },
+    {
+      "name": "ai.personas.ParentAssistant",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    { "name": "ai.personas.AdminAssistant", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "ai.personas.FinanceAssistant", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "ai.personas.HeadCoachAssistant",
+      "guard": "sanctum",
+      "seededOn": ["head_coach", "admin"]
+    },
+    {
+      "name": "ai.personas.MedicalAssistant",
+      "guard": "sanctum",
+      "description": "Medical role only. Never autonomous. Always draft-then-confirm.",
+      "seededOn": ["medical", "admin"]
+    },
+    {
+      "name": "ai.personas.ReceptionAssistant",
+      "guard": "sanctum",
+      "seededOn": ["reception", "admin"]
+    },
+    { "name": "ai.personas.HrAssistant", "guard": "sanctum", "seededOn": ["hr", "admin"] },
+
+    {
+      "name": "ai.runs.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "ai.runs.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "ai.runs.cancel",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+
+    {
+      "name": "ai.tool-calls.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "ai.tool-calls.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "medical",
+        "reception",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+
+    {
+      "name": "ai.tools.write-back",
+      "guard": "sanctum",
+      "description": "Allow AI write-back tools (draft mode). Human confirmation still required.",
+      "seededOn": ["coach", "head_coach", "hr", "medical", "admin", "owner"]
+    },
+    {
+      "name": "ai.tools.write-back-autonomous",
+      "guard": "sanctum",
+      "description": "P1 gate. Allow AI to execute write-back WITHOUT human confirmation. Enterprise only.",
+      "seededOn": ["admin", "owner"]
+    },
+
+    {
+      "name": "platform.ai.conversations.viewAny",
+      "guard": "platform_admin",
+      "description": "PII-masked. Prompts + responses redacted.",
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "platform.ai.runs.audit",
+      "guard": "platform_admin",
+      "description": "Token/cost reconciliation. No prompt/response bodies.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.ai.tool-calls.audit",
+      "guard": "platform_admin",
+      "description": "Tool-abuse detection. tool_name + status only.",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
 }

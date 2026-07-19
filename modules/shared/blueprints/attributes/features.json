@@ -2,6 +2,45 @@
   "id": "academorix://modules/attributes/features",
   "$version": 1,
   "title": "attributes — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "attributes.core",
+      "displayName": "Attributes core",
+      "description": "Master feature key. The EAV substrate + host trait resolution. On every tier because every sport-aware module (athlete-enrollment, progress, performance) depends on it.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "attributes.custom_definitions",
+      "displayName": "Custom attribute definitions",
+      "description": "Medium+. Tenants can define custom AttributeDefinitions beyond the seeded platform defaults. Small tier uses seeded defaults only (curated per business_type).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "attributes.custom_sets",
+      "displayName": "Custom attribute sets",
+      "description": "Medium+. Tenants can compose their own AttributeSets from custom + seeded definitions. Small tier uses platform-default sets per sport_key.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "attributes.set_versioning",
+      "displayName": "Manual set versioning",
+      "description": "Medium+. Tenants can explicitly version breaking changes to sets. Small tier: breaking changes force new set (no version chain).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "attributes.filterable_projection",
+      "displayName": "Filterable JSONB projections",
+      "description": "Enterprise. Tenant admin can nominate attributes for projection into generated columns / search index for fast list filtering. Small/Medium: filter on typed columns only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

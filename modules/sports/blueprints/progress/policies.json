@@ -2,6 +2,191 @@
   "id": "academorix://modules/progress/policies",
   "$version": 1,
   "title": "progress — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Six policies — one per aggregate. CoachNote visibility widening is a P1 authorization gate (once shared, cannot be un-shared). GradingResult writes gated to examiner_coach + admin.",
+  "policies": [
+    {
+      "model": "ProgressAssessment",
+      "class": "Academorix\\Sports\\Progress\\Policies\\ProgressAssessmentPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "progress.assessments.viewAny",
+          "scope": "admin + hr + coach for their sessions; guardian sees .own for their athletes"
+        },
+        {
+          "action": "view",
+          "permission": "progress.assessments.view",
+          "scope": "same + .own for the athlete's guardian"
+        },
+        {
+          "action": "create",
+          "permission": "progress.assessments.create",
+          "scope": "coach + head_coach for their assigned teams; admin + hr"
+        },
+        {
+          "action": "update",
+          "permission": "progress.assessments.update",
+          "scope": "authoring coach within 48h; admin + hr with reason (post-window override)"
+        },
+        {
+          "action": "delete",
+          "permission": "progress.assessments.delete",
+          "scope": "admin + owner only. Soft-delete preserves for historic-render"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.progress.assessments.viewAny",
+          "guard": "platform_admin"
+        }
+      ]
+    },
+    {
+      "model": "ProgressCard",
+      "class": "Academorix\\Sports\\Progress\\Policies\\ProgressCardPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "progress.cards.viewAny",
+          "scope": "same as assessment"
+        },
+        {
+          "action": "view",
+          "permission": "progress.cards.view",
+          "scope": "same + .own for athlete's guardian"
+        },
+        {
+          "action": "regenerate",
+          "permission": "progress.cards.regenerate",
+          "scope": "authoring coach + admin"
+        },
+        {
+          "action": "share",
+          "permission": "progress.cards.share",
+          "scope": "authoring coach + admin + guardian for .own; expiry required, no permanent shares"
+        },
+        {
+          "action": "revokeShare",
+          "permission": "progress.cards.revoke-share",
+          "scope": "sharer + admin"
+        }
+      ]
+    },
+    {
+      "model": "CoachNote",
+      "class": "Academorix\\Sports\\Progress\\Policies\\CoachNotePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "progress.coach-notes.viewAny",
+          "scope": "coach + head_coach + admin + hr. Guardians see only visibility IN ('shared_with_parent', 'shared_with_both')"
+        },
+        {
+          "action": "view",
+          "permission": "progress.coach-notes.view",
+          "scope": "authoring coach; head_coach on same team; admin + hr; guardian + athlete only when visibility permits"
+        },
+        {
+          "action": "create",
+          "permission": "progress.coach-notes.create",
+          "scope": "coach + head_coach on their assigned athletes"
+        },
+        {
+          "action": "revise",
+          "permission": "progress.coach-notes.revise",
+          "scope": "authoring coach + head_coach. Original preserved via revision_of_id"
+        },
+        {
+          "action": "widen",
+          "permission": "progress.coach-notes.widen-visibility",
+          "scope": "P1 gate — authoring coach + head_coach + admin. Never can narrow"
+        },
+        {
+          "action": "delete",
+          "permission": "progress.coach-notes.delete",
+          "scope": "admin + owner only. Reason required"
+        }
+      ]
+    },
+    {
+      "model": "BeltRank",
+      "class": "Academorix\\Sports\\Progress\\Policies\\BeltRankPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "progress.belt-ranks.viewAny",
+          "scope": "any authenticated user — belt catalogue is reference data"
+        },
+        { "action": "view", "permission": "progress.belt-ranks.view" },
+        {
+          "action": "create",
+          "permission": "progress.belt-ranks.create",
+          "scope": "admin + owner. Tenant overrides platform defaults"
+        },
+        {
+          "action": "update",
+          "permission": "progress.belt-ranks.update",
+          "scope": "admin + owner. Refused if any GradingResult references and rank_order would change"
+        },
+        {
+          "action": "delete",
+          "permission": "progress.belt-ranks.delete",
+          "scope": "admin + owner. Refused when referenced by any GradingResult"
+        }
+      ]
+    },
+    {
+      "model": "GradingEvent",
+      "class": "Academorix\\Sports\\Progress\\Policies\\GradingEventPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "progress.grading-events.viewAny",
+          "scope": "coach + head_coach + admin + hr + branch_manager"
+        },
+        { "action": "view", "permission": "progress.grading-events.view" },
+        {
+          "action": "create",
+          "permission": "progress.grading-events.create",
+          "scope": "head_coach + admin. Examiner must be certified for the belt track"
+        },
+        {
+          "action": "update",
+          "permission": "progress.grading-events.update",
+          "scope": "creating head_coach + admin. Only pre-completion"
+        },
+        {
+          "action": "cancel",
+          "permission": "progress.grading-events.cancel",
+          "scope": "admin + head_coach. Notifies candidates"
+        }
+      ]
+    },
+    {
+      "model": "GradingResult",
+      "class": "Academorix\\Sports\\Progress\\Policies\\GradingResultPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "progress.grading-results.viewAny",
+          "scope": "coach + head_coach + admin + hr; guardian sees .own for their athletes"
+        },
+        { "action": "view", "permission": "progress.grading-results.view" },
+        {
+          "action": "create",
+          "permission": "progress.grading-results.create",
+          "scope": "examiner_coach + head_coach + admin. Belt progression validated (to_belt.rank_order > from_belt.rank_order)"
+        },
+        {
+          "action": "update",
+          "permission": "progress.grading-results.update",
+          "scope": "examiner_coach + admin. Within 48h; result flip beyond that requires reason"
+        },
+        {
+          "action": "delete",
+          "permission": "progress.grading-results.delete",
+          "scope": "admin + owner. Refused when result='pass' AND BeltRankPromoted event has fired"
+        }
+      ]
+    }
+  ]
 }

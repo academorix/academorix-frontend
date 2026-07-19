@@ -2,6 +2,182 @@
   "id": "academorix://modules/medical/policies",
   "$version": 1,
   "title": "medical — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Six policies with STRICT RBAC. Medical role has full access; coaches see redacted summaries only; guardians see .own. Every read of encrypted fields (notes / provider names / medication names) requires the medical role — no coach-level bypass.",
+  "policies": [
+    {
+      "model": "MedicalRecord",
+      "class": "Academorix\\Sports\\Medical\\Policies\\MedicalRecordPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "medical.records.viewAny",
+          "scope": "medical + admin + owner ONLY"
+        },
+        { "action": "view", "permission": "medical.records.view" },
+        {
+          "action": "viewSummary",
+          "permission": "medical.records.view.own",
+          "scope": "guardian + adult-athlete .own — returns non-encrypted summary only"
+        },
+        {
+          "action": "create",
+          "permission": "medical.records.create",
+          "scope": "medical + admin. One per athlete via partial unique"
+        },
+        { "action": "update", "permission": "medical.records.update", "scope": "medical + admin" },
+        {
+          "action": "delete",
+          "permission": "medical.records.delete",
+          "scope": "admin + owner. Refused during active LegalHold. Archives to cold storage rather than hard-delete"
+        }
+      ]
+    },
+    {
+      "model": "Injury",
+      "class": "Academorix\\Sports\\Medical\\Policies\\InjuryPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "medical.injuries.viewAny",
+          "scope": "medical + admin + safeguarding_officer"
+        },
+        {
+          "action": "viewAnyCoach",
+          "permission": "medical.injuries.viewAny.coach",
+          "scope": "coach + head_coach — REDACTED (body_part + status only, no mechanism or notes)"
+        },
+        {
+          "action": "view",
+          "permission": "medical.injuries.view",
+          "scope": "medical + admin ONLY — full detail incl. notes_encrypted"
+        },
+        {
+          "action": "viewSummary",
+          "permission": "medical.injuries.view.summary",
+          "scope": "coach / hr / branch_manager / guardian / athlete — redacted (body_part / status / cleared_at only)"
+        },
+        {
+          "action": "create",
+          "permission": "medical.injuries.create",
+          "scope": "medical + admin + coach + head_coach — coach reports; medical role verifies"
+        },
+        {
+          "action": "update",
+          "permission": "medical.injuries.update",
+          "scope": "medical + admin ONLY"
+        },
+        {
+          "action": "clear",
+          "permission": "medical.injuries.clear",
+          "scope": "medical + admin ONLY — fires ReturnToPlayCleared event; removes eligibility gate"
+        },
+        { "action": "delete", "permission": "medical.injuries.delete", "scope": "admin + owner" }
+      ]
+    },
+    {
+      "model": "Treatment",
+      "class": "Academorix\\Sports\\Medical\\Policies\\TreatmentPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "medical.treatments.viewAny",
+          "scope": "medical + admin ONLY"
+        },
+        { "action": "view", "permission": "medical.treatments.view" },
+        { "action": "create", "permission": "medical.treatments.create" },
+        { "action": "update", "permission": "medical.treatments.update" },
+        {
+          "action": "delete",
+          "permission": "medical.treatments.delete",
+          "scope": "admin + owner. Encrypted fields wiped on delete"
+        }
+      ]
+    },
+    {
+      "model": "MedicalClearance",
+      "class": "Academorix\\Sports\\Medical\\Policies\\MedicalClearancePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "medical.clearances.viewAny",
+          "scope": "medical + admin + hr"
+        },
+        {
+          "action": "viewAnyCoach",
+          "permission": "medical.clearances.viewAny.coach",
+          "scope": "coach — sees valid/expired boolean + expiry date only"
+        },
+        {
+          "action": "view",
+          "permission": "medical.clearances.view",
+          "scope": "medical + admin + hr; guardian .own"
+        },
+        {
+          "action": "issue",
+          "permission": "medical.clearances.issue",
+          "scope": "medical + admin — issues cert with expiry"
+        },
+        {
+          "action": "revoke",
+          "permission": "medical.clearances.revoke",
+          "scope": "medical + admin — closes eligibility gate for the athlete"
+        },
+        { "action": "renew", "permission": "medical.clearances.renew" }
+      ]
+    },
+    {
+      "model": "Allergy",
+      "class": "Academorix\\Sports\\Medical\\Policies\\AllergyPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "medical.allergies.viewAny",
+          "scope": "medical + admin — full including notes"
+        },
+        {
+          "action": "viewAnyCoach",
+          "permission": "medical.allergies.viewAny.coach",
+          "scope": "coach — allergen + severity ONLY, notes redacted"
+        },
+        {
+          "action": "viewAnyOwn",
+          "permission": "medical.allergies.viewAny.own",
+          "scope": "guardian + athlete .own"
+        },
+        { "action": "view", "permission": "medical.allergies.view" },
+        {
+          "action": "create",
+          "permission": "medical.allergies.create",
+          "scope": "medical + admin + guardian (self-report path)"
+        },
+        { "action": "update", "permission": "medical.allergies.update" },
+        { "action": "delete", "permission": "medical.allergies.delete" }
+      ]
+    },
+    {
+      "model": "Medication",
+      "class": "Academorix\\Sports\\Medical\\Policies\\MedicationPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "medical.medications.viewAny",
+          "scope": "medical + admin ONLY"
+        },
+        {
+          "action": "viewAnyOwn",
+          "permission": "medical.medications.viewAny.own",
+          "scope": "guardian .own — encrypted fields NOT decrypted for guardians"
+        },
+        { "action": "view", "permission": "medical.medications.view" },
+        { "action": "create", "permission": "medical.medications.create" },
+        { "action": "update", "permission": "medical.medications.update" },
+        {
+          "action": "discontinue",
+          "permission": "medical.medications.discontinue",
+          "scope": "medical + admin — sets status=discontinued, keeps history"
+        },
+        { "action": "delete", "permission": "medical.medications.delete", "scope": "admin + owner" }
+      ]
+    }
+  ]
 }

@@ -2,6 +2,230 @@
   "id": "academorix://modules/progress/permissions",
   "$version": 1,
   "title": "progress — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\Progress\\Database\\Seeders\\ProgressPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences. Tenant plane (sanctum) — coaches author, head coaches + admins moderate, guardians view. Platform plane (platform_admin) — support tooling only, PII-masked.",
+  "permissions": [
+    {
+      "name": "progress.assessments.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "progress.assessments.viewAny.coach",
+      "guard": "sanctum",
+      "description": "Coach-scoped listing — sees assessments for athletes on assigned teams.",
+      "seededOn": ["coach", "head_coach"]
+    },
+    {
+      "name": "progress.assessments.viewAny.own",
+      "guard": "sanctum",
+      "description": "Guardian + adult-athlete scoped listing.",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "progress.assessments.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "progress.assessments.view.own",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "progress.assessments.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach", "hr", "admin", "owner"]
+    },
+    {
+      "name": "progress.assessments.update",
+      "guard": "sanctum",
+      "description": "48h post-assessment window; beyond that requires post-window-override.",
+      "seededOn": ["coach", "head_coach", "hr", "admin", "owner"]
+    },
+    { "name": "progress.assessments.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "progress.assessments.post-window-override",
+      "guard": "sanctum",
+      "description": "Bypass the 48h correction window with documented reason.",
+      "seededOn": ["hr", "admin", "owner"]
+    },
+
+    {
+      "name": "progress.cards.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "progress.cards.viewAny.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "progress.cards.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "branch_manager", "admin", "owner"]
+    },
+    { "name": "progress.cards.view.own", "guard": "sanctum", "seededOn": ["athlete", "guardian"] },
+    {
+      "name": "progress.cards.regenerate",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach", "admin"]
+    },
+    {
+      "name": "progress.cards.share",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach", "admin", "guardian"]
+    },
+    {
+      "name": "progress.cards.revoke-share",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach", "admin"]
+    },
+
+    {
+      "name": "progress.coach-notes.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "head_coach", "admin", "owner"]
+    },
+    {
+      "name": "progress.coach-notes.viewAny.own",
+      "guard": "sanctum",
+      "description": "Guardian + athlete see notes with shared_with_* visibility only.",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "progress.coach-notes.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "coach", "head_coach", "admin", "owner"]
+    },
+    {
+      "name": "progress.coach-notes.view.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "progress.coach-notes.create",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach"]
+    },
+    {
+      "name": "progress.coach-notes.revise",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach"]
+    },
+    {
+      "name": "progress.coach-notes.widen-visibility",
+      "guard": "sanctum",
+      "description": "P1 gate — visibility widening is irreversible.",
+      "seededOn": ["coach", "head_coach", "admin", "owner"]
+    },
+    { "name": "progress.coach-notes.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+
+    {
+      "name": "progress.belt-ranks.viewAny",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    {
+      "name": "progress.belt-ranks.view",
+      "guard": "sanctum",
+      "seededOn": [
+        "athlete",
+        "guardian",
+        "coach",
+        "head_coach",
+        "hr",
+        "branch_manager",
+        "admin",
+        "owner"
+      ]
+    },
+    { "name": "progress.belt-ranks.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "progress.belt-ranks.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "progress.belt-ranks.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+
+    {
+      "name": "progress.grading-events.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "progress.grading-events.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "progress.grading-events.create",
+      "guard": "sanctum",
+      "seededOn": ["head_coach", "admin", "owner"]
+    },
+    {
+      "name": "progress.grading-events.update",
+      "guard": "sanctum",
+      "seededOn": ["head_coach", "admin", "owner"]
+    },
+    {
+      "name": "progress.grading-events.cancel",
+      "guard": "sanctum",
+      "seededOn": ["head_coach", "admin", "owner"]
+    },
+
+    {
+      "name": "progress.grading-results.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "progress.grading-results.viewAny.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "progress.grading-results.view",
+      "guard": "sanctum",
+      "seededOn": ["coach", "head_coach", "hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "progress.grading-results.view.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "progress.grading-results.create",
+      "guard": "sanctum",
+      "seededOn": ["head_coach", "admin", "owner"]
+    },
+    {
+      "name": "progress.grading-results.update",
+      "guard": "sanctum",
+      "seededOn": ["head_coach", "admin", "owner"]
+    },
+    {
+      "name": "progress.grading-results.delete",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+
+    {
+      "name": "platform.progress.assessments.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.progress.grading-events.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
+  ]
 }

@@ -1,7 +1,165 @@
 {
   "id": "academorix://modules/people/events",
   "$version": 1,
-  "title": "people — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "people — published events",
+  "namespace": "Academorix\\People\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "CENTRAL-plane events — dispatched on the central connection's queue. LinkRequested is the load-bearing signal that fires guardian consent notifications. LinkApproved triggers tenant-side prefill of the local Athlete/Staff record with the consented shareable subset. PersonVerified elevates the identity so future lookups return verified=true; frozen identities refuse all new link requests.",
+  "events": [
+    {
+      "name": "PersonRegistered",
+      "class": "Academorix\\People\\Events\\PersonRegistered",
+      "trigger": "New PersonIdentity committed with academorix_id assigned. Fires on both self-registration (via central signup) and admin creation.",
+      "queue": "people",
+      "consumers": [
+        "audit::WriteToAuditLog (central retention: 10 years)",
+        "activity::WriteToActivityLog (central)"
+      ],
+      "payload": {
+        "person_identity_id": "ULID (pin_*)",
+        "academorix_id": "string (AX-XXXX-YYYY)",
+        "registered_at": "ISO 8601",
+        "registered_by_user_id": "ULID | null (self-registered when null)"
+      }
+    },
+    {
+      "name": "PersonVerified",
+      "class": "Academorix\\People\\Events\\PersonVerified",
+      "trigger": "PersonIdentity.verification_status flipped to 'verified' by platform staff. All active tenant link references gain verified=true in their next resolution.",
+      "queue": "people",
+      "consumers": [
+        "audit::WriteToAuditLog (central retention: 10 years)",
+        "notifications::DispatchPersonVerifiedNotification (person owner)",
+        "people::PropagateVerificationJob (all active tenant references)"
+      ],
+      "payload": {
+        "person_identity_id": "ULID",
+        "verified_at": "ISO 8601",
+        "verified_by_platform_user_id": "ULID (pun_*)",
+        "verification_method": "'passport_document' | 'national_id' | 'attested_by_original_tenant' | 'admin_manual'"
+      }
+    },
+    {
+      "name": "PersonUpdated",
+      "class": "Academorix\\People\\Events\\PersonUpdated",
+      "trigger": "PersonIdentity mutated (legal_name / dob / nationality). Notifies all tenants with active links so they can refresh their local prefill.",
+      "queue": "people",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchPersonUpdatedNotification (all tenants with active links)"
+      ],
+      "payload": {
+        "person_identity_id": "ULID",
+        "changed_fields": "string[]",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "LinkRequested",
+      "class": "Academorix\\People\\Events\\LinkRequested",
+      "trigger": "P1 event. Tenant filed a TenantLinkRequest for a PersonIdentity. Fires consent notification to guardians via central-URL.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (central retention: 7 years)",
+        "notifications::DispatchLinkConsentRequestedNotification (guardian or person owner, cannot-opt-out)"
+      ],
+      "payload": {
+        "tenant_link_request_id": "ULID (tlr_*)",
+        "person_identity_id": "ULID",
+        "requesting_tenant_id": "ULID (ten_*)",
+        "purpose": "'enroll_athlete' | 'hire_staff' | 'register_guardian'",
+        "requester_user_id": "ULID | null",
+        "signature": "string",
+        "expires_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LinkApproved",
+      "class": "Academorix\\People\\Events\\LinkApproved",
+      "trigger": "P1 event. Guardian approved a TenantLinkRequest + selected shareable fields. Cascades to the requesting tenant's local Athlete/Staff prefill.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (central retention: 7 years)",
+        "notifications::DispatchLinkApprovedNotification (requester + guardian)",
+        "people::PropagateLinkPrefillToTenant (async cross-tenant push of consented fields)"
+      ],
+      "payload": {
+        "tenant_link_request_id": "ULID",
+        "person_identity_id": "ULID",
+        "requesting_tenant_id": "ULID",
+        "consenting_guardian_person_identity_id": "ULID | null (null when the person is an adult approving for themselves)",
+        "shared_fields": "string[]",
+        "approved_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LinkDeclined",
+      "class": "Academorix\\People\\Events\\LinkDeclined",
+      "trigger": "Guardian declined a TenantLinkRequest. Tenant may proceed with fresh local Athlete/Staff without link.",
+      "queue": "people",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchLinkDeclinedNotification (requester)"
+      ],
+      "payload": {
+        "tenant_link_request_id": "ULID",
+        "person_identity_id": "ULID",
+        "requesting_tenant_id": "ULID",
+        "declined_at": "ISO 8601",
+        "declined_reason": "string | null"
+      }
+    },
+    {
+      "name": "LinkRevoked",
+      "class": "Academorix\\People\\Events\\LinkRevoked",
+      "trigger": "P1 event. Guardian revoked a previously-approved link. Stops future sync but preserves what the receiving tenant already created (per GDPR + local retention).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (central retention: 10 years)",
+        "notifications::DispatchLinkRevokedNotification (requesting tenant admin + guardian, cannot-opt-out)",
+        "people::MarkTenantReferenceStaleJob (async signal to tenant DB — local data preserved)"
+      ],
+      "payload": {
+        "tenant_link_request_id": "ULID",
+        "person_identity_id": "ULID",
+        "affected_tenant_id": "ULID",
+        "revoked_at": "ISO 8601",
+        "revoked_by_person_identity_id": "ULID",
+        "revoked_reason": "string | null"
+      }
+    },
+    {
+      "name": "GuardianLinkAdded",
+      "class": "Academorix\\People\\Events\\GuardianLinkAdded",
+      "trigger": "New PersonGuardianLink committed between two PersonIdentities. Cross-tenant portable — every tenant with either identity linked sees the guardian relationship on next resolution.",
+      "queue": "people",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchGuardianLinkAddedNotification (guardian + minor owners)"
+      ],
+      "payload": {
+        "guardian_link_id": "ULID (pgl_*)",
+        "minor_person_identity_id": "ULID",
+        "guardian_person_identity_id": "ULID",
+        "relationship": "'parent' | 'step_parent' | 'legal_guardian' | 'grandparent' | 'other'"
+      }
+    },
+    {
+      "name": "GuardianLinkRemoved",
+      "class": "Academorix\\People\\Events\\GuardianLinkRemoved",
+      "trigger": "PersonGuardianLink revoked. Cross-tenant propagation — active links may be affected.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (central retention: 10 years)",
+        "notifications::DispatchGuardianLinkRemovedNotification"
+      ],
+      "payload": {
+        "guardian_link_id": "ULID",
+        "minor_person_identity_id": "ULID",
+        "guardian_person_identity_id": "ULID",
+        "revoked_at": "ISO 8601",
+        "revoked_reason": "string | null"
+      }
+    }
+  ]
 }

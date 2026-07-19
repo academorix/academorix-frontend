@@ -1,7 +1,180 @@
 {
   "id": "academorix://modules/medical/events",
   "$version": 1,
-  "title": "medical — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "medical — published events",
+  "namespace": "Academorix\\Sports\\Medical\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit`. InjuryReported closes the eligibility gate for the affected athlete on their next squad-selection query. ReturnToPlayCleared re-opens it. ClearanceExpiring fires at 90d / 30d / 7d intervals — cannot-opt-out notifications. Full payloads DO NOT include encrypted fields; consumers must re-fetch through the medical policy gate to read details.",
+  "events": [
+    {
+      "name": "MedicalRecordCreated",
+      "class": "Academorix\\Sports\\Medical\\Events\\MedicalRecordCreated",
+      "trigger": "First MedicalRecord committed for an athlete.",
+      "queue": "medical",
+      "consumers": ["audit::WriteToAuditLog (retention: 10 years)", "activity::WriteToActivityLog"],
+      "payload": {
+        "medical_record_id": "ULID (mrc_*)",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID (ath_*)",
+        "created_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "InjuryReported",
+      "class": "Academorix\\Sports\\Medical\\Events\\InjuryReported",
+      "trigger": "P1 event. New Injury committed with status='reported'. Closes eligibility gate for the athlete on next squad query.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 10 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchInjuryReportedNotification (guardian + medical + coach, cannot-opt-out)",
+        "medical::UpdateEligibilityGate",
+        "event::InvalidateFutureSquadSelections"
+      ],
+      "payload": {
+        "injury_id": "ULID (inj_*)",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "body_part": "string",
+        "severity": "'minor' | 'moderate' | 'severe' | 'critical'",
+        "onset_at": "ISO 8601",
+        "reported_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "TreatmentAdministered",
+      "class": "Academorix\\Sports\\Medical\\Events\\TreatmentAdministered",
+      "trigger": "New Treatment committed against an active Injury.",
+      "queue": "medical",
+      "consumers": ["audit::WriteToAuditLog (retention: 10 years)"],
+      "payload": {
+        "treatment_id": "ULID (trt_*)",
+        "injury_id": "ULID",
+        "tenant_id": "ULID",
+        "kind": "'physio' | 'medication' | 'rehab' | 'consult' | 'imaging' | 'surgery' | 'other'",
+        "administered_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ClearanceIssued",
+      "class": "Academorix\\Sports\\Medical\\Events\\ClearanceIssued",
+      "trigger": "New MedicalClearance committed with expires_at > now.",
+      "queue": "medical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 10 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchClearanceIssuedNotification (guardian + athlete)",
+        "medical::UpdateEligibilityGate"
+      ],
+      "payload": {
+        "clearance_id": "ULID (mcl_*)",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "issued_at": "ISO 8601",
+        "expires_at": "ISO 8601",
+        "scope": "'all_activities' | 'limited' | 'pending_review'",
+        "issued_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "ClearanceExpiring",
+      "class": "Academorix\\Sports\\Medical\\Events\\ClearanceExpiring",
+      "trigger": "Scheduled job fires at 90d / 30d / 7d before expires_at. Cannot-opt-out notifications.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchClearanceExpiringNotification (guardian + medical + admin)"
+      ],
+      "payload": {
+        "clearance_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "expires_at": "ISO 8601",
+        "days_until_expiry": "90 | 30 | 7"
+      }
+    },
+    {
+      "name": "ClearanceExpired",
+      "class": "Academorix\\Sports\\Medical\\Events\\ClearanceExpired",
+      "trigger": "P1 event. Clearance passed expires_at without renewal. Closes eligibility gate.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 10 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchClearanceExpiredNotification (guardian + medical + admin, cannot-opt-out)",
+        "medical::UpdateEligibilityGate",
+        "event::InvalidateFutureSquadSelections"
+      ],
+      "payload": {
+        "clearance_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "expired_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ReturnToPlayCleared",
+      "class": "Academorix\\Sports\\Medical\\Events\\ReturnToPlayCleared",
+      "trigger": "P1 event. Injury.status flipped to 'cleared' by medical role. Re-opens eligibility gate.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 10 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchReturnToPlayClearedNotification (guardian + athlete + coach, cannot-opt-out — celebration)",
+        "medical::UpdateEligibilityGate"
+      ],
+      "payload": {
+        "injury_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "cleared_at": "ISO 8601",
+        "cleared_by_user_id": "ULID",
+        "days_since_onset": "integer"
+      }
+    },
+    {
+      "name": "AllergyAdded",
+      "class": "Academorix\\Sports\\Medical\\Events\\AllergyAdded",
+      "trigger": "New Allergy committed. Coach summary cache invalidated.",
+      "queue": "medical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "cache::InvalidateCoachAllergySummaryCache",
+        "notifications::DispatchAllergyAddedNotification (medical + coach, redacted summary)"
+      ],
+      "payload": {
+        "allergy_id": "ULID (alg_*)",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "allergen": "string",
+        "severity": "'mild' | 'moderate' | 'severe' | 'life_threatening'"
+      }
+    },
+    {
+      "name": "MedicationAdded",
+      "class": "Academorix\\Sports\\Medical\\Events\\MedicationAdded",
+      "trigger": "New Medication committed.",
+      "queue": "medical",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "medication_id": "ULID (med_*)",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "status": "'active' | 'discontinued' | 'completed' | 'on_hold'"
+      }
+    },
+    {
+      "name": "MedicationDiscontinued",
+      "class": "Academorix\\Sports\\Medical\\Events\\MedicationDiscontinued",
+      "trigger": "Medication.status flipped to 'discontinued'.",
+      "queue": "medical",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "medication_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "discontinued_at": "ISO 8601"
+      }
+    }
+  ]
 }

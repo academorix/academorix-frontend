@@ -2,6 +2,42 @@
   "id": "academorix://modules/ai/retention",
   "$version": 1,
   "title": "ai — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "AI conversations retained 1 year rolling for user access + support. AiRun + AiToolCall retained 7 years for audit (regulatory horizon on AI-driven decisions). Embeddings anonymized on source deletion.",
+  "policies": [
+    {
+      "entity": "AiConversation",
+      "hot_days": 365,
+      "warm_days": 90,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "description": "1 year rolling from last_message_at. User may explicitly delete anytime. Flagged conversations retained until platform review closes."
+    },
+    {
+      "entity": "AiRun",
+      "hot_days": 365,
+      "warm_days": null,
+      "cold_days": 2555,
+      "on_purge": "archive_cold",
+      "regulatory_minimum_days": 2555,
+      "description": "7 years for audit — AI-driven decisions must be traceable. Prompts + responses purged from hot at 1 year (only hashes remain in cold)."
+    },
+    {
+      "entity": "AiToolCall",
+      "hot_days": 365,
+      "warm_days": null,
+      "cold_days": 2555,
+      "on_purge": "archive_cold",
+      "regulatory_minimum_days": 2555,
+      "description": "Co-terminous with parent AiRun. args_hash preserved for tool-abuse forensics."
+    },
+    {
+      "entity": "AiEmbedding",
+      "hot_days": null,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["source_type + source_id deleted OR anonymized"],
+      "description": "Embeddings retained while source is live. Hard-deleted when source is purged. No independent purge horizon."
+    }
+  ]
 }

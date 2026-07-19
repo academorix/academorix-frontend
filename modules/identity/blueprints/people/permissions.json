@@ -2,6 +2,132 @@
   "id": "academorix://modules/people/permissions",
   "$version": 1,
   "title": "people — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\People\\Database\\Seeders\\PeoplePermissionSeeder",
+  "isSystem": true,
+  "description": "CENTRAL-plane permissions. Tenant users can lookup + file link requests; person owners approve/decline/revoke; platform staff verify + freeze.",
+  "permissions": [
+    {
+      "name": "people.view",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "guardian", "admin", "owner"]
+    },
+    {
+      "name": "people.create",
+      "guard": "sanctum",
+      "description": "Self-registration path.",
+      "seededOn": ["athlete", "guardian"]
+    },
+    { "name": "people.update", "guard": "sanctum", "seededOn": ["athlete", "guardian"] },
+    {
+      "name": "people.erase.own",
+      "guard": "sanctum",
+      "description": "Right-to-be-forgotten — 90-day grace then hard-delete.",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "people.lookup",
+      "guard": "sanctum",
+      "description": "Requires people.lookup entitlement. Rate-limited 10/hr/IP, 100/day/tenant.",
+      "seededOn": ["admin", "owner", "hr", "reception"]
+    },
+
+    {
+      "name": "people.link-requests.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "hr", "athlete", "guardian"]
+    },
+    {
+      "name": "people.link-requests.view",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "hr", "athlete", "guardian"]
+    },
+    {
+      "name": "people.link-requests.create",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner", "hr", "reception"]
+    },
+    {
+      "name": "people.link-requests.approve",
+      "guard": "sanctum",
+      "description": "Central-URL signature-authenticated. Guardian or adult person only.",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "people.link-requests.decline",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "people.link-requests.revoke",
+      "guard": "sanctum",
+      "seededOn": ["athlete", "guardian"]
+    },
+    {
+      "name": "people.link-requests.delete",
+      "guard": "sanctum",
+      "description": "Only pre-approval, only by requesting tenant admin.",
+      "seededOn": ["admin", "owner"]
+    },
+
+    {
+      "name": "people.guardian-links.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete", "admin", "owner"]
+    },
+    {
+      "name": "people.guardian-links.view",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete", "admin", "owner"]
+    },
+    {
+      "name": "people.guardian-links.create",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "people.guardian-links.revoke",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+
+    {
+      "name": "platform.people.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.people.view",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.people.verify",
+      "guard": "platform_admin",
+      "description": "Elevate verification_status to 'verified'. Audit-material.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.people.freeze",
+      "guard": "platform_admin",
+      "description": "Fraud response — locks all active links read-only.",
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "platform.people.link-requests.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.people.link-requests.approve",
+      "guard": "platform_admin",
+      "description": "Manual approval — requires documented reason.",
+      "seededOn": ["super_admin", "ops"]
+    },
+    {
+      "name": "platform.people.guardian-links.verify",
+      "guard": "platform_admin",
+      "description": "Elevate verification_method (birth cert / court order review).",
+      "seededOn": ["super_admin", "ops"]
+    }
+  ]
 }

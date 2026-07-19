@@ -2,6 +2,126 @@
   "id": "academorix://modules/people/policies",
   "$version": 1,
   "title": "people — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "CENTRAL-plane policies. Three model policies + strict lookup gate. Every lookup MUST prove BOTH the Academorix ID AND the date of birth — no PII returned pre-consent. Platform staff can override for support tooling only with audit trail.",
+  "policies": [
+    {
+      "model": "PersonIdentity",
+      "class": "Academorix\\People\\Policies\\PersonIdentityPolicy",
+      "abilities": [
+        {
+          "action": "lookup",
+          "permission": "people.lookup",
+          "scope": "any authenticated tenant user with people.link_requests entitlement; rate-limited 10/hr/IP, 100/day/tenant"
+        },
+        {
+          "action": "view",
+          "permission": "people.view",
+          "scope": "person owner (self); linked guardian; platform staff"
+        },
+        {
+          "action": "create",
+          "permission": "people.create",
+          "scope": "self-signup on central + admin-created via platform console"
+        },
+        {
+          "action": "update",
+          "permission": "people.update",
+          "scope": "person owner (self); linked guardian for minor"
+        },
+        {
+          "action": "verify",
+          "permission": "platform.people.verify",
+          "guard": "platform_admin",
+          "scope": "platform staff only. Elevates verification_status"
+        },
+        {
+          "action": "freeze",
+          "permission": "platform.people.freeze",
+          "guard": "platform_admin",
+          "scope": "platform staff only. Locks all active links read-only + refuses new link requests"
+        },
+        {
+          "action": "erase",
+          "permission": "people.erase.own",
+          "scope": "person owner only. 90-day grace + hard-delete + academorix_id blacklist"
+        }
+      ]
+    },
+    {
+      "model": "TenantLinkRequest",
+      "class": "Academorix\\People\\Policies\\TenantLinkRequestPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "people.link-requests.viewAny",
+          "scope": "requesting tenant admin sees their tenant's outbound requests; person owner sees inbound requests to them"
+        },
+        { "action": "view", "permission": "people.link-requests.view" },
+        {
+          "action": "create",
+          "permission": "people.link-requests.create",
+          "scope": "requesting tenant admin + hr"
+        },
+        {
+          "action": "approve",
+          "permission": "people.link-requests.approve",
+          "scope": "person owner (self) OR linked guardian for minor. Signature-authenticated on central plane"
+        },
+        {
+          "action": "decline",
+          "permission": "people.link-requests.decline",
+          "scope": "same as approve"
+        },
+        {
+          "action": "revoke",
+          "permission": "people.link-requests.revoke",
+          "scope": "person owner + linked guardian. Stops future sync; preserves what tenant already created"
+        },
+        {
+          "action": "delete",
+          "permission": "people.link-requests.delete",
+          "scope": "requesting tenant admin (only when status='requested')"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.people.link-requests.viewAny",
+          "guard": "platform_admin"
+        },
+        {
+          "action": "platformApprove",
+          "permission": "platform.people.link-requests.approve",
+          "guard": "platform_admin",
+          "scope": "manual approval when guardian cannot access central URL — requires documented reason"
+        }
+      ]
+    },
+    {
+      "model": "PersonGuardianLink",
+      "class": "Academorix\\People\\Policies\\PersonGuardianLinkPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "people.guardian-links.viewAny",
+          "scope": "any linked party (guardian or minor owner)"
+        },
+        { "action": "view", "permission": "people.guardian-links.view" },
+        {
+          "action": "create",
+          "permission": "people.guardian-links.create",
+          "scope": "guardian claims minor via self-service central OR platform staff via admin console with verification evidence"
+        },
+        {
+          "action": "verify",
+          "permission": "platform.people.guardian-links.verify",
+          "guard": "platform_admin",
+          "scope": "elevates verification_method from 'self_declared' to 'birth_certificate' / 'court_order'"
+        },
+        {
+          "action": "revoke",
+          "permission": "people.guardian-links.revoke",
+          "scope": "guardian + minor owner (once adult) + platform staff"
+        }
+      ]
+    }
+  ]
 }

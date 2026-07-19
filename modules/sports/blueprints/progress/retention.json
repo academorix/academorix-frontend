@@ -2,6 +2,61 @@
   "id": "academorix://modules/progress/retention",
   "$version": 1,
   "title": "progress — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "Progress records are development-material for athletes — long retention. GradingResult retained indefinitely for belt provenance across career moves. Extended retention Enterprise-only.",
+  "policies": [
+    {
+      "entity": "ProgressAssessment",
+      "hot_days": null,
+      "warm_days": 90,
+      "cold_days": 2555,
+      "on_purge": "hard_delete",
+      "regulatory_minimum_days": 2555,
+      "conditions": ["athlete_enrollment archived > 7 years ago"],
+      "description": "7 years post-enrollment-archival. Enterprise via progress.extended_retention entitlement: 10 years."
+    },
+    {
+      "entity": "ProgressCard",
+      "hot_days": null,
+      "warm_days": 90,
+      "cold_days": 2555,
+      "on_purge": "hard_delete",
+      "conditions": ["parent assessment purge-eligible"],
+      "description": "Cascades with parent assessment."
+    },
+    {
+      "entity": "CoachNote",
+      "hot_days": null,
+      "warm_days": 90,
+      "cold_days": 2555,
+      "on_purge": "anonymize",
+      "regulatory_minimum_days": 2555,
+      "description": "7 years post-enrollment-archival. Anonymized on purge (coach_user_id set to null, body cleared) so revision chain integrity preserved."
+    },
+    {
+      "entity": "BeltRank",
+      "hot_days": null,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "hard_delete",
+      "conditions": ["no GradingResult references"],
+      "description": "Reference data — retained indefinitely while referenced. Platform defaults never purged."
+    },
+    {
+      "entity": "GradingEvent",
+      "hot_days": null,
+      "warm_days": 30,
+      "cold_days": 3650,
+      "on_purge": "hard_delete",
+      "description": "10 years post-event. Belt exam provenance."
+    },
+    {
+      "entity": "GradingResult",
+      "hot_days": null,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "archive_cold",
+      "regulatory_minimum_days": 3650,
+      "description": "INDEFINITE retention — belt progression is the athlete's career-long provenance. Never hard-purged; archived to cold storage on tenant erasure."
+    }
+  ]
 }

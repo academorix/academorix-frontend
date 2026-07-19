@@ -2,6 +2,62 @@
   "id": "academorix://modules/medical/features",
   "$version": 1,
   "title": "medical — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "medical.records",
+      "displayName": "Medical records",
+      "description": "Master feature — encrypted per-athlete health records. On every tier (youth-sports safety mandatory).",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "medical.injuries",
+      "displayName": "Injury tracking",
+      "description": "Injury lifecycle + return-to-play gate. On every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "medical.clearances",
+      "displayName": "Medical clearances",
+      "description": "Squad-selection eligibility gate. On every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "medical.eligibility_gate",
+      "displayName": "Auto-block on active injury",
+      "description": "Auto-block squad selection when active injury OR expired clearance. Small tier: manual override; Medium+: automatic.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "medical.allergies",
+      "displayName": "Allergy tracking",
+      "description": "Coach-visible allergen summary (redacted). On every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "medical.medications",
+      "displayName": "Medication tracking",
+      "description": "Medical-role tracking of active medications with expiry. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "medical.pediatric_retention",
+      "displayName": "12-year pediatric retention",
+      "description": "Enterprise. Extends retention on pediatric records to 12 years to cover statute of limitations tolling.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "medical.clearance_expiry_alerts",
+      "displayName": "Clearance expiry alerts",
+      "description": "90/30/7 day expiry notifications. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    }
+  ]
 }

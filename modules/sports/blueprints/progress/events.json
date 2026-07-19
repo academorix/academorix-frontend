@@ -1,7 +1,173 @@
 {
   "id": "academorix://modules/progress/events",
   "$version": 1,
-  "title": "progress — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "progress — published events",
+  "namespace": "Academorix\\Sports\\Progress\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit`. ProgressAssessmentRecorded is the load-bearing signal — cascades to development promotion evaluation, awards auto-grant, and analytics. BeltRankPromoted is a P1 event that awards module always consumes.",
+  "events": [
+    {
+      "name": "ProgressAssessmentRecorded",
+      "class": "Academorix\\Sports\\Progress\\Events\\ProgressAssessmentRecorded",
+      "trigger": "AssessmentOrchestrator committed a ProgressAssessment (values validated + snapshot stamped + overall computed).",
+      "queue": "progress",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateAthleteProgressCache",
+        "development::EvaluatePromotionCriteria",
+        "awards::EvaluateAutoGrantOnAssessment",
+        "growth::analytics::TrackAssessmentEvent"
+      ],
+      "payload": {
+        "assessment_id": "ULID (pra_*)",
+        "tenant_id": "ULID",
+        "athlete_enrollment_id": "ULID (aen_*)",
+        "sport_key": "string",
+        "attribute_set_snapshot_id": "ULID (asg_*)",
+        "overall_score": "number | null",
+        "overall_tier": "'bronze' | 'silver' | 'gold' | 'diamond' | null",
+        "capture_date": "date",
+        "assessed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "ProgressCardGenerated",
+      "class": "Academorix\\Sports\\Progress\\Events\\ProgressCardGenerated",
+      "trigger": "ProgressCard rendered — either automatically after assessment save (per sport config) or on-demand via regenerate endpoint.",
+      "queue": "progress",
+      "consumers": ["audit::WriteToAuditLog", "cache::WarmCardRender"],
+      "payload": {
+        "card_id": "ULID (pcd_*)",
+        "assessment_id": "ULID",
+        "tenant_id": "ULID",
+        "card_type": "'fifa_card' | 'attribute_card' | 'radar' | 'time_trial' | 'apparatus_scores'",
+        "rendered_document_id": "ULID (fil_*) | null"
+      }
+    },
+    {
+      "name": "ProgressCardShared",
+      "class": "Academorix\\Sports\\Progress\\Events\\ProgressCardShared",
+      "trigger": "Card shared via signed URL — sharing action recorded for later expiry / revoke.",
+      "queue": "progress",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "card_id": "ULID",
+        "tenant_id": "ULID",
+        "share_signature": "string",
+        "share_expires_at": "ISO 8601",
+        "shared_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachNoteCreated",
+      "class": "Academorix\\Sports\\Progress\\Events\\CoachNoteCreated",
+      "trigger": "New CoachNote committed. Immutable — never fires again on the same row (edits create revisions via revision_of_id).",
+      "queue": "progress",
+      "consumers": ["audit::WriteToAuditLog", "activity::WriteToActivityLog"],
+      "payload": {
+        "note_id": "ULID (cno_*)",
+        "tenant_id": "ULID",
+        "athlete_enrollment_id": "ULID",
+        "coach_user_id": "ULID",
+        "visibility": "'coach_only' | 'shared_with_parent' | 'shared_with_athlete' | 'shared_with_both'"
+      }
+    },
+    {
+      "name": "CoachNoteRevised",
+      "class": "Academorix\\Sports\\Progress\\Events\\CoachNoteRevised",
+      "trigger": "New CoachNote row created with revision_of_id pointing at a predecessor. Original preserved.",
+      "queue": "progress",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "new_note_id": "ULID",
+        "predecessor_note_id": "ULID",
+        "tenant_id": "ULID",
+        "revised_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachNoteShared",
+      "class": "Academorix\\Sports\\Progress\\Events\\CoachNoteShared",
+      "trigger": "P1 event. Visibility widened (coach_only → shared_with_parent / shared_with_athlete). Never fires on narrowing (refused by observer).",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachNoteSharedNotification"
+      ],
+      "payload": {
+        "note_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_enrollment_id": "ULID",
+        "previous_visibility": "string",
+        "new_visibility": "string",
+        "shared_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "GradingEventScheduled",
+      "class": "Academorix\\Sports\\Progress\\Events\\GradingEventScheduled",
+      "trigger": "New GradingEvent committed with status='scheduled'. Fires notifications to candidate athletes + guardians.",
+      "queue": "progress",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGradingEventScheduledNotification"
+      ],
+      "payload": {
+        "grading_event_id": "ULID (gre_*)",
+        "tenant_id": "ULID",
+        "branch_id": "ULID (brn_*)",
+        "sport_key": "string",
+        "scheduled_at": "ISO 8601",
+        "examiner_coach_id": "ULID (cop_*)"
+      }
+    },
+    {
+      "name": "GradingResultRecorded",
+      "class": "Academorix\\Sports\\Progress\\Events\\GradingResultRecorded",
+      "trigger": "GradingResult with result IN ('pass', 'fail', 'deferred'). Cascades to BeltRankPromoted on 'pass'.",
+      "queue": "progress",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchGradingResultNotification"
+      ],
+      "payload": {
+        "grading_result_id": "ULID (grr_*)",
+        "grading_event_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_enrollment_id": "ULID",
+        "from_belt_id": "ULID (blt_*) | null",
+        "to_belt_id": "ULID (blt_*)",
+        "result": "'pass' | 'fail' | 'deferred'"
+      }
+    },
+    {
+      "name": "BeltRankPromoted",
+      "class": "Academorix\\Sports\\Progress\\Events\\BeltRankPromoted",
+      "trigger": "P1 event. Belt promotion committed from GradingResult with result='pass'. Load-bearing signal for awards + activity + notifications.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 10 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchBeltPromotedNotification (cannot-opt-out — celebration event)",
+        "awards::AutoGrantBeltPromotionAward",
+        "growth::analytics::TrackBeltPromotion"
+      ],
+      "payload": {
+        "grading_result_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID (ath_*)",
+        "athlete_enrollment_id": "ULID",
+        "sport_key": "string",
+        "from_belt_id": "ULID | null",
+        "to_belt_id": "ULID",
+        "from_belt_code": "string | null",
+        "to_belt_code": "string",
+        "promoted_at": "ISO 8601"
+      }
+    }
+  ]
 }

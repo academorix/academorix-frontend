@@ -2,6 +2,48 @@
   "id": "academorix://modules/people/features",
   "$version": 1,
   "title": "people — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "people.core",
+      "displayName": "People registry",
+      "description": "Master feature — central identity + Academorix ID issuance. On every tier for consuming tenants.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "people.link_requests",
+      "displayName": "Cross-academy linking",
+      "description": "Enables tenants to file link requests to a PersonIdentity for cross-academy prefill. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "people.lookup",
+      "displayName": "PersonIdentity lookup",
+      "description": "Enumeration-resistant lookup by AX-ID + DOB. Rate-limited. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "people.guardian_links",
+      "displayName": "Portable guardian links",
+      "description": "Cross-tenant guardian↔minor links via central identity. Enterprise — federated athlete academies.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "people.share_medical_summary",
+      "displayName": "Shareable medical summary",
+      "description": "Enterprise. Allow allergies + emergency contact in shareable field subset. Otherwise excluded.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "people.share_documents",
+      "displayName": "Shareable passport document",
+      "description": "Enterprise. Cross-tenant signed URL to a storage::File on origin tenant.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
 }

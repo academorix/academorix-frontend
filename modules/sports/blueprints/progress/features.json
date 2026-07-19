@@ -2,6 +2,55 @@
   "id": "academorix://modules/progress/features",
   "$version": 1,
   "title": "progress — feature keys",
-  "description": "Feature keys this module publishes for tenant entitlement gating.",
-  "features": []
+  "features": [
+    {
+      "key": "progress.assessments",
+      "displayName": "Skill assessments",
+      "description": "Master feature. Attribute-driven per-enrollment skill capture. On every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "progress.cards",
+      "displayName": "Progress cards",
+      "description": "Render assessments as shareable cards (FIFA / radar / etc). On every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "progress.cards.public_share",
+      "displayName": "Public card sharing",
+      "description": "Medium+. Signed-URL public sharing with expiry.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "progress.coach_notes",
+      "displayName": "Coach notes",
+      "description": "Per-athlete coach observations with widening-only visibility. On every tier.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "progress.belt_grading",
+      "displayName": "Belt grading (martial arts)",
+      "description": "Formal grading events + belt promotion. Gated by sport-config `BELT_PROGRESSION` capability.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "progress.historic_render",
+      "displayName": "Versioned historic render",
+      "description": "Historic assessments render with the AttributeSet version they were captured against.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "progress.parent_sharing",
+      "displayName": "Share notes with parents",
+      "description": "Coach can widen note visibility to shared_with_parent. Medium+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    }
+  ]
 }

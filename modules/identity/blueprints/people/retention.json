@@ -2,6 +2,34 @@
   "id": "academorix://modules/people/retention",
   "$version": 1,
   "title": "people — data retention windows",
-  "description": "Per-entity retention windows the retention runner respects.",
-  "policies": []
+  "description": "CENTRAL-plane retention. PersonIdentity is the identity of record — retained indefinitely. TenantLinkRequests 3y post-decision (audit trail for consent provenance). GuardianLinks retained while relationship active + 3y post-revocation.",
+  "policies": [
+    {
+      "entity": "PersonIdentity",
+      "hot_days": null,
+      "warm_days": null,
+      "cold_days": null,
+      "on_purge": "archive_cold",
+      "regulatory_minimum_days": 3650,
+      "description": "INDEFINITE retention while linked to any active tenant. On explicit erasure request (person requests full removal): 90-day grace period + hard-delete + academorix_id blacklisted from reuse. Frozen identities (fraud) retained indefinitely for audit."
+    },
+    {
+      "entity": "PersonGuardianLink",
+      "hot_days": null,
+      "warm_days": null,
+      "cold_days": 1095,
+      "on_purge": "anonymize",
+      "regulatory_minimum_days": 1095,
+      "description": "Retained while active. 3 years post-revocation with subject IDs anonymized (relationship metadata kept for audit). Never hard-deleted while any tenant record references either PersonIdentity."
+    },
+    {
+      "entity": "TenantLinkRequest",
+      "hot_days": null,
+      "warm_days": 30,
+      "cold_days": 1095,
+      "on_purge": "hard_delete",
+      "regulatory_minimum_days": 1095,
+      "description": "3 years post-terminal-state (approved / declined / revoked / expired). Signature purged after 30 days regardless of terminal state (URL becomes invalid)."
+    }
+  ]
 }

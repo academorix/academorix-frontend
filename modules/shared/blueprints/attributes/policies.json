@@ -2,6 +2,118 @@
   "id": "academorix://modules/attributes/policies",
   "$version": 1,
   "title": "attributes — authorization policies",
-  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
-  "policies": []
+  "description": "Three policies — one per aggregate. Attributes are tenant-configurable but require elevated permissions to modify — a bad AttributeSet cascades to every host using it. Values validated on the host's own save path; no direct value-mutation policies here.",
+  "policies": [
+    {
+      "model": "AttributeDefinition",
+      "class": "Academorix\\Attributes\\Policies\\AttributeDefinitionPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "attribute-definitions.viewAny",
+          "scope": "admin + branch_manager + hr — read the tenant's attribute catalogue"
+        },
+        { "action": "view", "permission": "attribute-definitions.view" },
+        {
+          "action": "create",
+          "permission": "attribute-definitions.create",
+          "scope": "admin + owner. Small tier uses seeded defaults only; Medium+ can define custom via `attributes.custom_definitions` entitlement"
+        },
+        {
+          "action": "update",
+          "permission": "attribute-definitions.update",
+          "scope": "admin + owner. Type + validation changes flagged as breaking — trigger set versioning cascade"
+        },
+        {
+          "action": "deprecate",
+          "permission": "attribute-definitions.deprecate",
+          "scope": "admin + owner. Sets referencing this definition remain valid (historic render); new sets refuse the definition"
+        },
+        {
+          "action": "delete",
+          "permission": "attribute-definitions.delete",
+          "scope": "admin + owner. Refused when referenced by any AttributeSet (existing or superseded)"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.attribute-definitions.viewAny",
+          "guard": "platform_admin"
+        }
+      ]
+    },
+    {
+      "model": "AttributeSet",
+      "class": "Academorix\\Attributes\\Policies\\AttributeSetPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "attribute-sets.viewAny",
+          "scope": "admin + branch_manager + hr"
+        },
+        { "action": "view", "permission": "attribute-sets.view" },
+        {
+          "action": "create",
+          "permission": "attribute-sets.create",
+          "scope": "admin + owner. Draft state — activation is a separate policy"
+        },
+        {
+          "action": "update",
+          "permission": "attribute-sets.update",
+          "scope": "admin + owner. Definition_order + labels — no version bump"
+        },
+        {
+          "action": "version",
+          "permission": "attribute-sets.version",
+          "scope": "admin + owner. Explicit breaking-change acknowledgement. Creates new version, supersedes old"
+        },
+        {
+          "action": "activate",
+          "permission": "attribute-sets.activate",
+          "scope": "admin + owner. Refuses when another active set exists at same (entity_type, discriminator_value)"
+        },
+        {
+          "action": "deactivate",
+          "permission": "attribute-sets.deactivate",
+          "scope": "admin + owner. Falls back to next-lower version if any"
+        },
+        {
+          "action": "delete",
+          "permission": "attribute-sets.delete",
+          "scope": "admin + owner. Refused when any host record snapshots this set version"
+        },
+        {
+          "action": "platformViewAny",
+          "permission": "platform.attribute-sets.viewAny",
+          "guard": "platform_admin"
+        }
+      ]
+    },
+    {
+      "model": "AttributeGroup",
+      "class": "Academorix\\Attributes\\Policies\\AttributeGroupPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "attribute-groups.viewAny",
+          "scope": "admin + branch_manager + hr"
+        },
+        { "action": "view", "permission": "attribute-groups.view" },
+        {
+          "action": "create",
+          "permission": "attribute-groups.create",
+          "scope": "admin + owner. Groups belong to a set — parent set must be draft or version-eligible"
+        },
+        {
+          "action": "update",
+          "permission": "attribute-groups.update",
+          "scope": "admin + owner. Labels + icon + collapsible — no version bump. sort_order changes fire AttributeGroupReordered"
+        },
+        {
+          "action": "delete",
+          "permission": "attribute-groups.delete",
+          "scope": "admin + owner. Cascade deletes from parent set"
+        }
+      ]
+    }
+  ]
 }

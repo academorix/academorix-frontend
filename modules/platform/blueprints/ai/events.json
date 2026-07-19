@@ -1,7 +1,169 @@
 {
   "id": "academorix://modules/ai/events",
   "$version": 1,
-  "title": "ai — domain events",
-  "description": "Events this module publishes. Payload contract lives on the corresponding wire-contract file in `contracts/<event>.v<n>.json` for cross-service events.",
-  "events": []
+  "title": "ai — published events",
+  "namespace": "Academorix\\Ai\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit`. RunStarted / RunCompleted / RunFailed pair up for observability + cost tracking. SensitiveDataBlocked is a P1 event — every fire indicates the AI SensitiveDataGate refused a prompt that would have leaked medical / safeguarding data. TokenPoolExhausted is P1 for entitlement governance.",
+  "events": [
+    {
+      "name": "ConversationStarted",
+      "class": "Academorix\\Ai\\Events\\ConversationStarted",
+      "trigger": "New AiConversation committed on first user message.",
+      "queue": "ai",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "growth::analytics::TrackAiConversation"
+      ],
+      "payload": {
+        "conversation_id": "ULID (aic_*)",
+        "tenant_id": "ULID",
+        "user_id": "ULID (usr_*)",
+        "persona": "string"
+      }
+    },
+    {
+      "name": "RunStarted",
+      "class": "Academorix\\Ai\\Events\\RunStarted",
+      "trigger": "New AiRun created — model call in-flight. Feeds cost-tracking pre-commit.",
+      "queue": "ai",
+      "consumers": ["audit::WriteToAuditLog (verbose channel)", "ai::TrackTokenUsage"],
+      "payload": {
+        "run_id": "ULID (arv_*)",
+        "conversation_id": "ULID | null",
+        "tenant_id": "ULID",
+        "persona": "string",
+        "provider": "'openai' | 'anthropic' | 'gemini' | 'groq' | 'xai' | 'ollama'",
+        "model": "string",
+        "started_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RunCompleted",
+      "class": "Academorix\\Ai\\Events\\RunCompleted",
+      "trigger": "AiRun.status flipped to 'completed'. Tokens + cost + latency stamped.",
+      "queue": "ai",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::RecordAiLatency",
+        "ai::DecrementTokenPool",
+        "growth::analytics::TrackAiRun"
+      ],
+      "payload": {
+        "run_id": "ULID",
+        "conversation_id": "ULID | null",
+        "tenant_id": "ULID",
+        "persona": "string",
+        "tokens_in": "integer",
+        "tokens_out": "integer",
+        "cost_minor": "integer",
+        "latency_ms": "integer"
+      }
+    },
+    {
+      "name": "RunFailed",
+      "class": "Academorix\\Ai\\Events\\RunFailed",
+      "trigger": "AiRun.status flipped to 'failed'. Fail-closed: no partial responses reach user.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::AlertOnAiFailure",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "run_id": "ULID",
+        "tenant_id": "ULID",
+        "persona": "string",
+        "provider": "string",
+        "error_message": "string",
+        "error_code": "string | null"
+      }
+    },
+    {
+      "name": "ToolCalled",
+      "class": "Academorix\\Ai\\Events\\ToolCalled",
+      "trigger": "AiToolCall created for a tool the run invoked. RBAC re-checked BEFORE this event fires.",
+      "queue": "ai",
+      "consumers": ["audit::WriteToAuditLog", "monitoring::TrackToolLatency"],
+      "payload": {
+        "tool_call_id": "ULID (atc_*)",
+        "run_id": "ULID",
+        "tenant_id": "ULID",
+        "tool_name": "string",
+        "args_hash": "string (sha256)"
+      }
+    },
+    {
+      "name": "ToolFailed",
+      "class": "Academorix\\Ai\\Events\\ToolFailed",
+      "trigger": "AiToolCall.status flipped to 'failed' or 'refused'. Refusal signals a RBAC/sensitivity gate blocked the tool from executing.",
+      "queue": "notifications-critical",
+      "consumers": ["audit::WriteToAuditLog (retention: 7 years)", "activity::WriteToActivityLog"],
+      "payload": {
+        "tool_call_id": "ULID",
+        "run_id": "ULID",
+        "tenant_id": "ULID",
+        "tool_name": "string",
+        "status": "'failed' | 'refused'",
+        "reason": "string"
+      }
+    },
+    {
+      "name": "EmbeddingIndexed",
+      "class": "Academorix\\Ai\\Events\\EmbeddingIndexed",
+      "trigger": "AiEmbedding created or updated. Fires for background SearchIndexer persona on new drills / coach notes / files.",
+      "queue": "ai-background",
+      "consumers": ["audit::WriteToAuditLog (verbose channel)", "search::UpdateRagIndex"],
+      "payload": {
+        "embedding_id": "ULID (aie_*)",
+        "tenant_id": "ULID",
+        "source_type": "string",
+        "source_id": "ULID",
+        "model": "string"
+      }
+    },
+    {
+      "name": "SensitiveDataBlocked",
+      "class": "Academorix\\Ai\\Events\\SensitiveDataBlocked",
+      "trigger": "P1 event. SensitiveDataGate refused a prompt because it would have leaked medical / safeguarding / financial / PII to an LLM without explicit consent. Fail-closed.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 10 years)",
+        "activity::WriteToActivityLog",
+        "notifications::AlertPlatformAdminOnSensitiveBlock",
+        "compliance::RaiseSafeguardingSignalIfMinor"
+      ],
+      "payload": {
+        "run_id": "ULID | null",
+        "conversation_id": "ULID | null",
+        "tenant_id": "ULID",
+        "user_id": "ULID",
+        "persona": "string",
+        "sensitivity_class": "'medical' | 'safeguarding' | 'financial' | 'pii'",
+        "blocked_at": "ISO 8601",
+        "reason_code": "string"
+      }
+    },
+    {
+      "name": "TokenPoolExhausted",
+      "class": "Academorix\\Ai\\Events\\TokenPoolExhausted",
+      "trigger": "P1 event. Tenant's monthly AI token pool crossed 0 via entitlements gate. Further AI calls refused with 429 until pool refills next cycle OR admin upgrades.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTokenPoolExhaustedNotification (tenant admin + owner, cannot-opt-out)",
+        "entitlements::LockAiFeature"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "pool_key": "'ai.token_pool.month'",
+        "cycle_started_at": "ISO 8601",
+        "cycle_ends_at": "ISO 8601",
+        "tokens_consumed": "integer",
+        "tokens_allowed": "integer"
+      }
+    }
+  ]
 }

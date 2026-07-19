@@ -2,6 +2,183 @@
   "id": "academorix://modules/medical/permissions",
   "$version": 1,
   "title": "medical — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Sports\\Medical\\Database\\Seeders\\MedicalPermissionSeeder",
+  "isSystem": true,
+  "description": "STRICT RBAC — medical role + admin ONLY for full read/write. Coaches see redacted allergy summary (never full detail). Guardians see .own for their athletes. Platform plane strictly PII-masked.",
+  "permissions": [
+    {
+      "name": "medical.records.viewAny",
+      "guard": "sanctum",
+      "description": "Full medical record access — medical role only.",
+      "seededOn": ["medical", "admin", "owner"]
+    },
+    {
+      "name": "medical.records.view",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner"]
+    },
+    {
+      "name": "medical.records.view.own",
+      "guard": "sanctum",
+      "description": "Guardian views own child's summary — no encrypted fields exposed.",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "medical.records.create",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner"]
+    },
+    {
+      "name": "medical.records.update",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner"]
+    },
+    {
+      "name": "medical.records.delete",
+      "guard": "sanctum",
+      "description": "Refused during active LegalHold. Archives to cold rather than hard-delete.",
+      "seededOn": ["admin", "owner"]
+    },
+
+    {
+      "name": "medical.injuries.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner", "safeguarding_officer"]
+    },
+    {
+      "name": "medical.injuries.viewAny.coach",
+      "guard": "sanctum",
+      "description": "Coach sees active injuries on assigned athletes — body_part + status only, no notes.",
+      "seededOn": ["coach", "head_coach"]
+    },
+    {
+      "name": "medical.injuries.viewAny.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "medical.injuries.view",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner"]
+    },
+    {
+      "name": "medical.injuries.view.summary",
+      "guard": "sanctum",
+      "description": "Redacted summary — body_part + status + cleared_at. No mechanism / notes.",
+      "seededOn": ["coach", "head_coach", "hr", "branch_manager", "guardian", "athlete"]
+    },
+    {
+      "name": "medical.injuries.create",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner", "coach", "head_coach"]
+    },
+    {
+      "name": "medical.injuries.update",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner"]
+    },
+    {
+      "name": "medical.injuries.clear",
+      "guard": "sanctum",
+      "description": "Return-to-play clearance step — medical role only.",
+      "seededOn": ["medical", "admin", "owner"]
+    },
+    { "name": "medical.injuries.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+
+    { "name": "medical.treatments.viewAny", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    { "name": "medical.treatments.view", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    { "name": "medical.treatments.create", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    { "name": "medical.treatments.update", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    { "name": "medical.treatments.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+
+    {
+      "name": "medical.clearances.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner", "hr"]
+    },
+    {
+      "name": "medical.clearances.viewAny.coach",
+      "guard": "sanctum",
+      "description": "Coach sees valid/expired boolean + expiry date only.",
+      "seededOn": ["coach", "head_coach", "branch_manager"]
+    },
+    {
+      "name": "medical.clearances.viewAny.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "medical.clearances.view",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner", "hr"]
+    },
+    {
+      "name": "medical.clearances.view.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    {
+      "name": "medical.clearances.issue",
+      "guard": "sanctum",
+      "description": "Issue new clearance — medical role only.",
+      "seededOn": ["medical", "admin"]
+    },
+    {
+      "name": "medical.clearances.revoke",
+      "guard": "sanctum",
+      "description": "Revoke active clearance — medical role only.",
+      "seededOn": ["medical", "admin"]
+    },
+    { "name": "medical.clearances.renew", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+
+    { "name": "medical.allergies.viewAny", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    {
+      "name": "medical.allergies.viewAny.coach",
+      "guard": "sanctum",
+      "description": "Coach sees allergen + severity ONLY. No notes.",
+      "seededOn": ["coach", "head_coach"]
+    },
+    {
+      "name": "medical.allergies.viewAny.own",
+      "guard": "sanctum",
+      "seededOn": ["guardian", "athlete"]
+    },
+    { "name": "medical.allergies.view", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    {
+      "name": "medical.allergies.create",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "guardian"]
+    },
+    { "name": "medical.allergies.update", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    {
+      "name": "medical.allergies.delete",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin", "owner"]
+    },
+
+    { "name": "medical.medications.viewAny", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    { "name": "medical.medications.viewAny.own", "guard": "sanctum", "seededOn": ["guardian"] },
+    { "name": "medical.medications.view", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    { "name": "medical.medications.create", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    { "name": "medical.medications.update", "guard": "sanctum", "seededOn": ["medical", "admin"] },
+    {
+      "name": "medical.medications.discontinue",
+      "guard": "sanctum",
+      "seededOn": ["medical", "admin"]
+    },
+    { "name": "medical.medications.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+
+    {
+      "name": "platform.medical.records.viewAny",
+      "guard": "platform_admin",
+      "description": "PII-masked — encrypted fields never exposed to platform plane.",
+      "seededOn": ["super_admin"]
+    },
+    {
+      "name": "platform.medical.injuries.viewAny",
+      "guard": "platform_admin",
+      "description": "PII-masked.",
+      "seededOn": ["super_admin"]
+    }
+  ]
 }

@@ -2,6 +2,94 @@
   "id": "academorix://modules/attributes/permissions",
   "$version": 1,
   "title": "attributes — permissions",
-  "description": "Permission strings the module seeds + the guard they target.",
-  "permissions": []
+  "seeder": "Academorix\\Attributes\\Database\\Seeders\\AttributesPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences. Tenant plane (sanctum) — attribute administration by admin / hr / branch_manager. Platform plane (platform_admin) — cross-tenant registry read.",
+  "permissions": [
+    {
+      "name": "attribute-definitions.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attribute-definitions.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attribute-definitions.create",
+      "guard": "sanctum",
+      "description": "Requires attributes.custom_definitions entitlement (Medium+).",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribute-definitions.update",
+      "guard": "sanctum",
+      "description": "Breaking-change flag triggers set versioning cascade.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribute-definitions.deprecate",
+      "guard": "sanctum",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "attribute-definitions.delete",
+      "guard": "sanctum",
+      "description": "Refused when referenced by any set.",
+      "seededOn": ["admin", "owner"]
+    },
+
+    {
+      "name": "attribute-sets.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attribute-sets.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    { "name": "attribute-sets.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "attribute-sets.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "attribute-sets.version",
+      "guard": "sanctum",
+      "description": "Explicit breaking-change acknowledgement.",
+      "seededOn": ["admin", "owner"]
+    },
+    { "name": "attribute-sets.activate", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "attribute-sets.deactivate", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    {
+      "name": "attribute-sets.delete",
+      "guard": "sanctum",
+      "description": "Refused when any host record snapshots this set version.",
+      "seededOn": ["admin", "owner"]
+    },
+
+    {
+      "name": "attribute-groups.viewAny",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    {
+      "name": "attribute-groups.view",
+      "guard": "sanctum",
+      "seededOn": ["hr", "branch_manager", "admin", "owner"]
+    },
+    { "name": "attribute-groups.create", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "attribute-groups.update", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+    { "name": "attribute-groups.delete", "guard": "sanctum", "seededOn": ["admin", "owner"] },
+
+    {
+      "name": "platform.attribute-definitions.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    },
+    {
+      "name": "platform.attribute-sets.viewAny",
+      "guard": "platform_admin",
+      "seededOn": ["super_admin", "ops", "support"]
+    }
+  ]
 }
