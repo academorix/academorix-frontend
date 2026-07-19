@@ -13,8 +13,8 @@ TIERS=(
   "platform:admin-console"
   "platform:reporting"
   "platform:public-site"
-  "platform:people"
-  "platform:attributes"
+  "identity:people"
+  "shared:attributes"
   "sports:progress"
   "sports:medical"
   "sports:performance"
@@ -29,7 +29,7 @@ TIERS=(
   "finance:digital-passes"
   "notifications:messaging"
   "notifications:announcements"
-  "growth:crm-leads"
+  # growth/crm-leads — removed per ADR 0024 (absorbed into sports/registrations).
   "shared:offline-sync"
 )
 
