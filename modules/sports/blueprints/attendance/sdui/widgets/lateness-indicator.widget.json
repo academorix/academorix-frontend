@@ -1,0 +1,22 @@
+{
+  "id": "attendance.widgets.lateness-indicator",
+  "title": "Lateness indicator",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "attendance.lateness-indicator",
+  "description": "Chip showing 'N min late' with color scale. < 5 min = neutral (barely late), 5-15 min = warning, > 15 min = danger. Used on attendance list rows + coach session-roster view.",
+  "params": {
+    "minutes_late": { "type": "integer", "required": true },
+    "size": { "type": "string", "required": false, "default": "sm" }
+  },
+  "nodes": [
+    {
+      "kind": "Chip",
+      "propsExpr": "{ size: $params.size, variant: $params.minutes_late > 15 ? 'danger' : $params.minutes_late >= 5 ? 'warning' : 'neutral', className: 'font-medium' }",
+      "children": [
+        { "kind": "Icon", "props": { "name": "clock", "className": "size-3 mr-1" } },
+        { "kind": "Text", "propsExpr": "{ children: $params.minutes_late + ' min late' }" }
+      ]
+    }
+  ]
+}

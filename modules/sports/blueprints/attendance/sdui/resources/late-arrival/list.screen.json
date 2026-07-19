@@ -1,0 +1,70 @@
+{
+  "id": "attendance.resources.late-arrival.list",
+  "title": "Late arrivals",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/late-arrivals",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attendance", "entity": "late-arrival", "action": "list" },
+  "requiresPermission": "late-arrivals.viewAny",
+  "dataSources": [
+    { "name": "late_arrivals", "kind": "http.get", "url": "/api/v1/late-arrivals", "unwrap": "data", "queryFromFilters": true }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Late arrivals" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every 'late' attendance record has a corresponding LateArrival satellite tracking exactly how late." } }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Late arrivals" },
+          "bindings": { "rows": { "$ref": "late_arrivals" } },
+          "columns": [
+            {
+              "key": "athlete",
+              "label": "Athlete",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } }
+                ]
+              }
+            },
+            { "key": "session_id", "label": "Session", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.session_display_name" } } } },
+            {
+              "key": "minutes_late",
+              "label": "Late by",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "attendance.lateness-indicator",
+                "bindings": { "minutes_late": { "$ref": "row.minutes_late" } }
+              }
+            },
+            {
+              "key": "penalty_applied",
+              "label": "Penalty applied",
+              "renderer": {
+                "kind": "Chip",
+                "propsExpr": "{ variant: row.penalty_applied === 'consume_pass_anyway' ? 'warning' : row.penalty_applied === 'fractional_consume' ? 'primary' : 'neutral', size: 'sm', className: 'capitalize' }",
+                "children": [{ "kind": "Text", "propsExpr": "{ children: row.penalty_applied ? row.penalty_applied.replace(/_/g, ' ') : 'None' }" }]
+              }
+            }
+          ],
+          "rowActions": {
+            "onPress": { "kind": "navigate", "toExpr": "'/tenant/attendance/' + row.attendance_record_id" }
+          }
+        }
+      ]
+    }
+  ]
+}

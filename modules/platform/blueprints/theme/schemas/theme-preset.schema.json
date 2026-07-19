@@ -1,0 +1,228 @@
+{
+  "id": "academorix://modules/theme/schemas/theme-preset",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ThemePreset",
+  "description": "A complete theme configuration. tenant_id NULL for platform-provided presets (6 seeded day-1); non-null for tenant-authored custom presets. The tokens jsonb IS the complete token map — every key from the canonical vocabulary that this preset defines. Overrides layer on top for partial customisation.",
+  "type": "object",
+  "x-module": "theme",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "theme_presets",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "tps_",
+    "incrementing": false,
+    "model": "Academorix\\Platform\\Theme\\Models\\ThemePreset",
+    "interface": "Academorix\\Platform\\Theme\\Contracts\\Data\\ThemePresetInterface",
+    "implements": ["Academorix\\Platform\\Theme\\Contracts\\Data\\ThemePresetInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasSlug",
+      "HasUserstamps",
+      "HasAuditable",
+      "HasActivityLog",
+      "HasMetadata",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "mode": "ThemeMode",
+      "category": "ThemePresetCategory",
+      "tokens": "TokenMapPayload",
+      "is_active": "boolean",
+      "metadata": "array"
+    },
+    "appends": [],
+    "observers": ["ThemePresetObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `tps_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "NULL = platform-provided preset (readable by every tenant); non-null = tenant-authored custom preset (readable only by its tenant)."
+      },
+      "slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Stable URL-safe identifier — 'light-default', 'corporate-navy', 'summer-2026-brand'. Unique within the (COALESCE(tenant_id, 'platform'), slug) namespace."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false
+      },
+      "description": {
+        "type": "text",
+        "nullable": true
+      },
+      "mode": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: light / dark."
+      },
+      "category": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'tenant_custom'",
+        "description": "Enum: platform_default / tenant_custom / brand_forward / high_contrast / minimal."
+      },
+      "tokens": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Complete token map keyed by canonical vocabulary token keys. Values validated against token_type schema by PresetValidator at write time."
+      },
+      "preview_thumbnail_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Signed URL to the 1200×630 PNG preview thumbnail. Generated async by PreviewPresetJob."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "false = preset drafted but not published for selection. Fires ThemePresetPublished on false → true transition."
+      },
+      "created_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": {
+          "table": "users",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Author of a tenant custom preset. RESTRICT — user deletion is blocked while they own presets (ownership must transfer first)."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form platform notes — Figma links, source-preset id for duplicates, designer references."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["COALESCE(tenant_id, 'platform')", "slug"],
+        "unique": true,
+        "name": "theme_presets_namespace_slug_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "Platform and tenant namespaces don't collide — 'light-default' is unique among platform presets AND is unique within each tenant's custom preset set."
+      },
+      {
+        "columns": ["tenant_id", "mode", "category"],
+        "unique": false,
+        "name": "theme_presets_tenant_mode_category_index",
+        "description": "Preset picker list filter."
+      },
+      {
+        "columns": ["tenant_id", "is_active"],
+        "unique": false,
+        "name": "theme_presets_tenant_active_index",
+        "description": "Active preset list."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "slug",
+    "name",
+    "mode",
+    "category",
+    "tokens",
+    "is_active",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tps_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": {
+      "type": ["string", "null"],
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "NULL = platform preset; non-null = tenant custom."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$",
+      "maxLength": 64
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "description": { "type": ["string", "null"] },
+    "mode": { "type": "string", "enum": ["light", "dark"] },
+    "category": {
+      "type": "string",
+      "enum": ["platform_default", "tenant_custom", "brand_forward", "high_contrast", "minimal"]
+    },
+    "tokens": {
+      "type": "object",
+      "description": "Complete token map. Every key must match the canonical vocabulary; every value must match the token_type schema for the key's category.",
+      "additionalProperties": { "type": "string" }
+    },
+    "preview_thumbnail_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "maxLength": 512
+    },
+    "is_active": { "type": "boolean", "default": true },
+    "created_by_user_id": {
+      "type": ["string", "null"],
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "metadata": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": []
+  },
+  "x-related": [
+    {
+      "schema": "academorix://modules/theme/schemas/theme",
+      "kind": "themes that reference this preset via selected_preset_id"
+    }
+  ]
+}

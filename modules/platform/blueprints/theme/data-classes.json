@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/theme/data-classes",
+  "$version": 1,
+  "title": "theme — data classification",
+  "description": "Theme rows carry NO PII beyond created_by / updated_by references — the tokens themselves are design values. user_theme_preferences carries per-user preferences (mode + accessibility flags) which are functional metadata, not personal identifiers.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Theme.id",
+      "Theme.tenant_id",
+      "Theme.mode",
+      "Theme.name",
+      "Theme.selected_preset_id",
+      "Theme.tokens_snapshot",
+      "Theme.accessibility_flags",
+      "Theme.is_active",
+      "Theme.activated_at",
+      "Theme.deactivated_at",
+      "Theme.created_at",
+      "Theme.updated_at",
+      "ThemePreset.id",
+      "ThemePreset.tenant_id",
+      "ThemePreset.slug",
+      "ThemePreset.name",
+      "ThemePreset.description",
+      "ThemePreset.mode",
+      "ThemePreset.category",
+      "ThemePreset.tokens",
+      "ThemePreset.preview_thumbnail_url",
+      "ThemePreset.is_active",
+      "ThemePreset.created_at",
+      "ThemePreset.updated_at",
+      "ThemeTokenOverride.id",
+      "ThemeTokenOverride.tenant_id",
+      "ThemeTokenOverride.theme_id",
+      "ThemeTokenOverride.token_key",
+      "ThemeTokenOverride.token_value",
+      "ThemeTokenOverride.token_type",
+      "ThemeTokenOverride.reason",
+      "ThemeTokenOverride.applied_at"
+    ],
+    "internal": [
+      "Theme.created_by",
+      "Theme.updated_by",
+      "ThemePreset.created_by_user_id",
+      "ThemeTokenOverride.created_by",
+      "ThemeTokenOverride.updated_by"
+    ],
+    "confidential": [],
+    "restricted": [],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [],
+    "audit_log": [
+      "Every ThemeActivated / ThemeDeactivated / ThemeTokenOverridden / ThemeAccessibilityFlagChanged event dual-written to activity + audit lanes.",
+      "user_theme_preferences updates fire UserThemePreferenceUpdated which activity captures — no audit trail for the user-scoped row (design decision: per-user preference is functional, not compliance-relevant)."
+    ]
+  },
+  "notes": [
+    "Theme rows are public within the tenant boundary — every authenticated tenant user with theme.read can inspect the rows.",
+    "Cross-tenant reads return zero rows via BelongsToTenant global scope — platform presets (tenant_id NULL) are the exception and are cross-tenant PUBLIC readable by design.",
+    "tokens_snapshot is the SAME class as the underlying tokens — it's a materialised view for immutability, not a security boundary.",
+    "user_theme_preferences (in user module) is 'internal' by default; the row is per-user and never surfaces cross-user."
+  ]
+}

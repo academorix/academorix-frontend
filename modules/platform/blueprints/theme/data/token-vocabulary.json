@@ -1,0 +1,196 @@
+{
+  "$version": 1,
+  "title": "Canonical token vocabulary",
+  "description": "The authoritative list of every design token key + expected value shape used by the theme module. Loaded at boot by PresetValidator + used by ThemeTokenOverrideObserver::creating for valid_token_key + valid_token_value_for_type. Extending this vocabulary requires a coordinated PR: (1) add the key here, (2) add default values to every affected platform preset in data/preset-catalog.json, (3) ship a MigrateThemeTokensOnPresetUpdateJob fanout for downstream themes. Eight categories × ~85 keys.",
+  "categories": {
+    "color": {
+      "token_type": "color",
+      "value_pattern": "^(#[0-9a-fA-F]{6,8}|rgb\\(.+\\)|rgba\\(.+\\)|hsl\\(.+\\)|hsla\\(.+\\)|oklch\\(.+\\))$",
+      "value_examples": ["#0066CC", "#0066CCFF", "rgb(0 102 204)", "rgba(0, 102, 204, 0.85)", "oklch(60% 0.14 258)"],
+      "keys": [
+        "color.primary.50",
+        "color.primary.100",
+        "color.primary.200",
+        "color.primary.300",
+        "color.primary.400",
+        "color.primary.500",
+        "color.primary.600",
+        "color.primary.700",
+        "color.primary.800",
+        "color.primary.900",
+        "color.secondary.500",
+        "color.accent.500",
+        "color.success.500",
+        "color.success.100",
+        "color.warning.500",
+        "color.warning.100",
+        "color.danger.500",
+        "color.danger.100",
+        "color.info.500",
+        "color.info.100",
+        "color.surface.default",
+        "color.surface.subtle",
+        "color.surface.muted",
+        "color.surface.raised",
+        "color.surface.overlay",
+        "color.text.default",
+        "color.text.muted",
+        "color.text.subtle",
+        "color.text.inverted",
+        "color.text.link",
+        "color.border.default",
+        "color.border.subtle",
+        "color.border.focus",
+        "color.focus.ring"
+      ]
+    },
+    "spacing": {
+      "token_type": "dimension",
+      "value_pattern": "^(0|[0-9]+(\\.[0-9]+)?(px|rem|em|%))$",
+      "value_examples": ["0", "4px", "0.5rem", "1rem", "16px"],
+      "keys": [
+        "spacing.0",
+        "spacing.px",
+        "spacing.0_5",
+        "spacing.1",
+        "spacing.2",
+        "spacing.3",
+        "spacing.4",
+        "spacing.5",
+        "spacing.6",
+        "spacing.8",
+        "spacing.10",
+        "spacing.12",
+        "spacing.16",
+        "spacing.20",
+        "spacing.24",
+        "spacing.32"
+      ]
+    },
+    "typography": {
+      "token_type": "typography",
+      "value_pattern_by_subtype": {
+        "family": "^.{1,500}$",
+        "size": "^[0-9]+(\\.[0-9]+)?(px|rem|em)$",
+        "weight": "^(100|200|300|400|500|600|700|800|900)$",
+        "line_height": "^[0-9]+(\\.[0-9]+)?(px|rem|em)?$",
+        "letter_spacing": "^-?[0-9]+(\\.[0-9]+)?(px|em|%)$"
+      },
+      "value_examples": [
+        "'Inter', ui-sans-serif, system-ui, sans-serif",
+        "16px",
+        "600",
+        "1.5",
+        "-0.01em"
+      ],
+      "keys": [
+        "typography.body.family",
+        "typography.body.size.xs",
+        "typography.body.size.sm",
+        "typography.body.size.md",
+        "typography.body.size.lg",
+        "typography.body.size.xl",
+        "typography.body.weight.regular",
+        "typography.body.weight.medium",
+        "typography.body.weight.semibold",
+        "typography.body.weight.bold",
+        "typography.body.line_height",
+        "typography.body.letter_spacing",
+        "typography.heading.family",
+        "typography.heading.size.h1",
+        "typography.heading.size.h2",
+        "typography.heading.size.h3",
+        "typography.heading.size.h4",
+        "typography.heading.weight",
+        "typography.heading.line_height",
+        "typography.heading.letter_spacing",
+        "typography.mono.family",
+        "typography.mono.size.md"
+      ]
+    },
+    "radius": {
+      "token_type": "dimension",
+      "value_pattern": "^(0|[0-9]+(\\.[0-9]+)?(px|rem|em|%)|9999px)$",
+      "value_examples": ["0", "4px", "8px", "12px", "9999px"],
+      "keys": [
+        "radius.none",
+        "radius.sm",
+        "radius.md",
+        "radius.lg",
+        "radius.xl",
+        "radius.2xl",
+        "radius.full"
+      ]
+    },
+    "shadow": {
+      "token_type": "shadow",
+      "value_pattern": "^.{1,500}$",
+      "value_examples": [
+        "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        "0 25px 50px -12px rgb(0 0 0 / 0.25)"
+      ],
+      "keys": [
+        "shadow.none",
+        "shadow.sm",
+        "shadow.md",
+        "shadow.lg",
+        "shadow.xl",
+        "shadow.2xl",
+        "shadow.inner"
+      ]
+    },
+    "motion": {
+      "token_type": "motion",
+      "value_pattern_by_subtype": {
+        "duration": "^[0-9]+(ms|s)$",
+        "easing": "^(linear|ease|ease-in|ease-out|ease-in-out|cubic-bezier\\(.+\\))$"
+      },
+      "value_examples": ["150ms", "300ms", "cubic-bezier(0.4, 0, 0.2, 1)"],
+      "keys": [
+        "motion.duration.instant",
+        "motion.duration.fast",
+        "motion.duration.default",
+        "motion.duration.slow",
+        "motion.duration.slower",
+        "motion.easing.standard",
+        "motion.easing.emphasized",
+        "motion.easing.decelerate",
+        "motion.easing.accelerate"
+      ]
+    },
+    "opacity": {
+      "token_type": "opacity",
+      "value_pattern": "^(0|1|0\\.[0-9]+)$",
+      "value_examples": ["0", "0.5", "0.85", "1"],
+      "keys": [
+        "opacity.disabled",
+        "opacity.hover",
+        "opacity.focus",
+        "opacity.overlay",
+        "opacity.divider"
+      ]
+    },
+    "z_index": {
+      "token_type": "z_index",
+      "value_pattern": "^[0-9]+$",
+      "value_examples": ["0", "10", "100", "1000"],
+      "keys": [
+        "z_index.base",
+        "z_index.dropdown",
+        "z_index.sticky",
+        "z_index.overlay",
+        "z_index.modal",
+        "z_index.popover",
+        "z_index.tooltip",
+        "z_index.toast"
+      ]
+    }
+  },
+  "cross_reference": [
+    "PresetValidator::validate() walks tokens jsonb against this vocabulary + refuses unknown keys when config('theme.tokens.fail_on_unknown_key') is true.",
+    "ThemeTokenOverrideObserver::creating validates token_key against this vocabulary via the valid_token_key rule.",
+    "ThemeTokenOverrideObserver::creating validates token_value against the category's value_pattern via valid_token_value_for_type.",
+    "Every platform preset in data/preset-catalog.json MUST declare a value for every key in this vocabulary — partial preset coverage is not allowed."
+  ]
+}

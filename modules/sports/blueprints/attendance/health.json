@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/attendance/health",
+  "$version": 1,
+  "title": "attendance — health probes",
+  "probes": [
+    {
+      "name": "attendance-schema-migrations-applied",
+      "class": "Academorix\\Sports\\Attendance\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms attendance_records / attendance_policies / absence_records / late_arrivals tables + partial unique indexes exist."
+    },
+    {
+      "name": "attendance-atomicity-invariant-clean",
+      "class": "Academorix\\Sports\\Attendance\\Health\\Probes\\AtomicityInvariantCleanProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Runs the CleanupOrphanCheckinsJob queries. Any attendance without consumed_pass_id when session.requires_pass=true, OR any Pass consumed without matching attendance, OR any (session, athlete) with both attendance and absence rows, is a P1 finding."
+    },
+    {
+      "name": "attendance-reconciliation-backlog",
+      "class": "Academorix\\Sports\\Attendance\\Health\\Probes\\ReconciliationBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Sessions with ends_at more than 26h ago that haven't been reconciled. WARN when > 20 — indicates ReconcileAttendanceJob stalled."
+    },
+    {
+      "name": "attendance-freeze-cascade-clean",
+      "class": "Academorix\\Sports\\Attendance\\Health\\Probes\\FreezeCascadeCleanProbe",
+      "category": "readiness",
+      "critical": true,
+      "description": "Athletes with unexcused-absence count > threshold BUT membership still active. WARN when found — indicates FreezeMembershipOnThresholdReached hook stalled or feature-flag off."
+    },
+    {
+      "name": "attendance-suspicious-fingerprint-count",
+      "class": "Academorix\\Sports\\Attendance\\Health\\Probes\\SuspiciousFingerprintProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Device fingerprints associated with N or more distinct athletes in a rolling 24h window. Flags for admin fraud review — WARN when > 5 tenant-wide."
+    },
+    {
+      "name": "attendance-no-show-fee-invoice-lag",
+      "class": "Academorix\\Sports\\Attendance\\Health\\Probes\\NoShowFeeInvoiceLagProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Absences with policy.no_show_fee_cents > 0 that lack a linked invoice more than 24h post-detection. WARN when > 10 — indicates ChargeNoShowFeeJob stalled."
+    },
+    {
+      "name": "attendance-check-in-latency",
+      "class": "Academorix\\Sports\\Attendance\\Health\\Probes\\CheckInLatencyProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "P99 check-in duration_ms. Alerts when > 2000ms — indicates DB contention on the atomic pass-consume path."
+    }
+  ]
+}

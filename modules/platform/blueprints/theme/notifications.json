@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/theme/notifications",
+  "$version": 1,
+  "title": "theme — user-facing notifications",
+  "description": "Laravel notifications (mail / database / broadcast). Every notification carries a consent tier — activated notifications are transactional_optional (admin ops confirmation), accessibility recommendations are functional_optional.",
+  "notifications": [
+    {
+      "class": "Academorix\\Platform\\Theme\\Notifications\\ThemeActivatedNotification",
+      "channels": ["database", "mail"],
+      "consent_tier": "transactional_optional",
+      "audience": "tenant admin + design-role users",
+      "trigger": "ThemeActivated event fired.",
+      "purpose": "Confirm the theme activation landed. Includes activated_at timestamp + mode + preset name + compiled_css_url preview link.",
+      "payload_fields": [
+        "theme_id",
+        "tenant_id",
+        "mode",
+        "selected_preset_name",
+        "activated_at",
+        "activated_by_user_id",
+        "preview_thumbnail_url"
+      ],
+      "template": "theme::mail.theme-activated"
+    },
+    {
+      "class": "Academorix\\Platform\\Theme\\Notifications\\ThemePresetPublishedNotification",
+      "channels": ["database"],
+      "consent_tier": "functional_optional",
+      "audience": "tenant admin + design-role users",
+      "trigger": "ThemePresetPublished event fired for a tenant-custom preset. NOT fired for platform presets (those broadcast via the platform-admin surface separately).",
+      "purpose": "Notify the tenant that their custom preset is now available for selection in the preset picker.",
+      "payload_fields": [
+        "preset_id",
+        "tenant_id",
+        "slug",
+        "name",
+        "mode",
+        "category",
+        "preview_thumbnail_url",
+        "published_at",
+        "published_by_user_id"
+      ],
+      "template": "theme::database.theme-preset-published"
+    },
+    {
+      "class": "Academorix\\Platform\\Theme\\Notifications\\ThemeAccessibilityRecommendationNotification",
+      "channels": ["database", "mail"],
+      "consent_tier": "functional_optional",
+      "audience": "tenant admin + design-role users",
+      "trigger": "ContrastAuditor detects a color pair on an active theme dropping below WCAG AA (4.5:1 body / 3:1 large text). Runs on ThemeActivated + on any ThemeTokenOverridden that affects a color token.",
+      "purpose": "Recommend accessibility improvements to the theme. NEVER blocks — the tenant is free to ship the theme as-is; the notification surfaces the finding for review.",
+      "payload_fields": [
+        "theme_id",
+        "tenant_id",
+        "findings",
+        "findings.token_pair.foreground_key",
+        "findings.token_pair.background_key",
+        "findings.contrast_ratio",
+        "findings.required_ratio",
+        "findings.severity",
+        "recommendation_text",
+        "audit_timestamp"
+      ],
+      "template": "theme::mail.theme-accessibility-recommendation",
+      "opt_out": "Recipients may opt out via NotificationPreference (category=theme.accessibility). Owner + admin roles may re-enable per-user."
+    }
+  ]
+}

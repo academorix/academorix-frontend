@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/theme/features",
+  "$version": 1,
+  "title": "theme — feature keys",
+  "features": [
+    {
+      "key": "theme.platform",
+      "displayName": "Theme platform",
+      "description": "Design token substrate — themes, presets, and overrides. Always on. Baseline UX.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "theme.dark_mode",
+      "displayName": "Dark mode",
+      "description": "Selecting mode='dark' on themes + activating dark presets. Available on every tier — dark mode is a baseline UX expectation.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "theme.custom_presets",
+      "displayName": "Custom presets",
+      "description": "Author tenant-owned ThemePreset rows. Gated by theme_custom_presets slot entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "theme.token_overrides",
+      "displayName": "Per-token overrides",
+      "description": "Sparse patches on top of a preset (ThemeTokenOverride rows). Gated by theme_token_overrides slot entitlement.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "theme.accessibility_audit",
+      "displayName": "Contrast auditor",
+      "description": "WCAG AA/AAA contrast-ratio findings surfaced as recommendations. Informational only. Always on — accessibility is not a paywall.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "theme.rollback_extended",
+      "displayName": "Extended activation history",
+      "description": "Last-20 prior Theme rows retained for rollback (default: last-5). Enterprise only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

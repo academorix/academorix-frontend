@@ -1,0 +1,107 @@
+{
+  "id": "academorix://modules/coaching/rules",
+  "$version": 1,
+  "title": "coaching — validation rules",
+  "description": "Custom Laravel validation rules published by CoachingServiceProvider::boot(). Used by both observers + FormRequest data classes.",
+  "namespace": "Academorix\\Sports\\Coaching\\Rules",
+  "rules": [
+    {
+      "name": "valid_primary_sport",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidPrimarySport",
+      "signature": "valid_primary_sport",
+      "description": "Refuses primary_sport_id that does not resolve to an is_active=true row in sports_registry.sports.",
+      "default_message": "The :attribute must reference an active sport in the registry."
+    },
+    {
+      "name": "valid_coaching_since_year",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidCoachingSinceYear",
+      "signature": "valid_coaching_since_year",
+      "description": "Refuses years outside 1900..current-year.",
+      "default_message": "The :attribute must be a year between 1900 and the current year."
+    },
+    {
+      "name": "valid_photo_url",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidPhotoUrl",
+      "signature": "valid_photo_url",
+      "description": "Refuses non-HTTPS S3 URLs. Matches pattern `https://[a-z0-9.\\-]+\\.s3(\\.[\\w\\-]+)*\\.amazonaws\\.com/.+` (or the tenant's configured S3-compatible endpoint per `coaching.storage.photo_endpoints`).",
+      "default_message": "The :attribute must be an HTTPS S3 URL."
+    },
+    {
+      "name": "valid_availability_shape",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidAvailabilityShape",
+      "signature": "valid_availability_shape",
+      "description": "Refuses availability payloads that don't match the day-of-week map schema: object with keys IN {monday, tuesday, wednesday, thursday, friday, saturday, sunday}, each value is an array of {start_hhmm, end_hhmm} pairs where start < end. Strict mode (per config) requires every day-of-week key.",
+      "default_message": "The :attribute must be a day-of-week availability map with valid time ranges."
+    },
+    {
+      "name": "valid_hourly_rate_currency_pair",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidHourlyRateCurrencyPair",
+      "signature": "valid_hourly_rate_currency_pair",
+      "description": "Cross-field validation: refuses when hourly_rate_cents XOR rate_currency is set. Both must be null OR both must be non-null.",
+      "default_message": "hourly_rate_cents and rate_currency must both be set or both null."
+    },
+    {
+      "name": "valid_specializations_shape",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidSpecializationsShape",
+      "signature": "valid_specializations_shape",
+      "description": "Refuses specializations arrays containing entries not in the specializations-catalog (data/specializations-catalog.json).",
+      "default_message": "One or more specializations are not in the catalog."
+    },
+    {
+      "name": "valid_languages",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidLanguages",
+      "signature": "valid_languages",
+      "description": "Refuses languages_spoken arrays containing entries that are not valid ISO 639-1 two-letter codes.",
+      "default_message": "One or more language codes are not valid ISO 639-1."
+    },
+    {
+      "name": "valid_role",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidAssignmentRole",
+      "signature": "valid_role",
+      "description": "Refuses role values outside: head_coach / assistant_coach / observer / substitute.",
+      "default_message": "The :attribute must be a valid coach-assignment role."
+    },
+    {
+      "name": "valid_ratable_type_for_rating",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidRatableTypeForRating",
+      "signature": "valid_ratable_type_for_rating",
+      "description": "Refuses ratable_type outside: Sport / Discipline / Position. Also verifies the referenced ratable_id resolves + is_active=true in the corresponding registry table.",
+      "default_message": "The rating must target an active Sport, Discipline, or Position."
+    },
+    {
+      "name": "valid_rating_value_for_scale",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\ValidRatingValueForScale",
+      "signature": "valid_rating_value_for_scale",
+      "description": "Cross-field: refuses when rating_value is not in 1..5 (both stars_1_5 + level_5_stage encode 1-5).",
+      "default_message": "rating_value must be between 1 and 5."
+    },
+    {
+      "name": "unique_active_certification_per_body_and_name",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\UniqueActiveCertificationPerBodyAndName",
+      "signature": "unique_active_certification_per_body_and_name",
+      "description": "Enforces the partial unique index (tenant_id, coaching_profile_id, issuing_body, certification_name, issued_at, deleted_at IS NULL).",
+      "default_message": "This certification (issuing body + name + issued date) already exists for this coach."
+    },
+    {
+      "name": "unique_head_coach_per_assignable",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\UniqueHeadCoachPerAssignable",
+      "signature": "unique_head_coach_per_assignable",
+      "description": "Enforces the partial unique index (tenant_id, assignable_type, assignable_id, role='head_coach', deleted_at IS NULL, end_date IS NULL OR end_date > NOW()).",
+      "default_message": "Another coach is already the head_coach for this session/team/event."
+    },
+    {
+      "name": "unique_coaching_profile_per_staff",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\UniqueCoachingProfilePerStaff",
+      "signature": "unique_coaching_profile_per_staff",
+      "description": "Enforces the partial unique index (tenant_id, staff_id, deleted_at IS NULL).",
+      "default_message": "This Staff already has an active coaching profile."
+    },
+    {
+      "name": "no_self_rating",
+      "class": "Academorix\\Sports\\Coaching\\Rules\\NoSelfRating",
+      "signature": "no_self_rating",
+      "description": "Refuses when rated_by_user_id resolves to the same Staff as the coaching_profile.staff_id (i.e. the rater is the coach being rated).",
+      "default_message": "You cannot rate your own coaching profile."
+    }
+  ]
+}

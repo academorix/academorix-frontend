@@ -1,0 +1,45 @@
+{
+  "$version": 1,
+  "title": "Coaching certification issuing-body catalog",
+  "description": "Reference catalog of recognized certification issuing bodies. Free-text issuing_body on CoachCertification is permitted (tenant may capture unique bodies), but analytics + UI-picker autocomplete draws from this list. Bucketed for analytics.",
+  "issuing_bodies": [
+    { "value": "USSF", "label": "US Soccer Federation", "bucket": "federation", "sport_scope": ["football", "soccer"], "verification_url_template": "https://www.ussoccer.com/coaching/coach-license-search", "webhook_available": false, "note": "USSF grassroots + D–A licenses." },
+    { "value": "USA_Basketball", "label": "USA Basketball", "bucket": "federation", "sport_scope": ["basketball"], "verification_url_template": "https://coachlicensing.usab.com/verify", "webhook_available": false, "note": "Gold / Silver / Bronze coach licenses." },
+    { "value": "USA_Swimming", "label": "USA Swimming", "bucket": "federation", "sport_scope": ["swimming"], "webhook_available": false, "note": "Coach + safety certifications." },
+    { "value": "USA_Volleyball", "label": "USA Volleyball", "bucket": "federation", "sport_scope": ["volleyball"], "webhook_available": false },
+    { "value": "USA_Track_and_Field", "label": "USA Track & Field", "bucket": "federation", "sport_scope": ["track_and_field"], "webhook_available": false },
+    { "value": "USA_Baseball", "label": "USA Baseball", "bucket": "federation", "sport_scope": ["baseball"], "webhook_available": false },
+    { "value": "USA_Softball", "label": "USA Softball", "bucket": "federation", "sport_scope": ["softball"], "webhook_available": false },
+    { "value": "USA_Hockey", "label": "USA Hockey", "bucket": "federation", "sport_scope": ["ice_hockey"], "webhook_available": false },
+    { "value": "USA_Gymnastics", "label": "USA Gymnastics", "bucket": "federation", "sport_scope": ["gymnastics"], "webhook_available": false },
+    { "value": "USTA", "label": "US Tennis Association", "bucket": "federation", "sport_scope": ["tennis"], "webhook_available": false },
+    { "value": "PGA_of_America", "label": "PGA of America", "bucket": "federation", "sport_scope": ["golf"], "webhook_available": false },
+    { "value": "FIFA", "label": "FIFA (international)", "bucket": "federation", "sport_scope": ["football", "soccer"], "webhook_available": false, "note": "International federation certifications. Rare on US tenants." },
+    { "value": "FIBA", "label": "FIBA (international)", "bucket": "federation", "sport_scope": ["basketball"], "webhook_available": false },
+    { "value": "IAAF_WA", "label": "World Athletics (IAAF)", "bucket": "federation", "sport_scope": ["track_and_field"], "webhook_available": false },
+
+    { "value": "SafeSport", "label": "US Center for SafeSport", "bucket": "safety", "sport_scope": [], "verification_url_template": "https://safesport.org/verify", "webhook_available": true, "note": "MANDATORY for coaches working with minors in Olympic + Paralympic sports. Wave 5+ safesport module integrates with this API." },
+    { "value": "Red_Cross", "label": "American Red Cross (CPR + AED + First Aid)", "bucket": "medical", "sport_scope": [], "webhook_available": false, "note": "CPR / AED / First Aid certifications." },
+    { "value": "American_Heart_Association", "label": "American Heart Association (BLS + Heartsaver)", "bucket": "medical", "sport_scope": [], "webhook_available": false, "note": "Basic Life Support + Heartsaver certifications." },
+    { "value": "NATA_BOC", "label": "Board of Certification (Athletic Trainer)", "bucket": "medical", "sport_scope": [], "webhook_available": false },
+
+    { "value": "NSCA", "label": "National Strength & Conditioning Association", "bucket": "industry", "sport_scope": [], "webhook_available": false, "note": "CSCS + CPT certifications." },
+    { "value": "NASM", "label": "National Academy of Sports Medicine", "bucket": "industry", "sport_scope": [], "webhook_available": false, "note": "CPT / CES / PES certifications. Public verification available." },
+    { "value": "ACSM", "label": "American College of Sports Medicine", "bucket": "industry", "sport_scope": [], "webhook_available": false },
+    { "value": "ACE", "label": "American Council on Exercise", "bucket": "industry", "sport_scope": [], "webhook_available": false },
+    { "value": "ISSA", "label": "International Sports Sciences Association", "bucket": "industry", "sport_scope": [], "webhook_available": false },
+    { "value": "USA_Weightlifting", "label": "USA Weightlifting", "bucket": "industry", "sport_scope": ["weightlifting"], "webhook_available": false },
+
+    { "value": "Yoga_Alliance", "label": "Yoga Alliance (RYT)", "bucket": "specialty", "sport_scope": ["yoga"], "webhook_available": false },
+    { "value": "Pilates_Method_Alliance", "label": "Pilates Method Alliance", "bucket": "specialty", "sport_scope": ["pilates"], "webhook_available": false },
+    { "value": "CrossFit_Inc", "label": "CrossFit Inc", "bucket": "specialty", "sport_scope": ["crossfit"], "webhook_available": false },
+
+    { "value": "tenant_internal", "label": "Tenant-internal training program", "bucket": "internal", "sport_scope": [], "webhook_available": false, "note": "Tenant's own certification program. Auto-verify candidate via config('coaching.verification.auto_verify_low_risk_bodies')." },
+    { "value": "other", "label": "Other (specify in certification_name)", "bucket": "other", "sport_scope": [], "webhook_available": false }
+  ],
+  "notes": [
+    "The `webhook_available` column signals Wave 4+ automated verification. Currently only SafeSport ships a public verification API.",
+    "The `verification_url_template` column is a suggested value for CoachCertification.verification_url — admins may paste a specific coach's verification URL, but the template hints at the correct portal.",
+    "The `bucket` feeds analytics events (issuing_body_bucket) — high-cardinality issuing_body values collapse to (federation / medical / safety / industry / specialty / internal / other)."
+  ]
+}

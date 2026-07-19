@@ -1,0 +1,102 @@
+{
+  "id": "coaching.resources.coach-skill-rating.list",
+  "title": "Coach skill ratings",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coach-skill-ratings",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coaching", "entity": "coach-skill-rating", "action": "list" },
+  "requiresPermission": "coach_skill_ratings.viewAny",
+  "dataSources": [
+    {
+      "name": "ratings",
+      "kind": "http.get",
+      "url": "/api/v1/coach-skill-ratings",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "features",
+      "kind": "http.get",
+      "url": "/api/v1/features",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "Alert",
+          "props": { "variant": "info", "title": "Enterprise feature", "children": "Skill ratings require the Medium+ tier. Upgrade to enable." },
+          "bindings": { "hidden": { "$expr": "$ref('features.coaching.skill_ratings')" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "bindings": { "hidden": { "$expr": "!$ref('features.coaching.skill_ratings')" } },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coach skill ratings" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Per-coach per-Sport/Discipline/Position ratings. Feed athlete↔coach match-making." } }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "star", "children": "Record rating" },
+              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-skill-ratings/create'" } },
+              "requiresPermission": "coach_skill_ratings.create"
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Skill ratings table" },
+          "bindings": { "rows": { "$ref": "ratings" }, "isLoading": { "$ref": "ratings.isLoading" }, "hidden": { "$expr": "!$ref('features.coaching.skill_ratings')" } },
+          "columns": [
+            { "key": "coach", "label": "Coach", "renderer": { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.coach_display_name" } } } },
+            {
+              "key": "ratable",
+              "label": "Rating on",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  { "kind": "Chip", "props": { "size": "xs" }, "bindings": { "children": { "$ref": "row.ratable_type" } } },
+                  { "kind": "Text", "props": { "className": "text-sm" }, "bindings": { "children": { "$ref": "row.ratable_display_name" } } }
+                ]
+              }
+            },
+            {
+              "key": "rating",
+              "label": "Rating",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "coaching.skill-rating-stars",
+                "bindings": {
+                  "rating_scale": { "$ref": "row.rating_scale" },
+                  "rating_value": { "$ref": "row.rating_value" }
+                }
+              }
+            },
+            { "key": "rated_at", "label": "Rated", "renderer": { "kind": "Text", "bindings": { "children": { "$expr": "$formatDate(row.rated_at, 'MMM d, yyyy')" } } } },
+            {
+              "key": "expires_at",
+              "label": "Expires",
+              "renderer": {
+                "kind": "Text",
+                "bindings": { "children": { "$expr": "row.expires_at ? $formatDate(row.expires_at, 'MMM d, yyyy') : 'Never'" } }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

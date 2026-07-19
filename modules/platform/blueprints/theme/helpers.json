@@ -1,0 +1,25 @@
+{
+  "id": "academorix://modules/theme/helpers",
+  "$version": 1,
+  "title": "theme — global helpers",
+  "description": "Global function helpers registered via the module's service provider. Kept small — theme is not a helper-heavy module.",
+  "helpers": [
+    {
+      "name": "theme_tokens",
+      "signature": "theme_tokens(?string $mode = null): array",
+      "purpose": "Convenience wrapper around TokenResolver::resolveTokens(). Resolves the caller's active theme tokens for the current tenant + requested mode (or the tenant's default mode). Returns the frozen tokens_snapshot as an associative array keyed by token_key. Cached via Redis theme:resolved:{tenant_id}:{mode}.",
+      "usage_example": "$primary = theme_tokens('light')['color.primary.500'];"
+    },
+    {
+      "name": "theme_css_url",
+      "signature": "theme_css_url(?string $mode = null): string",
+      "purpose": "Convenience wrapper. Returns the signed compiled CSS URL for the current tenant + mode. Suitable for a <link rel=\"stylesheet\" href=\"...\"> in SSR templates.",
+      "usage_example": "<link rel=\"stylesheet\" href=\"{{ theme_css_url('dark') }}\">"
+    }
+  ],
+  "notes": [
+    "Both helpers respect the current tenant scope via tenancy::CurrentTenant.",
+    "Helpers ARE optional — code that prefers explicit DI reaches for TokenResolver + CssRenderer bindings directly.",
+    "No helper for token-override CRUD — those flows go through the HTTP surface or explicit repository injection."
+  ]
+}

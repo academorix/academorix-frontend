@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/attendance/schedule",
+  "$version": 1,
+  "title": "attendance — scheduled tasks",
+  "entries": [
+    {
+      "name": "attendance-reconcile",
+      "command": "queue:dispatch --job=Academorix\\Sports\\Attendance\\Jobs\\ReconcileAttendanceJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03:00 UTC (tenant-local resolved at job time): sweep completed sessions from the last 25 hours, create AbsenceRecord for no-shows."
+    },
+    {
+      "name": "attendance-cleanup-orphan-checkins",
+      "command": "queue:dispatch --job=Academorix\\Sports\\Attendance\\Jobs\\CleanupOrphanCheckinsJob",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 04:00 UTC: verify atomicity invariants — every finding is P1. Runs AFTER the reconcile job so new orphan states from the previous night are surfaced."
+    },
+    {
+      "name": "attendance-notify-absences-cascade",
+      "command": "queue:dispatch --job=Academorix\\Sports\\Attendance\\Jobs\\NotifyAbsenceJob",
+      "cron": "0 8 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 08:00 UTC: cascade notifications for absences recorded in the previous 24h (batch dispatch — deduplicates per athlete per day)."
+    },
+    {
+      "name": "attendance-weekly-digest",
+      "command": "queue:dispatch --job=Academorix\\Sports\\Attendance\\Jobs\\GenerateAttendanceReportJob",
+      "cron": "0 9 * * 1",
+      "timezone": "UTC",
+      "purpose": "Weekly Monday 09:00 UTC: aggregate weekly attendance report per branch. Requires attendance_analytics entitlement."
+    },
+    {
+      "name": "attendance-purge-fraud-signals",
+      "command": "queue:dispatch --job=Academorix\\Sports\\Attendance\\Jobs\\PurgeAttendanceFraudSignalsJob",
+      "cron": "0 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05:00 UTC: null-out device_fingerprint_hash / ip_address / gps_lat / gps_lng on attendance records more than 1 year past session.ends_at. Attendance rows themselves survive; only the fraud signals are redacted."
+    },
+    {
+      "name": "attendance-purge-completed",
+      "command": "queue:dispatch --job=Academorix\\Sports\\Attendance\\Jobs\\PurgeCompletedAttendanceJob",
+      "cron": "0 6 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 06:00 UTC: hard-purge attendance / absence / late-arrival rows past retention (7y attendance / 3y absence / co-terminous late-arrival). 10y attendance retention for tenants with attendance_extended_retention entitlement."
+    }
+  ]
+}

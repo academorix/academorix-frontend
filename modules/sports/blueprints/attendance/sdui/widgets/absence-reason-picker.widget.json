@@ -1,0 +1,73 @@
+{
+  "id": "attendance.widgets.absence-reason-picker",
+  "title": "Absence reason picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "attendance.absence-reason-picker",
+  "description": "Filterable picker of canonical absence reasons from data/absence-reason-catalog.json. Uses HeroUI ComboBox per ui-components rule — always prefer ComboBox over Select for filterable single-choice.",
+  "params": {
+    "value": { "type": "string", "required": false, "description": "Currently selected reason value." },
+    "label": { "type": "string", "required": false, "default": "Reason" },
+    "placeholder": { "type": "string", "required": false, "default": "Search reason..." },
+    "required": { "type": "boolean", "required": false, "default": false },
+    "size": { "type": "string", "required": false, "default": "md" }
+  },
+  "dataSources": [
+    {
+      "name": "reasons",
+      "kind": "http.get",
+      "url": "/api/v1/catalogs/absence-reasons",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "kind": "ComboBox",
+      "propsExpr": "{ size: $params.size, selectedKey: $params.value, menuTrigger: 'focus', isRequired: $params.required }",
+      "actions": {
+        "onSelectionChange": { "kind": "emit", "name": "reason.changed", "valueExpr": "$selectedKey" }
+      },
+      "children": [
+        {
+          "kind": "Label",
+          "propsExpr": "{ children: $params.label }"
+        },
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            {
+              "kind": "Input",
+              "propsExpr": "{ placeholder: $params.placeholder }"
+            },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "bindings": { "items": { "$ref": "reasons" } },
+              "childTemplate": {
+                "kind": "ListBox.Item",
+                "propsExpr": "{ key: item.value, id: item.value, textValue: item.display_name }",
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col gap-0.5" },
+                    "children": [
+                      { "kind": "Text", "propsExpr": "{ className: 'font-medium', children: item.display_name }" },
+                      { "kind": "Text", "propsExpr": "{ className: 'text-xs text-muted', children: item.description }" }
+                    ]
+                  },
+                  { "kind": "ListBox.ItemIndicator" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

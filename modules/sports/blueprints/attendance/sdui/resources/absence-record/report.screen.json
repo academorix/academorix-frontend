@@ -1,0 +1,104 @@
+{
+  "id": "attendance.resources.absence-record.report",
+  "title": "Report absence",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/absences/report",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attendance", "entity": "absence-record", "action": "report" },
+  "requiresPermission": "absences.report.own",
+  "dataSources": [
+    { "name": "my_athletes", "kind": "http.get", "url": "/api/v1/me/athletes", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
+    { "name": "upcoming_sessions", "kind": "http.get", "url": "/api/v1/sessions/upcoming?filter[athlete_id]={form.athlete_id}", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Report absence" } },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-semibold", "children": "Advance notice auto-excuses" } },
+            { "kind": "Text", "props": { "children": "When you report an absence more than 24 hours before the session AND the reason is on your academy's auto-excuse list, we mark it excused automatically." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "children": "Who + when" } }] },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Athlete", "menuTrigger": "focus", "isRequired": true },
+                  "bindings": { "items": { "$ref": "my_athletes" } },
+                  "actions": { "onSelectionChange": { "kind": "field.set", "field": "athlete_id", "valueExpr": "$selectedKey" } }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Session missing", "menuTrigger": "focus", "isRequired": true },
+                  "bindings": { "items": { "$ref": "upcoming_sessions" }, "disabled": { "$expr": "!form.athlete_id" } },
+                  "actions": { "onSelectionChange": { "kind": "field.set", "field": "session_id", "valueExpr": "$selectedKey" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "children": "Why" } }] },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "attendance.absence-reason-picker",
+                  "props": { "label": "Reason", "required": true },
+                  "actions": { "onChange": { "kind": "field.set", "field": "absence_reason", "valueExpr": "$value" } }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "label": "Explanation (optional)", "maxLength": 4096, "rows": 3, "placeholder": "Add context for the coach or admin..." },
+                  "actions": { "onChange": { "kind": "field.set", "field": "explanation", "valueExpr": "$value" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/me/attendance" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Report absence" },
+              "bindings": { "disabled": { "$expr": "!form.session_id || !form.athlete_id || !form.absence_reason" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/absences/report",
+                  "bodyFromForm": true,
+                  "onSuccess": { "kind": "navigate", "to": "/tenant/me/attendance" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

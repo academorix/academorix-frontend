@@ -1,0 +1,9 @@
+{
+  "id": "academorix://modules/coaching/macros",
+  "$version": 1,
+  "title": "coaching — published macros",
+  "description": "No request-level macros. Coach context is always Staff-scoped — /coaches/me routes read Request::activeStaff() (from staff module) + narrow to coaching_profile.staff_id.",
+  "namespace_note": "N/A — no macros published by this module.",
+  "macros": [],
+  "blueprint_macros": []
+}

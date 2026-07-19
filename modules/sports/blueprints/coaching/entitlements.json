@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/coaching/entitlements",
+  "$version": 1,
+  "title": "coaching — declared entitlements",
+  "description": "Seven entitlement keys. `coaching_capture` is the master feature (Small+). `coaching_profile_slot` is the slot-count integer (Small=10 / Medium=100 / Enterprise=null). `coaching_advanced_certifications` enables the verification workflow with document upload (Medium+). `coaching_skill_ratings` enables the rating system (Medium+). `coaching_multi_branch` allows cross-branch assignments (Medium+). `coaching_public_directory` exposes verified coaches to customer-facing UI (Medium+). `coaching_extended_retention` extends the retention window from 7 to 10 years (Enterprise).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [
+    { "kind": "boolean" },
+    { "kind": "integer" }
+  ],
+  "entitlements": [
+    {
+      "key": "coaching_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature. When on, tenant may create CoachingProfile rows + downstream artifacts. When off, POST /api/v1/coaching-profiles returns 402 (feature not licensed). Small tier ON by default because every academy needs coach tracking — the flag exists to let a downgrade path turn coaching off entirely (rare, but coherent).",
+      "enforcedBy": [
+        "CoachingProfileObserver.creating refuses when tenant does not hold the entitlement (returns COACHING_CAPTURE_NOT_ENABLED)",
+        "SDUI 'Create profile' button hidden when features array does not include 'coaching.capture'"
+      ]
+    },
+    {
+      "key": "coaching_profile_slot",
+      "kind": "integer",
+      "defaultsByPlan": { "small": 10, "medium": 100, "enterprise": null },
+      "description": "Cap on active CoachingProfile rows. null = unlimited. Enforced on create — refuses with COACHING_PROFILE_SLOT_EXCEEDED when the count of is_active=true profiles would exceed the cap. Deactivated profiles do NOT count against the slot.",
+      "enforcedBy": [
+        "CoachingProfileObserver.creating refuses when count(active) >= cap",
+        "EntitlementProvisioner writes the cap to the plan's slot record; upgrades increase the cap without touching existing rows"
+      ]
+    },
+    {
+      "key": "coaching_advanced_certifications",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the full certification workflow: admin verification, document upload (verifies via storage::File), verification-notes field, external verification-url. When off (Small), certifications are captured as a simple text ledger without the verify step + document_url is refused.",
+      "enforcedBy": [
+        "CoachCertificationObserver.creating refuses document_url when gate is off (returns COACHING_CERT_DOCUMENT_REQUIRES_ADVANCED)",
+        "GET /coach-certifications/{cert}/verify returns 402 when gate is off (returns COACHING_CERT_VERIFICATION_NOT_ENABLED)",
+        "SDUI verify + upload-document buttons hidden when features array does not include 'coaching.advanced_certifications'"
+      ]
+    },
+    {
+      "key": "coaching_skill_ratings",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the CoachSkillRating aggregate. When off, POST /coach-skill-ratings returns 402. Read routes never expose ratings on Small tenants.",
+      "enforcedBy": [
+        "CoachSkillRatingObserver.creating refuses when gate is off (returns COACHING_SKILL_RATINGS_NOT_ENABLED)",
+        "SDUI ratings screens + widgets hidden when features array does not include 'coaching.skill_ratings'"
+      ]
+    },
+    {
+      "key": "coaching_multi_branch",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Allows a coach to hold assignments at branches other than their primary branch (CoachingProfile.branch_id). When off (Small), the assignment observer refuses if `assignable.branch_id != coaching_profile.branch_id`.",
+      "enforcedBy": [
+        "CoachAssignmentObserver.creating refuses cross-branch assignments when gate is off (returns COACHING_MULTI_BRANCH_NOT_ENABLED)",
+        "SDUI branch-picker restricts to coach's primary branch when features array does not include 'coaching.multi_branch'"
+      ]
+    },
+    {
+      "key": "coaching_public_directory",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Exposes verified + is_accepting_new_athletes=true CoachingProfiles on the tenant's customer-facing site + Wave 4 booking flow. When off, the customer sees only aggregate info (e.g. 'certified coaches available') without picking a specific coach.",
+      "enforcedBy": [
+        "Customer-facing booking flow queries `cop:accepting:{tenant_id}` cache only when features array includes 'coaching.public_directory'",
+        "Coach-picker widget on customer site rendered only when gate is on"
+      ]
+    },
+    {
+      "key": "coaching_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Extends retention windows: profiles 7y → 10y, ratings 2y → 5y. Applies to purge scans + rating expiry. Enterprise-only — the extra retention is legal-hold-friendly for regulated tenants (school-type, federation-affiliated).",
+      "enforcedBy": [
+        "PurgeExpiredSkillRatingsJob reads config.coaching.rating.default_expiry_years * (gate ? 2.5 : 1) — effectively 5y vs 2y",
+        "PurgeCoachingDataForErasedTenant honours the extended window when the tenant carries the entitlement at deactivation time (grandfathered per-record — a profile deactivated with the entitlement retains 10y even if the tenant later downgrades)"
+      ]
+    }
+  ]
+}

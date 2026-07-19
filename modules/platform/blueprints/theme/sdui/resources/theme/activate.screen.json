@@ -1,0 +1,153 @@
+{
+  "id": "theme.resources.theme.activate",
+  "title": "Activate theme",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/themes/{id}/activate",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme", "action": "activate" },
+  "requiresPermission": "theme.activate",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "candidate",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/themes/' + params.id",
+      "unwrap": "data"
+    },
+    {
+      "name": "current",
+      "kind": "http.get",
+      "url": "/api/v1/themes/current",
+      "unwrap": "data"
+    },
+    {
+      "name": "preview",
+      "kind": "http.post",
+      "urlExpr": "'/api/v1/themes/' + params.id + '/preview'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to themes",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/themes" } }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Activate theme"
+          }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "children": "Activating this theme will deactivate the current active theme for the same mode. The change fires a CSS regen — logged-in users see the new theme on next page load."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold uppercase tracking-wide text-muted mb-3",
+                "children": "Preview"
+              }
+            },
+            {
+              "kind": "Widget",
+              "widget": "theme.preset-thumbnail",
+              "props": { "theme": { "$ref": "candidate" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-sm font-semibold uppercase tracking-wide text-muted mb-3",
+                "children": "Contrast audit"
+              }
+            },
+            {
+              "kind": "List",
+              "props": { "className": "flex flex-col gap-2" },
+              "bindings": { "items": { "$ref": "preview.contrast_findings" } },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center justify-between text-sm" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.token_pair.foreground_key + ' × ' + row.token_pair.background_key"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "bindings": {
+                      "variant": {
+                        "$expr": "row.severity === 'fail_aa' ? 'danger' : row.severity === 'warn' ? 'warning' : 'success'"
+                      },
+                      "children": {
+                        "$expr": "row.contrast_ratio.toFixed(2) + ':1 (' + row.severity + ')'"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/themes" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Activate theme" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/themes/' + params.id + '/activate'",
+                  "onSuccess": [
+                    { "kind": "toast.success", "message": "Theme activated" },
+                    { "kind": "navigate", "to": "/tenant/themes" }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

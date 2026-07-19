@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/coaching/caches",
+  "$version": 1,
+  "title": "coaching — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": [
+    "coaching",
+    "coaching.profile",
+    "coaching.assignments",
+    "coaching.certifications",
+    "coaching.certifications.expiring",
+    "coaching.ratings",
+    "coaching.availability"
+  ],
+  "keys": [
+    {
+      "pattern": "cop:by_staff:{staff_id}",
+      "description": "The single active CoachingProfile for a Staff (or null). Read on every session-assignment / attendance decision.",
+      "ttlSeconds": 600,
+      "tags": ["coaching", "coaching.profile"],
+      "invalidatedBy": ["CoachingProfileCreated", "CoachingProfileVerified", "CoachingProfileDeactivated", "CoachingProfileReactivated"]
+    },
+    {
+      "pattern": "cop:by_sport:{tenant_id}:{primary_sport_key}",
+      "description": "Active + verified coaches for a tenant + primary_sport. Feeds the customer-facing coach picker (coaching_public_directory entitlement) + admin match-making.",
+      "ttlSeconds": 300,
+      "tags": ["coaching", "coaching.profile"],
+      "invalidatedBy": ["CoachingProfileCreated", "CoachingProfileVerified", "CoachingProfileDeactivated"]
+    },
+    {
+      "pattern": "cop:accepting:{tenant_id}",
+      "description": "Coaches with is_accepting_new_athletes=true. Read on customer-facing booking.",
+      "ttlSeconds": 300,
+      "tags": ["coaching", "coaching.profile"],
+      "invalidatedBy": ["CoachingProfileCreated", "CoachingProfileVerified", "CoachingProfileDeactivated"]
+    },
+    {
+      "pattern": "cas:by_profile:{coaching_profile_id}",
+      "description": "All active assignments for a coach. Read on coach's /me/assignments dashboard.",
+      "ttlSeconds": 180,
+      "tags": ["coaching", "coaching.assignments"],
+      "invalidatedBy": ["CoachAssignmentCreated", "CoachAssignmentUpdated", "CoachAssignmentEnded", "CoachAssignmentCancelled"]
+    },
+    {
+      "pattern": "cas:by_assignable:{assignable_type}:{assignable_id}",
+      "description": "All coaches assigned to a Session / Team / Event. Read hot on session-detail + team-detail pages.",
+      "ttlSeconds": 300,
+      "tags": ["coaching", "coaching.assignments"],
+      "invalidatedBy": ["CoachAssignmentCreated", "CoachAssignmentEnded", "CoachAssignmentCancelled"]
+    },
+    {
+      "pattern": "cas:head_coach:{assignable_type}:{assignable_id}",
+      "description": "The head_coach for an assignable, resolves to the single active row (or null). Load-bearing on session-check-in flow.",
+      "ttlSeconds": 600,
+      "tags": ["coaching", "coaching.assignments"],
+      "invalidatedBy": ["CoachAssignmentCreated (role=head_coach)", "CoachAssignmentEnded (was head_coach)", "CoachAssignmentCancelled (was head_coach)"]
+    },
+    {
+      "pattern": "ccf:by_profile:{coaching_profile_id}",
+      "description": "All active certifications for a coach. Read on coach-profile detail + verification workflow.",
+      "ttlSeconds": 300,
+      "tags": ["coaching", "coaching.certifications"],
+      "invalidatedBy": ["CoachCertificationAdded", "CoachCertificationVerified", "CoachCertificationExpired"]
+    },
+    {
+      "pattern": "ccf:expiring:{tenant_id}:{cadence_days}",
+      "description": "Certifications expiring within N days for a tenant (cadence_days IN 90 / 30 / 7). Feeds NotifyCertificationExpiringJob's per-tenant sweep.",
+      "ttlSeconds": 3600,
+      "tags": ["coaching", "coaching.certifications.expiring"],
+      "invalidatedBy": ["CoachCertificationAdded", "CoachCertificationExpiringSoon", "CoachCertificationExpired"]
+    },
+    {
+      "pattern": "csr:by_profile:{coaching_profile_id}",
+      "description": "All current skill ratings for a coach (aggregated max per ratable). Read on athlete↔coach match-making.",
+      "ttlSeconds": 600,
+      "tags": ["coaching", "coaching.ratings"],
+      "invalidatedBy": ["CoachSkillRatingRecorded", "CoachSkillRatingUpdated"]
+    },
+    {
+      "pattern": "cop:availability:{coaching_profile_id}:{iso_week}",
+      "description": "Resolved availability slots for a coach in an ISO-week, considering active assignments. Hot on scheduler + booking-page reads.",
+      "ttlSeconds": 300,
+      "tags": ["coaching", "coaching.availability"],
+      "invalidatedBy": ["CoachingProfileUpdated (availability changed)", "CoachAssignmentCreated", "CoachAssignmentEnded"]
+    }
+  ]
+}

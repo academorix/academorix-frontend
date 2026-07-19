@@ -1,0 +1,32 @@
+{
+  "id": "coaching.widgets.coach-status-chip",
+  "title": "Coach status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "coaching.coach-status-chip",
+  "description": "Compact HeroUI Chip showing a coach's active + verified state. Renders in three states: green 'Active + Verified' when is_active=true AND verified_by_admin_at != null; yellow 'Pending verification' when is_active=true AND verified_by_admin_at IS NULL; grey 'Inactive' when is_active=false.",
+  "params": {
+    "is_active": { "type": "boolean", "required": true },
+    "verified_by_admin_at": { "type": ["string", "null"], "required": true },
+    "compact": { "type": "boolean", "required": false, "default": false, "description": "When true, renders icon-only (uses tooltip for label)." }
+  },
+  "nodes": [
+    {
+      "kind": "Chip",
+      "props": {
+        "size": "xs"
+      },
+      "bindings": {
+        "children": {
+          "$expr": "!$params.is_active ? 'Inactive' : ($params.verified_by_admin_at ? 'Active + Verified' : 'Pending verification')"
+        },
+        "variant": {
+          "$expr": "!$params.is_active ? 'secondary' : ($params.verified_by_admin_at ? 'success' : 'warning')"
+        },
+        "leadingIcon": {
+          "$expr": "!$params.is_active ? 'pause-circle' : ($params.verified_by_admin_at ? 'check-circle' : 'clock')"
+        }
+      }
+    }
+  ]
+}

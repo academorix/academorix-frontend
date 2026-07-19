@@ -1,0 +1,108 @@
+{
+  "id": "attendance.resources.coach-session-roster",
+  "title": "Session roster (coach)",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coaches/me/sessions/{session}/attendance",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attendance", "entity": "coach-session-roster", "action": "view" },
+  "requiresPermission": "attendance.viewAny.coach",
+  "dataSources": [
+    { "name": "session", "kind": "http.get", "urlTemplate": "/api/v1/sessions/{session}", "unwrap": "data" },
+    { "name": "roster", "kind": "http.get", "urlTemplate": "/api/v1/coaches/me/sessions/{session}/attendance", "unwrap": "data", "realtime": { "channel": "session.{session}.attendance" } }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$ref": "session.name" } } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$ref": "session.starts_at" } } }
+              ]
+            },
+            {
+              "kind": "Widget",
+              "widget": "session.status-chip",
+              "bindings": { "status": { "$ref": "session.status" } }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info" },
+          "bindings": { "hidden": { "$expr": "session.status !== 'in_progress'" } },
+          "children": [
+            { "kind": "Text", "props": { "children": "Live session. Every tap below verifies the athlete's attendance immediately." } }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Session roster" },
+          "bindings": { "rows": { "$ref": "roster" } },
+          "columns": [
+            {
+              "key": "athlete",
+              "label": "Athlete",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } },
+                  { "kind": "Widget", "widget": "athlete.minor-badge", "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } } }
+                ]
+              }
+            },
+            {
+              "key": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "attendance.attendance-status-chip",
+                "bindings": { "status": { "$ref": "row.status" } }
+              }
+            },
+            {
+              "key": "actions",
+              "label": "",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex gap-2" },
+                "children": [
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "primary", "size": "sm", "children": "Verify" },
+                    "bindings": { "hidden": { "$expr": "row.status !== 'not_yet_checked_in'" } },
+                    "actions": {
+                      "onPress": {
+                        "kind": "http.post",
+                        "urlTemplate": "/api/v1/coaches/me/sessions/{session}/attendance/{row.athlete_id}",
+                        "onSuccess": { "kind": "refetch", "sourceName": "roster" }
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "secondary", "size": "sm", "children": "Add note" },
+                    "bindings": { "hidden": { "$expr": "row.status === 'not_yet_checked_in'" } },
+                    "actions": {
+                      "onPress": { "kind": "modal.open", "modal": "attendance.add-session-note", "params": { "attendance_record_id": "row.id" } }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

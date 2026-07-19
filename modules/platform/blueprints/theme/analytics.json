@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/theme/analytics",
+  "$version": 1,
+  "title": "theme — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Theme Activated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "mode", "preset_slug", "preset_category", "override_count"]
+    },
+    {
+      "name": "Theme Preset Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "mode", "category", "source_preset_slug"],
+      "notes": "source_preset_slug non-null when created via duplicate flow."
+    },
+    {
+      "name": "Theme Token Overridden",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "theme_id", "token_type", "token_key_prefix"],
+      "notes": "token_key_prefix is the category prefix only (color, spacing, typography, ...) — the full key is NOT sent to keep the event cardinality bounded."
+    },
+    {
+      "name": "Theme Preview Rendered",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "mode", "trigger"],
+      "notes": "trigger: admin_ui_preview_button / cli_preview_command."
+    },
+    {
+      "name": "Theme Contrast Recommendation Surfaced",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "theme_id", "wcag_level", "findings_count", "severity"]
+    },
+    {
+      "name": "User Theme Preference Updated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "preferred_mode", "high_contrast", "reduced_motion", "larger_text"],
+      "notes": "Property values are booleans + enum; NO user_id passed to Segment (server-side identity resolution)."
+    },
+    {
+      "name": "Theme Rolled Back",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "mode", "rolled_back_to_theme_id", "days_since_prior_activation"],
+      "notes": "Fires when a historical Theme row is re-activated (activation UI's rollback path)."
+    }
+  ]
+}

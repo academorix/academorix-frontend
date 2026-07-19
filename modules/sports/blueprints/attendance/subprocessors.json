@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/attendance/subprocessors",
+  "$version": 1,
+  "title": "attendance — subprocessors",
+  "description": "The Attendance module engages ZERO third-party subprocessors — every state transition is first-party. Downstream: notifications (dispatch), finance::invoice (no-show fees), storage (signature images on S3), membership (freeze cascade). All internal to Academorix.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    { "module": "notifications", "reference": "notifications::subprocessors.json", "used_for": "Dispatching attendance lifecycle notifications (email, SMS for freeze cascade, in-app)." },
+    { "module": "finance/invoice", "reference": "finance/invoice::subprocessors.json", "used_for": "No-show fee invoicing via CreateNoShowFeeInvoiceAction. Downstream Stripe/Paddle subprocessors managed at the payment module boundary." },
+    { "module": "storage", "reference": "storage::subprocessors.json", "used_for": "S3 signed URLs for signature_url_signed + documented_url_signed (medical notes on absence records). No third-party CDN in the hot path." },
+    { "module": "products/geofencing", "reference": "products/geofencing::subprocessors.json", "used_for": "GPS validation for checked_in_via='geofence'. No third-party geocoding — self-hosted PostGIS distance queries." }
+  ],
+  "notes": [
+    "GDPR Art. 30 requires this record even when empty.",
+    "Device fingerprint + IP + GPS are collected first-party for fraud correlation. NO third-party fraud vendor (Sift, Iovation, etc.) receives this data — deliberately kept in-tenant."
+  ]
+}

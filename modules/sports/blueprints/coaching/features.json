@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/coaching/features",
+  "$version": 1,
+  "title": "coaching — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "coaching.capture",
+      "displayName": "Coach roster",
+      "description": "Coaching profile catalogue + lifecycle. Master feature; when off, coaching workflows disabled.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "coaching.advanced_certifications",
+      "displayName": "Verified certifications",
+      "description": "Medium+. Enables the full certification workflow with admin verification + document upload. Small ships a simplified text-only cert ledger.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "coaching.skill_ratings",
+      "displayName": "Skill ratings",
+      "description": "Medium+. Enables the per-Coach per-Sport/Discipline/Position rating system. Feeds athlete↔coach match-making.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "coaching.multi_branch",
+      "displayName": "Cross-branch assignments",
+      "description": "Medium+. Allows a coach to hold assignments at branches other than their primary branch. Small tier limits assignments to the coach's home branch only.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "coaching.public_directory",
+      "displayName": "Public coach directory",
+      "description": "Medium+. Exposes verified + is_accepting_new_athletes=true coaches on the customer-facing site + booking flow.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "coaching.extended_retention",
+      "displayName": "Extended retention",
+      "description": "Enterprise-only. Extends coaching-record retention from 7 to 10 years + rating retention from 2 to 5 years. Legal-hold-friendly for regulated tenants.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "id": "academorix://modules/theme/jobs",
+  "$version": 1,
+  "title": "theme — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Platform\\Theme\\Jobs\\RegenerateRenderedCssJob",
+      "queue": "theme",
+      "purpose": "Rebuild the tenant's compiled CSS after a theme activation, a token-override change, or a preset schema migration. Walks the active themes for the tenant (up to two — one per mode), resolves the token cascade, materialises the final custom-property block, uploads to storage, and fires ThemeCacheInvalidated.",
+      "steps": [
+        "Resolve platform_default_preset ← selected_preset ← theme_token_overrides for each active theme.",
+        "Compile resolved tokens into a CSS custom-property block per mode (:root + .dark { ... } scoping).",
+        "Persist the compiled CSS to storage via storage::FileRepository (kind='theme-compiled-css'). Sign a fresh URL.",
+        "Update Theme.tokens_snapshot for each active theme (frozen final map).",
+        "Fire ThemeCacheInvalidated with compiled_css_url + compiled_css_hash.",
+        "Bust the Redis cache keys: theme:resolved:{tenant_id}:{mode} + theme:compiled-css:{tenant_id}."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "tenant_id — coalesces multiple rapid changes into one rebuild",
+      "tries": 3,
+      "backoff": [30, 120, 300]
+    },
+    {
+      "class": "Academorix\\Platform\\Theme\\Jobs\\PreviewPresetJob",
+      "queue": "theme",
+      "purpose": "Generate a preview thumbnail for a preset via headless browser (Puppeteer / Chromium). Renders a canonical preview template (dashboard mock) with the preset's tokens applied, screenshots, uploads to storage, writes the signed URL to ThemePreset.preview_thumbnail_url.",
+      "steps": [
+        "Compile the preset's tokens into CSS custom properties.",
+        "Load the canonical preview HTML template (a small dashboard mock — sidebar, card, button, chip, alert).",
+        "Inject the compiled CSS + capture a 1200×630 PNG (also usable for OG image).",
+        "Upload via storage::FileRepository (kind='theme-preset-thumbnail').",
+        "Write the signed URL to ThemePreset.preview_thumbnail_url."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "preset_id",
+      "tries": 2,
+      "backoff": [60, 300]
+    },
+    {
+      "class": "Academorix\\Platform\\Theme\\Jobs\\CacheThemeResolvedTokensJob",
+      "queue": "theme",
+      "purpose": "Warm the Redis resolved-tokens cache for a tenant proactively — dispatched by RegenerateRenderedCssJob AFTER the CSS write commits, and by scheduled tasks so cache-cold requests are rare.",
+      "steps": [
+        "For each active theme in (tenant_id, mode): resolve the cascade, materialise the token map.",
+        "SET theme:resolved:{tenant_id}:{mode} with TTL 3600s.",
+        "SET theme:compiled-css:{tenant_id}:{mode} to the signed URL with TTL 3600s."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "(tenant_id, mode)",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Platform\\Theme\\Jobs\\PurgeExpiredThemeSnapshotsJob",
+      "queue": "theme",
+      "purpose": "Nightly retention pass. Keeps the last-5 activations per (tenant_id, mode) for rollback (last-20 when the tenant has theme_rollback_extended). Older Theme rows are hard-deleted (their tokens_snapshot is no longer reachable, and rollback UI does not offer them).",
+      "steps": [
+        "For each tenant, for each mode: SELECT Theme rows ORDER BY activated_at DESC OFFSET N (N = 5 or 20).",
+        "Hard-delete those rows.",
+        "Emit tenant-scoped retention audit trail via compliance::RetentionRun."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "date-only",
+      "tries": 2,
+      "scheduled_via": "schedule.json — theme:purge-expired-snapshots"
+    },
+    {
+      "class": "Academorix\\Platform\\Theme\\Jobs\\MigrateThemeTokensOnPresetUpdateJob",
+      "queue": "theme",
+      "purpose": "Runs when a platform-default preset ships new tokens (via platform-admin UpdatePlatformThemePresetAction). Walks every downstream Theme.selected_preset_id = this.id and re-computes their tokens_snapshot to pick up the new preset keys — while preserving existing tenant token overrides on top.",
+      "steps": [
+        "Find every Theme WHERE selected_preset_id = preset.id AND is_active = true.",
+        "For each affected theme: re-resolve the cascade (new preset tokens ← existing overrides) → new tokens_snapshot.",
+        "Dispatch RegenerateRenderedCssJob for each affected tenant to rebuild their compiled CSS.",
+        "Fire ThemeCacheInvalidated per tenant."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "preset_id",
+      "tries": 3,
+      "backoff": [60, 300, 900],
+      "notes": "Fan-out is proportional to the number of tenants using the platform preset. Batched — the job dispatches child RegenerateRenderedCssJob jobs concurrently (up to a rate ceiling)."
+    }
+  ]
+}

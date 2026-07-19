@@ -1,0 +1,292 @@
+{
+  "id": "academorix://modules/coaching/events",
+  "$version": 1,
+  "title": "coaching — published events",
+  "namespace": "Academorix\\Sports\\Coaching\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Certification-expiration events (ExpiringSoon / Expired) are audit-critical with 7-year retention. Verification + deactivation events cascade downstream to session-assignment invalidation.",
+  "events": [
+    {
+      "name": "CoachingProfileCreated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachingProfileCreated",
+      "trigger": "CoachingProfileRepository committed a new profile. Fires once per profile row.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachingProfileCreatedNotification (to admin — pending verification)",
+        "cache::InvalidateStaffCoachingProfileCache"
+      ],
+      "payload": {
+        "profile_id": "ULID (cop_*)",
+        "tenant_id": "ULID (ten_*)",
+        "staff_id": "ULID (stf_*)",
+        "branch_id": "ULID (brn_*)",
+        "primary_sport_id": "ULID (spt_*) | null",
+        "coaching_since_year": "integer | null",
+        "created_by_user_id": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "CoachingProfileVerified",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachingProfileVerified",
+      "trigger": "Admin invoked /verify. verified_by_admin_at set. Unlocks assignment creation.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachingProfileVerifiedNotification (to coach)",
+        "cache::InvalidateCoachingBySportCache"
+      ],
+      "payload": {
+        "profile_id": "ULID",
+        "tenant_id": "ULID",
+        "staff_id": "ULID",
+        "verified_by_admin_user_id": "ULID",
+        "verified_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CoachingProfileDeactivated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachingProfileDeactivated",
+      "trigger": "is_active flipped false. May be admin-triggered (via /deactivate) OR cascade-triggered (via StaffOffboarded).",
+      "queue": "coaching-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "coaching::CancelActiveAssignmentsOnCoachingProfileDeactivated (priority 20)",
+        "notifications::DispatchCoachingProfileDeactivatedNotification (to coach + admin)",
+        "cache::InvalidateStaffCoachingProfileCache"
+      ],
+      "payload": {
+        "profile_id": "ULID",
+        "tenant_id": "ULID",
+        "staff_id": "ULID",
+        "trigger": "'manual' | 'staff_offboarded' | 'staff_suspended'",
+        "reason": "string | null",
+        "active_assignments_at_deactivate": "integer",
+        "deactivated_by_user_id": "ULID | null (null on cascade)"
+      }
+    },
+    {
+      "name": "CoachingProfileReactivated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachingProfileReactivated",
+      "trigger": "is_active flipped true after prior deactivation. Requires admin re-verification (verified_by_admin_at is set again).",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachingProfileVerifiedNotification (reuse — coach welcome-back email)"
+      ],
+      "payload": {
+        "profile_id": "ULID",
+        "tenant_id": "ULID",
+        "staff_id": "ULID",
+        "reactivated_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachAssignmentCreated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentCreated",
+      "trigger": "A CoachAssignment row committed successfully.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachAssignmentCreatedNotification (to coach)",
+        "cache::InvalidateCoachAssignmentsCache",
+        "cache::InvalidateAssignableAssignmentsCache"
+      ],
+      "payload": {
+        "assignment_id": "ULID (cas_*)",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID (cop_*)",
+        "assignable_type": "'Session' | 'Team' | 'Event'",
+        "assignable_id": "ULID (ses_* | tea_* | evt_*)",
+        "role": "'head_coach' | 'assistant_coach' | 'observer' | 'substitute'",
+        "start_date": "ISO 8601",
+        "end_date": "ISO 8601 | null",
+        "assigned_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachAssignmentUpdated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentUpdated",
+      "trigger": "role change OR notes mutation OR end_date extension.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "assignment_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachAssignmentEnded",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentEnded",
+      "trigger": "end_date reached (nightly job flips) OR admin invoked /end. Terminal but non-purging.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateCoachAssignmentsCache",
+        "cache::InvalidateAssignableAssignmentsCache"
+      ],
+      "payload": {
+        "assignment_id": "ULID",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID",
+        "assignable_type": "string",
+        "assignable_id": "ULID",
+        "role": "string",
+        "duration_days": "integer",
+        "reached_scheduled_end": "boolean",
+        "ended_by_user_id": "ULID | null (null when nightly job)"
+      }
+    },
+    {
+      "name": "CoachAssignmentCancelled",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachAssignmentCancelled",
+      "trigger": "Assignment deleted before end_date OR cascade-cancelled by CoachingProfileDeactivated / TeamArchived / EventArchived.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachAssignmentCancelledNotification (to coach)",
+        "cache::InvalidateCoachAssignmentsCache",
+        "cache::InvalidateAssignableAssignmentsCache"
+      ],
+      "payload": {
+        "assignment_id": "ULID",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID",
+        "trigger": "'manual' | 'coaching_profile_deactivated' | 'team_archived' | 'event_archived'",
+        "cancelled_by_user_id": "ULID | null"
+      }
+    },
+    {
+      "name": "CoachCertificationAdded",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationAdded",
+      "trigger": "A CoachCertification row committed. Schedules the three expiration-cadence checkpoints.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "coaching::ScheduleExpirationNoticesOnCertificationAdded (priority 30)"
+      ],
+      "payload": {
+        "certification_id": "ULID (ccf_*)",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID",
+        "issuing_body": "string",
+        "certification_name": "string",
+        "level": "string | null",
+        "issued_at": "ISO 8601 date",
+        "expires_at": "ISO 8601 date | null",
+        "added_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "CoachCertificationVerified",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationVerified",
+      "trigger": "Admin invoked /verify on the certification. verified_by_admin_user_id + verified_at set.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "certification_id": "ULID",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID",
+        "verified_by_admin_user_id": "ULID",
+        "verified_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CoachCertificationExpiringSoon",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationExpiringSoon",
+      "trigger": "NotifyCertificationExpiringJob detected certification within cadence window (90 / 30 / 7 days before expires_at). Fires ONCE PER CADENCE per certification.",
+      "queue": "coaching-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachCertificationExpiringSoonNotification (to coach + admin — cannot-opt-out)"
+      ],
+      "payload": {
+        "certification_id": "ULID",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID",
+        "cadence_days": "integer (90 | 30 | 7)",
+        "issuing_body": "string",
+        "certification_name": "string",
+        "expires_at": "ISO 8601 date"
+      }
+    },
+    {
+      "name": "CoachCertificationExpired",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachCertificationExpired",
+      "trigger": "NotifyCertificationExpiredJob detected certification with expires_at <= NOW(). Fires ONCE per certification lifecycle.",
+      "queue": "coaching-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachCertificationExpiredNotification (to coach + admin — cannot-opt-out; action required)"
+      ],
+      "payload": {
+        "certification_id": "ULID",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID",
+        "issuing_body": "string",
+        "certification_name": "string",
+        "was_verified": "boolean"
+      }
+    },
+    {
+      "name": "CoachSkillRatingRecorded",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachSkillRatingRecorded",
+      "trigger": "A CoachSkillRating row committed (fresh rating on a previously-unrated ratable).",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCoachSkillRatingRecordedNotification (to coach — opt-in only, per notify_on_rating preference)",
+        "cache::InvalidateCoachRatingsCache"
+      ],
+      "payload": {
+        "rating_id": "ULID (csr_*)",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID",
+        "ratable_type": "'Sport' | 'Discipline' | 'Position'",
+        "ratable_id": "ULID (spt_* | dsc_* | pos_*)",
+        "rating_scale": "'stars_1_5' | 'level_5_stage'",
+        "rating_value": "integer 1..5",
+        "rated_by_user_id": "ULID",
+        "rated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CoachSkillRatingUpdated",
+      "class": "Academorix\\Sports\\Coaching\\Events\\CoachSkillRatingUpdated",
+      "trigger": "Existing rating updated with a new rating_value.",
+      "queue": "coaching",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateCoachRatingsCache"
+      ],
+      "payload": {
+        "rating_id": "ULID",
+        "tenant_id": "ULID",
+        "coaching_profile_id": "ULID",
+        "from_value": "integer",
+        "to_value": "integer",
+        "changed_by_user_id": "ULID"
+      }
+    }
+  ]
+}

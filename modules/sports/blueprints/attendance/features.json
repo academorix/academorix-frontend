@@ -1,0 +1,21 @@
+{
+  "id": "academorix://modules/attendance/features",
+  "$version": 1,
+  "title": "attendance — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    { "key": "attendance.capture", "displayName": "Attendance capture", "description": "Master attendance recording. On every tier.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
+    { "key": "attendance.self_kiosk", "displayName": "Kiosk self-check-in", "description": "Athletes / guardians check in via a self-service kiosk.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
+    { "key": "attendance.qr_scan", "displayName": "QR-code check-in", "description": "Per-session QR code posted at the venue; athlete scans to check in.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
+    { "key": "attendance.coach_verified", "displayName": "Coach-verified check-in", "description": "Coach manually verifies each athlete's attendance from the roster.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
+    { "key": "attendance.geofence", "displayName": "Geofence-verified check-in", "description": "Medium+. GPS validation against session venue geofence. Requires products/geofencing module.", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
+    { "key": "attendance.advanced_policies", "displayName": "Per-plan attendance policies", "description": "Medium+. Attendance rules can be scoped per membership plan (not just per branch).", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
+    { "key": "attendance.no_show_fees", "displayName": "Auto-invoice no-show fees", "description": "Medium+. Failed sessions auto-generate an invoice via finance::invoice per policy.no_show_fee_cents.", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
+    { "key": "attendance.freeze_enforcement", "displayName": "Auto-freeze on absence threshold", "description": "When N unexcused absences cross policy.max_unexcused_absences_per_period, the athlete's membership auto-pauses.", "defaultEnabled": true, "planTiers": ["small", "medium", "enterprise"] },
+    { "key": "attendance.analytics", "displayName": "Attendance analytics", "description": "Medium+. Aggregate reports — attendance rate, absence patterns, late-arrival trends.", "defaultEnabled": false, "planTiers": ["medium", "enterprise"] },
+    { "key": "attendance.extended_retention", "displayName": "Extended retention (10 years)", "description": "Enterprise-only. Attendance records retain 10 years post-session for litigation-hold scenarios.", "defaultEnabled": false, "planTiers": ["enterprise"] }
+  ]
+}

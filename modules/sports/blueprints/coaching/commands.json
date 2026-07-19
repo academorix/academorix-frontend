@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/coaching/commands",
+  "$version": 1,
+  "title": "coaching — Artisan commands",
+  "commands": [
+    {
+      "signature": "coaching-profile:list {--tenant=} {--staff=} {--primary-sport=} {--accepting-new-athletes} {--verified}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\ListCoachingProfilesCommand",
+      "purpose": "Table view of coaching profiles. --primary-sport=<slug> narrows to one sport; --verified narrows to profiles with verified_by_admin_at != null."
+    },
+    {
+      "signature": "coaching-profile:describe {profile}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\DescribeCoachingProfileCommand",
+      "purpose": "Verbose read: profile + Staff + certifications + active assignments + current ratings + availability."
+    },
+    {
+      "signature": "coaching-profile:create {staff} {--primary-sport=} {--coaching-since-year=} {--branch=} {--bio=} {--dry-run}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\CreateCoachingProfileCommand",
+      "purpose": "Elevate a Staff row to Coach by creating a CoachingProfile. --dry-run validates without persisting. Refused when the Staff already has a profile."
+    },
+    {
+      "signature": "coaching-profile:verify {profile} {--admin-user=} {--notes=}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\VerifyCoachingProfileCommand",
+      "purpose": "Admin verifies a coaching profile. Sets verified_by_admin_at + fires CoachingProfileVerified. Coach can accept assignments after this."
+    },
+    {
+      "signature": "coaching-profile:deactivate {profile} {--reason=} {--cancel-assignments}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\DeactivateCoachingProfileCommand",
+      "purpose": "Flip is_active=false. --cancel-assignments cascades to CancelActiveAssignmentsOnCoachingProfileDeactivated. Coach stays as Staff — only their coaching role is removed."
+    },
+    {
+      "signature": "coach-assignment:list {--tenant=} {--profile=} {--assignable-type=} {--assignable=} {--role=} {--active}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\ListCoachAssignmentsCommand",
+      "purpose": "Table view of assignments. --assignable-type=Session narrows to session pivots. --active filters to open assignments (end_date > NOW() OR NULL)."
+    },
+    {
+      "signature": "coach-assignment:create {profile} {--assignable-type=} {--assignable=} {--role=} {--start=} {--end=} {--notes=} {--dry-run}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\CreateCoachAssignmentCommand",
+      "purpose": "Create an assignment. Validates coaching_profile is verified + active. --dry-run runs the AssignmentConflictDetector and reports without persisting."
+    },
+    {
+      "signature": "coach-assignment:end {assignment} {--end-date=} {--reason=}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\EndCoachAssignmentCommand",
+      "purpose": "Set end_date (default NOW()). Fires CoachAssignmentEnded."
+    },
+    {
+      "signature": "coach-certification:list {--profile=} {--tenant=} {--issuing-body=} {--verified} {--expiring-within-days=}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\ListCoachCertificationsCommand",
+      "purpose": "Table view of certifications. --expiring-within-days=30 filters to certs whose expires_at is within N days."
+    },
+    {
+      "signature": "coach-certification:verify {cert} {--admin-user=} {--verification-notes=}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\VerifyCoachCertificationCommand",
+      "purpose": "Admin verifies a certification. Sets verified_by_admin_user_id + verified_at."
+    },
+    {
+      "signature": "coach-certification:expiring {--tenant=} {--cadence=90} {--output=table}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\ExpiringCertsCommand",
+      "purpose": "One-shot report of certifications expiring within a cadence window (90/30/7). --output=csv for compliance export."
+    },
+    {
+      "signature": "coach-skill-rating:list {--profile=} {--tenant=} {--ratable-type=} {--ratable=} {--scale=}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\ListCoachSkillRatingsCommand",
+      "purpose": "Table view of skill ratings. --scale=stars_1_5 narrows to that scale."
+    },
+    {
+      "signature": "coach:report {--tenant=} {--branch=} {--output=csv}",
+      "class": "Academorix\\Sports\\Coaching\\Console\\Commands\\CoachRosterReportCommand",
+      "purpose": "Per-branch roster export: coach + primary sport + specializations + active assignments count + verified certification count. Runs GenerateCoachRosterReportJob synchronously."
+    }
+  ]
+}

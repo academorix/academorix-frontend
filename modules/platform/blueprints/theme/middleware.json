@@ -1,0 +1,26 @@
+{
+  "id": "academorix://modules/theme/middleware",
+  "$version": 1,
+  "title": "theme — HTTP middleware",
+  "description": "One owned middleware for SSR token injection; the rest of the surface consumes foundation + tenancy stack.",
+  "middleware": [
+    {
+      "name": "theme.resolve_tokens_for_ssr",
+      "class": "Academorix\\Platform\\Theme\\Http\\Middleware\\ResolveTokensForSsrMiddleware",
+      "purpose": "For any SSR request (Blade template, Inertia page, Vite SSR entry), resolve the caller's active theme + mode + accessibility_overrides and inject the compiled CSS URL (and inline token map for above-the-fold rendering) into the response's Content Security Policy + response headers. Downstream frontend code reads the pre-resolved theme without a round-trip.",
+      "runs_before": ["response.envelope"],
+      "adds_headers": ["X-Theme-Compiled-Css-Url", "X-Theme-Mode", "X-Theme-Snapshot-Hash"],
+      "notes": "The middleware DOES NOT touch the response body — it only sets headers + a small script tag with inline resolved tokens if the caller is in the initial-render window. Frontend hydration picks up the tokens on mount."
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "foundation::auth:sanctum", "notes": "Required on every /api/v1/themes* route except /me/theme-preference which uses the caller's own token." },
+    { "middleware": "foundation::auth:platform_admin", "notes": "Required on every /api/v1/platform/theme-presets* route." },
+    { "middleware": "foundation::throttle" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "versioning::versioning.resolve" }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/attendance/metrics",
+  "$version": 1,
+  "title": "attendance — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.attendance",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["status", "checked_in_via", "absence_status", "penalty_applied"],
+    "forbiddenAsLabels": ["tenant_id", "attendance_record_id", "athlete_id", "session_id", "user_id", "membership_id", "consumed_pass_id", "device_fingerprint_hash", "ip_address", "gps_lat", "gps_lng"]
+  },
+  "metrics": [
+    { "name": "academorix.attendance.count", "kind": "gauge", "unit": "records", "labels": ["status", "checked_in_via"] },
+    { "name": "academorix.attendance.recorded_total", "kind": "counter", "unit": "records", "labels": ["checked_in_via", "status"] },
+    { "name": "academorix.attendance.cancelled_total", "kind": "counter", "unit": "records", "labels": [] },
+    { "name": "academorix.attendance.checked_out_total", "kind": "counter", "unit": "records", "labels": [] },
+    { "name": "academorix.attendance.late_arrivals_total", "kind": "counter", "unit": "late-arrivals", "labels": ["penalty_applied"] },
+    { "name": "academorix.attendance.absence_recorded_total", "kind": "counter", "unit": "absences", "labels": ["absence_status"] },
+    { "name": "academorix.attendance.absence_excused_total", "kind": "counter", "unit": "absences", "labels": [] },
+    { "name": "academorix.attendance.freeze_threshold_reached_total", "kind": "counter", "unit": "cascades", "labels": [], "description": "P1. Every increment triggered a membership pause. Should trend low; sudden spikes indicate a broken policy or over-aggressive threshold." },
+    { "name": "academorix.attendance.no_show_fee_charged_total", "kind": "counter", "unit": "invoices", "labels": [] },
+    {
+      "name": "academorix.attendance.orphan.without_pass",
+      "kind": "counter",
+      "unit": "findings",
+      "labels": [],
+      "description": "CRITICAL. CleanupOrphanCheckinsJob findings — attendance records with session.requires_pass=true but no consumed_pass_id. Should stay at 0."
+    },
+    {
+      "name": "academorix.attendance.orphan.pass_consumption",
+      "kind": "counter",
+      "unit": "findings",
+      "labels": [],
+      "description": "CRITICAL. Pass consumed but no matching attendance record. Should stay at 0."
+    },
+    {
+      "name": "academorix.attendance.mutual_exclusion.violation",
+      "kind": "counter",
+      "unit": "findings",
+      "labels": [],
+      "description": "CRITICAL. (session, athlete) has both AttendanceRecord and AbsenceRecord. Should stay at 0."
+    },
+    { "name": "academorix.attendance.pass_consume.retries_total", "kind": "counter", "unit": "retries", "labels": [], "description": "Retries by the AttendanceOrchestrator when pass consumption hit a race condition. Non-fatal; alerts when rate > 5%." },
+    { "name": "academorix.attendance.pass_consume.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [50, 100, 500, 2000], "labels": [], "description": "P99 target < 500ms. Slower indicates DB contention on SELECT ... FOR UPDATE." },
+    { "name": "academorix.attendance.check_in.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [100, 500, 1000, 2000, 5000], "labels": ["checked_in_via"] },
+    { "name": "academorix.attendance.reconciliation.duration_ms", "kind": "histogram", "unit": "ms", "buckets": [1000, 10000, 60000, 300000], "labels": [] },
+    { "name": "academorix.attendance.reconciliation.absences_created_total", "kind": "counter", "unit": "absences", "labels": [] },
+    { "name": "academorix.attendance.rate_limit.rejections_total", "kind": "counter", "unit": "rejections", "labels": ["checked_in_via"] },
+    { "name": "academorix.attendance.geofence.rejections_total", "kind": "counter", "unit": "rejections", "labels": [] },
+    { "name": "academorix.attendance.suspicious_fingerprint.matches_total", "kind": "counter", "unit": "matches", "labels": [], "description": "Distinct athletes on same device_fingerprint_hash in rolling 24h window. Flags fraud investigation." },
+    { "name": "academorix.attendance.retention.hard_purges_total", "kind": "counter", "unit": "purges", "labels": [] }
+  ]
+}

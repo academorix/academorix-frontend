@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/coaching/subprocessors",
+  "$version": 1,
+  "title": "coaching — subprocessors",
+  "description": "The Coaching module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream: notifications module dispatches coaching notifications; storage module (Wave 4+) stores signed certification documents + coach photos. Wave 4+ optional integration with issuing-body verification APIs is subprocessor-relevant when introduced.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching CoachingProfileCreated / CoachingProfileVerified / CoachCertificationExpiringSoon / CoachCertificationExpired / CoachAssignmentCreated / CoachAssignmentEndingSoon / CoachSkillRatingRecorded notifications via mail / SMS / push channels."
+    },
+    {
+      "module": "storage",
+      "reference": "storage::subprocessors.json (Wave 4+)",
+      "used_for": "Signed URL storage for photo_url_signed (CoachingProfile) + document_url (CoachCertification). 7-year retention aligned with cert compliance window."
+    }
+  ],
+  "notes": [
+    "GDPR Art. 30 requires this record even when empty.",
+    "Adding a subprocessor (e.g. USSF / NASM / Red Cross API for automated certification verification) requires: update this file + refresh compliance.json Art. 28 + notify tenants on the subprocessor list at least 30 days before launch."
+  ]
+}

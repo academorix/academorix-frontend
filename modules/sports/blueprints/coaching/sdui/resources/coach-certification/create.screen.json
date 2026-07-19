@@ -1,0 +1,122 @@
+{
+  "id": "coaching.resources.coach-certification.create",
+  "title": "Capture certification",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coach-certifications/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coaching", "entity": "coach-certification", "action": "create" },
+  "requiresPermission": "coach_certifications.create",
+  "dataSources": [
+    {
+      "name": "coaches",
+      "kind": "http.get",
+      "url": "/api/v1/coaching-profiles?filter[is_active]=true",
+      "unwrap": "data"
+    },
+    {
+      "name": "issuingBodiesCatalog",
+      "kind": "static",
+      "value": { "$catalog": "coaching.certification-body-catalog" }
+    },
+    {
+      "name": "features",
+      "kind": "http.get",
+      "url": "/api/v1/features",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "form": {
+    "id": "createCoachCertificationForm",
+    "submit": {
+      "kind": "http.post",
+      "url": "/api/v1/coach-certifications",
+      "body": "$form",
+      "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coach-certifications/' + $response.data.id" },
+      "onError": { "kind": "toast.error", "message": "Could not capture certification." }
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Capture certification" } },
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "Card.Content",
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "coaching_profile_id", "menuTrigger": "focus" },
+                  "children": [
+                    { "kind": "Label", "propsExpr": "{ children: 'Coach' }" },
+                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "props": { "placeholder": "Search coach..." } }, { "kind": "ComboBox.Trigger" }] },
+                    {
+                      "kind": "ComboBox.Popover",
+                      "children": [
+                        { "kind": "ListBox", "bindings": { "items": { "$ref": "coaches" } }, "children": [{ "kind": "ListBox.Item", "propsExpr": "{ id: $item.id, textValue: $item.display_name }", "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "$item.display_name" } } }, { "kind": "ListBox.ItemIndicator" }] }] }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "issuing_body", "menuTrigger": "focus", "allowsCustomValue": true },
+                  "children": [
+                    { "kind": "Label", "propsExpr": "{ children: 'Issuing body' }" },
+                    { "kind": "ComboBox.InputGroup", "children": [{ "kind": "Input", "props": { "placeholder": "e.g. USSF, NASM, Red Cross..." } }, { "kind": "ComboBox.Trigger" }] },
+                    {
+                      "kind": "ComboBox.Popover",
+                      "children": [
+                        { "kind": "ListBox", "bindings": { "items": { "$ref": "issuingBodiesCatalog.issuing_bodies" } }, "children": [{ "kind": "ListBox.Item", "propsExpr": "{ id: $item.value, textValue: $item.label }", "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "$item.label" } } }, { "kind": "ListBox.ItemIndicator" }] }] }
+                      ]
+                    }
+                  ]
+                },
+                { "kind": "TextField", "props": { "name": "certification_name", "label": "Certification name", "isRequired": true, "placeholder": "e.g. USSF C License" } },
+                {
+                  "kind": "Select",
+                  "props": { "name": "level", "label": "Level (optional)" },
+                  "children": [
+                    { "kind": "Select.Item", "props": { "value": "entry", "children": "Entry" } },
+                    { "kind": "Select.Item", "props": { "value": "intermediate", "children": "Intermediate" } },
+                    { "kind": "Select.Item", "props": { "value": "advanced", "children": "Advanced" } },
+                    { "kind": "Select.Item", "props": { "value": "expert", "children": "Expert" } },
+                    { "kind": "Select.Item", "props": { "value": "master", "children": "Master" } }
+                  ]
+                },
+                { "kind": "DateField", "props": { "name": "issued_at", "label": "Issued date", "isRequired": true } },
+                { "kind": "DateField", "props": { "name": "expires_at", "label": "Expires date (optional)" } },
+                { "kind": "TextField", "props": { "name": "verification_url", "label": "External verification URL (optional)", "placeholder": "https://..." } },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "document_url", "label": "Scanned document URL (S3 signed)", "placeholder": "https://..." },
+                  "bindings": { "hidden": { "$expr": "!$ref('features.coaching.advanced_certifications')" } }
+                },
+                {
+                  "kind": "Alert",
+                  "props": { "variant": "info", "children": "Document upload requires the Advanced Certifications feature (Medium+ tier)." },
+                  "bindings": { "hidden": { "$expr": "$ref('features.coaching.advanced_certifications')" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            { "kind": "Button", "props": { "variant": "flat", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-certifications'" } } },
+            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "children": "Capture certification" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "$version": 1,
+  "name": "theme",
+  "alias": "theme",
+  "namespace": "Academorix\\Platform\\Theme",
+  "description": "Per-tenant design token substrate. Answers 'what does this tenant's dashboard, email, and PDF look like?'. Sibling of the settings module — settings owns arbitrary key-value config with cascading scope; theme owns the SPECIFIC design-token vocabulary (color palette, spacing scale, typography scale, radius scale, elevation scale, motion scale) with preset-selection + tenant-override semantics. Ships THREE aggregates: Theme (per-tenant active theme record — carries selected_preset_id + resolved tokens_snapshot jsonb + is_dark_mode + accessibility_flags like high_contrast/reduced_motion; one active per (tenant_id, mode)), ThemePreset (pre-built theme configs — tenant_id nullable for platform-provided presets; ships day-1 with 6 platform presets: light-default, dark-default, high-contrast-light, high-contrast-dark, brand-forward-blue, brand-forward-green; tenants may author custom presets), ThemeTokenOverride (per-tenant custom token override on top of a preset — for the 'we want the default preset but with our brand red on the primary action button' use case; overrides are token-key → token-value pairs with cascading resolution via the settings substrate). Every design token is a namespaced key: color.primary.500, color.surface.default, spacing.4, typography.body.family, typography.body.size.md, radius.md, shadow.md, motion.duration.fast. Presets ship as jsonb blobs of complete token maps; overrides are sparse patches applied in cascade order (platform default → tenant preset → tenant override). Tokens_snapshot is IMMUTABLE while a theme is active so mid-session theme changes never break rendering. Emits ThemeActivated event that clears the tenant's rendered-CSS cache. Not a scope-substrate consumer at the row level — theme is tenant-level (theme.tenant_id) with an optional per-user preference override (dark/light auto, high-contrast preference) stored in the user module's user_theme_preferences table. Distinct from branding (which owns STATIC assets — logo, favicon, brand name) and from settings (which owns arbitrary key-value config).",
+  "keywords": [
+    "theme",
+    "design-tokens",
+    "design-system",
+    "presets",
+    "token-overrides",
+    "dark-mode",
+    "light-mode",
+    "high-contrast",
+    "reduced-motion",
+    "accessibility",
+    "wcag-aa",
+    "css-custom-properties",
+    "immutable-snapshots",
+    "cascading-tokens",
+    "tenant-scoped",
+    "config-plane"
+  ],
+  "priority": 23,
+  "providers": ["Academorix\\Platform\\Theme\\Providers\\ThemeServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application", "settings"],
+  "extendedBy": [],
+  "planned_consumers": [
+    "notifications",
+    "notifications-mail",
+    "newsletter",
+    "invoice",
+    "growth::marketing"
+  ],
+  "contributes": {
+    "traits": ["BelongsToTheme", "HasThemeSnapshot"],
+    "attributes": ["AsThemeConsumer"],
+    "blueprints": ["theme"],
+    "middleware": ["theme.resolve_tokens_for_ssr"],
+    "events": [
+      "ThemeCreated",
+      "ThemeActivated",
+      "ThemeDeactivated",
+      "ThemePresetCreated",
+      "ThemePresetPublished",
+      "ThemeTokenOverridden",
+      "ThemeTokenOverrideRemoved",
+      "ThemeAccessibilityFlagChanged",
+      "ThemeCacheInvalidated",
+      "UserThemePreferenceUpdated"
+    ],
+    "policies": ["ThemePolicy", "ThemePresetPolicy", "ThemeTokenOverridePolicy"],
+    "hooks": [
+      "RegenerateCssOnThemeActivated",
+      "DeactivatePriorThemeOnActivate",
+      "FreezeTokensSnapshotOnActivate",
+      "PurgeExpiredThemeSnapshotsOnRetentionCap"
+    ],
+    "commands": [
+      "theme:list",
+      "theme:describe",
+      "theme:activate",
+      "theme:preview",
+      "theme-preset:list",
+      "theme-preset:create",
+      "theme-preset:duplicate",
+      "theme-token-override:report"
+    ],
+    "jobs": [
+      "RegenerateRenderedCssJob",
+      "PreviewPresetJob",
+      "CacheThemeResolvedTokensJob",
+      "PurgeExpiredThemeSnapshotsJob",
+      "MigrateThemeTokensOnPresetUpdateJob"
+    ],
+    "notifications": [
+      "ThemeActivatedNotification",
+      "ThemePresetPublishedNotification",
+      "ThemeAccessibilityRecommendationNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.theme"],
+    "observers": ["ThemeObserver", "ThemePresetObserver", "ThemeTokenOverrideObserver"],
+    "rules": [
+      "valid_token_key",
+      "valid_token_value_for_type",
+      "valid_mode",
+      "valid_category",
+      "valid_hex_color",
+      "valid_dimension_unit",
+      "valid_accessibility_flags_shape",
+      "unique_active_theme_per_tenant_per_mode",
+      "unique_slug_per_tenant_namespace",
+      "contrast_ratio_wcag_aa"
+    ],
+    "casts": [
+      "ThemeMode",
+      "ThemePresetCategory",
+      "ThemeTokenType",
+      "AccessibilityFlagsPayload",
+      "TokenMapPayload"
+    ],
+    "views": [],
+    "lang": ["theme"],
+    "config": ["theme"],
+    "macros": [],
+    "bindings": [
+      "ThemeRepository",
+      "ThemePresetRepository",
+      "ThemeTokenOverrideRepository",
+      "TokenResolver",
+      "CssRenderer",
+      "PresetValidator",
+      "ContrastAuditor",
+      "AccessibilityFlagsResolver",
+      "UserThemePreferenceResolver"
+    ],
+    "resources": ["theme", "theme-preset", "theme-token-override"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant admin (admin + design-role) manage themes, presets, and token overrides. End users only set their per-user dark/light preference + accessibility flags.",
+      "routes": [
+        "GET /api/v1/themes",
+        "POST /api/v1/themes",
+        "GET /api/v1/themes/{theme}",
+        "POST /api/v1/themes/{theme}/activate",
+        "POST /api/v1/themes/{theme}/preview",
+        "GET /api/v1/themes/current",
+        "GET /api/v1/theme-presets",
+        "POST /api/v1/theme-presets",
+        "GET /api/v1/theme-presets/{preset}",
+        "POST /api/v1/theme-presets/{preset}/duplicate",
+        "GET /api/v1/theme-token-overrides",
+        "POST /api/v1/theme-token-overrides",
+        "DELETE /api/v1/theme-token-overrides/{override}",
+        "GET /api/v1/me/theme-preference",
+        "PATCH /api/v1/me/theme-preference"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant preset library management — Academorix staff manage the platform-owned preset catalog + audit tenant preset usage.",
+      "routes": [
+        "GET /api/v1/platform/theme-presets",
+        "POST /api/v1/platform/theme-presets",
+        "PATCH /api/v1/platform/theme-presets/{preset}",
+        "DELETE /api/v1/platform/theme-presets/{preset}"
+      ]
+    }
+  }
+}

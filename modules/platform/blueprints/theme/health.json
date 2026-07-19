@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/theme/health",
+  "$version": 1,
+  "title": "theme — health probes",
+  "probes": [
+    {
+      "name": "theme-vocabulary-hydrated",
+      "class": "Academorix\\Platform\\Theme\\Health\\Probes\\VocabularyHydratedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The in-memory token vocabulary is populated. Failure means data/token-vocabulary.json failed to load at boot.",
+      "timeoutMs": 100
+    },
+    {
+      "name": "theme-platform-presets-seeded",
+      "class": "Academorix\\Platform\\Theme\\Health\\Probes\\PlatformPresetsSeededProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "The 6 platform presets from data/preset-catalog.json are present in theme_presets with tenant_id NULL.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "theme-css-regen-worker-healthy",
+      "class": "Academorix\\Platform\\Theme\\Health\\Probes\\CssRegenWorkerHealthyProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "The theme queue has at least one worker attached AND no stalled RegenerateRenderedCssJob in the last 5min. Non-critical because stale CSS renders fine; the alert surfaces the backlog.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "theme-preview-render-available",
+      "class": "Academorix\\Platform\\Theme\\Health\\Probes\\PreviewRenderAvailableProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "PreviewPresetJob's headless browser (Puppeteer / Chromium) is reachable. Non-critical because preset thumbnails degrade to color-swatch placeholders when unavailable.",
+      "timeoutMs": 2000
+    },
+    {
+      "name": "theme-active-theme-count",
+      "class": "Academorix\\Platform\\Theme\\Health\\Probes\\ActiveThemeCountProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Sanity check — no tenant has more than one active Theme per mode (the partial unique index enforces this at the DB layer; this probe surfaces DB-layer bugs).",
+      "timeoutMs": 300
+    }
+  ]
+}

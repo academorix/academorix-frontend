@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/theme/feature-flags",
+  "$version": 1,
+  "title": "theme — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "theme.writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for POST / PATCH / DELETE on themes, presets, and overrides. Off = read-only mode (incident response). Existing themes still render — only mutation is disabled."
+    },
+    {
+      "key": "theme.activation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggle for POST /themes/{theme}/activate. Off = admins may create + edit themes but cannot flip is_active. Useful during a CSS regen incident when you want to prevent further cache churn."
+    },
+    {
+      "key": "theme.css_regen",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggle for RegenerateRenderedCssJob. Off = tokens_snapshot updates on activation but no compiled CSS rebuild fires. Frontend falls back to prior compiled CSS URL (stale but valid). Never off in production."
+    },
+    {
+      "key": "theme.contrast_audit",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggle for ContrastAuditor. Off = ThemeAccessibilityRecommendationNotification never fires. Findings are informational only, so this flag is a cosmetic silencer, not a compliance signal."
+    },
+    {
+      "key": "theme.preset_thumbnail_generation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggle for PreviewPresetJob (Puppeteer thumbnail generation). Off = preview_thumbnail_url stays NULL on new presets; admin UI falls back to a color-swatch placeholder."
+    },
+    {
+      "key": "theme.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggle for PurgeExpiredThemeSnapshotsJob. Off = historical themes retained indefinitely (useful during compliance audit windows)."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "$version": 1,
+  "title": "AttendancePolicy.late_arrival_penalty_type — canonical patterns",
+  "description": "The four penalty patterns AttendancePolicy can enforce for late arrivals. Selected per-policy; applies to every LateArrival created under that policy.",
+  "values": [
+    {
+      "value": "none",
+      "display_name": "No penalty",
+      "description": "Late arrival is logged (LateArrival row created for coaching feedback) but no consequence — no pass consumption change, no notification, no fee.",
+      "pass_consumption": "normal",
+      "notifies_guardian": false,
+      "notifies_coach": false,
+      "invoices_fee": false,
+      "typical_use_case": "Recreational leagues where lateness is common and unproblematic."
+    },
+    {
+      "value": "consume_pass_anyway",
+      "display_name": "Consume pass fully",
+      "description": "Pass is consumed at full value regardless of lateness. LateArrival row records the pattern for coach feedback. Default for most tenants — being late doesn't grant a discount.",
+      "pass_consumption": "full",
+      "notifies_guardian": false,
+      "notifies_coach": true,
+      "invoices_fee": false,
+      "typical_use_case": "Standard academy policy — a session is a session, regardless of when the athlete showed up."
+    },
+    {
+      "value": "fractional_pass_consume",
+      "display_name": "Half-pass consume",
+      "description": "Pass is marked half-consumed via metadata.fractional=0.5. A full pass effectively becomes two half-consumptions this period. Requires additional accounting on the finance side — the linked Pass's metadata tracks the fractional balance.",
+      "pass_consumption": "half",
+      "notifies_guardian": true,
+      "notifies_coach": true,
+      "invoices_fee": false,
+      "typical_use_case": "Enterprise tenants offering a fairness policy — chronic lateness reduces perceived value, encouraging retention via visible flexibility."
+    },
+    {
+      "value": "notify_only",
+      "display_name": "Notify only",
+      "description": "No pass consumption. LateArrivalNotification fires to guardian + coach. Pass stays available for a future session in the period. Zero fee.",
+      "pass_consumption": "none",
+      "notifies_guardian": true,
+      "notifies_coach": true,
+      "invoices_fee": false,
+      "typical_use_case": "Youth academies encouraging punctuality via feedback rather than penalty — guardians learn about the pattern; coach adjusts."
+    }
+  ]
+}

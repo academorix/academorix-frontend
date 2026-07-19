@@ -1,0 +1,20 @@
+{
+  "id": "academorix://modules/attendance/macros",
+  "$version": 1,
+  "title": "attendance — published macros",
+  "description": "No dedicated request-level macros — attendance context is composite (session + athlete + enrollment + pass) + resolved via route bindings.",
+  "macros": [],
+  "blueprint_macros": [
+    {
+      "name": "Blueprint::attendanceFingerprint",
+      "signature": "Blueprint::attendanceFingerprint(): void",
+      "adds": "Adds the shared column family for check-in fraud-correlation columns: `device_fingerprint_hash` (varchar(64) nullable) + `ip_address` (inet nullable) + `gps_lat` (decimal(10,7) nullable) + `gps_lng` (decimal(10,7) nullable). Used by AttendanceRecord + reserved for future check-in-adjacent tables.",
+      "columns": [
+        "device_fingerprint_hash: varchar(64) NULL",
+        "ip_address: inet NULL",
+        "gps_lat: decimal(10,7) NULL",
+        "gps_lng: decimal(10,7) NULL"
+      ]
+    }
+  ]
+}

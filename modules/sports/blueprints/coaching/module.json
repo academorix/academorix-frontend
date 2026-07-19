@@ -1,0 +1,239 @@
+{
+  "$version": 1,
+  "name": "coaching",
+  "alias": "coaching",
+  "namespace": "Academorix\\Sports\\Coaching",
+  "description": "The Coach lane. Answers 'which Staff members are coaches, what are they qualified to coach, and which Sessions/Teams are they assigned to?'. Ships FOUR aggregates: `CoachingProfile` (per-Staff satellite — one Staff can have zero or one CoachingProfile; the profile marks them as an active Coach with sport-specific expertise like primary_sport_id, coaching_since_year, bio, photo_url_signed, availability_json, hourly_rate_cents + a jsonb blob of specializations), `CoachAssignment` (many-to-many pivot Coach ↔ Session OR Team OR Event with role IN (head_coach / assistant_coach / observer / substitute), start_date + end_date bounds, per-assignment notes), `CoachCertification` (Coach's held certifications — issuing_body, certification_name, level, issued_at, expires_at, verification_url, verified_by_admin flag; supports 'expires soon' notifications 90/30/7 days out), `CoachSkillRating` (per-Coach per-Sport OR per-Discipline OR per-Position rating — 1-5 stars OR level enum beginner/intermediate/advanced/expert/master; admins rate coaches for match-making athletes to appropriate coaches). Distinct from `Staff` which is generic employment. Coaching profile is opt-in — a coach is a Staff row that ALSO has a `coaching_profiles` row; not every Staff is a Coach (admin staff, reception, maintenance are Staff without CoachingProfile).",
+  "keywords": [
+    "coach",
+    "coaching",
+    "coaching-profile",
+    "coach-assignment",
+    "certification",
+    "skill-rating",
+    "sport-specialization",
+    "hourly-rate",
+    "availability",
+    "roster",
+    "head-coach",
+    "assistant-coach",
+    "observer",
+    "substitute",
+    "expiration",
+    "verification",
+    "safesport",
+    "ncaa",
+    "staff-satellite",
+    "wave-3b"
+  ],
+  "priority": 68,
+  "providers": [
+    "Academorix\\Sports\\Coaching\\Providers\\CoachingServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "staff",
+    "branch",
+    "registry",
+    "season",
+    "athlete",
+    "athlete-enrollment",
+    "event",
+    "session"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "sports/attendance",
+    "sports/session (extended reads)",
+    "notifications (session-coach change alerts)",
+    "growth::analytics (coach performance metrics)"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToCoachingProfile",
+      "HasCoachAssignments",
+      "HasCoachCertifications",
+      "HasCoachSkillRatings"
+    ],
+    "attributes": [
+      "AsCoachingListener"
+    ],
+    "blueprints": [
+      "coaching-profile",
+      "coach-assignment",
+      "coach-certification",
+      "coach-skill-rating"
+    ],
+    "middleware": [],
+    "events": [
+      "CoachingProfileCreated",
+      "CoachingProfileVerified",
+      "CoachingProfileDeactivated",
+      "CoachingProfileReactivated",
+      "CoachAssignmentCreated",
+      "CoachAssignmentUpdated",
+      "CoachAssignmentEnded",
+      "CoachAssignmentCancelled",
+      "CoachCertificationAdded",
+      "CoachCertificationVerified",
+      "CoachCertificationExpiringSoon",
+      "CoachCertificationExpired",
+      "CoachSkillRatingRecorded",
+      "CoachSkillRatingUpdated"
+    ],
+    "policies": [
+      "CoachingProfilePolicy",
+      "CoachAssignmentPolicy",
+      "CoachCertificationPolicy",
+      "CoachSkillRatingPolicy"
+    ],
+    "hooks": [
+      "PreventStaffOffboardingWithActiveCoachingProfile",
+      "PurgeCoachingDataForErasedTenant",
+      "DeactivateCoachingProfileOnStaffOffboarded",
+      "CancelActiveAssignmentsOnCoachingProfileDeactivated",
+      "ScheduleExpirationNoticesOnCertificationAdded"
+    ],
+    "commands": [
+      "coaching-profile:list",
+      "coaching-profile:describe",
+      "coaching-profile:create",
+      "coaching-profile:verify",
+      "coaching-profile:deactivate",
+      "coach-assignment:list",
+      "coach-assignment:create",
+      "coach-assignment:end",
+      "coach-certification:list",
+      "coach-certification:verify",
+      "coach-certification:expiring",
+      "coach-skill-rating:list",
+      "coach:report"
+    ],
+    "jobs": [
+      "NotifyCertificationExpiringJob",
+      "NotifyCertificationExpiredJob",
+      "NotifyAssignmentEndingSoonJob",
+      "NotifyCoachAvailabilityConflictJob",
+      "PurgeExpiredSkillRatingsJob",
+      "GenerateCoachRosterReportJob"
+    ],
+    "notifications": [
+      "CoachingProfileCreatedNotification",
+      "CoachingProfileVerifiedNotification",
+      "CoachCertificationExpiringSoonNotification",
+      "CoachCertificationExpiredNotification",
+      "CoachAssignmentCreatedNotification",
+      "CoachAssignmentEndingSoonNotification",
+      "CoachSkillRatingRecordedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.coaching-profiles",
+      "tenant.{tenantId}.coach-certifications",
+      "coaching-profile.{coachingProfileId}.assignments",
+      "coaching-profile.{coachingProfileId}.certifications",
+      "coaching-profile.{coachingProfileId}.ratings",
+      "user.{userId}.coaching"
+    ],
+    "observers": [
+      "CoachingProfileObserver",
+      "CoachAssignmentObserver",
+      "CoachCertificationObserver",
+      "CoachSkillRatingObserver"
+    ],
+    "rules": [
+      "valid_primary_sport",
+      "valid_coaching_since_year",
+      "valid_photo_url",
+      "valid_availability_shape",
+      "valid_hourly_rate_currency_pair",
+      "valid_specializations_shape",
+      "valid_languages",
+      "valid_role",
+      "valid_ratable_type_for_rating",
+      "valid_rating_value_for_scale",
+      "unique_active_certification_per_body_and_name",
+      "unique_head_coach_per_assignable",
+      "unique_coaching_profile_per_staff",
+      "no_self_rating"
+    ],
+    "casts": [
+      "CoachAssignmentRole",
+      "CoachRatingScale",
+      "CoachCertificationLevel",
+      "CoachAssignableType",
+      "CoachRatableType"
+    ],
+    "views": [],
+    "lang": [
+      "coaching"
+    ],
+    "config": [
+      "coaching"
+    ],
+    "macros": [],
+    "bindings": [
+      "CoachingProfileRepository",
+      "CoachAssignmentRepository",
+      "CoachCertificationRepository",
+      "CoachSkillRatingRepository",
+      "CoachingProfileVerifier",
+      "AssignmentConflictDetector",
+      "ExpirationScheduler",
+      "CoachRosterReporter",
+      "AvailabilityResolver"
+    ],
+    "resources": [
+      "coaching-profile",
+      "coach-assignment",
+      "coach-certification",
+      "coach-skill-rating"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing coaching CRUD — admin + HR + staff-role manage coaching profiles, assignments, certifications, and skill ratings. Coaches self-serve their own profile + availability + certifications via /coaches/me/*.",
+      "routes": [
+        "GET /api/v1/coaching-profiles",
+        "POST /api/v1/coaching-profiles",
+        "GET /api/v1/coaching-profiles/{profile}",
+        "PATCH /api/v1/coaching-profiles/{profile}",
+        "POST /api/v1/coaching-profiles/{profile}/verify",
+        "POST /api/v1/coaching-profiles/{profile}/deactivate",
+        "POST /api/v1/coaching-profiles/{profile}/reactivate",
+        "GET /api/v1/coach-assignments",
+        "POST /api/v1/coach-assignments",
+        "GET /api/v1/coach-assignments/{assignment}",
+        "POST /api/v1/coach-assignments/{assignment}/end",
+        "DELETE /api/v1/coach-assignments/{assignment}",
+        "GET /api/v1/coach-certifications",
+        "POST /api/v1/coach-certifications",
+        "GET /api/v1/coach-certifications/{cert}",
+        "POST /api/v1/coach-certifications/{cert}/verify",
+        "GET /api/v1/coach-certifications/expiring",
+        "GET /api/v1/coach-skill-ratings",
+        "POST /api/v1/coach-skill-ratings",
+        "GET /api/v1/coach-skill-ratings/{rating}",
+        "PATCH /api/v1/coach-skill-ratings/{rating}",
+        "GET /api/v1/coaches/{coach}/roster-report",
+        "GET /api/v1/coaches/me",
+        "PATCH /api/v1/coaches/me",
+        "GET /api/v1/coaches/me/assignments",
+        "GET /api/v1/coaches/me/certifications",
+        "POST /api/v1/coaches/me/certifications",
+        "GET /api/v1/coaches/me/ratings",
+        "GET /api/v1/coaches/me/export"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling. Coach PII (bio + phone + photo) is redacted at the platform plane; hourly-rate is redacted on every platform read.",
+      "routes": [
+        "GET /api/v1/platform/coaching-profiles",
+        "GET /api/v1/platform/coaching-profiles/{profile}"
+      ]
+    }
+  }
+}

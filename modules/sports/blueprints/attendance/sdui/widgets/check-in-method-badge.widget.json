@@ -1,0 +1,32 @@
+{
+  "id": "attendance.widgets.check-in-method-badge",
+  "title": "Check-in method badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "attendance.check-in-method-badge",
+  "description": "Small badge showing checked_in_via with a matching icon. Compact — meant for table rows and card headers.",
+  "params": {
+    "method": {
+      "type": "string",
+      "required": true,
+      "enum": ["self_kiosk", "coach_verified", "admin_recorded", "geofence", "qr_scan"]
+    },
+    "size": { "type": "string", "required": false, "default": "sm" }
+  },
+  "nodes": [
+    {
+      "kind": "Chip",
+      "propsExpr": "{ size: $params.size, variant: 'neutral', className: 'font-medium capitalize' }",
+      "children": [
+        {
+          "kind": "Icon",
+          "propsExpr": "{ name: $params.method === 'self_kiosk' ? 'device-tablet' : $params.method === 'coach_verified' ? 'user-check' : $params.method === 'admin_recorded' ? 'shield-check' : $params.method === 'geofence' ? 'map-pin' : 'qr-code', className: 'size-3 mr-1' }"
+        },
+        {
+          "kind": "Text",
+          "propsExpr": "{ children: $params.method === 'self_kiosk' ? 'Kiosk' : $params.method === 'coach_verified' ? 'Coach' : $params.method === 'admin_recorded' ? 'Admin' : $params.method === 'geofence' ? 'Geofence' : 'QR' }"
+        }
+      ]
+    }
+  ]
+}

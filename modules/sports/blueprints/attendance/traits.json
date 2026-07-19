@@ -1,0 +1,132 @@
+{
+  "id": "academorix://modules/attendance/traits",
+  "$version": 1,
+  "title": "attendance — trait composition",
+  "description": "Four owned traits — BelongsToAttendanceRecord + BelongsToAttendancePolicy for downstream models, HasAttendanceHistory + HasAbsenceHistory on Athlete for reverse-relation accessors.",
+  "owned": [
+    {
+      "trait": "Academorix\\Sports\\Attendance\\Concerns\\BelongsToAttendanceRecord",
+      "description": "Mixed into downstream models that carry an `attendance_record_id` FK. Adds `attendanceRecord()` belongsTo + query scope + cross-tenant guard.",
+      "public": true,
+      "usedBy": [
+        "attendance::LateArrival (owns the FK internally)",
+        "growth::analytics::AttendancePatternRecord (Wave 8+)"
+      ]
+    },
+    {
+      "trait": "Academorix\\Sports\\Attendance\\Concerns\\BelongsToAttendancePolicy",
+      "description": "Mixed into downstream models that carry a `policy_id` FK. Adds `attendancePolicy()` belongsTo + query scope.",
+      "public": true,
+      "usedBy": [
+        "attendance::LateArrival (policy_id at check-in snapshot)"
+      ]
+    },
+    {
+      "trait": "Academorix\\Sports\\Attendance\\Concerns\\HasAttendanceHistory",
+      "description": "Composed onto the Athlete model. Adds `attendanceRecords()` (hasMany), `recentAttendance(days)` (rolling window), `attendanceRate(season)` (present + late / expected), `sessionsAttended()` (distinct sessions).",
+      "public": true,
+      "usedBy": ["athlete::Athlete"]
+    },
+    {
+      "trait": "Academorix\\Sports\\Attendance\\Concerns\\HasAbsenceHistory",
+      "description": "Composed onto the Athlete model. Adds `absenceRecords()` (hasMany), `unexcusedAbsencesInWindow(days)` (rolling-window count), `absencesGroupedByReason()`, `hasReachedAbsenceThreshold(policy)`.",
+      "public": true,
+      "usedBy": ["athlete::Athlete"]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
+    "athlete": [{ "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
+    "athlete-enrollment": [
+      { "trait": "Academorix\\Sports\\AthleteEnrollment\\Concerns\\BelongsToAthleteEnrollment" }
+    ],
+    "session": [{ "trait": "Academorix\\Sports\\Session\\Concerns\\BelongsToSession" }],
+    "membership": [
+      { "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembership" }
+    ],
+    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+  },
+  "composition": {
+    "attendanceRecord": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToAthlete",
+        "BelongsToAthleteEnrollment",
+        "BelongsToSession",
+        "BelongsToMembership",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant precedes all scope-observing traits. No BelongsToBranch — branch cascades through session.venue.branch_id."
+    },
+    "attendancePolicy": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToBranch",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "AttendancePolicy carries branch_id directly (nullable) — policies scoped by (branch, plan) specificity."
+    },
+    "absenceRecord": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToAthlete",
+        "BelongsToAthleteEnrollment",
+        "BelongsToSession",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Mirrors AttendanceRecord's tenant/session/athlete triad. No membership_id — an absence is not a money-side event (unless no-show fee applies, which is separately dispatched via finance::invoice)."
+    },
+    "lateArrival": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToAthlete",
+        "BelongsToSession",
+        "BelongsToAttendanceRecord",
+        "BelongsToAttendancePolicy",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable"
+      ],
+      "notes": "Satellite of AttendanceRecord — no soft-delete (cascades with parent). No HasActivityLog — the parent's activity trail is sufficient."
+    }
+  }
+}

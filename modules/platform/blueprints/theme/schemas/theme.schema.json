@@ -1,0 +1,237 @@
+{
+  "id": "academorix://modules/theme/schemas/theme",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Theme",
+  "description": "Per-tenant active theme record. One row per (tenant_id, mode) active at a time (partial unique index). Carries the frozen tokens_snapshot materialised at activation time — mid-session preset edits never mutate an active theme's snapshot. Ties three inputs (platform default preset ← selected preset ← tenant token overrides) into one immutable jsonb map. Distinct from ThemePreset which is the source config, and ThemeTokenOverride which is a sparse patch.",
+  "type": "object",
+  "x-module": "theme",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "themes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "thm_",
+    "incrementing": false,
+    "model": "Academorix\\Platform\\Theme\\Models\\Theme",
+    "interface": "Academorix\\Platform\\Theme\\Contracts\\Data\\ThemeInterface",
+    "implements": ["Academorix\\Platform\\Theme\\Contracts\\Data\\ThemeInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasThemeSnapshot",
+      "HasUserstamps",
+      "HasAuditable",
+      "HasActivityLog",
+      "HasMetadata",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "mode": "ThemeMode",
+      "tokens_snapshot": "TokenMapPayload",
+      "accessibility_flags": "AccessibilityFlagsPayload",
+      "is_active": "boolean",
+      "activated_at": "datetime",
+      "deactivated_at": "datetime",
+      "metadata": "array"
+    },
+    "appends": ["compiled_css_url"],
+    "observers": ["ThemeObserver"],
+    "hidden": ["metadata"],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `thm_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "mode": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: light / dark."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Human display name — 'Academy Default (Light)', 'Corporate Dark', 'Autumn Sport Palette'."
+      },
+      "selected_preset_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "theme_presets",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The preset this theme references. RESTRICT — cannot delete a preset while any theme references it."
+      },
+      "tokens_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Frozen token map at activation. Shape: { \"color.primary.500\": \"#0066CC\", \"spacing.4\": \"16px\", ... }. NULL before first activation; IMMUTABLE while is_active=true. Materialised by ThemeObserver from the preset + overrides cascade."
+      },
+      "accessibility_flags": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{\"high_contrast\":false,\"reduced_motion\":false,\"larger_text\":false,\"focus_visible_always\":false}'::jsonb",
+        "description": "Boolean flags controlling accessibility overlays applied to the rendered CSS."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Exactly one active theme per (tenant_id, mode) — enforced by partial unique index."
+      },
+      "activated_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on is_active false → true transition. Never mutated once set (rollback creates a NEW Theme row rather than clearing this)."
+      },
+      "deactivated_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on is_active true → false transition. NULL for currently-active themes."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form module notes — designer refs, migration source, Figma links."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "mode"],
+        "unique": true,
+        "name": "themes_tenant_mode_active_unique",
+        "predicate": "is_active = TRUE AND deleted_at IS NULL",
+        "description": "Load-bearing invariant — exactly one active theme per (tenant, mode)."
+      },
+      {
+        "columns": ["tenant_id", "activated_at"],
+        "unique": false,
+        "name": "themes_tenant_activated_at_index",
+        "description": "Rollback query — 'most recent N activations for this tenant'."
+      },
+      {
+        "columns": ["selected_preset_id"],
+        "unique": false,
+        "name": "themes_selected_preset_id_index",
+        "description": "Downstream lookup — 'which themes reference this preset' for MigrateThemeTokensOnPresetUpdateJob."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "mode",
+    "name",
+    "selected_preset_id",
+    "accessibility_flags",
+    "is_active",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^thm_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["light", "dark"]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "selected_preset_id": {
+      "type": "string",
+      "pattern": "^tps_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tokens_snapshot": {
+      "type": ["object", "null"],
+      "description": "Frozen resolved token map. Keys match the canonical vocabulary; values match the token_type's value schema.",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "accessibility_flags": {
+      "type": "object",
+      "required": ["high_contrast", "reduced_motion", "larger_text", "focus_visible_always"],
+      "additionalProperties": false,
+      "properties": {
+        "high_contrast": { "type": "boolean" },
+        "reduced_motion": { "type": "boolean" },
+        "larger_text": { "type": "boolean" },
+        "focus_visible_always": { "type": "boolean" }
+      }
+    },
+    "is_active": { "type": "boolean", "default": false },
+    "activated_at": { "type": ["string", "null"], "format": "date-time" },
+    "deactivated_at": { "type": ["string", "null"], "format": "date-time" },
+    "compiled_css_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Computed — signed URL to the compiled CSS artifact. NULL when is_active=false or the CSS regen has not yet completed."
+    },
+    "metadata": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["metadata", "created_by", "updated_by", "deleted_by"],
+    "computed": ["compiled_css_url"]
+  },
+  "x-related": [
+    {
+      "schema": "academorix://modules/theme/schemas/theme-preset",
+      "kind": "the preset this theme references"
+    },
+    {
+      "schema": "academorix://modules/theme/schemas/theme-token-override",
+      "kind": "sparse token patches applied on top of the preset"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "id": "theme.resources.theme.preview",
+  "title": "Preview theme",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/themes/{id}/preview",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme", "action": "preview" },
+  "requiresPermission": "theme.read",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "theme",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/themes/' + params.id",
+      "unwrap": "data"
+    },
+    {
+      "name": "preview",
+      "kind": "http.post",
+      "urlExpr": "'/api/v1/themes/' + params.id + '/preview'",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "All themes",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/themes" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "bindings": { "children": { "$ref": "theme.name" } }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "children": "Activate"
+              },
+              "bindings": { "disabled": { "$ref": "theme.is_active" } },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/themes/' + params.id + '/activate'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-1 lg:grid-cols-2 gap-6" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-sm font-semibold uppercase tracking-wide text-muted mb-3",
+                    "children": "Rendered preview"
+                  }
+                },
+                {
+                  "kind": "Widget",
+                  "widget": "theme.preset-thumbnail",
+                  "props": { "theme": { "$ref": "theme" }, "large": true }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-sm font-semibold uppercase tracking-wide text-muted mb-3",
+                    "children": "Resolved tokens"
+                  }
+                },
+                {
+                  "kind": "List",
+                  "props": { "className": "grid grid-cols-2 gap-2 text-xs font-mono" },
+                  "bindings": {
+                    "items": {
+                      "$expr": "Object.entries(preview.tokens_snapshot).map(([key, value]) => ({ key, value }))"
+                    }
+                  },
+                  "itemRenderer": {
+                    "kind": "Widget",
+                    "widget": "theme.token-badge",
+                    "props": {
+                      "tokenKey": { "$ref": "row.key" },
+                      "tokenValue": { "$ref": "row.value" }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

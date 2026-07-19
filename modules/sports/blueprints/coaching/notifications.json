@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/coaching/notifications",
+  "$version": 1,
+  "title": "coaching — notification classes + categories",
+  "namespace": "Academorix\\Sports\\Coaching\\Notifications",
+  "notifications": [
+    "CoachingProfileCreatedNotification",
+    "CoachingProfileVerifiedNotification",
+    "CoachCertificationExpiringSoonNotification",
+    "CoachCertificationExpiredNotification",
+    "CoachAssignmentCreatedNotification",
+    "CoachAssignmentEndingSoonNotification",
+    "CoachSkillRatingRecordedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "coaching.profile_created",
+      "display_name": "Coaching profile created",
+      "description": "Sent to admin when a new CoachingProfile is created — pending verification.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "coaching.profile_verified",
+      "display_name": "Coaching profile verified",
+      "description": "Sent to coach when admin verifies their profile. Confirms they can now accept assignments.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "coaching.certification_expiring",
+      "display_name": "Certification expiring soon",
+      "description": "Sent to coach + admin at 90 / 30 / 7-day cadences before certification expires_at. Cannot-opt-out — compliance-critical (NCAA / IHSA / SafeSport).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "coaching.certification_expired",
+      "display_name": "Certification expired",
+      "description": "Sent to coach + admin when certification expires_at reached. Cannot-opt-out. Action required (renew or remove).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "coaching.assignment_created",
+      "display_name": "New assignment",
+      "description": "Sent to coach when a new CoachAssignment is created. Includes role + assignable summary + start_date.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "coaching.assignment_ending_soon",
+      "display_name": "Assignment ending soon",
+      "description": "Sent to coach 7 days before assignment.end_date. Coach may plan for the transition.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "coaching.skill_rating_recorded",
+      "display_name": "Skill rating recorded",
+      "description": "Sent to coach when admin records a new rating on them. OPT-IN — coach must have notify_on_rating=true on CoachingProfile.metadata.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "transactional_optional",
+      "opt_out_allowed": true,
+      "is_system": true
+    }
+  ]
+}

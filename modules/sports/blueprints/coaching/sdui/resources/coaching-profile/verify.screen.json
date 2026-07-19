@@ -1,0 +1,95 @@
+{
+  "id": "coaching.resources.coaching-profile.verify",
+  "title": "Verify coaching profile",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coaching-profiles/{profile_id}/verify",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coaching", "entity": "coaching-profile", "action": "verify" },
+  "requiresPermission": "coaching_profiles.verify",
+  "dataSources": [
+    {
+      "name": "profile",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/coaching-profiles/' + $route.profile_id",
+      "unwrap": "data"
+    },
+    {
+      "name": "certifications",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/coach-certifications?filter[coaching_profile_id]=' + $route.profile_id",
+      "unwrap": "data"
+    }
+  ],
+  "form": {
+    "id": "verifyCoachingProfileForm",
+    "submit": {
+      "kind": "http.post",
+      "urlExpr": "'/api/v1/coaching-profiles/' + $route.profile_id + '/verify'",
+      "body": "$form",
+      "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/' + $route.profile_id" },
+      "onError": { "kind": "toast.error", "message": "Could not verify profile." }
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Verify coaching profile" } },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Profile summary" } }] },
+            {
+              "kind": "Card.Content",
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-3 mb-4" },
+                  "children": [
+                    { "kind": "Avatar", "props": { "size": "md" }, "bindings": { "src": { "$ref": "profile.photo_url_signed" }, "name": { "$ref": "profile.display_name" } } },
+                    {
+                      "kind": "View",
+                      "children": [
+                        { "kind": "Text", "props": { "className": "text-lg font-medium" }, "bindings": { "children": { "$ref": "profile.display_name" } } },
+                        { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$ref": "profile.primary_sport_slug" } } }
+                      ]
+                    }
+                  ]
+                },
+                { "kind": "Description", "props": { "label": "Coaching since" }, "bindings": { "children": { "$ref": "profile.coaching_since_year" } } },
+                { "kind": "Description", "props": { "label": "Specializations" }, "bindings": { "children": { "$expr": "$ref('profile.specializations').join(', ')" } } },
+                { "kind": "Description", "props": { "label": "Certifications on file" }, "bindings": { "children": { "$expr": "$ref('certifications').length + ' captured'" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Verification unlocks assignments",
+            "children": "Once verified, this coach can be assigned to sessions, teams, and events."
+          }
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Content", "children": [{ "kind": "TextArea", "props": { "name": "verification_notes", "label": "Verification notes (optional)", "rows": 3 } }] }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            { "kind": "Button", "props": { "variant": "flat", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coaching-profiles/' + $route.profile_id" } } },
+            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "leadingIcon": "check-circle", "children": "Verify profile" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

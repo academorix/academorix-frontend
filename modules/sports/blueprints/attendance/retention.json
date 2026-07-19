@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/attendance/retention",
+  "$version": 1,
+  "title": "attendance — retention windows",
+  "description": "Attendance records retain 7 years post-session (10 years Enterprise via attendance_extended_retention entitlement) for federation + tax + regulatory-records compliance. Absence records retain 3 years. Late arrivals co-terminous with parent AttendanceRecord. Attendance policies retain while active + 7 years post-archive. Records under regulator hold survive TenantErased as compliance archive rows.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c)",
+    "gdpr Art. 17 (retention exception for regulatory records)",
+    "US Department of Education (youth program records)",
+    "state youth sports SafeSport (multi-year verification trails)",
+    "SOC 2 Type II CC7.2 (attendance events audit-critical)"
+  ],
+  "retention": [
+    {
+      "entity": "AttendanceRecord",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post session.ends_at); 3650 (10 years Enterprise via attendance_extended_retention)" },
+      "purge": {
+        "trigger": "> 7 years post session.ends_at (or 10 years Enterprise) AND no regulator hold",
+        "action": "hard delete via PurgeCompletedAttendanceJob",
+        "notes": "Federation regulators may require multi-year lookback for age-eligibility disputes. Enterprise extends to 10 years for litigation-hold scenarios."
+      }
+    },
+    {
+      "entity": "AttendancePolicy — active",
+      "hot": { "days": "indefinite (while is_active=true)" }
+    },
+    {
+      "entity": "AttendancePolicy — archived (is_active=false)",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post deactivation)" },
+      "purge": {
+        "trigger": "> 7 years past deactivation AND no LateArrival references remain",
+        "action": "hard delete"
+      }
+    },
+    {
+      "entity": "AbsenceRecord",
+      "hot": { "days": 90 },
+      "cold": { "days": "1095 (3 years post session.ends_at)" },
+      "purge": {
+        "trigger": "> 3 years past session.ends_at AND no linked no-show fee invoice active",
+        "action": "hard delete",
+        "notes": "Anti-discrimination audit inspection may require pattern retention. Compliance module may extend on demand."
+      }
+    },
+    {
+      "entity": "LateArrival",
+      "hot": { "days": "co-terminous with parent AttendanceRecord" },
+      "cold": { "days": "co-terminous with parent AttendanceRecord" },
+      "purge": {
+        "trigger": "cascades with parent AttendanceRecord hard-delete",
+        "action": "cascaded via the AttendanceRecord row"
+      }
+    },
+    {
+      "entity": "device_fingerprint_hash + ip_address + gps_lat/gps_lng",
+      "hot": { "days": 90 },
+      "cold": { "days": 365 },
+      "purge": {
+        "trigger": "> 1 year past session.ends_at",
+        "action": "column-level nulling (redaction) via PurgeAttendanceFraudSignalsJob",
+        "notes": "Fraud correlation signals retain 1 year — enough for cross-tenant pattern analysis without extending PII retention. Records themselves survive; only these columns are nulled."
+      }
+    },
+    {
+      "entity": "signature_url_signed",
+      "hot": { "days": 365 },
+      "cold": { "days": 2555 },
+      "purge": {
+        "trigger": "co-terminous with parent AttendanceRecord",
+        "action": "S3 object deletion cascaded via AttendanceRecord hard-delete"
+      }
+    }
+  ],
+  "cross_reference": [
+    "TenantErased cascades hard-delete of every attendance / policy / absence / late-arrival row. Compliance archive rows survive per compliance module for regulator holds.",
+    "Session archive (soft-delete) retains attendance data indefinitely; only Session hard-delete post-retention (7 years) triggers attendance hard-purge.",
+    "Membership hard-delete cascades: attendance records with consumed_pass_id pointing at that membership's Passes retain (consumed_pass_id RESTRICTs the pass hard-delete)."
+  ]
+}

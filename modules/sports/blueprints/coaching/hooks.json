@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/coaching/hooks",
+  "$version": 1,
+  "title": "coaching — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. Coaching does not register a bootstrapper. Ships five hooks: prevent staff-offboarding with active profile, tenant erasure cascade, staff-offboarded cascade, profile-deactivated → cancel-assignments cascade, cert-added → schedule expiration notices.",
+  "namespace": "Academorix\\Sports\\Coaching\\Hooks",
+  "hooks": [
+    {
+      "name": "PreventStaffOffboardingWithActiveCoachingProfile",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\PreventStaffOffboardingWithActiveCoachingProfile",
+      "kind": "cascade_prevention",
+      "listens_to": "staff::StaffOffboardingStarted (pre-write hook)",
+      "purpose": "Refuse the Staff offboard when the Staff still has an active CoachingProfile UNLESS the offboard invocation carries cascade=true. When cascade=true, the DeactivateCoachingProfileOnStaffOffboarded hook takes over post-write. This preserves the invariant that a Staff cannot be silently offboarded while carrying open coaching commitments.",
+      "returns": "STAFF_OFFBOARD_HAS_ACTIVE_COACHING_PROFILE (409) with the profile_id in the error payload",
+      "priority": 48,
+      "note": "Priority 48 — runs AFTER other staff-cascade guards (branch-manager guard at 45, coach-parent guard at 46). This is the last coaching-owned refusal in the chain."
+    },
+    {
+      "name": "DeactivateCoachingProfileOnStaffOffboarded",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\DeactivateCoachingProfileOnStaffOffboarded",
+      "kind": "cascade",
+      "listens_to": "staff::StaffOffboarded",
+      "purpose": "Post-offboard cascade. Flips CoachingProfile.is_active=false with trigger='staff_offboarded'. Fires CoachingProfileDeactivated. Downstream CancelActiveAssignmentsOnCoachingProfileDeactivated cancels open assignments.",
+      "priority": 20,
+      "note": "Priority 20 — runs BEFORE notification listeners so the notification carries the resolved deactivation reason."
+    },
+    {
+      "name": "CancelActiveAssignmentsOnCoachingProfileDeactivated",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\CancelActiveAssignmentsOnCoachingProfileDeactivated",
+      "kind": "cascade",
+      "listens_to": "coaching::CoachingProfileDeactivated",
+      "purpose": "Cancels every active CoachAssignment for the deactivated profile. Fires one CoachAssignmentCancelled per assignment with trigger='coaching_profile_deactivated'.",
+      "priority": 20
+    },
+    {
+      "name": "ScheduleExpirationNoticesOnCertificationAdded",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\ScheduleExpirationNoticesOnCertificationAdded",
+      "kind": "cascade",
+      "listens_to": "coaching::CoachCertificationAdded",
+      "purpose": "When the cert has expires_at, schedules NotifyCertificationExpiringJob at (expires_at - 90d), (- 30d), (- 7d). Also schedules NotifyCertificationExpiredJob at expires_at. Idempotent — reruns replace the schedule (used when admin updates the cert's expires_at).",
+      "priority": 30
+    },
+    {
+      "name": "PurgeCoachingDataForErasedTenant",
+      "class": "Academorix\\Sports\\Coaching\\Hooks\\PurgeCoachingDataForErasedTenant",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "Cascade delete via FK. Writes compliance audit trail entry + emits count metrics per entity (profiles / assignments / certifications / ratings). Skips rows under an active regulator hold (defense-in-depth: reads the tenancy audit trail's active-hold flags before firing).",
+      "compliance": "GDPR Art. 17 — right to erasure. Coaching rows cascade with the tenant. `coaching_extended_retention` grandfathers the extended window per-record."
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Coaching does not need a tenant-boot hydration path — every row loads on demand. The CoachingProfileRepository + AvailabilityResolver + AssignmentConflictDetector bindings cache lazily on first query."
+  }
+}

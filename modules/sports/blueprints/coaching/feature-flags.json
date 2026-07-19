@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/coaching/feature-flags",
+  "$version": 1,
+  "title": "coaching — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from tier-based entitlements. Every switch defaults to ON; ops flips OFF only for surgical operational reasons (migration, third-party outage, incident containment).",
+  "flags": [
+    {
+      "key": "coaching.profile_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for CoachingProfile create + update routes. Off = POST / PATCH / DELETE return 503. Reads unaffected."
+    },
+    {
+      "key": "coaching.profile_verify",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = /verify + /deactivate return 503. Emergency-only during verification-workflow migrations."
+    },
+    {
+      "key": "coaching.assignment_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /coach-assignments returns 503. Reads + end unaffected."
+    },
+    {
+      "key": "coaching.certification_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /coach-certifications + /verify return 503."
+    },
+    {
+      "key": "coaching.expiration_notify_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = NotifyCertificationExpiringJob + NotifyCertificationExpiredJob no-op. Use during mass-migration to prevent notification storm."
+    },
+    {
+      "key": "coaching.availability_conflict_job",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = NotifyCoachAvailabilityConflictJob no-op. Assignments still created; conflict-detection silent."
+    },
+    {
+      "key": "coaching.skill_rating_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /coach-skill-ratings returns 503."
+    },
+    {
+      "key": "coaching.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeExpiredSkillRatingsJob no-op. Data ages in place — legal-hold-friendly."
+    },
+    {
+      "key": "coaching.public_directory_reads",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = customer-facing coach picker returns empty roster + falls back to aggregate-info-only. Used during coach-roster overhaul."
+    }
+  ]
+}

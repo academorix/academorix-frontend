@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/theme/caches",
+  "$version": 1,
+  "title": "theme — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["theme"],
+  "keys": [
+    {
+      "pattern": "theme:vocabulary",
+      "description": "In-memory registry of the canonical token vocabulary loaded at boot from data/token-vocabulary.json.",
+      "ttlSeconds": 86400,
+      "tags": ["theme", "platform"],
+      "invalidatedBy": ["foundation::ApplicationBooted", "foundation::ConfigReloaded"]
+    },
+    {
+      "pattern": "theme:resolved:{tenant_id}:{mode}",
+      "description": "Resolved final token map for one (tenant, mode). Hot path — every TokenResolver::resolveTokens() read hits this first.",
+      "ttlSeconds": 3600,
+      "tags": ["theme", "resolved"],
+      "invalidatedBy": [
+        "ThemeActivated for the (tenant_id, mode)",
+        "ThemeTokenOverridden for a row on this tenant's active theme in the mode",
+        "ThemeTokenOverrideRemoved for the same"
+      ]
+    },
+    {
+      "pattern": "theme:compiled-css:{tenant_id}:{mode}",
+      "description": "Signed URL to the compiled CSS artifact in storage for one (tenant, mode). Served to the frontend via GET /themes/current.",
+      "ttlSeconds": 3600,
+      "tags": ["theme", "compiled"],
+      "invalidatedBy": [
+        "ThemeCacheInvalidated (fires post-RegenerateRenderedCssJob completion)"
+      ]
+    },
+    {
+      "pattern": "theme:presets:platform",
+      "description": "The seeded platform presets list (tenant_id NULL). Same content for every tenant. Cached because the preset picker in the admin UI reads this on every open.",
+      "ttlSeconds": 86400,
+      "tags": ["theme", "platform"],
+      "invalidatedBy": [
+        "ThemePresetCreated (tenant_id=NULL)",
+        "Platform admin PATCH /platform/theme-presets/{preset}",
+        "Platform admin DELETE /platform/theme-presets/{preset}"
+      ]
+    },
+    {
+      "pattern": "theme:presets:{tenant_id}",
+      "description": "The tenant's custom presets list (tenant_id != NULL).",
+      "ttlSeconds": 3600,
+      "tags": ["theme", "tenant"],
+      "invalidatedBy": [
+        "ThemePresetCreated for this tenant",
+        "ThemePresetPublished for this tenant",
+        "PATCH or DELETE on a preset owned by this tenant"
+      ]
+    },
+    {
+      "pattern": "theme:user-preference:{user_id}",
+      "description": "The user's per-user preference row (mode + accessibility_overrides). Short TTL because users toggle preferences interactively.",
+      "ttlSeconds": 600,
+      "tags": ["theme", "user"],
+      "invalidatedBy": [
+        "UserThemePreferenceUpdated for this user_id"
+      ]
+    },
+    {
+      "pattern": "theme:preset-thumbnail:{preset_id}",
+      "description": "Signed URL for the preset's preview thumbnail. Long TTL — presets don't move often.",
+      "ttlSeconds": 604800,
+      "tags": ["theme", "thumbnails"],
+      "invalidatedBy": [
+        "PreviewPresetJob writes a fresh URL to ThemePreset.preview_thumbnail_url",
+        "ThemePreset.tokens changed → thumbnail regen"
+      ]
+    }
+  ]
+}

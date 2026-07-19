@@ -1,0 +1,94 @@
+{
+  "id": "attendance.resources.attendance-policy.list",
+  "title": "Attendance policies",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/attendance-policies",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attendance", "entity": "attendance-policy", "action": "list" },
+  "requiresPermission": "attendance-policies.viewAny",
+  "dataSources": [
+    { "name": "policies", "kind": "http.get", "url": "/api/v1/attendance-policies", "unwrap": "data", "queryFromFilters": true },
+    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[status]=active", "unwrap": "data", "cache": { "ttlSeconds": 300 } }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Attendance policies" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Grace periods, no-show fees, absence thresholds, and late-arrival penalties per branch or plan." } }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Create policy" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/attendance-policies/create" } },
+              "requiresPermission": "attendance-policies.create"
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Branch", "menuTrigger": "focus", "className": "min-w-56" },
+              "bindings": { "items": { "$ref": "branches" } },
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "branch_id", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Show only active" },
+              "actions": { "onChange": { "kind": "filter.set", "field": "is_active", "valueExpr": "$value ? 'true' : null" } }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Attendance policies" },
+          "bindings": { "rows": { "$ref": "policies" } },
+          "columns": [
+            { "key": "name", "label": "Name", "renderer": { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.name" } } } },
+            {
+              "key": "specificity",
+              "label": "Scope",
+              "renderer": {
+                "kind": "Chip",
+                "propsExpr": "{ variant: row.membership_plan_id ? 'primary' : row.branch_id ? 'success' : 'neutral' }",
+                "children": [
+                  { "kind": "Text", "bindings": { "children": { "$ref": "row.specificity_label" } } }
+                ]
+              }
+            },
+            { "key": "grace_period_minutes", "label": "Grace (min)", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.grace_period_minutes" } } } },
+            { "key": "max_unexcused_absences_per_period", "label": "Max unexcused", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.max_unexcused_absences_per_period" } } } },
+            { "key": "absence_freeze_period_days", "label": "Window (days)", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.absence_freeze_period_days" } } } },
+            {
+              "key": "is_active",
+              "label": "Status",
+              "renderer": {
+                "kind": "Chip",
+                "propsExpr": "{ variant: row.is_active ? 'success' : 'neutral' }",
+                "children": [{ "kind": "Text", "propsExpr": "{ children: row.is_active ? 'Active' : 'Inactive' }" }]
+              }
+            }
+          ],
+          "rowActions": {
+            "onPress": { "kind": "navigate", "toExpr": "'/tenant/attendance-policies/' + row.id" }
+          }
+        }
+      ]
+    }
+  ]
+}

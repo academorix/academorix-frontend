@@ -1,0 +1,79 @@
+{
+  "$version": 1,
+  "title": "Accessibility flags catalog",
+  "description": "The four boolean flags on Theme.accessibility_flags jsonb + user_theme_preferences.accessibility_overrides. Each flag maps to a specific CSS media-query augmentation applied at compile time by the CssRenderer binding.",
+  "flags": [
+    {
+      "key": "high_contrast",
+      "display_name": "High contrast mode",
+      "description": "Increase contrast between color.text.* and color.surface.* pairs to WCAG AAA (7:1 body / 4.5:1 large text). Also thickens outlines + focus rings for visibility at low vision.",
+      "wcag_criteria": ["1.4.6 Contrast (Enhanced)", "2.4.7 Focus Visible"],
+      "os_hint_media_query": "prefers-contrast: more",
+      "css_overrides_applied": [
+        "color.text.default → highest-contrast counterpart",
+        "color.text.muted → highest-contrast counterpart",
+        "color.border.* → thicker + darker",
+        "shadow.* → outline-only shadows for definition",
+        "opacity.disabled → 0.7 minimum (rather than 0.5)"
+      ],
+      "default": false,
+      "notes": "Also honored via OS-level prefers-contrast: more. When the user's preference AND the OS both indicate high contrast, the compiled CSS auto-picks the high-contrast preset variant."
+    },
+    {
+      "key": "reduced_motion",
+      "display_name": "Reduced motion",
+      "description": "Zero all motion.duration.* tokens so animations become instant. Users with vestibular disorders + motion sickness benefit.",
+      "wcag_criteria": ["2.3.3 Animation from Interactions"],
+      "os_hint_media_query": "prefers-reduced-motion: reduce",
+      "css_overrides_applied": [
+        "motion.duration.instant → 0ms (no change)",
+        "motion.duration.fast → 0ms",
+        "motion.duration.default → 0ms",
+        "motion.duration.slow → 0ms",
+        "motion.duration.slower → 0ms",
+        "Additional @media (prefers-reduced-motion: reduce) block adds animation: none !important + transition: none !important"
+      ],
+      "default": false
+    },
+    {
+      "key": "larger_text",
+      "display_name": "Larger text",
+      "description": "Scale typography.*.size.* by +25% for improved readability at low vision. Also honors iOS Dynamic Type + Android font scaling implicitly via rem-based sizing.",
+      "wcag_criteria": ["1.4.4 Resize Text", "1.4.12 Text Spacing"],
+      "os_hint_media_query": null,
+      "css_overrides_applied": [
+        "typography.body.size.xs → +25%",
+        "typography.body.size.sm → +25%",
+        "typography.body.size.md → +25%",
+        "typography.body.size.lg → +25%",
+        "typography.body.size.xl → +25%",
+        "typography.heading.size.h1 → +25%",
+        "typography.heading.size.h2 → +25%",
+        "typography.heading.size.h3 → +25%",
+        "typography.heading.size.h4 → +25%",
+        "typography.body.line_height → +10% (compensation for larger sizes)"
+      ],
+      "default": false,
+      "notes": "Independent of OS text-scale — the flag applies +25% on TOP of whatever OS scaling the user has set. Users on iOS with 130% Dynamic Type AND this flag see effective 162.5% scale."
+    },
+    {
+      "key": "focus_visible_always",
+      "display_name": "Always show focus indicator",
+      "description": "Force :focus outline on every interactive element regardless of pointer-vs-keyboard interaction. Compliance with EN 301 549 + WCAG 2.4.7.",
+      "wcag_criteria": ["2.4.7 Focus Visible"],
+      "os_hint_media_query": null,
+      "css_overrides_applied": [
+        "All @focus-visible rules become @focus (no :focus-visible narrowing)",
+        "outline: 2px solid var(--color-border-focus) applied globally",
+        "outline-offset: 2px applied globally"
+      ],
+      "default": false,
+      "notes": "For keyboard-only users the default @focus-visible behavior already surfaces the ring. This flag forces the ring for pointer users too — useful for cognitive-disability users who need visual anchors."
+    }
+  ],
+  "seeder_contract": [
+    "The 4 flags are seeded as constants — not persisted in a table.",
+    "Theme.accessibility_flags always carries all 4 keys with boolean values (default all false). Validated by ThemeObserver via valid_accessibility_flags_shape rule.",
+    "user_theme_preferences.accessibility_overrides may carry a subset of the 4 keys (only the ones the user explicitly overrode). Missing keys fall through to the tenant's default."
+  ]
+}

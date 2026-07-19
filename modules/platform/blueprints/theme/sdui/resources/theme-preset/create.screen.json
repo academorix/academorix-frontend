@@ -1,0 +1,135 @@
+{
+  "id": "theme.resources.theme-preset.create",
+  "title": "New preset",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/theme-presets/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme-preset", "action": "create" },
+  "requiresPermission": "theme.manage",
+  "dataSources": [
+    {
+      "name": "sourcePresets",
+      "kind": "http.get",
+      "url": "/api/v1/theme-presets",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "All presets",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/theme-presets" } }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "New preset" }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "children": "Presets always start from an existing source — the token vocabulary is comprehensive and cloning ensures every key is covered. Pick a source below, then edit token values on the resulting preset."
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrl": "/api/v1/theme-presets",
+            "submitMethod": "POST",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Preset created" },
+              { "kind": "navigate", "toExpr": "'/tenant/theme-presets/' + response.data.id" }
+            ]
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "slug",
+                    "label": "Slug",
+                    "placeholder": "corporate-navy",
+                    "helpText": "Lowercase, dashes + underscores. Unique within your tenant.",
+                    "required": true
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "name",
+                    "label": "Display name",
+                    "placeholder": "Corporate Navy",
+                    "required": true
+                  }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": {
+                    "name": "description",
+                    "label": "Description (optional)",
+                    "placeholder": "Bold navy primary + soft accent. Used for Q1 marketing campaign."
+                  }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "source_preset_id",
+                    "label": "Source preset",
+                    "helpText": "The starting token map. Cloned into your new preset.",
+                    "required": true
+                  },
+                  "bindings": {
+                    "options": {
+                      "$expr": "sourcePresets.map(p => ({ key: p.id, label: p.name + ' (' + p.mode + ' · ' + p.category + ')' }))"
+                    }
+                  }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "category",
+                    "label": "Category",
+                    "required": true,
+                    "options": {
+                      "tenant_custom": "Tenant custom",
+                      "brand_forward": "Brand forward",
+                      "minimal": "Minimal"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Create preset"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

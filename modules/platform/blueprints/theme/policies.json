@@ -1,0 +1,142 @@
+{
+  "id": "academorix://modules/theme/policies",
+  "$version": 1,
+  "title": "theme — authorization policies",
+  "policies": [
+    {
+      "model": "Theme",
+      "class": "Academorix\\Platform\\Theme\\Policies\\ThemePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "theme.read",
+          "scope": "any authenticated tenant user"
+        },
+        {
+          "action": "view",
+          "permission": "theme.read",
+          "scope": "tenant-scoped row (BelongsToTenant global scope handles isolation)"
+        },
+        {
+          "action": "create",
+          "permission": "theme.manage",
+          "scope": "admin + design-role"
+        },
+        {
+          "action": "update",
+          "permission": "theme.manage",
+          "scope": "admin + design-role — creating rows only; tokens_snapshot is IMMUTABLE while active"
+        },
+        {
+          "action": "activate",
+          "permission": "theme.activate",
+          "scope": "admin + design-role — triggers ThemeActivated + CSS regen"
+        },
+        {
+          "action": "preview",
+          "permission": "theme.read",
+          "scope": "any authenticated tenant user — dry-run render, no persistence"
+        },
+        {
+          "action": "delete",
+          "permission": "theme.manage",
+          "scope": "admin + design-role — refused while is_active=true (must deactivate first)"
+        }
+      ]
+    },
+    {
+      "model": "ThemePreset",
+      "class": "Academorix\\Platform\\Theme\\Policies\\ThemePresetPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "theme.read",
+          "scope": "any authenticated tenant user — sees platform presets (tenant_id NULL) + tenant custom presets"
+        },
+        {
+          "action": "view",
+          "permission": "theme.read",
+          "scope": "platform preset visible to every tenant; tenant custom scoped by BelongsToTenant"
+        },
+        {
+          "action": "create",
+          "permission": "theme.manage",
+          "scope": "admin + design-role — tenant custom presets only (tenant_id != null)"
+        },
+        {
+          "action": "createPlatformPreset",
+          "permission": "platform.theme.manage-presets",
+          "scope": "platform_admin guard — Academorix staff only. Writes tenant_id NULL rows."
+        },
+        {
+          "action": "update",
+          "permission": "theme.manage",
+          "scope": "admin + design-role — mutates tenant custom preset only. Platform presets require platform.theme.manage-presets."
+        },
+        {
+          "action": "duplicate",
+          "permission": "theme.manage",
+          "scope": "admin + design-role — clones ANY preset (platform or tenant custom) into a new tenant custom preset. Gated by theme_custom_presets entitlement cap."
+        },
+        {
+          "action": "publish",
+          "permission": "theme.manage",
+          "scope": "admin + design-role — flips is_active false → true (fires ThemePresetPublished)"
+        },
+        {
+          "action": "delete",
+          "permission": "theme.manage",
+          "scope": "admin + design-role for tenant custom; platform_admin required for platform presets. Refused when any Theme.selected_preset_id references this preset AND that Theme is active."
+        }
+      ]
+    },
+    {
+      "model": "ThemeTokenOverride",
+      "class": "Academorix\\Platform\\Theme\\Policies\\ThemeTokenOverridePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "theme.read",
+          "scope": "any authenticated tenant user"
+        },
+        {
+          "action": "view",
+          "permission": "theme.read",
+          "scope": "tenant-scoped via BelongsToTenant"
+        },
+        {
+          "action": "create",
+          "permission": "theme.manage",
+          "scope": "admin + design-role — gated by theme_token_overrides entitlement cap"
+        },
+        {
+          "action": "update",
+          "permission": "theme.manage",
+          "scope": "admin + design-role"
+        },
+        {
+          "action": "delete",
+          "permission": "theme.manage",
+          "scope": "admin + design-role — falls through to underlying preset value on next resolution"
+        }
+      ]
+    },
+    {
+      "model": "UserThemePreference",
+      "class": "Academorix\\Platform\\Theme\\Policies\\UserThemePreferencePolicy",
+      "note": "Policy is authored here even though the underlying row (user_theme_preferences) lives in the user module. Theme is the resolver.",
+      "abilities": [
+        {
+          "action": "viewOwn",
+          "permission": "authenticated",
+          "scope": "user reads their own preference row (auto-provisioned on first read)"
+        },
+        {
+          "action": "updateOwn",
+          "permission": "authenticated",
+          "scope": "user updates their own preferred_mode + accessibility_overrides"
+        }
+      ]
+    }
+  ]
+}

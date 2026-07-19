@@ -1,0 +1,106 @@
+{
+  "id": "academorix://modules/theme/compliance",
+  "$version": 1,
+  "title": "theme — compliance evidence",
+  "description": "WCAG 2.2 Level AA + ADA + EN 301 549 covered by the ContrastAuditor + accessibility_flags primitives. GDPR Art. 25 (data protection by design) covered by not shipping third-party analytics for per-user theme preference. SOC 2 CC8.1 (change management) covered by the ThemeActivated dual-write audit trail.",
+  "regimes": {
+    "wcag_2_2": {
+      "applicable": true,
+      "conformance_level": "AA (default) / AAA (opt-in via config)",
+      "controls": [
+        {
+          "criterion": "1.4.3 Contrast (Minimum)",
+          "level": "AA",
+          "evidence": "ContrastAuditor computes contrast ratios for every color.text.* × color.surface.* pair; findings surface as ThemeAccessibilityRecommendationNotification when a pair drops below 4.5:1 (body) / 3:1 (large text)."
+        },
+        {
+          "criterion": "1.4.6 Contrast (Enhanced)",
+          "level": "AAA",
+          "evidence": "high-contrast-light + high-contrast-dark platform presets ship with all pairs ≥ 7:1 (body) / 4.5:1 (large text). Selectable via preset picker; also auto-selected when a user's accessibility_overrides.high_contrast=true."
+        },
+        {
+          "criterion": "2.3.3 Animation from Interactions",
+          "level": "AAA",
+          "evidence": "reduced_motion accessibility_flag zeroes motion.duration.* tokens. Honors prefers-reduced-motion OS setting via the compiled CSS's @media query."
+        },
+        {
+          "criterion": "1.4.4 Resize Text",
+          "level": "AA",
+          "evidence": "larger_text accessibility_flag scales typography.*.size.* by +25%. Honors iOS Dynamic Type + Android font scaling."
+        },
+        {
+          "criterion": "2.4.7 Focus Visible",
+          "level": "AA",
+          "evidence": "focus_visible_always accessibility_flag forces outline on every interactive element regardless of pointer-vs-keyboard interaction."
+        }
+      ]
+    },
+    "en_301_549": {
+      "applicable": true,
+      "controls": [
+        {
+          "clause": "9.1.4.3 Contrast (Minimum)",
+          "evidence": "Same as WCAG 1.4.3 — inherits ContrastAuditor findings."
+        },
+        {
+          "clause": "9.2.4.7 Focus Visible",
+          "evidence": "focus_visible_always flag + platform presets ship with contrast-compliant outline styles."
+        }
+      ]
+    },
+    "ada_title_iii": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "Effective communication",
+          "evidence": "Every tenant-facing rendering path reads theme tokens via TokenResolver — high-contrast + reduced-motion + larger-text preferences flow uniformly across dashboard, emails, PDFs, SDUI screens."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "user_theme_preferences carries preferred_mode + accessibility_overrides only. NO device fingerprints, NO analytics, NO third-party tracking. The preference is functional, not marketing."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "PurgeThemeDataForErasedTenant cascades tenant custom presets + themes + overrides on TenantErased. PurgeUserThemePreferenceForErasedUser removes per-user prefs on UserErased."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "Theme preferences never leave the tenant boundary — no third-party CSS-in-JS or design-system SaaS sync. TokenResolver runs entirely in-process."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Every ThemeActivated + ThemeTokenOverridden + ThemeAccessibilityFlagChanged captured via audit dual-write. Metrics exported per metrics.json."
+        },
+        {
+          "criterion": "CC8.1",
+          "principle": "change management",
+          "evidence": "Last-N activation history retained for rollback. Every activation carries activated_by_user_id + activated_at. Rollback is a plain re-activation of a prior Theme row — the tokens_snapshot is preserved verbatim."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.5.15",
+          "principle": "access control",
+          "evidence": "theme.manage + theme.activate permissions gate write paths. platform.theme.manage-presets gates platform preset writes to Academorix staff only."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "id": "academorix://modules/attendance/schemas/absence-record",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AbsenceRecord",
+  "description": "Per-athlete-per-session absence event. Carries tenant_id (CASCADE) + session_id (RESTRICT) + athlete_id (RESTRICT) + athlete_enrollment_id (RESTRICT) + optional reported_by_user_id (RESTRICT) + optional excused_by_user_id (RESTRICT). Mutually exclusive with AttendanceRecord — the two cannot co-exist for the same (session, athlete). NEVER carries application_id, organization_id, region_id, or scope_node_id directly.",
+  "type": "object",
+  "x-module": "attendance",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "absence_records",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "abs_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Attendance\\Models\\AbsenceRecord",
+    "interface": "Academorix\\Sports\\Attendance\\Contracts\\Data\\AbsenceRecordInterface",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthlete",
+      "BelongsToAthleteEnrollment",
+      "BelongsToSession",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "AbsenceStatus",
+      "counted_toward_freeze": "boolean",
+      "reported_at": "datetime",
+      "excused_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["AbsenceRecordObserver"],
+    "appends": ["is_excused", "days_since_reported"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `abs_<26>`." },
+      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
+      "session_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "sessions", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The session the athlete missed. IMMUTABLE post-create." },
+      "athlete_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athletes", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The absent athlete. IMMUTABLE post-create." },
+      "athlete_enrollment_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athlete_enrollments", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The roster row the athlete was on when they missed. IMMUTABLE post-create." },
+      "status": { "type": "string", "length": 32, "nullable": false, "default": "'unexcused'", "description": "Enum: unexcused / excused / no_show_advance_notice_given / vacation / medical / bereavement." },
+      "absence_reason": { "type": "string", "length": 256, "nullable": true, "description": "Reason string. Advisory catalog in data/absence-reason-catalog.json." },
+      "explanation": { "type": "text", "nullable": true, "description": "Guardian's free-text explanation. Admin + HR visible only." },
+      "reported_at": { "type": "timestamptz", "nullable": false, "description": "When the absence was recorded. Distinct from session.starts_at — pre-notification records reported_at BEFORE session; auto-detection records reported_at AT reconciliation time." },
+      "reported_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Guardian / athlete who self-reported. NULL for system-detected absences (ReconcileAttendanceJob)." },
+      "documented_url_signed": { "type": "string", "length": 512, "nullable": true, "description": "S3 signed URL for supporting documentation (medical note). Safeguarding_officer + hr visible only." },
+      "excused_by_user_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Admin who flipped the absence to excused. NULL until excusal." },
+      "excused_at": { "type": "timestamptz", "nullable": true, "description": "When the absence was excused. NULL until excusal." },
+      "counted_toward_freeze": { "type": "boolean", "nullable": false, "default": true, "description": "Whether this absence counts toward the rolling-window freeze threshold. Auto-set based on status: unexcused=true; excused/no_show_advance_notice_given/vacation/medical/bereavement=false." },
+      "metadata": { "type": "jsonb", "nullable": true, "description": "Free-form metadata. May contain no_show_fee_invoice_id when ChargeNoShowFeeJob dispatched." },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "session_id", "athlete_id"],
+        "unique": true,
+        "name": "absence_records_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One AbsenceRecord per (session, athlete)."
+      },
+      { "columns": ["tenant_id", "athlete_id", "reported_at"], "name": "absence_records_by_athlete_time_idx" },
+      { "columns": ["tenant_id", "session_id"], "name": "absence_records_by_session_idx" },
+      { "columns": ["tenant_id", "athlete_id", "counted_toward_freeze", "reported_at"], "name": "absence_records_freeze_window_idx", "predicate": "status = 'unexcused' AND deleted_at IS NULL", "description": "Feeds CheckAbsenceFreezeThresholdJob rolling-window count queries." }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "session_id",
+    "athlete_id",
+    "athlete_enrollment_id",
+    "status",
+    "reported_at",
+    "counted_toward_freeze",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^abs_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "session_id": { "type": "string", "pattern": "^ses_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "athlete_id": { "type": "string", "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "athlete_enrollment_id": { "type": "string", "pattern": "^aen_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": {
+      "type": "string",
+      "enum": ["unexcused", "excused", "no_show_advance_notice_given", "vacation", "medical", "bereavement"]
+    },
+    "absence_reason": { "type": ["string", "null"], "maxLength": 256 },
+    "explanation": { "type": ["string", "null"], "maxLength": 4096 },
+    "reported_at": { "type": "string", "format": "date-time" },
+    "reported_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "documented_url_signed": { "type": ["string", "null"], "maxLength": 512, "pattern": "^https://" },
+    "excused_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "excused_at": { "type": ["string", "null"], "format": "date-time" },
+    "counted_toward_freeze": { "type": "boolean" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One AbsenceRecord per (tenant_id, session_id, athlete_id) via partial unique index",
+    "Mutual exclusion with AttendanceRecord — no (session, athlete) can have both an AbsenceRecord and an AttendanceRecord",
+    "tenant_id + session_id + athlete_id + athlete_enrollment_id are IMMUTABLE post-create",
+    "excused_by_user_id + excused_at required together when status='excused' (set atomically on excusal)",
+    "counted_toward_freeze auto-derived from status — unexcused=true; every other status=false",
+    "Status transitions: unexcused ↔ excused (reversible with admin permission). Every other transition requires admin override with reason",
+    "Guardian self-report auto-flips status to 'excused' when reported > (session.starts_at - policy.advance_notice_threshold) AND absence_reason IN policy.auto_excuse_reasons"
+  ]
+}

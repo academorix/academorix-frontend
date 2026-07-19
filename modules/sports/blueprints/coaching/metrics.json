@@ -1,0 +1,149 @@
+{
+  "id": "academorix://modules/coaching/metrics",
+  "$version": 1,
+  "title": "coaching — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.coaching",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["primary_sport_key", "role", "assignable_type", "issuing_body_bucket", "rating_scale", "trigger", "cadence_days"],
+    "forbiddenAsLabels": ["tenant_id", "coaching_profile_id", "staff_id", "user_id", "assignment_id", "certification_id", "rating_id", "first_name", "last_name", "bio", "hourly_rate_cents", "verification_notes"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.coaching.profile.count",
+      "kind": "gauge",
+      "unit": "profiles",
+      "labels": ["is_active", "verified"]
+    },
+    {
+      "name": "academorix.coaching.profile.created_total",
+      "kind": "counter",
+      "unit": "profiles",
+      "labels": ["primary_sport_key", "is_accepting_new_athletes"]
+    },
+    {
+      "name": "academorix.coaching.profile.verified_total",
+      "kind": "counter",
+      "unit": "profiles",
+      "labels": []
+    },
+    {
+      "name": "academorix.coaching.profile.deactivated_total",
+      "kind": "counter",
+      "unit": "profiles",
+      "labels": ["trigger"]
+    },
+    {
+      "name": "academorix.coaching.profile.slot_usage_ratio",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": [],
+      "description": "Per-tenant active_profiles / coaching_profile_slot. Sampled hourly."
+    },
+    {
+      "name": "academorix.coaching.assignment.count",
+      "kind": "gauge",
+      "unit": "assignments",
+      "labels": ["role", "assignable_type"]
+    },
+    {
+      "name": "academorix.coaching.assignment.created_total",
+      "kind": "counter",
+      "unit": "assignments",
+      "labels": ["role", "assignable_type", "cross_branch"]
+    },
+    {
+      "name": "academorix.coaching.assignment.ended_total",
+      "kind": "counter",
+      "unit": "assignments",
+      "labels": ["role", "reached_scheduled_end"]
+    },
+    {
+      "name": "academorix.coaching.assignment.cancelled_total",
+      "kind": "counter",
+      "unit": "assignments",
+      "labels": ["role", "trigger"]
+    },
+    {
+      "name": "academorix.coaching.head_coach.invariant_violations",
+      "kind": "counter",
+      "unit": "violations",
+      "labels": [],
+      "description": "CRITICAL. Every increment indicates the one-head-coach-per-assignable invariant broke. Should stay at 0."
+    },
+    {
+      "name": "academorix.coaching.assignment.conflict_detected_total",
+      "kind": "counter",
+      "unit": "conflicts",
+      "labels": ["assignable_type", "conflict_source"]
+    },
+    {
+      "name": "academorix.coaching.certification.count",
+      "kind": "gauge",
+      "unit": "certifications",
+      "labels": ["issuing_body_bucket", "verified"]
+    },
+    {
+      "name": "academorix.coaching.certification.added_total",
+      "kind": "counter",
+      "unit": "certifications",
+      "labels": ["issuing_body_bucket", "has_expiry"]
+    },
+    {
+      "name": "academorix.coaching.certification.verified_total",
+      "kind": "counter",
+      "unit": "certifications",
+      "labels": ["issuing_body_bucket"]
+    },
+    {
+      "name": "academorix.coaching.certification.expiring_soon_total",
+      "kind": "counter",
+      "unit": "notices",
+      "labels": ["cadence_days", "issuing_body_bucket"]
+    },
+    {
+      "name": "academorix.coaching.certification.expired_total",
+      "kind": "counter",
+      "unit": "expirations",
+      "labels": ["issuing_body_bucket", "was_verified"]
+    },
+    {
+      "name": "academorix.coaching.certification.verification_backlog",
+      "kind": "gauge",
+      "unit": "certifications",
+      "labels": [],
+      "description": "Count of certifications added > 7 days ago without verified_at. Sampled hourly. Elevated indicates admin queue backlog."
+    },
+    {
+      "name": "academorix.coaching.skill_rating.count",
+      "kind": "gauge",
+      "unit": "ratings",
+      "labels": ["rating_scale"]
+    },
+    {
+      "name": "academorix.coaching.skill_rating.recorded_total",
+      "kind": "counter",
+      "unit": "ratings",
+      "labels": ["rating_scale", "ratable_type"]
+    },
+    {
+      "name": "academorix.coaching.skill_rating.updated_total",
+      "kind": "counter",
+      "unit": "updates",
+      "labels": ["rating_scale"]
+    },
+    {
+      "name": "academorix.coaching.skill_rating.expired_total",
+      "kind": "counter",
+      "unit": "ratings",
+      "labels": []
+    },
+    {
+      "name": "academorix.coaching.retention.hard_purges_total",
+      "kind": "counter",
+      "unit": "purges",
+      "labels": ["entity"]
+    }
+  ]
+}

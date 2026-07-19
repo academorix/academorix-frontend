@@ -1,0 +1,140 @@
+{
+  "id": "academorix://modules/theme/errors",
+  "$version": 1,
+  "title": "theme — error codes",
+  "namespace": "theme",
+  "errors": [
+    {
+      "code": "THEME_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.theme_not_found"
+    },
+    {
+      "code": "THEME_PRESET_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.preset_not_found"
+    },
+    {
+      "code": "THEME_TOKEN_OVERRIDE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.token_override_not_found"
+    },
+    {
+      "code": "THEME_ENTITLEMENT_REQUIRED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.entitlement_required",
+      "description": "The tenant's plan does not include the requested capability. Payload names the missing entitlement (theme_capture / theme_custom_presets / theme_token_overrides / theme_rollback_extended)."
+    },
+    {
+      "code": "THEME_ENTITLEMENT_EXHAUSTED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.entitlement_exhausted",
+      "description": "Would exceed the entitlement quota. Payload names the exhausted slot (theme_custom_presets cap or theme_token_overrides cap)."
+    },
+    {
+      "code": "THEME_INVALID_TOKEN_KEY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.invalid_token_key",
+      "description": "Token key is not in the canonical vocabulary (data/token-vocabulary.json)."
+    },
+    {
+      "code": "THEME_INVALID_TOKEN_VALUE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.invalid_token_value",
+      "description": "Token value does not match the token_type's value schema (e.g. hex expected on color type)."
+    },
+    {
+      "code": "THEME_CROSS_TENANT_PRESET_REFUSED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "theme.errors.cross_tenant_preset_refused",
+      "description": "Attempted to reference a tenant custom preset from a different tenant. Platform presets (tenant_id NULL) are the ONLY cross-tenant readable presets."
+    },
+    {
+      "code": "THEME_ALREADY_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.already_active",
+      "description": "Attempted to activate a theme that is already the active theme for its (tenant, mode)."
+    },
+    {
+      "code": "THEME_CANNOT_DELETE_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.cannot_delete_active",
+      "description": "Attempted to delete a theme where is_active=true. Deactivate first, or activate a replacement theme (which auto-deactivates)."
+    },
+    {
+      "code": "THEME_PRESET_REFERENCED_BY_ACTIVE_THEME",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.preset_referenced_by_active_theme",
+      "description": "Attempted to delete a preset while an active Theme references it (Theme.selected_preset_id + is_active=true)."
+    },
+    {
+      "code": "THEME_SLUG_ALREADY_EXISTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "theme.errors.slug_already_exists",
+      "description": "Preset slug already exists within the (platform / tenant) namespace."
+    },
+    {
+      "code": "THEME_PLATFORM_PRESET_WRITE_DENIED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "theme.errors.platform_preset_write_denied",
+      "description": "Attempted to write to a platform preset (tenant_id NULL) from a tenant caller. Only platform_admin guard can mutate platform presets."
+    },
+    {
+      "code": "THEME_CSS_REGEN_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "theme.errors.css_regen_failed",
+      "description": "RegenerateRenderedCssJob failed after retries. Active theme still holds a valid tokens_snapshot; only the compiled-CSS artifact is stale. Ops-visible."
+    },
+    {
+      "code": "THEME_PREVIEW_RENDER_FAILED",
+      "http": 500,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "theme.errors.preview_render_failed",
+      "description": "PreviewPresetJob's headless browser failed (Puppeteer crash, timeout, memory limit). The preset is still usable; only the preview_thumbnail_url is missing."
+    }
+  ]
+}

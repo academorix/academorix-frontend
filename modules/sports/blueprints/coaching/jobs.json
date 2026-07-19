@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/coaching/jobs",
+  "$version": 1,
+  "title": "coaching — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\Coaching\\Jobs\\NotifyCertificationExpiringJob",
+      "queue": "coaching",
+      "purpose": "Nightly sweep. For each tenant, selects certifications where expires_at falls within one of the configured cadence windows (default 90 / 30 / 7 days from now). Fires CoachCertificationExpiringSoon ONCE per (certification_id, cadence_days) pair via a `notice_sent_at` marker on cert.metadata.expiration_notices.{cadence}.",
+      "steps": [
+        "For each cadence in config('coaching.notifications.expiration_cadence_days', [90, 30, 7])",
+        "  SELECT * FROM coach_certifications WHERE deleted_at IS NULL AND expires_at BETWEEN (now() + cadence::interval - 1d) AND (now() + cadence::interval + 1d) AND (metadata->'expiration_notices'->>cadence::text IS NULL) LIMIT 500",
+        "  For each: mark metadata.expiration_notices.{cadence} = now() + fire CoachCertificationExpiringSoon"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Coaching\\Jobs\\NotifyCertificationExpiredJob",
+      "queue": "coaching",
+      "purpose": "Nightly sweep. Detects certifications with expires_at <= NOW() that have not yet fired CoachCertificationExpired (marker on cert.metadata.expired_at). Fires the terminal expiration event + writes the marker.",
+      "steps": [
+        "SELECT * FROM coach_certifications WHERE deleted_at IS NULL AND expires_at <= now() AND (metadata->>'expired_at' IS NULL) LIMIT 500",
+        "For each: mark metadata.expired_at = now() + fire CoachCertificationExpired"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Coaching\\Jobs\\NotifyAssignmentEndingSoonJob",
+      "queue": "coaching",
+      "purpose": "Nightly sweep. Selects assignments where end_date is within config('coaching.notifications.assignment_ending_soon_days', 7). Fires CoachAssignmentEndingSoon ONCE per assignment via `notice_sent_at` marker.",
+      "steps": [
+        "SELECT * FROM coach_assignments WHERE deleted_at IS NULL AND end_date BETWEEN now() AND (now() + config('...')::interval) AND (metadata->>'ending_notice_sent_at' IS NULL) LIMIT 500",
+        "For each: mark metadata.ending_notice_sent_at = now() + fire CoachAssignmentEndingSoon"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Coaching\\Jobs\\NotifyCoachAvailabilityConflictJob",
+      "queue": "coaching",
+      "purpose": "Runs pre-create (from CoachAssignmentController@store) + nightly for existing assignments. Cross-references each active CoachAssignment against the coach's availability_json + against other same-coach assignments in overlapping time windows. Fires soft-warn `CoachAssignmentConflictDetected` (attached to assignment.metadata.conflicts, does NOT refuse).",
+      "steps": [
+        "For each active assignment: resolve its assignable's declared window (Session.starts_at → Session.ends_at; Team.season time; Event.date range)",
+        "Cross-check against coaching_profile.availability day-of-week map",
+        "Cross-check against other active assignments for the same coaching_profile_id in overlapping windows",
+        "For each conflict: append to assignment.metadata.conflicts + fire event",
+        "Guarded by config('coaching.assignment.allow_overlapping_by_default', false) — when true, the job runs but skips fanning notifications"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Coaching\\Jobs\\PurgeExpiredSkillRatingsJob",
+      "queue": "coaching",
+      "purpose": "Nightly sweep. Hard-deletes CoachSkillRating rows past their expires_at (soft-cleanup) AND past the tenant's configured retention window (hard-purge). Batch-size 500.",
+      "steps": [
+        "SELECT id FROM coach_skill_ratings WHERE deleted_at IS NULL AND expires_at IS NOT NULL AND expires_at <= now() LIMIT 500 — soft-delete these first (marks expired)",
+        "SELECT id FROM coach_skill_ratings WHERE deleted_at IS NOT NULL AND deleted_at <= now() - retention_window::interval LIMIT 500 — hard-delete",
+        "retention_window resolves per-tenant: config('coaching.retention.rating_years', 2) * (tenant.coaching_extended_retention ? 2.5 : 1) → 2y or 5y"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Coaching\\Jobs\\GenerateCoachRosterReportJob",
+      "queue": "coaching",
+      "purpose": "Weekly per-branch job. Compiles active coaches + primary sport + specializations + assignment counts + verified certification counts. Writes to storage::File as a signed CSV. Notifies branch_manager + admin. Retained 7 years (compliance audit).",
+      "steps": [
+        "For each tenant with active CoachingProfile rows: for each branch, gather stats",
+        "Format: coaching_profile.id, staff.display_name, primary_sport, specializations, active_assignment_count, verified_cert_count, is_accepting_new_athletes",
+        "Store signed CSV via storage::File (Wave 4+); until then, notification carries inline JSON"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "tries": 2
+    }
+  ]
+}

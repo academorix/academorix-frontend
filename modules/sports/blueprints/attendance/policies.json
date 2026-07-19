@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/attendance/policies",
+  "$version": 1,
+  "title": "attendance — authorization policies",
+  "description": "Four policies — one per aggregate. Compose ResolveScope + .own scope for guardians / athletes / coaches viewing their own attendance surfaces.",
+  "policies": [
+    {
+      "model": "AttendanceRecord",
+      "class": "Academorix\\Sports\\Attendance\\Policies\\AttendanceRecordPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "attendance.viewAny", "scope": "any tenant admin; coaches see their sessions; guardians see .own for their athletes" },
+        { "action": "view", "permission": "attendance.view", "scope": "same + .own for the athlete's guardian" },
+        { "action": "create", "permission": "attendance.create", "scope": "admin + reception + branch_manager for admin_recorded; coach + head_coach for coach_verified on their assigned sessions; athlete + guardian for self_kiosk/qr_scan/geofence via .own" },
+        { "action": "checkIn", "permission": "attendance.check-in.own", "scope": "athlete + guardian via .own; kiosk-audience via signed kiosk token" },
+        { "action": "checkOut", "permission": "attendance.check-out", "scope": "same as checkIn" },
+        { "action": "update", "permission": "attendance.update", "scope": "admin + coach for their sessions; within 48h post-session window" },
+        { "action": "cancel", "permission": "attendance.cancel", "scope": "admin + branch_manager. Refunds consumed pass in the same transaction" },
+        { "action": "addSessionNote", "permission": "attendance.add-session-note", "scope": "coach + head_coach on their assigned sessions only" },
+        { "action": "platformViewAny", "permission": "platform.attendance.viewAny", "guard": "platform_admin" },
+        { "action": "platformView", "permission": "platform.attendance.view", "guard": "platform_admin" }
+      ]
+    },
+    {
+      "model": "AttendancePolicy",
+      "class": "Academorix\\Sports\\Attendance\\Policies\\AttendancePolicyPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "attendance-policies.viewAny", "scope": "admin + branch_manager + hr" },
+        { "action": "view", "permission": "attendance-policies.view" },
+        { "action": "create", "permission": "attendance-policies.create", "scope": "admin + owner. Advanced (per-plan) requires attendance_advanced_policies entitlement" },
+        { "action": "update", "permission": "attendance-policies.update" },
+        { "action": "activate", "permission": "attendance-policies.activate", "scope": "admin + owner. Refuses when it would create an active-policy collision at same specificity" },
+        { "action": "deactivate", "permission": "attendance-policies.deactivate" },
+        { "action": "delete", "permission": "attendance-policies.delete", "scope": "admin + owner. Refuses when is_active=true" }
+      ]
+    },
+    {
+      "model": "AbsenceRecord",
+      "class": "Academorix\\Sports\\Attendance\\Policies\\AbsenceRecordPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "absences.viewAny", "scope": "admin + hr + branch_manager + safeguarding_officer; coaches see .own for their sessions" },
+        { "action": "view", "permission": "absences.view", "scope": "same + .own for guardians of the absent athlete" },
+        { "action": "report", "permission": "absences.report.own", "scope": "athlete + guardian pre-notify their own absences via .own" },
+        { "action": "excuse", "permission": "absences.excuse", "scope": "admin + hr + branch_manager + safeguarding_officer. Requires reason" },
+        { "action": "reverseExcuse", "permission": "absences.reverse-excuse", "scope": "admin + safeguarding_officer only. Flips excused → unexcused with reason" },
+        { "action": "update", "permission": "absences.update", "scope": "admin + hr for absence_reason + explanation" },
+        { "action": "delete", "permission": "absences.delete", "scope": "admin + owner with override permission" },
+        { "action": "platformViewAny", "permission": "platform.absences.viewAny", "guard": "platform_admin" }
+      ]
+    },
+    {
+      "model": "LateArrival",
+      "class": "Academorix\\Sports\\Attendance\\Policies\\LateArrivalPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "late-arrivals.viewAny", "scope": "admin + hr + coach on their sessions" },
+        { "action": "view", "permission": "late-arrivals.view" },
+        { "action": "platformViewAny", "permission": "platform.late-arrivals.viewAny", "guard": "platform_admin" }
+      ]
+    }
+  ]
+}

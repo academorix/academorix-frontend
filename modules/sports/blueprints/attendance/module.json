@@ -1,0 +1,250 @@
+{
+  "$version": 1,
+  "name": "attendance",
+  "alias": "attendance",
+  "namespace": "Academorix\\Sports\\Attendance",
+  "description": "The Attendance lane. Answers 'did this athlete show up at this session, when, and did they use a pass?'. Ships FOUR aggregates: `AttendanceRecord` (per-athlete-per-session check-in event carrying checked_in_at + checked_in_via IN self_kiosk/coach_verified/admin_recorded/geofence/qr_scan + status IN present/late/left_early/present_with_note; linked to consumed_pass_id via finance::Pass consumption; consumed atomically at check-in), `AttendancePolicy` (per-branch OR per-membership-plan rules — grace_period_minutes for late arrivals, no_show_fee_cents for missed sessions, max_absences_per_period before enrollment freeze, late_arrival_penalty pattern), `AbsenceRecord` (per-athlete-per-session absence — status IN excused/unexcused/no_show_advance_notice_given/vacation, absence_reason enum + free-text explanation, excused_by_user_id when admin excuses), `LateArrival` (per-attendance-record satellite tracking WHEN in the grace-period an athlete arrived — for coaching feedback + policy enforcement). Check-in flow: (1) validate athlete has active Membership + unconsumed Pass for the period, (2) create AttendanceRecord with atomic Pass.consume(), (3) if late (past grace period): also create LateArrival, (4) fire AttendanceRecorded event which cascades to growth::analytics + notifications. If athlete doesn't check in by session.ends_at: (5) create AbsenceRecord (status=unexcused) via nightly ReconcileAttendanceJob. Absences can be later excused by admin — flips status to excused + records reason. Attendance policy enforcement: (a) N unexcused absences in rolling window → notify athlete + admin, (b) N unexcused past threshold → freeze membership (via membership::MembershipObserver.setStatus('paused')), (c) late arrival penalty per late_penalty_rule. Distinct from `Pass.consumed_at` which is the raw money-movement — AttendanceRecord is the domain-level check-in event with device_fingerprint + ip + gps for fraud correlation on self-kiosk paths.",
+  "keywords": [
+    "attendance",
+    "check-in",
+    "check-out",
+    "absence",
+    "no-show",
+    "late-arrival",
+    "kiosk",
+    "coach-verified",
+    "admin-recorded",
+    "geofence",
+    "qr-scan",
+    "pass-consumption",
+    "attendance-policy",
+    "grace-period",
+    "no-show-fee",
+    "absence-threshold",
+    "membership-freeze",
+    "reconciliation",
+    "safesport",
+    "device-fingerprint",
+    "gps-verified",
+    "atomic-pass-consume",
+    "coach-notes",
+    "guardian-self-report",
+    "tenant",
+    "wave-7"
+  ],
+  "priority": 69,
+  "providers": [
+    "Academorix\\Sports\\Attendance\\Providers\\AttendanceServiceProvider"
+  ],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "branch",
+    "athlete",
+    "athlete-enrollment",
+    "season",
+    "event",
+    "session",
+    "coaching",
+    "membership",
+    "staff"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "growth::analytics (attendance patterns)",
+    "notifications (absence follow-ups)",
+    "sports/progress (attendance is a factor in progress tracking)"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToAttendanceRecord",
+      "BelongsToAttendancePolicy",
+      "HasAttendanceHistory",
+      "HasAbsenceHistory"
+    ],
+    "attributes": [
+      "AsAttendanceListener"
+    ],
+    "blueprints": [
+      "attendance-record",
+      "attendance-policy",
+      "absence-record",
+      "late-arrival"
+    ],
+    "middleware": [
+      "attendance.rate_limit",
+      "attendance.geofence_verify"
+    ],
+    "events": [
+      "AttendanceRecorded",
+      "AttendanceStatusUpdated",
+      "AttendanceCheckedOut",
+      "AttendanceCancelled",
+      "LateArrivalRecorded",
+      "AbsenceRecorded",
+      "AbsenceExcused",
+      "AbsenceReasonUpdated",
+      "AbsenceFreezeThresholdReached",
+      "AttendancePolicyCreated",
+      "AttendancePolicyUpdated",
+      "AttendancePolicyActivated",
+      "AttendancePolicyDeactivated",
+      "PassConsumedViaAttendance",
+      "NoShowFeeCharged",
+      "AttendanceReconciled"
+    ],
+    "policies": [
+      "AttendanceRecordPolicy",
+      "AttendancePolicyPolicy",
+      "AbsenceRecordPolicy",
+      "LateArrivalPolicy"
+    ],
+    "hooks": [
+      "ConsumePassAtomicallyOnAttendanceCreated",
+      "RefundPassAtomicallyOnAttendanceCancelled",
+      "DetectAndCreateAbsencesForCompletedSession",
+      "EvaluateAbsenceThresholdOnAbsenceRecorded",
+      "FreezeMembershipOnThresholdReached",
+      "PurgeAttendanceDataForErasedTenant",
+      "PreventEnrollmentArchiveWithActiveAttendance",
+      "PreventSessionArchiveWithActiveAttendance"
+    ],
+    "commands": [
+      "attendance:list",
+      "attendance:check-in",
+      "attendance:check-out",
+      "attendance:cancel",
+      "attendance:report",
+      "attendance-policy:list",
+      "attendance-policy:create",
+      "attendance-policy:activate",
+      "absence:list",
+      "absence:report",
+      "absence:excuse",
+      "absence:threshold-check",
+      "attendance:reconcile"
+    ],
+    "jobs": [
+      "ReconcileAttendanceJob",
+      "NotifyAbsenceJob",
+      "CheckAbsenceFreezeThresholdJob",
+      "ChargeNoShowFeeJob",
+      "ConsumePassAtomicallyJob",
+      "CleanupOrphanCheckinsJob",
+      "GenerateAttendanceReportJob"
+    ],
+    "notifications": [
+      "AttendanceRecordedNotification",
+      "LateArrivalNotification",
+      "FirstAbsenceNotification",
+      "ThirdAbsenceWarningNotification",
+      "AbsenceFreezeThresholdReachedNotification",
+      "NoShowFeeChargedNotification",
+      "AttendanceExcusedNotification",
+      "CoachSessionAttendanceSummaryNotification",
+      "WeeklyAttendanceDigestNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.attendance",
+      "session.{sessionId}.attendance",
+      "athlete.{athleteId}.attendance",
+      "user.{userId}.attendance",
+      "coach.{coachId}.attendance"
+    ],
+    "observers": [
+      "AttendanceRecordObserver",
+      "AttendancePolicyObserver",
+      "AbsenceRecordObserver",
+      "LateArrivalObserver"
+    ],
+    "rules": [
+      "valid_status",
+      "valid_check_in_via",
+      "valid_late_penalty_type",
+      "valid_absence_status",
+      "valid_grace_period_minutes",
+      "valid_max_absences",
+      "valid_freeze_period_days",
+      "valid_gps_coordinates",
+      "unique_attendance_per_session_per_athlete",
+      "unique_absence_per_session_per_athlete",
+      "valid_signature_url",
+      "no_check_in_after_session_end_plus_grace",
+      "pass_available_when_required"
+    ],
+    "casts": [
+      "AttendanceStatus",
+      "CheckInVia",
+      "AbsenceStatus",
+      "LatePenaltyType"
+    ],
+    "views": [],
+    "lang": [
+      "attendance"
+    ],
+    "config": [
+      "attendance"
+    ],
+    "macros": [],
+    "bindings": [
+      "AttendanceRecordRepository",
+      "AttendancePolicyRepository",
+      "AbsenceRecordRepository",
+      "LateArrivalRepository",
+      "AttendanceOrchestrator",
+      "AbsenceDetector",
+      "AbsenceThresholdEvaluator",
+      "PolicyResolver",
+      "NoShowFeeCharger",
+      "GeofenceValidator",
+      "AttendanceReporter"
+    ],
+    "resources": [
+      "attendance-record",
+      "attendance-policy",
+      "absence-record",
+      "late-arrival"
+    ]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing attendance CRUD — kiosk / self check-in for athletes + coach-verified check-in on session rosters + admin overrides + policy management + absence excusal + guardian-facing pre-notification of absences. Every check-in atomically consumes a Pass when the session requires one.",
+      "routes": [
+        "POST /api/v1/attendance/check-in",
+        "POST /api/v1/attendance/check-out",
+        "GET /api/v1/attendance/mine",
+        "GET /api/v1/coaches/me/sessions/{session}/attendance",
+        "POST /api/v1/coaches/me/sessions/{session}/attendance/{athlete}",
+        "POST /api/v1/coaches/me/sessions/{session}/attendance/{athlete}/notes",
+        "GET /api/v1/attendance-records",
+        "POST /api/v1/attendance-records",
+        "GET /api/v1/attendance-records/{record}",
+        "PATCH /api/v1/attendance-records/{record}",
+        "POST /api/v1/attendance-records/{record}/cancel",
+        "GET /api/v1/attendance-policies",
+        "POST /api/v1/attendance-policies",
+        "GET /api/v1/attendance-policies/{policy}",
+        "PATCH /api/v1/attendance-policies/{policy}",
+        "POST /api/v1/attendance-policies/{policy}/activate",
+        "POST /api/v1/attendance-policies/{policy}/deactivate",
+        "GET /api/v1/absences",
+        "GET /api/v1/absences/{absence}",
+        "POST /api/v1/absences/{absence}/excuse",
+        "POST /api/v1/absences/report",
+        "GET /api/v1/athletes/{athlete}/attendance",
+        "POST /api/v1/attendance/reconcile",
+        "GET /api/v1/reports/attendance"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant read for support tooling — attendance history + no-show-fee dispute investigations. Minor athlete names + device fingerprints redacted at the platform plane.",
+      "routes": [
+        "GET /api/v1/platform/attendance",
+        "GET /api/v1/platform/attendance/{record}"
+      ]
+    }
+  }
+}

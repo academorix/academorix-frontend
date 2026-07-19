@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/theme/permissions",
+  "$version": 1,
+  "title": "theme — permissions",
+  "seeder": "Academorix\\Platform\\Theme\\Database\\Seeders\\ThemePermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "theme.read",
+      "guard": "sanctum",
+      "description": "Read themes, presets, and token overrides for the tenant. Also gates the /me/theme-preference read.",
+      "seededOn": ["member", "admin", "owner", "coach", "athlete", "parent"]
+    },
+    {
+      "name": "theme.manage",
+      "guard": "sanctum",
+      "description": "CRUD on themes, presets, and token overrides. Design-role privilege — typically held by tenant owner + admin + explicit design-role users.",
+      "seededOn": ["admin", "owner", "design"]
+    },
+    {
+      "name": "theme.activate",
+      "guard": "sanctum",
+      "description": "Flip a theme's is_active false → true. Separate from theme.manage because activation triggers CSS regen + notification fanout — some organisations restrict this to the owner even if design-role holds theme.manage.",
+      "seededOn": ["admin", "owner"]
+    },
+    {
+      "name": "platform.theme.read",
+      "guard": "platform_admin",
+      "description": "Read platform-provided presets + cross-tenant custom preset usage stats.",
+      "seededOn": ["super_admin", "platform_designer"]
+    },
+    {
+      "name": "platform.theme.manage-presets",
+      "guard": "platform_admin",
+      "description": "CRUD on platform-provided ThemePreset rows (tenant_id = NULL). Academorix staff only. Every write triggers MigrateThemeTokensOnPresetUpdateJob for tenants referencing the preset.",
+      "seededOn": ["super_admin", "platform_designer"]
+    }
+  ]
+}

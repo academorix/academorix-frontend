@@ -1,0 +1,24 @@
+{
+  "id": "academorix://modules/coaching/middleware",
+  "$version": 1,
+  "title": "coaching — HTTP middleware",
+  "middleware": [],
+  "notes": [
+    "Coaching does not publish middleware — resource-scope enforcement lives in policies + observers.",
+    "Verified-and-active gating for assignment creation lives in the CoachAssignmentObserver.creating hook (returns COACHING_PROFILE_NOT_VERIFIED / COACHING_PROFILE_INACTIVE). No middleware equivalent — the domain rule is more precise than a route-level guard.",
+    "Entitlement gating (coaching_capture / coaching_advanced_certifications / coaching_skill_ratings / coaching_multi_branch) enforced at the observer level — routes return 402 with the specific error code."
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::enforce_tenant_membership" },
+    { "middleware": "staff::staff.resolve_active" },
+    { "middleware": "access::authorize" },
+    { "middleware": "scope::resolve_scope" }
+  ]
+}

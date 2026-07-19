@@ -1,0 +1,151 @@
+{
+  "id": "attendance.resources.attendance-policy.create",
+  "title": "Create attendance policy",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/attendance-policies/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attendance", "entity": "attendance-policy", "action": "create" },
+  "requiresPermission": "attendance-policies.create",
+  "dataSources": [
+    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[status]=active", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
+    { "name": "plans", "kind": "http.get", "url": "/api/v1/membership-plans?filter[status]=active", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
+    { "name": "templates", "kind": "http.get", "url": "/api/v1/catalogs/attendance-policy-templates", "unwrap": "data", "cache": { "ttlSeconds": 3600 } }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Create attendance policy" } },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "children": "Start from a template (optional)" } }] },
+            {
+              "kind": "Card.Content",
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Template", "menuTrigger": "focus" },
+                  "bindings": { "items": { "$ref": "templates" } },
+                  "actions": { "onSelectionChange": { "kind": "form.hydrateFromTemplate", "sourceExpr": "$selectedKey" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "children": "Name + scope" } }] },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-3" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": { "label": "Policy name", "isRequired": true, "maxLength": 128 },
+                  "actions": { "onChange": { "kind": "field.set", "field": "name", "valueExpr": "$value" } }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Branch (leave blank for tenant-wide)", "menuTrigger": "focus" },
+                  "bindings": { "items": { "$ref": "branches" } },
+                  "actions": { "onSelectionChange": { "kind": "field.set", "field": "branch_id", "valueExpr": "$selectedKey" } }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Membership plan (leave blank for all plans)", "menuTrigger": "focus" },
+                  "bindings": { "items": { "$ref": "plans" }, "disabled": { "$expr": "!features.includes('attendance.advanced_policies')" } },
+                  "actions": { "onSelectionChange": { "kind": "field.set", "field": "membership_plan_id", "valueExpr": "$selectedKey" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "children": "Grace + late-after" } }] },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-3" },
+              "children": [
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Grace period (minutes)", "minValue": 0, "maxValue": 120, "defaultValue": 15, "isRequired": true },
+                  "actions": { "onChange": { "kind": "field.set", "field": "grace_period_minutes", "valueExpr": "$value" } }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Late-after (minutes)", "minValue": 1, "maxValue": 120, "defaultValue": 30, "isRequired": true },
+                  "actions": { "onChange": { "kind": "field.set", "field": "late_after_minutes", "valueExpr": "$value" } }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Late-arrival penalty", "menuTrigger": "focus", "defaultSelectedKey": "notify_only" },
+                  "props_items": [
+                    { "id": "none", "label": "None — log only" },
+                    { "id": "consume_pass_anyway", "label": "Consume pass fully" },
+                    { "id": "fractional_pass_consume", "label": "Half-pass consume" },
+                    { "id": "notify_only", "label": "Notify guardian + coach" }
+                  ],
+                  "actions": { "onSelectionChange": { "kind": "field.set", "field": "late_arrival_penalty_type", "valueExpr": "$selectedKey" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "children": "Freeze threshold" } }] },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-3" },
+              "children": [
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Max unexcused absences in window", "minValue": 1, "maxValue": 100, "defaultValue": 3, "isRequired": true },
+                  "actions": { "onChange": { "kind": "field.set", "field": "max_unexcused_absences_per_period", "valueExpr": "$value" } }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "label": "Rolling window (days)", "minValue": 7, "maxValue": 365, "defaultValue": 30, "isRequired": true },
+                  "actions": { "onChange": { "kind": "field.set", "field": "absence_freeze_period_days", "valueExpr": "$value" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/attendance-policies" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Create + activate" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/attendance-policies",
+                  "bodyFromForm": true,
+                  "extraBody": { "is_active": true },
+                  "onSuccess": { "kind": "navigate", "to": "/tenant/attendance-policies" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/coaching/config",
+  "$version": 1,
+  "title": "coaching — developer configuration",
+  "configFile": "config/coaching.php",
+  "envPrefix": "COACHING_",
+  "sections": {
+    "verification": {
+      "keys": [
+        {
+          "path": "coaching.verification.auto_verify_low_risk_bodies",
+          "type": "array",
+          "env": "COACHING_VERIFICATION_AUTO_VERIFY_LOW_RISK_BODIES",
+          "default": [],
+          "description": "Issuing bodies whose certifications may be auto-verified without admin review (e.g. tenant's internal training certifications). Empty by default — every cert requires manual review. Tenant may opt in via settings."
+        },
+        {
+          "path": "coaching.verification.require_admin_verification",
+          "type": "boolean",
+          "default": true,
+          "description": "When true (default), fresh CoachingProfile rows require admin verify before assignments can be created. When false (self-serve tenants), profiles are auto-verified on create — the assignment observer relaxes its verified_by_admin_at check."
+        },
+        {
+          "path": "coaching.verification.webhook_endpoint_map",
+          "type": "array",
+          "default": {},
+          "description": "Wave 4+: Map of issuing_body slug -> webhook URL for automated verification (e.g. 'ussf' -> 'https://verify.ussoccer.com/api/v1/verify'). Empty by default; Wave 4 adds federation-specific pilots."
+        }
+      ]
+    },
+    "notifications": {
+      "keys": [
+        {
+          "path": "coaching.notifications.expiration_cadence_days",
+          "type": "array",
+          "default": [90, 30, 7, 0],
+          "description": "Days-before-expiry at which to fire CoachCertificationExpiringSoon. 0 fires CoachCertificationExpired instead. Tenant may customize (e.g. add 180-day preview)."
+        },
+        {
+          "path": "coaching.notifications.assignment_ending_soon_days",
+          "type": "int",
+          "default": 7,
+          "description": "Days-before-assignment.end_date at which to fire CoachAssignmentEndingSoon. Coach may plan for the transition."
+        }
+      ]
+    },
+    "assignment": {
+      "keys": [
+        {
+          "path": "coaching.assignment.max_concurrent_per_coach",
+          "type": "int",
+          "default": 0,
+          "description": "Max concurrent active assignments per coaching_profile_id. 0 = unlimited. When > 0, the observer refuses new assignments once the count is reached."
+        },
+        {
+          "path": "coaching.assignment.max_assistants_per_assignable",
+          "type": "int",
+          "default": 3,
+          "description": "Max active assistant_coach assignments on a single Session / Team / Event. Head coach is separate + always 1."
+        },
+        {
+          "path": "coaching.assignment.allow_overlapping_by_default",
+          "type": "boolean",
+          "default": false,
+          "description": "When false (default), the AssignmentConflictDetector flags assignments whose Session times overlap other active assignments for the same coach. Admins may override with intent — the assignment lands but with `has_conflict=true` metadata + a soft-warn event."
+        }
+      ]
+    },
+    "rating": {
+      "keys": [
+        {
+          "path": "coaching.rating.default_expiry_years",
+          "type": "int",
+          "default": 2,
+          "description": "Years after rated_at at which the rating auto-expires. 0 = never expire. Enterprise with coaching_extended_retention default is 5 years."
+        },
+        {
+          "path": "coaching.rating.default_scale",
+          "type": "string",
+          "default": "stars_1_5",
+          "description": "Default rating_scale when the admin doesn't select one. Options: stars_1_5, level_5_stage."
+        }
+      ]
+    },
+    "availability": {
+      "keys": [
+        {
+          "path": "coaching.availability.strict_validation",
+          "type": "boolean",
+          "default": false,
+          "description": "When true, availability_json must cover every day-of-week (Mon-Sun) with at least an empty array []. When false (default), missing days imply 'unavailable' — no validation."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "coaching.retention.profile_years",
+          "type": "int",
+          "default": 7,
+          "description": "Years past CoachingProfileDeactivated at which the row becomes eligible for hard-purge. 10 with coaching_extended_retention entitlement."
+        },
+        {
+          "path": "coaching.retention.certification_post_expiry_years",
+          "type": "int",
+          "default": 7,
+          "description": "Years past CoachCertificationExpired at which the cert becomes eligible for hard-purge."
+        },
+        {
+          "path": "coaching.retention.rating_years",
+          "type": "int",
+          "default": 2,
+          "description": "Years past rated_at at which the rating becomes eligible for hard-purge. 5 with coaching_extended_retention."
+        }
+      ]
+    }
+  }
+}

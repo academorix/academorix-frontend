@@ -1,0 +1,141 @@
+{
+  "id": "academorix://modules/attendance/schemas/attendance-policy",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "AttendancePolicy",
+  "description": "Per-branch OR per-membership-plan attendance enforcement rules. Carries tenant_id (CASCADE) + optional branch_id (RESTRICT) + optional membership_plan_id (RESTRICT). Composite unique on (tenant_id, branch_id, membership_plan_id) WHERE is_active=true — one active policy per specificity. NEVER carries application_id, organization_id, region_id, or scope_node_id directly.",
+  "type": "object",
+  "x-module": "attendance",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "attendance_policies",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "apo_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Attendance\\Models\\AttendancePolicy",
+    "interface": "Academorix\\Sports\\Attendance\\Contracts\\Data\\AttendancePolicyInterface",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "late_arrival_penalty_type": "LatePenaltyType",
+      "grace_period_minutes": "integer",
+      "late_after_minutes": "integer",
+      "no_show_fee_cents": "integer",
+      "max_unexcused_absences_per_period": "integer",
+      "absence_freeze_period_days": "integer",
+      "auto_excuse_reasons": "array",
+      "notification_config": "array",
+      "is_active": "boolean",
+      "effective_from": "datetime",
+      "effective_until": "datetime"
+    },
+    "observers": ["AttendancePolicyObserver"],
+    "appends": ["specificity_label", "is_effective_now"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `apo_<26>`." },
+      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
+      "branch_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "branches", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Branch scope. NULL = tenant-wide default. IMMUTABLE post-create." },
+      "membership_plan_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "membership_plans", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Plan scope. NULL = applies to all plans on the branch. IMMUTABLE post-create. Requires attendance_advanced_policies entitlement when set." },
+      "name": { "type": "string", "length": 128, "nullable": false, "description": "Human-readable policy name (e.g. 'Youth Academy Attendance Policy')." },
+      "grace_period_minutes": { "type": "integer", "nullable": false, "default": 15, "description": "Minutes past session.starts_at during which check-in counts as 'present'. Beyond this = 'late'." },
+      "late_after_minutes": { "type": "integer", "nullable": false, "default": 30, "description": "Minutes past session.starts_at at which late-arrival penalty applies. Must be strictly greater than grace_period_minutes." },
+      "late_arrival_penalty_type": { "type": "string", "length": 32, "nullable": false, "default": "'notify_only'", "description": "Enum: none / consume_pass_anyway / fractional_pass_consume / notify_only." },
+      "no_show_fee_cents": { "type": "bigint", "nullable": true, "description": "Fee charged per unexcused absence. NULL = no fee. When set, no_show_fee_currency required. Requires attendance_no_show_fees entitlement to actually invoice." },
+      "no_show_fee_currency": { "type": "string", "length": 3, "nullable": true, "description": "ISO 4217 3-letter currency code. Required when no_show_fee_cents > 0." },
+      "max_unexcused_absences_per_period": { "type": "integer", "nullable": false, "default": 3, "description": "Rolling-window unexcused-absence count that triggers freeze cascade. Range 1..100." },
+      "absence_freeze_period_days": { "type": "integer", "nullable": false, "default": 30, "description": "Rolling-window size in days. Range 7..365." },
+      "auto_excuse_reasons": { "type": "jsonb", "nullable": true, "description": "Array of absence_reason values that auto-flip status to 'excused' when supplied via guardian self-report > 24h in advance." },
+      "notification_config": { "type": "jsonb", "nullable": true, "description": "Object: { notify_athlete_on_first_absence: bool, notify_guardian_on_second: bool, notify_admin_on_third: bool, notify_on_late: bool }." },
+      "is_active": { "type": "boolean", "nullable": false, "default": true, "description": "Only active policies participate in PolicyResolver lookups. Deactivate to disable without deleting." },
+      "effective_from": { "type": "timestamptz", "nullable": true, "description": "Optional start of the policy's effective window." },
+      "effective_until": { "type": "timestamptz", "nullable": true, "description": "Optional end of the policy's effective window." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "branch_id", "membership_plan_id"],
+        "unique": true,
+        "name": "attendance_policies_active_unique",
+        "predicate": "is_active = true AND deleted_at IS NULL",
+        "description": "One active policy per (branch, plan) specificity. Prevents overlapping active enforcement."
+      },
+      { "columns": ["tenant_id", "is_active"], "name": "attendance_policies_active_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "name",
+    "grace_period_minutes",
+    "late_after_minutes",
+    "late_arrival_penalty_type",
+    "max_unexcused_absences_per_period",
+    "absence_freeze_period_days",
+    "is_active",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^apo_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": ["string", "null"], "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "membership_plan_id": { "type": ["string", "null"], "pattern": "^mbp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "maxLength": 128 },
+    "grace_period_minutes": { "type": "integer", "minimum": 0, "maximum": 120 },
+    "late_after_minutes": { "type": "integer", "minimum": 1, "maximum": 120 },
+    "late_arrival_penalty_type": {
+      "type": "string",
+      "enum": ["none", "consume_pass_anyway", "fractional_pass_consume", "notify_only"]
+    },
+    "no_show_fee_cents": { "type": ["integer", "null"], "minimum": 0 },
+    "no_show_fee_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "max_unexcused_absences_per_period": { "type": "integer", "minimum": 1, "maximum": 100 },
+    "absence_freeze_period_days": { "type": "integer", "minimum": 7, "maximum": 365 },
+    "auto_excuse_reasons": { "type": ["array", "null"], "items": { "type": "string" } },
+    "notification_config": {
+      "type": ["object", "null"],
+      "properties": {
+        "notify_athlete_on_first_absence": { "type": "boolean" },
+        "notify_guardian_on_second": { "type": "boolean" },
+        "notify_admin_on_third": { "type": "boolean" },
+        "notify_on_late": { "type": "boolean" }
+      }
+    },
+    "is_active": { "type": "boolean" },
+    "effective_from": { "type": ["string", "null"], "format": "date-time" },
+    "effective_until": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One active policy per (tenant_id, branch_id, membership_plan_id) specificity via partial unique index",
+    "grace_period_minutes MUST be strictly less than late_after_minutes",
+    "no_show_fee_currency required when no_show_fee_cents > 0",
+    "tenant_id + branch_id + membership_plan_id are IMMUTABLE post-create (create a new policy to change specificity)",
+    "membership_plan_id (non-null) requires attendance_advanced_policies entitlement at creation time",
+    "effective_from < effective_until when both set",
+    "auto_excuse_reasons values MUST match known values in data/absence-reason-catalog.json (validated but not FK-referenced)"
+  ]
+}

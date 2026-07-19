@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/attendance/compliance",
+  "$version": 1,
+  "title": "attendance — compliance evidence",
+  "description": "Attendance is safeguarding-adjacent (minor check-ins with device fingerprint + GPS), money-adjacent (Pass consumption + no-show fees), and audit-critical (state-machine + membership freeze cascade). US Department of Education retention for youth programs. State-level SafeSport minor-verification requirements. GDPR Art. 6(1)(b) contractual basis. CCPA export rights. COPPA parental consent for biometric-adjacent collection.",
+  "regimes": {
+    "us_department_of_education": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "attendance records for youth programs",
+          "evidence": "AttendanceRecord retains 7 years post-session (10 years Enterprise). Federation regulators may inspect multi-year eligibility trails."
+        }
+      ]
+    },
+    "state_youth_sports_safesport": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "SafeSport check-in verification for minors",
+          "evidence": "checked_in_by_user_id captures the User who verified the check-in for a minor athlete. coach_verified path requires the coach to be actively assigned to the session via sports/coaching module."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "contractual basis",
+          "evidence": "Attendance recording is necessary to fulfil the tenant's contract with the athlete's guardian (rendering the paid service — sessions attended)."
+        },
+        {
+          "article": "Art. 8",
+          "principle": "parental consent for children",
+          "evidence": "Guardian consent for device_fingerprint + GPS capture on minor athletes validated at check-in — refuses with ATTENDANCE_MINOR_CONSENT_MISSING when consent not recorded on the athlete's consent_snapshot."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure — with retention exception",
+          "evidence": "Attendance records retain 7 years post-session for federation compliance. Records under regulator hold survive TenantErased as compliance archive rows."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "customer / guardian data export",
+          "evidence": "Guardians can request an export of their athlete's attendance history via /athletes/{athlete}/attendance and via the tenant's data-export flow."
+        },
+        {
+          "principle": "no sale of PII",
+          "evidence": "Device fingerprint + IP + GPS are collected for fraud correlation ONLY. Analytics events strip these fields; no third-party subprocessor receives them."
+        }
+      ]
+    },
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "parental consent for biometric-adjacent collection",
+          "evidence": "For minor athletes, guardian consent for device_fingerprint_hash + gps_lat/gps_lng capture is validated at check-in time. Kiosk check-in requires explicit consent flag on the parent Athlete's consent_snapshot; refuses with ATTENDANCE_MINOR_CONSENT_MISSING otherwise. Policy must document what fingerprint / GPS data is collected and retained."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "segregation of duties",
+          "evidence": "attendance.cancel restricted to hr / branch_manager / admin / owner (coaches cannot cancel attendance to hide misconduct). absences.reverse-excuse restricted to safeguarding_officer + admin + owner (prevents cover-up of documented absences)."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "CleanupOrphanCheckinsJob P1 signal — every finding (orphan attendance without pass consumption, orphan pass without attendance, mutual-exclusion violation) is investigated. Metric academorix.attendance.orphan.without_pass should stay at 0."
+        }
+      ]
+    },
+    "anti_discrimination": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "absence pattern audit",
+          "evidence": "Absence records carry status + reason + counted_toward_freeze + retention 3 years. Platform-side compliance dashboard cross-references absence patterns against protected characteristics (redacted per platform-plane rules) to detect discriminatory attendance-policy enforcement."
+        }
+      ]
+    }
+  }
+}

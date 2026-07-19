@@ -1,0 +1,118 @@
+{
+  "id": "theme.mode-switcher",
+  "title": "Mode switcher",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Light/dark/auto radio group + the four accessibility flag toggles. Reused on the theme create/edit screens (writing theme.mode + theme.accessibility_flags) and on /me/theme-preference (writing preferred_mode + accessibility_overrides).",
+  "props": {
+    "modeFieldName": {
+      "type": "string",
+      "default": "mode",
+      "description": "Form field name for the mode radio group."
+    },
+    "modeChoices": {
+      "type": "array",
+      "default": ["light", "dark"],
+      "description": "Which mode options to render. On theme create/edit only ['light', 'dark']; on /me/theme-preference ['auto', 'light', 'dark']."
+    },
+    "accessibilityFlagsFieldName": {
+      "type": "string",
+      "default": "accessibility_flags",
+      "description": "Form field name for the accessibility flags jsonb."
+    },
+    "showAccessibilityFlags": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-2" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "label",
+                "className": "text-sm font-medium",
+                "children": "Mode"
+              }
+            },
+            {
+              "kind": "RadioGroup",
+              "props": { "className": "flex items-center gap-4" },
+              "bindings": {
+                "name": { "$ref": "props.modeFieldName" },
+                "options": {
+                  "$expr": "props.modeChoices.map(m => ({ key: m, label: m.charAt(0).toUpperCase() + m.slice(1) }))"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-2" },
+          "bindings": { "hidden": { "$expr": "!props.showAccessibilityFlags" } },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "label",
+                "className": "text-sm font-medium",
+                "children": "Accessibility"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-xs text-muted",
+                "children": "Toggles cascade into the compiled CSS. Users can also override these per-user via their profile."
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col gap-2 mt-2" },
+              "children": [
+                {
+                  "kind": "Checkbox",
+                  "bindings": {
+                    "name": { "$expr": "props.accessibilityFlagsFieldName + '.high_contrast'" },
+                    "children": "High contrast (WCAG AAA color pairs)"
+                  }
+                },
+                {
+                  "kind": "Checkbox",
+                  "bindings": {
+                    "name": { "$expr": "props.accessibilityFlagsFieldName + '.reduced_motion'" },
+                    "children": "Reduced motion (zero animation durations)"
+                  }
+                },
+                {
+                  "kind": "Checkbox",
+                  "bindings": {
+                    "name": { "$expr": "props.accessibilityFlagsFieldName + '.larger_text'" },
+                    "children": "Larger text (+25% typography size scale)"
+                  }
+                },
+                {
+                  "kind": "Checkbox",
+                  "bindings": {
+                    "name": { "$expr": "props.accessibilityFlagsFieldName + '.focus_visible_always'" },
+                    "children": "Always show focus indicator (force outline on every interaction)"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

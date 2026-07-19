@@ -1,0 +1,57 @@
+{
+  "$version": 1,
+  "title": "AttendanceRecord.checked_in_via — canonical values",
+  "description": "The five values the checked_in_via enum accepts. Each shapes the validation + fraud-signal capture during check-in orchestration.",
+  "values": [
+    {
+      "value": "self_kiosk",
+      "display_name": "Kiosk self check-in",
+      "description": "Athlete (or guardian) checks in via a self-service kiosk at the venue. Kiosk is authenticated with a session-scoped token; the caller identifies the athlete. Requires device_fingerprint_hash for fraud correlation.",
+      "entitlement_required": "attendance_self_kiosk",
+      "requires_fingerprint": true,
+      "requires_gps": false,
+      "requires_verifier_user": false,
+      "typical_use_case": "Front-desk kiosk at a fitness academy where members badge in via a shared tablet."
+    },
+    {
+      "value": "coach_verified",
+      "display_name": "Coach-verified check-in",
+      "description": "Coach manually verifies each athlete from the session roster on their mobile device. checked_in_by_user_id set to the coach's user ID. Coach MUST be actively assigned to the session (validated against sports/coaching).",
+      "entitlement_required": null,
+      "requires_fingerprint": false,
+      "requires_gps": false,
+      "requires_verifier_user": true,
+      "typical_use_case": "Head coach ticks off athletes at the start of a Sunday practice."
+    },
+    {
+      "value": "admin_recorded",
+      "display_name": "Admin-recorded check-in",
+      "description": "Admin / reception manually records attendance from the tenant admin panel. Post-session correction path. checked_in_by_user_id set to the admin's user ID.",
+      "entitlement_required": null,
+      "requires_fingerprint": false,
+      "requires_gps": false,
+      "requires_verifier_user": true,
+      "typical_use_case": "Reception adds a missed check-in for an athlete who forgot to tap in at the kiosk."
+    },
+    {
+      "value": "geofence",
+      "display_name": "Geofence-verified check-in",
+      "description": "Athlete's mobile app auto-checks in when GPS coordinates fall inside session.venue_geofence_radius. Requires gps_lat + gps_lng. Integrates with products/geofencing module. Requires attendance_geofence entitlement.",
+      "entitlement_required": "attendance_geofence",
+      "requires_fingerprint": false,
+      "requires_gps": true,
+      "requires_verifier_user": false,
+      "typical_use_case": "Elite academy where senior athletes' phones auto-check-in when they arrive at the training complex."
+    },
+    {
+      "value": "qr_scan",
+      "display_name": "QR-code scan",
+      "description": "Athlete scans a per-session QR code posted at the venue. Requires device_fingerprint_hash. The QR encodes the session ID + a short-lived HMAC signature validated at scan-time.",
+      "entitlement_required": "attendance_qr_scan",
+      "requires_fingerprint": true,
+      "requires_gps": false,
+      "requires_verifier_user": false,
+      "typical_use_case": "Youth academy where each athlete's guardian scans a printed poster at drop-off to record the check-in."
+    }
+  ]
+}

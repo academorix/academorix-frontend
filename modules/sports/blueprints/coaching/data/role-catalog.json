@@ -1,0 +1,57 @@
+{
+  "$version": 1,
+  "title": "Coach assignment role catalog",
+  "description": "The four assignment roles + their operational semantics. Reference for SDUI + observer enforcement.",
+  "roles": [
+    {
+      "value": "head_coach",
+      "label": "Head coach",
+      "sort_order": 1,
+      "operational": {
+        "unique_per_assignable": true,
+        "note": "Exactly one head_coach per active assignable. Enforced by partial unique index + observer. Head coach makes lineup + strategy decisions.",
+        "authority_level": "primary",
+        "receives_notifications": true
+      }
+    },
+    {
+      "value": "assistant_coach",
+      "label": "Assistant coach",
+      "sort_order": 2,
+      "operational": {
+        "unique_per_assignable": false,
+        "max_per_assignable_default": 3,
+        "note": "Multiple allowed per assignable. Cap configurable via coaching.assignment.max_assistants_per_assignable (default 3). Assists head coach; may run substitutions but not lineup.",
+        "authority_level": "secondary",
+        "receives_notifications": true
+      }
+    },
+    {
+      "value": "observer",
+      "label": "Observer",
+      "sort_order": 3,
+      "operational": {
+        "unique_per_assignable": false,
+        "note": "Non-participating role. Used for evaluators, mentor-coaches auditing, student-coaches shadowing, cross-branch guest coaches watching.",
+        "authority_level": "none",
+        "receives_notifications": false
+      }
+    },
+    {
+      "value": "substitute",
+      "label": "Substitute",
+      "sort_order": 4,
+      "operational": {
+        "unique_per_assignable": false,
+        "note": "On-call role. The assignment carries an `activated_at` metadata field when the substitute steps in for an absent head or assistant. Notifications route only when activated.",
+        "authority_level": "conditional",
+        "receives_notifications": "only_when_activated"
+      }
+    }
+  ],
+  "notes": [
+    "SDUI role-picker sorts by sort_order (head_coach first — the most important choice).",
+    "The `authority_level` column drives future permission-derived checks (Wave 4+ session attendance module considers only 'primary' + 'secondary' as decision-makers for check-in flow).",
+    "Role transitions on existing assignments are allowed with an admin permission — for example, promoting an assistant to head_coach when the current head_coach's assignment ends. The observer re-runs the head-coach uniqueness check on transition."
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/coaching/analytics",
+  "$version": 1,
+  "title": "coaching — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Coaching Profile Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "primary_sport_key", "coaching_since_year_bucket", "specialization_count_bucket", "is_accepting_new_athletes"]
+    },
+    {
+      "name": "Coaching Profile Verified",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "days_since_created_bucket", "certification_count_at_verify"]
+    },
+    {
+      "name": "Coaching Profile Deactivated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "trigger", "days_active_bucket", "active_assignments_at_deactivate"]
+    },
+    {
+      "name": "Coach Assignment Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "role", "assignable_type", "has_end_date", "cross_branch"]
+    },
+    {
+      "name": "Coach Assignment Ended",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "role", "assignable_type", "duration_days_bucket", "reached_scheduled_end"]
+    },
+    {
+      "name": "Coach Assignment Cancelled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "role", "assignable_type", "days_since_start_bucket"]
+    },
+    {
+      "name": "Coach Certification Added",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "issuing_body_bucket", "certification_level", "has_expiry", "days_to_expiry_bucket"]
+    },
+    {
+      "name": "Coach Certification Verified",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "issuing_body_bucket", "days_since_added_bucket", "manual_or_webhook"]
+    },
+    {
+      "name": "Coach Certification Expiring Soon",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "issuing_body_bucket", "cadence_days"],
+      "description": "Consent tier: essential — compliance signal (NCAA + IHSA + SafeSport visibility)."
+    },
+    {
+      "name": "Coach Certification Expired",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "issuing_body_bucket", "days_since_added_bucket", "was_verified"],
+      "description": "Consent tier: essential — compliance signal."
+    },
+    {
+      "name": "Coach Skill Rating Recorded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "rating_scale", "rating_value_bucket", "ratable_type", "rated_by_role"]
+    },
+    {
+      "name": "Coach Skill Rating Updated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "rating_scale", "from_value_bucket", "to_value_bucket", "ratable_type"]
+    },
+    {
+      "name": "Coach Assignment Conflict Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "role", "assignable_type", "conflict_source"],
+      "description": "Consent tier: essential — operational integrity signal."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry coach names / emails / phone numbers / bio text / hourly rate / certification numbers / dispute reasons — only structural + timing data.",
+    "`issuing_body_bucket` buckets the free-text issuing_body enum into (federation / medical / academic / industry / other) to keep label cardinality bounded.",
+    "`specialization_count_bucket` = 0-2 / 3-5 / 6-10 / 11+.",
+    "`coaching_since_year_bucket` = current-year-minus-value bucketed into (0-1 / 2-5 / 6-10 / 11-20 / 20+ years).",
+    "`rating_value_bucket` = 1-2 / 3 / 4-5 (never emits raw rating alongside the coach identifier — pairing the two would leak an evaluative judgment)."
+  ]
+}

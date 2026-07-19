@@ -1,0 +1,132 @@
+{
+  "id": "academorix://modules/coaching/traits",
+  "$version": 1,
+  "title": "coaching — trait composition",
+  "description": "Four owned traits — one anchor + three composition helpers. Anchor: BelongsToCoachingProfile for downstream models with a coaching_profile_id FK. Helpers: HasCoachAssignments / HasCoachCertifications / HasCoachSkillRatings compose the reverse relations onto CoachingProfile itself.",
+  "owned": [
+    {
+      "trait": "Academorix\\Sports\\Coaching\\Concerns\\BelongsToCoachingProfile",
+      "description": "Mixed into any downstream model that carries a `coaching_profile_id` FK. Adds the `coachingProfile()` belongsTo relation + a `resolveInCoachingProfile(?CoachingProfile)` query scope + a `booted()` hook that refuses to save when coachingProfile.tenant_id != row.tenant_id (cross-tenant defense-in-depth).",
+      "public": true,
+      "usedBy": [
+        "coaching::CoachAssignment (owned)",
+        "coaching::CoachCertification (owned)",
+        "coaching::CoachSkillRating (owned)",
+        "sports/attendance::AttendanceCheckIn (Wave 4+ — session check-in references the coach who authorised)"
+      ],
+      "conflicts_with": []
+    },
+    {
+      "trait": "Academorix\\Sports\\Coaching\\Concerns\\HasCoachAssignments",
+      "description": "Composed onto CoachingProfile. Adds `assignments()` (hasMany CoachAssignment), `activeAssignments()` (filtered), `headCoachAssignments()`, `assistantAssignments()`. Read-only accessors.",
+      "public": true,
+      "usedBy": ["coaching::CoachingProfile"]
+    },
+    {
+      "trait": "Academorix\\Sports\\Coaching\\Concerns\\HasCoachCertifications",
+      "description": "Composed onto CoachingProfile. Adds `certifications()`, `verifiedCertifications()`, `expiringCertifications(int $withinDays)`, `expiredCertifications()`.",
+      "public": true,
+      "usedBy": ["coaching::CoachingProfile"]
+    },
+    {
+      "trait": "Academorix\\Sports\\Coaching\\Concerns\\HasCoachSkillRatings",
+      "description": "Composed onto CoachingProfile. Adds `skillRatings()`, `currentRatings()` (unexpired), `ratingsForSport(string)`, `ratingsForDiscipline(string)`, `ratingsForPosition(string)`, `topRatingFor(string $ratableType, string $ratableId)`.",
+      "public": true,
+      "usedBy": ["coaching::CoachingProfile"]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }
+    ],
+    "staff": [
+      { "trait": "Academorix\\Staff\\Concerns\\BelongsToStaff", "reason": "CoachingProfile carries staff_id — cascades tenant + branch through the parent Staff." }
+    ],
+    "branch": [
+      { "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch", "reason": "CoachingProfile.branch_id direct — cascades organization + region + tenant through the branch." }
+    ],
+    "user": [
+      { "trait": "Academorix\\User\\Concerns\\BelongsToUser", "reason": "CoachSkillRating carries rated_by_user_id; CoachCertification carries verified_by_admin_user_id; CoachAssignment carries assigned_by_user_id — enables audit-trail joins." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every state mutation (verification, deactivation, rating value change, certification verify) is compliance-relevant." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }
+    ]
+  },
+  "composition": {
+    "coachingProfile": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToStaff",
+        "BelongsToBranch",
+        "HasCoachAssignments",
+        "HasCoachCertifications",
+        "HasCoachSkillRatings",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant precedes every scope-observing trait. BelongsToStaff precedes BelongsToBranch (Staff resolves the tenant + user chain first). The three Has* helpers compose reverse relations; no observer overlap."
+    },
+    "coachAssignment": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToCoachingProfile",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ]
+    },
+    "coachCertification": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToCoachingProfile",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ]
+    },
+    "coachSkillRating": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToCoachingProfile",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ]
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/theme/listeners",
+  "$version": 1,
+  "title": "theme — subscribed events",
+  "listeners": [
+    {
+      "event": "foundation::ApplicationBooted",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\HydrateTokenVocabulary",
+      "queue": null,
+      "purpose": "Load the canonical token vocabulary from data/token-vocabulary.json into an in-memory registry used by PresetValidator + ThemeTokenOverrideObserver. First-touch cost paid at boot."
+    },
+    {
+      "event": "foundation::ConfigReloaded",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\RehydrateTokenVocabulary",
+      "queue": null,
+      "purpose": "Rebuild the in-memory vocabulary registry on hot-reload."
+    },
+    {
+      "event": "tenancy::TenantProvisioned",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\SeedDefaultThemeForNewTenant",
+      "queue": "theme",
+      "purpose": "New tenant provisioned → create a light Theme row referencing config('theme.presets.default_slug') (default: light-default) + activate it. Runs after commit on TenantProvisioned so a partial tenant creation never leaves an orphan theme row."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\PurgeThemeDataForErasedTenant",
+      "queue": "notifications",
+      "purpose": "Cascade-delete every Theme, tenant-custom ThemePreset, and ThemeTokenOverride for the erased tenant. Platform presets survive. FK cascade handles the delete; this listener writes the compliance audit trail."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\PurgeUserThemePreferenceForErasedUser",
+      "queue": "notifications",
+      "purpose": "GDPR Art. 17 — delete the user's user_theme_preference row. The row lives in the user module; theme is the semantic owner + drives the compliance side."
+    },
+    {
+      "event": "theme::ThemeActivated",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\InvalidateResolvedTokensCache",
+      "queue": null,
+      "purpose": "Bust the theme:resolved:{tenant_id}:{mode} + theme:compiled-css:{tenant_id}:{mode} Redis keys. Runs synchronously — cache invalidation must land before the compiled CSS regen writes."
+    },
+    {
+      "event": "theme::ThemeActivated",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\AuditContrastOnActivate",
+      "queue": "theme",
+      "purpose": "Run ContrastAuditor over the activated theme; if any color pair drops below WCAG AA, dispatch ThemeAccessibilityRecommendationNotification. Gated by config('theme.accessibility.audit_on_activate') + theme_accessibility_audit entitlement."
+    },
+    {
+      "event": "theme::ThemeTokenOverridden",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\ScheduleCssRegenOnOverride",
+      "queue": "theme",
+      "purpose": "Dispatch RegenerateRenderedCssJob for the parent theme's tenant. Debounced via the job's shouldBeUnique+uniqueFor(60s) so a burst of overrides in one form-submit coalesces into a single rebuild."
+    },
+    {
+      "event": "theme::ThemeTokenOverrideRemoved",
+      "listener": "Academorix\\Platform\\Theme\\Listeners\\ScheduleCssRegenOnOverrideRemoval",
+      "queue": "theme",
+      "purpose": "Same debounced regen dispatch as ThemeTokenOverridden — override removal falls through to preset default, still needs a CSS rebuild."
+    }
+  ]
+}

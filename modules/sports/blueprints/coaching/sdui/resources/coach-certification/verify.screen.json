@@ -1,0 +1,80 @@
+{
+  "id": "coaching.resources.coach-certification.verify",
+  "title": "Verify certification",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coach-certifications/{cert_id}/verify",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coaching", "entity": "coach-certification", "action": "verify" },
+  "requiresPermission": "coach_certifications.verify",
+  "dataSources": [
+    {
+      "name": "cert",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/coach-certifications/' + $route.cert_id",
+      "unwrap": "data"
+    }
+  ],
+  "form": {
+    "id": "verifyCoachCertificationForm",
+    "submit": {
+      "kind": "http.post",
+      "urlExpr": "'/api/v1/coach-certifications/' + $route.cert_id + '/verify'",
+      "body": "$form",
+      "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/coach-certifications/' + $route.cert_id" },
+      "onError": { "kind": "toast.error", "message": "Could not verify certification." }
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-xl mx-auto" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Verify certification" } },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Header", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "font-semibold", "children": "Certification details" } }] },
+            {
+              "kind": "Card.Content",
+              "children": [
+                { "kind": "Description", "props": { "label": "Coach" }, "bindings": { "children": { "$ref": "cert.coach_display_name" } } },
+                { "kind": "Description", "props": { "label": "Issuing body" }, "bindings": { "children": { "$ref": "cert.issuing_body" } } },
+                { "kind": "Description", "props": { "label": "Certification name" }, "bindings": { "children": { "$ref": "cert.certification_name" } } },
+                { "kind": "Description", "props": { "label": "Level" }, "bindings": { "children": { "$ref": "cert.level" } } },
+                { "kind": "Description", "props": { "label": "Issued" }, "bindings": { "children": { "$expr": "$formatDate(cert.issued_at, 'MMM d, yyyy')" } } },
+                { "kind": "Description", "props": { "label": "Expires" }, "bindings": { "children": { "$expr": "cert.expires_at ? $formatDate(cert.expires_at, 'MMM d, yyyy') : 'Does not expire'" } } },
+                {
+                  "kind": "Link",
+                  "props": { "href": { "$ref": "cert.verification_url" }, "target": "_blank", "leadingIcon": "arrow-top-right-on-square", "children": "External verification →" },
+                  "bindings": { "hidden": { "$expr": "!cert.verification_url" } }
+                },
+                {
+                  "kind": "Link",
+                  "props": { "href": { "$ref": "cert.document_url" }, "target": "_blank", "leadingIcon": "document", "children": "View scanned document →" },
+                  "bindings": { "hidden": { "$expr": "!cert.document_url" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "Card.Content", "children": [{ "kind": "TextArea", "props": { "name": "verification_notes", "label": "Verification notes (optional)", "rows": 3, "placeholder": "e.g. Verified against USSF public portal on 2026-01-15" } }] }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            { "kind": "Button", "props": { "variant": "flat", "children": "Cancel" }, "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/coach-certifications/' + $route.cert_id" } } },
+            { "kind": "Button", "props": { "variant": "primary", "type": "submit", "leadingIcon": "check-circle", "children": "Verify certification" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

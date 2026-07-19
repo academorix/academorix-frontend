@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/theme/entitlements",
+  "$version": 1,
+  "title": "theme — entitlements",
+  "reference": {
+    "publishedBy": "entitlements",
+    "seededFrom": "BusinessType.default_config.entitlements"
+  },
+  "kinds": [
+    { "kind": "boolean" },
+    { "kind": "slot" }
+  ],
+  "entitlements": [
+    {
+      "key": "theme_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": true, "medium": true, "enterprise": true },
+      "description": "Master gate — enables the whole theme module. Master feature is available on every tier (baseline branded experience), but downstream sub-entitlements gate customisation depth."
+    },
+    {
+      "key": "theme_custom_presets",
+      "kind": "slot",
+      "unit": "presets",
+      "defaultsByPlan": { "small": 0, "medium": 5, "enterprise": 10000 },
+      "description": "Cap on the number of tenant-authored ThemePreset rows (excluding platform-provided presets). Small = pick from platform presets only; Medium = up to 5 custom presets; Enterprise = effectively unlimited (10k soft cap for pagination sanity)."
+    },
+    {
+      "key": "theme_token_overrides",
+      "kind": "slot",
+      "unit": "overrides",
+      "defaultsByPlan": { "small": 0, "medium": 25, "enterprise": 10000 },
+      "description": "Per-theme cap on ThemeTokenOverride rows. Small = presets are as-is (no per-token tweaks); Medium = 25 overrides per theme (typical brand-color-swap scope); Enterprise = effectively unlimited (10k soft cap)."
+    },
+    {
+      "key": "theme_accessibility_audit",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": true, "medium": true, "enterprise": true },
+      "description": "Enables the ContrastAuditor binding — WCAG AA (4.5:1) + AAA (7:1) contrast ratio findings surfaced as ThemeAccessibilityRecommendationNotification. Informational only, never blocks writes. Available on every tier (accessibility is not a paywall)."
+    },
+    {
+      "key": "theme_dark_mode",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": true, "medium": true, "enterprise": true },
+      "description": "Enables selecting mode='dark' on any Theme + activating dark presets. Available on every tier — dark mode is a baseline UX expectation."
+    },
+    {
+      "key": "theme_rollback_extended",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": false, "medium": false, "enterprise": true },
+      "description": "Extends the theme-activation history retention from the default last-5 activations to last-20. Enterprise only — long-tail rollback is a compliance/support signal (revert to Q3 2025 branding for a legal review)."
+    }
+  ],
+  "cross_references": [
+    "ThemeObserver::creating checks theme_capture before persisting.",
+    "ThemePresetObserver::creating checks theme_custom_presets when tenant_id != null.",
+    "ThemeTokenOverrideObserver::creating checks theme_token_overrides.",
+    "PurgeExpiredThemeSnapshotsJob uses theme_rollback_extended to pick between last-5 vs last-20 retention.",
+    "The ContrastAuditor binding is unconditional but its findings are only surfaced when theme_accessibility_audit is true."
+  ]
+}

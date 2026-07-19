@@ -1,0 +1,329 @@
+{
+  "id": "academorix://modules/attendance/events",
+  "$version": 1,
+  "title": "attendance — published events",
+  "namespace": "Academorix\\Sports\\Attendance\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit`. AttendanceRecorded is the load-bearing check-in signal — cascades to Pass consumption bookkeeping + growth::analytics + notifications. AbsenceFreezeThresholdReached is a P1 event — every fire pauses a paying membership.",
+  "events": [
+    {
+      "name": "AttendanceRecorded",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceRecorded",
+      "trigger": "AttendanceOrchestrator committed the atomic (attendance-create + pass-consume) transaction. Fires exactly once per successful check-in.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAttendanceRecordedNotification (opt-in — some guardians want per-session confirmation)",
+        "cache::InvalidateAthleteAttendanceCache",
+        "cache::InvalidateSessionRosterCache",
+        "growth::analytics::TrackAttendanceEvent (Wave 8+)"
+      ],
+      "payload": {
+        "attendance_record_id": "ULID (atd_*)",
+        "tenant_id": "ULID",
+        "session_id": "ULID (ses_*)",
+        "athlete_id": "ULID (ath_*)",
+        "athlete_enrollment_id": "ULID (aen_*)",
+        "consumed_pass_id": "ULID (pss_*) | null",
+        "membership_id": "ULID (mbr_*) | null",
+        "status": "'present' | 'late' | 'left_early' | 'present_with_note'",
+        "checked_in_at": "ISO 8601",
+        "checked_in_via": "'self_kiosk' | 'coach_verified' | 'admin_recorded' | 'geofence' | 'qr_scan'",
+        "checked_in_by_user_id": "ULID (usr_*) | null"
+      }
+    },
+    {
+      "name": "AttendanceStatusUpdated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceStatusUpdated",
+      "trigger": "Attendance status mutated within the 48h post-session correction window (present → late-marked-explicitly, or notes added).",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "attendance_record_id": "ULID",
+        "tenant_id": "ULID",
+        "from_status": "string",
+        "to_status": "string",
+        "changed_by_user_id": "ULID",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "AttendanceCheckedOut",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceCheckedOut",
+      "trigger": "checked_out_at set on an AttendanceRecord. Optional field — only sessions with mandatory check-out or partial-attendance tracking use it.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "attendance_record_id": "ULID",
+        "tenant_id": "ULID",
+        "session_id": "ULID",
+        "athlete_id": "ULID",
+        "checked_out_at": "ISO 8601",
+        "left_early_reason": "string | null"
+      }
+    },
+    {
+      "name": "AttendanceCancelled",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceCancelled",
+      "trigger": "Admin cancelled an attendance record (accidental check-in, wrong athlete, wrong session). The consumed Pass is refunded (returned to unused pool via Pass.refund()) in the same transaction. Also fires via sports::SessionCancelled cascade — every attendance for the cancelled session is cancelled.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAttendanceCancelledNotification (to guardian)",
+        "cache::InvalidateAthleteAttendanceCache"
+      ],
+      "payload": {
+        "attendance_record_id": "ULID",
+        "tenant_id": "ULID",
+        "session_id": "ULID",
+        "athlete_id": "ULID",
+        "refunded_pass_id": "ULID | null",
+        "cancellation_reason": "string",
+        "cancelled_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "LateArrivalRecorded",
+      "class": "Academorix\\Sports\\Attendance\\Events\\LateArrivalRecorded",
+      "trigger": "AttendanceOrchestrator computed status='late' during check-in and created a LateArrival satellite row. Fires alongside AttendanceRecorded in the same commit.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchLateArrivalNotification (to guardian + coach when policy.notification_config.notify_on_late)"
+      ],
+      "payload": {
+        "late_arrival_id": "ULID (lat_*)",
+        "attendance_record_id": "ULID (atd_*)",
+        "tenant_id": "ULID",
+        "session_id": "ULID",
+        "athlete_id": "ULID",
+        "minutes_late": "integer",
+        "policy_id": "ULID (apo_*) | null",
+        "penalty_applied": "'none' | 'consume_pass_anyway' | 'fractional_consume' | 'notify_only' | null"
+      }
+    },
+    {
+      "name": "AbsenceRecorded",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceRecorded",
+      "trigger": "AbsenceRecord created — either by nightly ReconcileAttendanceJob (auto-detected unexcused no-show) OR by guardian self-report (POST /absences/report).",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchFirstAbsenceNotification (to guardian + athlete when policy.notification_config.notify_athlete_on_first_absence)",
+        "attendance::EvaluateAbsenceThresholdOnAbsenceRecorded (in-band rolling-window check)"
+      ],
+      "payload": {
+        "absence_record_id": "ULID (abs_*)",
+        "tenant_id": "ULID",
+        "session_id": "ULID",
+        "athlete_id": "ULID",
+        "athlete_enrollment_id": "ULID",
+        "status": "'unexcused' | 'excused' | 'no_show_advance_notice_given' | 'vacation' | 'medical' | 'bereavement'",
+        "absence_reason": "string | null",
+        "reported_at": "ISO 8601",
+        "reported_by_user_id": "ULID | null",
+        "counted_toward_freeze": "boolean"
+      }
+    },
+    {
+      "name": "AbsenceExcused",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceExcused",
+      "trigger": "Admin flipped an existing AbsenceRecord.status from unexcused → excused. counted_toward_freeze flipped to false; threshold re-evaluated (may undo a prior freeze cascade).",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAttendanceExcusedNotification (to guardian)",
+        "attendance::EvaluateAbsenceThresholdOnAbsenceRecorded (re-run — may undo freeze)"
+      ],
+      "payload": {
+        "absence_record_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "excused_by_user_id": "ULID",
+        "excused_at": "ISO 8601",
+        "absence_reason": "string | null",
+        "documented_url_signed": "string | null"
+      }
+    },
+    {
+      "name": "AbsenceReasonUpdated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceReasonUpdated",
+      "trigger": "absence_reason OR explanation mutated on an existing AbsenceRecord. Distinct from AbsenceExcused which flips the STATUS.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog"
+      ],
+      "payload": {
+        "absence_record_id": "ULID",
+        "tenant_id": "ULID",
+        "from_reason": "string | null",
+        "to_reason": "string | null",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "AbsenceFreezeThresholdReached",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AbsenceFreezeThresholdReached",
+      "trigger": "P1 event. EvaluateAbsenceThresholdOnAbsenceRecorded hook detected the athlete's unexcused-absence count in the rolling window has crossed policy.max_unexcused_absences_per_period. Cascades to membership freeze.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAbsenceFreezeThresholdReachedNotification (to guardian + admin — cannot-opt-out)",
+        "attendance::FreezeMembershipOnThresholdReached (pauses the membership via membership::MembershipObserver.setStatus('paused'))"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "athlete_enrollment_id": "ULID",
+        "membership_id": "ULID | null",
+        "policy_id": "ULID | null",
+        "unexcused_count": "integer",
+        "threshold": "integer",
+        "window_days": "integer",
+        "triggered_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AttendancePolicyCreated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendancePolicyCreated",
+      "trigger": "New AttendancePolicy committed.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidatePolicyResolverCache"
+      ],
+      "payload": {
+        "policy_id": "ULID (apo_*)",
+        "tenant_id": "ULID",
+        "branch_id": "ULID | null",
+        "membership_plan_id": "ULID | null",
+        "name": "string",
+        "grace_period_minutes": "integer",
+        "max_unexcused_absences_per_period": "integer"
+      }
+    },
+    {
+      "name": "AttendancePolicyUpdated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendancePolicyUpdated",
+      "trigger": "Policy mutated. Cache invalidated so subsequent check-ins pick up new grace period + thresholds.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidatePolicyResolverCache"
+      ],
+      "payload": {
+        "policy_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "changed_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "AttendancePolicyActivated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendancePolicyActivated",
+      "trigger": "is_active flipped false → true. Refuses if it would create an active-policy collision at the same (branch, plan) specificity.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidatePolicyResolverCache"
+      ],
+      "payload": {
+        "policy_id": "ULID",
+        "tenant_id": "ULID",
+        "activated_at": "ISO 8601",
+        "activated_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "AttendancePolicyDeactivated",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendancePolicyDeactivated",
+      "trigger": "is_active flipped true → false. Fallback policy at broader specificity takes over.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidatePolicyResolverCache"
+      ],
+      "payload": {
+        "policy_id": "ULID",
+        "tenant_id": "ULID",
+        "deactivated_at": "ISO 8601",
+        "deactivated_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "PassConsumedViaAttendance",
+      "class": "Academorix\\Sports\\Attendance\\Events\\PassConsumedViaAttendance",
+      "trigger": "Bridges finance::PassConsumed to attendance context. Fires alongside AttendanceRecorded when a Pass was consumed as part of the check-in. Distinct from finance's own PassConsumed which is the raw money-side event.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog"
+      ],
+      "payload": {
+        "attendance_record_id": "ULID",
+        "consumed_pass_id": "ULID (pss_*)",
+        "membership_id": "ULID (mbr_*)",
+        "tenant_id": "ULID",
+        "consumed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "NoShowFeeCharged",
+      "class": "Academorix\\Sports\\Attendance\\Events\\NoShowFeeCharged",
+      "trigger": "P1. ChargeNoShowFeeJob dispatched an invoice creation via finance::invoice module for a policy-configured no-show fee. Fires per (athlete, session) once.",
+      "queue": "notifications-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchNoShowFeeChargedNotification (to guardian — cannot-opt-out, invoice payable)",
+        "finance::invoice::CreateNoShowFeeInvoice"
+      ],
+      "payload": {
+        "absence_record_id": "ULID",
+        "tenant_id": "ULID",
+        "athlete_id": "ULID",
+        "membership_id": "ULID | null",
+        "fee_amount_cents": "integer",
+        "fee_currency": "string",
+        "policy_id": "ULID",
+        "charged_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AttendanceReconciled",
+      "class": "Academorix\\Sports\\Attendance\\Events\\AttendanceReconciled",
+      "trigger": "ReconcileAttendanceJob completed processing a Session. Fires once per session with count metrics — expected / present / absent / late.",
+      "queue": "attendance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "cache::InvalidateSessionRosterCache",
+        "growth::analytics::TrackSessionAttendanceAggregate (Wave 8+)"
+      ],
+      "payload": {
+        "session_id": "ULID",
+        "tenant_id": "ULID",
+        "expected_count": "integer",
+        "present_count": "integer",
+        "late_count": "integer",
+        "absent_count": "integer",
+        "excused_count": "integer",
+        "reconciled_at": "ISO 8601"
+      }
+    }
+  ]
+}

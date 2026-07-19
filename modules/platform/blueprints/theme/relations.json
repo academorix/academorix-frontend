@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/theme/relations",
+  "$version": 1,
+  "title": "theme — model relationships",
+  "description": "Three aggregates + one outbound reference to a co-located row (user_theme_preferences, owned by user module).",
+  "internal": [
+    {
+      "from": "Theme",
+      "kind": "belongsTo",
+      "to": "ThemePreset",
+      "foreignKey": "selected_preset_id",
+      "onDelete": "RESTRICT",
+      "description": "A Theme references a preset. Cannot delete the preset while any Theme references it."
+    },
+    {
+      "from": "Theme",
+      "kind": "hasMany",
+      "to": "ThemeTokenOverride",
+      "foreignKey": "theme_id",
+      "onDelete": "CASCADE",
+      "description": "Deleting a theme cascade-deletes its overrides."
+    },
+    {
+      "from": "ThemeTokenOverride",
+      "kind": "belongsTo",
+      "to": "Theme",
+      "foreignKey": "theme_id",
+      "onDelete": "CASCADE"
+    },
+    {
+      "from": "ThemePreset",
+      "kind": "hasMany",
+      "to": "Theme",
+      "foreignKey": "selected_preset_id",
+      "inverse": "belongsTo",
+      "description": "Reverse — used by MigrateThemeTokensOnPresetUpdateJob to find affected downstream themes."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Theme",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "CASCADE",
+      "note": "BelongsToTenant trait handles the global scope + auto-fill on save."
+    },
+    {
+      "from": "ThemePreset",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "nullable": true,
+      "onDelete": "CASCADE",
+      "note": "Nullable — platform-provided presets carry tenant_id = NULL. Cascades on TenantErased for tenant custom presets."
+    },
+    {
+      "from": "ThemePreset",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "created_by_user_id",
+      "nullable": true,
+      "onDelete": "RESTRICT",
+      "note": "Author of a tenant custom preset. RESTRICT so a user deletion is blocked while they own presets — those must transfer ownership first."
+    },
+    {
+      "from": "ThemeTokenOverride",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "CASCADE"
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules read via TokenResolver — no downstream FKs point at theme rows. TokenResolver is the ONLY documented consumer contract; feature packages call resolver.resolveTokens(tenantId, mode) rather than joining on the theme tables.",
+    "user_theme_preferences_note": "The user_theme_preferences table (owned by the user module) references user_id but does NOT carry an FK to any theme table — the preference is orthogonal to the tenant's theme selection (a user can prefer 'dark' regardless of which dark theme the tenant serves)."
+  }
+}

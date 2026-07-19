@@ -1,0 +1,41 @@
+{
+  "id": "academorix://modules/theme/attributes",
+  "$version": 1,
+  "title": "theme — declarative attributes",
+  "description": "One PHP attribute — #[AsThemeConsumer] — that a downstream module uses to mark itself as a theme-token consumer. Discovery at boot compiles a list of consumers used for cache warming + fanout on ThemeCacheInvalidated.",
+  "namespace": "Academorix\\Platform\\Theme\\Attributes",
+  "attributes": [
+    {
+      "name": "AsThemeConsumer",
+      "class": "Academorix\\Platform\\Theme\\Attributes\\AsThemeConsumer",
+      "target": "class",
+      "repeatable": false,
+      "purpose": "Marks a class as a theme-token consumer. Registers with the ThemeConsumerRegistry so downstream cache-warming + ThemeCacheInvalidated fanout know to bust the consumer's own caches. Applied to notification templates, email renderers, PDF invoice renderers, SDUI screen resolvers.",
+      "arguments": [
+        {
+          "name": "concern",
+          "type": "string",
+          "required": true,
+          "description": "Short identifier of what the consumer renders — 'email-template', 'pdf-invoice', 'sdui-screen', 'og-image'. Used for observability grouping."
+        },
+        {
+          "name": "consumesModes",
+          "type": "array<string>",
+          "default": "['light', 'dark']",
+          "description": "Which theme modes the consumer renders. Email templates typically ['light']; SDUI screens typically both."
+        },
+        {
+          "name": "invalidatesCacheKey",
+          "type": "string|null",
+          "default": "null",
+          "description": "Optional consumer-owned cache key to purge on ThemeCacheInvalidated. Null = the consumer handles invalidation internally via its own event listener."
+        }
+      ]
+    }
+  ],
+  "conventions": [
+    "Consumer registration is OPTIONAL — a module can read theme tokens via TokenResolver without registering. The attribute exists for lifecycle-integrated consumers (email templates + PDF renderers) that need cache invalidation on theme change.",
+    "Every #[AsThemeConsumer] class is compiled into a ThemeConsumerRegistry at boot via foundation's DiscoversAttributes seam.",
+    "The registry is inspected by ThemeCacheInvalidated fanout to selectively purge downstream caches."
+  ]
+}

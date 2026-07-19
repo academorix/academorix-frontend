@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/coaching/schemas/coach-skill-rating",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "CoachSkillRating",
+  "description": "Per-Coach per-Sport/Discipline/Position rating. Polymorphic ratable across sports/registry. Two scales: stars_1_5 OR level_5_stage. Rated_by_user_id resolves to a User; the observer refuses self-rating (rater's Staff == coaching_profile.staff). Ratings expire (default 2 years); PurgeExpiredSkillRatingsJob sweeps nightly. Carries tenant_id (CASCADE) + coaching_profile_id (CASCADE). NEVER carries application_id, organization_id, region_id, branch_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "coaching",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "coach_skill_ratings",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "csr_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Coaching\\Models\\CoachSkillRating",
+    "interface": "Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachSkillRatingInterface",
+    "implements": ["Academorix\\Sports\\Coaching\\Contracts\\Data\\CoachSkillRatingInterface"],
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToCoachingProfile",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "rating_scale": "CoachRatingScale",
+      "ratable_type": "CoachRatableType",
+      "rating_value": "integer",
+      "rated_at": "datetime",
+      "expires_at": "date",
+      "metadata": "array"
+    },
+    "observers": ["CoachSkillRatingObserver"],
+    "appends": [
+      "coach_display_name",
+      "ratable_display_name",
+      "is_current"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `csr_<26>`." },
+      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
+      "coaching_profile_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "coaching_profiles", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" }, "description": "The rated coach." },
+      "ratable_type": { "type": "string", "length": 32, "nullable": false, "description": "Enum: Sport / Discipline / Position. Corresponds to a sports/registry target model." },
+      "ratable_id": { "type": "string", "length": 30, "nullable": false, "description": "The target row's ULID." },
+      "rating_scale": { "type": "string", "length": 16, "nullable": false, "description": "Enum: stars_1_5 / level_5_stage." },
+      "rating_value": { "type": "smallint", "nullable": false, "description": "Integer 1..5. Encoding differs per scale (stars = literal; level = 1=beginner, 2=intermediate, 3=advanced, 4=expert, 5=master)." },
+      "rated_by_user_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "users", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The rater's User. RESTRICT — cannot hard-delete a User while ratings reference." },
+      "rated_at": { "type": "timestamptz", "nullable": false },
+      "notes": { "type": "text", "nullable": true, "description": "Admin-authored rationale. HR-visible only (never surfaces on coach's /me/ratings)." },
+      "expires_at": { "type": "date", "nullable": true, "description": "When the rating auto-expires. Defaults to rated_at + config('coaching.rating.default_expiry_years', 2) years. NULL = never expire." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "coaching_profile_id", "ratable_type", "ratable_id"],
+        "unique": true,
+        "name": "coach_skill_ratings_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One live rating per (coach, ratable). Updates replace values; duplicates refused."
+      },
+      { "columns": ["tenant_id", "coaching_profile_id", "ratable_type"], "name": "coach_skill_ratings_profile_type_idx" },
+      { "columns": ["tenant_id", "expires_at"], "name": "coach_skill_ratings_expires_idx", "description": "Feeds PurgeExpiredSkillRatingsJob." }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "coaching_profile_id",
+    "ratable_type",
+    "ratable_id",
+    "rating_scale",
+    "rating_value",
+    "rated_by_user_id",
+    "rated_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^csr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "coaching_profile_id": { "type": "string", "pattern": "^cop_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "ratable_type": { "type": "string", "enum": ["Sport", "Discipline", "Position"] },
+    "ratable_id": { "type": "string", "pattern": "^(spt|dsc|pos)_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "rating_scale": { "type": "string", "enum": ["stars_1_5", "level_5_stage"] },
+    "rating_value": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "rated_by_user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "rated_at": { "type": "string", "format": "date-time" },
+    "notes": { "type": ["string", "null"], "maxLength": 2048 },
+    "expires_at": { "type": ["string", "null"], "format": "date" },
+    "metadata": { "type": ["object", "null"] },
+    "coach_display_name": { "type": "string" },
+    "ratable_display_name": { "type": "string" },
+    "is_current": { "type": "boolean" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One live row per (tenant_id, coaching_profile_id, ratable_type, ratable_id) — enforced by partial unique index",
+    "rating_value in 1..5 for both scales — enforced by observer + valid_rating_value_for_scale rule",
+    "ratable_type in (Sport, Discipline, Position) — enforced by observer",
+    "The referenced ratable_id row must be is_active=true in the target registry table — enforced by observer + valid_ratable_type_for_rating rule",
+    "rated_by_user_id.staff_id MUST NOT equal coaching_profile.staff_id (no self-rating) — enforced by observer + no_self_rating rule",
+    "Tenant MUST hold the coaching_skill_ratings entitlement to create ratings — enforced by observer",
+    "rating_scale, ratable_type, ratable_id, coaching_profile_id are IMMUTABLE post-create — enforced by observer (create new row instead)"
+  ]
+}

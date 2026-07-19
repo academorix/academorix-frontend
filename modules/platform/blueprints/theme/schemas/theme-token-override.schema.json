@@ -1,0 +1,182 @@
+{
+  "id": "academorix://modules/theme/schemas/theme-token-override",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ThemeTokenOverride",
+  "description": "Per-tenant sparse patch applied on top of a preset. One row per (theme_id, token_key). Enables 'we like the platform light-default preset but want our brand red on the primary action button' without cloning the whole preset. The override cascades into Theme.tokens_snapshot at activation time — the override row itself never mutates once created (later edits update in place; deletions fall through to preset default).",
+  "type": "object",
+  "x-module": "theme",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "theme_token_overrides",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "tto_",
+    "incrementing": false,
+    "model": "Academorix\\Platform\\Theme\\Models\\ThemeTokenOverride",
+    "interface": "Academorix\\Platform\\Theme\\Contracts\\Data\\ThemeTokenOverrideInterface",
+    "implements": ["Academorix\\Platform\\Theme\\Contracts\\Data\\ThemeTokenOverrideInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToTheme",
+      "HasUserstamps",
+      "HasAuditable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "token_type": "ThemeTokenType",
+      "applied_at": "datetime"
+    },
+    "appends": [],
+    "observers": ["ThemeTokenOverrideObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `tto_<26 chars>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "theme_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "themes",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Parent theme. CASCADE — deleting a theme removes its overrides."
+      },
+      "token_key": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Canonical vocabulary key — 'color.primary.500', 'spacing.4', 'typography.body.family'. Validated against data/token-vocabulary.json by ThemeTokenOverrideObserver at write time."
+      },
+      "token_value": {
+        "type": "string",
+        "length": 256,
+        "nullable": false,
+        "description": "Override value. Format depends on token_type: hex for color, dimension for spacing/radius, font-family string for typography.family, etc."
+      },
+      "token_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: color / dimension / typography / radius / shadow / motion / opacity / z_index. Determines value validation schema."
+      },
+      "reason": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Human note for audit — 'brand color override for CTA'."
+      },
+      "applied_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the override was applied to the parent theme's snapshot. Set on create + updated on token_value change."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "theme_id", "token_key"],
+        "unique": true,
+        "name": "theme_token_overrides_tenant_theme_key_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "At most one override per (theme, token_key)."
+      },
+      {
+        "columns": ["theme_id"],
+        "unique": false,
+        "name": "theme_token_overrides_theme_id_index",
+        "description": "TokenResolver reads all overrides for a theme via this index."
+      },
+      {
+        "columns": ["tenant_id", "token_type"],
+        "unique": false,
+        "name": "theme_token_overrides_tenant_type_index",
+        "description": "Per-tenant filter — 'show me all color overrides in this tenant'."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "theme_id",
+    "token_key",
+    "token_value",
+    "token_type",
+    "applied_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^tto_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "theme_id": { "type": "string", "pattern": "^thm_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "token_key": {
+      "type": "string",
+      "pattern": "^(color|spacing|typography|radius|shadow|motion|opacity|z_index)(\\.[a-z0-9_-]+)+$",
+      "maxLength": 128
+    },
+    "token_value": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "token_type": {
+      "type": "string",
+      "enum": ["color", "dimension", "typography", "radius", "shadow", "motion", "opacity", "z_index"]
+    },
+    "reason": {
+      "type": ["string", "null"],
+      "maxLength": 256
+    },
+    "applied_at": { "type": "string", "format": "date-time" },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["created_by", "updated_by", "deleted_by"],
+    "computed": []
+  },
+  "x-related": [
+    {
+      "schema": "academorix://modules/theme/schemas/theme",
+      "kind": "parent theme this override applies to"
+    }
+  ]
+}

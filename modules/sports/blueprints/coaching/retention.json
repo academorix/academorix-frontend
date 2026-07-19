@@ -1,0 +1,101 @@
+{
+  "id": "academorix://modules/coaching/retention",
+  "$version": 1,
+  "title": "coaching — retention windows",
+  "description": "Retention aligned with US DOL wage-and-hour + NCAA / IHSA coach-verification compliance. Active coaching records retain for the lifetime of the parent Staff. Deactivated profiles retain 7 years (10 with coaching_extended_retention). Certifications retain while-active + 7 years post-expiration. Skill ratings retain 2 years default (5 with extended). Tenant erasure cascades except records under active regulator hold.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) — data minimisation",
+    "gdpr Art. 17 §3(b) — erasure exception for legal obligation",
+    "us_dol FLSA §516.2(a) — wage-and-hour record retention",
+    "ncaa_ihsa — coach-certification verification retention",
+    "safesport — background check certification retention",
+    "ccpa §1798.105(d)(5) — contract performance exception"
+  ],
+  "retention": [
+    {
+      "entity": "CoachingProfile — is_active=true, verified",
+      "hot": { "days": "co-terminous with parent Staff" },
+      "purge": {
+        "trigger": "never (until deactivation)",
+        "action": "no-op"
+      }
+    },
+    {
+      "entity": "CoachingProfile — is_active=false",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post deactivation); 3650 (10 years with coaching_extended_retention)" },
+      "purge": {
+        "trigger": "> 7 years past deactivation (or 10 with extended)",
+        "action": "hard delete via PurgeCoachingDataForErasedTenant + companion job (Wave 4+)",
+        "notes": "Employment-record retention per US DOL. Cascades to child certifications + assignments + ratings."
+      }
+    },
+    {
+      "entity": "CoachAssignment — active",
+      "hot": { "days": "co-terminous with end_date" },
+      "purge": {
+        "trigger": "never (until end_date reached)",
+        "action": "no-op"
+      }
+    },
+    {
+      "entity": "CoachAssignment — ended",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post end_date)" },
+      "purge": {
+        "trigger": "> 7 years past end_date",
+        "action": "hard delete",
+        "notes": "Wage-and-hour audit retention. Historical roster survives archive/withdrawal of parent Team/Event/Session."
+      }
+    },
+    {
+      "entity": "CoachCertification — active + verified",
+      "hot": { "days": "co-terminous with expires_at (or forever if no expiry)" },
+      "purge": {
+        "trigger": "never while unexpired",
+        "action": "no-op"
+      }
+    },
+    {
+      "entity": "CoachCertification — expired",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post expiration); 3650 (10 with coaching_extended_retention)" },
+      "purge": {
+        "trigger": "> 7 years past expires_at (10 with extended)",
+        "action": "hard delete",
+        "notes": "NCAA / IHSA / SafeSport compliance — verification history must survive coach's employment for regulatory investigations."
+      }
+    },
+    {
+      "entity": "CoachSkillRating — current",
+      "hot": { "days": "co-terminous with expires_at (default 2 years post rated_at)" },
+      "purge": {
+        "trigger": "expires_at reached",
+        "action": "soft-delete via PurgeExpiredSkillRatingsJob (nightly)"
+      }
+    },
+    {
+      "entity": "CoachSkillRating — soft-deleted",
+      "hot": { "days": 90 },
+      "cold": { "days": "730 (2 years post expiration); 1825 (5 with coaching_extended_retention)" },
+      "purge": {
+        "trigger": "> 2 years past expires_at (5 with extended)",
+        "action": "hard delete via PurgeExpiredSkillRatingsJob (nightly)",
+        "notes": "Ratings are evaluation-authored; retention shorter than employment records but still audit-visible for the medium term."
+      }
+    },
+    {
+      "entity": "document_url + photo_url_signed references",
+      "hot": { "days": "co-terminous with parent row" },
+      "purge": {
+        "trigger": "parent row hard-delete",
+        "action": "cascade via storage::File retention (Wave 4+)"
+      }
+    }
+  ],
+  "cross_reference": [
+    "TenantErased cascades hard-delete of every coaching row via FK CASCADE. Audit rows survive per the audit module's outlives-source design.",
+    "Regulator hold: When a tenant carries an active regulator hold flag (Wave 4+ tenancy audit trail), the purge job skips those rows regardless of retention window.",
+    "Extended retention grandfathered per-record: a profile deactivated while the tenant carried coaching_extended_retention retains 10y even if the tenant later downgrades to Medium."
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/attendance/caches",
+  "$version": 1,
+  "title": "attendance — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": [
+    "attendance",
+    "attendance.by_athlete",
+    "attendance.by_session",
+    "attendance.policy_resolver",
+    "attendance.roster_snapshot",
+    "attendance.reports"
+  ],
+  "keys": [
+    {
+      "pattern": "atd:by_athlete:{athlete_id}:{season_id}",
+      "description": "All attendance + absence records for an athlete in a season. Read hot on athlete detail pages + guardian dashboards.",
+      "ttlSeconds": 300,
+      "tags": ["attendance", "attendance.by_athlete"],
+      "invalidatedBy": ["AttendanceRecorded", "AttendanceCancelled", "AbsenceRecorded", "AbsenceExcused"]
+    },
+    {
+      "pattern": "atd:by_session:{session_id}",
+      "description": "Session roster with check-in status per enrolled athlete. Read hot on coach session-day dashboards + live session broadcast.",
+      "ttlSeconds": 60,
+      "tags": ["attendance", "attendance.by_session"],
+      "invalidatedBy": ["AttendanceRecorded", "AttendanceStatusUpdated", "AttendanceCheckedOut", "AttendanceCancelled", "AbsenceRecorded", "AttendanceReconciled"]
+    },
+    {
+      "pattern": "atd:policy_resolver:{tenant_id}:{branch_id}:{plan_id}",
+      "description": "Cached policy resolution — given a (branch, plan) combo, which policy applies? Nearest-match cascade result.",
+      "ttlSeconds": 3600,
+      "tags": ["attendance", "attendance.policy_resolver"],
+      "invalidatedBy": ["AttendancePolicyCreated", "AttendancePolicyUpdated", "AttendancePolicyActivated", "AttendancePolicyDeactivated"]
+    },
+    {
+      "pattern": "atd:roster_snapshot:{session_id}",
+      "description": "Materialised expected-attendee list for a session (from AthleteEnrollments). Feeds ReconcileAttendanceJob + coach roster view.",
+      "ttlSeconds": 600,
+      "tags": ["attendance", "attendance.roster_snapshot"],
+      "invalidatedBy": ["athlete-enrollment::EnrollmentActivated", "athlete-enrollment::EnrollmentWithdrawn"]
+    },
+    {
+      "pattern": "atd:reports:{tenant_id}:{branch_id}:{period_start}:{period_end}",
+      "description": "Materialised attendance report for a period. Feeds Weekly Digest + admin reports UI.",
+      "ttlSeconds": 3600,
+      "tags": ["attendance", "attendance.reports"],
+      "invalidatedBy": ["AttendanceRecorded", "AbsenceRecorded", "AttendanceCancelled", "AbsenceExcused"]
+    },
+    {
+      "pattern": "atd:absence_rolling_window:{athlete_id}:{policy_id}",
+      "description": "Cached rolling-window unexcused-absence count for an athlete + policy. Read hot on threshold evaluation. Short TTL because it drives the freeze cascade — stale values must not persist.",
+      "ttlSeconds": 60,
+      "tags": ["attendance", "attendance.by_athlete"],
+      "invalidatedBy": ["AbsenceRecorded", "AbsenceExcused"]
+    }
+  ]
+}

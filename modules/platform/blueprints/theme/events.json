@@ -1,0 +1,183 @@
+{
+  "id": "academorix://modules/theme/events",
+  "$version": 1,
+  "title": "theme — published events",
+  "namespace": "Academorix\\Platform\\Theme\\Events",
+  "dispatchMode": "afterCommit",
+  "events": [
+    {
+      "name": "ThemeCreated",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemeCreated",
+      "trigger": "New Theme row inserted. Row starts is_active=false; a separate ThemeActivated fires once someone flips is_active=true.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteThemeCreatedToActivity"
+      ],
+      "payload": {
+        "theme_id": "thm_ULID",
+        "tenant_id": "ten_ULID",
+        "mode": "'light' | 'dark'",
+        "name": "string",
+        "selected_preset_id": "tps_ULID",
+        "created_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ThemeActivated",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemeActivated",
+      "trigger": "Theme.is_active transitions false → true (via ThemeObserver::updating). Fires AFTER the prior active theme (same mode) has been flipped to is_active=false in the same DB txn.",
+      "queue": "notifications",
+      "consumers": [
+        "theme::RegenerateCssOnThemeActivated",
+        "notifications::SendThemeActivatedNotification",
+        "activity::WriteThemeActivatedToActivity",
+        "audit::WriteThemeActivatedToAudit"
+      ],
+      "payload": {
+        "theme_id": "thm_ULID",
+        "tenant_id": "ten_ULID",
+        "mode": "'light' | 'dark'",
+        "selected_preset_id": "tps_ULID",
+        "tokens_snapshot_hash": "SHA-256 of the frozen tokens jsonb — for cache-key derivation",
+        "activated_at": "ISO 8601",
+        "prior_theme_id": "thm_ULID | null — the theme that was deactivated in the same transaction"
+      }
+    },
+    {
+      "name": "ThemeDeactivated",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemeDeactivated",
+      "trigger": "Theme.is_active transitions true → false. Typically fires alongside a sibling ThemeActivated for the replacement theme in the same DB txn.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteThemeDeactivatedToActivity"
+      ],
+      "payload": {
+        "theme_id": "thm_ULID",
+        "tenant_id": "ten_ULID",
+        "mode": "'light' | 'dark'",
+        "deactivated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ThemePresetCreated",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemePresetCreated",
+      "trigger": "New ThemePreset row inserted. tenant_id NULL = platform preset (fires only during platform-admin operations); non-null = tenant custom preset.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteThemePresetCreatedToActivity"
+      ],
+      "payload": {
+        "preset_id": "tps_ULID",
+        "tenant_id": "ten_ULID | null",
+        "slug": "string",
+        "name": "string",
+        "mode": "'light' | 'dark'",
+        "category": "ThemePresetCategory",
+        "is_platform": "bool — derived from tenant_id IS NULL",
+        "created_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ThemePresetPublished",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemePresetPublished",
+      "trigger": "ThemePreset.is_active transitions false → true. For tenant custom presets: makes the preset visible to admin selection UI. For platform presets: cross-tenant announcement.",
+      "queue": "notifications",
+      "consumers": [
+        "notifications::SendThemePresetPublishedNotification",
+        "activity::WriteThemePresetPublishedToActivity"
+      ],
+      "payload": {
+        "preset_id": "tps_ULID",
+        "tenant_id": "ten_ULID | null",
+        "slug": "string",
+        "published_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ThemeTokenOverridden",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemeTokenOverridden",
+      "trigger": "New ThemeTokenOverride row inserted. One event per (theme_id, token_key) — batched at the request level.",
+      "queue": "notifications",
+      "consumers": [
+        "theme::RegenerateCssOnThemeActivated",
+        "activity::WriteThemeTokenOverriddenToActivity"
+      ],
+      "payload": {
+        "override_id": "tto_ULID",
+        "theme_id": "thm_ULID",
+        "tenant_id": "ten_ULID",
+        "token_key": "string — canonical vocabulary key (e.g. 'color.primary.500')",
+        "token_type": "ThemeTokenType",
+        "reason": "string | null"
+      }
+    },
+    {
+      "name": "ThemeTokenOverrideRemoved",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemeTokenOverrideRemoved",
+      "trigger": "ThemeTokenOverride hard-deleted or soft-deleted. Falls through to the underlying preset value in next resolution.",
+      "queue": "notifications",
+      "consumers": [
+        "theme::RegenerateCssOnThemeActivated",
+        "activity::WriteThemeTokenOverrideRemovedToActivity"
+      ],
+      "payload": {
+        "override_id": "tto_ULID",
+        "theme_id": "thm_ULID",
+        "tenant_id": "ten_ULID",
+        "token_key": "string",
+        "removed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ThemeAccessibilityFlagChanged",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemeAccessibilityFlagChanged",
+      "trigger": "Theme.accessibility_flags jsonb changes. One event per boolean flip within the payload — high_contrast, reduced_motion, larger_text, focus_visible_always.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteThemeAccessibilityFlagChangedToActivity",
+        "audit::WriteThemeAccessibilityFlagChangedToAudit"
+      ],
+      "payload": {
+        "theme_id": "thm_ULID",
+        "tenant_id": "ten_ULID",
+        "flag": "'high_contrast' | 'reduced_motion' | 'larger_text' | 'focus_visible_always'",
+        "new_value": "bool",
+        "old_value": "bool",
+        "changed_by_user_id": "usr_ULID | null"
+      }
+    },
+    {
+      "name": "ThemeCacheInvalidated",
+      "class": "Academorix\\Platform\\Theme\\Events\\ThemeCacheInvalidated",
+      "trigger": "Fires post-RegenerateRenderedCssJob completion. Downstream consumers (CDN purge, SSR cache) key off this to bust their own caches.",
+      "queue": "notifications",
+      "consumers": [
+        "observability::MetricsCollector",
+        "storage::PurgeCdnCache (planned)"
+      ],
+      "payload": {
+        "tenant_id": "ten_ULID",
+        "theme_id": "thm_ULID",
+        "compiled_css_url": "string — signed URL to the newly-rendered CSS",
+        "compiled_css_hash": "SHA-256",
+        "invalidated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "UserThemePreferenceUpdated",
+      "class": "Academorix\\Platform\\Theme\\Events\\UserThemePreferenceUpdated",
+      "trigger": "user::user_theme_preferences row updated — mode preference (light/dark/auto) OR accessibility overrides. Event fires HERE (not in user module) because theme is the resolver — user module owns the ROW, theme owns the SEMANTICS.",
+      "queue": "notifications",
+      "consumers": [
+        "activity::WriteUserThemePreferenceUpdatedToActivity"
+      ],
+      "payload": {
+        "user_id": "usr_ULID",
+        "tenant_id": "ten_ULID",
+        "preferred_mode": "'auto' | 'light' | 'dark'",
+        "accessibility_overrides": "AccessibilityFlagsPayload",
+        "updated_at": "ISO 8601"
+      }
+    }
+  ]
+}

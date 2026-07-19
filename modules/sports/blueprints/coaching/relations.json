@@ -1,0 +1,208 @@
+{
+  "id": "academorix://modules/coaching/relations",
+  "$version": 1,
+  "title": "coaching — model relationships",
+  "description": "Four owned entities: CoachingProfile, CoachAssignment, CoachCertification, CoachSkillRating. Every row carries `tenant_id` (CASCADE) per tenancy-columns.md §3. NEVER `application_id`, `region_id`, `organization_id`, `branch_id` (branch cascades through profile.branch_id), or `scope_node_id` — forbidden per §5. Every outbound FK stays same-tenant per defense-in-depth.",
+  "internal": [
+    {
+      "from": "CoachingProfile",
+      "kind": "hasMany",
+      "to": "CoachAssignment",
+      "foreignKey": "coaching_profile_id",
+      "description": "One profile → many assignments."
+    },
+    {
+      "from": "CoachingProfile",
+      "kind": "hasMany",
+      "to": "CoachCertification",
+      "foreignKey": "coaching_profile_id",
+      "description": "One profile → many certifications (ledger)."
+    },
+    {
+      "from": "CoachingProfile",
+      "kind": "hasMany",
+      "to": "CoachSkillRating",
+      "foreignKey": "coaching_profile_id",
+      "description": "One profile → many ratings across different ratables."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "CoachingProfile",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every coaching profile is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "CoachingProfile",
+      "kind": "belongsTo",
+      "to": "staff::Staff",
+      "foreignKey": "staff_id",
+      "onDelete": "restrict",
+      "description": "The parent Staff. RESTRICT — cannot hard-delete a Staff while a coaching profile references it. Offboarding cascades via the DeactivateCoachingProfileOnStaffOffboarded hook."
+    },
+    {
+      "from": "CoachingProfile",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "Coach's primary branch. RESTRICT — branch archive is refused while a coaching profile references it (staff module already guards this via BelongsToBranch)."
+    },
+    {
+      "from": "CoachingProfile",
+      "kind": "belongsTo",
+      "to": "sports/registry::Sport",
+      "foreignKey": "primary_sport_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Primary sport reference. RESTRICT — cannot deactivate a Sport while any active profile references it. Nullable — a coach may not have a declared primary sport (e.g. general fitness)."
+    },
+    {
+      "from": "CoachAssignment",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "CoachAssignment",
+      "kind": "belongsTo",
+      "to": "CoachingProfile",
+      "foreignKey": "coaching_profile_id",
+      "onDelete": "restrict",
+      "description": "The coach being assigned. RESTRICT — profile hard-delete blocked while assignments reference; soft-delete cascades to CancelActiveAssignmentsOnCoachingProfileDeactivated."
+    },
+    {
+      "from": "CoachAssignment",
+      "kind": "morphTo",
+      "to": "assignable (Session | Team | Event)",
+      "foreignKeys": ["assignable_type", "assignable_id"],
+      "description": "Polymorphic. Same-tenant enforcement lives in the observer (returns COACH_ASSIGNMENT_CROSS_TENANT on mismatch)."
+    },
+    {
+      "from": "CoachAssignment",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "assigned_by_user_id",
+      "onDelete": "restrict",
+      "description": "Audit trail — the User who created the assignment."
+    },
+    {
+      "from": "CoachCertification",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "CoachCertification",
+      "kind": "belongsTo",
+      "to": "CoachingProfile",
+      "foreignKey": "coaching_profile_id",
+      "onDelete": "cascade",
+      "description": "The profile that holds this certification. CASCADE — certifications have no meaning without their profile. Purge-at-retention protected — the row survives profile deactivation."
+    },
+    {
+      "from": "CoachCertification",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "verified_by_admin_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "SET NULL on User archive so audit trail survives."
+    },
+    {
+      "from": "CoachSkillRating",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "CoachSkillRating",
+      "kind": "belongsTo",
+      "to": "CoachingProfile",
+      "foreignKey": "coaching_profile_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "CoachSkillRating",
+      "kind": "morphTo",
+      "to": "ratable (Sport | Discipline | Position)",
+      "foreignKeys": ["ratable_type", "ratable_id"],
+      "description": "Polymorphic against sports/registry. Same-tenant not applicable — the registry is platform-scoped (tenant_id nullable). The observer validates is_active=true on the referenced row."
+    },
+    {
+      "from": "CoachSkillRating",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "rated_by_user_id",
+      "onDelete": "restrict",
+      "description": "The rater. RESTRICT — cannot hard-delete a User whose ratings still exist (SET NULL alternative rejected — the rater identity is audit-critical)."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules read coaching entities through the SDK + through the sports/session module's head_coach_id reference. No inbound FK from other modules today except the polymorphic morph_to on assignable/ratable.",
+    "examples": [
+      "sports/session::Session — carries `head_coach_id` referencing CoachingProfile (single primary coach) + this module's CoachAssignment tracks the many-to-many for stacking assistants",
+      "sports/attendance (Wave 4) — reads coaching_profile_id for check-in eligibility; assignment lookup via CoachAssignmentRepository",
+      "sports/team::Team (Wave 3+) — head_coach_id references CoachingProfile for the team's head coach; assignments track the multi-coach roster",
+      "notifications (Wave 4+) — session-coach-change alerts route through user::User → staff::Staff → coaching_profile.notify_on_rating preferences",
+      "growth::analytics (Wave 5+) — reads rating events for coach performance metrics"
+    ],
+    "onDelete": "N/A — no inbound FKs from other modules. Polymorphic references are same-tenant defense-in-depth checked by the observer."
+  },
+  "morphs": [
+    {
+      "from": "CoachAssignment.assignable",
+      "types": ["Academorix\\Sports\\Session\\Models\\Session", "Academorix\\Sports\\Team\\Models\\Team", "Academorix\\Sports\\Event\\Models\\Event"],
+      "description": "The thing being coached. Enforced string enum in the assignable_type column: 'Session' | 'Team' | 'Event'."
+    },
+    {
+      "from": "CoachSkillRating.ratable",
+      "types": ["Academorix\\Sports\\Registry\\Models\\Sport", "Academorix\\Sports\\Registry\\Models\\Discipline", "Academorix\\Sports\\Registry\\Models\\Position"],
+      "description": "The skill dimension being rated. Enforced string enum in the ratable_type column: 'Sport' | 'Discipline' | 'Position'."
+    }
+  ],
+  "accessor_chain": {
+    "description": "Presentation accessors delegate to related aggregates for uniform display.",
+    "CoachingProfile": {
+      "display_name": "staff->user->profile->display_name",
+      "email": "staff->user->identity->email",
+      "phone": "staff->user->profile->phone_e164",
+      "primary_sport_slug": "primarySport->slug",
+      "primary_sport_name": "primarySport->name",
+      "certification_count": "certifications->where('verified_at', '!=', null)->count()",
+      "active_assignment_count": "assignments->where('is_active', true)->count()",
+      "has_expiring_certifications": "certifications->contains(fn (c) => c->expires_at?->isBetween(now(), now()->addDays(90)))"
+    },
+    "CoachAssignment": {
+      "coach_display_name": "coachingProfile->display_name",
+      "is_active": "deleted_at IS NULL AND (end_date IS NULL OR end_date > now())",
+      "duration_days": "end_date ? end_date->diffInDays(start_date) : now()->diffInDays(start_date)",
+      "assignable_summary": "polymorphic - resolves to a short title of the Session/Team/Event"
+    },
+    "CoachCertification": {
+      "coach_display_name": "coachingProfile->display_name",
+      "is_verified": "verified_at IS NOT NULL",
+      "is_expired": "expires_at IS NOT NULL AND expires_at < now()",
+      "days_until_expiry": "expires_at ? expires_at->diffInDays(now()) : null"
+    },
+    "CoachSkillRating": {
+      "coach_display_name": "coachingProfile->display_name",
+      "ratable_display_name": "polymorphic - resolves to sport/discipline/position name",
+      "is_current": "deleted_at IS NULL AND (expires_at IS NULL OR expires_at > now())"
+    }
+  },
+  "notes": [
+    "CoachingProfile carries `application_id` INDIRECTLY via its Tenant. Enforced by tenancy-compliance-auditor.",
+    "CoachingProfile.branch_id is direct — but that's the STAFF-inherited branch scoping pattern (BelongsToBranch trait). Not a shortcut; branch is the coach's home.",
+    "CoachAssignment.assignable inherits its branch cascade through the assignable's own branch_id.",
+    "CoachSkillRating.ratable references the sports/registry catalog. Registry rows are platform-scoped (tenant_id nullable) — never a cross-tenant leak from registry.",
+    "CoachingProfile.staff_id + tenant_id are IMMUTABLE post-create — enforced by observer.",
+    "There is NO `Coach` model. Coach IS Staff. `CoachingProfile` is the sport-domain satellite that marks a Staff as an active Coach."
+  ]
+}

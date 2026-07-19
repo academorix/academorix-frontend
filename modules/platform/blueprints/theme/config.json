@@ -1,0 +1,122 @@
+{
+  "id": "academorix://modules/theme/config",
+  "$version": 1,
+  "title": "theme — developer configuration",
+  "configFile": "config/theme.php",
+  "envPrefix": "THEME_",
+  "sections": {
+    "presets": {
+      "description": "Platform-provided preset catalog. Six presets seeded from data/preset-catalog.json.",
+      "keys": [
+        {
+          "path": "theme.presets.platform_slugs",
+          "type": "array<string>",
+          "default": [
+            "light-default",
+            "dark-default",
+            "high-contrast-light",
+            "high-contrast-dark",
+            "brand-forward-blue",
+            "brand-forward-green"
+          ],
+          "description": "The seeded platform preset slugs. Migrations seed these on module boot; adding a slug here requires updating data/preset-catalog.json."
+        },
+        {
+          "path": "theme.presets.default_slug",
+          "type": "string",
+          "default": "light-default",
+          "description": "The preset assigned to newly-provisioned tenants (TenantProvisioned hook seeds a Theme referencing this preset)."
+        }
+      ]
+    },
+    "tokens": {
+      "description": "Canonical token vocabulary paths.",
+      "keys": [
+        {
+          "path": "theme.tokens.vocabulary_path",
+          "type": "string",
+          "default": "modules/platform/blueprints/theme/data/token-vocabulary.json",
+          "description": "Path to the canonical token vocabulary. Loaded at boot by PresetValidator."
+        },
+        {
+          "path": "theme.tokens.fail_on_unknown_key",
+          "type": "bool",
+          "default": true,
+          "description": "Reject writes with token keys not in the vocabulary. Turn false ONLY for beta preset development. Never off in production."
+        }
+      ]
+    },
+    "cache": {
+      "keys": [
+        {
+          "path": "theme.cache.resolved_tokens_ttl_seconds",
+          "type": "int",
+          "env": "THEME_CACHE_RESOLVED_TTL",
+          "default": 3600,
+          "description": "Redis TTL for theme:resolved:{tenant_id}:{mode} — the resolved token map."
+        },
+        {
+          "path": "theme.cache.compiled_css_ttl_seconds",
+          "type": "int",
+          "env": "THEME_CACHE_COMPILED_CSS_TTL",
+          "default": 3600,
+          "description": "Redis TTL for theme:compiled-css:{tenant_id}:{mode} — the signed URL to the compiled CSS artifact."
+        },
+        {
+          "path": "theme.cache.preset_thumbnail_ttl_seconds",
+          "type": "int",
+          "default": 604800,
+          "description": "Preset thumbnail signed-URL TTL — 7 days, since presets don't move often."
+        }
+      ]
+    },
+    "accessibility": {
+      "keys": [
+        {
+          "path": "theme.accessibility.wcag_level",
+          "type": "string",
+          "default": "AA",
+          "description": "WCAG 2.2 contrast target for the ContrastAuditor. 'AA' (default) checks 4.5:1 body / 3:1 large. 'AAA' checks 7:1 body / 4.5:1 large. Findings are ALWAYS informational — this setting only changes the threshold at which recommendations surface."
+        },
+        {
+          "path": "theme.accessibility.audit_on_activate",
+          "type": "bool",
+          "default": true,
+          "description": "Run the ContrastAuditor after every ThemeActivated. Surface findings as ThemeAccessibilityRecommendationNotification."
+        }
+      ]
+    },
+    "rollback": {
+      "keys": [
+        {
+          "path": "theme.rollback.default_retention_activations",
+          "type": "int",
+          "default": 5,
+          "description": "How many prior Theme rows to retain for rollback (default tier). Enterprise tier via theme_rollback_extended entitlement bumps this to 20."
+        },
+        {
+          "path": "theme.rollback.enterprise_retention_activations",
+          "type": "int",
+          "default": 20,
+          "description": "How many prior Theme rows to retain when the tenant has theme_rollback_extended."
+        }
+      ]
+    },
+    "css_render": {
+      "keys": [
+        {
+          "path": "theme.css_render.output_format",
+          "type": "string",
+          "default": "css_custom_properties",
+          "description": "Output format for RegenerateRenderedCssJob. Currently only css_custom_properties (CSS variables under :root + .dark scope). Future: 'tailwind_config' (writes a tailwind.config.js snippet) — deferred to v2."
+        },
+        {
+          "path": "theme.css_render.minify",
+          "type": "bool",
+          "default": true,
+          "description": "Minify the compiled CSS."
+        }
+      ]
+    }
+  }
+}

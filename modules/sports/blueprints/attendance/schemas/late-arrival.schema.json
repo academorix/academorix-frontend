@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/attendance/schemas/late-arrival",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "LateArrival",
+  "description": "Per-attendance-record satellite tracking WHEN in the grace-period an athlete arrived. Created only when parent AttendanceRecord.status='late' or 'left_early'. Carries tenant_id (CASCADE) + attendance_record_id (RESTRICT) + denormalised session_id (RESTRICT) + athlete_id (RESTRICT) + optional policy_id (RESTRICT — snapshot at check-in time). NEVER carries application_id, organization_id, region_id, or scope_node_id directly.",
+  "type": "object",
+  "x-module": "attendance",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "late_arrivals",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "lat_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Attendance\\Models\\LateArrival",
+    "interface": "Academorix\\Sports\\Attendance\\Contracts\\Data\\LateArrivalInterface",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToAthlete",
+      "BelongsToSession",
+      "BelongsToAttendanceRecord",
+      "BelongsToAttendancePolicy",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "minutes_late": "integer",
+      "penalty_applied": "LatePenaltyType",
+      "metadata": "array"
+    },
+    "observers": ["LateArrivalObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true, "description": "Prefixed ULID: `lat_<26>`." },
+      "tenant_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" } },
+      "attendance_record_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "attendance_records", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Parent AttendanceRecord. IMMUTABLE. Cascade-deleted only when parent is hard-deleted." },
+      "session_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "sessions", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Denormalised from parent attendance_record.session_id. IMMUTABLE." },
+      "athlete_id": { "type": "string", "length": 30, "nullable": false, "foreign": { "table": "athletes", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "Denormalised from parent attendance_record.athlete_id. IMMUTABLE." },
+      "minutes_late": { "type": "integer", "nullable": false, "description": "Minutes past session.starts_at. Must be > 0. IMMUTABLE — event timestamp facts." },
+      "policy_id": { "type": "string", "length": 30, "nullable": true, "foreign": { "table": "attendance_policies", "column": "id", "onUpdate": "cascade", "onDelete": "restrict" }, "description": "The AttendancePolicy resolved at check-in time. SNAPSHOT — survives even when the policy is later deactivated. IMMUTABLE." },
+      "penalty_applied": { "type": "string", "length": 32, "nullable": true, "description": "Enum: none / consume_pass_anyway / fractional_consume / notify_only. Snapshot of policy.late_arrival_penalty_type at check-in. IMMUTABLE." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "athlete_id", "minutes_late"], "name": "late_arrivals_by_athlete_idx", "description": "Feeds coach dashboard's per-athlete lateness pattern view." },
+      { "columns": ["tenant_id", "session_id"], "name": "late_arrivals_by_session_idx" },
+      { "columns": ["attendance_record_id"], "name": "late_arrivals_by_attendance_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "attendance_record_id",
+    "session_id",
+    "athlete_id",
+    "minutes_late",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^lat_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "attendance_record_id": { "type": "string", "pattern": "^atd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "session_id": { "type": "string", "pattern": "^ses_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "athlete_id": { "type": "string", "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "minutes_late": { "type": "integer", "minimum": 1 },
+    "policy_id": { "type": ["string", "null"], "pattern": "^apo_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "penalty_applied": {
+      "type": ["string", "null"],
+      "enum": ["none", "consume_pass_anyway", "fractional_consume", "notify_only", null]
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "LateArrival can only be created when parent AttendanceRecord.status IN ('late', 'left_early')",
+    "session_id + athlete_id denormalised from parent attendance_record and MUST match (validated at creating)",
+    "tenant_id + attendance_record_id + session_id + athlete_id + minutes_late + policy_id + penalty_applied are IMMUTABLE post-create",
+    "minutes_late > 0 (a 'late arrival' with 0 minutes late is nonsensical)",
+    "policy_id + penalty_applied are POINT-IN-TIME SNAPSHOTS — survive policy deactivation or deletion",
+    "LateArrival has no soft-delete — cascades with parent AttendanceRecord hard-delete"
+  ]
+}

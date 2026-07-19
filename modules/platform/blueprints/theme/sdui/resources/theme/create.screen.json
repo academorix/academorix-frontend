@@ -1,0 +1,100 @@
+{
+  "id": "theme.resources.theme.create",
+  "title": "New theme",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/themes/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme", "action": "create" },
+  "requiresPermission": "theme.manage",
+  "dataSources": [
+    {
+      "name": "presets",
+      "kind": "http.get",
+      "url": "/api/v1/theme-presets",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "All themes",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/themes" } }
+        },
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "New theme" }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrl": "/api/v1/themes",
+            "submitMethod": "POST",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Theme created" },
+              { "kind": "navigate", "toExpr": "'/tenant/themes/' + response.data.id" }
+            ]
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "name",
+                    "label": "Theme name",
+                    "placeholder": "Academy Default (Light)",
+                    "required": true
+                  }
+                },
+                {
+                  "kind": "Widget",
+                  "widget": "theme.mode-switcher",
+                  "props": {
+                    "modeFieldName": "mode",
+                    "accessibilityFlagsFieldName": "accessibility_flags"
+                  }
+                },
+                {
+                  "kind": "Select",
+                  "props": { "name": "selected_preset_id", "label": "Preset", "required": true },
+                  "bindings": {
+                    "options": {
+                      "$expr": "presets.map(p => ({ key: p.id, label: p.name + ' (' + p.mode + ')' }))"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Create theme"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

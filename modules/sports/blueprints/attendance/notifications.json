@@ -1,0 +1,109 @@
+{
+  "id": "academorix://modules/attendance/notifications",
+  "$version": 1,
+  "title": "attendance — notification classes + categories",
+  "namespace": "Academorix\\Sports\\Attendance\\Notifications",
+  "notifications": [
+    "AttendanceRecordedNotification",
+    "LateArrivalNotification",
+    "FirstAbsenceNotification",
+    "ThirdAbsenceWarningNotification",
+    "AbsenceFreezeThresholdReachedNotification",
+    "NoShowFeeChargedNotification",
+    "AttendanceExcusedNotification",
+    "CoachSessionAttendanceSummaryNotification",
+    "WeeklyAttendanceDigestNotification"
+  ],
+  "categories": [
+    {
+      "slug": "attendance.recorded",
+      "display_name": "Attendance recorded",
+      "description": "Sent when an athlete checks in. Opt-in — some guardians want per-session confirmation, most don't.",
+      "default_channels": ["in_app"],
+      "priority": "informational",
+      "consent_tier": "informational_opt_in",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "attendance.late_arrival",
+      "display_name": "Late arrival",
+      "description": "Sent when an athlete arrived after grace period. Coach + guardian visibility.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "informational_opt_in",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "attendance.first_absence",
+      "display_name": "First absence recorded",
+      "description": "Sent on the athlete's first unexcused absence in the rolling window. Configurable per policy (policy.notification_config.notify_athlete_on_first_absence).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "attendance.third_absence_warning",
+      "display_name": "Third absence — freeze approaching",
+      "description": "Sent when the athlete's unexcused-absence count reaches (max_unexcused - 1). Warns the guardian that one more absence pauses the membership.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "attendance.freeze_threshold_reached",
+      "display_name": "Membership frozen — absence threshold reached",
+      "description": "P1 event. Sent when the athlete's unexcused-absence count crossed policy.max_unexcused_absences_per_period. Membership is paused. Cannot-opt-out — this is a state-change on a paying subscription.",
+      "default_channels": ["mail", "in_app", "sms"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "attendance.no_show_fee_charged",
+      "display_name": "No-show fee invoiced",
+      "description": "Sent when a no-show fee invoice was created via finance::invoice. Cannot-opt-out — the invoice is payable.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "attendance.excused",
+      "display_name": "Absence excused",
+      "description": "Sent when an admin flipped an unexcused absence to excused. Reassures the guardian the record has been corrected.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "informational_opt_in",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "attendance.coach_session_summary",
+      "display_name": "Session attendance summary (coach)",
+      "description": "Post-session digest for the head coach: who attended, who was late, who was absent. Sent within 60 minutes of session.ends_at.",
+      "default_channels": ["in_app", "mail"],
+      "priority": "informational",
+      "consent_tier": "informational_opt_in",
+      "opt_out_allowed": true,
+      "is_system": true
+    },
+    {
+      "slug": "attendance.weekly_digest",
+      "display_name": "Weekly attendance digest (admin)",
+      "description": "Weekly per-branch summary: attendance rate, absence patterns, late-arrival trends. Opt-in. Requires attendance_analytics entitlement.",
+      "default_channels": ["mail"],
+      "priority": "informational",
+      "consent_tier": "informational_opt_in",
+      "opt_out_allowed": true,
+      "is_system": true
+    }
+  ]
+}

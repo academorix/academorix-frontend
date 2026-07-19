@@ -1,0 +1,132 @@
+{
+  "id": "theme.resources.theme-preset.list",
+  "title": "Presets",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/theme-presets",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme-preset", "action": "list" },
+  "requiresPermission": "theme.read",
+  "dataSources": [
+    {
+      "name": "presets",
+      "kind": "http.get",
+      "url": "/api/v1/theme-presets",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Theme presets"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "6 platform presets ship day 1 + your tenant custom presets. Duplicate a platform preset to customize."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "New preset"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/theme-presets/new" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "List",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+          "bindings": { "items": { "$ref": "presets" } },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 flex flex-col gap-3" },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center justify-between" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-medium" },
+                    "bindings": { "children": { "$ref": "row.name" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs", "variant": "info" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.tenant_id !== null" },
+                      "children": "Platform"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "Widget",
+                "widget": "theme.preset-thumbnail",
+                "props": { "preset": { "$ref": "row" } }
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2 text-xs text-muted" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "row.mode" } }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "xs" },
+                    "bindings": { "children": { "$ref": "row.category" } }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Link",
+                    "props": { "size": "sm", "children": "Duplicate" },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/theme-presets/' + row.id + '/duplicate'"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

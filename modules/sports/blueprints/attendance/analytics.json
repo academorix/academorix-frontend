@@ -1,0 +1,34 @@
+{
+  "id": "academorix://modules/attendance/analytics",
+  "$version": 1,
+  "title": "attendance — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    { "name": "Attendance Recorded", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "checked_in_via", "status", "was_on_time_bucket", "session_type_bucket"] },
+    { "name": "Attendance Late", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "minutes_late_bucket", "penalty_applied"] },
+    { "name": "Attendance Checked Out", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "left_early_bucket"] },
+    { "name": "Attendance Cancelled", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "cancellation_reason_bucket"] },
+    { "name": "Absence Recorded", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "status", "reported_source", "counted_toward_freeze"] },
+    { "name": "Absence Excused", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "absence_reason_bucket"] },
+    {
+      "name": "Absence Freeze Threshold Reached",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "threshold", "window_days"],
+      "description": "P1 event. Consent tier: essential — the athlete's membership just got frozen; this is a system-integrity signal."
+    },
+    { "name": "No Show Fee Charged", "kind": "track", "consent_required": "essential", "properties": ["tenant_id", "fee_amount_bucket", "fee_currency"], "description": "Consent tier: essential — money-side signal for revenue reconciliation." },
+    { "name": "Attendance Policy Activated", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "specificity_label", "grace_period_bucket", "max_absences_bucket"] },
+    { "name": "Late Arrival Recorded", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "minutes_late_bucket"] },
+    { "name": "Attendance Reconciled", "kind": "track", "consent_required": "functional", "properties": ["tenant_id", "expected_count_bucket", "attendance_rate_bucket", "absence_count_bucket"] }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw device_fingerprint_hash / ip_address / gps_lat / gps_lng — those live in confidential columns for fraud correlation only.",
+    "Analytics NEVER carry raw absence_reason free-text or explanation — reasons are bucketed via absence_reason_bucket (medical / family / vacation / transportation / other).",
+    "minutes_late bucketed as (0-5 / 6-15 / 16-30 / 31-60 / >60) — prevents identity inference via precise timestamps.",
+    "fee_amount bucketed as (under_20 / under_50 / under_200 / over_200) — same reason.",
+    "session_type + venue never propagate — those are contextual to sports/session's own analytics.",
+    "Guardian consent for analytics tier gates every event via consent_required — essential events fire regardless (they're system-integrity signals)."
+  ]
+}

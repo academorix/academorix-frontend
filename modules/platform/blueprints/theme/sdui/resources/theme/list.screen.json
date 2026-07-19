@@ -1,0 +1,162 @@
+{
+  "id": "theme.resources.theme.list",
+  "title": "Themes",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/themes",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme", "action": "list" },
+  "requiresPermission": "theme.read",
+  "dataSources": [
+    {
+      "name": "themes",
+      "kind": "http.get",
+      "url": "/api/v1/themes",
+      "unwrap": "data",
+      "paginated": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Themes"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Manage design tokens for your dashboard, emails, and PDFs. Exactly one active theme per mode."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "New theme"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/themes/new" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Tabs",
+          "props": { "defaultValue": "light" },
+          "children": [
+            {
+              "kind": "Tabs.List",
+              "children": [
+                { "kind": "Tabs.Trigger", "props": { "value": "light", "children": "Light mode" } },
+                { "kind": "Tabs.Trigger", "props": { "value": "dark", "children": "Dark mode" } }
+              ]
+            },
+            {
+              "kind": "Tabs.Content",
+              "props": { "value": "light" },
+              "children": [
+                {
+                  "kind": "List",
+                  "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-4" },
+                  "bindings": {
+                    "items": { "$expr": "themes.filter(t => t.mode === 'light')" }
+                  },
+                  "itemRenderer": {
+                    "kind": "Card",
+                    "props": { "className": "p-4 flex flex-col gap-3" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center justify-between" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-medium" },
+                            "bindings": { "children": { "$ref": "row.name" } }
+                          },
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "sm", "variant": "success" },
+                            "bindings": {
+                              "hidden": { "$expr": "!row.is_active" },
+                              "children": "Active"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Widget",
+                        "widget": "theme.preset-thumbnail",
+                        "props": { "theme": { "$ref": "row" } }
+                      },
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "Link",
+                            "props": { "size": "sm", "children": "Preview" },
+                            "actions": {
+                              "onPress": {
+                                "kind": "navigate",
+                                "toExpr": "'/tenant/themes/' + row.id + '/preview'"
+                              }
+                            }
+                          },
+                          {
+                            "kind": "Button",
+                            "props": { "size": "sm", "variant": "primary", "children": "Activate" },
+                            "bindings": { "disabled": { "$ref": "row.is_active" } },
+                            "actions": {
+                              "onPress": {
+                                "kind": "navigate",
+                                "toExpr": "'/tenant/themes/' + row.id + '/activate'"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Tabs.Content",
+              "props": { "value": "dark" },
+              "children": [
+                {
+                  "kind": "Alert",
+                  "props": {
+                    "variant": "info",
+                    "children": "Dark mode themes render for users whose preferred_mode is 'dark' or 'auto' with the OS in dark mode. Same UX as light mode above — mirror the tab."
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

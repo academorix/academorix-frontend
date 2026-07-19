@@ -1,0 +1,147 @@
+{
+  "id": "academorix://modules/coaching/settings",
+  "$version": 1,
+  "title": "coaching — settings",
+  "description": "Tenant-facing preferences for coaching workflow: verification cadence, assignment limits, rating defaults, availability strictness.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "coaching",
+      "class": "Academorix\\Sports\\Coaching\\Settings\\CoachingSettings",
+      "label": "Coaching",
+      "description": "Tenant-wide coaching workflow defaults.",
+      "icon": "user-group",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 68,
+      "permission": "coaching_profiles.viewAny",
+      "sections": [
+        {
+          "label": "Verification",
+          "icon": "shield-check",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "require_admin_verification",
+              "controlType": "toggle",
+              "label": "Require admin verification",
+              "defaultValue": true,
+              "helpText": "When on (default), new coaching profiles require admin verify before assignments can be created.",
+              "sortOrder": 1
+            },
+            {
+              "name": "auto_verify_low_risk_bodies",
+              "controlType": "multi-text",
+              "label": "Auto-verify certifications from these issuing bodies",
+              "defaultValue": [],
+              "helpText": "Certifications from these issuing bodies auto-verify without admin review. Empty by default; use only for tenant-internal training certs.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "expiration_cadence_days",
+              "controlType": "multi-number",
+              "label": "Certification expiration cadence (days before expiry)",
+              "defaultValue": [90, 30, 7],
+              "helpText": "Days before expires_at at which to fire the expiring-soon notification. 0 always fires the expired event.",
+              "sortOrder": 1
+            },
+            {
+              "name": "assignment_ending_soon_days",
+              "controlType": "number",
+              "label": "Assignment ending-soon window (days)",
+              "defaultValue": 7,
+              "min": 1,
+              "max": 30,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Assignment",
+          "icon": "clipboard-list",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "max_concurrent_per_coach",
+              "controlType": "number",
+              "label": "Max concurrent assignments per coach",
+              "defaultValue": 0,
+              "min": 0,
+              "max": 100,
+              "helpText": "0 = unlimited.",
+              "sortOrder": 1
+            },
+            {
+              "name": "max_assistants_per_assignable",
+              "controlType": "number",
+              "label": "Max assistant coaches per Session/Team/Event",
+              "defaultValue": 3,
+              "min": 0,
+              "max": 10,
+              "sortOrder": 2
+            },
+            {
+              "name": "allow_overlapping_by_default",
+              "controlType": "toggle",
+              "label": "Allow overlapping assignments by default",
+              "defaultValue": false,
+              "helpText": "When off (default), the conflict detector flags overlapping assignments but does not refuse them. Admins may still override with intent.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Rating",
+          "icon": "star",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "default_expiry_years",
+              "controlType": "number",
+              "label": "Default rating expiry (years)",
+              "defaultValue": 2,
+              "min": 0,
+              "max": 10,
+              "helpText": "0 = never expire. Extended retention (Enterprise) defaults to 5.",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_scale",
+              "controlType": "select",
+              "label": "Default rating scale",
+              "defaultValue": "stars_1_5",
+              "options": [
+                { "value": "stars_1_5", "label": "Stars (1-5)" },
+                { "value": "level_5_stage", "label": "Level (Beginner → Master)" }
+              ],
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Availability",
+          "icon": "calendar",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "strict_validation",
+              "controlType": "toggle",
+              "label": "Require full-week availability",
+              "defaultValue": false,
+              "helpText": "When on, availability must include every day-of-week (Mon-Sun) with at least an empty array. When off, missing days imply unavailable.",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

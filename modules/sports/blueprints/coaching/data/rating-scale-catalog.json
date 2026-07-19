@@ -1,0 +1,44 @@
+{
+  "$version": 1,
+  "title": "Coach skill rating scale catalog",
+  "description": "The two supported rating scales + their value encodings. Both scales encode 1-5; the display + intent differ.",
+  "scales": [
+    {
+      "value": "stars_1_5",
+      "label": "Stars (1-5)",
+      "sort_order": 1,
+      "min_value": 1,
+      "max_value": 5,
+      "display_widget": "coaching.skill-rating-stars",
+      "value_labels": {
+        "1": "Poor",
+        "2": "Below average",
+        "3": "Average",
+        "4": "Good",
+        "5": "Excellent"
+      },
+      "note": "Freeform star rating. Best for subjective evaluation ('how skilled is this coach at teaching serve technique?')."
+    },
+    {
+      "value": "level_5_stage",
+      "label": "Level (Beginner → Master)",
+      "sort_order": 2,
+      "min_value": 1,
+      "max_value": 5,
+      "display_widget": "coaching.skill-rating-stars",
+      "value_labels": {
+        "1": "Beginner",
+        "2": "Intermediate",
+        "3": "Advanced",
+        "4": "Expert",
+        "5": "Master"
+      },
+      "note": "Level-based rating. Best for domain-competency evaluation ('what level of goalkeeper training is this coach qualified to lead?'). Encodes to 1-5 for storage but SDUI renders as the level label."
+    }
+  ],
+  "notes": [
+    "Both scales encode integer 1..5 in the rating_value column. The rating_scale column tells SDUI which label set to render.",
+    "The `display_widget` column tells SDUI which widget to reuse — the skill-rating-stars widget renders differently based on rating_scale ('★★★★☆' vs 'Advanced'/4).",
+    "Adding a third scale requires: update this file + add to the CoachRatingScale enum + update the observer's valid_rating_value_for_scale rule."
+  ]
+}

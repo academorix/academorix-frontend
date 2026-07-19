@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/theme/schedule",
+  "$version": 1,
+  "title": "theme — scheduled tasks",
+  "entries": [
+    {
+      "name": "theme:purge-expired-snapshots",
+      "command": "php artisan theme:purge-expired-snapshots",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03 UTC — dispatch PurgeExpiredThemeSnapshotsJob. Retains last-5 Theme rows per (tenant, mode) (last-20 for tenants with theme_rollback_extended)."
+    },
+    {
+      "name": "theme:warm-resolved-tokens-cache",
+      "command": "php artisan theme:warm-cache",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly — dispatch CacheThemeResolvedTokensJob for every tenant with an active theme, so the theme:resolved:{tenant}:{mode} Redis keys never go cold. Job is idempotent + shouldBeUnique with 60s window."
+    },
+    {
+      "name": "theme:preset-thumbnail-backfill",
+      "command": "php artisan theme:preset-thumbnail-backfill --missing-only",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 04 UTC — find ThemePreset rows with preview_thumbnail_url IS NULL AND is_active=true; dispatch PreviewPresetJob for each. Catches presets that landed while the render worker was down."
+    },
+    {
+      "name": "theme:contrast-audit-active-themes",
+      "command": "php artisan theme:contrast-audit",
+      "cron": "0 5 * * 1",
+      "timezone": "UTC",
+      "purpose": "Weekly Monday 05 UTC — run ContrastAuditor across every tenant's active themes; surface findings as ThemeAccessibilityRecommendationNotification. Provides ongoing accessibility signal even without theme edits."
+    }
+  ]
+}

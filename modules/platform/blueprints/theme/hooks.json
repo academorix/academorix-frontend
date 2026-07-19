@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/theme/hooks",
+  "$version": 1,
+  "title": "theme — module hooks",
+  "description": "Cross-aggregate lifecycle callbacks. Each hook is a named class + a single-invoke handler wired into an event/observer via the module's service provider. Distinct from listeners (external event subscribers) — hooks are internal orchestration.",
+  "hooks": [
+    {
+      "name": "RegenerateCssOnThemeActivated",
+      "class": "Academorix\\Platform\\Theme\\Hooks\\RegenerateCssOnThemeActivated",
+      "triggered_by": "ThemeActivated (ShouldDispatchAfterCommit)",
+      "action": "Dispatch RegenerateRenderedCssJob for the tenant. Runs post-commit so a failed rebuild never rolls back the activation itself.",
+      "queue": "theme",
+      "critical": true,
+      "notes": "The 'CSS is stale until the rebuild lands' window is bounded by the job's execution time (typically < 5s). During that window, downstream consumers read the prior theme_snapshot from cache. This is intentional — availability over consistency."
+    },
+    {
+      "name": "DeactivatePriorThemeOnActivate",
+      "class": "Academorix\\Platform\\Theme\\Hooks\\DeactivatePriorThemeOnActivate",
+      "triggered_by": "ThemeObserver::updating (is_active false → true)",
+      "action": "Inside the same DB transaction: find prior active theme in same (tenant_id, mode); set is_active=false + deactivated_at=now(). Enforces the unique_active_theme_per_tenant_per_mode partial index without needing the caller to remember the two-step 'deactivate old, activate new' dance.",
+      "critical": true,
+      "notes": "Runs INSIDE the observer (same DB txn), not as an after-commit hook — the invariant would break if the deactivation were reordered."
+    },
+    {
+      "name": "FreezeTokensSnapshotOnActivate",
+      "class": "Academorix\\Platform\\Theme\\Hooks\\FreezeTokensSnapshotOnActivate",
+      "triggered_by": "ThemeObserver::updating (is_active false → true)",
+      "action": "Resolve the cascade: platform_default_preset ← selected_preset ← theme_token_overrides. Materialise into Theme.tokens_snapshot (jsonb). This snapshot is IMMUTABLE while is_active=true; subsequent preset edits or override changes DO NOT mutate an active theme's snapshot — they land as new sibling rows.",
+      "critical": true,
+      "notes": "The load-bearing invariant: mid-session preset edits by an admin never break rendering for logged-in users."
+    },
+    {
+      "name": "PurgeExpiredThemeSnapshotsOnRetentionCap",
+      "class": "Academorix\\Platform\\Theme\\Hooks\\PurgeExpiredThemeSnapshotsOnRetentionCap",
+      "triggered_by": "PurgeExpiredThemeSnapshotsJob (nightly schedule)",
+      "action": "Per tenant, per mode: retain the last-N Theme rows (N = 5 default, 20 for theme_rollback_extended tenants); hard-delete older rows. Rollback UI only offers themes that survive this pass.",
+      "notes": "Compliance-relevant — the retention policy is auditable via compliance::RetentionRun."
+    }
+  ]
+}

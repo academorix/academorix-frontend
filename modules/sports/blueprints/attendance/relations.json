@@ -1,0 +1,223 @@
+{
+  "id": "academorix://modules/attendance/relations",
+  "$version": 1,
+  "title": "attendance — model relationships",
+  "description": "Four owned entities. AttendanceRecord + AbsenceRecord belong to 4 aggregates directly (Tenant + Session + Athlete + AthleteEnrollment) + AttendanceRecord references Pass (SET NULL) + Membership (RESTRICT). AttendancePolicy belongs to Tenant + optional Branch + optional MembershipPlan. LateArrival is a satellite of AttendanceRecord. All RESTRICT outbound except tenant (CASCADE) + consumed_pass_id (RESTRICT — cannot lose the money-side reference). No `application_id` / `organization_id` / `region_id` / `scope_node_id` — forbidden columns.",
+  "internal": [
+    {
+      "from": "LateArrival",
+      "kind": "belongsTo",
+      "to": "AttendanceRecord",
+      "foreignKey": "attendance_record_id",
+      "onDelete": "restrict",
+      "description": "Satellite parent. Late arrivals are cascade-deleted only when the parent attendance is hard-deleted post-retention."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "AttendanceRecord",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "AttendanceRecord",
+      "kind": "belongsTo",
+      "to": "sports::Session",
+      "foreignKey": "session_id",
+      "onDelete": "restrict",
+      "description": "The session being attended. RESTRICT — sessions cannot be archived while attendance records reference them. IMMUTABLE post-create."
+    },
+    {
+      "from": "AttendanceRecord",
+      "kind": "belongsTo",
+      "to": "athlete::Athlete",
+      "foreignKey": "athlete_id",
+      "onDelete": "restrict",
+      "description": "The attendee. RESTRICT. IMMUTABLE post-create."
+    },
+    {
+      "from": "AttendanceRecord",
+      "kind": "belongsTo",
+      "to": "athlete-enrollment::AthleteEnrollment",
+      "foreignKey": "athlete_enrollment_id",
+      "onDelete": "restrict",
+      "description": "The roster row the athlete is attending via. RESTRICT — enrollment cannot be hard-deleted while attendance references remain. IMMUTABLE post-create."
+    },
+    {
+      "from": "AttendanceRecord",
+      "kind": "belongsTo",
+      "to": "finance::Pass",
+      "foreignKey": "consumed_pass_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "The Pass atomically consumed at check-in. NULL when session.requires_pass=false OR when the athlete used a trial / free / drop-in path. RESTRICT — the money-side reference cannot be lost. IMMUTABLE once set."
+    },
+    {
+      "from": "AttendanceRecord",
+      "kind": "belongsTo",
+      "to": "finance::Membership",
+      "foreignKey": "membership_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "The membership from which the Pass was consumed. Denormalised for indexed filtering. NULL for trial / free / drop-in. RESTRICT."
+    },
+    {
+      "from": "AttendanceRecord",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "checked_in_by_user_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "The User (coach / admin / kiosk-authed athlete) who performed the check-in. NULL for pure self-kiosk with anonymous session. RESTRICT for accountability trail."
+    },
+    {
+      "from": "AttendancePolicy",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "AttendancePolicy",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Branch scope of the policy. NULL = tenant-wide default. RESTRICT — branches cannot be archived while active policies reference them."
+    },
+    {
+      "from": "AttendancePolicy",
+      "kind": "belongsTo",
+      "to": "finance::MembershipPlan",
+      "foreignKey": "membership_plan_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Plan scope of the policy. NULL = applies to all plans on the branch. RESTRICT — plans cannot be archived while active policies reference them."
+    },
+    {
+      "from": "AbsenceRecord",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "AbsenceRecord",
+      "kind": "belongsTo",
+      "to": "sports::Session",
+      "foreignKey": "session_id",
+      "onDelete": "restrict",
+      "description": "The session the athlete missed. IMMUTABLE."
+    },
+    {
+      "from": "AbsenceRecord",
+      "kind": "belongsTo",
+      "to": "athlete::Athlete",
+      "foreignKey": "athlete_id",
+      "onDelete": "restrict",
+      "description": "The absent athlete. IMMUTABLE."
+    },
+    {
+      "from": "AbsenceRecord",
+      "kind": "belongsTo",
+      "to": "athlete-enrollment::AthleteEnrollment",
+      "foreignKey": "athlete_enrollment_id",
+      "onDelete": "restrict",
+      "description": "The roster row the athlete was on when they missed the session. IMMUTABLE."
+    },
+    {
+      "from": "AbsenceRecord",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "reported_by_user_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Guardian / athlete who self-reported (POST /absences/report). NULL for system-detected absences (nightly ReconcileAttendanceJob)."
+    },
+    {
+      "from": "AbsenceRecord",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "excused_by_user_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Admin who flipped the absence to excused. NULL until excusal."
+    },
+    {
+      "from": "LateArrival",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "LateArrival",
+      "kind": "belongsTo",
+      "to": "sports::Session",
+      "foreignKey": "session_id",
+      "onDelete": "restrict",
+      "description": "Denormalised from parent attendance_record for indexed filtering."
+    },
+    {
+      "from": "LateArrival",
+      "kind": "belongsTo",
+      "to": "athlete::Athlete",
+      "foreignKey": "athlete_id",
+      "onDelete": "restrict",
+      "description": "Denormalised from parent attendance_record."
+    },
+    {
+      "from": "LateArrival",
+      "kind": "belongsTo",
+      "to": "attendance::AttendancePolicy",
+      "foreignKey": "policy_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "The AttendancePolicy applied at check-in. Snapshot of policy resolution — the policy_id survives even when the policy is later deactivated. RESTRICT — policies cannot be hard-deleted while LateArrival rows reference them."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream Wave 8+ modules attach:",
+    "examples": [
+      "growth::analytics::AttendancePatternRecord (Wave 8+) — attendance_record_id references AttendanceRecord.id for pattern detection",
+      "sports/progress (Wave 8+) — reads attendance rate as a factor in progress tracking (no FK; consumes emitted events)",
+      "finance::invoice — reads absence_id via NoShowFeeCharged event payload (no FK; consumes emitted events)"
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing attendance_records.id + absence_records.id — cascade-checks live in AttendanceRecordObserver.saving + AbsenceRecordObserver.saving."
+  },
+  "morphs": [],
+  "accessor_chain": {
+    "description": "The AttendanceRecord model delegates presentation accessors to its aggregates.",
+    "AttendanceRecord": {
+      "athlete_display_name": "athlete->display_name",
+      "session_display_name": "session->name",
+      "session_starts_at": "session->starts_at",
+      "session_ends_at": "session->ends_at",
+      "was_late": "status IN ('late')",
+      "was_left_early": "status IN ('left_early')",
+      "minutes_late": "computed diff between checked_in_at and session.starts_at (positive when late)",
+      "is_within_correction_window": "now() <= session.ends_at + interval '48 hours'"
+    },
+    "AbsenceRecord": {
+      "athlete_display_name": "athlete->display_name",
+      "session_display_name": "session->name",
+      "is_excused": "status IN ('excused', 'no_show_advance_notice_given', 'vacation', 'medical', 'bereavement')",
+      "days_since_reported": "computed floor((now - reported_at) / 86400)"
+    },
+    "AttendancePolicy": {
+      "specificity_label": "computed — 'plan-scoped' / 'branch-scoped' / 'tenant-wide' based on (branch_id, membership_plan_id)",
+      "is_effective_now": "is_active AND (effective_from IS NULL OR effective_from <= now()) AND (effective_until IS NULL OR effective_until > now())"
+    }
+  },
+  "notes": [
+    "AttendanceRecord + AbsenceRecord carry `application_id` INDIRECTLY via their Tenant.",
+    "Branch, organization, region cascade through session.venue.branch_id → session → attendance (for AttendanceRecord + AbsenceRecord).",
+    "For AttendancePolicy: branch cascade is DIRECT (branch_id column); organization + region cascade through branch.",
+    "tenant_id + session_id + athlete_id + athlete_enrollment_id + checked_in_at + checked_in_via are IMMUTABLE post-create on AttendanceRecord.",
+    "consumed_pass_id is IMMUTABLE once set — cancel + re-create attendance to re-attribute a pass.",
+    "policy_id on LateArrival is IMMUTABLE — it's a snapshot of the policy at check-in time."
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/theme/settings",
+  "$version": 1,
+  "title": "theme — settings (meta)",
+  "description": "Settings the theme module publishes about itself. Consumed by the settings platform via #[AsSetting] discovery. Group covers rollback retention override + accessibility audit toggle + auto-provision-default-theme behavior on TenantProvisioned.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "theme_platform",
+      "class": "Academorix\\Platform\\Theme\\Settings\\ThemePlatformSettings",
+      "label": "Theme platform",
+      "description": "Configuration for the design token substrate — rollback retention, accessibility audit cadence, default theme on tenant provisioning.",
+      "icon": "swatch",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 23,
+      "permission": "theme.read",
+      "sections": [
+        {
+          "label": "Rollback",
+          "description": "How many historical themes to retain for rollback.",
+          "icon": "arrow-uturn-left",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "rollback_retention_override",
+              "controlType": "number",
+              "label": "Rollback retention (activations)",
+              "defaultValue": null,
+              "validation": ["nullable", "integer", "min:1", "max:100"],
+              "min": 1,
+              "max": 100,
+              "sortOrder": 1,
+              "helpText": "Empty = follow entitlement default (5 for standard, 20 for theme_rollback_extended tenants). Explicit value overrides — capped at entitlement max."
+            }
+          ]
+        },
+        {
+          "label": "Accessibility audit",
+          "description": "Contrast auditor cadence + threshold.",
+          "icon": "eye",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "audit_on_activate",
+              "controlType": "toggle",
+              "label": "Audit on activate",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "Run the ContrastAuditor after every ThemeActivated. Findings surface as ThemeAccessibilityRecommendationNotification."
+            },
+            {
+              "name": "wcag_level",
+              "controlType": "select",
+              "label": "WCAG target level",
+              "defaultValue": "AA",
+              "validation": ["required", "in:AA,AAA"],
+              "options": { "AA": "AA (4.5:1 body / 3:1 large)", "AAA": "AAA (7:1 body / 4.5:1 large)" },
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Auto-provisioning",
+          "description": "Default theme seeded when a new tenant is provisioned.",
+          "icon": "sparkles",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "default_preset_slug",
+              "controlType": "select",
+              "label": "Default preset for new tenants",
+              "defaultValue": "light-default",
+              "validation": [
+                "required",
+                "string",
+                "in:light-default,dark-default,high-contrast-light,high-contrast-dark,brand-forward-blue,brand-forward-green"
+              ],
+              "options": {
+                "light-default": "Light Default",
+                "dark-default": "Dark Default",
+                "high-contrast-light": "High Contrast Light",
+                "high-contrast-dark": "High Contrast Dark",
+                "brand-forward-blue": "Brand Forward Blue",
+                "brand-forward-green": "Brand Forward Green"
+              },
+              "sortOrder": 1,
+              "helpText": "SeedDefaultThemeForNewTenant reads this on TenantProvisioned to pick which preset the new tenant's theme references."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

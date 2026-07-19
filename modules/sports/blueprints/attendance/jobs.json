@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/attendance/jobs",
+  "$version": 1,
+  "title": "attendance — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\ReconcileAttendanceJob",
+      "queue": "attendance",
+      "purpose": "Nightly at 03:00 tenant-local time: for each Session past ends_at on that day, sweep expected attendees → create AbsenceRecord (status='unexcused', reported_at=now(), reported_by_user_id=NULL, counted_toward_freeze=true) for every enrolled athlete without an AttendanceRecord or existing AbsenceRecord. Fires AttendanceReconciled per session.",
+      "steps": [
+        "SELECT id, tenant_id, team_id, season_id, ends_at FROM sessions WHERE ends_at BETWEEN now() - interval '25 hours' AND now() AND status IN ('completed', 'in_progress') AND deleted_at IS NULL",
+        "For each session, resolve expected attendees: SELECT athlete_id, id AS enrollment_id FROM athlete_enrollments WHERE tenant_id=? AND team_id=? AND season_id=? AND status IN ('active', 'confirmed') AND deleted_at IS NULL",
+        "For each expected athlete: SELECT id FROM attendance_records WHERE session_id=? AND athlete_id=? AND deleted_at IS NULL; if found → skip (attended)",
+        "  ELSE SELECT id FROM absence_records WHERE session_id=? AND athlete_id=? AND deleted_at IS NULL; if found → skip (already reported)",
+        "  ELSE INSERT AbsenceRecord (status='unexcused', reported_at=now(), reported_by_user_id=NULL, counted_toward_freeze=true) → fires AbsenceRecorded (which cascades threshold evaluation)",
+        "Emit AttendanceReconciled with counts (expected / present / late / absent / excused)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\NotifyAbsenceJob",
+      "queue": "attendance",
+      "purpose": "Per-absence: cascade notifications based on policy.notification_config. Dispatches FirstAbsenceNotification / ThirdAbsenceWarningNotification / AbsenceFreezeThresholdReachedNotification per athlete's rolling-window absence count.",
+      "steps": [
+        "Given an AbsenceRecord id: load absence + resolve applicable AttendancePolicy",
+        "Compute rolling-window unexcused count: SELECT COUNT(*) FROM absence_records WHERE athlete_id=? AND status='unexcused' AND counted_toward_freeze=true AND reported_at > now() - policy.absence_freeze_period_days days AND deleted_at IS NULL",
+        "If count == 1 AND policy.notification_config.notify_athlete_on_first_absence: dispatch FirstAbsenceNotification (to athlete + primary guardian)",
+        "If count == 2 AND policy.notification_config.notify_guardian_on_second: dispatch to primary guardian",
+        "If count == 3 AND policy.notification_config.notify_admin_on_third: dispatch ThirdAbsenceWarningNotification (to admin + safeguarding_officer)",
+        "If count >= policy.max_unexcused_absences_per_period: dispatch AbsenceFreezeThresholdReachedNotification (cannot-opt-out) — this fires alongside the CheckAbsenceFreezeThresholdJob's freeze cascade"
+      ],
+      "shouldQueue": true,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\CheckAbsenceFreezeThresholdJob",
+      "queue": "attendance",
+      "purpose": "Per-athlete rolling-window check. Fires AbsenceFreezeThresholdReached (P1) when unexcused-absence count crosses policy.max_unexcused_absences_per_period. Dispatched from AbsenceRecordObserver.creating + on excusal reversals.",
+      "steps": [
+        "Given an athlete_id + optional policy_id: resolve applicable policy for the athlete's active enrollment",
+        "Compute count: SELECT COUNT(*) FROM absence_records WHERE athlete_id=? AND status='unexcused' AND counted_toward_freeze=true AND reported_at > now() - policy.absence_freeze_period_days days AND deleted_at IS NULL",
+        "If count >= policy.max_unexcused_absences_per_period AND NOT already at freeze state: fire AbsenceFreezeThresholdReached with (athlete_id, membership_id, policy_id, unexcused_count, threshold, window_days) → FreezeMembershipOnThresholdReached hook pauses the membership via membership::MembershipObserver.setStatus('paused')",
+        "If count < threshold AND athlete's membership currently paused with pause_reason='attendance_threshold': fire potential unfreeze event; admin manually resumes via membership:resume (auto-unfreeze intentionally NOT implemented — admin must review pattern first)"
+      ],
+      "shouldQueue": true,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\ChargeNoShowFeeJob",
+      "queue": "attendance",
+      "purpose": "Per-absence: dispatch invoice creation via finance::invoice for a policy-configured no-show fee. Only runs for tenants holding `attendance_no_show_fees` entitlement. Idempotent — refuses to fire twice for the same absence_record_id.",
+      "steps": [
+        "Given an absence_record_id: load absence + resolve policy",
+        "Refuse if tenant lacks `attendance_no_show_fees` entitlement",
+        "Refuse if policy.no_show_fee_cents == 0 or NULL",
+        "Refuse if absence.status != 'unexcused'",
+        "Refuse if invoice already dispatched for this absence (check absence.metadata.no_show_fee_invoice_id)",
+        "Dispatch finance::invoice::CreateNoShowFeeInvoiceAction with (athlete_id, membership_id, fee_amount_cents=policy.no_show_fee_cents, fee_currency=policy.no_show_fee_currency, description='No-show fee for session ' + session_id)",
+        "On success: set absence.metadata.no_show_fee_invoice_id + fire NoShowFeeCharged",
+        "On failure: retry with exponential backoff; after 3 attempts fire NoShowFeeChargeFailed diagnostic event"
+      ],
+      "shouldQueue": true,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\ConsumePassAtomicallyJob",
+      "queue": "attendance-critical",
+      "purpose": "Fallback path for the AttendanceOrchestrator when synchronous atomic consumption isn't available (rare — high-latency environments during peak check-in windows). Runs the pass consumption in a queued transaction with retries. Every failure is a P1 signal (attendance without pass consumption is a compliance violation).",
+      "steps": [
+        "Given (attendance_record_id, target_pass_id): open DB transaction",
+        "SELECT ... FOR UPDATE the pass WHERE id=target_pass_id AND consumed_at IS NULL",
+        "UPDATE passes SET consumed_at, consumed_by_session_id",
+        "UPDATE attendance_records SET consumed_pass_id=target_pass_id, membership_id=target_pass.membership_id",
+        "Fire PassConsumedViaAttendance",
+        "On failure: rollback + fire PassConsumeAtomicityFailed (P1) — orphan-checkins job will pick up the drift"
+      ],
+      "shouldQueue": true,
+      "tries": 5,
+      "backoff": [30, 60, 300, 900, 1800]
+    },
+    {
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\CleanupOrphanCheckinsJob",
+      "queue": "attendance",
+      "purpose": "Nightly: verify integrity of atomic pass consumption. Every attendance with session.requires_pass=true MUST have consumed_pass_id set; every pass with consumed_by_session_id set MUST have a matching attendance record. Findings are P1 compliance signals.",
+      "steps": [
+        "SELECT id FROM attendance_records ar JOIN sessions s ON s.id=ar.session_id WHERE s.requires_pass=true AND ar.consumed_pass_id IS NULL AND ar.deleted_at IS NULL AND ar.created_at > now() - interval '48 hours' — Orphan attendance without pass",
+        "  For each: fire diagnostic event OrphanAttendanceWithoutPass + emit metric academorix.attendance.orphan.without_pass",
+        "SELECT id FROM passes p WHERE p.consumed_by_session_id IS NOT NULL AND NOT EXISTS(SELECT 1 FROM attendance_records ar WHERE ar.consumed_pass_id=p.id AND ar.deleted_at IS NULL) AND p.consumed_at > now() - interval '48 hours' — Orphan pass consumption without attendance",
+        "  For each: fire OrphanPassConsumption + emit metric academorix.attendance.orphan.pass_consumption",
+        "SELECT ar.id FROM attendance_records ar WHERE EXISTS(SELECT 1 FROM absence_records abs WHERE abs.session_id=ar.session_id AND abs.athlete_id=ar.athlete_id AND abs.deleted_at IS NULL) AND ar.deleted_at IS NULL — Mutual exclusion violation",
+        "  For each: fire AttendanceAbsenceCoexist (P1)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Sports\\Attendance\\Jobs\\GenerateAttendanceReportJob",
+      "queue": "attendance-reports",
+      "purpose": "Weekly per-branch attendance summary: rate, absence patterns, late-arrival trends. Feeds the admin dashboard's Weekly Attendance Digest. Only runs for tenants holding `attendance_analytics` entitlement.",
+      "steps": [
+        "Refuse if tenant lacks `attendance_analytics` entitlement",
+        "For each branch: aggregate last 7 days of attendance records + absences + late arrivals",
+        "Compute: attendance_rate = present + late / expected; late_rate = late / (present + late); absence_rate = unexcused / expected",
+        "Persist to attendance_reports table (materialised view) with (tenant_id, branch_id, period_start, period_end, metrics_json)",
+        "Dispatch WeeklyAttendanceDigestNotification to admin + branch_manager (opt-in)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "tries": 2
+    }
+  ]
+}

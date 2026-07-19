@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/theme/retention",
+  "$version": 1,
+  "title": "theme — retention windows",
+  "description": "Themes are retained while active + last-N activations for rollback (N=5 default, N=20 Enterprise via theme_rollback_extended). Platform presets retained indefinitely; tenant custom presets retained while their tenant is active. Overrides co-terminous with their parent theme. TenantErased cascade deletes everything.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5 (storage limitation) + Art. 17 (erasure cascades on TenantErased)",
+    "soc2 CC8.1 (change management via activation audit trail — rollback capability retained per policy)"
+  ],
+  "retention": [
+    {
+      "entity": "Theme (is_active=true)",
+      "hot": { "days": "while active" },
+      "purge": {
+        "trigger": "Theme is deactivated (is_active flips true → false) AND newer active theme exists in same (tenant_id, mode)",
+        "action": "Retained for rollback per the last-N policy below."
+      }
+    },
+    {
+      "entity": "Theme (is_active=false, historical)",
+      "hot": {
+        "count": 5,
+        "description": "Last-5 deactivated Theme rows per (tenant_id, mode) retained for rollback. Bumps to 20 when the tenant has the theme_rollback_extended entitlement."
+      },
+      "purge": {
+        "trigger": "PurgeExpiredThemeSnapshotsJob nightly retention pass",
+        "action": "Hard delete rows beyond the last-N cap. Rollback UI only offers themes that survive this pass."
+      }
+    },
+    {
+      "entity": "ThemePreset (tenant_id = NULL, platform-provided)",
+      "hot": { "days": "forever" },
+      "purge": {
+        "trigger": "Platform-admin explicit DELETE via /platform/theme-presets/{preset}",
+        "action": "Refused while any active tenant Theme references the preset."
+      }
+    },
+    {
+      "entity": "ThemePreset (tenant_id != NULL, tenant custom)",
+      "hot": { "days": "while tenant active" },
+      "purge": {
+        "trigger": "tenancy::TenantErased event",
+        "action": "Hard delete via cascade FK. PurgeThemeDataForErasedTenant writes the audit trail."
+      }
+    },
+    {
+      "entity": "ThemeTokenOverride",
+      "hot": { "days": "co-terminous with parent Theme" },
+      "purge": {
+        "trigger": "Parent Theme hard-deleted",
+        "action": "Cascade delete via FK. Explicit DELETE via /theme-token-overrides/{override} is allowed at any time — falls through to preset default."
+      }
+    },
+    {
+      "entity": "user_theme_preferences (owned by user module)",
+      "hot": { "days": "while user active" },
+      "purge": {
+        "trigger": "user::UserErased event",
+        "action": "PurgeUserThemePreferenceForErasedUser listener writes the compliance trail; row cascades via user_id FK."
+      }
+    }
+  ],
+  "cross_reference": [
+    "PurgeExpiredThemeSnapshotsJob is scheduled via schedule.json (theme:purge-expired-snapshots).",
+    "compliance::RetentionRun is written per purge pass for auditability.",
+    "The theme_rollback_extended entitlement lifts the cap from 5 to 20."
+  ]
+}

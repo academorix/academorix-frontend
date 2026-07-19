@@ -1,0 +1,113 @@
+{
+  "id": "academorix://modules/coaching/data-classes",
+  "$version": 1,
+  "title": "coaching — field classification",
+  "description": "Coaching entities carry a mix of tiers. Public: structural + slugs. Internal: verification state + activity flags. Confidential: bio + notes + verification-document reference. Regulated financial: hourly_rate_cents (7-year retention; NEVER surfaces on platform-admin reads). Regulated minor: coach-of-minors-adjacent — coach identifiers referenced by athlete rows for minor athletes are subject to the athlete module's redactor chain.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "CoachingProfile.id",
+      "CoachingProfile.tenant_id",
+      "CoachingProfile.staff_id",
+      "CoachingProfile.branch_id",
+      "CoachingProfile.primary_sport_id",
+      "CoachingProfile.coaching_since_year",
+      "CoachingProfile.specializations",
+      "CoachingProfile.languages_spoken",
+      "CoachingProfile.is_accepting_new_athletes",
+      "CoachingProfile.is_active",
+      "CoachingProfile.max_athletes_per_session",
+      "CoachAssignment.id",
+      "CoachAssignment.tenant_id",
+      "CoachAssignment.coaching_profile_id",
+      "CoachAssignment.assignable_type",
+      "CoachAssignment.assignable_id",
+      "CoachAssignment.role",
+      "CoachAssignment.start_date",
+      "CoachAssignment.end_date",
+      "CoachCertification.id",
+      "CoachCertification.tenant_id",
+      "CoachCertification.coaching_profile_id",
+      "CoachCertification.issuing_body",
+      "CoachCertification.certification_name",
+      "CoachCertification.level",
+      "CoachCertification.issued_at",
+      "CoachCertification.expires_at",
+      "CoachCertification.verification_url",
+      "CoachSkillRating.id",
+      "CoachSkillRating.tenant_id",
+      "CoachSkillRating.coaching_profile_id",
+      "CoachSkillRating.ratable_type",
+      "CoachSkillRating.ratable_id",
+      "CoachSkillRating.rating_scale",
+      "CoachSkillRating.rating_value",
+      "CoachSkillRating.rated_at",
+      "CoachSkillRating.expires_at"
+    ],
+    "internal": [
+      "CoachingProfile.verified_by_admin_at",
+      "CoachingProfile.availability",
+      "CoachingProfile.metadata",
+      "CoachingProfile.rate_currency",
+      "CoachingProfile.created_by",
+      "CoachingProfile.updated_by",
+      "CoachingProfile.created_at",
+      "CoachingProfile.updated_at",
+      "CoachAssignment.assigned_by_user_id",
+      "CoachAssignment.created_by",
+      "CoachAssignment.updated_by",
+      "CoachAssignment.created_at",
+      "CoachAssignment.updated_at",
+      "CoachCertification.verified_by_admin_user_id",
+      "CoachCertification.verified_at",
+      "CoachCertification.created_by",
+      "CoachCertification.updated_by",
+      "CoachCertification.created_at",
+      "CoachCertification.updated_at",
+      "CoachSkillRating.rated_by_user_id",
+      "CoachSkillRating.created_by",
+      "CoachSkillRating.updated_by",
+      "CoachSkillRating.created_at",
+      "CoachSkillRating.updated_at"
+    ],
+    "confidential": [
+      "CoachingProfile.bio (coach-authored; admin + coach-self visibility only)",
+      "CoachingProfile.photo_url_signed (signed S3 URL; expires per storage policy)",
+      "CoachAssignment.notes (admin + coach-self visibility)",
+      "CoachCertification.document_url (signed S3 URL for scanned cert)",
+      "CoachCertification.verification_notes (admin-visible only)",
+      "CoachSkillRating.notes (admin-visible only)"
+    ],
+    "restricted": [
+      "CoachingProfile.hourly_rate_cents (see regulated_financial)",
+      "CoachingProfile.rate_currency (see regulated_financial)"
+    ],
+    "regulated_minor": [
+      "For coaches assigned to sessions/teams/events involving MINOR athletes: coach identifiers referenced in the athlete module's redactor chain are subject to the same regulated_minor stripping as the athlete's own PII on cross-tenant platform-admin reads.",
+      "Photo URLs for coaches whose CoachAssignment.assignable resolves to a minor-eligible cohort require the signed-URL to have a `hint=minors_cohort` marker so downstream renderers can apply extra scrutiny."
+    ],
+    "regulated_health": [],
+    "regulated_financial": [
+      "CoachingProfile.hourly_rate_cents (7-year retention; NEVER surfaces on platform-admin reads; admin permission `coaching_profiles.view.rate` required)",
+      "CoachingProfile.rate_currency (paired with hourly_rate_cents; same access controls)"
+    ],
+    "audit_log": [
+      "CoachingProfile.verified_by_admin_at (every transition — audit-critical, 7-year retention)",
+      "CoachingProfile.is_active (every flip — audit-critical)",
+      "CoachingProfile.hourly_rate_cents (every change — compensation-audit critical)",
+      "CoachingProfile.primary_sport_id (every change)",
+      "CoachAssignment.role (every change — cascade effect on notifications + attendance)",
+      "CoachAssignment.end_date (every change — audit-critical for wage-and-hour compliance)",
+      "CoachCertification.verified_by_admin_user_id (every set — compliance audit)",
+      "CoachCertification.expires_at (every change — safeguarding audit)",
+      "CoachSkillRating.rating_value (every change — evaluation-audit tracking)",
+      "CoachingProfile.deleted_at (soft-delete audit)"
+    ]
+  },
+  "notes": [
+    "Coaches' PII (name, email, phone) lives on their linked user::Profile — the redactor chain applies transitively when a CoachingProfile is read.",
+    "Every certification-related audit event surfaces on the notification-templates: coach + admin receive the emails; safeguarding_officer receives the alerts for SafeSport / medical-related certification lapses.",
+    "hourly_rate_cents on the profile is REFERENCE data — it's used by scheduling logic to plan a coach's weekly economic capacity but payroll writeback belongs in a Finance module (not owned here).",
+    "CoachSkillRating.notes carries free-text rationale from the rating admin. HR-visible only; does NOT surface on the coach's /me/ratings response (a coach sees their rating value but not the notes)."
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "$version": 1,
+  "title": "AttendancePolicy — canonical template samples",
+  "description": "Six pre-built policy shapes that cover the common tenant configurations. Seed via `php artisan attendance-policy:create --template=<name>`. Tenants can copy + adjust — no template is prescriptive.",
+  "templates": [
+    {
+      "name": "youth_academy_strict",
+      "display_name": "Youth academy — strict",
+      "description": "Tight youth academy policy. Short grace period, no-show fee, low absence threshold, freeze on 3 unexcused in 30 days. Notify guardians early.",
+      "shape": {
+        "grace_period_minutes": 5,
+        "late_after_minutes": 15,
+        "late_arrival_penalty_type": "consume_pass_anyway",
+        "no_show_fee_cents": 2500,
+        "no_show_fee_currency": "USD",
+        "max_unexcused_absences_per_period": 3,
+        "absence_freeze_period_days": 30,
+        "auto_excuse_reasons": ["medical_documented", "bereavement", "school_conflict", "religious_observance"],
+        "notification_config": {
+          "notify_athlete_on_first_absence": true,
+          "notify_guardian_on_second": true,
+          "notify_admin_on_third": true,
+          "notify_on_late": true
+        }
+      }
+    },
+    {
+      "name": "adult_fitness_lenient",
+      "display_name": "Adult fitness — lenient",
+      "description": "Adult fitness academy. Generous grace period, no fee, higher absence threshold, no membership freeze. Notify only when patterns emerge.",
+      "shape": {
+        "grace_period_minutes": 20,
+        "late_after_minutes": 45,
+        "late_arrival_penalty_type": "notify_only",
+        "no_show_fee_cents": 0,
+        "no_show_fee_currency": null,
+        "max_unexcused_absences_per_period": 10,
+        "absence_freeze_period_days": 60,
+        "auto_excuse_reasons": ["medical_documented", "medical_undocumented", "family_emergency_notified", "family_emergency_unnotified", "vacation_notified", "transportation", "weather"],
+        "notification_config": {
+          "notify_athlete_on_first_absence": false,
+          "notify_guardian_on_second": false,
+          "notify_admin_on_third": true,
+          "notify_on_late": false
+        }
+      }
+    },
+    {
+      "name": "elite_academy_zero_tolerance",
+      "display_name": "Elite academy — zero tolerance",
+      "description": "Elite competitive academy. Short grace, immediate freeze on 2 unexcused, high no-show fee. Enterprise-only — heavy notification cadence.",
+      "shape": {
+        "grace_period_minutes": 0,
+        "late_after_minutes": 10,
+        "late_arrival_penalty_type": "consume_pass_anyway",
+        "no_show_fee_cents": 5000,
+        "no_show_fee_currency": "USD",
+        "max_unexcused_absences_per_period": 2,
+        "absence_freeze_period_days": 30,
+        "auto_excuse_reasons": ["medical_documented", "bereavement"],
+        "notification_config": {
+          "notify_athlete_on_first_absence": true,
+          "notify_guardian_on_second": true,
+          "notify_admin_on_third": true,
+          "notify_on_late": true
+        }
+      }
+    },
+    {
+      "name": "seasonal_camp_relaxed",
+      "display_name": "Seasonal camp — relaxed",
+      "description": "Short-duration seasonal camp. Long grace, no freeze mechanism (rolling window longer than camp duration means threshold never fires), fee only for repeat no-shows.",
+      "shape": {
+        "grace_period_minutes": 15,
+        "late_after_minutes": 30,
+        "late_arrival_penalty_type": "none",
+        "no_show_fee_cents": 0,
+        "no_show_fee_currency": null,
+        "max_unexcused_absences_per_period": 100,
+        "absence_freeze_period_days": 365,
+        "auto_excuse_reasons": ["medical_documented", "family_emergency_notified", "vacation_notified", "weather", "transportation"],
+        "notification_config": {
+          "notify_athlete_on_first_absence": false,
+          "notify_guardian_on_second": true,
+          "notify_admin_on_third": true,
+          "notify_on_late": false
+        }
+      }
+    },
+    {
+      "name": "fractional_pass_boutique",
+      "display_name": "Boutique studio — fractional passes",
+      "description": "Boutique studio that lets athletes claim half a pass when late. Middle-of-the-road threshold. Requires Enterprise tier for the fractional consume path in downstream billing.",
+      "shape": {
+        "grace_period_minutes": 5,
+        "late_after_minutes": 20,
+        "late_arrival_penalty_type": "fractional_pass_consume",
+        "no_show_fee_cents": 1500,
+        "no_show_fee_currency": "USD",
+        "max_unexcused_absences_per_period": 5,
+        "absence_freeze_period_days": 45,
+        "auto_excuse_reasons": ["medical_documented", "medical_undocumented", "family_emergency_notified", "school_conflict"],
+        "notification_config": {
+          "notify_athlete_on_first_absence": true,
+          "notify_guardian_on_second": true,
+          "notify_admin_on_third": true,
+          "notify_on_late": true
+        }
+      }
+    },
+    {
+      "name": "compliance_youth_minimum",
+      "display_name": "Compliance — youth minimum viable",
+      "description": "Bare-minimum policy that meets US Department of Education + state SafeSport recording requirements for youth programs without adding tenant-defined penalties. Passes are consumed normally; no fees; no freeze.",
+      "shape": {
+        "grace_period_minutes": 15,
+        "late_after_minutes": 30,
+        "late_arrival_penalty_type": "consume_pass_anyway",
+        "no_show_fee_cents": 0,
+        "no_show_fee_currency": null,
+        "max_unexcused_absences_per_period": 100,
+        "absence_freeze_period_days": 365,
+        "auto_excuse_reasons": [
+          "medical_documented",
+          "medical_undocumented",
+          "family_emergency_notified",
+          "family_emergency_unnotified",
+          "vacation_notified",
+          "bereavement",
+          "school_conflict",
+          "religious_observance",
+          "weather",
+          "transportation"
+        ],
+        "notification_config": {
+          "notify_athlete_on_first_absence": false,
+          "notify_guardian_on_second": false,
+          "notify_admin_on_third": true,
+          "notify_on_late": false
+        }
+      }
+    }
+  ]
+}

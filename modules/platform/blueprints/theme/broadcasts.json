@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/theme/broadcasts",
+  "$version": 1,
+  "title": "theme — broadcast channels",
+  "description": "Real-time UI updates so admin panels observe activation + regen completion without polling.",
+  "channels": [
+    {
+      "channel": "tenant.{tenantId}.theme",
+      "kind": "private",
+      "auth": "tenant.resolve + theme.read permission",
+      "events": [
+        "ThemeActivated",
+        "ThemeDeactivated",
+        "ThemeTokenOverridden",
+        "ThemeTokenOverrideRemoved",
+        "ThemeAccessibilityFlagChanged",
+        "ThemeCacheInvalidated"
+      ],
+      "consumer_hint": "Admin dashboard's Theme panel subscribes to this channel to auto-refresh when a peer admin activates a new theme or edits an override. Frontend uses @stackra/realtime bindings — no polling."
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "id": "theme.resources.theme-token-override.list",
+  "title": "Token overrides",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/themes/{theme_id}/overrides",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme-token-override", "action": "list" },
+  "requiresPermission": "theme.read",
+  "params": [{ "name": "theme_id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "theme",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/themes/' + params.theme_id",
+      "unwrap": "data"
+    },
+    {
+      "name": "overrides",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/theme-token-overrides?theme_id=' + params.theme_id",
+      "unwrap": "data",
+      "paginated": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to theme",
+            "className": "text-sm text-muted"
+          },
+          "actions": {
+            "onPress": { "kind": "navigate", "toExpr": "'/tenant/themes/' + params.theme_id" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": { "$expr": "theme.name + ' — token overrides'" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Sparse patches on top of the underlying preset. Removing an override falls through to the preset default."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Add override"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/themes/' + params.theme_id + '/overrides/new'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-0 overflow-hidden" },
+          "children": [
+            {
+              "kind": "Table",
+              "children": [
+                {
+                  "kind": "Table.Header",
+                  "children": [
+                    {
+                      "kind": "Table.Row",
+                      "children": [
+                        { "kind": "Table.HeadCell", "props": { "children": "Token key" } },
+                        { "kind": "Table.HeadCell", "props": { "children": "Value" } },
+                        { "kind": "Table.HeadCell", "props": { "children": "Type" } },
+                        { "kind": "Table.HeadCell", "props": { "children": "Reason" } },
+                        { "kind": "Table.HeadCell", "props": { "children": "" } }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "Table.Body",
+                  "bindings": { "items": { "$ref": "overrides" } },
+                  "itemRenderer": {
+                    "kind": "Table.Row",
+                    "children": [
+                      {
+                        "kind": "Table.Cell",
+                        "props": { "className": "font-mono text-xs" },
+                        "bindings": { "children": { "$ref": "row.token_key" } }
+                      },
+                      {
+                        "kind": "Table.Cell",
+                        "children": [
+                          {
+                            "kind": "Widget",
+                            "widget": "theme.token-badge",
+                            "props": {
+                              "tokenKey": { "$ref": "row.token_key" },
+                              "tokenValue": { "$ref": "row.token_value" }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Table.Cell",
+                        "children": [
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "xs" },
+                            "bindings": { "children": { "$ref": "row.token_type" } }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Table.Cell",
+                        "props": { "className": "text-xs text-muted" },
+                        "bindings": { "children": { "$ref": "row.reason" } }
+                      },
+                      {
+                        "kind": "Table.Cell",
+                        "children": [
+                          {
+                            "kind": "Link",
+                            "props": { "size": "sm", "variant": "danger", "children": "Delete" },
+                            "actions": {
+                              "onPress": {
+                                "kind": "http.delete",
+                                "urlExpr": "'/api/v1/theme-token-overrides/' + row.id",
+                                "confirm": "Remove this override? The token will fall back to the preset default.",
+                                "onSuccess": [
+                                  { "kind": "toast.success", "message": "Override removed" },
+                                  { "kind": "data.refresh", "source": "overrides" }
+                                ]
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

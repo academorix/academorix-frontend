@@ -1,0 +1,150 @@
+{
+  "id": "theme.resources.theme-token-override.edit",
+  "title": "Edit token override",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/themes/{theme_id}/overrides/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme-token-override", "action": "edit" },
+  "requiresPermission": "theme.manage",
+  "params": [{ "name": "theme_id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "theme",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/themes/' + params.theme_id",
+      "unwrap": "data"
+    },
+    {
+      "name": "vocabulary",
+      "kind": "static",
+      "path": "modules/platform/blueprints/theme/data/token-vocabulary.json"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "Back to overrides",
+            "className": "text-sm text-muted"
+          },
+          "actions": {
+            "onPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/themes/' + params.theme_id + '/overrides'"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Add token override"
+          }
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrl": "/api/v1/theme-token-overrides",
+            "submitMethod": "POST",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Override added" },
+              {
+                "kind": "navigate",
+                "toExpr": "'/tenant/themes/' + params.theme_id + '/overrides'"
+              }
+            ]
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Hidden",
+                  "props": { "name": "theme_id" },
+                  "bindings": { "value": { "$ref": "params.theme_id" } }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "token_key",
+                    "label": "Token key",
+                    "helpText": "Pick a canonical vocabulary key. Value validation adapts to the token category.",
+                    "required": true,
+                    "searchable": true
+                  },
+                  "bindings": {
+                    "options": {
+                      "$expr": "Object.entries(vocabulary.categories).flatMap(([cat, def]) => def.keys.map(k => ({ key: k, label: k, group: cat })))"
+                    }
+                  }
+                },
+                {
+                  "kind": "Select",
+                  "props": {
+                    "name": "token_type",
+                    "label": "Token type",
+                    "helpText": "Auto-derived from token key prefix. Editable for advanced cases.",
+                    "required": true,
+                    "options": {
+                      "color": "color",
+                      "dimension": "dimension",
+                      "typography": "typography",
+                      "radius": "radius",
+                      "shadow": "shadow",
+                      "motion": "motion",
+                      "opacity": "opacity",
+                      "z_index": "z_index"
+                    }
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "token_value",
+                    "label": "Token value",
+                    "placeholder": "#0066CC or 1rem or 500 or ...",
+                    "required": true,
+                    "helpText": "Format depends on token type. Colors accept hex/rgb/hsl/oklch; dimensions accept px/rem/em."
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "reason",
+                    "label": "Reason (optional)",
+                    "placeholder": "Brand color override for Q1 campaign",
+                    "maxLength": 256
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Add override"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

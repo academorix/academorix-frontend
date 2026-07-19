@@ -1,0 +1,89 @@
+{
+  "id": "attendance.resources.absence-record.excuse",
+  "title": "Excuse absence",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/absences/{absence}/excuse",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "attendance", "entity": "absence-record", "action": "excuse" },
+  "requiresPermission": "absences.excuse",
+  "dataSources": [
+    { "name": "absence", "kind": "http.get", "urlTemplate": "/api/v1/absences/{absence}", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-3xl mx-auto" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Excuse absence" } },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info" },
+          "children": [
+            { "kind": "Text", "props": { "children": "Excusing this absence will flip its status to 'excused' and remove it from the freeze-window count. If the athlete was previously frozen because of this absence, the freeze may be undone." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "Card.Header",
+              "children": [
+                { "kind": "Text", "propsExpr": "{ children: 'Excusing ' + absence.athlete_display_name + ' from ' + absence.session_display_name }" }
+              ]
+            },
+            {
+              "kind": "Card.Content",
+              "props": { "className": "flex flex-col gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "attendance.absence-reason-picker",
+                  "props": { "label": "Reason", "required": true },
+                  "actions": { "onChange": { "kind": "field.set", "field": "absence_reason", "valueExpr": "$value" } }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "label": "Explanation (optional)", "maxLength": 4096, "rows": 3 },
+                  "actions": { "onChange": { "kind": "field.set", "field": "explanation", "valueExpr": "$value" } }
+                },
+                {
+                  "kind": "Widget",
+                  "widget": "storage.signed-upload",
+                  "props": { "label": "Supporting documentation (optional)", "accept": "image/*,application/pdf", "maxSizeMb": 10 },
+                  "actions": { "onUploaded": { "kind": "field.set", "field": "documented_url_signed", "valueExpr": "$signedUrl" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate.back" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Excuse absence" },
+              "bindings": { "disabled": { "$expr": "!form.absence_reason" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlTemplate": "/api/v1/absences/{absence}/excuse",
+                  "bodyFromForm": true,
+                  "onSuccess": { "kind": "navigate", "to": "/tenant/absences" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

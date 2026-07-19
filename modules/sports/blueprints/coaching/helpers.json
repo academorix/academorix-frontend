@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/coaching/helpers",
+  "$version": 1,
+  "title": "coaching — helper functions",
+  "description": "Ergonomic helpers for resolving a Staff's coaching profile, listing active assignments, computing availability, and gating on tier entitlements.",
+  "namespace": "Academorix\\Sports\\Coaching\\Support",
+  "helpers": [
+    {
+      "signature": "coaching_profile_for(Staff $staff): ?CoachingProfile",
+      "purpose": "Returns the active CoachingProfile for a Staff (or null when the Staff isn't a Coach). Cache-hot via `cop:by_staff:{staff_id}`.",
+      "delegates_to": "CoachingProfileRepository::forStaff()"
+    },
+    {
+      "signature": "is_coach(Staff $staff): bool",
+      "purpose": "True when the Staff has an active + verified CoachingProfile. Used by session-assignment eligibility checks."
+    },
+    {
+      "signature": "coaches_for_sport(Tenant $tenant, string $primarySportKey, bool $accepting_only = false): Collection<CoachingProfile>",
+      "purpose": "Returns active + verified coaches whose primary sport matches the key. accepting_only=true narrows to is_accepting_new_athletes.",
+      "delegates_to": "CoachingProfileRepository::bySport()"
+    },
+    {
+      "signature": "active_assignments_for(CoachingProfile $profile): Collection<CoachAssignment>",
+      "purpose": "All open assignments for a coach (end_date IS NULL OR > NOW()). Feeds /me/assignments."
+    },
+    {
+      "signature": "head_coach_for(Model $assignable): ?CoachingProfile",
+      "purpose": "Returns the current head_coach for a Session / Team / Event (or null). Cache-hot via `cas:head_coach:{type}:{id}`.",
+      "delegates_to": "CoachAssignmentRepository::headCoachFor()"
+    },
+    {
+      "signature": "assistant_coaches_for(Model $assignable): Collection<CoachingProfile>",
+      "purpose": "Every active assistant_coach on an assignable. Order stable by CoachAssignment.created_at."
+    },
+    {
+      "signature": "coach_availability_for(CoachingProfile $profile, IsoWeek $week): AvailabilitySnapshot",
+      "purpose": "Resolves the coach's weekly availability minus their active assignments in that week. Powers the scheduling UI + customer booking picker.",
+      "delegates_to": "AvailabilityResolver::forWeek()"
+    },
+    {
+      "signature": "certifications_for(CoachingProfile $profile, bool $verified_only = false): Collection<CoachCertification>",
+      "purpose": "All held certifications for a coach. verified_only=true filters to verified_at != null."
+    },
+    {
+      "signature": "expiring_certifications(Tenant $tenant, int $withinDays): Collection<CoachCertification>",
+      "purpose": "Every cert whose expires_at is within N days from now. Delegates to `ccf:expiring:{tenant_id}:{cadence_days}` cache when the cadence matches 90/30/7."
+    },
+    {
+      "signature": "skill_ratings_for(CoachingProfile $profile, ?string $ratableType = null): Collection<CoachSkillRating>",
+      "purpose": "All current ratings for a coach. ratableType='Sport' narrows to sport-level ratings only."
+    },
+    {
+      "signature": "top_skill_rating_for(CoachingProfile $profile, string $ratableType, string $ratableId): ?CoachSkillRating",
+      "purpose": "The single highest-value active rating a coach holds on a specific Sport / Discipline / Position. Used in match-making."
+    },
+    {
+      "signature": "can_assign_across_branches(Tenant $tenant): bool",
+      "purpose": "True when tenant holds the `coaching_multi_branch` entitlement. Read on assignment-form rendering."
+    }
+  ]
+}

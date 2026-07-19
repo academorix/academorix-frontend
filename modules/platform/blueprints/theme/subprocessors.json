@@ -1,0 +1,16 @@
+{
+  "id": "academorix://modules/theme/subprocessors",
+  "$version": 1,
+  "title": "theme — subprocessors used",
+  "description": "Third-party subprocessors this module uses for its own operation.",
+  "subprocessors": [
+    {
+      "name": "Puppeteer / Chromium (managed via chrome-php or laravel/browsershot)",
+      "purpose": "Headless browser used by PreviewPresetJob to render the canonical preview template with a preset's tokens applied → screenshot → uploaded as ThemePreset.preview_thumbnail_url.",
+      "hosting": "in-cluster (workers run Chromium in a sidecar container / dedicated node pool)",
+      "data_shared": "Only the preset's own tokens jsonb + the canonical preview HTML template. NO tenant PII, NO customer data.",
+      "compliance": "No GDPR sub-processor addendum required — no personal data leaves the workload boundary.",
+      "fallback_when_unavailable": "preview_thumbnail_url stays NULL; admin UI renders a color-swatch placeholder derived from the preset's color.primary.500 + color.surface.default tokens."
+    }
+  ]
+}

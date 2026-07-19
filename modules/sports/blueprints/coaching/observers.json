@@ -1,0 +1,99 @@
+{
+  "id": "academorix://modules/coaching/observers",
+  "$version": 1,
+  "title": "coaching — Eloquent observers",
+  "description": "Four observers, one per entity. Each enforces write-time invariants specific to its aggregate.",
+  "observers": [
+    {
+      "model": "CoachingProfile",
+      "observer": "Academorix\\Sports\\Coaching\\Observers\\CoachingProfileObserver",
+      "handles": [
+        "creating → populate ULID prefix `cop_`",
+        "creating → refuse when tenant does not hold `coaching_capture` entitlement (returns COACHING_CAPTURE_NOT_ENABLED)",
+        "creating → refuse when count(is_active=true CoachingProfile rows for tenant) >= tenant's `coaching_profile_slot` cap (returns COACHING_PROFILE_SLOT_EXCEEDED)",
+        "creating → refuse when Staff.tenant_id != coaching_profile.tenant_id (cross-tenant defense-in-depth)",
+        "creating → refuse when Staff.employment_status IN ('offboarded', 'suspended') (returns COACHING_PROFILE_STAFF_INACTIVE)",
+        "creating → refuse when (tenant_id, staff_id) already has a live row via the partial unique index; return COACHING_PROFILE_DUPLICATE_PER_STAFF",
+        "creating → refuse when primary_sport_id is set but does not resolve to is_active=true row in sports_registry.sports (returns COACHING_PROFILE_INVALID_PRIMARY_SPORT)",
+        "creating → refuse when photo_url_signed is set but does not match HTTPS S3 pattern (returns COACHING_PROFILE_INVALID_PHOTO_URL)",
+        "creating → refuse when hourly_rate_cents XOR rate_currency is set (both-or-neither invariant — returns COACHING_PROFILE_HOURLY_RATE_INCOMPLETE)",
+        "creating → refuse when specializations is set but contains a slug not in the specializations-catalog (returns COACHING_PROFILE_INVALID_SPECIALIZATIONS)",
+        "creating → refuse when languages_spoken is set but contains an invalid ISO 639-1 code (returns COACHING_PROFILE_INVALID_LANGUAGES)",
+        "creating → refuse when availability is set but does not satisfy valid_availability_shape rule (returns COACHING_PROFILE_INVALID_AVAILABILITY)",
+        "creating → set is_active=true default, verified_by_admin_at=null (must be verified separately)",
+        "creating → fire CoachingProfileCreated",
+        "updating tenant_id → REFUSE (returns COACHING_PROFILE_TENANT_ID_IMMUTABLE)",
+        "updating staff_id → REFUSE (returns COACHING_PROFILE_STAFF_ID_IMMUTABLE) — a coaching profile belongs to one Staff forever",
+        "updating primary_sport_id → re-validate active in registry (returns COACHING_PROFILE_INVALID_PRIMARY_SPORT if not)",
+        "updating photo_url_signed → re-validate HTTPS S3",
+        "updating hourly_rate_cents / rate_currency → re-validate both-or-neither",
+        "updating availability → re-validate valid_availability_shape",
+        "updating verified_by_admin_at from null → non-null → fire CoachingProfileVerified; refuse when already verified (returns COACHING_PROFILE_ALREADY_VERIFIED)",
+        "updating is_active true → false → fire CoachingProfileDeactivated (with trigger='manual')",
+        "updating is_active false → true → require verified_by_admin_at re-set (admin re-verify) + fire CoachingProfileReactivated",
+        "deleting (soft-delete) → cascade to CancelActiveAssignmentsOnCoachingProfileDeactivated via CoachingProfileDeactivated event",
+        "deleting (hard-delete) → allowed only via CASCADE from Tenant erasure OR after 7-year retention (10y with coaching_extended_retention)"
+      ]
+    },
+    {
+      "model": "CoachAssignment",
+      "observer": "Academorix\\Sports\\Coaching\\Observers\\CoachAssignmentObserver",
+      "handles": [
+        "creating → populate ULID prefix `cas_`",
+        "creating → resolve coaching_profile; refuse when profile.is_active=false (returns COACHING_PROFILE_INACTIVE)",
+        "creating → refuse when profile.verified_by_admin_at IS NULL (returns COACHING_PROFILE_NOT_VERIFIED)",
+        "creating → refuse when profile.metadata.on_leave=true (returns COACHING_PROFILE_INACTIVE — same code, refined message)",
+        "creating → refuse when role not in ('head_coach', 'assistant_coach', 'observer', 'substitute') (returns COACH_ASSIGNMENT_INVALID_ROLE)",
+        "creating → refuse when assignable_type not in ('Session', 'Team', 'Event') (returns COACH_ASSIGNMENT_INVALID_ASSIGNABLE_TYPE)",
+        "creating → resolve assignable_id against its model + refuse when assignable.tenant_id != assignment.tenant_id (returns COACH_ASSIGNMENT_CROSS_TENANT)",
+        "creating → when role='head_coach', check partial unique index (tenant_id, assignable_type, assignable_id, role='head_coach', active) — refuse when another head_coach exists (returns COACH_ASSIGNMENT_DUPLICATE_HEAD_COACH)",
+        "creating → when role='assistant_coach', check count of active assistant_coach assignments on same assignable — refuse when >= config('coaching.assignment.max_assistants_per_assignable', 3) (returns COACH_ASSIGNMENT_MAX_ASSISTANTS_EXCEEDED)",
+        "creating → when profile.branch_id != assignable.branch_id (resolves via assignable.model → branch_id), refuse UNLESS tenant carries coaching_multi_branch entitlement (returns COACHING_MULTI_BRANCH_NOT_ENABLED)",
+        "creating → refuse when start_date >= end_date (both set — returns COACH_ASSIGNMENT_INVALID_DATE_RANGE)",
+        "creating → refuse when count(active assignments for this profile) >= config('coaching.assignment.max_concurrent_per_coach') (when > 0; returns COACH_ASSIGNMENT_MAX_CONCURRENT_EXCEEDED)",
+        "creating → dispatch NotifyCoachAvailabilityConflictJob immediately for the newly-created assignment (soft-warn on conflict, does NOT refuse)",
+        "creating → fire CoachAssignmentCreated",
+        "updating role → when transitioning TO head_coach, re-run partial unique check (returns COACH_ASSIGNMENT_DUPLICATE_HEAD_COACH if another head_coach exists on the assignable)",
+        "updating role / notes → fire CoachAssignmentUpdated",
+        "updating end_date past today → do NOT auto-fire CoachAssignmentEnded (the nightly job handles that)",
+        "updating end_date backward (extending shorter than current end_date but still > now) → allowed; fires CoachAssignmentUpdated",
+        "deleting (soft-delete) → fire CoachAssignmentCancelled with trigger='manual'"
+      ]
+    },
+    {
+      "model": "CoachCertification",
+      "observer": "Academorix\\Sports\\Coaching\\Observers\\CoachCertificationObserver",
+      "handles": [
+        "creating → populate ULID prefix `ccf_`",
+        "creating → refuse when coaching_profile.tenant_id != cert.tenant_id (cross-tenant defense-in-depth)",
+        "creating → refuse when duplicate (tenant_id, coaching_profile_id, issuing_body, certification_name, issued_at) exists via partial unique index (returns COACH_CERTIFICATION_DUPLICATE)",
+        "creating → refuse when expires_at is set AND expires_at <= issued_at (returns COACH_CERTIFICATION_INVALID_EXPIRY)",
+        "creating → refuse when document_url is set but does not match HTTPS S3 pattern (returns COACH_CERTIFICATION_INVALID_DOCUMENT_URL)",
+        "creating → refuse when document_url is set BUT tenant lacks coaching_advanced_certifications entitlement (returns COACHING_CERT_DOCUMENT_REQUIRES_ADVANCED)",
+        "creating → fire CoachCertificationAdded (downstream: ScheduleExpirationNoticesOnCertificationAdded)",
+        "updating expires_at → invalidate scheduled expiration notices in metadata.expiration_notices + re-schedule via ScheduleExpirationNoticesOnCertificationAdded",
+        "updating verified_by_admin_user_id from null → non-null → refuse when tenant lacks coaching_advanced_certifications entitlement (returns COACHING_CERT_VERIFICATION_NOT_ENABLED); refuse when already verified (returns COACH_CERTIFICATION_ALREADY_VERIFIED); set verified_at + fire CoachCertificationVerified",
+        "deleting (hard-delete) → allowed only via CASCADE from CoachingProfile hard-delete OR past 7-year post-expiration retention"
+      ]
+    },
+    {
+      "model": "CoachSkillRating",
+      "observer": "Academorix\\Sports\\Coaching\\Observers\\CoachSkillRatingObserver",
+      "handles": [
+        "creating → populate ULID prefix `csr_`",
+        "creating → refuse when tenant lacks coaching_skill_ratings entitlement (returns COACHING_SKILL_RATINGS_NOT_ENABLED)",
+        "creating → refuse when coaching_profile.tenant_id != rating.tenant_id (cross-tenant defense-in-depth)",
+        "creating → refuse when rating_scale not in ('stars_1_5', 'level_5_stage') (returns COACH_SKILL_RATING_INVALID_SCALE)",
+        "creating → refuse when rating_value not in 1..5 (returns COACH_SKILL_RATING_INVALID_VALUE)",
+        "creating → refuse when ratable_type not in ('Sport', 'Discipline', 'Position') (returns COACH_SKILL_RATING_INVALID_RATABLE_TYPE)",
+        "creating → resolve ratable_id against sports_registry table matching ratable_type + refuse when the row is not is_active=true (returns COACH_SKILL_RATING_UNKNOWN_RATABLE)",
+        "creating → resolve rated_by_user_id.staff_id via user::User → staff::Staff. When resolved staff_id equals coaching_profile.staff_id, refuse (returns COACH_SKILL_RATING_SELF_RATING_FORBIDDEN)",
+        "creating → refuse when (tenant_id, coaching_profile_id, ratable_type, ratable_id) already has a live row (returns COACH_SKILL_RATING_DUPLICATE — update the existing rating instead)",
+        "creating → set rated_at=now() when unset; set expires_at=rated_at+config('coaching.rating.default_expiry_years', 2) years when unset",
+        "creating → fire CoachSkillRatingRecorded",
+        "updating rating_value → fire CoachSkillRatingUpdated (with from_value + to_value)",
+        "updating (rating_scale, ratable_type, ratable_id, coaching_profile_id) → REFUSE (these fields are immutable — create a new row + delete the old one instead)"
+      ]
+    }
+  ]
+}

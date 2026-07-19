@@ -1,0 +1,105 @@
+{
+  "$version": 1,
+  "title": "AbsenceRecord.absence_reason — canonical values",
+  "description": "Known values for absence_reason. The list is advisory — free-text is permitted for cases not covered here, but policy.auto_excuse_reasons matches these canonical strings. Adding a value here doesn't automatically make it auto-excused; the tenant's policy chooses which subset auto-excuses.",
+  "values": [
+    {
+      "value": "medical_documented",
+      "display_name": "Medical (documented)",
+      "description": "Athlete missed the session due to illness or injury with supporting documentation (medical note uploaded via documented_url_signed).",
+      "requires_documentation": true,
+      "typical_auto_excuse_config": true,
+      "counts_toward_freeze_default": false
+    },
+    {
+      "value": "medical_undocumented",
+      "display_name": "Medical (self-reported)",
+      "description": "Athlete missed due to illness / injury but no documentation provided.",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": false,
+      "counts_toward_freeze_default": false,
+      "notes": "Admin decides whether to excuse post-hoc. Default status stays 'unexcused' until reviewed."
+    },
+    {
+      "value": "family_emergency_notified",
+      "display_name": "Family emergency (advance-notified)",
+      "description": "Guardian pre-notified > 24h in advance of a family emergency.",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": true,
+      "counts_toward_freeze_default": false
+    },
+    {
+      "value": "family_emergency_unnotified",
+      "display_name": "Family emergency (no notice)",
+      "description": "Family emergency reported after the missed session. Admin reviews individually.",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": false,
+      "counts_toward_freeze_default": false
+    },
+    {
+      "value": "vacation_notified",
+      "display_name": "Vacation (advance-notified)",
+      "description": "Guardian pre-notified of a planned vacation absence.",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": true,
+      "counts_toward_freeze_default": false,
+      "notes": "Some tenants configure vacation notice > 7 days for auto-excusal."
+    },
+    {
+      "value": "transportation",
+      "display_name": "Transportation issue",
+      "description": "Missed due to transportation / logistics (traffic, missed ride, etc.).",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": false,
+      "counts_toward_freeze_default": true
+    },
+    {
+      "value": "bereavement",
+      "display_name": "Bereavement",
+      "description": "Family loss / funeral.",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": true,
+      "counts_toward_freeze_default": false
+    },
+    {
+      "value": "school_conflict",
+      "display_name": "School conflict",
+      "description": "Athlete had an unavoidable school commitment (exam, mandatory event).",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": true,
+      "counts_toward_freeze_default": false
+    },
+    {
+      "value": "religious_observance",
+      "display_name": "Religious observance",
+      "description": "Athlete observing a religious holiday or ritual.",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": true,
+      "counts_toward_freeze_default": false
+    },
+    {
+      "value": "weather",
+      "display_name": "Weather",
+      "description": "Severe weather prevented safe travel to the venue. Often tenant-level (session cancelled) rather than athlete-level.",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": true,
+      "counts_toward_freeze_default": false
+    },
+    {
+      "value": "unspecified",
+      "display_name": "Unspecified",
+      "description": "No reason given (guardian didn't fill the field, or admin recorded the absence without reason).",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": false,
+      "counts_toward_freeze_default": true
+    },
+    {
+      "value": "other",
+      "display_name": "Other",
+      "description": "Catchall — free-text explanation lives in the explanation column.",
+      "requires_documentation": false,
+      "typical_auto_excuse_config": false,
+      "counts_toward_freeze_default": true
+    }
+  ]
+}

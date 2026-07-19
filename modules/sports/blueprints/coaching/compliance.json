@@ -1,0 +1,101 @@
+{
+  "id": "academorix://modules/coaching/compliance",
+  "$version": 1,
+  "title": "coaching — compliance evidence",
+  "description": "Coaching records are employment-adjacent + safeguarding-adjacent. Every certification lifecycle, assignment, and skill rating is compliance-relevant. GDPR Art. 6(1)(b) (contractual basis for employment record), Art. 17 §3 (retained-employment exception), CCPA (right to export), SOC 2 CC6.3, NCAA / IHSA coach-certification verification for youth sports, SafeSport hook (integration point for future safesport module), US DOL wage-and-hour record retention.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "processing necessary for contract performance",
+          "evidence": "Coaching records are lawful under the employment / engagement contract between tenant and coach. CoachingProfile + CoachAssignment + CoachCertification + CoachSkillRating are all recorded for the purpose of executing the tenant's obligations to their customers."
+        },
+        {
+          "article": "Art. 17 §3(b)",
+          "principle": "erasure exception for legal obligation",
+          "evidence": "Coaching records survive 'right to be forgotten' requests for the retention window (7 years post-deactivation; 10y with `coaching_extended_retention`). US DOL wage-and-hour requires 3-7 years of employment records; NCAA / IHSA compliance requires certification verification records for youth-sports contexts."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Coach PII (bio, phone, photo, hourly rate) is confidential-tier + gated behind `coaching_profiles.view.pii` permission. Hourly rate is regulated_financial-tier (never surfaces on cross-tenant platform-admin reads). Certification documents (Wave 4 storage integration) are S3-signed with 7-year retention."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "right to know + right to data portability",
+          "evidence": "GET /api/v1/coaches/me/export returns the coach's complete data envelope (profile + assignments + certifications + received ratings) in JSON. Gated behind sanctum auth. Rate-limited to prevent scraping."
+        },
+        {
+          "principle": "right to delete (with employment exception)",
+          "evidence": "Coach may request account deletion via user::User erasure; coaching rows CASCADE via tenant erasure. Standalone coaching-record deletion during employment is refused (contract-performance exception per CCPA §1798.105(d)(5))."
+        }
+      ]
+    },
+    "coppa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "protecting minor athletes",
+          "evidence": "Coach → minor athlete interactions require the coach to have both verified_by_admin_at != null AND a valid SafeSport certification (verified via CoachCertification with issuing_body='SafeSport'). Enforced by Wave 3b hook in the sports/session module (references this module's verifier via CoachingProfileVerifier binding)."
+        }
+      ]
+    },
+    "ferpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "coach access to education records (US school-type tenants)",
+          "evidence": "Coaches with an active + verified CoachingProfile + valid credentials at a US school-type tenant inherit staff-tier access to athlete education records per FERPA §99.31(a)(1)(i)(B) 'legitimate educational interest'. Access scope narrows to their assigned Teams / Sessions."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "`coaching_profiles.verify` + `coach_certifications.verify` are admin + owner only. Coaches cannot self-verify their own certifications or promote their own profile. Rating writes require admin permission; self-rating is refused at the observer level."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "Coach expiration cadence + assignment conflict detection emit metrics; nightly reconciliation on head_coach uniqueness. Metric `academorix.coaching.head_coach.invariant_violations` should stay at 0."
+        }
+      ]
+    },
+    "us_dol_wage_hour": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "employment record retention",
+          "evidence": "CoachingProfile.hourly_rate_cents + CoachAssignment date ranges satisfy the DOL FLSA §516.2(a) requirement for wage-and-hour records (3-year retention minimum for most states; 7 years default here; 10y with `coaching_extended_retention`)."
+        }
+      ]
+    },
+    "ncaa_ihsa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "coach-certification verification for youth sports",
+          "evidence": "CoachCertification.verified_by_admin_user_id + verification_url provide audit-ready evidence that certifications from recognized bodies (USSF, USA Basketball, USA Swimming, USA Soccer, NASM, NSCA, Red Cross) have been reviewed by tenant admin. Wave 4+ webhook integration verifies against issuing body public APIs where available."
+        }
+      ]
+    },
+    "safesport": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "integration hook for background check verification",
+          "evidence": "This module ships the certification-ledger scaffolding to record SafeSport certifications. Wave 5+ dedicated `safesport` module integrates with the actual SafeSport API to verify + auto-refresh + auto-suspend on expiration. Today: manual capture + verify workflow with admin-uploaded documents."
+        }
+      ]
+    }
+  }
+}

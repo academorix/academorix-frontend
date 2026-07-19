@@ -1,0 +1,25 @@
+{
+  "id": "attendance.widgets.attendance-status-chip",
+  "title": "Attendance status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "attendance.attendance-status-chip",
+  "description": "Status chip with color variant per state. Used in attendance list rows + athlete detail pages + coach session-roster live view.",
+  "params": {
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": ["not_yet_checked_in", "present", "late", "left_early", "present_with_note"]
+    },
+    "size": { "type": "string", "required": false, "default": "sm" }
+  },
+  "nodes": [
+    {
+      "kind": "Chip",
+      "propsExpr": "{ size: $params.size, variant: $params.status === 'present' ? 'success' : $params.status === 'late' ? 'warning' : $params.status === 'left_early' ? 'warning' : $params.status === 'present_with_note' ? 'primary' : 'neutral', className: 'capitalize' }",
+      "children": [
+        { "kind": "Text", "propsExpr": "{ children: $params.status.replace(/_/g, ' ') }" }
+      ]
+    }
+  ]
+}

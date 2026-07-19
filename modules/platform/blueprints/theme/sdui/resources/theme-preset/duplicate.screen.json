@@ -1,0 +1,122 @@
+{
+  "id": "theme.resources.theme-preset.duplicate",
+  "title": "Duplicate preset",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/theme-presets/{id}/duplicate",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "theme", "entity": "theme-preset", "action": "duplicate" },
+  "requiresPermission": "theme.manage",
+  "params": [{ "name": "id", "type": "string", "in": "path", "required": true }],
+  "dataSources": [
+    {
+      "name": "source",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/theme-presets/' + params.id",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "Link",
+          "props": {
+            "leadingIcon": "arrow-left",
+            "children": "All presets",
+            "className": "text-sm text-muted"
+          },
+          "actions": { "onPress": { "kind": "navigate", "to": "/tenant/theme-presets" } }
+        },
+        {
+          "kind": "Text",
+          "props": {
+            "as": "h1",
+            "className": "text-2xl font-semibold",
+            "children": "Duplicate preset"
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4 flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "theme.preset-thumbnail",
+              "props": { "preset": { "$ref": "source" }, "compact": true }
+            },
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted", "children": "Duplicating from" }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-medium" },
+                  "bindings": { "children": { "$ref": "source.name" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "submitUrlExpr": "'/api/v1/theme-presets/' + params.id + '/duplicate'",
+            "submitMethod": "POST",
+            "onSuccess": [
+              { "kind": "toast.success", "message": "Preset duplicated" },
+              { "kind": "navigate", "toExpr": "'/tenant/theme-presets/' + response.data.id" }
+            ]
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6 flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "slug",
+                    "label": "New slug",
+                    "placeholder": "corporate-navy-v2",
+                    "required": true
+                  }
+                },
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "name",
+                    "label": "New display name",
+                    "placeholder": "Corporate Navy v2",
+                    "required": true
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "type": "submit",
+                    "children": "Duplicate"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

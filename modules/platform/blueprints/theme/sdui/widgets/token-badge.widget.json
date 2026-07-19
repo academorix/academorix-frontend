@@ -1,0 +1,75 @@
+{
+  "id": "theme.token-badge",
+  "title": "Token badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Compact renderer for one token value. Shape adapts to the token type: color = swatch + hex code, dimension = ruler + px value, typography = font sample, radius = corner sample, shadow = box sample, motion = duration bar, opacity = transparency bar, z_index = numeric badge.",
+  "props": {
+    "tokenKey": { "type": "string", "description": "Canonical token key (e.g. 'color.primary.500')." },
+    "tokenValue": { "type": "string", "description": "The token's value." }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-2" },
+      "children": [
+        {
+          "kind": "View",
+          "props": {
+            "className": "size-6 rounded border border-content2 flex-shrink-0"
+          },
+          "bindings": {
+            "hidden": { "$expr": "!props.tokenKey.startsWith('color.')" },
+            "style": { "$expr": "{ backgroundColor: props.tokenValue }" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": {
+            "className": "h-6 rounded-r-sm bg-primary-500 flex-shrink-0"
+          },
+          "bindings": {
+            "hidden": {
+              "$expr": "!props.tokenKey.startsWith('spacing.') && !props.tokenKey.startsWith('radius.')"
+            },
+            "style": { "$expr": "{ width: props.tokenValue }" }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "flex-shrink-0" },
+          "bindings": {
+            "hidden": { "$expr": "!props.tokenKey.startsWith('typography.family')" },
+            "style": { "$expr": "{ fontFamily: props.tokenValue }" },
+            "children": "Aa"
+          }
+        },
+        {
+          "kind": "View",
+          "props": {
+            "className": "size-8 bg-content2 rounded-md flex-shrink-0"
+          },
+          "bindings": {
+            "hidden": { "$expr": "!props.tokenKey.startsWith('shadow.')" },
+            "style": { "$expr": "{ boxShadow: props.tokenValue }" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "size-6 bg-primary-500 flex-shrink-0" },
+          "bindings": {
+            "hidden": { "$expr": "!props.tokenKey.startsWith('opacity.')" },
+            "style": { "$expr": "{ opacity: Number(props.tokenValue) }" }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs font-mono" },
+          "bindings": { "children": { "$ref": "props.tokenValue" } }
+        }
+      ]
+    }
+  ]
+}
