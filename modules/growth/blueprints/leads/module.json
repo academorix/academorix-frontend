@@ -1,0 +1,184 @@
+{
+  "$version": 1,
+  "name": "leads",
+  "alias": "leads",
+  "namespace": "Academorix\\Growth\\Leads",
+  "description": "Pre-enrollment CRM funnel. Answers 'which prospective family is at which stage of our sales pipeline?'. Captures leads from web forms, referrals, walk-ins, calls, imports, and API pushes; owns the pipeline state machine (NEW -> CONTACTED -> QUALIFIED -> TRIAL -> WON / LOST); tracks staff assignments, follow-up tasks, and per-lead activity timelines. On conversion, hands off athlete records to the sports/registrations module (via the LeadConversionService) and materialises the attribution snapshot from growth/attribution frozen at capture time. Complements enrollment (§12.4 in the domain blueprint) with the top-of-funnel + follow-up story that enrollment does not own. Owns three tables: `leads` (canonical row per prospective family; 7-year retention for conversion audit + regulator lookback), `lead_activities` (append-only timeline of every touchpoint per lead; 2-year retention), `lead_tasks` (follow-up work with priority + due date + assignee). Every row cascades tenant scoping through `tenant_id`; NO row carries application_id, region_id, organization_id, or scope_node_id per tenancy-columns.md §5. Attribution snapshot is captured once at lead creation and IMMUTABLE thereafter (matches marketing's frozen-at-capture pattern) so ROAS + funnel conversion reporting stays stable across attribution resets. Notifications module fires reminder emails / push for stale leads + tasks; the `leads:reassign-stale` command surfaces leads without recent activity for round-robin re-assignment.",
+  "keywords": [
+    "leads",
+    "lead",
+    "lead-activity",
+    "lead-task",
+    "crm",
+    "funnel",
+    "pipeline",
+    "sales-pipeline",
+    "prospect",
+    "trial",
+    "trial-conversion",
+    "conversion-tracking",
+    "attribution",
+    "assignment",
+    "follow-up",
+    "pipeline-stage",
+    "web-form",
+    "walk-in",
+    "referral-capture",
+    "growth",
+    "wave-5"
+  ],
+  "priority": 55,
+  "providers": ["Academorix\\Growth\\Leads\\Providers\\LeadsServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "attribution",
+    "notifications"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "sports::registrations (Wave 6 — receives converted leads via LeadConversionService; creates athlete rows + attaches attribution snapshot)",
+    "marketing (Wave 5 — LeadConverted maps to marketing_events.event_type=signup for ad-network fan-out)",
+    "notifications (Wave 5 — fires follow-up reminders, stale-lead alerts, task-due digest)",
+    "reporting (Wave 6 — funnel-conversion + source-attribution rollups over the lead + lead_activity ledger)"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToLead",
+      "HasLeadActivities",
+      "HasLeadTasks"
+    ],
+    "attributes": [
+      "AsLeadStageTransition",
+      "AsLeadSource"
+    ],
+    "blueprints": [
+      "leads",
+      "lead_activities",
+      "lead_tasks"
+    ],
+    "middleware": ["leads.enforce_entitlement"],
+    "events": [
+      "LeadCaptured",
+      "LeadContacted",
+      "LeadQualified",
+      "LeadTrialBooked",
+      "LeadConverted",
+      "LeadLost",
+      "LeadReassigned"
+    ],
+    "policies": [
+      "LeadPolicy",
+      "LeadActivityPolicy",
+      "LeadTaskPolicy"
+    ],
+    "hooks": [
+      "PurgeLeadsForErasedTenant",
+      "SnapshotAttributionOnLeadCapture",
+      "MaterialiseAthletesOnLeadConverted"
+    ],
+    "commands": [
+      "leads:list",
+      "leads:describe",
+      "leads:reassign-stale",
+      "leads:funnel-report"
+    ],
+    "jobs": [
+      "ReassignStaleLeadsJob",
+      "SendLeadFollowUpJob",
+      "MaterialiseLeadConversionJob",
+      "CloseStaleLeadTasksJob"
+    ],
+    "notifications": [
+      "LeadCapturedNotification",
+      "LeadAssignedNotification",
+      "LeadTaskDueNotification",
+      "LeadStaleReassignedNotification",
+      "LeadConvertedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.leads",
+      "tenant.{tenantId}.leads.tasks"
+    ],
+    "observers": [
+      "LeadObserver",
+      "LeadActivityObserver",
+      "LeadTaskObserver"
+    ],
+    "rules": [
+      "valid_lead_stage",
+      "valid_lead_source",
+      "valid_lost_reason",
+      "valid_stage_transition",
+      "valid_task_priority",
+      "valid_task_status",
+      "valid_attribution_snapshot_shape",
+      "valid_currency"
+    ],
+    "casts": [
+      "LeadStage",
+      "LeadSource",
+      "LeadLostReason",
+      "LeadTaskPriority",
+      "LeadTaskStatus",
+      "LeadActivityType",
+      "AttributionSnapshot"
+    ],
+    "views": [],
+    "lang": ["leads"],
+    "config": ["leads"],
+    "macros": [],
+    "bindings": [
+      "LeadRepository",
+      "LeadActivityRepository",
+      "LeadTaskRepository",
+      "LeadConversionService",
+      "LeadAttributionSnapshotter",
+      "LeadStageTransitionValidator",
+      "LeadFunnelReporter"
+    ],
+    "resources": [
+      "lead",
+      "lead-activity",
+      "lead-task"
+    ]
+  },
+  "wraps": {
+    "packages": [],
+    "rationale": "Pure domain module — no third-party integrations wrapped. Ad-network delivery for LeadConverted lands via the marketing module's listener registry, not from here."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing CRM surface. Every route carries the `sanctum` guard + `X-Application-Id` header + `leads.enforce_entitlement` middleware. Reception + marketing + admin roles manage the funnel; coach role reads own-child leads only via policy narrowing; parent role never sees the surface.",
+      "routes": [
+        "GET /api/v1/leads",
+        "POST /api/v1/leads",
+        "GET /api/v1/leads/{lead}",
+        "PATCH /api/v1/leads/{lead}",
+        "DELETE /api/v1/leads/{lead}",
+        "POST /api/v1/leads/{lead}/assign",
+        "POST /api/v1/leads/{lead}/convert",
+        "GET /api/v1/leads/{lead}/activities",
+        "POST /api/v1/leads/{lead}/activities",
+        "GET /api/v1/lead-activities",
+        "GET /api/v1/lead-activities/{lead_activity}",
+        "GET /api/v1/lead-tasks",
+        "POST /api/v1/lead-tasks",
+        "GET /api/v1/lead-tasks/{lead_task}",
+        "PATCH /api/v1/lead-tasks/{lead_task}",
+        "DELETE /api/v1/lead-tasks/{lead_task}",
+        "POST /api/v1/lead-tasks/{lead_task}/complete",
+        "GET /api/v1/leads/reports/funnel"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant support tooling. Ops + support can read (never mutate) tenant leads for support-ticket triage.",
+      "routes": [
+        "GET /api/v1/platform/leads",
+        "GET /api/v1/platform/leads/{lead}"
+      ]
+    }
+  }
+}

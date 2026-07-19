@@ -90,6 +90,20 @@ final class CreateFileRequestData extends Data
         public ?array $customProperties = null,
 
         public ?array $metadata = null,
+
+        #[StringType]
+        public ?string $documentType = null,
+
+        #[StringType]
+        public ?string $expiryAt = null,
+
+        #[StringType]
+        public string $ocrStatus,
+
+        #[StringType]
+        public ?string $ocrText = null,
+
+        public ?array $ocrMetadata = null,
     ) {
     }
 }

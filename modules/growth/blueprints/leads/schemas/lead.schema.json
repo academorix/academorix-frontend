@@ -1,0 +1,284 @@
+{
+  "id": "academorix://modules/leads/schemas/lead",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Lead",
+  "description": "Canonical prospective-family row. Belongs to a Tenant + (optionally) a preferred Branch + (optionally) an assigned owner (staff User). Attribution snapshot frozen at capture time. State machine: NEW -> CONTACTED -> QUALIFIED -> TRIAL -> WON / LOST. NEVER carries application_id, region_id, organization_id, or scope_node_id — all cascade through tenant_id per tenancy-columns.md §5.",
+  "type": "object",
+  "x-module": "leads",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "leads",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "led_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Leads\\Models\\Lead",
+    "interface": "Academorix\\Growth\\Leads\\Contracts\\Data\\LeadInterface",
+    "implements": ["Academorix\\Growth\\Leads\\Contracts\\Data\\LeadInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasLeadActivities",
+      "HasLeadTasks",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "source": "LeadSource",
+      "stage": "LeadStage",
+      "lost_reason": "LeadLostReason",
+      "athlete_names": "array",
+      "attribution_snapshot": "array",
+      "converted_athlete_ids": "array",
+      "metadata": "array",
+      "expected_start_at": "date",
+      "converted_at": "datetime",
+      "estimated_lifetime_value_cents": "integer"
+    },
+    "observers": ["LeadObserver"],
+    "appends": ["is_open", "days_in_stage", "activity_count"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `led_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "source": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: web_form / referral / walk_in / call / email / social / trial_signup / import / api."
+      },
+      "source_reference": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "External identifier from the originating system (form-submission ID, referral code, phone-log ID, imported row primary key)."
+      },
+      "stage": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'NEW'",
+        "description": "Enum: NEW / CONTACTED / QUALIFIED / TRIAL / WON / LOST. Transitions run through LeadStageTransitionValidator."
+      },
+      "owner_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Staff User currently assigned to the lead. NULL = unassigned / needs triage."
+      },
+      "contact_name": { "type": "string", "length": 255, "nullable": false },
+      "contact_email": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Primary contact email. Not unique — the same family may raise multiple leads over time."
+      },
+      "contact_phone": { "type": "string", "length": 64, "nullable": true, "description": "E.164 preferred but tolerated as raw." },
+      "contact_language": { "type": "string", "length": 8, "nullable": true, "description": "ISO 639-1 language code for follow-up communication preference." },
+      "athlete_names": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of proposed athletes attached to this lead. Shape: [{ first_name, last_name?, dob?, notes? }]. Materialised into sports::athletes on conversion."
+      },
+      "sport_key": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Sports registry key when the family expressed a specific interest. Free-text pre-Wave-3c."
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "set null" },
+        "description": "Preferred branch when the family named one. NULL = branch-agnostic / assign later."
+      },
+      "program_interest": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Free-text description of the program / class / discipline the family is interested in."
+      },
+      "expected_start_at": {
+        "type": "date",
+        "nullable": true,
+        "description": "Family-stated target start date. Informs prioritisation + follow-up cadence."
+      },
+      "estimated_lifetime_value_cents": {
+        "type": "bigint",
+        "nullable": true,
+        "description": "Sales-authored estimate of the lead's LTV in the smallest currency unit. Feeds pipeline-value dashboards."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217 3-letter code. Required when estimated_lifetime_value_cents IS NOT NULL."
+      },
+      "attribution_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Frozen at capture. Shape: { utm_source?, utm_medium?, utm_campaign?, utm_content?, utm_term?, gclid?, fbclid?, ttclid?, first_touch_at?, last_touch_at?, landing_page?, referrer?, session_id? }. IMMUTABLE after create."
+      },
+      "converted_athlete_ids": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of `ath_*` athlete IDs materialised on conversion. NULL until stage=WON."
+      },
+      "converted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set when stage transitions to WON. IMMUTABLE thereafter."
+      },
+      "lost_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: budget / timing / competitor / not_qualified / ghost / other. Required when stage=LOST."
+      },
+      "lost_notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "Optional free-text describing the lost reason. Sales narrative for retro analysis."
+      },
+      "notes": {
+        "type": "text",
+        "nullable": true,
+        "description": "General notes on the lead. Prefer lead_activities entries for time-stamped touchpoints."
+      },
+      "metadata": { "type": "jsonb", "nullable": true, "description": "Free-form metadata bag for tenant-authored custom fields." },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "stage", "created_at"], "name": "leads_stage_idx" },
+      { "columns": ["tenant_id", "owner_id", "stage"], "name": "leads_owner_stage_idx" },
+      { "columns": ["tenant_id", "source"], "name": "leads_source_idx" },
+      { "columns": ["tenant_id", "converted_at"], "name": "leads_converted_at_idx", "predicate": "converted_at IS NOT NULL" },
+      { "columns": ["tenant_id", "branch_id", "stage"], "name": "leads_branch_stage_idx", "predicate": "branch_id IS NOT NULL" },
+      { "columns": ["tenant_id", "created_at"], "name": "leads_recent_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "source",
+    "stage",
+    "contact_name",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^led_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "source": {
+      "type": "string",
+      "enum": ["web_form", "referral", "walk_in", "call", "email", "social", "trial_signup", "import", "api"]
+    },
+    "source_reference": { "type": ["string", "null"], "maxLength": 255 },
+    "stage": {
+      "type": "string",
+      "enum": ["NEW", "CONTACTED", "QUALIFIED", "TRIAL", "WON", "LOST"]
+    },
+    "owner_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "contact_name": { "type": "string", "minLength": 1, "maxLength": 255 },
+    "contact_email": { "type": ["string", "null"], "format": "email", "maxLength": 255 },
+    "contact_phone": { "type": ["string", "null"], "maxLength": 64 },
+    "contact_language": { "type": ["string", "null"], "pattern": "^[a-z]{2}$", "maxLength": 8 },
+    "athlete_names": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "required": ["first_name"],
+        "properties": {
+          "first_name": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "last_name": { "type": ["string", "null"], "maxLength": 128 },
+          "dob": { "type": ["string", "null"], "format": "date" },
+          "notes": { "type": ["string", "null"], "maxLength": 500 }
+        }
+      }
+    },
+    "sport_key": { "type": ["string", "null"], "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$" },
+    "branch_id": { "type": ["string", "null"], "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "program_interest": { "type": ["string", "null"], "maxLength": 255 },
+    "expected_start_at": { "type": ["string", "null"], "format": "date" },
+    "estimated_lifetime_value_cents": { "type": ["integer", "null"], "minimum": 0 },
+    "currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "attribution_snapshot": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "utm_source": { "type": ["string", "null"] },
+        "utm_medium": { "type": ["string", "null"] },
+        "utm_campaign": { "type": ["string", "null"] },
+        "utm_content": { "type": ["string", "null"] },
+        "utm_term": { "type": ["string", "null"] },
+        "gclid": { "type": ["string", "null"] },
+        "fbclid": { "type": ["string", "null"] },
+        "ttclid": { "type": ["string", "null"] },
+        "first_touch_at": { "type": ["string", "null"], "format": "date-time" },
+        "last_touch_at": { "type": ["string", "null"], "format": "date-time" },
+        "landing_page": { "type": ["string", "null"] },
+        "referrer": { "type": ["string", "null"] },
+        "session_id": { "type": ["string", "null"] }
+      }
+    },
+    "converted_athlete_ids": {
+      "type": ["array", "null"],
+      "items": { "type": "string", "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" }
+    },
+    "converted_at": { "type": ["string", "null"], "format": "date-time" },
+    "lost_reason": {
+      "type": ["string", "null"],
+      "enum": [null, "budget", "timing", "competitor", "not_qualified", "ghost", "other"]
+    },
+    "lost_notes": { "type": ["string", "null"] },
+    "notes": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["is_open", "days_in_stage", "activity_count"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`led_<26>`)"]
+  },
+  "x-invariants": [
+    "attribution_snapshot is frozen at capture time — IMMUTABLE after create",
+    "converted_at IS NOT NULL implies stage='WON'",
+    "stage='WON' implies converted_at IS NOT NULL AND converted_athlete_ids IS NOT NULL",
+    "stage='LOST' implies lost_reason IS NOT NULL",
+    "estimated_lifetime_value_cents IS NOT NULL implies currency IS NOT NULL",
+    "stage transitions follow the state machine: NEW -> CONTACTED -> QUALIFIED -> TRIAL -> WON / LOST. Backward transitions require the stage-transition validator's explicit allow-list.",
+    "converted_at IMMUTABLE once set — subsequent stage changes back to non-WON are forbidden"
+  ]
+}

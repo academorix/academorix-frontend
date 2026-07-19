@@ -1,0 +1,145 @@
+{
+  "id": "academorix://modules/leads/events",
+  "$version": 1,
+  "title": "leads — published events",
+  "namespace": "Academorix\\Growth\\Leads\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. LeadConverted is the load-bearing signal — feeds sports::registrations, marketing (as signup), reporting, and notifications simultaneously. LeadCaptured triggers attribution snapshotting via SnapshotAttributionOnLeadCapture. LeadReassigned + LeadLost provide the audit trail for pipeline retros.",
+  "events": [
+    {
+      "name": "LeadCaptured",
+      "class": "Academorix\\Growth\\Leads\\Events\\LeadCaptured",
+      "trigger": "LeadObserver.creating committed a new leads row. Precedes attribution snapshot materialisation.",
+      "queue": "leads",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — regulator lookback on marketing conversions)",
+        "leads::SnapshotAttributionOnLeadCapture (reads growth::attribution + freezes into leads.attribution_snapshot)",
+        "notifications::DispatchLeadCapturedNotification (opt-in to marketing role — new-lead alerts)",
+        "monitoring::MetricsCollector (increments academorix.leads.captured_total)"
+      ],
+      "payload": {
+        "lead_id": "ULID (led_*)",
+        "tenant_id": "ULID (ten_*)",
+        "source": "string (web_form / referral / walk_in / call / email / social / trial_signup / import / api)",
+        "contact_email": "string | null",
+        "branch_id": "ULID (brn_*) | null",
+        "sport_key": "string | null",
+        "captured_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LeadContacted",
+      "class": "Academorix\\Growth\\Leads\\Events\\LeadContacted",
+      "trigger": "Lead.stage transitions NEW -> CONTACTED. LeadObserver.updating fires when the stage_change validator accepts the transition.",
+      "queue": "leads",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "lead_id": "ULID",
+        "tenant_id": "ULID",
+        "from_stage": "'NEW'",
+        "to_stage": "'CONTACTED'",
+        "owner_id": "ULID (usr_*) | null",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LeadQualified",
+      "class": "Academorix\\Growth\\Leads\\Events\\LeadQualified",
+      "trigger": "Lead.stage transitions CONTACTED -> QUALIFIED.",
+      "queue": "leads",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "lead_id": "ULID",
+        "tenant_id": "ULID",
+        "owner_id": "ULID | null",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LeadTrialBooked",
+      "class": "Academorix\\Growth\\Leads\\Events\\LeadTrialBooked",
+      "trigger": "Lead.stage transitions QUALIFIED -> TRIAL. Typically fired when the family accepts a trial-session invitation.",
+      "queue": "leads",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchLeadTrialBookedNotification (opt-in to family + assigned owner)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "lead_id": "ULID",
+        "tenant_id": "ULID",
+        "owner_id": "ULID | null",
+        "trial_scheduled_at": "ISO 8601 | null (from the trial_scheduled activity when known)",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LeadConverted",
+      "class": "Academorix\\Growth\\Leads\\Events\\LeadConverted",
+      "trigger": "CRITICAL. Lead.stage transitions to WON. LeadConversionService materialised athletes into sports::registrations + attribution snapshot travels to marketing::MarketingEvent event_type=signup.",
+      "queue": "leads-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial conversion record)",
+        "leads::MaterialiseAthletesOnLeadConverted (creates athlete + guardian rows via sports::registrations)",
+        "marketing::MarketingEventCapturer (maps to marketing_events.event_type='signup' for ad-network fan-out)",
+        "notifications::DispatchLeadConvertedNotification (owner + admin — celebrate + kick off onboarding)",
+        "monitoring::MetricsCollector (increments academorix.leads.converted_total; feeds funnel-conversion dashboard)"
+      ],
+      "payload": {
+        "lead_id": "ULID",
+        "tenant_id": "ULID",
+        "owner_id": "ULID | null",
+        "source": "string",
+        "converted_athlete_ids": "ULID[] (ath_*)",
+        "attribution_snapshot": "object (frozen at capture — passed through to downstream consumers)",
+        "estimated_lifetime_value_cents": "integer | null",
+        "currency": "string (ISO 4217) | null",
+        "converted_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LeadLost",
+      "class": "Academorix\\Growth\\Leads\\Events\\LeadLost",
+      "trigger": "Lead.stage transitions to LOST. lost_reason set at the same time. Terminal.",
+      "queue": "leads",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector (increments academorix.leads.lost_total; feeds loss-reason breakdown dashboard)"
+      ],
+      "payload": {
+        "lead_id": "ULID",
+        "tenant_id": "ULID",
+        "from_stage": "string",
+        "lost_reason": "'budget' | 'timing' | 'competitor' | 'not_qualified' | 'ghost' | 'other'",
+        "owner_id": "ULID | null",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LeadReassigned",
+      "class": "Academorix\\Growth\\Leads\\Events\\LeadReassigned",
+      "trigger": "Lead.owner_id changed OR the leads:reassign-stale command flushed stale-lead reassignment. Every fire writes an assignment activity via the observer.",
+      "queue": "leads",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchLeadAssignedNotification (opt-in to the new owner)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "lead_id": "ULID",
+        "tenant_id": "ULID",
+        "from_owner_id": "ULID | null",
+        "to_owner_id": "ULID | null",
+        "reason": "'manual' | 'stale_reassignment' | 'onboarding'",
+        "actor_id": "ULID | null (null = system-generated by the stale-reassignment job)",
+        "at": "ISO 8601"
+      }
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+{
+  "id": "academorix://modules/match/schemas/match-squad-entry",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MatchSquadEntry",
+  "description": "One row per athlete selected (or considered) for a match's squad. Carries role, shirt number, formation slot, captaincy. Belongs to Tenant + Match (CASCADE). References Athlete + AthleteEnrollment (RESTRICT — the enrollment scopes eligibility to the season). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "match",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "match_squad_entries",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "msq_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Match\\Models\\MatchSquadEntry",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchSquadEntryInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchSquadEntryInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToMatch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "role": "SquadEntryRole",
+      "shirt_number": "integer",
+      "is_captain": "boolean",
+      "metadata": "array"
+    },
+    "observers": ["MatchSquadEntryObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `msq_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "match_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "match_fixtures", "column": "id", "onDelete": "cascade" }
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "restrict" }
+      },
+      "athlete_enrollment_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "athlete_enrollments", "column": "id", "onDelete": "restrict" },
+        "description": "The season-scoped enrollment that makes this athlete eligible for the match. Enforces season-eligibility at write time."
+      },
+      "role": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: starter / substitute / reserve / not_selected. `not_selected` rows exist when a coach considered + rejected an athlete for the audit trail."
+      },
+      "shirt_number": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Jersey number for the match. Unique per (match_id, shirt_number) partial WHERE shirt_number IS NOT NULL."
+      },
+      "formation_slot": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Formation slot code from the sports::formations registry (e.g. `LB` / `CDM` / `LW`). NULL for non-formation sports (swimming, gymnastics) + substitutes."
+      },
+      "is_captain": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Team captain flag. At most one row per (match_id) with is_captain=true."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Free-form metadata bag (per-athlete notes, injury flags, positional preferences)."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["match_id", "athlete_id"],
+        "unique": true,
+        "name": "match_squad_entries_match_athlete_unique"
+      },
+      {
+        "columns": ["tenant_id", "match_id", "role"],
+        "name": "match_squad_entries_match_role_idx"
+      },
+      {
+        "columns": ["match_id", "shirt_number"],
+        "unique": true,
+        "name": "match_squad_entries_match_shirt_unique",
+        "predicate": "shirt_number IS NOT NULL"
+      },
+      {
+        "columns": ["match_id", "is_captain"],
+        "unique": true,
+        "name": "match_squad_entries_captain_unique",
+        "predicate": "is_captain = TRUE"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "match_id",
+    "athlete_id",
+    "athlete_enrollment_id",
+    "role",
+    "is_captain",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^msq_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "match_id": { "type": "string", "pattern": "^mat_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "athlete_id": { "type": "string", "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "athlete_enrollment_id": { "type": "string", "pattern": "^aen_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "role": { "type": "string", "enum": ["starter", "substitute", "reserve", "not_selected"] },
+    "shirt_number": { "type": ["integer", "null"], "minimum": 0, "maximum": 999 },
+    "formation_slot": { "type": ["string", "null"], "maxLength": 32 },
+    "is_captain": { "type": "boolean" },
+    "metadata": { "type": "object", "nullable": true },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "unique (match_id, athlete_id) — an athlete has at most one squad row per match",
+    "unique (match_id, shirt_number) when shirt_number IS NOT NULL — no jersey conflicts",
+    "at most one is_captain=TRUE per match",
+    "role='not_selected' implies shirt_number IS NULL AND formation_slot IS NULL AND is_captain=FALSE",
+    "formation_slot IS NOT NULL implies role IN ('starter', 'substitute')",
+    "athlete_enrollment_id must match the match's season (referential + policy check)",
+    "athlete_id + match_id IMMUTABLE post-create (drop + recreate the row to swap athletes)"
+  ]
+}

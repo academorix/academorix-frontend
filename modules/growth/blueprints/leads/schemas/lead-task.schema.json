@@ -1,0 +1,155 @@
+{
+  "id": "academorix://modules/leads/schemas/lead-task",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "LeadTask",
+  "description": "Follow-up task attached to a Lead. Belongs to Tenant + Lead (CASCADE on parent delete). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "leads",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "lead_tasks",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "let_",
+    "incrementing": false,
+    "model": "Academorix\\Growth\\Leads\\Models\\LeadTask",
+    "interface": "Academorix\\Growth\\Leads\\Contracts\\Data\\LeadTaskInterface",
+    "implements": ["Academorix\\Growth\\Leads\\Contracts\\Data\\LeadTaskInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToLead",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "task_type": "LeadTaskType",
+      "priority": "LeadTaskPriority",
+      "status": "LeadTaskStatus",
+      "due_at": "datetime",
+      "completed_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["LeadTaskObserver"],
+    "appends": ["is_overdue", "days_until_due"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `let_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "lead_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "leads", "column": "id", "onDelete": "cascade" }
+      },
+      "assigned_to_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "Staff User the task is assigned to. NULL = unassigned queue."
+      },
+      "task_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: call / email / meeting / follow_up / send_document."
+      },
+      "title": { "type": "string", "length": 255, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "priority": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'normal'",
+        "description": "Enum: low / normal / high / urgent."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'open'",
+        "description": "Enum: open / in_progress / completed / cancelled."
+      },
+      "due_at": { "type": "timestamptz", "nullable": true, "description": "Optional deadline. When NULL the task has no urgency." },
+      "completed_at": { "type": "timestamptz", "nullable": true, "description": "Set when status transitions to completed. IMMUTABLE thereafter." },
+      "completed_by": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "set null" },
+        "description": "User who completed the task. Set together with completed_at."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "assigned_to_id", "status", "due_at"], "name": "lead_tasks_assignee_status_due_idx" },
+      { "columns": ["tenant_id", "lead_id", "status"], "name": "lead_tasks_lead_status_idx" },
+      { "columns": ["tenant_id", "status", "due_at"], "name": "lead_tasks_open_due_idx", "predicate": "status IN ('open', 'in_progress')" },
+      { "columns": ["tenant_id", "priority", "due_at"], "name": "lead_tasks_priority_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "lead_id",
+    "task_type",
+    "title",
+    "priority",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^let_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "lead_id": { "type": "string", "pattern": "^led_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "assigned_to_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "task_type": {
+      "type": "string",
+      "enum": ["call", "email", "meeting", "follow_up", "send_document"]
+    },
+    "title": { "type": "string", "minLength": 1, "maxLength": 255 },
+    "description": { "type": ["string", "null"] },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "normal", "high", "urgent"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["open", "in_progress", "completed", "cancelled"]
+    },
+    "due_at": { "type": ["string", "null"], "format": "date-time" },
+    "completed_at": { "type": ["string", "null"], "format": "date-time" },
+    "completed_by": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "status='completed' implies completed_at IS NOT NULL AND completed_by IS NOT NULL",
+    "status='completed' + completed_at + completed_by are IMMUTABLE once set (re-open requires a new task)",
+    "status='cancelled' implies completed_at IS NULL AND completed_by IS NULL",
+    "due_at IS NULL is valid — priority alone drives triage when no deadline is set",
+    "task_type IMMUTABLE post-create"
+  ]
+}

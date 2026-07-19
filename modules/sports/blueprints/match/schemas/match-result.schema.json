@@ -1,0 +1,180 @@
+{
+  "id": "academorix://modules/match/schemas/match-result",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MatchResult",
+  "description": "Per-participant final result for a match. For standard home/away matches there is exactly one row with participant_id=NULL carrying home + away scores together. For multi-team meets (galas / festivals) there is one row per match_participant carrying that participant's score / time / distance / apparatus. Scoring is sport-agnostic — the ScoringStrategyResolver decides which columns are used per sport. Belongs to Tenant + Match (CASCADE). Optionally references MatchParticipant. NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "match",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "match_results",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mre_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Match\\Models\\MatchResult",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchResultInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchResultInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToMatch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable"
+    ],
+    "casts": {
+      "outcome": "MatchOutcome",
+      "period_scores_json": "array",
+      "final_score_home": "integer",
+      "final_score_away": "integer",
+      "time_recorded_seconds": "float",
+      "distance_recorded_meters": "float",
+      "apparatus_scores_json": "array",
+      "published_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["MatchResultObserver"],
+    "appends": ["is_published"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `mre_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "match_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "match_fixtures", "column": "id", "onDelete": "cascade" }
+      },
+      "participant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "match_participants", "column": "id", "onDelete": "cascade" },
+        "description": "NULL for standard home/away matches (one result row aggregates both sides). NOT NULL for multi-team meets — one result row per participant."
+      },
+      "period_scores_json": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of per-period scores for score-based sports with periods (halves / quarters / sets). Shape: [{ label: 'Q1', home: 2, away: 1 }] for team sports; [{ label: 'Set 1', score: 25 }] for individual sets."
+      },
+      "final_score_home": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Home-side final score for score-based sports on standard matches. NULL for time-scored / distance-scored / apparatus-scored / multi-team."
+      },
+      "final_score_away": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Away-side final score. Same nullability rules as final_score_home."
+      },
+      "time_recorded_seconds": {
+        "type": "float",
+        "nullable": true,
+        "description": "Time-scored result in seconds with millisecond precision. NULL for non-time-scored sports."
+      },
+      "distance_recorded_meters": {
+        "type": "float",
+        "nullable": true,
+        "description": "Distance-scored result in metres. NULL for non-distance-scored sports."
+      },
+      "apparatus_scores_json": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Apparatus-scored result. Shape: [{ apparatus: 'floor', difficulty: 5.4, execution: 8.9, penalty: 0.1, total: 14.2 }]. Sport-strategy-specific."
+      },
+      "outcome": {
+        "type": "string",
+        "length": 8,
+        "nullable": true,
+        "description": "Enum: win / draw / loss. Relative to team_id on standard matches; relative to the participant on multi-team. NULL for individual (non-competitive) sports."
+      },
+      "motm_athlete_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "set null" },
+        "description": "Man-of-the-match award. Must reference an athlete on this match's squad."
+      },
+      "published_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on POST /results/publish. Fires MatchResultPublished + kicks the standings recompute."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "match_id"], "name": "match_results_match_idx" },
+      {
+        "columns": ["match_id", "participant_id"],
+        "unique": true,
+        "name": "match_results_participant_unique",
+        "predicate": "participant_id IS NOT NULL"
+      },
+      {
+        "columns": ["match_id"],
+        "unique": true,
+        "name": "match_results_standard_unique",
+        "predicate": "participant_id IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "published_at"],
+        "name": "match_results_published_idx",
+        "predicate": "published_at IS NOT NULL"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "match_id", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mre_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "match_id": { "type": "string", "pattern": "^mat_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "participant_id": { "type": ["string", "null"], "pattern": "^mpa_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "period_scores_json": { "type": ["array", "null"] },
+    "final_score_home": { "type": ["integer", "null"], "minimum": 0 },
+    "final_score_away": { "type": ["integer", "null"], "minimum": 0 },
+    "time_recorded_seconds": { "type": ["number", "null"], "minimum": 0 },
+    "distance_recorded_meters": { "type": ["number", "null"], "minimum": 0 },
+    "apparatus_scores_json": { "type": ["array", "null"] },
+    "outcome": {
+      "type": ["string", "null"],
+      "enum": [null, "win", "draw", "loss"]
+    },
+    "motm_athlete_id": { "type": ["string", "null"], "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "published_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "final_score_home IS NOT NULL implies final_score_away IS NOT NULL (and vice versa)",
+    "outcome='win' AND participant_id IS NULL implies final_score_home > final_score_away",
+    "outcome='draw' AND participant_id IS NULL implies final_score_home = final_score_away",
+    "outcome='loss' AND participant_id IS NULL implies final_score_home < final_score_away",
+    "at least one of {final_score_home, time_recorded_seconds, distance_recorded_meters, apparatus_scores_json} IS NOT NULL — a result must record SOMETHING",
+    "motm_athlete_id, when set, must correspond to a match_squad_entries row with match_id=this.match_id and role IN ('starter','substitute')",
+    "published_at IMMUTABLE once set — un-publish deletes + recreates",
+    "unique (match_id, participant_id) when participant_id IS NOT NULL — one result per participant per match",
+    "unique (match_id) WHERE participant_id IS NULL — one standard-result row per match"
+  ]
+}

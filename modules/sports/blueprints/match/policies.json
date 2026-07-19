@@ -1,0 +1,209 @@
+{
+  "id": "academorix://modules/match/policies",
+  "$version": 1,
+  "title": "match — authorization policies",
+  "description": "Seven policies, one per owned model. Every ability resolves through spatie/laravel-permission then narrows by tenant scope + role-specific rules. Parent role visibility is narrowed to matches whose squad contains one of the parent's child athletes. Note visibility is filtered by MatchNoteVisibility at query time (parents see public + parents; anonymous sees public only).",
+  "policies": [
+    {
+      "model": "MatchFixture",
+      "class": "Academorix\\Sports\\Match\\Policies\\MatchFixturePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "matches.viewAny",
+          "scope": "parent role narrowed to matches whose squad contains one of their child athletes; coach + head_coach see all tenant matches; support role sees read-only."
+        },
+        { "action": "view", "permission": "matches.view", "scope": "same narrowing as viewAny." },
+        {
+          "action": "create",
+          "permission": "matches.create",
+          "scope": "coach creates in DRAFT / SCHEDULED; head_coach + admin + owner can create in any pre-terminal state."
+        },
+        {
+          "action": "update",
+          "permission": "matches.update",
+          "scope": "coach can only update matches they created before publish; head_coach + admin + owner can update any."
+        },
+        {
+          "action": "delete",
+          "permission": "matches.delete",
+          "scope": "admin + owner only. Refuses when status IN ('IN_PROGRESS', 'COMPLETED')."
+        },
+        {
+          "action": "reschedule",
+          "permission": "matches.reschedule",
+          "scope": "head_coach + admin + owner. On status=LINEUP_SET or beyond, fires notify + re-approval hook."
+        },
+        { "action": "postpone", "permission": "matches.postpone" },
+        { "action": "cancel", "permission": "matches.cancel" },
+        {
+          "action": "abandon",
+          "permission": "matches.abandon",
+          "scope": "only from status=IN_PROGRESS. Requires reason in metadata."
+        },
+        {
+          "action": "publishLineup",
+          "permission": "matches.publish-lineup",
+          "scope": "requires >= 1 starter in match_squad_entries."
+        },
+        {
+          "action": "unpublishLineup",
+          "permission": "matches.unpublish-lineup",
+          "scope": "refuses after status=IN_PROGRESS."
+        },
+        {
+          "action": "recordResult",
+          "permission": "matches.record-result",
+          "scope": "requires status IN ('IN_PROGRESS', 'COMPLETED'). ScoringStrategyResolver validates the shape."
+        },
+        { "action": "publishResult", "permission": "matches.publish-result" },
+        { "action": "platformViewAny", "permission": "platform.matches.viewAny" },
+        { "action": "platformView", "permission": "platform.matches.view" }
+      ]
+    },
+    {
+      "model": "MatchParticipant",
+      "class": "Academorix\\Sports\\Match\\Policies\\MatchParticipantPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "match-participants.viewAny" },
+        { "action": "view", "permission": "match-participants.view" },
+        {
+          "action": "create",
+          "permission": "match-participants.create",
+          "scope": "multi-team meets only — refuses when parent match has team_id IS NOT NULL."
+        },
+        {
+          "action": "update",
+          "permission": "NEVER",
+          "scope": "participants are drop + recreate to preserve identity."
+        },
+        { "action": "delete", "permission": "match-participants.delete" }
+      ]
+    },
+    {
+      "model": "MatchSquadEntry",
+      "class": "Academorix\\Sports\\Match\\Policies\\MatchSquadEntryPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "match-squad-entries.viewAny",
+          "scope": "parent role narrowed to squad entries for their child athletes."
+        },
+        { "action": "view", "permission": "match-squad-entries.view" },
+        {
+          "action": "create",
+          "permission": "match-squad-entries.create",
+          "scope": "refuses when the athlete's enrollment does not match the match's season."
+        },
+        { "action": "update", "permission": "match-squad-entries.update" },
+        {
+          "action": "delete",
+          "permission": "match-squad-entries.delete",
+          "scope": "refuses on status=IN_PROGRESS + status=COMPLETED (roster is frozen at kickoff)."
+        }
+      ]
+    },
+    {
+      "model": "MatchResult",
+      "class": "Academorix\\Sports\\Match\\Policies\\MatchResultPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "match-results.viewAny" },
+        { "action": "view", "permission": "match-results.view" },
+        {
+          "action": "create",
+          "permission": "matches.record-result",
+          "scope": "requires match status IN ('IN_PROGRESS', 'COMPLETED')."
+        },
+        {
+          "action": "update",
+          "permission": "matches.record-result",
+          "scope": "refuses when published_at IS NOT NULL."
+        },
+        {
+          "action": "delete",
+          "permission": "NEVER",
+          "scope": "results are corrected via update; deletion cascades only with the parent match."
+        }
+      ]
+    },
+    {
+      "model": "MatchEvent",
+      "class": "Academorix\\Sports\\Match\\Policies\\MatchEventPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "match-events.viewAny" },
+        { "action": "view", "permission": "match-events.view" },
+        {
+          "action": "create",
+          "permission": "match-events.create",
+          "scope": "requires match status IN ('IN_PROGRESS', 'COMPLETED'). Athlete must belong to the match's squad."
+        },
+        {
+          "action": "update",
+          "permission": "NEVER",
+          "scope": "events are IMMUTABLE post-create — corrections drop + recreate."
+        },
+        {
+          "action": "delete",
+          "permission": "match-events.delete",
+          "scope": "coach can delete their own inserts before publish; head_coach + admin + owner can delete any."
+        }
+      ]
+    },
+    {
+      "model": "MatchNote",
+      "class": "Academorix\\Sports\\Match\\Policies\\MatchNotePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "match-notes.viewAny",
+          "scope": "list-scoped by visibility: coach + head_coach see all; parents see visibility IN ('parents', 'public'); public/anonymous see visibility='public' only."
+        },
+        {
+          "action": "view",
+          "permission": "match-notes.view",
+          "scope": "same visibility narrowing."
+        },
+        {
+          "action": "create",
+          "permission": "match-notes.create",
+          "scope": "authoring restricted to coach + head_coach + admin + owner."
+        },
+        {
+          "action": "update",
+          "permission": "match-notes.update",
+          "scope": "author can update own; head_coach + admin + owner can update any."
+        },
+        {
+          "action": "delete",
+          "permission": "match-notes.delete",
+          "scope": "author can delete own; head_coach + admin + owner can delete any."
+        },
+        {
+          "action": "shareWithParents",
+          "permission": "match-notes.share-with-parents",
+          "scope": "widens visibility to `parents`. Requires head_coach + admin + owner."
+        },
+        {
+          "action": "shareWithPublic",
+          "permission": "match-notes.share-with-public",
+          "scope": "widens visibility to `public`. Requires admin + owner + tenant public-notes entitlement."
+        }
+      ]
+    },
+    {
+      "model": "OpponentLogo",
+      "class": "Academorix\\Sports\\Match\\Policies\\OpponentLogoPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "opponent-logos.viewAny" },
+        { "action": "view", "permission": "opponent-logos.view" },
+        { "action": "create", "permission": "opponent-logos.create" },
+        { "action": "update", "permission": "opponent-logos.update" },
+        {
+          "action": "delete",
+          "permission": "opponent-logos.delete",
+          "scope": "refuses when any match references this row (opponent_logo_id FK). Ops must first null out the references."
+        }
+      ]
+    }
+  ]
+}

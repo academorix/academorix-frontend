@@ -1,0 +1,160 @@
+{
+  "id": "academorix://modules/match/schemas/match-event",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MatchEvent",
+  "description": "One row per in-match timeline entry (goal, assist, own_goal, yellow/red card, substitution, apparatus_score, lane_time, penalty). Belongs to Tenant + Match (CASCADE). Optionally references Athlete + a related Athlete (assist points at the scorer). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "match",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "match_events",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mev_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Match\\Models\\MatchEvent",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchEventInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchEventInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToMatch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "type": "MatchEventType",
+      "minute": "integer",
+      "stoppage": "integer",
+      "metadata": "array"
+    },
+    "observers": ["MatchEventObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `mev_<26>`. (Note the ULID prefix `mev_` collides with marketing's marketing_event prefix — the two live in different tables so there is no lookup ambiguity; distinct table names disambiguate.)"
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "match_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "match_fixtures", "column": "id", "onDelete": "cascade" }
+      },
+      "minute": {
+        "type": "integer",
+        "nullable": false,
+        "description": "In-match minute (0-based). 0 = pre-kickoff; 90+ for extra-time; use stoppage for injury time inside a period."
+      },
+      "stoppage": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Stoppage-time offset within the current minute. `minute=45 stoppage=3` renders as `45+3'`."
+      },
+      "type": {
+        "type": "string",
+        "length": 24,
+        "nullable": false,
+        "description": "Enum: goal / assist / own_goal / yellow_card / red_card / substitution / apparatus_score / lane_time / penalty_awarded / penalty_scored / penalty_missed / timeout."
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "set null" },
+        "description": "Primary athlete for the event (scorer for goal, sent-off player for red_card, substituted-off for substitution). NULL for team-level events (timeout, opponent goal without named scorer)."
+      },
+      "related_athlete_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "athletes", "column": "id", "onDelete": "set null" },
+        "description": "Secondary athlete (scorer for an assist; substituted-on player for a substitution). Only meaningful for pairing event types."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Event-specific fields. Shape: { assist_type: 'through_ball' } for assist; { card_reason: 'reckless_challenge' } for cards; { off_athlete_enrollment_id, on_athlete_enrollment_id } for substitution; { lane: 4, split_seconds: [...] } for lane_time; { apparatus: 'floor', total: 14.2 } for apparatus_score."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "match_id", "minute", "stoppage"],
+        "name": "match_events_match_time_idx"
+      },
+      { "columns": ["match_id", "type"], "name": "match_events_type_idx" },
+      {
+        "columns": ["athlete_id", "type"],
+        "name": "match_events_athlete_type_idx",
+        "predicate": "athlete_id IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "match_id",
+    "minute",
+    "stoppage",
+    "type",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mev_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "match_id": { "type": "string", "pattern": "^mat_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "minute": { "type": "integer", "minimum": 0, "maximum": 300 },
+    "stoppage": { "type": "integer", "minimum": 0, "maximum": 30 },
+    "type": {
+      "type": "string",
+      "enum": [
+        "goal",
+        "assist",
+        "own_goal",
+        "yellow_card",
+        "red_card",
+        "substitution",
+        "apparatus_score",
+        "lane_time",
+        "penalty_awarded",
+        "penalty_scored",
+        "penalty_missed",
+        "timeout"
+      ]
+    },
+    "athlete_id": { "type": ["string", "null"], "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "related_athlete_id": { "type": ["string", "null"], "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "type='goal' + type='own_goal' + type='penalty_scored' require athlete_id IS NOT NULL",
+    "type IN ('yellow_card', 'red_card') require athlete_id IS NOT NULL",
+    "type='assist' requires related_athlete_id IS NOT NULL AND athlete_id IS NOT NULL AND athlete_id <> related_athlete_id",
+    "type='substitution' requires athlete_id IS NOT NULL AND related_athlete_id IS NOT NULL AND athlete_id <> related_athlete_id",
+    "athlete_id when set must belong to the match's squad (match_squad_entries.match_id=this.match_id AND athlete_id=this.athlete_id)",
+    "related_athlete_id when set must satisfy the same squad-membership rule",
+    "type + match_id + minute + stoppage IMMUTABLE post-create — corrections drop + recreate"
+  ]
+}

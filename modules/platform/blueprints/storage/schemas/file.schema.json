@@ -202,6 +202,34 @@
         "nullable": true,
         "description": "Our HasMetadata trait's bag \u2014 tenant-supplied notes on the file."
       },
+      "document_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Semantic document classification when the file is a document (passport, medical_clearance, invoice, certificate, contract, id_card, visa, insurance). Null for non-document files. Consumed by \u00a714.6 Safeguarding + \u00a710.10 Documents & Media."
+      },
+      "expiry_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Document expiry timestamp when applicable (passports, medical clearances, visas, DBS checks). Composite-indexed with tenant_id to drive expiring-document reminders."
+      },
+      "ocr_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'skipped'",
+        "description": "Enum: pending / processing / completed / failed / skipped. skipped is the default \u2014 OCR runs only when document_type marks the file as a scanned document."
+      },
+      "ocr_text": {
+        "type": "text",
+        "nullable": true,
+        "description": "Extracted plain text from OCR pass. Nullable while ocr_status != completed. Feeds the search index for full-text document search."
+      },
+      "ocr_metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Structured extraction from OCR (e.g. { passport_number, given_names, surname, dob, expiry }). Enables auto-fill of Athlete/Guardian PII on capture."
+      },
       "created_by": { "type": "uuid", "nullable": true },
       "updated_by": { "type": "uuid", "nullable": true },
       "deleted_by": { "type": "uuid", "nullable": true },

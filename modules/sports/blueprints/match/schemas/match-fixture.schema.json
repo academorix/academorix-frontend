@@ -1,0 +1,227 @@
+{
+  "id": "academorix://modules/match/schemas/match-fixture",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MatchFixture",
+  "description": "Canonical competitive-match row. `MatchFixture` is the PHP class name for a match (renamed from `Match` — a PHP 8.0 reserved keyword — while the domain concept, table `match_fixtures`, ULID prefix `mat_`, and every consumer-facing string keep talking about matches). Belongs to Tenant + Season + Branch (required) + Team (nullable — multi-team meets) + Competition (nullable — friendlies) + Facility (nullable — venue TBD) + OpponentLogo (nullable). NEVER carries application_id, region_id, organization_id, or scope_node_id — all cascade through tenant_id per tenancy-columns.md §5. State machine: SCHEDULED -> LINEUP_SET -> IN_PROGRESS -> COMPLETED / POSTPONED / CANCELLED / ABANDONED.",
+  "type": "object",
+  "x-module": "match",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "match_fixtures",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mat_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Match\\Models\\MatchFixture",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchFixtureInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchFixtureInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "BelongsToSeason",
+      "HasMatchParticipants",
+      "HasMatchSquadEntries",
+      "HasMatchResults",
+      "HasMatchEvents",
+      "HasMatchNotes",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "home_or_away": "MatchHomeOrAway",
+      "status": "MatchStatus",
+      "kickoff_at": "datetime",
+      "lineup_published_at": "datetime",
+      "result_summary_json": "array",
+      "metadata": "array"
+    },
+    "observers": ["MatchFixtureObserver"],
+    "appends": ["is_multi_team", "is_lineup_published", "is_terminal", "days_until_kickoff"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `mat_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "season_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "seasons", "column": "id", "onDelete": "restrict" }
+      },
+      "sport_key": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Sports registry key. Discriminates into the scoring strategy (mechanism #4) so football / swimming / gymnastics all share one match model."
+      },
+      "team_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "teams", "column": "id", "onDelete": "restrict" },
+        "description": "Home team for standard home/away matches. NULL for multi-team events (galas / festivals / swim meets) — participants live on match_participants instead."
+      },
+      "competition_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "competitions", "column": "id", "onDelete": "set null" },
+        "description": "NULL for friendlies. When set, MatchResultPublished triggers a competition-standings recompute."
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "branches", "column": "id", "onDelete": "restrict" }
+      },
+      "facility_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "facilities", "column": "id", "onDelete": "set null" },
+        "description": "The bookable venue. NULL when the venue is TBD or when the branch has a single default pitch."
+      },
+      "opponent_name": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Free-text for standard home/away matches (`Downtown Wanderers U10`). NULL for multi-team events or internal matches — participants describe themselves via match_participants."
+      },
+      "opponent_logo_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "opponent_logos", "column": "id", "onDelete": "set null" },
+        "description": "Cached opponent logo. Reused across matches via normalized-name lookup."
+      },
+      "home_or_away": {
+        "type": "string",
+        "length": 8,
+        "nullable": true,
+        "description": "Enum: home / away / neutral. NULL for multi-team events (participants each declare their own home/away in match_participants when relevant)."
+      },
+      "kickoff_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Scheduled kickoff. Rescheduling on status=LINEUP_SET or beyond re-fires lineup-publish gate + notify."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'SCHEDULED'",
+        "description": "Enum: SCHEDULED / LINEUP_SET / IN_PROGRESS / COMPLETED / POSTPONED / CANCELLED / ABANDONED."
+      },
+      "lineup_published_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on POST /lineup/publish; cleared on /lineup/unpublish. Drives the parent-facing published-lineup view + the NotifyMatchLineupPublishedJob dispatch."
+      },
+      "result_summary_json": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Denormalized snapshot of match_results for cheap list-view rendering. Shape depends on sport's scoring strategy — { home_score, away_score, outcome, motm_athlete_id } for score-based; { winning_lane, winning_time_seconds } for time-based; { winning_participant_id, winning_score } for apparatus."
+      },
+      "notes_snapshot": {
+        "type": "text",
+        "nullable": true,
+        "description": "Rendered public/coach recap excerpt for fast display on the match card. Regenerated from match_notes on write."
+      },
+      "metadata": { "type": "jsonb", "nullable": true, "description": "Free-form metadata bag." },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "season_id", "kickoff_at"], "name": "match_fixtures_season_kickoff_idx" },
+      { "columns": ["tenant_id", "team_id", "status"], "name": "match_fixtures_team_status_idx", "predicate": "team_id IS NOT NULL" },
+      { "columns": ["tenant_id", "competition_id"], "name": "match_fixtures_competition_idx", "predicate": "competition_id IS NOT NULL" },
+      { "columns": ["tenant_id", "branch_id", "kickoff_at"], "name": "match_fixtures_branch_kickoff_idx" },
+      { "columns": ["tenant_id", "status"], "name": "match_fixtures_status_idx" },
+      { "columns": ["tenant_id", "sport_key", "kickoff_at"], "name": "match_fixtures_sport_kickoff_idx" },
+      { "columns": ["tenant_id", "opponent_logo_id"], "name": "match_fixtures_opponent_logo_idx", "predicate": "opponent_logo_id IS NOT NULL" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "season_id",
+    "sport_key",
+    "branch_id",
+    "kickoff_at",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mat_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "season_id": { "type": "string", "pattern": "^sea_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "sport_key": { "type": "string", "maxLength": 64, "pattern": "^[a-z][a-z0-9_]*$" },
+    "team_id": { "type": ["string", "null"], "pattern": "^tea_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "competition_id": { "type": ["string", "null"], "pattern": "^cmp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "facility_id": { "type": ["string", "null"], "pattern": "^fac_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "opponent_name": { "type": ["string", "null"], "maxLength": 255 },
+    "opponent_logo_id": { "type": ["string", "null"], "pattern": "^olg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "home_or_away": {
+      "type": ["string", "null"],
+      "enum": [null, "home", "away", "neutral"]
+    },
+    "kickoff_at": { "type": "string", "format": "date-time" },
+    "status": {
+      "type": "string",
+      "enum": ["SCHEDULED", "LINEUP_SET", "IN_PROGRESS", "COMPLETED", "POSTPONED", "CANCELLED", "ABANDONED"]
+    },
+    "lineup_published_at": { "type": ["string", "null"], "format": "date-time" },
+    "result_summary_json": { "type": ["object", "null"] },
+    "notes_snapshot": { "type": ["string", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "computed": ["is_multi_team", "is_lineup_published", "is_terminal", "days_until_kickoff"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`mat_<26>`)"]
+  },
+  "x-invariants": [
+    "team_id IS NOT NULL XOR match has >= 2 rows in match_participants (a standard match has a team; a multi-team meet has participants)",
+    "opponent_name IS NULL when the match is multi-team (team_id IS NULL) — opponents live on match_participants",
+    "lineup_published_at IS NOT NULL implies status IN ('LINEUP_SET', 'IN_PROGRESS', 'COMPLETED')",
+    "status='COMPLETED' implies at least one row in match_results with published_at IS NOT NULL",
+    "status='POSTPONED' implies kickoff_at may be updated without re-approval; status='LINEUP_SET' or beyond blocks kickoff_at updates without a reschedule action + re-notify",
+    "status='CANCELLED' + status='ABANDONED' are terminal — cannot transition back",
+    "sport_key IMMUTABLE post-create — matches never change sport",
+    "tenant_id + season_id + branch_id IMMUTABLE post-create",
+    "team_id IMMUTABLE once at least one squad entry exists (locks the participating team)",
+    "facility_id changes on status='LINEUP_SET' or beyond fire the venue-change hook + require re-approval + re-notify"
+  ]
+}

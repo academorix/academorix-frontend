@@ -1,0 +1,142 @@
+{
+  "id": "academorix://modules/match/errors",
+  "$version": 1,
+  "title": "match — error codes",
+  "namespace": "match",
+  "errors": [
+    {
+      "code": "MATCH_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.not_found"
+    },
+    {
+      "code": "MATCH_INVALID_STATE_TRANSITION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.invalid_state_transition",
+      "description": "Requested state transition is not permitted by the state machine. Response body includes the current status + permitted targets."
+    },
+    {
+      "code": "MATCH_LINEUP_NOT_READY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.lineup_not_ready",
+      "description": "Attempted to publish a lineup with fewer than 1 starter, or with a starter whose enrollment does not match the match's season."
+    },
+    {
+      "code": "MATCH_LINEUP_ALREADY_PUBLISHED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.lineup_already_published",
+      "description": "POST /lineup/publish invoked when lineup_published_at IS NOT NULL. Idempotent no-op returns 200 instead of 409 when the payload is identical."
+    },
+    {
+      "code": "MATCH_KICKOFF_IN_PAST",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.kickoff_in_past",
+      "description": "Attempted to schedule / reschedule kickoff_at to a past timestamp. Historical matches must be created via the retrospective-import path."
+    },
+    {
+      "code": "MATCH_RESULT_UNSUPPORTED_SHAPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.result_unsupported_shape",
+      "description": "The result payload does not match the sport's scoring strategy (e.g. providing final_score_home for a time-scored sport). Response body includes the expected shape from ScoringStrategyResolver."
+    },
+    {
+      "code": "MATCH_RESULT_ALREADY_PUBLISHED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.result_already_published",
+      "description": "Attempted to mutate a match_results row whose published_at IS NOT NULL. Corrections require an admin-role override + regenerates the standings."
+    },
+    {
+      "code": "MATCH_SQUAD_ENTRY_ATHLETE_NOT_ELIGIBLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.squad_athlete_not_eligible",
+      "description": "Attempted to add an athlete to the squad whose active AthleteEnrollment does not match the match's season."
+    },
+    {
+      "code": "MATCH_SQUAD_SHIRT_CONFLICT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.squad_shirt_conflict",
+      "description": "Two squad entries proposed the same shirt_number. Squad-shirt uniqueness is enforced per match."
+    },
+    {
+      "code": "MATCH_SQUAD_CAPTAIN_CONFLICT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.squad_captain_conflict",
+      "description": "Two squad entries marked is_captain=true. At most one captain per match."
+    },
+    {
+      "code": "MATCH_EVENT_ATHLETE_NOT_IN_SQUAD",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.event_athlete_not_in_squad",
+      "description": "Attempted to log a match_event referencing an athlete who is not in the match's squad."
+    },
+    {
+      "code": "MATCH_MULTI_TEAM_REQUIRES_PARTICIPANTS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.multi_team_requires_participants",
+      "description": "Multi-team match (team_id IS NULL) requires at least 2 match_participants rows."
+    },
+    {
+      "code": "MATCH_NOTE_VISIBILITY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.note_visibility_not_entitled",
+      "description": "Attempted to widen note visibility to `public` without the tenant public-notes entitlement."
+    },
+    {
+      "code": "MATCH_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.insufficient_role",
+      "description": "Caller lacks the coach / head_coach / admin / owner role required to reach the surface."
+    },
+    {
+      "code": "MATCH_OPPONENT_LOGO_IN_USE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "match.errors.opponent_logo_in_use",
+      "description": "Attempted to hard-delete an opponent_logos row while at least one match references it. Null out the references first."
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "id": "academorix://modules/match/events",
+  "$version": 1,
+  "title": "match — published events",
+  "namespace": "Academorix\\Sports\\Match\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. MatchLineupPublished + MatchResultPublished are the load-bearing signals — the first triggers family + public notify + attendance auto-materialisation; the second triggers competition-standings recompute + parent notifications + awards/MOTM streak evaluation. MatchPostponed + MatchCancelled + MatchAbandoned close the fixture and re-notify parents.",
+  "events": [
+    {
+      "name": "MatchScheduled",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchScheduled",
+      "trigger": "MatchObserver.creating committed a new matches row. Attaches to a Competition when competition_id IS NOT NULL.",
+      "queue": "matches",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "match::CacheOpponentLogoOnMatchScheduled (writes / bumps the opponent_logos row for the named opponent)",
+        "monitoring::MetricsCollector (increments academorix.matches.scheduled_total)"
+      ],
+      "payload": {
+        "match_id": "ULID (mat_*)",
+        "tenant_id": "ULID",
+        "season_id": "ULID",
+        "sport_key": "string",
+        "team_id": "ULID | null",
+        "competition_id": "ULID | null",
+        "branch_id": "ULID",
+        "facility_id": "ULID | null",
+        "opponent_name": "string | null",
+        "kickoff_at": "ISO 8601",
+        "scheduled_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MatchLineupSet",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchLineupSet",
+      "trigger": "Match.status transitions SCHEDULED -> LINEUP_SET. Head coach chose the squad + roles. Lineup is not yet parent-facing — that requires MatchLineupPublished.",
+      "queue": "matches",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "squad_size": "integer",
+        "starter_count": "integer",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MatchLineupPublished",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchLineupPublished",
+      "trigger": "POST /matches/{match}/lineup/publish committed. lineup_published_at set. Kicks parent-facing notify + attendance auto-materialisation.",
+      "queue": "matches-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "match::NotifyMatchLineupPublishedJob (dispatches parent + squad-athlete notifications)",
+        "match::MaterialiseAttendanceFromLineupJob (creates pre-filled attendance rows from the published squad)",
+        "monitoring::MetricsCollector (increments academorix.matches.lineup_published_total)"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "team_id": "ULID | null",
+        "squad_athlete_ids": "ULID[] (ath_*)",
+        "published_at": "ISO 8601",
+        "published_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "MatchStarted",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchStarted",
+      "trigger": "Match.status transitions LINEUP_SET -> IN_PROGRESS. Typically automatic at kickoff_at or manual from a coach starting the timer.",
+      "queue": "matches",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "match::MaterialiseAttendanceOnMatchStarted (freezes pre-filled attendance rows into the confirmable set)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "kicked_off_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MatchScored",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchScored",
+      "trigger": "A match_events row with type IN ('goal', 'own_goal', 'apparatus_score', 'lane_time') was inserted while status=IN_PROGRESS. Powers the live scoreboard.",
+      "queue": "matches",
+      "consumers": [
+        "monitoring::MetricsCollector",
+        "broadcasts::PushLiveScoreUpdate (tenant.{tenantId}.matches.{matchId} channel)"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "match_event_id": "ULID (mev_*)",
+        "event_type": "string",
+        "athlete_id": "ULID | null",
+        "minute": "integer",
+        "stoppage": "integer",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MatchCompleted",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchCompleted",
+      "trigger": "Match.status transitions IN_PROGRESS -> COMPLETED. Requires at least one match_results row present.",
+      "queue": "matches",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "duration_seconds": "integer | null (kicked_off_at -> completed_at)",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MatchPostponed",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchPostponed",
+      "trigger": "POST /matches/{match}/postpone. Match keeps its identity + squad + notes but kickoff_at is re-planned. Not terminal.",
+      "queue": "matches",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchMatchPostponedNotification (families + squad athletes + public site)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "reason": "string | null",
+        "old_kickoff_at": "ISO 8601",
+        "new_kickoff_at": "ISO 8601 | null (null when re-scheduling is deferred)",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MatchCancelled",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchCancelled",
+      "trigger": "POST /matches/{match}/cancel. Terminal. Match is preserved for audit; no future rescheduling.",
+      "queue": "matches",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchMatchCancelledNotification",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "reason": "string | null",
+        "cancelled_by_user_id": "ULID",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MatchAbandoned",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchAbandoned",
+      "trigger": "POST /matches/{match}/abandon. Only from status=IN_PROGRESS. Terminal. Partial match_events are preserved but no result publish.",
+      "queue": "matches",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — abandonments are compliance-relevant for injury / safeguarding claims)",
+        "notifications::DispatchMatchCancelledNotification",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "reason": "string",
+        "abandoned_at_minute": "integer",
+        "abandoned_by_user_id": "ULID",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MatchResultPublished",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchResultPublished",
+      "trigger": "POST /matches/{match}/results/publish. match_results.published_at set on all owned rows. Terminal for scoring. Kicks the standings recompute.",
+      "queue": "matches-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "match::RecomputeStandingsOnMatchResultPublished (dispatches RecomputeStandingsJob when competition_id IS NOT NULL)",
+        "notifications::DispatchMatchResultPublishedNotification (families + squad + public site)",
+        "monitoring::MetricsCollector (increments academorix.matches.result_published_total)"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "competition_id": "ULID | null",
+        "outcome": "'win' | 'draw' | 'loss' | null",
+        "motm_athlete_id": "ULID | null",
+        "result_summary_json": "object (denormalized snapshot)",
+        "published_at": "ISO 8601",
+        "published_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "MatchMotmAwarded",
+      "class": "Academorix\\Sports\\Match\\Events\\MatchMotmAwarded",
+      "trigger": "match_results.motm_athlete_id was set (or changed) while published_at IS NULL. Distinct from MatchResultPublished so the awards module can react without waiting for the full publish.",
+      "queue": "matches",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchMatchMotmAwardedNotification (opt-in to the awarded athlete's family)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "match_id": "ULID",
+        "tenant_id": "ULID",
+        "motm_athlete_id": "ULID (ath_*)",
+        "awarded_by_user_id": "ULID",
+        "at": "ISO 8601"
+      }
+    }
+  ]
+}

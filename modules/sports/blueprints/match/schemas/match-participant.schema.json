@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/match/schemas/match-participant",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MatchParticipant",
+  "description": "Polymorphic participant row for multi-team events (galas, swim meets, festivals) where a single match aggregates N teams / athletes / external opponents instead of a home/away pair. Belongs to Tenant + Match (CASCADE). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "match",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "match_participants",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mpa_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Match\\Models\\MatchParticipant",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchParticipantInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchParticipantInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToMatch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "display_order": "integer",
+      "metadata": "array"
+    },
+    "observers": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `mpa_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "match_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "match_fixtures", "column": "id", "onDelete": "cascade" }
+      },
+      "participant_type": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic discriminator. Enum: team / athlete / opponent_ref. `team` + `athlete` point at internal rows; `opponent_ref` describes an external competitor whose row lives on opponent_logos."
+      },
+      "participant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic ID: `tea_<26>` for team, `ath_<26>` for athlete, `olg_<26>` for opponent_ref. NULL is permitted only for opponent_ref when opponent_logos has no cached row yet."
+      },
+      "label": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Denormalized display label for cheap list rendering (e.g. `Downtown Boys U10`, `Marina Swim Squad — Lane 4`). Regenerated when the participant's underlying entity is renamed."
+      },
+      "display_order": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Rendering order in the match card. Ascending. Ties broken by created_at."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Participant-specific payload. Shape depends on sport — { lane: 4 } for swimming; { seed: 3 } for gymnastics; { color: 'red', kit_url: '...' } for football festival."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "match_id", "display_order"],
+        "name": "match_participants_match_order_idx"
+      },
+      {
+        "columns": ["match_id", "participant_type", "participant_id"],
+        "unique": true,
+        "name": "match_participants_polymorphic_unique",
+        "predicate": "participant_id IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "match_id",
+    "participant_type",
+    "display_order",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mpa_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "match_id": { "type": "string", "pattern": "^mat_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "participant_type": { "type": "string", "enum": ["team", "athlete", "opponent_ref"] },
+    "participant_id": { "type": ["string", "null"] },
+    "label": { "type": ["string", "null"], "maxLength": 255 },
+    "display_order": { "type": "integer", "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "participant_type='team' implies participant_id matches ^tea_ pattern",
+    "participant_type='athlete' implies participant_id matches ^ath_ pattern",
+    "participant_type='opponent_ref' implies participant_id is NULL or matches ^olg_ pattern",
+    "unique (match_id, participant_type, participant_id) when participant_id IS NOT NULL — no duplicate participants",
+    "participant_type + participant_id IMMUTABLE post-create"
+  ]
+}

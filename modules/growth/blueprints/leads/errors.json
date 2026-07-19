@@ -1,0 +1,105 @@
+{
+  "id": "academorix://modules/leads/errors",
+  "$version": 1,
+  "title": "leads — error codes",
+  "namespace": "leads",
+  "errors": [
+    {
+      "code": "LEAD_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.lead_not_found"
+    },
+    {
+      "code": "LEAD_ALREADY_CONVERTED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.already_converted",
+      "description": "Attempted to convert a lead already in stage=WON. Conversion is one-way."
+    },
+    {
+      "code": "LEAD_ALREADY_LOST",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.already_lost",
+      "description": "Attempted to convert a lead in stage=LOST. Requires re-opening the lead first (creates a new lead row via clone)."
+    },
+    {
+      "code": "LEAD_INVALID_STAGE_TRANSITION",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.invalid_stage_transition",
+      "description": "Requested stage transition is not permitted by the state machine. Response body includes the current stage + the permitted targets."
+    },
+    {
+      "code": "LEAD_LOST_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.lost_reason_required",
+      "description": "stage=LOST transitions require lost_reason on the same request."
+    },
+    {
+      "code": "LEAD_CONVERSION_ATHLETES_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.conversion_athletes_required",
+      "description": "LeadConversionService refuses when athlete_names is empty AND the caller did not supply an existing athletes payload."
+    },
+    {
+      "code": "LEAD_TASK_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.task_not_found"
+    },
+    {
+      "code": "LEAD_TASK_ALREADY_COMPLETED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.task_already_completed",
+      "description": "Completion is one-way. Re-opening a task requires cloning it into a new lead_tasks row."
+    },
+    {
+      "code": "LEAD_TASK_ASSIGNEE_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.task_assignee_required",
+      "description": "Attempted to mark a task in_progress without setting assigned_to_id first."
+    },
+    {
+      "code": "LEAD_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "leads.errors.insufficient_role",
+      "description": "Caller lacks the reception / marketing / admin / owner role required to reach the CRM surface."
+    },
+    {
+      "code": "LEAD_ATTRIBUTION_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "leads.errors.attribution_immutable",
+      "description": "Attempted to mutate attribution_snapshot after capture. Frozen at create time."
+    }
+  ]
+}

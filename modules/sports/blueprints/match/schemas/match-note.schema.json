@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/match/schemas/match-note",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MatchNote",
+  "description": "Coach-authored recap note for a match, with visibility tier (coach_only / parents / public). Belongs to Tenant + Match (CASCADE). References the authoring User (RESTRICT). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "match",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "match_notes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mno_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Match\\Models\\MatchNote",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\MatchNoteInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\MatchNoteInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToMatch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "visibility": "MatchNoteVisibility",
+      "metadata": "array"
+    },
+    "observers": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `mno_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "match_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "match_fixtures", "column": "id", "onDelete": "cascade" }
+      },
+      "actor_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The User who authored the note. Every note is attributable — anonymous authoring is forbidden."
+      },
+      "body": {
+        "type": "text",
+        "nullable": false,
+        "description": "Markdown-rendered note body. Length uncapped; enforced client-side."
+      },
+      "visibility": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'coach_only'",
+        "description": "Enum: coach_only / parents / public. Parents / public visibility require the parent-share-with-parents / public-notes entitlement per tier."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "match_id", "created_at"], "name": "match_notes_match_time_idx" },
+      { "columns": ["tenant_id", "visibility"], "name": "match_notes_visibility_idx" },
+      { "columns": ["actor_id", "created_at"], "name": "match_notes_actor_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "match_id",
+    "actor_id",
+    "body",
+    "visibility",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mno_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "match_id": { "type": "string", "pattern": "^mat_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "actor_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "body": { "type": "string", "minLength": 1 },
+    "visibility": { "type": "string", "enum": ["coach_only", "parents", "public"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "match_id + actor_id IMMUTABLE post-create — a note is owned by its author for the audit trail",
+    "widening visibility (coach_only -> parents / parents -> public) requires the appropriate role on the actor + entitlement on the tenant",
+    "narrowing visibility (public -> parents / parents -> coach_only) is permitted for the author or an admin+ role"
+  ]
+}

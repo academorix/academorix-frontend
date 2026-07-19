@@ -1,0 +1,115 @@
+{
+  "id": "academorix://modules/match/schemas/opponent-logo",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "OpponentLogo",
+  "description": "Cache of external-opponent logos keyed by normalized name for reuse across matches. Belongs to Tenant. References `platform::storage` File (SET NULL — the file lives in the storage module). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "match",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "opponent_logos",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "olg_",
+    "incrementing": false,
+    "model": "Academorix\\Sports\\Match\\Models\\OpponentLogo",
+    "interface": "Academorix\\Sports\\Match\\Contracts\\Data\\OpponentLogoInterface",
+    "implements": ["Academorix\\Sports\\Match\\Contracts\\Data\\OpponentLogoInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "Searchable"
+    ],
+    "casts": {
+      "search_frequency_count": "integer",
+      "last_used_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["OpponentLogoObserver"],
+    "appends": ["is_orphan"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `olg_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "normalized_name": {
+        "type": "string",
+        "length": 255,
+        "nullable": false,
+        "description": "Lowercased + trimmed + diacritic-folded name used as the reuse key. Populated by the OpponentLogoObserver on save."
+      },
+      "display_name": {
+        "type": "string",
+        "length": 255,
+        "nullable": false,
+        "description": "Human-readable opponent name preserved verbatim from the tenant's input."
+      },
+      "logo_file_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "files", "column": "id", "onDelete": "set null" },
+        "description": "Reference into `platform::storage.files`. NULL when only a URL is known."
+      },
+      "logo_url": {
+        "type": "string",
+        "length": 1024,
+        "nullable": true,
+        "description": "Fallback external URL for when logo_file_id IS NULL. Rendered as-is on match cards."
+      },
+      "search_frequency_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "Incremented on every cache hit. Powers admin-facing 'most-used opponents' search."
+      },
+      "last_used_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set on every cache-hit — the OpponentLogoObserver bumps this when a match links here."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "normalized_name"], "unique": true, "name": "opponent_logos_tenant_name_unique" },
+      { "columns": ["tenant_id", "search_frequency_count"], "name": "opponent_logos_frequency_idx" },
+      { "columns": ["tenant_id", "last_used_at"], "name": "opponent_logos_last_used_idx", "predicate": "last_used_at IS NOT NULL" }
+    ]
+  },
+  "required": ["id", "tenant_id", "normalized_name", "display_name", "search_frequency_count", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^olg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "normalized_name": { "type": "string", "minLength": 1, "maxLength": 255 },
+    "display_name": { "type": "string", "minLength": 1, "maxLength": 255 },
+    "logo_file_id": { "type": ["string", "null"], "pattern": "^fil_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "logo_url": { "type": ["string", "null"], "format": "uri", "maxLength": 1024 },
+    "search_frequency_count": { "type": "integer", "minimum": 0 },
+    "last_used_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "unique (tenant_id, normalized_name) — one cache row per (tenant, opponent name)",
+    "logo_file_id IS NULL AND logo_url IS NULL is allowed (name-only row until a logo lands)",
+    "normalized_name recomputed by the observer whenever display_name changes",
+    "search_frequency_count is monotonically increasing — decrements are forbidden"
+  ]
+}
