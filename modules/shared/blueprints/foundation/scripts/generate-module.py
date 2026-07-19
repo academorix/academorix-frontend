@@ -98,9 +98,14 @@ def _load_aux(module_dir: Path, filename: str) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 def emit_composer_json(m: Module) -> str:
-    """Emit the module package's composer.json."""
-    ns_escaped = m.ns_module_root.replace("\\", "\\\\")
-    provider = f"{m.ns_module_root}\\\\Providers\\\\{m.studly_name}ServiceProvider"
+    """Emit the module package's composer.json.
+
+    Backslashes flow straight through — json.dumps handles PSR-4 escaping.
+    Double-escaping (`ns.replace('\\\\', '\\\\\\\\')`) here caused the JSON
+    autoload prefixes to render as `Academorix\\\\Foo\\\\` (double
+    backslashes) and PSR-4 to silently fail for every module.
+    """
+    provider = f"{m.ns_module_root}\\Providers\\{m.studly_name}ServiceProvider"
     payload = {
         "name": m.composer_module_name,
         "type": "library",
@@ -135,8 +140,8 @@ def emit_composer_json(m: Module) -> str:
             "phpstan/phpstan": "^2.0",
             "mockery/mockery": "^1.6",
         },
-        "autoload": {"psr-4": {f"{ns_escaped}\\\\": "src/"}},
-        "autoload-dev": {"psr-4": {f"{ns_escaped}\\\\Tests\\\\": "tests/"}},
+        "autoload": {"psr-4": {f"{m.ns_module_root}\\": "src/"}},
+        "autoload-dev": {"psr-4": {f"{m.ns_module_root}\\Tests\\": "tests/"}},
         "extra": {
             "laravel": {
                 "providers": [provider],
@@ -1682,6 +1687,345 @@ final class {class_name} extends Data
 
 
 # ---------------------------------------------------------------------------
+# #[AsSetting] emitter — one Spatie Settings subclass per settings.json group.
+# ---------------------------------------------------------------------------
+
+# Blueprint controlType string -> PHP ControlType enum case name.
+_CONTROL_TYPE_MAP = {
+    "text": "Text",
+    "textarea": "Textarea",
+    "number": "Number",
+    "toggle": "Toggle",
+    "select": "Select",
+    "multiselect": "Multiselect",
+    "color": "Color",
+    "file": "File",
+    "date": "Date",
+    "time": "Time",
+    "datetime": "Datetime",
+    "timezone": "Timezone",
+    "locale": "Locale",
+    "currency": "Currency",
+    "password": "Password",
+    "url": "Url",
+    "email": "Email",
+    "json": "Json",
+    "code": "Code",
+    "slider": "Slider",
+    "icon": "Icon",
+    "css-value": "CssValue",
+    "font": "Font",
+}
+
+
+def _infer_php_type(default_value: Any, control_type: str, nullable_from_validation: bool) -> tuple[str, str]:
+    """Return `(php_type, formatted_default)` for a settings-field property.
+
+    The property default is the source of truth per `settings.md` §2.
+    Validation array may include `nullable` — in which case the type
+    is prefixed with `?`.
+    """
+    if isinstance(default_value, bool):
+        base = "bool"
+        formatted = "true" if default_value else "false"
+    elif isinstance(default_value, int):
+        base = "int"
+        formatted = str(default_value)
+    elif isinstance(default_value, float):
+        base = "float"
+        formatted = repr(default_value)
+    elif isinstance(default_value, str):
+        base = "string"
+        escaped = default_value.replace("\\", "\\\\").replace("'", "\\'")
+        formatted = f"'{escaped}'"
+    elif default_value is None:
+        # Choose a plausible base type from the control widget, then
+        # make it explicitly nullable.
+        if control_type in ("number", "slider"):
+            base = "int"
+        elif control_type in ("toggle",):
+            base = "bool"
+        elif control_type in ("json", "multiselect"):
+            base = "array"
+        else:
+            base = "string"
+        return f"?{base}", "null"
+    elif isinstance(default_value, list):
+        base = "array"
+        # Format PHP array literal — only accept scalar list values.
+        elems = []
+        for v in default_value:
+            if isinstance(v, str):
+                esc = v.replace("\\", "\\\\").replace("'", "\\'")
+                elems.append(f"'{esc}'")
+            elif isinstance(v, bool):
+                elems.append("true" if v else "false")
+            elif isinstance(v, (int, float)):
+                elems.append(str(v))
+            else:
+                # Complex; fall back to json-encoded string literal.
+                elems.append("null")
+        formatted = "[" + ", ".join(elems) + "]"
+    elif isinstance(default_value, dict):
+        base = "array"
+        formatted = "[]"
+    else:
+        base = "mixed"
+        formatted = "null"
+
+    if nullable_from_validation:
+        return f"?{base}", formatted
+    return base, formatted
+
+
+def _format_php_scalar(value: Any) -> str:
+    """PHP-literal representation of a JSON scalar. Used for attribute args."""
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (int, float)):
+        return repr(value) if isinstance(value, float) else str(value)
+    if isinstance(value, str):
+        escaped = value.replace("\\", "\\\\").replace("'", "\\'")
+        return f"'{escaped}'"
+    if isinstance(value, list):
+        return "[" + ", ".join(_format_php_scalar(v) for v in value) + "]"
+    if isinstance(value, dict):
+        pairs = []
+        for k, v in value.items():
+            key_escaped = str(k).replace("\\", "\\\\").replace("'", "\\'")
+            pairs.append(f"'{key_escaped}' => {_format_php_scalar(v)}")
+        return "[" + ", ".join(pairs) + "]"
+    return "null"
+
+
+def _format_validation_rules(rules: list[Any]) -> str:
+    """Format a validation-rules list as a PHP array literal."""
+    if not rules:
+        return "[]"
+    parts = []
+    for r in rules:
+        if isinstance(r, str):
+            escaped = r.replace("\\", "\\\\").replace("'", "\\'")
+            parts.append(f"'{escaped}'")
+    return "[" + ", ".join(parts) + "]"
+
+
+def emit_settings_group(m: Module, group: dict[str, Any], ns_override: str | None = None) -> tuple[str, str] | None:
+    """Emit `src/Settings/<Name>Settings.php` for one settings.json group.
+
+    Reads:
+      - `group.class`         - FQCN (only last segment used as class name)
+      - `group.key`           - Spatie group prefix + `#[AsSetting(group: ...)]`
+      - `group.label`         - `#[AsSetting(label: ...)]`
+      - `group.description`   - `#[AsSetting(description: ...)]`
+      - `group.icon`          - `#[AsSetting(icon: ...)]`
+      - `group.scope`         - `#[AsSetting(scope: ...)]`
+      - `group.permission`    - `#[AsSetting(permission: ...)]`
+      - `group.sortOrder`     - `#[AsSetting(sortOrder: ...)]`
+      - `group.sections[]`    - list of {label, description, icon, sortOrder, fields}
+      - `group.sections[].fields[]` - list of {name, controlType, label,
+                                     defaultValue, validation, options?, min?,
+                                     max?, sensitive?, sortOrder, helpText?,
+                                     placeholder?}
+
+    Returns None when the group is malformed (missing `class`, empty sections).
+    """
+    class_fqcn = group.get("class")
+    key = group.get("key")
+    if not class_fqcn or not isinstance(class_fqcn, str) or not key:
+        return None
+
+    # Use only the class name from the FQCN; the namespace comes from the
+    # module's `ns_module_root` (matches its composer autoload) rather than
+    # the blueprint's FQCN prefix (which for ~half the modules encodes a
+    # tier-nested convention the generator retired earlier).
+    class_name = class_fqcn.rsplit("\\", 1)[-1]
+    # The module.json `namespace` field is authoritative — it matches the
+    # module's composer.json PSR-4 autoload. Real-impl packages often use
+    # tier-prefixed namespaces (`Academorix\Notifications\Mail`) which the
+    # generator's `ns_module_root` (`Academorix\NotificationsMail`) does not
+    # produce. Callers pass the resolved namespace via `ns_override`.
+    module_ns = ns_override or m.ns_module_root
+    ns = f"{module_ns}\\Settings"
+
+    sections = group.get("sections") or []
+    if not isinstance(sections, list) or not sections:
+        return None
+
+    # --- #[AsSetting(...)] on the class ---
+    as_setting_args = [
+        f"group: '{key}'",
+        f"label: '{str(group.get('label', key)).replace(chr(39), chr(92)+chr(39))}'",
+    ]
+    desc = group.get("description")
+    if isinstance(desc, str) and desc.strip():
+        as_setting_args.append(
+            f"description: '{desc.replace(chr(92), chr(92)+chr(92)).replace(chr(39), chr(92)+chr(39))}'"
+        )
+    icon = group.get("icon")
+    if isinstance(icon, str) and icon.strip():
+        as_setting_args.append(f"icon: '{icon}'")
+    scope = group.get("scope")
+    if isinstance(scope, str) and scope.strip():
+        as_setting_args.append(f"scope: '{scope}'")
+    perm = group.get("permission")
+    if isinstance(perm, str) and perm.strip():
+        as_setting_args.append(f"permission: '{perm}'")
+    sort_order = group.get("sortOrder")
+    if isinstance(sort_order, int):
+        as_setting_args.append(f"sortOrder: {sort_order}")
+    as_setting_line = "#[AsSetting(\n    " + ",\n    ".join(as_setting_args) + ",\n)]"
+
+    # --- Build property list section-by-section ---
+    prop_blocks: list[str] = []
+    has_options = False  # Whether any field carries `options` (for use import decisions).
+
+    for section in sections:
+        if not isinstance(section, dict):
+            continue
+        section_label = section.get("label", "")
+        section_desc = section.get("description", "")
+        section_icon = section.get("icon", "")
+        section_sort = section.get("sortOrder", 0)
+        section_group = section_label  # Used as `#[SettingField(group: ...)]` value.
+        fields = section.get("fields") or []
+        if not isinstance(fields, list) or not fields:
+            continue
+
+        first_in_section = True
+        for field in fields:
+            if not isinstance(field, dict):
+                continue
+            field_name = field.get("name")
+            if not field_name or not isinstance(field_name, str):
+                continue
+            control_type = field.get("controlType", "text")
+            control_enum_case = _CONTROL_TYPE_MAP.get(control_type, "Text")
+            label = field.get("label", field_name)
+            default_value = field.get("defaultValue")
+            validation = field.get("validation") or []
+            if not isinstance(validation, list):
+                validation = []
+            nullable = "nullable" in validation
+            options = field.get("options")
+            if options:
+                has_options = True
+            min_val = field.get("min")
+            max_val = field.get("max")
+            sensitive = bool(field.get("sensitive", False))
+            field_sort = field.get("sortOrder", 0)
+            help_text = field.get("helpText")
+            placeholder = field.get("placeholder")
+
+            php_type, php_default = _infer_php_type(default_value, control_type, nullable)
+
+            # --- Build #[SettingField(...)] args ---
+            sf_args = [
+                f"controlType: ControlType::{control_enum_case}",
+                f"label: {_format_php_scalar(label)}",
+            ]
+            if validation:
+                sf_args.append(f"validation: {_format_validation_rules(validation)}")
+            if section_group:
+                sf_args.append(f"group: {_format_php_scalar(section_group)}")
+            if isinstance(field_sort, int):
+                sf_args.append(f"sortOrder: {field_sort}")
+            if options and isinstance(options, dict):
+                sf_args.append(f"options: {_format_php_scalar(options)}")
+            if min_val is not None:
+                sf_args.append(f"min: {_format_php_scalar(min_val)}")
+            if max_val is not None:
+                sf_args.append(f"max: {_format_php_scalar(max_val)}")
+            if sensitive:
+                sf_args.append("sensitive: true")
+            if help_text:
+                sf_args.append(f"helpText: {_format_php_scalar(help_text)}")
+            if placeholder:
+                sf_args.append(f"placeholder: {_format_php_scalar(placeholder)}")
+            sf_line = "    #[SettingField(" + ", ".join(sf_args) + ")]"
+
+            block_lines: list[str] = []
+
+            # Section header on the first field of each section.
+            if first_in_section:
+                block_lines.append("")
+                block_lines.append(
+                    f"    // ── {section_label} ──────────────────────────────────"
+                )
+                sg_args = [f"label: {_format_php_scalar(section_label)}"]
+                if section_desc:
+                    sg_args.append(f"description: {_format_php_scalar(section_desc)}")
+                if section_icon:
+                    sg_args.append(f"icon: {_format_php_scalar(section_icon)}")
+                if isinstance(section_sort, int):
+                    sg_args.append(f"sortOrder: {section_sort}")
+                block_lines.append(
+                    "    #[SettingGroup(" + ", ".join(sg_args) + ")]"
+                )
+                first_in_section = False
+
+            block_lines.append(sf_line)
+            block_lines.append(f"    public {php_type} ${field_name} = {php_default};")
+            prop_blocks.append("\n".join(block_lines))
+
+    if not prop_blocks:
+        return None
+    props_body = "\n\n".join(prop_blocks)
+
+    # --- Class docblock ---
+    class_doc = _php_docblock([
+        f"{class_name} — {group.get('label', key)}.",
+        "",
+        _first_sentence(group.get("description", ""), 200)
+        or f"Attribute-driven settings group for `{key}`.",
+        "",
+        f"Every field is a public typed property; the property default IS",
+        f"the source of truth (§2 of the `settings` steering rule). Storage",
+        f"goes through `Scope::write('settings', ...)` — never a bespoke",
+        f"`settings_values` table.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Academorix\\Settings\\Attributes\\AsSetting;
+use Academorix\\Settings\\Attributes\\SettingField;
+use Academorix\\Settings\\Attributes\\SettingGroup;
+use Academorix\\Settings\\Enums\\ControlType;
+use Spatie\\LaravelSettings\\Settings;
+
+{class_doc}
+{as_setting_line}
+class {class_name} extends Settings
+{{
+{props_body}
+
+    /**
+     * Return the Spatie Settings group identifier.
+     *
+     * @return string The settings group key.
+     */
+    public static function group(): string
+    {{
+        return '{key}';
+    }}
+}}
+"""
+    return f"src/Settings/{class_name}.php", body
+
+
+# ---------------------------------------------------------------------------
 # Test scaffolds.
 # ---------------------------------------------------------------------------
 
@@ -1880,6 +2224,42 @@ def write_module(m: Module, out_root: Path, *, force: bool, dry_run: bool) -> tu
         if not isinstance(attr_name, str):
             continue
         files.append(emit_php_attribute(m, attr_name))
+
+    # #[AsSetting] classes from settings.json → groups[].
+    # The composer.json PSR-4 autoload prefix is the ground truth for the
+    # module's namespace root — real-impl packages carry tier-prefixed
+    # namespaces the generator's `ns_module_root` does not compute. When the
+    # composer.json is emitted by the generator it uses `ns_module_root`;
+    # when the composer.json is hand-tuned it may declare a different prefix
+    # (like `Academorix\Notifications\Mail\` for notifications-mail).
+    # Either way, the settings namespace must match the autoload prefix so
+    # PSR-4 resolves the emitted class.
+    module_ns_override: str | None = None
+    composer_path = pkg_dir / "composer.json"
+    if composer_path.is_file():
+        try:
+            composer_data = json.loads(composer_path.read_text())
+            psr4 = composer_data.get("autoload", {}).get("psr-4", {})
+            for prefix in psr4:
+                trimmed = prefix.rstrip("\\")
+                # Prefer the shortest prefix (the root); skip nested keys
+                # like `<Ns>\Database\Factories\`.
+                if module_ns_override is None or len(trimmed) < len(module_ns_override):
+                    if "Database" not in trimmed and "Tests" not in trimmed:
+                        module_ns_override = trimmed
+        except json.JSONDecodeError:
+            pass
+
+    settings_raw = _load_aux(module_dir, "settings.json")
+    settings_groups_raw = settings_raw.get("groups") or settings_raw.get("settings") or []
+    if isinstance(settings_groups_raw, list):
+        for group in settings_groups_raw:
+            if not isinstance(group, dict):
+                continue
+            emitted = emit_settings_group(m, group, ns_override=module_ns_override)
+            if emitted is None:
+                continue
+            files.append(emitted)
 
     # Test scaffolds.
     files.append(("tests/Pest.php", emit_pest_bootstrap(m)))
