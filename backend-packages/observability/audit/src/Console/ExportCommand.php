@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan audit:export` — TODO(gen): describe what this command does.
+ * `php artisan audit:export` — Export the audit rows.
  *
  * @category Audit
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'audit:export',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Export the audit rows.',
 )]
 final class ExportCommand extends BaseCommand
 {

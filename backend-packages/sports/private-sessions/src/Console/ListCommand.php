@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan private-sessions:list` — TODO(gen): describe what this command does.
+ * `php artisan private-sessions:list` — List every private sessions row.
  *
  * @category PrivateSessions
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'private-sessions:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every private sessions row.',
 )]
 final class ListCommand extends BaseCommand
 {

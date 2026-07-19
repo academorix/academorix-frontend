@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan refund:describe` — TODO(gen): describe what this command does.
+ * `php artisan refund:describe` — Describe the refund surface.
  *
  * @category Refund
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'refund:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the refund surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

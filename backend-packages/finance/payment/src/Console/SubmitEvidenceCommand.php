@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment-dispute:submit-evidence` — TODO(gen): describe what this command does.
+ * `php artisan payment-dispute:submit-evidence` — Submit evidence — payment dispute command.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment-dispute:submit-evidence',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Submit evidence — payment dispute command.',
 )]
 final class SubmitEvidenceCommand extends BaseCommand
 {

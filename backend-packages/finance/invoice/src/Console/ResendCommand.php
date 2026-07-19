@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invoice:resend` — TODO(gen): describe what this command does.
+ * `php artisan invoice:resend` — Resend — invoice command.
  *
  * @category Invoice
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invoice:resend',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Resend — invoice command.',
 )]
 final class ResendCommand extends BaseCommand
 {

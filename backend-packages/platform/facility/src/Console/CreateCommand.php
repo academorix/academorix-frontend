@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan facility:create` — TODO(gen): describe what this command does.
+ * `php artisan facility:create` — Create a new facility.
  *
  * @category Facility
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'facility:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new facility.',
 )]
 final class CreateCommand extends BaseCommand
 {

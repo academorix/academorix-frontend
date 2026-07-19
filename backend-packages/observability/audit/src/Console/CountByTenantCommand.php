@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan audit:count-by-tenant` — TODO(gen): describe what this command does.
+ * `php artisan audit:count-by-tenant` — Count by tenant — audit command.
  *
  * @category Audit
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'audit:count-by-tenant',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Count by tenant — audit command.',
 )]
 final class CountByTenantCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:publish` — TODO(gen): describe what this command does.
+ * `php artisan event:publish` — Publish a event.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:publish',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Publish a event.',
 )]
 final class PublishCommand extends BaseCommand
 {

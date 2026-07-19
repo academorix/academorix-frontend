@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan subscription:seed-plans` — TODO(gen): describe what this command does.
+ * `php artisan subscription:seed-plans` — Seed plans — subscription command.
  *
  * @category Subscription
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'subscription:seed-plans',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed plans — subscription command.',
 )]
 final class SeedPlansCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:replay-dead-letter` — TODO(gen): describe what this command does.
+ * `php artisan marketing:replay-dead-letter` — Replay dead letter — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:replay-dead-letter',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Replay dead letter — marketing command.',
 )]
 final class ReplayDeadLetterCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan subscription:advance-dunning` — TODO(gen): describe what this command does.
+ * `php artisan subscription:advance-dunning` — Advance dunning — subscription command.
  *
  * @category Subscription
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'subscription:advance-dunning',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Advance dunning — subscription command.',
 )]
 final class AdvanceDunningCommand extends BaseCommand
 {

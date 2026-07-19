@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan safeguarding:list` — TODO(gen): describe what this command does.
+ * `php artisan safeguarding:list` — List every safeguarding row.
  *
  * @category Safeguarding
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'safeguarding:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every safeguarding row.',
 )]
 final class ListCommand extends BaseCommand
 {

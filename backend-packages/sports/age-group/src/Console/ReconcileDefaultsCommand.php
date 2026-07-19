@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan age-group:reconcile-defaults` — TODO(gen): describe what this command does.
+ * `php artisan age-group:reconcile-defaults` — Reconcile defaults — age group command.
  *
  * @category AgeGroup
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'age-group:reconcile-defaults',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile defaults — age group command.',
 )]
 final class ReconcileDefaultsCommand extends BaseCommand
 {

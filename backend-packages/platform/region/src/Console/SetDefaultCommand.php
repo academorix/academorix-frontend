@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan region:set-default` — TODO(gen): describe what this command does.
+ * `php artisan region:set-default` — Set default — region command.
  *
  * @category Region
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'region:set-default',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set default — region command.',
 )]
 final class SetDefaultCommand extends BaseCommand
 {

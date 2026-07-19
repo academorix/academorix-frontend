@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan region:seed-defaults-for-legacy-tenants` — TODO(gen): describe what this command does.
+ * `php artisan region:seed-defaults-for-legacy-tenants` — Seed defaults for legacy tenants — region command.
  *
  * @category Region
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'region:seed-defaults-for-legacy-tenants',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed defaults for legacy tenants — region command.',
 )]
 final class SeedDefaultsForLegacyTenantsCommand extends BaseCommand
 {

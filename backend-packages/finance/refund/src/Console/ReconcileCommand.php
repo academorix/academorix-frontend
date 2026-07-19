@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan refund:reconcile` — TODO(gen): describe what this command does.
+ * `php artisan refund:reconcile` — Reconcile the refund data.
  *
  * @category Refund
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'refund:reconcile',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile the refund data.',
 )]
 final class ReconcileCommand extends BaseCommand
 {

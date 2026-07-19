@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan search:reindex` — TODO(gen): describe what this command does.
+ * `php artisan search:reindex` — Reindex — search command.
  *
  * @category Search
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'search:reindex',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reindex — search command.',
 )]
 final class ReindexCommand extends BaseCommand
 {

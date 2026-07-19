@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan ai:list-personas` — TODO(gen): describe what this command does.
+ * `php artisan ai:list-personas` — List personas — ai command.
  *
  * @category Ai
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'ai:list-personas',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List personas — ai command.',
 )]
 final class ListPersonasCommand extends BaseCommand
 {

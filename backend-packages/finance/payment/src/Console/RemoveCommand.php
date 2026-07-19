@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment-method:remove` — TODO(gen): describe what this command does.
+ * `php artisan payment-method:remove` — Remove — payment method command.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment-method:remove',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Remove — payment method command.',
 )]
 final class RemoveCommand extends BaseCommand
 {

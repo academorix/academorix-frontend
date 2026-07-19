@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan ledger:report` — TODO(gen): describe what this command does.
+ * `php artisan ledger:report` — Report on the ledger data.
  *
  * @category Transaction
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'ledger:report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Report on the ledger data.',
 )]
 final class ReportCommand extends BaseCommand
 {

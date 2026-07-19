@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan integrations:rotate-tokens` — TODO(gen): describe what this command does.
+ * `php artisan integrations:rotate-tokens` — Rotate tokens — integrations command.
  *
  * @category Integrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'integrations:rotate-tokens',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Rotate tokens — integrations command.',
 )]
 final class RotateTokensCommand extends BaseCommand
 {

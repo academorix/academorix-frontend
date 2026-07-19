@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan registrations:conversion-report` — TODO(gen): describe what this command does.
+ * `php artisan registrations:conversion-report` — Conversion report — registrations command.
  *
  * @category Registrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'registrations:conversion-report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Conversion report — registrations command.',
 )]
 final class ConversionReportCommand extends BaseCommand
 {

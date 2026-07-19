@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan grants:audit-resource` — TODO(gen): describe what this command does.
+ * `php artisan grants:audit-resource` — Audit resource — grants command.
  *
  * @category Grants
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'grants:audit-resource',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit resource — grants command.',
 )]
 final class AuditResourceCommand extends BaseCommand
 {

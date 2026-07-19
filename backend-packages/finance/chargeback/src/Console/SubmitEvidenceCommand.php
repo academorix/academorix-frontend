@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:submit-evidence` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:submit-evidence` — Submit evidence — chargeback command.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:submit-evidence',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Submit evidence — chargeback command.',
 )]
 final class SubmitEvidenceCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan transfer:export` — TODO(gen): describe what this command does.
+ * `php artisan transfer:export` — Export the transfer rows.
  *
  * @category Transfer
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'transfer:export',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Export the transfer rows.',
 )]
 final class ExportCommand extends BaseCommand
 {

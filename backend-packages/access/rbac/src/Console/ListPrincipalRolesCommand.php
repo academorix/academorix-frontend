@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:list-principal-roles` — TODO(gen): describe what this command does.
+ * `php artisan rbac:list-principal-roles` — List principal roles — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:list-principal-roles',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List principal roles — rbac command.',
 )]
 final class ListPrincipalRolesCommand extends BaseCommand
 {

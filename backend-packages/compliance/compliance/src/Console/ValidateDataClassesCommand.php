@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:validate-data-classes` — TODO(gen): describe what this command does.
+ * `php artisan compliance:validate-data-classes` — Validate data classes — compliance command.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:validate-data-classes',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Validate data classes — compliance command.',
 )]
 final class ValidateDataClassesCommand extends BaseCommand
 {

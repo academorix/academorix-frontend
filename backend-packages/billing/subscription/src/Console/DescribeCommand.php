@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan subscription:describe` — TODO(gen): describe what this command does.
+ * `php artisan subscription:describe` — Describe the subscription surface.
  *
  * @category Subscription
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'subscription:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the subscription surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

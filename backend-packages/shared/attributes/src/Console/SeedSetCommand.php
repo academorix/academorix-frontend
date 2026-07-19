@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attributes:seed-set` — TODO(gen): describe what this command does.
+ * `php artisan attributes:seed-set` — Seed set — attributes command.
  *
  * @category Attributes
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attributes:seed-set',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed set — attributes command.',
 )]
 final class SeedSetCommand extends BaseCommand
 {

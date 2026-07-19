@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral:force-vest` — TODO(gen): describe what this command does.
+ * `php artisan referral:force-vest` — Force vest — referral command.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral:force-vest',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Force vest — referral command.',
 )]
 final class ForceVestCommand extends BaseCommand
 {

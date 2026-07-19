@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:seed-consent-categories` — TODO(gen): describe what this command does.
+ * `php artisan compliance:seed-consent-categories` — Seed consent categories — compliance command.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:seed-consent-categories',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed consent categories — compliance command.',
 )]
 final class SeedConsentCategoriesCommand extends BaseCommand
 {

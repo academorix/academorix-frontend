@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan public-site:list` — TODO(gen): describe what this command does.
+ * `php artisan public-site:list` — List every public site row.
  *
  * @category PublicSite
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'public-site:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every public site row.',
 )]
 final class ListCommand extends BaseCommand
 {

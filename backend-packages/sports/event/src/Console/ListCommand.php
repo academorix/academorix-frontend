@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:list` — TODO(gen): describe what this command does.
+ * `php artisan event:list` — List every event row.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every event row.',
 )]
 final class ListCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan search:cancel` — TODO(gen): describe what this command does.
+ * `php artisan search:cancel` — Cancel — search command.
  *
  * @category Search
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'search:cancel',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cancel — search command.',
 )]
 final class CancelCommand extends BaseCommand
 {

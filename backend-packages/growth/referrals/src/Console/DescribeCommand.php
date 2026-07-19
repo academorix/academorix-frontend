@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral:describe` — TODO(gen): describe what this command does.
+ * `php artisan referral:describe` — Describe the referral surface.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the referral surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

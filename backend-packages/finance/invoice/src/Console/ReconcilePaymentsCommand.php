@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invoice:reconcile-payments` — TODO(gen): describe what this command does.
+ * `php artisan invoice:reconcile-payments` — Reconcile payments — invoice command.
  *
  * @category Invoice
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invoice:reconcile-payments',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile payments — invoice command.',
 )]
 final class ReconcilePaymentsCommand extends BaseCommand
 {

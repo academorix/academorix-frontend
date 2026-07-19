@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan user:bulk-invite` — TODO(gen): describe what this command does.
+ * `php artisan user:bulk-invite` — Bulk invite — user command.
  *
  * @category User
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'user:bulk-invite',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Bulk invite — user command.',
 )]
 final class BulkInviteCommand extends BaseCommand
 {

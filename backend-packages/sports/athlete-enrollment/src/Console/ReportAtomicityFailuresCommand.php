@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:report-atomicity-failures` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:report-atomicity-failures` — Report atomicity failures — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:report-atomicity-failures',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Report atomicity failures — enrollment command.',
 )]
 final class ReportAtomicityFailuresCommand extends BaseCommand
 {

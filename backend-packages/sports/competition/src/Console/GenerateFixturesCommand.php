@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan competition:generate-fixtures` — TODO(gen): describe what this command does.
+ * `php artisan competition:generate-fixtures` — Generate fixtures — competition command.
  *
  * @category Competition
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'competition:generate-fixtures',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Generate fixtures — competition command.',
 )]
 final class GenerateFixturesCommand extends BaseCommand
 {

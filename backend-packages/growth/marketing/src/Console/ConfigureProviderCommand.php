@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:configure-provider` — TODO(gen): describe what this command does.
+ * `php artisan marketing:configure-provider` — Configure provider — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:configure-provider',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Configure provider — marketing command.',
 )]
 final class ConfigureProviderCommand extends BaseCommand
 {

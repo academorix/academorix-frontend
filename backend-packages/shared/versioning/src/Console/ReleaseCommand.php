@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan versioning:release` — TODO(gen): describe what this command does.
+ * `php artisan versioning:release` — Release — versioning command.
  *
  * @category Versioning
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'versioning:release',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Release — versioning command.',
 )]
 final class ReleaseCommand extends BaseCommand
 {

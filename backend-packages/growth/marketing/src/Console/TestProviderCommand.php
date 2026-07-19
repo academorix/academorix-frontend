@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:test-provider` — TODO(gen): describe what this command does.
+ * `php artisan marketing:test-provider` — Test provider — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:test-provider',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test provider — marketing command.',
 )]
 final class TestProviderCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan reception:list-visitors` — TODO(gen): describe what this command does.
+ * `php artisan reception:list-visitors` — List visitors — reception command.
  *
  * @category Reception
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'reception:list-visitors',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List visitors — reception command.',
 )]
 final class ListVisitorsCommand extends BaseCommand
 {

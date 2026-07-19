@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan absence:report` — TODO(gen): describe what this command does.
+ * `php artisan absence:report` — Report on the absence data.
  *
  * @category Attendance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'absence:report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Report on the absence data.',
 )]
 final class ReportCommand extends BaseCommand
 {

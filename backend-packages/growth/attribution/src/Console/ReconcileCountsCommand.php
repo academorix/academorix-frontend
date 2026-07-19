@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attribution:reconcile-counts` — TODO(gen): describe what this command does.
+ * `php artisan attribution:reconcile-counts` — Reconcile counts — attribution command.
  *
  * @category Attribution
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attribution:reconcile-counts',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile counts — attribution command.',
 )]
 final class ReconcileCountsCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:sms:opt-out-remove` — TODO(gen): describe what this command does.
+ * `php artisan notifications:sms:opt-out-remove` — Sms:opt out remove — notifications command.
  *
  * @category NotificationsSms
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:sms:opt-out-remove',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Sms:opt out remove — notifications command.',
 )]
 final class SmsOptOutRemoveCommand extends BaseCommand
 {

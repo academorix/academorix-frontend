@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan monitoring:acknowledge-alert` — TODO(gen): describe what this command does.
+ * `php artisan monitoring:acknowledge-alert` — Acknowledge alert — monitoring command.
  *
  * @category Monitoring
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'monitoring:acknowledge-alert',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Acknowledge alert — monitoring command.',
 )]
 final class AcknowledgeAlertCommand extends BaseCommand
 {

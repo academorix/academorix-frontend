@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:aggregate-ratings` — TODO(gen): describe what this command does.
+ * `php artisan session:aggregate-ratings` — Aggregate ratings — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:aggregate-ratings',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Aggregate ratings — session command.',
 )]
 final class AggregateRatingsCommand extends BaseCommand
 {

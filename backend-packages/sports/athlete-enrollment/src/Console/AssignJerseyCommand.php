@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:assign-jersey` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:assign-jersey` — Assign jersey — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:assign-jersey',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Assign jersey — enrollment command.',
 )]
 final class AssignJerseyCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attendance:cancel` — TODO(gen): describe what this command does.
+ * `php artisan attendance:cancel` — Cancel — attendance command.
  *
  * @category Attendance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attendance:cancel',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cancel — attendance command.',
 )]
 final class CancelCommand extends BaseCommand
 {

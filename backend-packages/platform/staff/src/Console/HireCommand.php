@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan staff:hire` — TODO(gen): describe what this command does.
+ * `php artisan staff:hire` — Hire — staff command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'staff:hire',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Hire — staff command.',
 )]
 final class HireCommand extends BaseCommand
 {

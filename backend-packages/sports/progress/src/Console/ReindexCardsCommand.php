@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan progress:reindex-cards` — TODO(gen): describe what this command does.
+ * `php artisan progress:reindex-cards` — Reindex cards — progress command.
  *
  * @category Progress
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'progress:reindex-cards',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reindex cards — progress command.',
 )]
 final class ReindexCardsCommand extends BaseCommand
 {

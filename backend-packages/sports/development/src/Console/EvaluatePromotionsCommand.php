@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan development:evaluate-promotions` — TODO(gen): describe what this command does.
+ * `php artisan development:evaluate-promotions` — Evaluate promotions — development command.
  *
  * @category Development
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'development:evaluate-promotions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Evaluate promotions — development command.',
 )]
 final class EvaluatePromotionsCommand extends BaseCommand
 {

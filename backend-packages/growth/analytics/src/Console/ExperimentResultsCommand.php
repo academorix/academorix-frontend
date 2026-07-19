@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan analytics:experiment-results` — TODO(gen): describe what this command does.
+ * `php artisan analytics:experiment-results` — Experiment results — analytics command.
  *
  * @category Analytics
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'analytics:experiment-results',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Experiment results — analytics command.',
 )]
 final class ExperimentResultsCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan progress:seed-belts` — TODO(gen): describe what this command does.
+ * `php artisan progress:seed-belts` — Seed belts — progress command.
  *
  * @category Progress
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'progress:seed-belts',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed belts — progress command.',
 )]
 final class SeedBeltsCommand extends BaseCommand
 {

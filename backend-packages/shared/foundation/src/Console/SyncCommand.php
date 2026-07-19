@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan module:sync` — TODO(gen): describe what this command does.
+ * `php artisan module:sync` — Synchronise the module.
  *
  * @category Foundation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'module:sync',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Synchronise the module.',
 )]
 final class SyncCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:revoke-role` — TODO(gen): describe what this command does.
+ * `php artisan rbac:revoke-role` — Revoke role — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:revoke-role',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Revoke role — rbac command.',
 )]
 final class RevokeRoleCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coupon:bulk-issue` — TODO(gen): describe what this command does.
+ * `php artisan coupon:bulk-issue` — Bulk issue — coupon command.
  *
  * @category Coupon
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coupon:bulk-issue',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Bulk issue — coupon command.',
 )]
 final class BulkIssueCommand extends BaseCommand
 {

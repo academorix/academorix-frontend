@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan access-requests:audit-report` — TODO(gen): describe what this command does.
+ * `php artisan access-requests:audit-report` — Audit report — access requests command.
  *
  * @category Requests
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'access-requests:audit-report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit report — access requests command.',
 )]
 final class AuditReportCommand extends BaseCommand
 {

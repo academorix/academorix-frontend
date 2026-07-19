@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan athlete:describe` — TODO(gen): describe what this command does.
+ * `php artisan athlete:describe` — Describe the athlete surface.
  *
  * @category Athlete
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'athlete:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the athlete surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan service-account:rotate` — TODO(gen): describe what this command does.
+ * `php artisan service-account:rotate` — Rotate — service account command.
  *
  * @category ServiceAccounts
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'service-account:rotate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Rotate — service account command.',
 )]
 final class RotateCommand extends BaseCommand
 {

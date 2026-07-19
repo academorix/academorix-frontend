@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan auth:revoke-all-sessions` — TODO(gen): describe what this command does.
+ * `php artisan auth:revoke-all-sessions` — Revoke all sessions — auth command.
  *
  * @category Auth
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'auth:revoke-all-sessions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Revoke all sessions — auth command.',
 )]
 final class RevokeAllSessionsCommand extends BaseCommand
 {

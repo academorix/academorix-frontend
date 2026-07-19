@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan sports:registry:create-custom-position` — TODO(gen): describe what this command does.
+ * `php artisan sports:registry:create-custom-position` — Registry:create custom position — sports command.
  *
  * @category Registry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'sports:registry:create-custom-position',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Registry:create custom position — sports command.',
 )]
 final class RegistryCreateCustomPositionCommand extends BaseCommand
 {

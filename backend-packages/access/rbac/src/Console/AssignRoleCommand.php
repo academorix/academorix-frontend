@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:assign-role` — TODO(gen): describe what this command does.
+ * `php artisan rbac:assign-role` — Assign role — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:assign-role',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Assign role — rbac command.',
 )]
 final class AssignRoleCommand extends BaseCommand
 {

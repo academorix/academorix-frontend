@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan pass:list` — TODO(gen): describe what this command does.
+ * `php artisan pass:list` — List every pass row.
  *
  * @category Membership
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'pass:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every pass row.',
 )]
 final class ListCommand extends BaseCommand
 {

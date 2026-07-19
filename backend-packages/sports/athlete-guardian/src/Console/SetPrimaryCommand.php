@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan guardian:set-primary` — TODO(gen): describe what this command does.
+ * `php artisan guardian:set-primary` — Set primary — guardian command.
  *
  * @category AthleteGuardian
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'guardian:set-primary',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set primary — guardian command.',
 )]
 final class SetPrimaryCommand extends BaseCommand
 {

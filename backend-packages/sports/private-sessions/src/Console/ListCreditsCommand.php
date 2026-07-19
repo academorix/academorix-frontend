@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan private-sessions:list-credits` — TODO(gen): describe what this command does.
+ * `php artisan private-sessions:list-credits` — List credits — private sessions command.
  *
  * @category PrivateSessions
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'private-sessions:list-credits',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List credits — private sessions command.',
 )]
 final class ListCreditsCommand extends BaseCommand
 {

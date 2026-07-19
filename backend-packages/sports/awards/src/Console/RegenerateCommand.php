@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan certificates:regenerate` — TODO(gen): describe what this command does.
+ * `php artisan certificates:regenerate` — Regenerate — certificates command.
  *
  * @category Awards
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'certificates:regenerate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Regenerate — certificates command.',
 )]
 final class RegenerateCommand extends BaseCommand
 {

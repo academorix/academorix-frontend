@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:withdraw` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:withdraw` — Withdraw — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:withdraw',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Withdraw — enrollment command.',
 )]
 final class WithdrawCommand extends BaseCommand
 {

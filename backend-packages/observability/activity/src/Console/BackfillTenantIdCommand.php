@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan activity:backfill-tenant-id` — TODO(gen): describe what this command does.
+ * `php artisan activity:backfill-tenant-id` — Backfill tenant id — activity command.
  *
  * @category Activity
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'activity:backfill-tenant-id',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Backfill tenant id — activity command.',
 )]
 final class BackfillTenantIdCommand extends BaseCommand
 {

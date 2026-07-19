@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan passes:issue` — TODO(gen): describe what this command does.
+ * `php artisan passes:issue` — Issue — passes command.
  *
  * @category DigitalPasses
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'passes:issue',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Issue — passes command.',
 )]
 final class IssueCommand extends BaseCommand
 {

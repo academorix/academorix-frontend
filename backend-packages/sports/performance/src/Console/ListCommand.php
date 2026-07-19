@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan performance:list` — TODO(gen): describe what this command does.
+ * `php artisan performance:list` — List every performance row.
  *
  * @category Performance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'performance:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every performance row.',
 )]
 final class ListCommand extends BaseCommand
 {

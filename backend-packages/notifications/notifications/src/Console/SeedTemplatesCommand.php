@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:seed-templates` — TODO(gen): describe what this command does.
+ * `php artisan notifications:seed-templates` — Seed templates — notifications command.
  *
  * @category Notifications
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:seed-templates',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed templates — notifications command.',
 )]
 final class SeedTemplatesCommand extends BaseCommand
 {

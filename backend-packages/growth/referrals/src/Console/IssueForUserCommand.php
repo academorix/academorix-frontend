@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral-code:issue-for-user` — TODO(gen): describe what this command does.
+ * `php artisan referral-code:issue-for-user` — Issue for user — referral code command.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral-code:issue-for-user',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Issue for user — referral code command.',
 )]
 final class IssueForUserCommand extends BaseCommand
 {

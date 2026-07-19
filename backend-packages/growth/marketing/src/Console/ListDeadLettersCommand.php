@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:list-dead-letters` — TODO(gen): describe what this command does.
+ * `php artisan marketing:list-dead-letters` — List dead letters — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:list-dead-letters',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List dead letters — marketing command.',
 )]
 final class ListDeadLettersCommand extends BaseCommand
 {

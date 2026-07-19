@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment-method:list-mine` — TODO(gen): describe what this command does.
+ * `php artisan payment-method:list-mine` — List mine — payment method command.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment-method:list-mine',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List mine — payment method command.',
 )]
 final class ListMineCommand extends BaseCommand
 {

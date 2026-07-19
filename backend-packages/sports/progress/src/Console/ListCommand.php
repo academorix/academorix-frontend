@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan grading:list` — TODO(gen): describe what this command does.
+ * `php artisan grading:list` — List every grading row.
  *
  * @category Progress
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'grading:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every grading row.',
 )]
 final class ListCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:in-app:test-broadcast` — TODO(gen): describe what this command does.
+ * `php artisan notifications:in-app:test-broadcast` — In app:test broadcast — notifications command.
  *
  * @category NotificationsInApp
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:in-app:test-broadcast',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'In app:test broadcast — notifications command.',
 )]
 final class InAppTestBroadcastCommand extends BaseCommand
 {

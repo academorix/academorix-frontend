@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invoice:mark-uncollectible` — TODO(gen): describe what this command does.
+ * `php artisan invoice:mark-uncollectible` — Mark uncollectible — invoice command.
  *
  * @category Invoice
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invoice:mark-uncollectible',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mark uncollectible — invoice command.',
 )]
 final class MarkUncollectibleCommand extends BaseCommand
 {

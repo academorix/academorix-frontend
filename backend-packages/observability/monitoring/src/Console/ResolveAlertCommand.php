@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan monitoring:resolve-alert` — TODO(gen): describe what this command does.
+ * `php artisan monitoring:resolve-alert` — Resolve alert — monitoring command.
  *
  * @category Monitoring
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'monitoring:resolve-alert',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Resolve alert — monitoring command.',
 )]
 final class ResolveAlertCommand extends BaseCommand
 {

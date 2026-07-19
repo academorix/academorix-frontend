@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan offline-sync:purge-stale` — TODO(gen): describe what this command does.
+ * `php artisan offline-sync:purge-stale` — Purge stale — offline sync command.
  *
  * @category OfflineSync
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'offline-sync:purge-stale',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge stale — offline sync command.',
 )]
 final class PurgeStaleCommand extends BaseCommand
 {

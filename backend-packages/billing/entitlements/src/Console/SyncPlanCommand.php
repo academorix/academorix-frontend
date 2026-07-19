@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan entitlements:sync-plan` — TODO(gen): describe what this command does.
+ * `php artisan entitlements:sync-plan` — Sync plan — entitlements command.
  *
  * @category Entitlements
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'entitlements:sync-plan',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Sync plan — entitlements command.',
 )]
 final class SyncPlanCommand extends BaseCommand
 {

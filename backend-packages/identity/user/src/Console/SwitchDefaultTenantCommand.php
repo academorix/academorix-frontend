@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan user:switch-default-tenant` — TODO(gen): describe what this command does.
+ * `php artisan user:switch-default-tenant` — Switch default tenant — user command.
  *
  * @category User
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'user:switch-default-tenant',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Switch default tenant — user command.',
 )]
 final class SwitchDefaultTenantCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan membership:cancel` — TODO(gen): describe what this command does.
+ * `php artisan membership:cancel` — Cancel — membership command.
  *
  * @category Membership
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'membership:cancel',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cancel — membership command.',
 )]
 final class CancelCommand extends BaseCommand
 {

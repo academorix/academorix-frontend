@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan monitoring:audit-suppressions` — TODO(gen): describe what this command does.
+ * `php artisan monitoring:audit-suppressions` — Audit suppressions — monitoring command.
  *
  * @category Monitoring
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'monitoring:audit-suppressions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit suppressions — monitoring command.',
 )]
 final class AuditSuppressionsCommand extends BaseCommand
 {

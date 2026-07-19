@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:mail:suppression-add` — TODO(gen): describe what this command does.
+ * `php artisan notifications:mail:suppression-add` — Mail:suppression add — notifications command.
  *
  * @category NotificationsMail
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:mail:suppression-add',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mail:suppression add — notifications command.',
 )]
 final class MailSuppressionAddCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan ai:reindex-embeddings` — TODO(gen): describe what this command does.
+ * `php artisan ai:reindex-embeddings` — Reindex embeddings — ai command.
  *
  * @category Ai
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'ai:reindex-embeddings',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reindex embeddings — ai command.',
 )]
 final class ReindexEmbeddingsCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan search:jobs` — TODO(gen): describe what this command does.
+ * `php artisan search:jobs` — Jobs — search command.
  *
  * @category Search
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'search:jobs',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Jobs — search command.',
 )]
 final class JobsCommand extends BaseCommand
 {

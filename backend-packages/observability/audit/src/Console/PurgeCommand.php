@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan audit:purge` — TODO(gen): describe what this command does.
+ * `php artisan audit:purge` — Purge expired audit data.
  *
  * @category Audit
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'audit:purge',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge expired audit data.',
 )]
 final class PurgeCommand extends BaseCommand
 {

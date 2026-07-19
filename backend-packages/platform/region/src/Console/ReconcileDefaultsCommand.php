@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan region:reconcile-defaults` — TODO(gen): describe what this command does.
+ * `php artisan region:reconcile-defaults` — Reconcile defaults — region command.
  *
  * @category Region
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'region:reconcile-defaults',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile defaults — region command.',
 )]
 final class ReconcileDefaultsCommand extends BaseCommand
 {

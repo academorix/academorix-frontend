@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:list-instances` — TODO(gen): describe what this command does.
+ * `php artisan approvals:list-instances` — List instances — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:list-instances',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List instances — approvals command.',
 )]
 final class ListInstancesCommand extends BaseCommand
 {

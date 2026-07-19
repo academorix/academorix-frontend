@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan webhook:retry` — TODO(gen): describe what this command does.
+ * `php artisan webhook:retry` — Retry — webhook command.
  *
  * @category Webhook
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'webhook:retry',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Retry — webhook command.',
 )]
 final class RetryCommand extends BaseCommand
 {

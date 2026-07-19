@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan athlete:record-consent` — TODO(gen): describe what this command does.
+ * `php artisan athlete:record-consent` — Record consent — athlete command.
  *
  * @category Athlete
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'athlete:record-consent',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Record consent — athlete command.',
 )]
 final class RecordConsentCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan analytics:list-events` — TODO(gen): describe what this command does.
+ * `php artisan analytics:list-events` — List events — analytics command.
  *
  * @category Analytics
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'analytics:list-events',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List events — analytics command.',
 )]
 final class ListEventsCommand extends BaseCommand
 {

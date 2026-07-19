@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geography:warm-cache` — TODO(gen): describe what this command does.
+ * `php artisan geography:warm-cache` — Warm cache — geography command.
  *
  * @category Geography
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geography:warm-cache',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Warm cache — geography command.',
 )]
 final class WarmCacheCommand extends BaseCommand
 {

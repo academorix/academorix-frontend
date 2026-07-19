@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan age-group:describe` — TODO(gen): describe what this command does.
+ * `php artisan age-group:describe` — Describe the age group surface.
  *
  * @category AgeGroup
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'age-group:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the age group surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

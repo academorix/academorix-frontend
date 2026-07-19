@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan offline-sync:reset-device` — TODO(gen): describe what this command does.
+ * `php artisan offline-sync:reset-device` — Reset device — offline sync command.
  *
  * @category OfflineSync
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'offline-sync:reset-device',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reset device — offline sync command.',
 )]
 final class ResetDeviceCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan mfa:purge-unconfirmed` — TODO(gen): describe what this command does.
+ * `php artisan mfa:purge-unconfirmed` — Purge unconfirmed — mfa command.
  *
  * @category Mfa
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'mfa:purge-unconfirmed',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge unconfirmed — mfa command.',
 )]
 final class PurgeUnconfirmedCommand extends BaseCommand
 {

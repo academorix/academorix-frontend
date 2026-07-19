@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan integrations:purge-disabled` — TODO(gen): describe what this command does.
+ * `php artisan integrations:purge-disabled` — Purge disabled — integrations command.
  *
  * @category Integrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'integrations:purge-disabled',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge disabled — integrations command.',
 )]
 final class PurgeDisabledCommand extends BaseCommand
 {

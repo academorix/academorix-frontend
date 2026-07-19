@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan auth:purge-expired` — TODO(gen): describe what this command does.
+ * `php artisan auth:purge-expired` — Purge expired — auth command.
  *
  * @category Auth
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'auth:purge-expired',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge expired — auth command.',
 )]
 final class PurgeExpiredCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:roll-status` — TODO(gen): describe what this command does.
+ * `php artisan event:roll-status` — Roll status — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:roll-status',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Roll status — event command.',
 )]
 final class RollStatusCommand extends BaseCommand
 {

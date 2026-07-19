@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan organization:rebuild-tree-paths` — TODO(gen): describe what this command does.
+ * `php artisan organization:rebuild-tree-paths` — Rebuild tree paths — organization command.
  *
  * @category Organization
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'organization:rebuild-tree-paths',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Rebuild tree paths — organization command.',
 )]
 final class RebuildTreePathsCommand extends BaseCommand
 {

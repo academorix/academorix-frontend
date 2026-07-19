@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invitations:expire-stale` — TODO(gen): describe what this command does.
+ * `php artisan invitations:expire-stale` — Expire stale — invitations command.
  *
  * @category Invitations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invitations:expire-stale',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Expire stale — invitations command.',
 )]
 final class ExpireStaleCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coach-assignment:create` — TODO(gen): describe what this command does.
+ * `php artisan coach-assignment:create` — Create a new coach assignment.
  *
  * @category Coaching
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coach-assignment:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new coach assignment.',
 )]
 final class CreateCommand extends BaseCommand
 {

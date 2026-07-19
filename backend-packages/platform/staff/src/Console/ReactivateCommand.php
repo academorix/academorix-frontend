@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan staff:reactivate` — TODO(gen): describe what this command does.
+ * `php artisan staff:reactivate` — Reactivate — staff command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'staff:reactivate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reactivate — staff command.',
 )]
 final class ReactivateCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attribution:reset` — TODO(gen): describe what this command does.
+ * `php artisan attribution:reset` — Reset the attribution data.
  *
  * @category Attribution
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attribution:reset',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reset the attribution data.',
 )]
 final class ResetCommand extends BaseCommand
 {

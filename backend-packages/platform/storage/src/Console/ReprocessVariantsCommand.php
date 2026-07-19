@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan storage:reprocess-variants` — TODO(gen): describe what this command does.
+ * `php artisan storage:reprocess-variants` — Reprocess variants — storage command.
  *
  * @category Storage
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'storage:reprocess-variants',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reprocess variants — storage command.',
 )]
 final class ReprocessVariantsCommand extends BaseCommand
 {

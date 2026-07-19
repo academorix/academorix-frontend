@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan impersonation:force-end` — TODO(gen): describe what this command does.
+ * `php artisan impersonation:force-end` — Force end — impersonation command.
  *
  * @category Delegation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'impersonation:force-end',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Force end — impersonation command.',
 )]
 final class ForceEndCommand extends BaseCommand
 {

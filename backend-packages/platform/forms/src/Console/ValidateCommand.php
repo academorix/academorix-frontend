@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan forms:validate` — TODO(gen): describe what this command does.
+ * `php artisan forms:validate` — Validate — forms command.
  *
  * @category Forms
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'forms:validate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Validate — forms command.',
 )]
 final class ValidateCommand extends BaseCommand
 {

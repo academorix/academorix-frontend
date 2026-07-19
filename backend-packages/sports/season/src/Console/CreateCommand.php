@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan season:create` — TODO(gen): describe what this command does.
+ * `php artisan season:create` — Create a new season.
  *
  * @category Season
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'season:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new season.',
 )]
 final class CreateCommand extends BaseCommand
 {

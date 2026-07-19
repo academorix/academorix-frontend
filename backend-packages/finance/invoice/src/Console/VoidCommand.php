@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invoice:void` — TODO(gen): describe what this command does.
+ * `php artisan invoice:void` — Void — invoice command.
  *
  * @category Invoice
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invoice:void',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Void — invoice command.',
 )]
 final class VoidCommand extends BaseCommand
 {

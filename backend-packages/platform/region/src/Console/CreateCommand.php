@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan region:create` — TODO(gen): describe what this command does.
+ * `php artisan region:create` — Create a new region.
  *
  * @category Region
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'region:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new region.',
 )]
 final class CreateCommand extends BaseCommand
 {

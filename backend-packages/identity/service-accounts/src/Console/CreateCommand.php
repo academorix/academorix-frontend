@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan service-account:create` — TODO(gen): describe what this command does.
+ * `php artisan service-account:create` — Create a new service account.
  *
  * @category ServiceAccounts
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'service-account:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new service account.',
 )]
 final class CreateCommand extends BaseCommand
 {

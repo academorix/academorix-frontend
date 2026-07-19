@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coupon:deactivate` — TODO(gen): describe what this command does.
+ * `php artisan coupon:deactivate` — Deactivate a coupon.
  *
  * @category Coupon
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coupon:deactivate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Deactivate a coupon.',
 )]
 final class DeactivateCommand extends BaseCommand
 {

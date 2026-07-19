@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geofencing:list-subject-aliases` — TODO(gen): describe what this command does.
+ * `php artisan geofencing:list-subject-aliases` — List subject aliases — geofencing command.
  *
  * @category Geofencing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geofencing:list-subject-aliases',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List subject aliases — geofencing command.',
 )]
 final class ListSubjectAliasesCommand extends BaseCommand
 {

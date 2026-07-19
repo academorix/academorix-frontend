@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan membership-plan:duplicate` — TODO(gen): describe what this command does.
+ * `php artisan membership-plan:duplicate` — Duplicate a membership plan.
  *
  * @category Membership
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'membership-plan:duplicate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Duplicate a membership plan.',
 )]
 final class DuplicateCommand extends BaseCommand
 {

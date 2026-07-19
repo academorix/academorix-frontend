@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan team:set-default` — TODO(gen): describe what this command does.
+ * `php artisan team:set-default` — Set default — team command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'team:set-default',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set default — team command.',
 )]
 final class SetDefaultCommand extends BaseCommand
 {

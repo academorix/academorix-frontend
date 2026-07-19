@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan guardian:dispute` — TODO(gen): describe what this command does.
+ * `php artisan guardian:dispute` — Dispute — guardian command.
  *
  * @category AthleteGuardian
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'guardian:dispute',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Dispute — guardian command.',
 )]
 final class DisputeCommand extends BaseCommand
 {

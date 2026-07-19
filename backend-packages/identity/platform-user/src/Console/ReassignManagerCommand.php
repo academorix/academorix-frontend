@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan platform-user:reassign-manager` — TODO(gen): describe what this command does.
+ * `php artisan platform-user:reassign-manager` — Reassign manager — platform user command.
  *
  * @category PlatformUser
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'platform-user:reassign-manager',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reassign manager — platform user command.',
 )]
 final class ReassignManagerCommand extends BaseCommand
 {

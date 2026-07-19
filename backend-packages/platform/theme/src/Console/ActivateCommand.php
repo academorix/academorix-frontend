@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan theme:activate` — TODO(gen): describe what this command does.
+ * `php artisan theme:activate` — Activate a theme.
  *
  * @category Theme
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'theme:activate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Activate a theme.',
 )]
 final class ActivateCommand extends BaseCommand
 {

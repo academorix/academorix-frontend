@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coach-certification:expiring` — TODO(gen): describe what this command does.
+ * `php artisan coach-certification:expiring` — Expiring — coach certification command.
  *
  * @category Coaching
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coach-certification:expiring',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Expiring — coach certification command.',
 )]
 final class ExpiringCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan subscription:report-usage` — TODO(gen): describe what this command does.
+ * `php artisan subscription:report-usage` — Report usage — subscription command.
  *
  * @category Subscription
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'subscription:report-usage',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Report usage — subscription command.',
 )]
 final class ReportUsageCommand extends BaseCommand
 {

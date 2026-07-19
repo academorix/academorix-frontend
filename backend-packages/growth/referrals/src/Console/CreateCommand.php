@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral-program:create` — TODO(gen): describe what this command does.
+ * `php artisan referral-program:create` — Create a new referral program.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral-program:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new referral program.',
 )]
 final class CreateCommand extends BaseCommand
 {

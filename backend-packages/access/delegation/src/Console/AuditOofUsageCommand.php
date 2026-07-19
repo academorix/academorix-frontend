@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan delegations:audit-oof-usage` — TODO(gen): describe what this command does.
+ * `php artisan delegations:audit-oof-usage` — Audit oof usage — delegations command.
  *
  * @category Delegation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'delegations:audit-oof-usage',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit oof usage — delegations command.',
 )]
 final class AuditOofUsageCommand extends BaseCommand
 {

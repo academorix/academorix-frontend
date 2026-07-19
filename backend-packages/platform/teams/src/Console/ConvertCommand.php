@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan trial:convert` — TODO(gen): describe what this command does.
+ * `php artisan trial:convert` — Convert — trial command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'trial:convert',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Convert — trial command.',
 )]
 final class ConvertCommand extends BaseCommand
 {

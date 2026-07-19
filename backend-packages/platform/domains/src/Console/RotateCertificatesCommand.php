@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan domains:rotate-certificates` — TODO(gen): describe what this command does.
+ * `php artisan domains:rotate-certificates` — Rotate certificates — domains command.
  *
  * @category Domains
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'domains:rotate-certificates',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Rotate certificates — domains command.',
 )]
 final class RotateCertificatesCommand extends BaseCommand
 {

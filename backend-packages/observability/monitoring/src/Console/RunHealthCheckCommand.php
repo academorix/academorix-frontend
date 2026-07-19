@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan monitoring:run-health-check` — TODO(gen): describe what this command does.
+ * `php artisan monitoring:run-health-check` — Run health check — monitoring command.
  *
  * @category Monitoring
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'monitoring:run-health-check',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Run health check — monitoring command.',
 )]
 final class RunHealthCheckCommand extends BaseCommand
 {

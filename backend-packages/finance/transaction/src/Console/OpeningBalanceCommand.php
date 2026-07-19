@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan ledger:opening-balance` — TODO(gen): describe what this command does.
+ * `php artisan ledger:opening-balance` — Opening balance — ledger command.
  *
  * @category Transaction
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'ledger:opening-balance',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Opening balance — ledger command.',
 )]
 final class OpeningBalanceCommand extends BaseCommand
 {

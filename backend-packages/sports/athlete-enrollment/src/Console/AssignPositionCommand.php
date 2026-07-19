@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:assign-position` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:assign-position` — Assign position — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:assign-position',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Assign position — enrollment command.',
 )]
 final class AssignPositionCommand extends BaseCommand
 {

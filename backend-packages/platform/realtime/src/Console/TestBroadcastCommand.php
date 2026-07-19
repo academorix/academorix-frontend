@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan realtime:test-broadcast` — TODO(gen): describe what this command does.
+ * `php artisan realtime:test-broadcast` — Test broadcast — realtime command.
  *
  * @category Realtime
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'realtime:test-broadcast',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test broadcast — realtime command.',
 )]
 final class TestBroadcastCommand extends BaseCommand
 {

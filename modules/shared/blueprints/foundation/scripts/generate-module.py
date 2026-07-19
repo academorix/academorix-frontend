@@ -1928,14 +1928,25 @@ final class {class_name} extends AcademorixException
 def emit_console_command(m: Module, signature: str) -> tuple[str, str]:
     """Emit `src/Console/<Name>Command.php` for one command entry."""
     ns = f"{m.ns_module_root}\\Console"
-    parts = signature.split(":", 1)
+    # Signature shape: `<group>:<verb>[ {args}]`. `<verb>` is the leaf
+    # action (e.g. `list`, `describe`, `activate`). `<group>` is the
+    # top-level namespace (e.g. `theme`, `settings`, `feature-flags`).
+    signature_root = signature.split(" ", 1)[0]  # strip trailing arg spec
+    parts = signature_root.split(":", 1)
     if len(parts) == 2:
-        _, verb_part = parts
+        group_part, verb_part = parts
     else:
+        group_part = m.name
         verb_part = parts[0]
     class_name = f"{studly(verb_part)}Command"
+    # Auto-derived description from the group + verb. Reads at a glance:
+    # `feature-flags:seed`  ->  "Seed the feature-flags catalogue"
+    # `theme:activate`      ->  "Activate a theme"
+    # `settings:describe`   ->  "Describe the settings surface"
+    description = _derive_command_description(group_part, verb_part)
+    escaped_description = description.replace("\\", "\\\\").replace("'", "\\'")
     doc = _php_docblock([
-        f"`php artisan {signature}` — TODO(gen): describe what this command does.",
+        f"`php artisan {signature}` — {description}",
         "",
         f"@category {m.studly_name}",
         "",
@@ -1955,7 +1966,7 @@ use Academorix\\Console\\Console\\Commands\\BaseCommand;
 {doc}
 #[AsCommand(
     name: '{signature}',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: '{escaped_description}',
 )]
 final class {class_name} extends BaseCommand
 {{
@@ -1971,6 +1982,66 @@ final class {class_name} extends BaseCommand
 }}
 """
     return f"src/Console/{class_name}.php", body
+
+
+# Verb -> human-readable action phrase. Used by `_derive_command_description`
+# so the generator emits `Activate a theme` instead of `TODO(gen): describe
+# what this command does`.
+_COMMAND_VERB_PHRASES = {
+    "list":      "List every",
+    "describe":  "Describe the",
+    "show":      "Show one",
+    "create":    "Create a new",
+    "update":    "Update an existing",
+    "delete":    "Delete an",
+    "seed":      "Seed the",
+    "sync":      "Synchronise the",
+    "activate":  "Activate a",
+    "deactivate": "Deactivate a",
+    "publish":   "Publish a",
+    "duplicate": "Duplicate a",
+    "preview":   "Preview a",
+    "export":    "Export the",
+    "import":    "Import the",
+    "purge":     "Purge expired",
+    "prune":     "Prune stale",
+    "reconcile": "Reconcile the",
+    "reset":     "Reset the",
+    "rebuild":   "Rebuild the",
+    "refresh":   "Refresh the",
+    "verify":    "Verify the",
+    "audit":     "Audit the",
+    "report":    "Report on the",
+    "migrate":   "Migrate the",
+    "seed:permissions": "Seed permission definitions for the",
+}
+
+
+def _derive_command_description(group: str, verb: str) -> str:
+    """Turn `(group, verb)` into a human-readable console description.
+
+    Reads at a glance in `artisan list`: `theme:activate` -> "Activate a
+    theme.", `feature-flags:seed` -> "Seed the feature-flags catalogue."
+    Unknown verbs fall back to the sentence-cased verb phrase.
+    """
+    phrase = _COMMAND_VERB_PHRASES.get(verb.lower())
+    subject = group.replace("-", " ").replace("_", " ")
+    if phrase is None:
+        # Unknown verb — capitalise the raw verb and pair with the group.
+        return f"{verb.replace('-', ' ').capitalize()} — {subject} command."
+    # Terminal-object heuristic: `list every X`, `seed the Y catalogue`, ...
+    if verb == "list":
+        return f"{phrase} {subject} row."
+    if verb == "seed":
+        return f"{phrase} {subject} catalogue."
+    if verb == "describe":
+        return f"{phrase} {subject} surface."
+    if verb in {"purge", "prune", "reconcile", "reset", "rebuild",
+                "refresh", "verify", "audit", "report", "migrate"}:
+        return f"{phrase} {subject} data."
+    if verb in {"export", "import"}:
+        return f"{phrase} {subject} rows."
+    return f"{phrase} {subject.rstrip('s') if subject.endswith('s') else subject}."
 
 
 # ---------------------------------------------------------------------------

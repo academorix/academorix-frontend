@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan tax:list-rates` — TODO(gen): describe what this command does.
+ * `php artisan tax:list-rates` — List rates — tax command.
  *
  * @category Tax
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'tax:list-rates',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List rates — tax command.',
 )]
 final class ListRatesCommand extends BaseCommand
 {

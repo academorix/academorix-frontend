@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral:cancel` — TODO(gen): describe what this command does.
+ * `php artisan referral:cancel` — Cancel — referral command.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral:cancel',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cancel — referral command.',
 )]
 final class CancelCommand extends BaseCommand
 {

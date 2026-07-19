@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan season:begin-playoffs` — TODO(gen): describe what this command does.
+ * `php artisan season:begin-playoffs` — Begin playoffs — season command.
  *
  * @category Season
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'season:begin-playoffs',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Begin playoffs — season command.',
 )]
 final class BeginPlayoffsCommand extends BaseCommand
 {

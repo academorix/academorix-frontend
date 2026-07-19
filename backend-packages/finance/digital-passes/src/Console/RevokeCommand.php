@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan passes:revoke` — TODO(gen): describe what this command does.
+ * `php artisan passes:revoke` — Revoke — passes command.
  *
  * @category DigitalPasses
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'passes:revoke',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Revoke — passes command.',
 )]
 final class RevokeCommand extends BaseCommand
 {

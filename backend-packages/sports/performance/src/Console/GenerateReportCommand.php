@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan performance:generate-report` — TODO(gen): describe what this command does.
+ * `php artisan performance:generate-report` — Generate report — performance command.
  *
  * @category Performance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'performance:generate-report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Generate report — performance command.',
 )]
 final class GenerateReportCommand extends BaseCommand
 {

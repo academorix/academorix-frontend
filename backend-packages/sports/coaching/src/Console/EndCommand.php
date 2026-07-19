@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coach-assignment:end` — TODO(gen): describe what this command does.
+ * `php artisan coach-assignment:end` — End — coach assignment command.
  *
  * @category Coaching
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coach-assignment:end',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'End — coach assignment command.',
 )]
 final class EndCommand extends BaseCommand
 {

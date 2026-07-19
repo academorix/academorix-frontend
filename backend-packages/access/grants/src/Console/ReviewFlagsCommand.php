@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan grants:review-flags` — TODO(gen): describe what this command does.
+ * `php artisan grants:review-flags` — Review flags — grants command.
  *
  * @category Grants
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'grants:review-flags',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Review flags — grants command.',
 )]
 final class ReviewFlagsCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan staff:demote` — TODO(gen): describe what this command does.
+ * `php artisan staff:demote` — Demote — staff command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'staff:demote',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Demote — staff command.',
 )]
 final class DemoteCommand extends BaseCommand
 {

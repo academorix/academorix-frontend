@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan gates:list` — TODO(gen): describe what this command does.
+ * `php artisan gates:list` — List every gates row.
  *
  * @category Credentials
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'gates:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every gates row.',
 )]
 final class ListCommand extends BaseCommand
 {

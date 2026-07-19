@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan staff:offboard` — TODO(gen): describe what this command does.
+ * `php artisan staff:offboard` — Offboard — staff command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'staff:offboard',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Offboard — staff command.',
 )]
 final class OffboardCommand extends BaseCommand
 {

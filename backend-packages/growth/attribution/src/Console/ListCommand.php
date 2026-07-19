@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attribution:list` — TODO(gen): describe what this command does.
+ * `php artisan attribution:list` — List every attribution row.
  *
  * @category Attribution
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attribution:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every attribution row.',
 )]
 final class ListCommand extends BaseCommand
 {

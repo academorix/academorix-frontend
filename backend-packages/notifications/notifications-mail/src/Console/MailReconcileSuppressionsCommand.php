@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:mail:reconcile-suppressions` — TODO(gen): describe what this command does.
+ * `php artisan notifications:mail:reconcile-suppressions` — Mail:reconcile suppressions — notifications command.
  *
  * @category NotificationsMail
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:mail:reconcile-suppressions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mail:reconcile suppressions — notifications command.',
 )]
 final class MailReconcileSuppressionsCommand extends BaseCommand
 {

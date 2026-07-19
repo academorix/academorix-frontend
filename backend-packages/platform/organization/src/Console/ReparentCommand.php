@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan organization:reparent` — TODO(gen): describe what this command does.
+ * `php artisan organization:reparent` — Reparent — organization command.
  *
  * @category Organization
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'organization:reparent',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reparent — organization command.',
 )]
 final class ReparentCommand extends BaseCommand
 {

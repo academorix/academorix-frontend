@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan search:test-query` — TODO(gen): describe what this command does.
+ * `php artisan search:test-query` — Test query — search command.
  *
  * @category Search
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'search:test-query',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test query — search command.',
 )]
 final class TestQueryCommand extends BaseCommand
 {

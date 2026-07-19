@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan sports:registry:seed-platform-catalog` — TODO(gen): describe what this command does.
+ * `php artisan sports:registry:seed-platform-catalog` — Registry:seed platform catalog — sports command.
  *
  * @category Registry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'sports:registry:seed-platform-catalog',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Registry:seed platform catalog — sports command.',
 )]
 final class RegistrySeedPlatformCatalogCommand extends BaseCommand
 {

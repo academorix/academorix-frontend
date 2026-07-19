@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment-provider:configure` — TODO(gen): describe what this command does.
+ * `php artisan payment-provider:configure` — Configure — payment provider command.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment-provider:configure',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Configure — payment provider command.',
 )]
 final class ConfigureCommand extends BaseCommand
 {

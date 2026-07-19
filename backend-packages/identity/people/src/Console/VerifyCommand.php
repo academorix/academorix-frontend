@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan people:verify` — TODO(gen): describe what this command does.
+ * `php artisan people:verify` — Verify the people data.
  *
  * @category People
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'people:verify',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Verify the people data.',
 )]
 final class VerifyCommand extends BaseCommand
 {

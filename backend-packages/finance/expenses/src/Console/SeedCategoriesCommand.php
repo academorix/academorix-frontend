@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan expenses:seed-categories` — TODO(gen): describe what this command does.
+ * `php artisan expenses:seed-categories` — Seed categories — expenses command.
  *
  * @category Expenses
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'expenses:seed-categories',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed categories — expenses command.',
 )]
 final class SeedCategoriesCommand extends BaseCommand
 {

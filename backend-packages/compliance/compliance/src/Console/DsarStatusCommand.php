@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:dsar-status` — TODO(gen): describe what this command does.
+ * `php artisan compliance:dsar-status` — Dsar status — compliance command.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:dsar-status',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Dsar status — compliance command.',
 )]
 final class DsarStatusCommand extends BaseCommand
 {

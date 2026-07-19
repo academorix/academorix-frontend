@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan tax:verify-exemption` — TODO(gen): describe what this command does.
+ * `php artisan tax:verify-exemption` — Verify exemption — tax command.
  *
  * @category Tax
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'tax:verify-exemption',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Verify exemption — tax command.',
 )]
 final class VerifyExemptionCommand extends BaseCommand
 {

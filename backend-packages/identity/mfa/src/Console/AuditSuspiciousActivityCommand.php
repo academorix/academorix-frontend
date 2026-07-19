@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan mfa:audit-suspicious-activity` — TODO(gen): describe what this command does.
+ * `php artisan mfa:audit-suspicious-activity` — Audit suspicious activity — mfa command.
  *
  * @category Mfa
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'mfa:audit-suspicious-activity',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit suspicious activity — mfa command.',
 )]
 final class AuditSuspiciousActivityCommand extends BaseCommand
 {

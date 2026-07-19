@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attributes:version-set` — TODO(gen): describe what this command does.
+ * `php artisan attributes:version-set` — Version set — attributes command.
  *
  * @category Attributes
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attributes:version-set',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Version set — attributes command.',
 )]
 final class VersionSetCommand extends BaseCommand
 {

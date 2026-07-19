@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan reception:daily-report` — TODO(gen): describe what this command does.
+ * `php artisan reception:daily-report` — Daily report — reception command.
  *
  * @category Reception
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'reception:daily-report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Daily report — reception command.',
 )]
 final class DailyReportCommand extends BaseCommand
 {

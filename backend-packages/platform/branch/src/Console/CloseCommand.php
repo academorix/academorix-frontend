@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan branch:close` — TODO(gen): describe what this command does.
+ * `php artisan branch:close` — Close — branch command.
  *
  * @category Branch
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'branch:close',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Close — branch command.',
 )]
 final class CloseCommand extends BaseCommand
 {

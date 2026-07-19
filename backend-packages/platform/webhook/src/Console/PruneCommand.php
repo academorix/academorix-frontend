@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan webhook:prune` — TODO(gen): describe what this command does.
+ * `php artisan webhook:prune` — Prune stale webhook data.
  *
  * @category Webhook
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'webhook:prune',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Prune stale webhook data.',
 )]
 final class PruneCommand extends BaseCommand
 {

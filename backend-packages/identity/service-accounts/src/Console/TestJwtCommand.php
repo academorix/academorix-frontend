@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan service-account:test-jwt` — TODO(gen): describe what this command does.
+ * `php artisan service-account:test-jwt` — Test jwt — service account command.
  *
  * @category ServiceAccounts
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'service-account:test-jwt',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test jwt — service account command.',
 )]
 final class TestJwtCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan sports:registry:create-custom-sport` — TODO(gen): describe what this command does.
+ * `php artisan sports:registry:create-custom-sport` — Registry:create custom sport — sports command.
  *
  * @category Registry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'sports:registry:create-custom-sport',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Registry:create custom sport — sports command.',
 )]
 final class RegistryCreateCustomSportCommand extends BaseCommand
 {

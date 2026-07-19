@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan drills:seed-defaults` — TODO(gen): describe what this command does.
+ * `php artisan drills:seed-defaults` — Seed defaults — drills command.
  *
  * @category Drills
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'drills:seed-defaults',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed defaults — drills command.',
 )]
 final class SeedDefaultsCommand extends BaseCommand
 {

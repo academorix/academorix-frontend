@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan ledger:audit-imbalances` — TODO(gen): describe what this command does.
+ * `php artisan ledger:audit-imbalances` — Audit imbalances — ledger command.
  *
  * @category Transaction
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'ledger:audit-imbalances',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit imbalances — ledger command.',
 )]
 final class AuditImbalancesCommand extends BaseCommand
 {

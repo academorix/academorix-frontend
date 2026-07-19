@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan public-site:generate-sitemap` — TODO(gen): describe what this command does.
+ * `php artisan public-site:generate-sitemap` — Generate sitemap — public site command.
  *
  * @category PublicSite
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'public-site:generate-sitemap',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Generate sitemap — public site command.',
 )]
 final class GenerateSitemapCommand extends BaseCommand
 {

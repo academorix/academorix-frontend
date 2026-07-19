@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan organization:reconcile-defaults` — TODO(gen): describe what this command does.
+ * `php artisan organization:reconcile-defaults` — Reconcile defaults — organization command.
  *
  * @category Organization
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'organization:reconcile-defaults',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile defaults — organization command.',
 )]
 final class ReconcileDefaultsCommand extends BaseCommand
 {

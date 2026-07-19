@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:list-pending-evidence` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:list-pending-evidence` — List pending evidence — chargeback command.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:list-pending-evidence',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List pending evidence — chargeback command.',
 )]
 final class ListPendingEvidenceCommand extends BaseCommand
 {

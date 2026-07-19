@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan auth:describe-token` — TODO(gen): describe what this command does.
+ * `php artisan auth:describe-token` — Describe token — auth command.
  *
  * @category Auth
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'auth:describe-token',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe token — auth command.',
 )]
 final class DescribeTokenCommand extends BaseCommand
 {

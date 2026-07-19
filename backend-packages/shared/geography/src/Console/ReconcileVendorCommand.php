@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geography:reconcile-vendor` — TODO(gen): describe what this command does.
+ * `php artisan geography:reconcile-vendor` — Reconcile vendor — geography command.
  *
  * @category Geography
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geography:reconcile-vendor',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile vendor — geography command.',
 )]
 final class ReconcileVendorCommand extends BaseCommand
 {

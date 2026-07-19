@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral-program:archive` — TODO(gen): describe what this command does.
+ * `php artisan referral-program:archive` — Archive — referral program command.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral-program:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — referral program command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

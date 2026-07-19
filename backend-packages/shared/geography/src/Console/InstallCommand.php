@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geography:install` — TODO(gen): describe what this command does.
+ * `php artisan geography:install` — Install — geography command.
  *
  * @category Geography
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geography:install',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Install — geography command.',
 )]
 final class InstallCommand extends BaseCommand
 {

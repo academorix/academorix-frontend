@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan telemetry:sample-traces` — TODO(gen): describe what this command does.
+ * `php artisan telemetry:sample-traces` — Sample traces — telemetry command.
  *
  * @category Telemetry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'telemetry:sample-traces',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Sample traces — telemetry command.',
 )]
 final class SampleTracesCommand extends BaseCommand
 {

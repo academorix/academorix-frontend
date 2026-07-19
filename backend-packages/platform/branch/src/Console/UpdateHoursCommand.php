@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan branch:update-hours` — TODO(gen): describe what this command does.
+ * `php artisan branch:update-hours` — Update hours — branch command.
  *
  * @category Branch
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'branch:update-hours',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Update hours — branch command.',
 )]
 final class UpdateHoursCommand extends BaseCommand
 {

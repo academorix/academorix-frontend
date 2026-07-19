@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan region:audit-tax-config` — TODO(gen): describe what this command does.
+ * `php artisan region:audit-tax-config` — Audit tax config — region command.
  *
  * @category Region
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'region:audit-tax-config',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit tax config — region command.',
 )]
 final class AuditTaxConfigCommand extends BaseCommand
 {

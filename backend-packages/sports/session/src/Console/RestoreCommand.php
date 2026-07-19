@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:restore` — TODO(gen): describe what this command does.
+ * `php artisan session:restore` — Restore — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:restore',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Restore — session command.',
 )]
 final class RestoreCommand extends BaseCommand
 {

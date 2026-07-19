@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:describe` — TODO(gen): describe what this command does.
+ * `php artisan compliance:describe` — Describe the compliance surface.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the compliance surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

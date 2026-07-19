@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan auth:test-signing-key` — TODO(gen): describe what this command does.
+ * `php artisan auth:test-signing-key` — Test signing key — auth command.
  *
  * @category Auth
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'auth:test-signing-key',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test signing key — auth command.',
 )]
 final class TestSigningKeyCommand extends BaseCommand
 {

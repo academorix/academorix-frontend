@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:reconcile-facility-bookings` — TODO(gen): describe what this command does.
+ * `php artisan event:reconcile-facility-bookings` — Reconcile facility bookings — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:reconcile-facility-bookings',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile facility bookings — event command.',
 )]
 final class ReconcileFacilityBookingsCommand extends BaseCommand
 {

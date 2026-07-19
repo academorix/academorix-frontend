@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan transaction:describe` — TODO(gen): describe what this command does.
+ * `php artisan transaction:describe` — Describe the transaction surface.
  *
  * @category Transaction
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'transaction:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the transaction surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

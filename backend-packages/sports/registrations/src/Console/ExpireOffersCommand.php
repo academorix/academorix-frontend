@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan registrations:expire-offers` — TODO(gen): describe what this command does.
+ * `php artisan registrations:expire-offers` — Expire offers — registrations command.
  *
  * @category Registrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'registrations:expire-offers',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Expire offers — registrations command.',
 )]
 final class ExpireOffersCommand extends BaseCommand
 {

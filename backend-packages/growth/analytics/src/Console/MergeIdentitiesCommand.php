@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan analytics:merge-identities` — TODO(gen): describe what this command does.
+ * `php artisan analytics:merge-identities` — Merge identities — analytics command.
  *
  * @category Analytics
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'analytics:merge-identities',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Merge identities — analytics command.',
 )]
 final class MergeIdentitiesCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attendance-policy:activate` — TODO(gen): describe what this command does.
+ * `php artisan attendance-policy:activate` — Activate a attendance policy.
  *
  * @category Attendance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attendance-policy:activate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Activate a attendance policy.',
 )]
 final class ActivateCommand extends BaseCommand
 {

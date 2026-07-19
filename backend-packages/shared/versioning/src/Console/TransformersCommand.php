@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan versioning:transformers` — TODO(gen): describe what this command does.
+ * `php artisan versioning:transformers` — Transformers — versioning command.
  *
  * @category Versioning
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'versioning:transformers',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Transformers — versioning command.',
 )]
 final class TransformersCommand extends BaseCommand
 {

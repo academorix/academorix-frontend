@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:push:validate-tokens` — TODO(gen): describe what this command does.
+ * `php artisan notifications:push:validate-tokens` — Push:validate tokens — notifications command.
  *
  * @category NotificationsPush
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:push:validate-tokens',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Push:validate tokens — notifications command.',
 )]
 final class PushValidateTokensCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan team:create` — TODO(gen): describe what this command does.
+ * `php artisan team:create` — Create a new team.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'team:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new team.',
 )]
 final class CreateCommand extends BaseCommand
 {

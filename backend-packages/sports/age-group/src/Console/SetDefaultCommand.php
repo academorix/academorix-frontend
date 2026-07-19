@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan age-group:set-default` — TODO(gen): describe what this command does.
+ * `php artisan age-group:set-default` — Set default — age group command.
  *
  * @category AgeGroup
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'age-group:set-default',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set default — age group command.',
 )]
 final class SetDefaultCommand extends BaseCommand
 {

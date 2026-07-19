@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:close-registration` — TODO(gen): describe what this command does.
+ * `php artisan event:close-registration` — Close registration — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:close-registration',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Close registration — event command.',
 )]
 final class CloseRegistrationCommand extends BaseCommand
 {

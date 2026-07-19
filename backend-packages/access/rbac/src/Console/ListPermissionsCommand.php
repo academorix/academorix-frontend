@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:list-permissions` — TODO(gen): describe what this command does.
+ * `php artisan rbac:list-permissions` — List permissions — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:list-permissions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List permissions — rbac command.',
 )]
 final class ListPermissionsCommand extends BaseCommand
 {

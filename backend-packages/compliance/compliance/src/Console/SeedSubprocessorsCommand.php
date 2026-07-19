@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:seed-subprocessors` — TODO(gen): describe what this command does.
+ * `php artisan compliance:seed-subprocessors` — Seed subprocessors — compliance command.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:seed-subprocessors',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed subprocessors — compliance command.',
 )]
 final class SeedSubprocessorsCommand extends BaseCommand
 {

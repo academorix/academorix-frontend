@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:mail:test-send` — TODO(gen): describe what this command does.
+ * `php artisan notifications:mail:test-send` — Mail:test send — notifications command.
  *
  * @category NotificationsMail
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:mail:test-send',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mail:test send — notifications command.',
 )]
 final class MailTestSendCommand extends BaseCommand
 {

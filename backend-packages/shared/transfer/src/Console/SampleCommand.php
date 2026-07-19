@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan transfer:sample` — TODO(gen): describe what this command does.
+ * `php artisan transfer:sample` — Sample — transfer command.
  *
  * @category Transfer
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'transfer:sample',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Sample — transfer command.',
 )]
 final class SampleCommand extends BaseCommand
 {

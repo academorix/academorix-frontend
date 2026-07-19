@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan announcements:expire-overdue` — TODO(gen): describe what this command does.
+ * `php artisan announcements:expire-overdue` — Expire overdue — announcements command.
  *
  * @category Announcements
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'announcements:expire-overdue',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Expire overdue — announcements command.',
 )]
 final class ExpireOverdueCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:reconcile-deliveries` — TODO(gen): describe what this command does.
+ * `php artisan notifications:reconcile-deliveries` — Reconcile deliveries — notifications command.
  *
  * @category Notifications
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:reconcile-deliveries',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile deliveries — notifications command.',
 )]
 final class ReconcileDeliveriesCommand extends BaseCommand
 {

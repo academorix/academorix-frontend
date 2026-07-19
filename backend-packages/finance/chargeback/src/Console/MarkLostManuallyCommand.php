@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:mark-lost-manually` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:mark-lost-manually` — Mark lost manually — chargeback command.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:mark-lost-manually',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mark lost manually — chargeback command.',
 )]
 final class MarkLostManuallyCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan monitoring:list-providers` — TODO(gen): describe what this command does.
+ * `php artisan monitoring:list-providers` — List providers — monitoring command.
  *
  * @category Monitoring
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'monitoring:list-providers',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List providers — monitoring command.',
 )]
 final class ListProvidersCommand extends BaseCommand
 {

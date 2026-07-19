@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan trial:complete` — TODO(gen): describe what this command does.
+ * `php artisan trial:complete` — Complete — trial command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'trial:complete',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Complete — trial command.',
 )]
 final class CompleteCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:cascade-purge` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:cascade-purge` — Cascade purge — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:cascade-purge',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cascade purge — enrollment command.',
 )]
 final class CascadePurgeCommand extends BaseCommand
 {

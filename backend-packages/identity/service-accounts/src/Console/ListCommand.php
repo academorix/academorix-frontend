@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan service-account:list` — TODO(gen): describe what this command does.
+ * `php artisan service-account:list` — List every service account row.
  *
  * @category ServiceAccounts
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'service-account:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every service account row.',
 )]
 final class ListCommand extends BaseCommand
 {

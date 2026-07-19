@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan branch:geocode` — TODO(gen): describe what this command does.
+ * `php artisan branch:geocode` — Geocode — branch command.
  *
  * @category Branch
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'branch:geocode',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Geocode — branch command.',
 )]
 final class GeocodeCommand extends BaseCommand
 {

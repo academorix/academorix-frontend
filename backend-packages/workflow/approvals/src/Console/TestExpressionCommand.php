@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:test-expression` — TODO(gen): describe what this command does.
+ * `php artisan approvals:test-expression` — Test expression — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:test-expression',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test expression — approvals command.',
 )]
 final class TestExpressionCommand extends BaseCommand
 {

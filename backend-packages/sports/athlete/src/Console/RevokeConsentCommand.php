@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan athlete:revoke-consent` — TODO(gen): describe what this command does.
+ * `php artisan athlete:revoke-consent` — Revoke consent — athlete command.
  *
  * @category Athlete
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'athlete:revoke-consent',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Revoke consent — athlete command.',
 )]
 final class RevokeConsentCommand extends BaseCommand
 {

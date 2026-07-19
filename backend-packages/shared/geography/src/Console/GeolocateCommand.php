@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geography:geolocate` — TODO(gen): describe what this command does.
+ * `php artisan geography:geolocate` — Geolocate — geography command.
  *
  * @category Geography
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geography:geolocate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Geolocate — geography command.',
 )]
 final class GeolocateCommand extends BaseCommand
 {

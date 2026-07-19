@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan reporting:seed-definitions` — TODO(gen): describe what this command does.
+ * `php artisan reporting:seed-definitions` — Seed definitions — reporting command.
  *
  * @category Reporting
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'reporting:seed-definitions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed definitions — reporting command.',
 )]
 final class SeedDefinitionsCommand extends BaseCommand
 {

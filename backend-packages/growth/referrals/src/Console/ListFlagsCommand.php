@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral-fraud:list-flags` — TODO(gen): describe what this command does.
+ * `php artisan referral-fraud:list-flags` — List flags — referral fraud command.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral-fraud:list-flags',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List flags — referral fraud command.',
 )]
 final class ListFlagsCommand extends BaseCommand
 {

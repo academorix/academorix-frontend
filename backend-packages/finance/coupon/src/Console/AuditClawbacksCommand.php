@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coupon:audit-clawbacks` — TODO(gen): describe what this command does.
+ * `php artisan coupon:audit-clawbacks` — Audit clawbacks — coupon command.
  *
  * @category Coupon
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coupon:audit-clawbacks',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit clawbacks — coupon command.',
 )]
 final class AuditClawbacksCommand extends BaseCommand
 {

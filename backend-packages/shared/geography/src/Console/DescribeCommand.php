@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geography:describe` — TODO(gen): describe what this command does.
+ * `php artisan geography:describe` — Describe the geography surface.
  *
  * @category Geography
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geography:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the geography surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

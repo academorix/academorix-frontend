@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:complete` — TODO(gen): describe what this command does.
+ * `php artisan event:complete` — Complete — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:complete',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Complete — event command.',
 )]
 final class CompleteCommand extends BaseCommand
 {

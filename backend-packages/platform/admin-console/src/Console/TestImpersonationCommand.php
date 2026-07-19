@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan admin:test-impersonation` — TODO(gen): describe what this command does.
+ * `php artisan admin:test-impersonation` — Test impersonation — admin command.
  *
  * @category AdminConsole
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'admin:test-impersonation',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test impersonation — admin command.',
 )]
 final class TestImpersonationCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:describe-event` — TODO(gen): describe what this command does.
+ * `php artisan marketing:describe-event` — Describe event — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:describe-event',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe event — marketing command.',
 )]
 final class DescribeEventCommand extends BaseCommand
 {

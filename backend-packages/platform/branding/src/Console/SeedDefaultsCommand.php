@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan branding:seed-defaults` — TODO(gen): describe what this command does.
+ * `php artisan branding:seed-defaults` — Seed defaults — branding command.
  *
  * @category Branding
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'branding:seed-defaults',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed defaults — branding command.',
 )]
 final class SeedDefaultsCommand extends BaseCommand
 {

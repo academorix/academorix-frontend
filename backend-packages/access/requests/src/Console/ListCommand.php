@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan access-requests:list` — TODO(gen): describe what this command does.
+ * `php artisan access-requests:list` — List every access requests row.
  *
  * @category Requests
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'access-requests:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every access requests row.',
 )]
 final class ListCommand extends BaseCommand
 {

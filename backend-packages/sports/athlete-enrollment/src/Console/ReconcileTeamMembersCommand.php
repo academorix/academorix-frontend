@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:reconcile-team-members` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:reconcile-team-members` — Reconcile team members — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:reconcile-team-members',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile team members — enrollment command.',
 )]
 final class ReconcileTeamMembersCommand extends BaseCommand
 {

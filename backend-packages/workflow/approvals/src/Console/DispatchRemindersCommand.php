@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:dispatch-reminders` — TODO(gen): describe what this command does.
+ * `php artisan approvals:dispatch-reminders` — Dispatch reminders — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:dispatch-reminders',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Dispatch reminders — approvals command.',
 )]
 final class DispatchRemindersCommand extends BaseCommand
 {

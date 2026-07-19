@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan region:pause` — TODO(gen): describe what this command does.
+ * `php artisan region:pause` — Pause — region command.
  *
  * @category Region
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'region:pause',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Pause — region command.',
 )]
 final class PauseCommand extends BaseCommand
 {

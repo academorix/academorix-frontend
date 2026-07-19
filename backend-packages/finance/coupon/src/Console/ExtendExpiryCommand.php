@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coupon:extend-expiry` — TODO(gen): describe what this command does.
+ * `php artisan coupon:extend-expiry` — Extend expiry — coupon command.
  *
  * @category Coupon
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coupon:extend-expiry',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Extend expiry — coupon command.',
 )]
 final class ExtendExpiryCommand extends BaseCommand
 {

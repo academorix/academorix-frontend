@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan membership:reissue-passes` — TODO(gen): describe what this command does.
+ * `php artisan membership:reissue-passes` — Reissue passes — membership command.
  *
  * @category Membership
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'membership:reissue-passes',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reissue passes — membership command.',
 )]
 final class ReissuePassesCommand extends BaseCommand
 {

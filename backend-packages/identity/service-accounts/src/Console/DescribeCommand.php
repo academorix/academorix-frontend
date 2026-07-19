@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan service-account:describe` — TODO(gen): describe what this command does.
+ * `php artisan service-account:describe` — Describe the service account surface.
  *
  * @category ServiceAccounts
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'service-account:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the service account surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

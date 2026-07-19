@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan grants:purge-expired` — TODO(gen): describe what this command does.
+ * `php artisan grants:purge-expired` — Purge expired — grants command.
  *
  * @category Grants
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'grants:purge-expired',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge expired — grants command.',
 )]
 final class PurgeExpiredCommand extends BaseCommand
 {

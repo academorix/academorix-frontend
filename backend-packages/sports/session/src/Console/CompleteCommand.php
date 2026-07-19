@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:complete` — TODO(gen): describe what this command does.
+ * `php artisan session:complete` — Complete — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:complete',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Complete — session command.',
 )]
 final class CompleteCommand extends BaseCommand
 {

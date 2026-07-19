@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attribution:reconcile-campaigns` — TODO(gen): describe what this command does.
+ * `php artisan attribution:reconcile-campaigns` — Reconcile campaigns — attribution command.
  *
  * @category Attribution
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attribution:reconcile-campaigns',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile campaigns — attribution command.',
 )]
 final class ReconcileCampaignsCommand extends BaseCommand
 {

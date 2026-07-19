@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan delegations:create` — TODO(gen): describe what this command does.
+ * `php artisan delegations:create` — Create a new delegation.
  *
  * @category Delegation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'delegations:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new delegation.',
 )]
 final class CreateCommand extends BaseCommand
 {

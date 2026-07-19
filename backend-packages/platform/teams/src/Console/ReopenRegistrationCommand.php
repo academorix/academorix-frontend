@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan team:reopen-registration` — TODO(gen): describe what this command does.
+ * `php artisan team:reopen-registration` — Reopen registration — team command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'team:reopen-registration',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reopen registration — team command.',
 )]
 final class ReopenRegistrationCommand extends BaseCommand
 {

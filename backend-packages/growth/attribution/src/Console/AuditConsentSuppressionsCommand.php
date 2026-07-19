@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attribution:audit-consent-suppressions` — TODO(gen): describe what this command does.
+ * `php artisan attribution:audit-consent-suppressions` — Audit consent suppressions — attribution command.
  *
  * @category Attribution
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attribution:audit-consent-suppressions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit consent suppressions — attribution command.',
 )]
 final class AuditConsentSuppressionsCommand extends BaseCommand
 {

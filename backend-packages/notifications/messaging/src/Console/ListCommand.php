@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan messaging:list` — TODO(gen): describe what this command does.
+ * `php artisan messaging:list` — List every messaging row.
  *
  * @category Messaging
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'messaging:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every messaging row.',
 )]
 final class ListCommand extends BaseCommand
 {

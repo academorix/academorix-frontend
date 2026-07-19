@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:check-in` — TODO(gen): describe what this command does.
+ * `php artisan session:check-in` — Check in — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:check-in',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Check in — session command.',
 )]
 final class CheckInCommand extends BaseCommand
 {

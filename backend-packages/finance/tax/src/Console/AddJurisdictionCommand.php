@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan tax:add-jurisdiction` — TODO(gen): describe what this command does.
+ * `php artisan tax:add-jurisdiction` — Add jurisdiction — tax command.
  *
  * @category Tax
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'tax:add-jurisdiction',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Add jurisdiction — tax command.',
 )]
 final class AddJurisdictionCommand extends BaseCommand
 {

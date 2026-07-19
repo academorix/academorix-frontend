@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:reconcile-status` — TODO(gen): describe what this command does.
+ * `php artisan marketing:reconcile-status` — Reconcile status — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:reconcile-status',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile status — marketing command.',
 )]
 final class ReconcileStatusCommand extends BaseCommand
 {

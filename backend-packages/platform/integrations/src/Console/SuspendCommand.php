@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan apps:suspend` — TODO(gen): describe what this command does.
+ * `php artisan apps:suspend` — Suspend — apps command.
  *
  * @category Integrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'apps:suspend',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Suspend — apps command.',
 )]
 final class SuspendCommand extends BaseCommand
 {

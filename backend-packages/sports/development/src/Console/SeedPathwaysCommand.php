@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan development:seed-pathways` — TODO(gen): describe what this command does.
+ * `php artisan development:seed-pathways` — Seed pathways — development command.
  *
  * @category Development
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'development:seed-pathways',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed pathways — development command.',
 )]
 final class SeedPathwaysCommand extends BaseCommand
 {

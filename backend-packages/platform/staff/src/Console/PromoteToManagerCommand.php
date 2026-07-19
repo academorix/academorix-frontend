@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan staff:promote-to-manager` — TODO(gen): describe what this command does.
+ * `php artisan staff:promote-to-manager` — Promote to manager — staff command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'staff:promote-to-manager',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Promote to manager — staff command.',
 )]
 final class PromoteToManagerCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:audit-permission-check` — TODO(gen): describe what this command does.
+ * `php artisan rbac:audit-permission-check` — Audit permission check — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:audit-permission-check',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit permission check — rbac command.',
 )]
 final class AuditPermissionCheckCommand extends BaseCommand
 {

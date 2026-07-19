@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan athlete:link-user` — TODO(gen): describe what this command does.
+ * `php artisan athlete:link-user` — Link user — athlete command.
  *
  * @category Athlete
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'athlete:link-user',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Link user — athlete command.',
 )]
 final class LinkUserCommand extends BaseCommand
 {

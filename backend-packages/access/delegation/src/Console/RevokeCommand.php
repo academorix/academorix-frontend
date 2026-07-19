@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan delegations:revoke` — TODO(gen): describe what this command does.
+ * `php artisan delegations:revoke` — Revoke — delegations command.
  *
  * @category Delegation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'delegations:revoke',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Revoke — delegations command.',
 )]
 final class RevokeCommand extends BaseCommand
 {

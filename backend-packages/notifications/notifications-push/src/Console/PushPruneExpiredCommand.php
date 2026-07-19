@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:push:prune-expired` — TODO(gen): describe what this command does.
+ * `php artisan notifications:push:prune-expired` — Push:prune expired — notifications command.
  *
  * @category NotificationsPush
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:push:prune-expired',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Push:prune expired — notifications command.',
 )]
 final class PushPruneExpiredCommand extends BaseCommand
 {

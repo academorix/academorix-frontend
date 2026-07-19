@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan progress:describe` — TODO(gen): describe what this command does.
+ * `php artisan progress:describe` — Describe the progress surface.
  *
  * @category Progress
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'progress:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the progress surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

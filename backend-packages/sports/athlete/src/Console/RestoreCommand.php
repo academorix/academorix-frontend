@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan athlete:restore` — TODO(gen): describe what this command does.
+ * `php artisan athlete:restore` — Restore — athlete command.
  *
  * @category Athlete
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'athlete:restore',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Restore — athlete command.',
 )]
 final class RestoreCommand extends BaseCommand
 {

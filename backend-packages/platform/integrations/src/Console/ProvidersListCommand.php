@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan integrations:providers:list` — TODO(gen): describe what this command does.
+ * `php artisan integrations:providers:list` — Providers:list — integrations command.
  *
  * @category Integrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'integrations:providers:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Providers:list — integrations command.',
 )]
 final class ProvidersListCommand extends BaseCommand
 {

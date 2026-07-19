@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan storage:purge-orphans` — TODO(gen): describe what this command does.
+ * `php artisan storage:purge-orphans` — Purge orphans — storage command.
  *
  * @category Storage
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'storage:purge-orphans',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge orphans — storage command.',
 )]
 final class PurgeOrphansCommand extends BaseCommand
 {

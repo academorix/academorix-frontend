@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan module:diagnose` — TODO(gen): describe what this command does.
+ * `php artisan module:diagnose` — Diagnose — module command.
  *
  * @category Foundation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'module:diagnose',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Diagnose — module command.',
 )]
 final class DiagnoseCommand extends BaseCommand
 {

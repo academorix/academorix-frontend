@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coach:set-availability` — TODO(gen): describe what this command does.
+ * `php artisan coach:set-availability` — Set availability — coach command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coach:set-availability',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set availability — coach command.',
 )]
 final class SetAvailabilityCommand extends BaseCommand
 {

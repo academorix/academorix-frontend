@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan guardian:set-role` — TODO(gen): describe what this command does.
+ * `php artisan guardian:set-role` — Set role — guardian command.
  *
  * @category AthleteGuardian
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'guardian:set-role',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set role — guardian command.',
 )]
 final class SetRoleCommand extends BaseCommand
 {

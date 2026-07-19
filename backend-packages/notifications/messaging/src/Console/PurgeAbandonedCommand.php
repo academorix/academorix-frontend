@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan messaging:purge-abandoned` — TODO(gen): describe what this command does.
+ * `php artisan messaging:purge-abandoned` — Purge abandoned — messaging command.
  *
  * @category Messaging
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'messaging:purge-abandoned',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge abandoned — messaging command.',
 )]
 final class PurgeAbandonedCommand extends BaseCommand
 {

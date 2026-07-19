@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan awards:revoke` — TODO(gen): describe what this command does.
+ * `php artisan awards:revoke` — Revoke — awards command.
  *
  * @category Awards
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'awards:revoke',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Revoke — awards command.',
 )]
 final class RevokeCommand extends BaseCommand
 {

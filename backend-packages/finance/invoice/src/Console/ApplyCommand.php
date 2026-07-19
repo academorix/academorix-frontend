@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan credit-note:apply` — TODO(gen): describe what this command does.
+ * `php artisan credit-note:apply` — Apply — credit note command.
  *
  * @category Invoice
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'credit-note:apply',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Apply — credit note command.',
 )]
 final class ApplyCommand extends BaseCommand
 {

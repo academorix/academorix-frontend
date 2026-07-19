@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan grants:revoke` — TODO(gen): describe what this command does.
+ * `php artisan grants:revoke` — Revoke — grants command.
  *
  * @category Grants
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'grants:revoke',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Revoke — grants command.',
 )]
 final class RevokeCommand extends BaseCommand
 {

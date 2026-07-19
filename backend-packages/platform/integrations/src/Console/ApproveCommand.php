@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan apps:approve` — TODO(gen): describe what this command does.
+ * `php artisan apps:approve` — Approve — apps command.
  *
  * @category Integrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'apps:approve',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Approve — apps command.',
 )]
 final class ApproveCommand extends BaseCommand
 {

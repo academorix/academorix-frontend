@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan credentials:issue` — TODO(gen): describe what this command does.
+ * `php artisan credentials:issue` — Issue — credentials command.
  *
  * @category Credentials
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'credentials:issue',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Issue — credentials command.',
 )]
 final class IssueCommand extends BaseCommand
 {

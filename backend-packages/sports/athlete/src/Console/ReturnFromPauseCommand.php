@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan athlete:return-from-pause` — TODO(gen): describe what this command does.
+ * `php artisan athlete:return-from-pause` — Return from pause — athlete command.
  *
  * @category Athlete
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'athlete:return-from-pause',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Return from pause — athlete command.',
 )]
 final class ReturnFromPauseCommand extends BaseCommand
 {

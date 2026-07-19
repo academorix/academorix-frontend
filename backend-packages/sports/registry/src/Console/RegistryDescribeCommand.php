@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan sports:registry:describe` — TODO(gen): describe what this command does.
+ * `php artisan sports:registry:describe` — Registry:describe — sports command.
  *
  * @category Registry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'sports:registry:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Registry:describe — sports command.',
 )]
 final class RegistryDescribeCommand extends BaseCommand
 {

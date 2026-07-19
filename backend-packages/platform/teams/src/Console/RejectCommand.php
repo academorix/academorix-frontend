@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan trial:reject` — TODO(gen): describe what this command does.
+ * `php artisan trial:reject` — Reject — trial command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'trial:reject',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reject — trial command.',
 )]
 final class RejectCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:accept` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:accept` — Accept — chargeback command.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:accept',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Accept — chargeback command.',
 )]
 final class AcceptCommand extends BaseCommand
 {

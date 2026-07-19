@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan transaction:reverse` — TODO(gen): describe what this command does.
+ * `php artisan transaction:reverse` — Reverse — transaction command.
  *
  * @category Transaction
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'transaction:reverse',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reverse — transaction command.',
 )]
 final class ReverseCommand extends BaseCommand
 {

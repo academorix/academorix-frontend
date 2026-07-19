@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan age-group:archive` — TODO(gen): describe what this command does.
+ * `php artisan age-group:archive` — Archive — age group command.
  *
  * @category AgeGroup
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'age-group:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — age group command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

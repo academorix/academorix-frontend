@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan tax:sync-rates` — TODO(gen): describe what this command does.
+ * `php artisan tax:sync-rates` — Sync rates — tax command.
  *
  * @category Tax
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'tax:sync-rates',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Sync rates — tax command.',
 )]
 final class SyncRatesCommand extends BaseCommand
 {

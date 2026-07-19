@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan season:reconcile-current` — TODO(gen): describe what this command does.
+ * `php artisan season:reconcile-current` — Reconcile current — season command.
  *
  * @category Season
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'season:reconcile-current',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile current — season command.',
 )]
 final class ReconcileCurrentCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attribution:purge-expired` — TODO(gen): describe what this command does.
+ * `php artisan attribution:purge-expired` — Purge expired — attribution command.
  *
  * @category Attribution
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attribution:purge-expired',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge expired — attribution command.',
 )]
 final class PurgeExpiredCommand extends BaseCommand
 {

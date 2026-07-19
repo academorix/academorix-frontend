@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:preview-evidence` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:preview-evidence` — Preview evidence — chargeback command.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:preview-evidence',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Preview evidence — chargeback command.',
 )]
 final class PreviewEvidenceCommand extends BaseCommand
 {

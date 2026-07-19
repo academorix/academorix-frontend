@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan sports:registry:resolve` — TODO(gen): describe what this command does.
+ * `php artisan sports:registry:resolve` — Registry:resolve — sports command.
  *
  * @category Registry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'sports:registry:resolve',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Registry:resolve — sports command.',
 )]
 final class RegistryResolveCommand extends BaseCommand
 {

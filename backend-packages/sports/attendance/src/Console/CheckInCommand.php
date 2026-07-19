@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attendance:check-in` — TODO(gen): describe what this command does.
+ * `php artisan attendance:check-in` — Check in — attendance command.
  *
  * @category Attendance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attendance:check-in',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Check in — attendance command.',
 )]
 final class CheckInCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event-team:withdraw` — TODO(gen): describe what this command does.
+ * `php artisan event-team:withdraw` — Withdraw — event team command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event-team:withdraw',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Withdraw — event team command.',
 )]
 final class WithdrawCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan age-group:list` — TODO(gen): describe what this command does.
+ * `php artisan age-group:list` — List every age group row.
  *
  * @category AgeGroup
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'age-group:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every age group row.',
 )]
 final class ListCommand extends BaseCommand
 {

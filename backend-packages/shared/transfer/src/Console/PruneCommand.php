@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan transfer:prune` — TODO(gen): describe what this command does.
+ * `php artisan transfer:prune` — Prune stale transfer data.
  *
  * @category Transfer
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'transfer:prune',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Prune stale transfer data.',
 )]
 final class PruneCommand extends BaseCommand
 {

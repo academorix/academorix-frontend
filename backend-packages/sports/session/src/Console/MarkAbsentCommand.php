@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:mark-absent` — TODO(gen): describe what this command does.
+ * `php artisan session:mark-absent` — Mark absent — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:mark-absent',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mark absent — session command.',
 )]
 final class MarkAbsentCommand extends BaseCommand
 {

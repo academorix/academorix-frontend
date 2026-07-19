@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan organization:tree` — TODO(gen): describe what this command does.
+ * `php artisan organization:tree` — Tree — organization command.
  *
  * @category Organization
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'organization:tree',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Tree — organization command.',
 )]
 final class TreeCommand extends BaseCommand
 {

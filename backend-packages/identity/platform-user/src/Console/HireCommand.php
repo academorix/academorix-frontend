@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan platform-user:hire` — TODO(gen): describe what this command does.
+ * `php artisan platform-user:hire` — Hire — platform user command.
  *
  * @category PlatformUser
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'platform-user:hire',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Hire — platform user command.',
 )]
 final class HireCommand extends BaseCommand
 {

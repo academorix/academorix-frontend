@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan identity:erase` — TODO(gen): describe what this command does.
+ * `php artisan identity:erase` — Erase — identity command.
  *
  * @category Identity
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'identity:erase',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Erase — identity command.',
 )]
 final class EraseCommand extends BaseCommand
 {

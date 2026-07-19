@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:test-selector` — TODO(gen): describe what this command does.
+ * `php artisan approvals:test-selector` — Test selector — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:test-selector',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test selector — approvals command.',
 )]
 final class TestSelectorCommand extends BaseCommand
 {

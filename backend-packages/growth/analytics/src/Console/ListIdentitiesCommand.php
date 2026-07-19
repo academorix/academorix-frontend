@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan analytics:list-identities` — TODO(gen): describe what this command does.
+ * `php artisan analytics:list-identities` — List identities — analytics command.
  *
  * @category Analytics
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'analytics:list-identities',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List identities — analytics command.',
 )]
 final class ListIdentitiesCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan membership-plan:create` — TODO(gen): describe what this command does.
+ * `php artisan membership-plan:create` — Create a new membership plan.
  *
  * @category Membership
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'membership-plan:create',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Create a new membership plan.',
 )]
 final class CreateCommand extends BaseCommand
 {

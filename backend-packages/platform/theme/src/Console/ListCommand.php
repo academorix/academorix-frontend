@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan theme-preset:list` — TODO(gen): describe what this command does.
+ * `php artisan theme-preset:list` — List every theme preset row.
  *
  * @category Theme
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'theme-preset:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every theme preset row.',
 )]
 final class ListCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan monitoring:reset-circuit-breaker` — TODO(gen): describe what this command does.
+ * `php artisan monitoring:reset-circuit-breaker` — Reset circuit breaker — monitoring command.
  *
  * @category Monitoring
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'monitoring:reset-circuit-breaker',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reset circuit breaker — monitoring command.',
 )]
 final class ResetCircuitBreakerCommand extends BaseCommand
 {

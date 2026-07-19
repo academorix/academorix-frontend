@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan region:list` — TODO(gen): describe what this command does.
+ * `php artisan region:list` — List every region row.
  *
  * @category Region
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'region:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every region row.',
 )]
 final class ListCommand extends BaseCommand
 {

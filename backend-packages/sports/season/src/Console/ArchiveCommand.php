@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan season:archive` — TODO(gen): describe what this command does.
+ * `php artisan season:archive` — Archive — season command.
  *
  * @category Season
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'season:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — season command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

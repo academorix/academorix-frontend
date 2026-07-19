@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attributes:validate-host` — TODO(gen): describe what this command does.
+ * `php artisan attributes:validate-host` — Validate host — attributes command.
  *
  * @category Attributes
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attributes:validate-host',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Validate host — attributes command.',
 )]
 final class ValidateHostCommand extends BaseCommand
 {

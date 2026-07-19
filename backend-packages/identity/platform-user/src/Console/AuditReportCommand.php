@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan platform-user:audit-report` — TODO(gen): describe what this command does.
+ * `php artisan platform-user:audit-report` — Audit report — platform user command.
  *
  * @category PlatformUser
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'platform-user:audit-report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit report — platform user command.',
 )]
 final class AuditReportCommand extends BaseCommand
 {

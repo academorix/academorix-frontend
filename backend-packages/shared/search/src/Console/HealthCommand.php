@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan search:health` — TODO(gen): describe what this command does.
+ * `php artisan search:health` — Health — search command.
  *
  * @category Search
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'search:health',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Health — search command.',
 )]
 final class HealthCommand extends BaseCommand
 {

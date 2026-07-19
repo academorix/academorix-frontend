@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral-code:generate-campaign-code` — TODO(gen): describe what this command does.
+ * `php artisan referral-code:generate-campaign-code` — Generate campaign code — referral code command.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral-code:generate-campaign-code',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Generate campaign code — referral code command.',
 )]
 final class GenerateCampaignCodeCommand extends BaseCommand
 {

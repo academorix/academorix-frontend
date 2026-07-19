@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan forms:publish` — TODO(gen): describe what this command does.
+ * `php artisan forms:publish` — Publish a form.
  *
  * @category Forms
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'forms:publish',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Publish a form.',
 )]
 final class PublishCommand extends BaseCommand
 {

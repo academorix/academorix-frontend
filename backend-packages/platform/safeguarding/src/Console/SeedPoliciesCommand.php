@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan safeguarding:seed-policies` — TODO(gen): describe what this command does.
+ * `php artisan safeguarding:seed-policies` — Seed policies — safeguarding command.
  *
  * @category Safeguarding
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'safeguarding:seed-policies',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed policies — safeguarding command.',
 )]
 final class SeedPoliciesCommand extends BaseCommand
 {

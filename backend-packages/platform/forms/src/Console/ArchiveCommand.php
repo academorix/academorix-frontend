@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan forms:archive` — TODO(gen): describe what this command does.
+ * `php artisan forms:archive` — Archive — forms command.
  *
  * @category Forms
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'forms:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — forms command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

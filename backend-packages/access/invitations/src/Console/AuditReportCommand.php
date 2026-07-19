@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invitations:audit-report` — TODO(gen): describe what this command does.
+ * `php artisan invitations:audit-report` — Audit report — invitations command.
  *
  * @category Invitations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invitations:audit-report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit report — invitations command.',
 )]
 final class AuditReportCommand extends BaseCommand
 {

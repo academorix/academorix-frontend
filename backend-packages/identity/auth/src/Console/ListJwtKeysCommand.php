@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan auth:list-jwt-keys` — TODO(gen): describe what this command does.
+ * `php artisan auth:list-jwt-keys` — List jwt keys — auth command.
  *
  * @category Auth
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'auth:list-jwt-keys',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List jwt keys — auth command.',
 )]
 final class ListJwtKeysCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invoice:finalize` — TODO(gen): describe what this command does.
+ * `php artisan invoice:finalize` — Finalize — invoice command.
  *
  * @category Invoice
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invoice:finalize',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Finalize — invoice command.',
 )]
 final class FinalizeCommand extends BaseCommand
 {

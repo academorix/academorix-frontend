@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan auth:list-sessions` — TODO(gen): describe what this command does.
+ * `php artisan auth:list-sessions` — List sessions — auth command.
  *
  * @category Auth
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'auth:list-sessions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List sessions — auth command.',
 )]
 final class ListSessionsCommand extends BaseCommand
 {

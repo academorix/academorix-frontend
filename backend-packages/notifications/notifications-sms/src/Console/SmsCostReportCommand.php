@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:sms:cost-report` — TODO(gen): describe what this command does.
+ * `php artisan notifications:sms:cost-report` — Sms:cost report — notifications command.
  *
  * @category NotificationsSms
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:sms:cost-report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Sms:cost report — notifications command.',
 )]
 final class SmsCostReportCommand extends BaseCommand
 {

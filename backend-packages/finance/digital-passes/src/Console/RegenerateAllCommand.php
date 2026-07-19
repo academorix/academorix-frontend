@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan passes:regenerate-all` — TODO(gen): describe what this command does.
+ * `php artisan passes:regenerate-all` — Regenerate all — passes command.
  *
  * @category DigitalPasses
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'passes:regenerate-all',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Regenerate all — passes command.',
 )]
 final class RegenerateAllCommand extends BaseCommand
 {

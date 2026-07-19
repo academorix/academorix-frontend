@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan tenant-member:list` — TODO(gen): describe what this command does.
+ * `php artisan tenant-member:list` — List every tenant member row.
  *
  * @category User
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'tenant-member:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every tenant member row.',
 )]
 final class ListCommand extends BaseCommand
 {

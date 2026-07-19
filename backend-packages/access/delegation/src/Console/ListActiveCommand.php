@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan impersonation:list-active` — TODO(gen): describe what this command does.
+ * `php artisan impersonation:list-active` — List active — impersonation command.
  *
  * @category Delegation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'impersonation:list-active',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List active — impersonation command.',
 )]
 final class ListActiveCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:assign-coach` — TODO(gen): describe what this command does.
+ * `php artisan session:assign-coach` — Assign coach — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:assign-coach',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Assign coach — session command.',
 )]
 final class AssignCoachCommand extends BaseCommand
 {

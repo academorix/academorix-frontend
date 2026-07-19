@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan medical:audit-access` — TODO(gen): describe what this command does.
+ * `php artisan medical:audit-access` — Audit access — medical command.
  *
  * @category Medical
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'medical:audit-access',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit access — medical command.',
 )]
 final class AuditAccessCommand extends BaseCommand
 {

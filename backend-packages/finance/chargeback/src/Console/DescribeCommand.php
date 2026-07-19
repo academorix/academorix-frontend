@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:describe` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:describe` — Describe the chargeback surface.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the chargeback surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

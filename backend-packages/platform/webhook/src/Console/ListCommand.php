@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan webhook:list` — TODO(gen): describe what this command does.
+ * `php artisan webhook:list` — List every webhook row.
  *
  * @category Webhook
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'webhook:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every webhook row.',
 )]
 final class ListCommand extends BaseCommand
 {

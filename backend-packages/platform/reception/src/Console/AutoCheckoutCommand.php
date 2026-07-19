@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan reception:auto-checkout` — TODO(gen): describe what this command does.
+ * `php artisan reception:auto-checkout` — Auto checkout — reception command.
  *
  * @category Reception
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'reception:auto-checkout',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Auto checkout — reception command.',
 )]
 final class AutoCheckoutCommand extends BaseCommand
 {

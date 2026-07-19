@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan grants:reconcile-orphaned` — TODO(gen): describe what this command does.
+ * `php artisan grants:reconcile-orphaned` — Reconcile orphaned — grants command.
  *
  * @category Grants
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'grants:reconcile-orphaned',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile orphaned — grants command.',
 )]
 final class ReconcileOrphanedCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event-team:check-in` — TODO(gen): describe what this command does.
+ * `php artisan event-team:check-in` — Check in — event team command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event-team:check-in',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Check in — event team command.',
 )]
 final class CheckInCommand extends BaseCommand
 {

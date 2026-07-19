@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:describe` — TODO(gen): describe what this command does.
+ * `php artisan session:describe` — Describe the session surface.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the session surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

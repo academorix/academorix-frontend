@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:remove-facility` — TODO(gen): describe what this command does.
+ * `php artisan event:remove-facility` — Remove facility — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:remove-facility',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Remove facility — event command.',
 )]
 final class RemoveFacilityCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:add-facility` — TODO(gen): describe what this command does.
+ * `php artisan event:add-facility` — Add facility — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:add-facility',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Add facility — event command.',
 )]
 final class AddFacilityCommand extends BaseCommand
 {

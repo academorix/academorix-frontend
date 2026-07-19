@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan delegations:list` — TODO(gen): describe what this command does.
+ * `php artisan delegations:list` — List every delegations row.
  *
  * @category Delegation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'delegations:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every delegations row.',
 )]
 final class ListCommand extends BaseCommand
 {

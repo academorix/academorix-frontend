@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan season:list` — TODO(gen): describe what this command does.
+ * `php artisan season:list` — List every season row.
  *
  * @category Season
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'season:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every season row.',
 )]
 final class ListCommand extends BaseCommand
 {

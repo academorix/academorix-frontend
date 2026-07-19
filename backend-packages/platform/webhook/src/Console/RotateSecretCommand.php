@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan webhook:rotate-secret` — TODO(gen): describe what this command does.
+ * `php artisan webhook:rotate-secret` — Rotate secret — webhook command.
  *
  * @category Webhook
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'webhook:rotate-secret',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Rotate secret — webhook command.',
 )]
 final class RotateSecretCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:update-curriculum` — TODO(gen): describe what this command does.
+ * `php artisan session:update-curriculum` — Update curriculum — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:update-curriculum',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Update curriculum — session command.',
 )]
 final class UpdateCurriculumCommand extends BaseCommand
 {

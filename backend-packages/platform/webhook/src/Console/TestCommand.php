@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan webhook:test` — TODO(gen): describe what this command does.
+ * `php artisan webhook:test` — Test — webhook command.
  *
  * @category Webhook
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'webhook:test',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test — webhook command.',
 )]
 final class TestCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan access-requests:cleanup-orphaned` — TODO(gen): describe what this command does.
+ * `php artisan access-requests:cleanup-orphaned` — Cleanup orphaned — access requests command.
  *
  * @category Requests
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'access-requests:cleanup-orphaned',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cleanup orphaned — access requests command.',
 )]
 final class CleanupOrphanedCommand extends BaseCommand
 {

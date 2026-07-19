@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan transfer:cancel` — TODO(gen): describe what this command does.
+ * `php artisan transfer:cancel` — Cancel — transfer command.
  *
  * @category Transfer
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'transfer:cancel',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cancel — transfer command.',
 )]
 final class CancelCommand extends BaseCommand
 {

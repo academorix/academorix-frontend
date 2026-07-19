@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:withdraw` — TODO(gen): describe what this command does.
+ * `php artisan approvals:withdraw` — Withdraw — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:withdraw',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Withdraw — approvals command.',
 )]
 final class WithdrawCommand extends BaseCommand
 {

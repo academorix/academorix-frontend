@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coach-skill-rating:list` — TODO(gen): describe what this command does.
+ * `php artisan coach-skill-rating:list` — List every coach skill rating row.
  *
  * @category Coaching
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coach-skill-rating:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every coach skill rating row.',
 )]
 final class ListCommand extends BaseCommand
 {

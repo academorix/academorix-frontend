@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment-dispute:list` — TODO(gen): describe what this command does.
+ * `php artisan payment-dispute:list` — List every payment dispute row.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment-dispute:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every payment dispute row.',
 )]
 final class ListCommand extends BaseCommand
 {

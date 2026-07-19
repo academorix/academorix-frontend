@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:promote-from-waitlist` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:promote-from-waitlist` — Promote from waitlist — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:promote-from-waitlist',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Promote from waitlist — enrollment command.',
 )]
 final class PromoteFromWaitlistCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan staff:reinstate` — TODO(gen): describe what this command does.
+ * `php artisan staff:reinstate` — Reinstate — staff command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'staff:reinstate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reinstate — staff command.',
 )]
 final class ReinstateCommand extends BaseCommand
 {

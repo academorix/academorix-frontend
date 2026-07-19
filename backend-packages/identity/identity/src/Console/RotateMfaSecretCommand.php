@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan identity:rotate-mfa-secret` — TODO(gen): describe what this command does.
+ * `php artisan identity:rotate-mfa-secret` — Rotate mfa secret — identity command.
  *
  * @category Identity
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'identity:rotate-mfa-secret',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Rotate mfa secret — identity command.',
 )]
 final class RotateMfaSecretCommand extends BaseCommand
 {

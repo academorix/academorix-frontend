@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attribution:capture-manual` — TODO(gen): describe what this command does.
+ * `php artisan attribution:capture-manual` — Capture manual — attribution command.
  *
  * @category Attribution
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attribution:capture-manual',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Capture manual — attribution command.',
 )]
 final class CaptureManualCommand extends BaseCommand
 {

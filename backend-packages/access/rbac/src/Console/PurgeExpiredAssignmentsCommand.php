@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:purge-expired-assignments` — TODO(gen): describe what this command does.
+ * `php artisan rbac:purge-expired-assignments` — Purge expired assignments — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:purge-expired-assignments',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge expired assignments — rbac command.',
 )]
 final class PurgeExpiredAssignmentsCommand extends BaseCommand
 {

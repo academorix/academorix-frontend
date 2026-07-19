@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan sports:registry:reconcile-references` — TODO(gen): describe what this command does.
+ * `php artisan sports:registry:reconcile-references` — Registry:reconcile references — sports command.
  *
  * @category Registry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'sports:registry:reconcile-references',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Registry:reconcile references — sports command.',
 )]
 final class RegistryReconcileReferencesCommand extends BaseCommand
 {

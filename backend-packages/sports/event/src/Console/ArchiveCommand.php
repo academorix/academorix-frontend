@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:archive` — TODO(gen): describe what this command does.
+ * `php artisan event:archive` — Archive — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — event command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

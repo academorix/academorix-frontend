@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan medical:seed-injury-catalog` — TODO(gen): describe what this command does.
+ * `php artisan medical:seed-injury-catalog` — Seed injury catalog — medical command.
  *
  * @category Medical
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'medical:seed-injury-catalog',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed injury catalog — medical command.',
 )]
 final class SeedInjuryCatalogCommand extends BaseCommand
 {

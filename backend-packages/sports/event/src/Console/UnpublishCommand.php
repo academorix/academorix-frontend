@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:unpublish` — TODO(gen): describe what this command does.
+ * `php artisan event:unpublish` — Unpublish — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:unpublish',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Unpublish — event command.',
 )]
 final class UnpublishCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:submit` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:submit` — Submit — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:submit',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Submit — enrollment command.',
 )]
 final class SubmitCommand extends BaseCommand
 {

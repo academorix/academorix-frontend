@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan membership-plan:archive` — TODO(gen): describe what this command does.
+ * `php artisan membership-plan:archive` — Archive — membership plan command.
  *
  * @category Membership
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'membership-plan:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — membership plan command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

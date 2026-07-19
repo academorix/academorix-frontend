@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan entitlements:reset` — TODO(gen): describe what this command does.
+ * `php artisan entitlements:reset` — Reset the entitlements data.
  *
  * @category Entitlements
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'entitlements:reset',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reset the entitlements data.',
 )]
 final class ResetCommand extends BaseCommand
 {

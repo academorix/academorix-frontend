@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan telemetry:tail-logs` — TODO(gen): describe what this command does.
+ * `php artisan telemetry:tail-logs` — Tail logs — telemetry command.
  *
  * @category Telemetry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'telemetry:tail-logs',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Tail logs — telemetry command.',
 )]
 final class TailLogsCommand extends BaseCommand
 {

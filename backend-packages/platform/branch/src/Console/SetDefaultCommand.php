@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan branch:set-default` — TODO(gen): describe what this command does.
+ * `php artisan branch:set-default` — Set default — branch command.
  *
  * @category Branch
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'branch:set-default',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set default — branch command.',
 )]
 final class SetDefaultCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan athlete:archive` — TODO(gen): describe what this command does.
+ * `php artisan athlete:archive` — Archive — athlete command.
  *
  * @category Athlete
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'athlete:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — athlete command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

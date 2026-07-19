@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:sync-role-definitions` — TODO(gen): describe what this command does.
+ * `php artisan rbac:sync-role-definitions` — Sync role definitions — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:sync-role-definitions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Sync role definitions — rbac command.',
 )]
 final class SyncRoleDefinitionsCommand extends BaseCommand
 {

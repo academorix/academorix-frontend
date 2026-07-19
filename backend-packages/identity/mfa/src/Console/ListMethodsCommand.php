@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan mfa:list-methods` — TODO(gen): describe what this command does.
+ * `php artisan mfa:list-methods` — List methods — mfa command.
  *
  * @category Mfa
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'mfa:list-methods',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List methods — mfa command.',
 )]
 final class ListMethodsCommand extends BaseCommand
 {

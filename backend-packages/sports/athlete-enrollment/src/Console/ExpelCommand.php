@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:expel` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:expel` — Expel — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:expel',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Expel — enrollment command.',
 )]
 final class ExpelCommand extends BaseCommand
 {

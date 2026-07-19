@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan versioning:sunset` — TODO(gen): describe what this command does.
+ * `php artisan versioning:sunset` — Sunset — versioning command.
  *
  * @category Versioning
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'versioning:sunset',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Sunset — versioning command.',
 )]
 final class SunsetCommand extends BaseCommand
 {

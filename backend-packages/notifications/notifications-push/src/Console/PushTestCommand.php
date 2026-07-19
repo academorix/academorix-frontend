@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan notifications:push:test` — TODO(gen): describe what this command does.
+ * `php artisan notifications:push:test` — Push:test — notifications command.
  *
  * @category NotificationsPush
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'notifications:push:test',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Push:test — notifications command.',
 )]
 final class PushTestCommand extends BaseCommand
 {

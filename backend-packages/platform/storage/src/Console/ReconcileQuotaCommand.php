@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan storage:reconcile-quota` — TODO(gen): describe what this command does.
+ * `php artisan storage:reconcile-quota` — Reconcile quota — storage command.
  *
  * @category Storage
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'storage:reconcile-quota',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile quota — storage command.',
 )]
 final class ReconcileQuotaCommand extends BaseCommand
 {

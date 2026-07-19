@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan attributes:list` — TODO(gen): describe what this command does.
+ * `php artisan attributes:list` — List every attributes row.
  *
  * @category Attributes
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'attributes:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every attributes row.',
 )]
 final class ListCommand extends BaseCommand
 {

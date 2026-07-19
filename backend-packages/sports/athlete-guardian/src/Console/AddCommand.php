@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan guardian:add` — TODO(gen): describe what this command does.
+ * `php artisan guardian:add` — Add — guardian command.
  *
  * @category AthleteGuardian
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'guardian:add',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Add — guardian command.',
 )]
 final class AddCommand extends BaseCommand
 {

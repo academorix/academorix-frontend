@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment-dispute:accept` — TODO(gen): describe what this command does.
+ * `php artisan payment-dispute:accept` — Accept — payment dispute command.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment-dispute:accept',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Accept — payment dispute command.',
 )]
 final class AcceptCommand extends BaseCommand
 {

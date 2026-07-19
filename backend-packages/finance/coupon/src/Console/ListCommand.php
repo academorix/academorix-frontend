@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coupon:list` — TODO(gen): describe what this command does.
+ * `php artisan coupon:list` — List every coupon row.
  *
  * @category Coupon
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coupon:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every coupon row.',
 )]
 final class ListCommand extends BaseCommand
 {

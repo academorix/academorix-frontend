@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan registrations:auto-offer-waitlist` — TODO(gen): describe what this command does.
+ * `php artisan registrations:auto-offer-waitlist` — Auto offer waitlist — registrations command.
  *
  * @category Registrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'registrations:auto-offer-waitlist',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Auto offer waitlist — registrations command.',
 )]
 final class AutoOfferWaitlistCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:reject` — TODO(gen): describe what this command does.
+ * `php artisan approvals:reject` — Reject — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:reject',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reject — approvals command.',
 )]
 final class RejectCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan guardian:remove` — TODO(gen): describe what this command does.
+ * `php artisan guardian:remove` — Remove — guardian command.
  *
  * @category AthleteGuardian
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'guardian:remove',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Remove — guardian command.',
 )]
 final class RemoveCommand extends BaseCommand
 {

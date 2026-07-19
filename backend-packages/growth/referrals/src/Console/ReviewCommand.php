@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan referral-fraud:review` — TODO(gen): describe what this command does.
+ * `php artisan referral-fraud:review` — Review — referral fraud command.
  *
  * @category Referrals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'referral-fraud:review',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Review — referral fraud command.',
 )]
 final class ReviewCommand extends BaseCommand
 {

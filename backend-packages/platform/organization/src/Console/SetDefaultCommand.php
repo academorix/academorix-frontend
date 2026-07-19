@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan organization:set-default` — TODO(gen): describe what this command does.
+ * `php artisan organization:set-default` — Set default — organization command.
  *
  * @category Organization
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'organization:set-default',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set default — organization command.',
 )]
 final class SetDefaultCommand extends BaseCommand
 {

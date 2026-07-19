@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan cache:tags` — TODO(gen): describe what this command does.
+ * `php artisan cache:tags` — Tags — cache command.
  *
  * @category Foundation
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'cache:tags',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Tags — cache command.',
 )]
 final class TagsCommand extends BaseCommand
 {

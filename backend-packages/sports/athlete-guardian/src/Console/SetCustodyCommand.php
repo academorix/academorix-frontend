@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan guardian:set-custody` — TODO(gen): describe what this command does.
+ * `php artisan guardian:set-custody` — Set custody — guardian command.
  *
  * @category AthleteGuardian
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'guardian:set-custody',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set custody — guardian command.',
 )]
 final class SetCustodyCommand extends BaseCommand
 {

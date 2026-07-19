@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan ai:mcp:serve` — TODO(gen): describe what this command does.
+ * `php artisan ai:mcp:serve` — Mcp:serve — ai command.
  *
  * @category Ai
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'ai:mcp:serve',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mcp:serve — ai command.',
 )]
 final class McpServeCommand extends BaseCommand
 {

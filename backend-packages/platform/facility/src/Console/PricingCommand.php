@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan facility:pricing` — TODO(gen): describe what this command does.
+ * `php artisan facility:pricing` — Pricing — facility command.
  *
  * @category Facility
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'facility:pricing',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Pricing — facility command.',
 )]
 final class PricingCommand extends BaseCommand
 {

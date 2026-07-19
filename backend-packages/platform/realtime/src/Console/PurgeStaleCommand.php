@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan realtime:purge-stale` — TODO(gen): describe what this command does.
+ * `php artisan realtime:purge-stale` — Purge stale — realtime command.
  *
  * @category Realtime
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'realtime:purge-stale',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge stale — realtime command.',
 )]
 final class PurgeStaleCommand extends BaseCommand
 {

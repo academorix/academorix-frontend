@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan ledger:reconcile` — TODO(gen): describe what this command does.
+ * `php artisan ledger:reconcile` — Reconcile the ledger data.
  *
  * @category Transaction
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'ledger:reconcile',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile the ledger data.',
 )]
 final class ReconcileCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:reconcile-template-versions` — TODO(gen): describe what this command does.
+ * `php artisan approvals:reconcile-template-versions` — Reconcile template versions — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:reconcile-template-versions',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile template versions — approvals command.',
 )]
 final class ReconcileTemplateVersionsCommand extends BaseCommand
 {

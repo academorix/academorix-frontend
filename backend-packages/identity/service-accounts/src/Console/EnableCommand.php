@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan service-account:enable` — TODO(gen): describe what this command does.
+ * `php artisan service-account:enable` — Enable — service account command.
  *
  * @category ServiceAccounts
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'service-account:enable',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Enable — service account command.',
 )]
 final class EnableCommand extends BaseCommand
 {

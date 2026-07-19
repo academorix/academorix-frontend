@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan age-group:seed-defaults-for-tenant` — TODO(gen): describe what this command does.
+ * `php artisan age-group:seed-defaults-for-tenant` — Seed defaults for tenant — age group command.
  *
  * @category AgeGroup
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'age-group:seed-defaults-for-tenant',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed defaults for tenant — age group command.',
 )]
 final class SeedDefaultsForTenantCommand extends BaseCommand
 {

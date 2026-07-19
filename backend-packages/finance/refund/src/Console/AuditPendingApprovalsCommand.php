@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan refund:audit-pending-approvals` — TODO(gen): describe what this command does.
+ * `php artisan refund:audit-pending-approvals` — Audit pending approvals — refund command.
  *
  * @category Refund
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'refund:audit-pending-approvals',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit pending approvals — refund command.',
 )]
 final class AuditPendingApprovalsCommand extends BaseCommand
 {

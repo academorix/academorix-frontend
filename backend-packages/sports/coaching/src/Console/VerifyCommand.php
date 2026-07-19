@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coach-certification:verify` — TODO(gen): describe what this command does.
+ * `php artisan coach-certification:verify` — Verify the coach certification data.
  *
  * @category Coaching
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coach-certification:verify',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Verify the coach certification data.',
 )]
 final class VerifyCommand extends BaseCommand
 {

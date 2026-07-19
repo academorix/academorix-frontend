@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment:capture` — TODO(gen): describe what this command does.
+ * `php artisan payment:capture` — Capture — payment command.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment:capture',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Capture — payment command.',
 )]
 final class CaptureCommand extends BaseCommand
 {

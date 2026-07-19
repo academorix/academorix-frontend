@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:deactivate-template` — TODO(gen): describe what this command does.
+ * `php artisan approvals:deactivate-template` — Deactivate template — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:deactivate-template',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Deactivate template — approvals command.',
 )]
 final class DeactivateTemplateCommand extends BaseCommand
 {

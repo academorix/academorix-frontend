@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan competition:recompute-standings` — TODO(gen): describe what this command does.
+ * `php artisan competition:recompute-standings` — Recompute standings — competition command.
  *
  * @category Competition
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'competition:recompute-standings',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Recompute standings — competition command.',
 )]
 final class RecomputeStandingsCommand extends BaseCommand
 {

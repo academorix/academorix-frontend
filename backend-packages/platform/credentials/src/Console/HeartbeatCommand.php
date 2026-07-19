@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan gates:heartbeat` — TODO(gen): describe what this command does.
+ * `php artisan gates:heartbeat` — Heartbeat — gates command.
  *
  * @category Credentials
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'gates:heartbeat',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Heartbeat — gates command.',
 )]
 final class HeartbeatCommand extends BaseCommand
 {

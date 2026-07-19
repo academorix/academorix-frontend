@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan facility:reconcile-bookings` — TODO(gen): describe what this command does.
+ * `php artisan facility:reconcile-bookings` — Reconcile bookings — facility command.
  *
  * @category Facility
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'facility:reconcile-bookings',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile bookings — facility command.',
 )]
 final class ReconcileBookingsCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan audit:show` — TODO(gen): describe what this command does.
+ * `php artisan audit:show` — Show one audit.
  *
  * @category Audit
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'audit:show',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Show one audit.',
 )]
 final class ShowCommand extends BaseCommand
 {

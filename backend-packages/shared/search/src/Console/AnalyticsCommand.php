@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan search:analytics` — TODO(gen): describe what this command does.
+ * `php artisan search:analytics` — Analytics — search command.
  *
  * @category Search
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'search:analytics',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Analytics — search command.',
 )]
 final class AnalyticsCommand extends BaseCommand
 {

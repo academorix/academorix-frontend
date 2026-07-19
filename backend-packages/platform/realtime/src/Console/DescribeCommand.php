@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan realtime:describe` — TODO(gen): describe what this command does.
+ * `php artisan realtime:describe` — Describe the realtime surface.
  *
  * @category Realtime
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'realtime:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the realtime surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

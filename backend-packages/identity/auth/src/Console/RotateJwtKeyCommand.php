@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan auth:rotate-jwt-key` — TODO(gen): describe what this command does.
+ * `php artisan auth:rotate-jwt-key` — Rotate jwt key — auth command.
  *
  * @category Auth
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'auth:rotate-jwt-key',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Rotate jwt key — auth command.',
 )]
 final class RotateJwtKeyCommand extends BaseCommand
 {

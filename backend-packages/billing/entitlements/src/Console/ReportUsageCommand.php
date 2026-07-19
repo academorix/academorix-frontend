@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan entitlements:report-usage` — TODO(gen): describe what this command does.
+ * `php artisan entitlements:report-usage` — Report usage — entitlements command.
  *
  * @category Entitlements
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'entitlements:report-usage',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Report usage — entitlements command.',
 )]
 final class ReportUsageCommand extends BaseCommand
 {

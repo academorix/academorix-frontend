@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan apps:list` — TODO(gen): describe what this command does.
+ * `php artisan apps:list` — List every apps row.
  *
  * @category Integrations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'apps:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every apps row.',
 )]
 final class ListCommand extends BaseCommand
 {

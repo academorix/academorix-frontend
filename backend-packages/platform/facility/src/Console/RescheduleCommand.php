@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan booking:reschedule` — TODO(gen): describe what this command does.
+ * `php artisan booking:reschedule` — Reschedule — booking command.
  *
  * @category Facility
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'booking:reschedule',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reschedule — booking command.',
 )]
 final class RescheduleCommand extends BaseCommand
 {

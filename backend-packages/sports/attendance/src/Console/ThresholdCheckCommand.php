@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan absence:threshold-check` — TODO(gen): describe what this command does.
+ * `php artisan absence:threshold-check` — Threshold check — absence command.
  *
  * @category Attendance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'absence:threshold-check',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Threshold check — absence command.',
 )]
 final class ThresholdCheckCommand extends BaseCommand
 {

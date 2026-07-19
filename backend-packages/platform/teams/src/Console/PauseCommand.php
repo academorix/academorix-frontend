@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan team:pause` — TODO(gen): describe what this command does.
+ * `php artisan team:pause` — Pause — team command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'team:pause',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Pause — team command.',
 )]
 final class PauseCommand extends BaseCommand
 {

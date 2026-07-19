@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan guardian:reconcile-primary` — TODO(gen): describe what this command does.
+ * `php artisan guardian:reconcile-primary` — Reconcile primary — guardian command.
  *
  * @category AthleteGuardian
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'guardian:reconcile-primary',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile primary — guardian command.',
 )]
 final class ReconcilePrimaryCommand extends BaseCommand
 {

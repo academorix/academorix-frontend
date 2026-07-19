@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan ledger:list-entries` — TODO(gen): describe what this command does.
+ * `php artisan ledger:list-entries` — List entries — ledger command.
  *
  * @category Transaction
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'ledger:list-entries',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List entries — ledger command.',
 )]
 final class ListEntriesCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan booking:mark-no-show` — TODO(gen): describe what this command does.
+ * `php artisan booking:mark-no-show` — Mark no show — booking command.
  *
  * @category Facility
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'booking:mark-no-show',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mark no show — booking command.',
 )]
 final class MarkNoShowCommand extends BaseCommand
 {

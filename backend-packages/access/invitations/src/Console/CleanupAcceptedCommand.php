@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invitations:cleanup-accepted` — TODO(gen): describe what this command does.
+ * `php artisan invitations:cleanup-accepted` — Cleanup accepted — invitations command.
  *
  * @category Invitations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invitations:cleanup-accepted',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cleanup accepted — invitations command.',
 )]
 final class CleanupAcceptedCommand extends BaseCommand
 {

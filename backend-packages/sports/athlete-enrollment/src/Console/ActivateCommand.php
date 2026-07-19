@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:activate` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:activate` — Activate a enrollment.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:activate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Activate a enrollment.',
 )]
 final class ActivateCommand extends BaseCommand
 {

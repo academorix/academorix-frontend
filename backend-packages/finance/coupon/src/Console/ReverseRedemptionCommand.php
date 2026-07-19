@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coupon:reverse-redemption` — TODO(gen): describe what this command does.
+ * `php artisan coupon:reverse-redemption` — Reverse redemption — coupon command.
  *
  * @category Coupon
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coupon:reverse-redemption',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reverse redemption — coupon command.',
 )]
 final class ReverseRedemptionCommand extends BaseCommand
 {

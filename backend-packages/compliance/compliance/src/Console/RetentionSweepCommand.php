@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:retention-sweep` — TODO(gen): describe what this command does.
+ * `php artisan compliance:retention-sweep` — Retention sweep — compliance command.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:retention-sweep',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Retention sweep — compliance command.',
 )]
 final class RetentionSweepCommand extends BaseCommand
 {

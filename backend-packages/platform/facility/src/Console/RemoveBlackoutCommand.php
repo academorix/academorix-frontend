@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan facility:remove-blackout` — TODO(gen): describe what this command does.
+ * `php artisan facility:remove-blackout` — Remove blackout — facility command.
  *
  * @category Facility
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'facility:remove-blackout',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Remove blackout — facility command.',
 )]
 final class RemoveBlackoutCommand extends BaseCommand
 {

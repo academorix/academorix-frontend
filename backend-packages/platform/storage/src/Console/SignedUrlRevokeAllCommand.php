@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan storage:signed-url-revoke-all` — TODO(gen): describe what this command does.
+ * `php artisan storage:signed-url-revoke-all` — Signed url revoke all — storage command.
  *
  * @category Storage
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'storage:signed-url-revoke-all',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Signed url revoke all — storage command.',
 )]
 final class SignedUrlRevokeAllCommand extends BaseCommand
 {

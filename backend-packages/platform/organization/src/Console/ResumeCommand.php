@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan organization:resume` — TODO(gen): describe what this command does.
+ * `php artisan organization:resume` — Resume — organization command.
  *
  * @category Organization
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'organization:resume',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Resume — organization command.',
 )]
 final class ResumeCommand extends BaseCommand
 {

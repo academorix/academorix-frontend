@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan service-account:delete` — TODO(gen): describe what this command does.
+ * `php artisan service-account:delete` — Delete an service account.
  *
  * @category ServiceAccounts
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'service-account:delete',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Delete an service account.',
 )]
 final class DeleteCommand extends BaseCommand
 {

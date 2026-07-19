@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:reconcile` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:reconcile` — Reconcile the chargeback data.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:reconcile',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile the chargeback data.',
 )]
 final class ReconcileCommand extends BaseCommand
 {

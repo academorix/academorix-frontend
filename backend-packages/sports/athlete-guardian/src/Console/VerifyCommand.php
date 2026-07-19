@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan guardian:verify` — TODO(gen): describe what this command does.
+ * `php artisan guardian:verify` — Verify the guardian data.
  *
  * @category AthleteGuardian
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'guardian:verify',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Verify the guardian data.',
 )]
 final class VerifyCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan season:roll-phase` — TODO(gen): describe what this command does.
+ * `php artisan season:roll-phase` — Roll phase — season command.
  *
  * @category Season
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'season:roll-phase',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Roll phase — season command.',
 )]
 final class RollPhaseCommand extends BaseCommand
 {

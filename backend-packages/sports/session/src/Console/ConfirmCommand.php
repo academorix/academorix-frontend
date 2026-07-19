@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:confirm` — TODO(gen): describe what this command does.
+ * `php artisan session:confirm` — Confirm — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:confirm',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Confirm — session command.',
 )]
 final class ConfirmCommand extends BaseCommand
 {

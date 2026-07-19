@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan approvals:list-templates` — TODO(gen): describe what this command does.
+ * `php artisan approvals:list-templates` — List templates — approvals command.
  *
  * @category Approvals
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'approvals:list-templates',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List templates — approvals command.',
 )]
 final class ListTemplatesCommand extends BaseCommand
 {

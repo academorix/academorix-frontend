@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan access-requests:describe` — TODO(gen): describe what this command does.
+ * `php artisan access-requests:describe` — Describe the access requests surface.
  *
  * @category Requests
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'access-requests:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the access requests surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

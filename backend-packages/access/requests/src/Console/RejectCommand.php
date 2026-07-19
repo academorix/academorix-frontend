@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan access-requests:reject` — TODO(gen): describe what this command does.
+ * `php artisan access-requests:reject` — Reject — access requests command.
  *
  * @category Requests
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'access-requests:reject',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reject — access requests command.',
 )]
 final class RejectCommand extends BaseCommand
 {

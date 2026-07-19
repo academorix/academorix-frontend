@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan tenancy:archive` — TODO(gen): describe what this command does.
+ * `php artisan tenancy:archive` — Archive — tenancy command.
  *
  * @category Tenancy
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'tenancy:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — tenancy command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:dispatch-event` — TODO(gen): describe what this command does.
+ * `php artisan marketing:dispatch-event` — Dispatch event — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:dispatch-event',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Dispatch event — marketing command.',
 )]
 final class DispatchEventCommand extends BaseCommand
 {

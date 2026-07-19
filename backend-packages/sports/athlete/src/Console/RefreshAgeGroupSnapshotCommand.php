@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan athlete:refresh-age-group-snapshot` — TODO(gen): describe what this command does.
+ * `php artisan athlete:refresh-age-group-snapshot` — Refresh age group snapshot — athlete command.
  *
  * @category Athlete
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'athlete:refresh-age-group-snapshot',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Refresh age group snapshot — athlete command.',
 )]
 final class RefreshAgeGroupSnapshotCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:audit-subprocessors` — TODO(gen): describe what this command does.
+ * `php artisan compliance:audit-subprocessors` — Audit subprocessors — compliance command.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:audit-subprocessors',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit subprocessors — compliance command.',
 )]
 final class AuditSubprocessorsCommand extends BaseCommand
 {

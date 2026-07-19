@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan team-member:mark-graduated` — TODO(gen): describe what this command does.
+ * `php artisan team-member:mark-graduated` — Mark graduated — team member command.
  *
  * @category Teams
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'team-member:mark-graduated',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mark graduated — team member command.',
 )]
 final class MarkGraduatedCommand extends BaseCommand
 {

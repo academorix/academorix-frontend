@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan people:seed-lookup-fixtures` — TODO(gen): describe what this command does.
+ * `php artisan people:seed-lookup-fixtures` — Seed lookup fixtures — people command.
  *
  * @category People
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'people:seed-lookup-fixtures',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed lookup fixtures — people command.',
 )]
 final class SeedLookupFixturesCommand extends BaseCommand
 {

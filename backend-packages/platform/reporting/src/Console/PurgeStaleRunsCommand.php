@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan reporting:purge-stale-runs` — TODO(gen): describe what this command does.
+ * `php artisan reporting:purge-stale-runs` — Purge stale runs — reporting command.
  *
  * @category Reporting
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'reporting:purge-stale-runs',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Purge stale runs — reporting command.',
 )]
 final class PurgeStaleRunsCommand extends BaseCommand
 {

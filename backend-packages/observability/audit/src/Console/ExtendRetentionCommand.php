@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan audit:extend-retention` — TODO(gen): describe what this command does.
+ * `php artisan audit:extend-retention` — Extend retention — audit command.
  *
  * @category Audit
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'audit:extend-retention',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Extend retention — audit command.',
 )]
 final class ExtendRetentionCommand extends BaseCommand
 {

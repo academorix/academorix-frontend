@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan search:synonyms` — TODO(gen): describe what this command does.
+ * `php artisan search:synonyms` — Synonyms — search command.
  *
  * @category Search
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'search:synonyms',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Synonyms — search command.',
 )]
 final class SynonymsCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan refund:report` — TODO(gen): describe what this command does.
+ * `php artisan refund:report` — Report on the refund data.
  *
  * @category Refund
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'refund:report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Report on the refund data.',
 )]
 final class ReportCommand extends BaseCommand
 {

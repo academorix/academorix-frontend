@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:audit-terminal` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:audit-terminal` — Audit terminal — chargeback command.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:audit-terminal',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit terminal — chargeback command.',
 )]
 final class AuditTerminalCommand extends BaseCommand
 {

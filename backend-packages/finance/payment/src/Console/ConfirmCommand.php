@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment-intent:confirm` — TODO(gen): describe what this command does.
+ * `php artisan payment-intent:confirm` — Confirm — payment intent command.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment-intent:confirm',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Confirm — payment intent command.',
 )]
 final class ConfirmCommand extends BaseCommand
 {

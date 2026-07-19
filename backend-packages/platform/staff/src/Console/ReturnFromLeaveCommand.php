@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan staff:return-from-leave` — TODO(gen): describe what this command does.
+ * `php artisan staff:return-from-leave` — Return from leave — staff command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'staff:return-from-leave',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Return from leave — staff command.',
 )]
 final class ReturnFromLeaveCommand extends BaseCommand
 {

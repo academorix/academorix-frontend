@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan branding:regenerate-og-images` — TODO(gen): describe what this command does.
+ * `php artisan branding:regenerate-og-images` — Regenerate og images — branding command.
  *
  * @category Branding
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'branding:regenerate-og-images',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Regenerate og images — branding command.',
 )]
 final class RegenerateOgImagesCommand extends BaseCommand
 {

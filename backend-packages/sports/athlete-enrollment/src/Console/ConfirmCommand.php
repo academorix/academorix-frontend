@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan enrollment:confirm` — TODO(gen): describe what this command does.
+ * `php artisan enrollment:confirm` — Confirm — enrollment command.
  *
  * @category AthleteEnrollment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'enrollment:confirm',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Confirm — enrollment command.',
 )]
 final class ConfirmCommand extends BaseCommand
 {

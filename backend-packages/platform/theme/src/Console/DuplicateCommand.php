@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan theme-preset:duplicate` — TODO(gen): describe what this command does.
+ * `php artisan theme-preset:duplicate` — Duplicate a theme preset.
  *
  * @category Theme
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'theme-preset:duplicate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Duplicate a theme preset.',
 )]
 final class DuplicateCommand extends BaseCommand
 {

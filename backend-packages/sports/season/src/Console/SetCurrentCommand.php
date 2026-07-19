@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan season:set-current` — TODO(gen): describe what this command does.
+ * `php artisan season:set-current` — Set current — season command.
  *
  * @category Season
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'season:set-current',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set current — season command.',
 )]
 final class SetCurrentCommand extends BaseCommand
 {

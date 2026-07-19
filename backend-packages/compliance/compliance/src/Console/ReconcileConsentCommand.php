@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:reconcile-consent` — TODO(gen): describe what this command does.
+ * `php artisan compliance:reconcile-consent` — Reconcile consent — compliance command.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:reconcile-consent',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile consent — compliance command.',
 )]
 final class ReconcileConsentCommand extends BaseCommand
 {

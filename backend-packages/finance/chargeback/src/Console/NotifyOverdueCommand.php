@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan chargeback:notify-overdue` — TODO(gen): describe what this command does.
+ * `php artisan chargeback:notify-overdue` — Notify overdue — chargeback command.
  *
  * @category Chargeback
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'chargeback:notify-overdue',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Notify overdue — chargeback command.',
 )]
 final class NotifyOverdueCommand extends BaseCommand
 {

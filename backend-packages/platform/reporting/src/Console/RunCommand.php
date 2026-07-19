@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan reporting:run` — TODO(gen): describe what this command does.
+ * `php artisan reporting:run` — Run — reporting command.
  *
  * @category Reporting
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'reporting:run',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Run — reporting command.',
 )]
 final class RunCommand extends BaseCommand
 {

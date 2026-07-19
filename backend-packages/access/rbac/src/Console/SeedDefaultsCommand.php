@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:seed-defaults` — TODO(gen): describe what this command does.
+ * `php artisan rbac:seed-defaults` — Seed defaults — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:seed-defaults',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed defaults — rbac command.',
 )]
 final class SeedDefaultsCommand extends BaseCommand
 {

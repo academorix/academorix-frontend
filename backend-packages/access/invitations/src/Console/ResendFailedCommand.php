@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invitations:resend-failed` — TODO(gen): describe what this command does.
+ * `php artisan invitations:resend-failed` — Resend failed — invitations command.
  *
  * @category Invitations
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invitations:resend-failed',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Resend failed — invitations command.',
 )]
 final class ResendFailedCommand extends BaseCommand
 {

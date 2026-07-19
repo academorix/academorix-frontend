@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan passes:test-push` — TODO(gen): describe what this command does.
+ * `php artisan passes:test-push` — Test push — passes command.
  *
  * @category DigitalPasses
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'passes:test-push',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test push — passes command.',
 )]
 final class TestPushCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:restore` — TODO(gen): describe what this command does.
+ * `php artisan event:restore` — Restore — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:restore',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Restore — event command.',
 )]
 final class RestoreCommand extends BaseCommand
 {

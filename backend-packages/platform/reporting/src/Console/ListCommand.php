@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan reporting:list` — TODO(gen): describe what this command does.
+ * `php artisan reporting:list` — List every reporting row.
  *
  * @category Reporting
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'reporting:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every reporting row.',
 )]
 final class ListCommand extends BaseCommand
 {

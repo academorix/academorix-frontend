@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:roas-report` — TODO(gen): describe what this command does.
+ * `php artisan marketing:roas-report` — Roas report — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:roas-report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Roas report — marketing command.',
 )]
 final class RoasReportCommand extends BaseCommand
 {

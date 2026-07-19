@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan rbac:migrate-legacy-roles` — TODO(gen): describe what this command does.
+ * `php artisan rbac:migrate-legacy-roles` — Migrate legacy roles — rbac command.
  *
  * @category Rbac
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'rbac:migrate-legacy-roles',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Migrate legacy roles — rbac command.',
 )]
 final class MigrateLegacyRolesCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geofencing:describe` — TODO(gen): describe what this command does.
+ * `php artisan geofencing:describe` — Describe the geofencing surface.
  *
  * @category Geofencing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geofencing:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the geofencing surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan transaction:list` — TODO(gen): describe what this command does.
+ * `php artisan transaction:list` — List every transaction row.
  *
  * @category Transaction
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'transaction:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every transaction row.',
 )]
 final class ListCommand extends BaseCommand
 {

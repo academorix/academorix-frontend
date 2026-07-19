@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invoice:mark-paid` — TODO(gen): describe what this command does.
+ * `php artisan invoice:mark-paid` — Mark paid — invoice command.
  *
  * @category Invoice
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invoice:mark-paid',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Mark paid — invoice command.',
 )]
 final class MarkPaidCommand extends BaseCommand
 {

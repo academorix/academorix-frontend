@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan event:set-primary-facility` — TODO(gen): describe what this command does.
+ * `php artisan event:set-primary-facility` — Set primary facility — event command.
  *
  * @category Event
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'event:set-primary-facility',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set primary facility — event command.',
 )]
 final class SetPrimaryFacilityCommand extends BaseCommand
 {

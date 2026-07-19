@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geofencing:list-fenceable-aliases` — TODO(gen): describe what this command does.
+ * `php artisan geofencing:list-fenceable-aliases` — List fenceable aliases — geofencing command.
  *
  * @category Geofencing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geofencing:list-fenceable-aliases',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List fenceable aliases — geofencing command.',
 )]
 final class ListFenceableAliasesCommand extends BaseCommand
 {

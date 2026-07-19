@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan user:erase` — TODO(gen): describe what this command does.
+ * `php artisan user:erase` — Erase — user command.
  *
  * @category User
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'user:erase',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Erase — user command.',
 )]
 final class EraseCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan marketing:resolve-dead-letter` — TODO(gen): describe what this command does.
+ * `php artisan marketing:resolve-dead-letter` — Resolve dead letter — marketing command.
  *
  * @category Marketing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'marketing:resolve-dead-letter',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Resolve dead letter — marketing command.',
 )]
 final class ResolveDeadLetterCommand extends BaseCommand
 {

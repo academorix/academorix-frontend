@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan mfa:force-disable` — TODO(gen): describe what this command does.
+ * `php artisan mfa:force-disable` — Force disable — mfa command.
  *
  * @category Mfa
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'mfa:force-disable',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Force disable — mfa command.',
 )]
 final class ForceDisableCommand extends BaseCommand
 {

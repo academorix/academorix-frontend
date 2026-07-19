@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan membership:renew` — TODO(gen): describe what this command does.
+ * `php artisan membership:renew` — Renew — membership command.
  *
  * @category Membership
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'membership:renew',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Renew — membership command.',
 )]
 final class RenewCommand extends BaseCommand
 {

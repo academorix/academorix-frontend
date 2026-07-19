@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan access-requests:cache-clear` — TODO(gen): describe what this command does.
+ * `php artisan access-requests:cache-clear` — Cache clear — access requests command.
  *
  * @category Requests
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'access-requests:cache-clear',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Cache clear — access requests command.',
 )]
 final class CacheClearCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan people:audit-lookups` — TODO(gen): describe what this command does.
+ * `php artisan people:audit-lookups` — Audit lookups — people command.
  *
  * @category People
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'people:audit-lookups',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit lookups — people command.',
 )]
 final class AuditLookupsCommand extends BaseCommand
 {

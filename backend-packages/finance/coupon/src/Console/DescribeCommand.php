@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coupon:describe` — TODO(gen): describe what this command does.
+ * `php artisan coupon:describe` — Describe the coupon surface.
  *
  * @category Coupon
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coupon:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the coupon surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

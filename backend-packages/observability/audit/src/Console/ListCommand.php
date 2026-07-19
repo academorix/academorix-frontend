@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan audit:list` — TODO(gen): describe what this command does.
+ * `php artisan audit:list` — List every audit row.
  *
  * @category Audit
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'audit:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every audit row.',
 )]
 final class ListCommand extends BaseCommand
 {

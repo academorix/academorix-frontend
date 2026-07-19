@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan season:close-registration` — TODO(gen): describe what this command does.
+ * `php artisan season:close-registration` — Close registration — season command.
  *
  * @category Season
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'season:close-registration',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Close registration — season command.',
 )]
 final class CloseRegistrationCommand extends BaseCommand
 {

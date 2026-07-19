@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan staff:audit-compensation` — TODO(gen): describe what this command does.
+ * `php artisan staff:audit-compensation` — Audit compensation — staff command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'staff:audit-compensation',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Audit compensation — staff command.',
 )]
 final class AuditCompensationCommand extends BaseCommand
 {

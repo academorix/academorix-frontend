@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan transfer:verify` — TODO(gen): describe what this command does.
+ * `php artisan transfer:verify` — Verify the transfer data.
  *
  * @category Transfer
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'transfer:verify',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Verify the transfer data.',
 )]
 final class VerifyCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan expenses:generate-recurring` — TODO(gen): describe what this command does.
+ * `php artisan expenses:generate-recurring` — Generate recurring — expenses command.
  *
  * @category Expenses
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'expenses:generate-recurring',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Generate recurring — expenses command.',
 )]
 final class GenerateRecurringCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:archive` — TODO(gen): describe what this command does.
+ * `php artisan session:archive` — Archive — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:archive',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Archive — session command.',
 )]
 final class ArchiveCommand extends BaseCommand
 {

@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan identity:unlock` — TODO(gen): describe what this command does.
+ * `php artisan identity:unlock` — Unlock — identity command.
  *
  * @category Identity
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'identity:unlock',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Unlock — identity command.',
 )]
 final class UnlockCommand extends BaseCommand
 {

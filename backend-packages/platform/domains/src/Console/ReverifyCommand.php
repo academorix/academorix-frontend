@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan domains:reverify` — TODO(gen): describe what this command does.
+ * `php artisan domains:reverify` — Reverify — domains command.
  *
  * @category Domains
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'domains:reverify',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reverify — domains command.',
 )]
 final class ReverifyCommand extends BaseCommand
 {

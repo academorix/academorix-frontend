@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan theme:preview` — TODO(gen): describe what this command does.
+ * `php artisan theme:preview` — Preview a theme.
  *
  * @category Theme
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'theme:preview',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Preview a theme.',
 )]
 final class PreviewCommand extends BaseCommand
 {

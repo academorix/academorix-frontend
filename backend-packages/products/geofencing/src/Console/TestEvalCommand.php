@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan geofencing:test-eval` — TODO(gen): describe what this command does.
+ * `php artisan geofencing:test-eval` — Test eval — geofencing command.
  *
  * @category Geofencing
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'geofencing:test-eval',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test eval — geofencing command.',
 )]
 final class TestEvalCommand extends BaseCommand
 {

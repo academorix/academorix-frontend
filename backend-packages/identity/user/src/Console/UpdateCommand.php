@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan profile:update` — TODO(gen): describe what this command does.
+ * `php artisan profile:update` — Update an existing profile.
  *
  * @category User
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'profile:update',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Update an existing profile.',
 )]
 final class UpdateCommand extends BaseCommand
 {

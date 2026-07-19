@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan invoice:regenerate-pdf` — TODO(gen): describe what this command does.
+ * `php artisan invoice:regenerate-pdf` — Regenerate pdf — invoice command.
  *
  * @category Invoice
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'invoice:regenerate-pdf',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Regenerate pdf — invoice command.',
 )]
 final class RegeneratePdfCommand extends BaseCommand
 {

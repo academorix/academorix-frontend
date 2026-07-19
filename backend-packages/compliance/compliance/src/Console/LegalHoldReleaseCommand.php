@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan compliance:legal-hold-release` — TODO(gen): describe what this command does.
+ * `php artisan compliance:legal-hold-release` — Legal hold release — compliance command.
  *
  * @category Compliance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'compliance:legal-hold-release',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Legal hold release — compliance command.',
 )]
 final class LegalHoldReleaseCommand extends BaseCommand
 {

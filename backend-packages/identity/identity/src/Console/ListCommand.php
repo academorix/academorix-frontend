@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan identity:list` — TODO(gen): describe what this command does.
+ * `php artisan identity:list` — List every identity row.
  *
  * @category Identity
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'identity:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every identity row.',
 )]
 final class ListCommand extends BaseCommand
 {

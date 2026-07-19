@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan storage:dedup-audit` — TODO(gen): describe what this command does.
+ * `php artisan storage:dedup-audit` — Dedup audit — storage command.
  *
  * @category Storage
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'storage:dedup-audit',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Dedup audit — storage command.',
 )]
 final class DedupAuditCommand extends BaseCommand
 {

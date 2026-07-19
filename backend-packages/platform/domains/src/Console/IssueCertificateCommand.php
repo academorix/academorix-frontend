@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan domains:issue-certificate` — TODO(gen): describe what this command does.
+ * `php artisan domains:issue-certificate` — Issue certificate — domains command.
  *
  * @category Domains
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'domains:issue-certificate',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Issue certificate — domains command.',
 )]
 final class IssueCertificateCommand extends BaseCommand
 {

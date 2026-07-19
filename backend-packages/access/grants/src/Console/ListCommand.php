@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan grants:list` — TODO(gen): describe what this command does.
+ * `php artisan grants:list` — List every grants row.
  *
  * @category Grants
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'grants:list',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'List every grants row.',
 )]
 final class ListCommand extends BaseCommand
 {

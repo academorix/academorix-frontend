@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan theme-token-override:report` — TODO(gen): describe what this command does.
+ * `php artisan theme-token-override:report` — Report on the theme token override data.
  *
  * @category Theme
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'theme-token-override:report',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Report on the theme token override data.',
 )]
 final class ReportCommand extends BaseCommand
 {

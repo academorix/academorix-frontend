@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan payment-dispute:describe` — TODO(gen): describe what this command does.
+ * `php artisan payment-dispute:describe` — Describe the payment dispute surface.
  *
  * @category Payment
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'payment-dispute:describe',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Describe the payment dispute surface.',
 )]
 final class DescribeCommand extends BaseCommand
 {

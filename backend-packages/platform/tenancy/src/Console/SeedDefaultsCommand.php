@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan tenancy:seed-defaults` — TODO(gen): describe what this command does.
+ * `php artisan tenancy:seed-defaults` — Seed defaults — tenancy command.
  *
  * @category Tenancy
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'tenancy:seed-defaults',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed defaults — tenancy command.',
 )]
 final class SeedDefaultsCommand extends BaseCommand
 {

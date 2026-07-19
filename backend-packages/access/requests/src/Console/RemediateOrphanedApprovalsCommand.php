@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan access-requests:remediate-orphaned-approvals` — TODO(gen): describe what this command does.
+ * `php artisan access-requests:remediate-orphaned-approvals` — Remediate orphaned approvals — access requests command.
  *
  * @category Requests
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'access-requests:remediate-orphaned-approvals',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Remediate orphaned approvals — access requests command.',
 )]
 final class RemediateOrphanedApprovalsCommand extends BaseCommand
 {

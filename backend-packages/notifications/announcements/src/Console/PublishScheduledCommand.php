@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan announcements:publish-scheduled` — TODO(gen): describe what this command does.
+ * `php artisan announcements:publish-scheduled` — Publish scheduled — announcements command.
  *
  * @category Announcements
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'announcements:publish-scheduled',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Publish scheduled — announcements command.',
 )]
 final class PublishScheduledCommand extends BaseCommand
 {

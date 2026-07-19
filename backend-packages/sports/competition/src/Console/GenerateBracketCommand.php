@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan competition:generate-bracket` — TODO(gen): describe what this command does.
+ * `php artisan competition:generate-bracket` — Generate bracket — competition command.
  *
  * @category Competition
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'competition:generate-bracket',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Generate bracket — competition command.',
 )]
 final class GenerateBracketCommand extends BaseCommand
 {

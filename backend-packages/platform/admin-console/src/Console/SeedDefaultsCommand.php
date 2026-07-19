@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan admin:seed-defaults` — TODO(gen): describe what this command does.
+ * `php artisan admin:seed-defaults` — Seed defaults — admin command.
  *
  * @category AdminConsole
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'admin:seed-defaults',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed defaults — admin command.',
 )]
 final class SeedDefaultsCommand extends BaseCommand
 {

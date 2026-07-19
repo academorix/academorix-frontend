@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan telemetry:test-emit` — TODO(gen): describe what this command does.
+ * `php artisan telemetry:test-emit` — Test emit — telemetry command.
  *
  * @category Telemetry
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'telemetry:test-emit',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Test emit — telemetry command.',
 )]
 final class TestEmitCommand extends BaseCommand
 {

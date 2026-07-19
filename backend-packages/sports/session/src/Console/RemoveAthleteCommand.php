@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:remove-athlete` — TODO(gen): describe what this command does.
+ * `php artisan session:remove-athlete` — Remove athlete — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:remove-athlete',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Remove athlete — session command.',
 )]
 final class RemoveAthleteCommand extends BaseCommand
 {

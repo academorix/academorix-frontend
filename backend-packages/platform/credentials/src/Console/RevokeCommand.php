@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan credentials:revoke` — TODO(gen): describe what this command does.
+ * `php artisan credentials:revoke` — Revoke — credentials command.
  *
  * @category Credentials
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'credentials:revoke',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Revoke — credentials command.',
 )]
 final class RevokeCommand extends BaseCommand
 {

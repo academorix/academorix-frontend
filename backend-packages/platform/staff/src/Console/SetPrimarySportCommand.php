@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan coach:set-primary-sport` — TODO(gen): describe what this command does.
+ * `php artisan coach:set-primary-sport` — Set primary sport — coach command.
  *
  * @category Staff
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'coach:set-primary-sport',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Set primary sport — coach command.',
 )]
 final class SetPrimarySportCommand extends BaseCommand
 {

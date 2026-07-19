@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan storage:rescan-virus` — TODO(gen): describe what this command does.
+ * `php artisan storage:rescan-virus` — Rescan virus — storage command.
  *
  * @category Storage
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'storage:rescan-virus',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Rescan virus — storage command.',
 )]
 final class RescanVirusCommand extends BaseCommand
 {

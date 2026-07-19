@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan session:reconcile-attendance` — TODO(gen): describe what this command does.
+ * `php artisan session:reconcile-attendance` — Reconcile attendance — session command.
  *
  * @category Session
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'session:reconcile-attendance',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Reconcile attendance — session command.',
 )]
 final class ReconcileAttendanceCommand extends BaseCommand
 {

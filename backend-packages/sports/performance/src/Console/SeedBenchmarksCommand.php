@@ -10,7 +10,7 @@ use Academorix\Console\Attributes\AsCommand;
 use Academorix\Console\Console\Commands\BaseCommand;
 
 /**
- * `php artisan performance:seed-benchmarks` — TODO(gen): describe what this command does.
+ * `php artisan performance:seed-benchmarks` — Seed benchmarks — performance command.
  *
  * @category Performance
  *
@@ -18,7 +18,7 @@ use Academorix\Console\Console\Commands\BaseCommand;
  */
 #[AsCommand(
     name: 'performance:seed-benchmarks',
-    description: 'TODO(gen): one-line description shown by `artisan list`.',
+    description: 'Seed benchmarks — performance command.',
 )]
 final class SeedBenchmarksCommand extends BaseCommand
 {
