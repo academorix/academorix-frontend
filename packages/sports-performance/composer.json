@@ -1,0 +1,63 @@
+{
+  "name": "academorix-sports/performance",
+  "type": "library",
+  "description": "Academorix Performance module — server-side Laravel package emitted from the module blueprint at `modules/sports/blueprints/performance/`. Complements the wire SDK at `academorix-sports/performance-sdk`.",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "module",
+    "laravel",
+    "sports",
+    "performance"
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^11.0 || ^12.0",
+    "illuminate/database": "^11.0 || ^12.0",
+    "illuminate/container": "^11.0 || ^12.0",
+    "spatie/laravel-data": "^4.11",
+    "academorix/foundation": "@dev",
+    "academorix-sports/performance-sdk": "@dev"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0",
+    "mockery/mockery": "^1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\\\Sports\\\\Performance\\\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\\\Sports\\\\Performance\\\\Tests\\\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Sports\\Performance\\\\Providers\\\\PerformanceServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "scripts": {
+    "test": "./vendor/bin/pest",
+    "test:coverage": "./vendor/bin/pest --coverage --min=80",
+    "lint": "./vendor/bin/pint --test",
+    "format": "./vendor/bin/pint",
+    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

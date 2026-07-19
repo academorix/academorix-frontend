@@ -1,0 +1,9 @@
+<?php
+
+declare(strict_types=1);
+
+use Academorix\Finance\Coupon\Models\CouponRedemption;
+
+it('is a placeholder — replace with actual CouponRedemption unit tests', function (): void {
+    expect(CouponRedemption::class)->toBeString();
+});

@@ -1,0 +1,50 @@
+# academorix-notifications/announcements
+
+Server-side Laravel package for the `announcements` module. Auto-generated from
+the blueprint at `modules/notifications/blueprints/announcements/`.
+
+## Entities
+
+- **AnnouncementView** (`anv_...`) — Per-user view record — read_at +
+  acknowledged_at.
+- **Announcement** (`ann_...`) —
+
+## Layout
+
+```
+src/
+├── Providers/                     # <Name>ServiceProvider (module boot)
+├── Contracts/
+│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
+│   └── Repositories/*Interface.php
+├── Models/*.php                   # Eloquent, attribute-first
+├── Repositories/*.php             # #[AsRepository] + #[UseModel]
+├── Data/*.php                     # Spatie Data output DTOs
+├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
+├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
+└── Actions/*.php                  # Single-invoke controllers (#[AsController])
+database/
+├── migrations/*.php
+├── factories/*.php
+└── seeders/*.php                  # (dual-source catalogues only)
+tests/
+├── Feature/
+└── Unit/
+```
+
+## Regeneration
+
+```bash
+python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
+    notifications announcements --force
+```
+
+Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
+file is a hand-tuned override that survives regeneration.
+
+## Companion wire SDK
+
+The wire-visible Saloon + Spatie Data package lives at
+`academorix-notifications/announcements-sdk` under
+`sdk/notifications-announcements-sdk/`. Consumers cross the service boundary
+through the SDK; this package is the SERVER-side owner of the domain.
