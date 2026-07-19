@@ -1,66 +1,89 @@
 {
   "name": "academorix/storage",
   "type": "library",
-  "description": "Academorix Storage module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/storage/`. Complements the wire SDK at `academorix-platform/storage-sdk`.",
+  "description": "File-upload substrate — wraps `spatie/laravel-medialibrary ^11` and adds our tenant scoping, entitlement enforcement, antivirus pipeline, audited signed-URL orchestrator, chunked-upload state machine, image variants, and content-addressable dedup. Owns four aggregates: File (the domain unit, polymorphic via `fileable_type`/`fileable_id`), FileVariant (image + document derivatives), SignedUrlAudit (every signed URL issued with TTL / IP lock / user lock / hit count), and ChunkedUpload (in-flight multipart / tus.io state).",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
-    "platform",
-    "storage"
+    "storage",
+    "files",
+    "attachments",
+    "uploads",
+    "signed-urls",
+    "image-variants",
+    "chunked-upload",
+    "tus",
+    "s3",
+    "antivirus",
+    "clamav",
+    "dedup",
+    "sha256",
+    "cdn",
+    "medialibrary"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/activity": "@dev",
+    "academorix/application": "@dev",
+    "academorix/audit": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/entitlements": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-platform/storage-sdk": "@dev"
+    "academorix/tenancy": "@dev",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/filesystem": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/notifications": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11",
+    "spatie/laravel-medialibrary": "^11.0"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Storage\\\\": "src/"
+      "Academorix\\Storage\\": "src/",
+      "Academorix\\Storage\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Storage\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Storage\\\\Tests\\\\": "tests/"
+      "Academorix\\Storage\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Storage\\\\Providers\\\\StorageServiceProvider"
+        "Academorix\\Storage\\Providers\\StorageServiceProvider"
       ],
       "aliases": {}
     }
   },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-  },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "olvlvl/composer-attribute-collector": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "stable",

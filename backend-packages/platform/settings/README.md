@@ -1,52 +1,72 @@
 # academorix/settings
 
-Server-side Laravel package for the `settings` module. Auto-generated from the
-blueprint at `modules/platform/blueprints/settings/`.
+Attribute-driven settings platform for Academorix. Ships the declarative
+authoring surface every module writes against (`#[AsSetting]` /
+`#[SettingGroup]` / `#[SettingField]`), a boot-time discovery pass that hydrates
+a shared registry, and a resolver that reads via the `system → tenant → user`
+cascade. Wraps
+[`spatie/laravel-settings`](https://github.com/spatie/laravel-settings) for the
+storage layer.
 
-## Entities
+## Aggregates
 
-- **SettingValue** (`set_...`) — Persistence row.
-- **SettingsGroup** (`...`) — Read-only registry row for a settings group (a set
-  of related settings surfaced together in the UI).
-- **SettingsSchema** (`...`) — Read-only registry entry for a single settings
-  FIELD within a group (e.
+| Aggregate        | ULID prefix | Table              | Purpose                                                                                      |
+| ---------------- | ----------- | ------------------ | -------------------------------------------------------------------------------------------- |
+| `SettingsGroup`  | `sgr_`      | `settings_groups`  | Top-level group like `general` / `billing` / `notifications`. System-owned rows are locked.  |
+| `SettingsSchema` | `sss_`      | `settings_schemas` | One row per registered `#[SettingField]` — the field catalogue.                              |
+| `SettingValue`   | `stv_`      | `setting_values`   | Per-scope value. `scope_kind ∈ {system, tenant, user}`; system rows carry `scope_id = NULL`. |
 
-## Layout
-
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
-
-## Regeneration
+## Install
 
 ```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    platform settings --force
+composer require academorix/settings
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
+## Blueprint
 
-## Companion wire SDK
+Wire contract at `modules/platform/blueprints/settings/`.
 
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/settings-sdk` under `sdk/platform-settings-sdk/`. Consumers
-cross the service boundary through the SDK; this package is the SERVER-side
-owner of the domain.
+## Contributes
+
+- **Attributes**: `AsSetting` (marks a class as a settings container),
+  `SettingGroup` (visual section on that class), `SettingField` (per-property
+  declaration).
+- **Contracts (framework-swappable)**: `SettingsServiceInterface`,
+  `SettingsRegistryInterface`, `SettingsResolverInterface`,
+  `SettingsWriterInterface`. Default implementations ship in `src/Services`.
+- **Bootstrappers**: `SettingsDiscoveryBootstrapper` — scans every
+  `#[AsSetting]` class at boot and hydrates the registry.
+- **Events**: `SettingsChangeEvent`, `SettingsGroupResolved`,
+  `SettingsWriteRefused`. All `ShouldDispatchAfterCommit`.
+- **Permissions**: `SettingsPermission` (view + manage — dual-guard) mapped onto
+  spatie's guard-aware permission rows.
+- **Commands**: `settings:describe`, `settings:seed`, `settings:show`,
+  `settings:export`, `settings:import`.
+- **Jobs**: `ExportSettingsJob`, `ImportSettingsJob`,
+  `MigrateSettingsSchemaJob`.
+- **Cast**: `EncryptedSensitiveSettingCast` — encrypts values whose owning
+  schema carries `sensitive: true`.
+
+## Hierarchy resolution
+
+Reads resolve deepest-first:
+
+1. `user` — the caller's user-scope override.
+2. `tenant` — the caller's tenant-scope override.
+3. `system` — the platform default seeded by the discovery pass.
+4. The field's declared `default_value` when no row is found.
+
+`org` and `branch` levels are deferred until the scope module lands.
+
+## Dual-write
+
+Every write dispatches a `SettingsChangeEvent` (after commit) which is consumed
+by both the `activity` module (tenant-facing feed) and the `audit` module
+(immutable compliance trail).
+
+## Tests
+
+```bash
+composer install
+vendor/bin/pest
+```

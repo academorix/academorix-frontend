@@ -1,66 +1,80 @@
 {
   "name": "academorix/notifications",
   "type": "library",
-  "description": "Academorix Notifications module — server-side Laravel package emitted from the module blueprint at `modules/notifications/blueprints/notifications/`. Complements the wire SDK at `academorix-notifications/notifications-sdk`.",
+  "description": "Notification substrate core for Academorix. Owns six aggregates: `Notification` (the universal delivery record), `NotificationDelivery` (per-channel attempt audit trail), `NotificationTemplate` (versioned reusable templates), `NotificationPreference` (per-user opt-in per category per channel), `NotificationCategory` (module-fed registry with is_system+tenant-override rows) and `NotificationDigest` (batched daily/weekly delivery). Channel-agnostic: the single dispatch entry point (`DispatchGatewayInterface`) fires an event-carried state payload to the send queue; channel modules subscribe and translate to their transport. Attribute-driven consumer registration (`#[Notifiable]`, `#[HasPreferences]`) + attribute-first discovery + framework-swappable services + HTTP surface for tenant inbox, tenant preferences, tenant admin templates, RFC 8058 one-click unsubscribe, and cross-tenant platform diagnostics.",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
     "notifications",
-    "notifications"
+    "delivery-log",
+    "templates",
+    "preferences",
+    "digests",
+    "category-registry",
+    "event-carried-state",
+    "dispatch-gateway",
+    "unsubscribe",
+    "audit-trail"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/application": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
+    "academorix/serializer": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-notifications/notifications-sdk": "@dev"
+    "academorix/tenancy": "@dev",
+    "illuminate/bus": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Notifications\\\\": "src/"
+      "Academorix\\Notifications\\": "src/",
+      "Academorix\\Notifications\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Notifications\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Notifications\\\\Tests\\\\": "tests/"
+      "Academorix\\Notifications\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Notifications\\\\Providers\\\\NotificationsServiceProvider"
+        "Academorix\\Notifications\\Providers\\NotificationsServiceProvider"
       ],
       "aliases": {}
     }
   },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-  },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "olvlvl/composer-attribute-collector": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "stable",

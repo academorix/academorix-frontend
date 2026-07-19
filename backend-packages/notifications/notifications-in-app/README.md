@@ -1,49 +1,10 @@
 # academorix/notifications-in-app
 
-Server-side Laravel package for the `notifications-in-app` module.
-Auto-generated from the blueprint at
-`modules/notifications/blueprints/notifications-in-app/`.
+In-app notification channel for Academorix. Registers the `in_app` channel
+driver with the parent `academorix/notifications` module's channel registry and
+subscribes to `NotificationDispatched` events. On dispatch: writes a delivery
+row synchronously (in-app delivery is guaranteed on DB write) and emits a Reverb
+broadcast on the `user.{id}.notifications` private channel for live inbox
+updates. Priority `25` — loads after notifications core (`20`).
 
-## Entities
-
-- (no entities modelled yet)
-
-## Layout
-
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
-
-## Regeneration
-
-```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    notifications notifications-in-app --force
-```
-
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
-
-## Companion wire SDK
-
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-notifications/notifications-in-app-sdk` under
-`sdk/notifications-notifications-in-app-sdk/`. Consumers cross the service
-boundary through the SDK; this package is the SERVER-side owner of the domain.
+Blueprint: `modules/notifications/blueprints/notifications-in-app/`.

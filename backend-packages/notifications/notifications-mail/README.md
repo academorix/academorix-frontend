@@ -1,48 +1,16 @@
 # academorix/notifications-mail
 
-Server-side Laravel package for the `notifications-mail` module. Auto-generated
-from the blueprint at `modules/notifications/blueprints/notifications-mail/`.
+Mail notification channel for Academorix. Registers the `mail` channel driver
+with the parent `academorix/notifications` module's channel registry and
+subscribes to `NotificationDispatched` events. On dispatch: renders the template
+through Laravel Blade, injects CAN-SPAM footer + RFC 8058 `List-Unsubscribe`
+headers, hands off to Laravel Mail's `MailManager`, and captures the provider
+message id into a `NotificationDelivery` row. Ingests per-provider webhooks
+(Mailgun / SendGrid / AWS SES / Postmark / Resend) via the `webhook` module's
+`InboundWebhookReceived` event, normalises them into `MailDelivered` /
+`MailOpened` / `MailClicked` / `MailBounced` / `MailComplaint` events, and owns
+a `MailSuppression` aggregate for hard-bounced / complained / manually-blocked
+addresses. Priority `26` — loads after notifications core (`20`) and
+notifications-in-app (`25`).
 
-## Entities
-
-- **MailSuppression** (`supp_...`) — Suppressed email addresses.
-
-## Layout
-
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
-
-## Regeneration
-
-```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    notifications notifications-mail --force
-```
-
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
-
-## Companion wire SDK
-
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-notifications/notifications-mail-sdk` under
-`sdk/notifications-notifications-mail-sdk/`. Consumers cross the service
-boundary through the SDK; this package is the SERVER-side owner of the domain.
+Blueprint: `modules/notifications/blueprints/notifications-mail/`.

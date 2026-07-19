@@ -1,48 +1,40 @@
-# academorix/notifications-push
+# `academorix/notifications-push`
 
-Server-side Laravel package for the `notifications-push` module. Auto-generated
-from the blueprint at `modules/notifications/blueprints/notifications-push/`.
+Push notification channel for Academorix — Firebase Cloud Messaging (Android +
+Web), Apple Push Notification service (iOS), Expo (React Native), and OneSignal
+(enterprise). Enterprise-day-1 shape: attribute-first DI, `#[Bind]` on
+interfaces, `#[UseModel]` on repositories, `#[Cacheable]` + `#[Filterable]`
+config, `SeedsPermissionEnum` trait, and no property arrays on the provider.
 
-## Entities
+## What it owns
 
-- **PushSubscription** (`psub_...`) — Per-user per-device push subscription.
+- **`PushSubscription` aggregate** — device tokens per user + application,
+  encrypted at rest, fingerprinted for admin visibility. `device_token` NEVER
+  returned on any API response.
+- **`PushTransportManager`** — MultipleInstanceManager wrapping the four
+  supported providers.
+- **`PushChannel`** — registered with the core notifications channel registry
+  under slug `push`.
+- **Provider webhook strategies** — FCM Cloud Pub/Sub OIDC signature, APNs
+  Feedback Service, OneSignal HMAC. Registered against the shared webhook
+  module.
+- **Priority 27** — after notifications core (25), before mail (26 - already
+  landed) and SMS (28).
 
-## Layout
+## Non-goals
 
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
+- Push notification content templating — that lives in
+  `academorix/notifications` (the core module).
+- Inbound webhook receiver — delegated to `academorix/webhook`. This module
+  ships only the per-provider signature strategies.
+- Cross-channel dispatch orchestration — the core notifications module fans out
+  to enabled channels via the `NotificationChannelRegistry`.
 
-## Regeneration
+## Compliance
 
-```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    notifications notifications-push --force
-```
-
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
-
-## Companion wire SDK
-
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-notifications/notifications-push-sdk` under
-`sdk/notifications-notifications-push-sdk/`. Consumers cross the service
-boundary through the SDK; this package is the SERVER-side owner of the domain.
+- **GDPR Art. 32** — device tokens encrypted at rest (AES-256, KMS-backed);
+  fingerprint (SHA-256) exposed to admins for support diagnostics.
+- **COPPA VPC** — marketing pushes to minors without verified parental consent
+  are refused at send-time and audit-logged.
+- **GDPR Art. 17** — `PurgeSubscriptionsForErasedUser` listener hard-deletes
+  every subscription for an erased user.

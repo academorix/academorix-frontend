@@ -1,53 +1,74 @@
 # academorix/transfer
 
-Server-side Laravel package for the `transfer` module. Auto-generated from the
-blueprint at `modules/shared/blueprints/transfer/`.
+Enterprise-grade unified import/export engine for Academorix. Thin wrapper
+around `maatwebsite/excel` — leverages its `->queue()` chain,
+`WithChunkReading`, `WithBatchInserts`, `WithHeadings`, `WithMapping`,
+`WithValidation`, `WithUpserts`, `SkipsFailures` verbatim — layered with
+attribute-driven registration, an `xfer_jobs` domain record, error-artifact
+writer, mode-based imports (append / upsert / replace / delete), sharded imports
+for very large files, downloadable errors artifact for partial success, signed
+download URLs, tenant scoping via `BelongsToTenant`, and per-user notifications
+on completion.
 
-## Entities
+Distinct from `activity` (product feed) and `audit` (compliance evidence) —
+`transfer` runs the data-movement operations both of those modules observe.
 
-- **XferArtifact** (`xart_...`) — Generated file record.
-- **XferJob** (`xfer_...`) — The persisted domain record for a single import /
-  export / sample operation.
-- **XferMappingProfile** (`xmap_...`) — Saved header-remap profile.
-- **XferShard** (`xshd_...`) — Per-shard progress record for a sharded import /
-  export or multi-sheet workbook.
+## Aggregates
 
-## Layout
+| Aggregate            | ULID prefix | Purpose                                                                                   |
+| -------------------- | ----------- | ----------------------------------------------------------------------------------------- |
+| `XferJob`            | `xjb_`      | The operation record — import / export / sample, mode, status, counters, notify channels. |
+| `XferShard`          | `xshd_`     | Sub-job when a file is sharded — parent xfer_job id, shard index, status, counters.       |
+| `XferArtifact`       | `xart_`     | File output — path, format, byte size, checksum, retention expires-at.                    |
+| `XferMappingProfile` | `xmap_`     | Saved header remap profile per tenant per entity. Reusable across imports.                |
 
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
+## Contributes
 
-## Regeneration
+- **Attributes (8)** — `#[Importable]`, `#[Exportable]`, `#[SampleData]`,
+  `#[ImportField]`, `#[ExportField]`, `#[TransferField]`,
+  `#[ImportableWorkbook]`, `#[ExportableWorkbook]`.
+- **Traits (2)** — `HasImportable`, `HasExportable`.
+- **Bindings (9)** — `EntityRegistryInterface`, `WorkbookRegistryInterface`,
+  `ImportManagerInterface`, `ExportManagerInterface`,
+  `SampleDataGeneratorInterface`, `ArtifactStorageInterface`,
+  `MappingProfileRepositoryInterface`, `NotificationChannelResolverInterface`,
+  `SignedUrlSignerInterface` — every default impl ships; consumer apps override
+  any binding via `#[Bind]` on the interface.
+- **Events (10)** — `XferJobQueued`, `XferJobStarted`, `XferJobProgress`,
+  `XferJobShardCompleted`, `XferJobCompleted`, `XferJobPartiallySucceeded`,
+  `XferJobFailed`, `XferJobCancelled`, `XferArtifactPruned`,
+  `SampleDataGenerated`.
+- **Notifications (3)** — `XferJobCompletedNotification`,
+  `XferJobPartiallySucceededNotification`, `XferJobFailedNotification`.
+- **Jobs (11)** — `ImportEntityJob`, `ExportEntityJob`, `ImportShardJob`,
+  `ExportShardJob`, `ImportCoordinatorJob`, `ExportCoordinatorJob`,
+  `GenerateSampleDataJob`, `WriteErrorsArtifactJob`, `MarkXferJobCompletedJob`,
+  `SendXferJobNotificationJob`, `PruneXferArtifactsJob`.
+- **Observers (2)** — `XferJobObserver`, `XferShardObserver`.
+- **Policies (2)** — `XferJobPolicy`, `XferMappingProfilePolicy`.
+- **Casts (7)** — `ImportModeCast`, `ExportFormatCast`, `ImportFormatCast`,
+  `XferJobStatusCast`, `XferJobCountersCast`, `NotifyChannelListCast`,
+  `LookupByCast`.
+- **Rules (5)** — `SupportedImportFormat`, `SupportedExportFormat`,
+  `TransferModeAllowed`, `HeaderRowIndex`, `CsvSeparatorChar`.
+- **Commands (8)** — `transfer:describe`, `transfer:import`, `transfer:export`,
+  `transfer:sample`, `transfer:jobs`, `transfer:cancel`, `transfer:prune`,
+  `transfer:verify`.
+- **Permissions** — dual-guard (`sanctum` + `platform_admin`) via
+  `TransferPermission`.
+
+## Vendor wrap
+
+Rides `maatwebsite/excel` verbatim: `->queue()`, `WithChunkReading`,
+`WithBatchInserts`, `WithHeadings`, `WithMapping`, `WithValidation`,
+`WithUpserts`, `SkipsFailures`, `FromQuery`, `FromCollection`,
+`WithCustomChunkSize`, `WithCustomCsvSettings`, `WithMultipleSheets`,
+`WithColumnWidths`, `WithColumnFormatting`. We never re-implement chunking or
+queueing.
+
+## Tests
 
 ```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    shared transfer --force
+composer install
+vendor/bin/pest
 ```
-
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
-
-## Companion wire SDK
-
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-shared/transfer-sdk` under `sdk/shared-transfer-sdk/`. Consumers
-cross the service boundary through the SDK; this package is the SERVER-side
-owner of the domain.

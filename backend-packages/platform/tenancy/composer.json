@@ -1,66 +1,74 @@
 {
   "name": "academorix/tenancy",
   "type": "library",
-  "description": "Academorix Tenancy module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/tenancy/`. Complements the wire SDK at `academorix-platform/tenancy-sdk`.",
+  "description": "Tenancy domain module — owns the `Tenant` aggregate (customer of an Academorix Application) and its named `TenantContact` roster (billing / legal / DPO / technical / support / owner). Every downstream module scopes rows to a Tenant via the `BelongsToTenant` / `BelongsToTenantOptional` traits + `tenantable()` blueprint macro published here. Ships the `resolve.tenant` / `tenant.user` / `platform.domain` middleware, two Octane-safe tenancy hooks (log-context, cache-prefix), and the tenant lifecycle events every subscriber (billing, webhook, notifications, compliance) listens for.",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
-    "platform",
-    "tenancy"
+    "tenancy",
+    "multi-tenant",
+    "tenant-scope",
+    "domain-module"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/application": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-platform/tenancy-sdk": "@dev"
+    "illuminate/auth": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/mail": "^13.0",
+    "illuminate/notifications": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Tenancy\\\\": "src/"
+      "Academorix\\Tenancy\\": "src/",
+      "Academorix\\Tenancy\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Tenancy\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Tenancy\\\\Tests\\\\": "tests/"
+      "Academorix\\Tenancy\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Tenancy\\\\Providers\\\\TenancyServiceProvider"
+        "Academorix\\Tenancy\\Providers\\TenancyServiceProvider"
       ],
       "aliases": {}
     }
   },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-  },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "olvlvl/composer-attribute-collector": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "stable",

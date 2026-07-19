@@ -1,66 +1,78 @@
 {
   "name": "academorix/invitations",
   "type": "library",
-  "description": "Academorix Invitations module — server-side Laravel package emitted from the module blueprint at `modules/access/blueprints/invitations/`. Complements the wire SDK at `academorix-access/invitations-sdk`.",
+  "description": "Agnostic invitation substrate for Academorix. Owns the `Invitation` aggregate (token-based invitations with target/inviter polymorphism, expiry, resend, bounce tracking, and a full state machine) and the `InvitationEvent` aggregate (append-only funnel audit log). Consumer modules register their `target_type` string via the `InvitationTargetRegistry` at boot; the invitations module handles delivery, bounce tracking, expiry, rate limits, and acceptance orchestration. Not coupled to any specific target or credential provider.",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
-    "access",
-    "invitations"
+    "invitations",
+    "invite",
+    "onboarding",
+    "acceptance",
+    "polymorphic",
+    "audit-funnel",
+    "bounce-tracking",
+    "multi-channel"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
+    "academorix/serializer": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-access/invitations-sdk": "@dev"
+    "academorix/tenancy": "@dev",
+    "illuminate/bus": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/notifications": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Invitations\\\\": "src/"
+      "Academorix\\Invitations\\": "src/",
+      "Academorix\\Invitations\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Invitations\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Invitations\\\\Tests\\\\": "tests/"
+      "Academorix\\Invitations\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Invitations\\\\Providers\\\\InvitationsServiceProvider"
+        "Academorix\\Invitations\\Providers\\InvitationsServiceProvider"
       ],
       "aliases": {}
     }
   },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-  },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "olvlvl/composer-attribute-collector": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "stable",

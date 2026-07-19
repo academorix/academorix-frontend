@@ -1,49 +1,52 @@
 # academorix/domains
 
-Server-side Laravel package for the `domains` module. Auto-generated from the
-blueprint at `modules/platform/blueprints/domains/`.
+Custom-domain substrate for tenant white-label. Owns the `Domain` aggregate
+(canonical hostname bound to a Tenant) and `DomainRecord` (the expected DNS
+records diffed by the verification job).
 
-## Entities
+## Aggregates
 
-- **DomainRecord** (`drc_...`) — DNS record we expect a custom Domain to have.
-- **Domain** (`dom_...`) — Custom domain per tenant.
+| Aggregate      | ULID prefix | Purpose                                                                                        |
+| -------------- | ----------- | ---------------------------------------------------------------------------------------------- |
+| `Domain`       | `dom_`      | Custom hostname per Tenant. `subdomain` (auto) / `custom` / `alias` — one primary per tenant.  |
+| `DomainRecord` | `drc_`      | Expected DNS record we diff against real DNS. Not authoritative; a checklist for verification. |
 
-## Layout
-
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
-
-## Regeneration
+## Install
 
 ```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    platform domains --force
+composer require academorix/domains
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
+Auto-registers via `extra.laravel.providers`.
 
-## Companion wire SDK
+## Blueprint
 
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/domains-sdk` under `sdk/platform-domains-sdk/`. Consumers
-cross the service boundary through the SDK; this package is the SERVER-side
-owner of the domain.
+The wire contract lives at `modules/platform/blueprints/domains/`.
+
+## Contributes
+
+- **Contracts (framework-swappable)**: `DomainVerifierInterface`,
+  `CertificateProvisionerInterface`. Default `Null*` implementations are no-ops;
+  consumer apps bind concrete DNS + ACME providers.
+- **Permissions**: `DomainsPermission` (view + manage — dual-guard).
+- **Commands**: `domains:verify`, `domains:reverify`,
+  `domains:issue-certificate`, `domains:rotate-certificates`.
+- **Events (10)**: Domain lifecycle (added / verified / verification-failed /
+  removed) · DomainRecord lifecycle (created / updated / removed) · Certificate
+  lifecycle (issued / rotated / expiring).
+- **Rules**: `valid_domain_host` (RFC 1035 hostname check).
+
+## DNS + ACME are pluggable
+
+`NullDomainVerifier` and `NullCertificateProvisioner` ship as safe no-ops. A
+consumer app binds a real implementation (e.g. `AwsRoute53Verifier`,
+`LetsEncryptProvisioner`) via `#[Bind]` on the concrete class or a container
+override. The job bodies handle the round-trip; only the verify + issue calls
+delegate to the pluggable provider.
+
+## Tests
+
+```bash
+composer install
+vendor/bin/pest
+```

@@ -5,5 +5,10 @@ parameters:
     level: 9
     paths:
         - src
+        - database
         - tests
     treatPhpDocTypesAsCertain: false
+    checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        # Laravel's magic model accessors return mixed by design.
+        - '#Cannot access property .* on mixed#'

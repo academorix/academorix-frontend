@@ -1,60 +1,83 @@
 {
   "name": "academorix/geography",
   "type": "library",
-  "description": "Academorix Geography module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/geography/`. Complements the wire SDK at `academorix-shared/geography-sdk`.",
+  "description": "Global reference catalog wrapping nnjeim/world. Six entities — Country, State, City, Currency, Language, Timezone — shipped as PUBLIC read-only reference data + an authenticated + rate-limited IP→location resolver on top of MaxMind GeoLite2 with ip-api.com fallback. Not tenant-scoped — the catalog is global platform reference data every marketing page, signup flow, and tenant UI depends on. nnjeim/world owns the six tables + migrations + seeder (installed once via `php artisan world:install`); this module ships subclass models rebinding `config('world.models.*')` so vendor relations return our subclasses, plus the Data / Repository / Service / Controller / Policy / Provider layers.",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
-    "shared",
-    "geography"
+    "geography",
+    "iso-3166",
+    "iso-4217",
+    "iso-639",
+    "countries",
+    "states",
+    "cities",
+    "currencies",
+    "languages",
+    "timezones",
+    "iana",
+    "geolocation",
+    "maxmind",
+    "geolite2",
+    "ip-api",
+    "nnjeim-world",
+    "reference-data"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
     "academorix/routing": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-shared/geography-sdk": "@dev"
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/notifications": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "mattiverse/userstamps": "^1.0",
+    "nesbot/carbon": "^3.0",
+    "nnjeim/world": "^1.1",
+    "olvlvl/composer-attribute-collector": "^2.0",
+    "owen-it/laravel-auditing": "^13.0",
+    "spatie/laravel-data": "^4.11"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Geography\\\\": "src/"
+      "Academorix\\Geography\\": "src/",
+      "Academorix\\Geography\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Geography\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Geography\\\\Tests\\\\": "tests/"
+      "Academorix\\Geography\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Geography\\\\Providers\\\\GeographyServiceProvider"
+        "Academorix\\Geography\\Providers\\GeographyServiceProvider"
       ],
       "aliases": {}
     }
-  },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
   },
   "config": {
     "sort-packages": true,

@@ -1,66 +1,80 @@
 {
   "name": "academorix/notifications-push",
   "type": "library",
-  "description": "Academorix NotificationsPush module — server-side Laravel package emitted from the module blueprint at `modules/notifications/blueprints/notifications-push/`. Complements the wire SDK at `academorix-notifications/notifications-push-sdk`.",
+  "description": "Push notification channel. Owns the PushSubscription entity (device tokens — RESTRICTED tier, encrypted at rest) + a MultipleInstanceManager wrapping FCM (Android + Web) / APNs (iOS) / Expo (React Native) / OneSignal (enterprise). Provider-agnostic delivery with token validation, invalid-token cleanup, COPPA VPC gate for minors, GDPR Art. 32 encryption controls, per-provider health probes. Consumes webhook module for inbound provider feedback.",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
     "notifications",
-    "notifications-push"
+    "push",
+    "mobile-push",
+    "web-push",
+    "fcm",
+    "apns",
+    "expo",
+    "onesignal",
+    "device-tokens",
+    "coppa"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/application": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/notifications": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-notifications/notifications-push-sdk": "@dev"
+    "academorix/tenancy": "@dev",
+    "academorix/webhook": "@dev",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\NotificationsPush\\\\": "src/"
+      "Academorix\\Notifications\\Push\\": "src/",
+      "Academorix\\Notifications\\Push\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Notifications\\Push\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\NotificationsPush\\\\Tests\\\\": "tests/"
+      "Academorix\\Notifications\\Push\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\NotificationsPush\\\\Providers\\\\NotificationsPushServiceProvider"
+        "Academorix\\Notifications\\Push\\Providers\\NotificationsPushServiceProvider"
       ],
       "aliases": {}
     }
   },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-  },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "olvlvl/composer-attribute-collector": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "stable",

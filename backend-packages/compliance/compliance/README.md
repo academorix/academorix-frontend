@@ -1,58 +1,31 @@
 # academorix/compliance
 
-Server-side Laravel package for the `compliance` module. Auto-generated from the
-blueprint at `modules/compliance/blueprints/compliance/`.
+Cross-cutting compliance substrate. Wave 5 infrastructure. The **only**
+canonical orchestrator for GDPR / CCPA data-subject rights, consent evidence,
+retention execution, legal-hold policy, subprocessor / VPC registry, minor
+safeguarding reporting, and breach-notification workflow.
 
-## Entities
+See `modules/compliance/blueprints/compliance/readme.md` for the full design
+narrative.
 
-- **ConsentCategory** (`ccg_...`) — Config-backed catalogue of consent
-  categories.
-- **ConsentRecord** (`cns_...`) — Immutable subject × category × decision
-  snapshot.
-- **DsarArtefact** (`dsa_...`) — Per-module contribution to a DSAR bundle.
-- **Dsar** (`dsr_...`) — Data-Subject-Access-Request state machine.
-- **LegalHold** (`lhd_...`) — Freezes retention on a subject / tenant / case /
-  class scope.
-- **RetentionRun** (`rtr_...`) — Audit trail of every retention sweep.
-- **SafeguardingIncident** (`sfi_...`) — Minor-safeguarding report inbox.
-- **Subprocessor** (`spr_...`) — Versioned VPC / DPA registry.
+## Eight aggregates
 
-## Layout
+- `ConsentCategory` — platform + tenant consent catalogue.
+- `ConsentRecord` — immutable subject x category snapshots.
+- `Dsar` — data-subject-request state machine.
+- `DsarArtefact` — per-module DSAR bundle contribution.
+- `LegalHold` — retention freeze at subject / tenant / case / class scope.
+- `RetentionRun` — audit trail of every retention sweep.
+- `Subprocessor` — versioned VPC registry.
+- `SafeguardingIncident` — minor-safeguarding report inbox.
 
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
+## Attribute contracts
 
-## Regeneration
+Downstream modules opt into the compliance orchestration via attributes:
 
-```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    compliance compliance --force
-```
+- `#[DsarExportable]` / `#[DsarErasable]` — model is a DSAR contributor.
+- `#[ConsentRequired]` — action or job is gated on a consent category.
+- `#[RetentionPolicy]` — model carries an inline retention policy.
+- `#[LegalHoldable]` — model participates in legal-hold checks.
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
-
-## Companion wire SDK
-
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-compliance/compliance-sdk` under `sdk/compliance-compliance-sdk/`.
-Consumers cross the service boundary through the SDK; this package is the
-SERVER-side owner of the domain.
+Registries hydrated at boot via `#[HydratesFrom]` on the interfaces.

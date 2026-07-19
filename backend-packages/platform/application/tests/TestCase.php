@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Academorix\Application\Tests;
 
+use Academorix\Application\Providers\ApplicationServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 /**
- * Base test case for academorix/application.
+ * Base Feature-test case for `academorix/application`.
+ *
+ * Orchestra Testbench loads the module's service provider + every
+ * framework provider the module depends on (authorization, caching,
+ * console, crud, database, events, exceptions, foundation, localization,
+ * retention, routing, scheduling, service-provider).
  *
  * @category Application
  *
@@ -15,6 +21,31 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
  */
 abstract class TestCase extends OrchestraTestCase
 {
-    // Add package providers here if the module's tests need Laravel container
-    // access beyond Orchestra's defaults.
+    /**
+     * Providers registered in every Feature test's boot cycle.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return array<int, class-string>
+     */
+    protected function getPackageProviders($app): array
+    {
+        return [
+            ApplicationServiceProvider::class,
+        ];
+    }
+
+    /**
+     * Environment overrides applied before every test.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     */
+    protected function defineEnvironment($app): void
+    {
+        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.connections.testing', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+            'prefix'   => '',
+        ]);
+    }
 }

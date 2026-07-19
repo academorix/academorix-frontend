@@ -1,60 +1,89 @@
 {
   "name": "academorix/search",
   "type": "library",
-  "description": "Academorix Search module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/search/`. Complements the wire SDK at `academorix-shared/search-sdk`.",
+  "description": "Enterprise search engine. Thin wrapper around laravel/scout with attribute-driven registration (#[Searchable] / #[SearchField] / #[SearchFacet] / #[SearchSynonym] / #[SearchBoost]), pluggable engine adapters (Meilisearch, Postgres FTS, pgvector, Elasticsearch stub), a unified query API, zero-downtime reindex via alias swap, per-tenant + per-language synonym registry, saved queries + smart lists, user-facing autocomplete, and full analytics (query volume, no-results, click-through).",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
-    "shared",
-    "search"
+    "search",
+    "scout",
+    "meilisearch",
+    "pgvector",
+    "postgres-fts",
+    "tsvector",
+    "elasticsearch",
+    "autocomplete",
+    "faceted-search",
+    "synonyms",
+    "analytics",
+    "multi-tenant",
+    "semantic-search"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/activity": "@dev",
+    "academorix/audit": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/notifications": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
+    "academorix/serializer": "@dev",
     "academorix/service-provider": "@dev",
+    "academorix/settings": "@dev",
     "academorix/support": "@dev",
-    "academorix-shared/search-sdk": "@dev"
+    "academorix/tenancy": "@dev",
+    "illuminate/bus": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "laravel/scout": "^10.0",
+    "mattiverse/userstamps": "^1.0",
+    "olvlvl/composer-attribute-collector": "^2.0",
+    "owen-it/laravel-auditing": "^13.0",
+    "spatie/laravel-data": "^4.11"
+  },
+  "suggest": {
+    "devnoiseconsulting/laravel-scout-postgres-tsvector": "Required by PostgresFtsEngine when the `search.engines.postgres_fts` driver is used.",
+    "benbjurstrom/pgvector-scout": "Required by PgvectorEngine when the `search.can_use_pgvector` entitlement is granted."
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Search\\\\": "src/"
+      "Academorix\\Search\\": "src/",
+      "Academorix\\Search\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Search\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Search\\\\Tests\\\\": "tests/"
+      "Academorix\\Search\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Search\\\\Providers\\\\SearchServiceProvider"
+        "Academorix\\Search\\Providers\\SearchServiceProvider"
       ],
       "aliases": {}
     }
-  },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
   },
   "config": {
     "sort-packages": true,

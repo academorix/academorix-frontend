@@ -1,66 +1,74 @@
 {
   "name": "academorix/branding",
   "type": "library",
-  "description": "Academorix Branding module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/branding/`. Complements the wire SDK at `academorix-platform/branding-sdk`.",
+  "description": "White-label branding profile per Tenant — theme, palette, logo variants, typography, custom CSS variables. Cache-heavy (100:1 read/write) so it warrants its own module + cache lifecycle. Publishes the `BrandingResolver` (per-domain resolution) + `OgImageRenderer` (open-graph card renderer) bindings — default `Null*` implementations ship; consumer apps override.",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
-    "platform",
-    "branding"
+    "branding",
+    "theme",
+    "logo",
+    "palette",
+    "typography",
+    "white-label",
+    "og-image"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-platform/branding-sdk": "@dev"
+    "academorix/tenancy": "@dev",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Branding\\\\": "src/"
+      "Academorix\\Branding\\": "src/",
+      "Academorix\\Branding\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Branding\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Branding\\\\Tests\\\\": "tests/"
+      "Academorix\\Branding\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Branding\\\\Providers\\\\BrandingServiceProvider"
+        "Academorix\\Branding\\Providers\\BrandingServiceProvider"
       ],
       "aliases": {}
     }
   },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-  },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "olvlvl/composer-attribute-collector": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "stable",

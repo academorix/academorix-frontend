@@ -1,52 +1,87 @@
 # academorix/webhook
 
-Server-side Laravel package for the `webhook` module. Auto-generated from the
-blueprint at `modules/platform/blueprints/webhook/`.
+Outbound webhook substrate for Academorix. Owns two aggregates:
+`WebhookSubscription` (the customer-registered destination + event filter) and
+`WebhookDelivery` (the per-attempt outbound audit trail).
 
-## Entities
+## Aggregates
 
-- **WebhookDelivery** (`wdlv_...`) — Per-attempt audit row for outbound webhook
-  dispatches.
-- **WebhookSubscription** (`wsub_...`) — One customer-registered subscription:
-  destination (HTTPS URL / EventBridge / PubSub / mTLS) + events subscribed to +
-  api...
+| Aggregate             | ULID prefix | Purpose                                                                                                    |
+| --------------------- | ----------- | ---------------------------------------------------------------------------------------------------------- |
+| `WebhookSubscription` | `whs_`      | Registered destination + subscribed events + api_version pin + signing secret (with rotation grace).       |
+| `WebhookDelivery`     | `whd_`      | Append-only per-attempt audit row: request URL + payload + response + latency + signature + attempt count. |
 
-## Layout
-
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
-
-## Regeneration
+## Install
 
 ```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    platform webhook --force
+composer require academorix/webhook
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
+## Contributes
 
-## Companion wire SDK
+- **Contracts (framework-swappable)**: `WebhookSigner`, `WebhookSender`,
+  `WebhookEventDispatcher`, `WebhookRegistry`, `WebhookDestinationRegistry`,
+  `SecretRotator`, `BackoffStrategyResolver`. Default impls ship — consumer apps
+  override any binding.
+- **Attributes**: `#[AsWebhookEvent]` (mark an event class as broadcastable),
+  `#[AsWebhookDestination]` (register a destination driver).
+- **Destinations (4)**: `HttpsDestination` (ships in v1),
+  `EventBridgeDestination`, `PubSubDestination`, `MtlsHttpsDestination`
+  (feature-flag guarded).
+- **Backoff strategies (2)**: `StaticArrayBackoffStrategy`,
+  `RetryAfterAwareBackoffStrategy`.
+- **Permissions**: `WebhookPermission` (view, manage, manage-own — dual-guard).
+- **Commands**: `webhook:list`, `webhook:destinations`, `webhook:retry`,
+  `webhook:rotate-secret`, `webhook:test`, `webhook:probe`, `webhook:prune`.
+- **Events (14)**: subscription lifecycle + delivery lifecycle + probe
+  outcomes + inbound receiver.
+- **Jobs (4)**: `DispatchWebhookJob`, `WebhookProbeJob`,
+  `PruneWebhookDeliveriesJob`, `AutoUpgradePinnedSubscriptionsJob`.
+- **Middleware**: `webhooks.verify` — inbound-webhook signature guard.
+- **Casts (3)**: `WebhookPayloadCast` (encrypted), `DestinationConfigCast`
+  (encrypted), `BackoffConfigCast` (plain JSON).
 
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/webhook-sdk` under `sdk/platform-webhook-sdk/`. Consumers
-cross the service boundary through the SDK; this package is the SERVER-side
-owner of the domain.
+## Signing spec
+
+Every outbound request carries the following headers:
+
+| Header                         | Value                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------- |
+| `X-Webhook-ID`                 | Delivery ULID (`whd_...`). Idempotency key for the receiver.              |
+| `X-Webhook-Event`              | Event name (e.g. `invitation.sent`).                                      |
+| `X-Webhook-Event-Version`      | Resolved payload version (e.g. `v1`).                                     |
+| `X-Webhook-Timestamp`          | Unix timestamp when the payload was signed.                               |
+| `X-Webhook-Signature`          | `hex(hmac_sha256(timestamp + '.' + event + '.' + payload, secret))`.      |
+| `X-Webhook-Signature-Previous` | Only during rotation grace — signature computed with the previous secret. |
+| `X-Webhook-Attempt`            | 1-indexed attempt number. Enables receiver dedup.                         |
+
+Receivers reject when `abs(now - timestamp) > replay_window_seconds` (default
+300).
+
+## Rotation grace
+
+`webhook:rotate-secret <subscription>` moves the current secret into
+`signing_secret_previous`, generates a new secret, and sets a grace window
+(default 24h). During the grace window every outbound request carries BOTH
+signatures so receivers can migrate without downtime. After the window the
+previous secret is cleared.
+
+## Destination drivers
+
+| Driver        | Kind          | Requires config                                                | Ships in v1 | Feature flag                      |
+| ------------- | ------------- | -------------------------------------------------------------- | ----------- | --------------------------------- |
+| `https`       | standard      | `url`                                                          | yes         | none                              |
+| `eventbridge` | aws           | `region`, `event_bus_name`, `source`                           | stub        | `webhook.destination.eventbridge` |
+| `pubsub`      | gcp           | `project_id`, `topic_name`                                     | stub        | `webhook.destination.pubsub`      |
+| `mtls-https`  | high-security | `url`, `client_cert_path`, `client_key_path`, `ca_bundle_path` | stub        | `webhook.destination.mtls`        |
+
+The stub destinations throw `\RuntimeException` at dispatch time — consumer apps
+override `#[Bind]` with a real implementation once the required SDK is
+available.
+
+## Tests
+
+```bash
+composer install
+vendor/bin/pest
+```

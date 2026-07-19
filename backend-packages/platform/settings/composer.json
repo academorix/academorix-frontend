@@ -1,66 +1,75 @@
 {
   "name": "academorix/settings",
   "type": "library",
-  "description": "Academorix Settings module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/settings/`. Complements the wire SDK at `academorix-platform/settings-sdk`.",
+  "description": "Attribute-driven settings registry. Ships `#[AsSetting]` + `#[SettingGroup]` + `#[SettingField]` for declarative authoring across every module. Registry hydrates at boot; reads resolve via the `system → tenant → user` hierarchy; writes fire `SettingsChangeEvent` for the activity + audit dual-write. HTTP surface `GET|PUT /api/v1/settings/{group}` + a schema endpoint for the admin UI. Wraps `spatie/laravel-settings` for the storage layer.",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
-    "platform",
-    "settings"
+    "settings",
+    "configuration",
+    "attribute-driven",
+    "spatie-settings",
+    "hierarchy",
+    "system-tenant-user",
+    "dual-write"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-platform/settings-sdk": "@dev"
+    "academorix/tenancy": "@dev",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11",
+    "spatie/laravel-settings": "^3.0"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Settings\\\\": "src/"
+      "Academorix\\Settings\\": "src/",
+      "Academorix\\Settings\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Settings\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Settings\\\\Tests\\\\": "tests/"
+      "Academorix\\Settings\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Settings\\\\Providers\\\\SettingsServiceProvider"
+        "Academorix\\Settings\\Providers\\SettingsServiceProvider"
       ],
       "aliases": {}
     }
   },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-  },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "olvlvl/composer-attribute-collector": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "stable",

@@ -1,55 +1,55 @@
 # academorix/integrations
 
-Server-side Laravel package for the `integrations` module. Auto-generated from
-the blueprint at `modules/platform/blueprints/integrations/`.
+Third-party integration credentials per Tenant. Owns the `TenantIntegration`
+aggregate — Stripe, Slack, HubSpot, Zapier, custom OAuth2, SCIM, HRIS, LMS.
 
-## Entities
+## Aggregate
 
-- **AppInstallation** (`ain_...`) — Per-(tenant, app) install grant.
-- **AppWebhookSubscription** (`awh_...`) — Per-install webhook subscription.
-- **App** (`apk_...`) — Marketplace app definition (Lane 2 per ADR 0025).
-- **IntegrationProvider** (`ipd_...`) — Allowlist catalog of every provider
-  Academorix supports (stripe / paddle / pipedrive / hubspot / twilio / zoom /
-  apple_w...
-- **TenantIntegration** (`wit_...`) — External identity / directory / HRIS / LMS
-  integration configured for a Tenant.
+| Aggregate           | ULID prefix | Purpose                                                                                                                                                                           |
+| ------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TenantIntegration` | `wit_`      | One row per (Tenant × integration kind × provider). Config blob is encrypted at rest via KMS pointer; NEVER surfaces on the tenant-facing wire outside the redacted status shape. |
 
-## Layout
-
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
-
-## Regeneration
+## Install
 
 ```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    platform integrations --force
+composer require academorix/integrations
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
+## Blueprint
 
-## Companion wire SDK
+Wire contract at `modules/platform/blueprints/integrations/`.
 
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/integrations-sdk` under `sdk/platform-integrations-sdk/`.
-Consumers cross the service boundary through the SDK; this package is the
-SERVER-side owner of the domain.
+## Contributes
+
+- **Contracts (framework-swappable)**: `IntegrationSecretsCipherInterface` (KMS
+  encrypt/decrypt of the `config` blob) + `IntegrationRegistryInterface`
+  (per-provider `sync()` dispatcher). Default `Null*` implementations ship —
+  consumer apps bind their own.
+- **Permissions**: `IntegrationsPermission` — dual-guard (view + manage on
+  `platform_admin`; manage-own on `sanctum`).
+- **Commands**: `integrations:list`, `integrations:sync`,
+  `integrations:rotate-tokens`, `integrations:purge-disabled`.
+- **Events (7)**: `IntegrationConfigured`, `IntegrationSyncStarted`,
+  `IntegrationSyncCompleted`, `IntegrationSyncFailed`,
+  `IntegrationTokenRefreshed`, `IntegrationDisabled`, `IntegrationRemoved`.
+- **Jobs (3)**: `SyncIntegrationJob`, `RefreshIntegrationTokenJob`,
+  `PurgeDisabledIntegrationJob`.
+- **Rule**: `valid_integration_provider` — checks that `provider` is a known key
+  for the given `kind` (`config('integrations.providers')` whitelist).
+- **Cast**: `IntegrationConfig` — encrypts on save, decrypts on hydrate via the
+  container-resolved cipher.
+
+## Encrypted-at-rest note
+
+The `config` JSONB column NEVER holds plaintext. The `IntegrationConfig` cast
+routes every read + write through `IntegrationSecretsCipherInterface`. The
+default `NullIntegrationSecretsCipher` is a pass-through so the module boots
+without a KMS backend — PRODUCTION MUST OVERRIDE with a KMS-backed cipher before
+enabling real integrations.
+
+## Tests
+
+```bash
+composer install
+vendor/bin/pest
+```

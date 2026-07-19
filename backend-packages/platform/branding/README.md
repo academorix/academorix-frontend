@@ -1,48 +1,47 @@
 # academorix/branding
 
-Server-side Laravel package for the `branding` module. Auto-generated from the
-blueprint at `modules/platform/blueprints/branding/`.
+White-label branding substrate for Academorix tenants. Owns the `Branding`
+aggregate — theme, palette, logo variants, typography, and custom CSS variables.
 
-## Entities
+## Aggregate
 
-- **Branding** (`brd_...`) — Theme + logo profile per tenant.
+| Aggregate  | ULID prefix | Purpose                                                                                                                                        |
+| ---------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Branding` | `brd_`      | Theme + palette + logo profile per Tenant. Multiple profiles per tenant (day/night, per-domain, seasonal). One `is_default = true` per tenant. |
 
-## Layout
-
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
-
-## Regeneration
+## Install
 
 ```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    platform branding --force
+composer require academorix/branding
 ```
 
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
+## Blueprint
 
-## Companion wire SDK
+Wire contract at `modules/platform/blueprints/branding/`.
 
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-platform/branding-sdk` under `sdk/platform-branding-sdk/`. Consumers
-cross the service boundary through the SDK; this package is the SERVER-side
-owner of the domain.
+## Contributes
+
+- **Contracts (framework-swappable)**: `BrandingResolverInterface` (per-domain
+  or per-tenant resolution) + `OgImageRendererInterface` (open-graph card
+  renderer). Default `Null*` implementations ship — consumer apps bind their
+  own.
+- **Permissions**: `BrandingPermission` (view + manage — dual-guard).
+- **Commands**: `branding:regenerate-og-images`, `branding:seed-defaults`.
+- **Events (4)**: `BrandingCreated`, `BrandingUpdated`, `BrandingReset`,
+  `BrandingArchived`.
+- **Rule**: `valid_hex_color`.
+- **Cast**: `BrandingPayload` — structured DTO around the palette + logo bundle
+  that `Tenant.branding` (JSONB) is denormalised from.
+
+## Cache strategy
+
+Repository ships `#[Cacheable(ttl: 3600, tags: true)]` — a 1-hour TTL and
+tag-based invalidation. The observer flushes the tenant tag on every write, so
+readers see stable snapshots but writes propagate immediately.
+
+## Tests
+
+```bash
+composer install
+vendor/bin/pest
+```

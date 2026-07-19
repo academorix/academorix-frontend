@@ -1,66 +1,78 @@
 {
   "name": "academorix/domains",
   "type": "library",
-  "description": "Academorix Domains module — server-side Laravel package emitted from the module blueprint at `modules/platform/blueprints/domains/`. Complements the wire SDK at `academorix-platform/domains-sdk`.",
+  "description": "Domains domain module — owns the `Domain` aggregate (custom hostname bound to a Tenant) and `DomainRecord` (the expected DNS records diffed by the verification job). Publishes the `DomainVerifier` + `CertificateProvisioner` bindings every host-resolver + ACME consumer swaps at deploy. Extracted from tenants at v0.3 so long-running DNS + cert workflows own their module lifecycle.",
   "license": "proprietary",
   "keywords": [
     "academorix",
-    "module",
     "laravel",
-    "platform",
-    "domains"
+    "domain",
+    "dns",
+    "cname",
+    "verification",
+    "certificate",
+    "ssl",
+    "white-label",
+    "domain-module"
   ],
   "require": {
     "php": "^8.3",
-    "illuminate/support": "^13.0",
-    "illuminate/database": "^13.0",
-    "illuminate/container": "^13.0",
-    "illuminate/contracts": "^13.0",
-    "spatie/laravel-data": "^4.11",
-    "academorix/foundation": "@dev",
+    "academorix/application": "@dev",
+    "academorix/authorization": "@dev",
+    "academorix/console": "@dev",
     "academorix/crud": "@dev",
+    "academorix/database": "@dev",
+    "academorix/enum": "@dev",
+    "academorix/events": "@dev",
+    "academorix/exceptions": "@dev",
+    "academorix/foundation": "@dev",
+    "academorix/retention": "@dev",
     "academorix/routing": "@dev",
     "academorix/service-provider": "@dev",
     "academorix/support": "@dev",
-    "academorix-platform/domains-sdk": "@dev"
+    "academorix/tenancy": "@dev",
+    "illuminate/contracts": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/events": "^13.0",
+    "illuminate/http": "^13.0",
+    "illuminate/mail": "^13.0",
+    "illuminate/notifications": "^13.0",
+    "illuminate/queue": "^13.0",
+    "illuminate/routing": "^13.0",
+    "illuminate/support": "^13.0",
+    "spatie/laravel-data": "^4.11"
   },
   "require-dev": {
+    "mockery/mockery": "^1.6",
     "orchestra/testbench": "^11.0",
     "pestphp/pest": "^4.0",
     "pestphp/pest-plugin-laravel": "^4.0",
-    "phpstan/phpstan": "^2.0",
-    "mockery/mockery": "^1.6"
+    "phpstan/phpstan": "^2.0"
   },
   "autoload": {
     "psr-4": {
-      "Academorix\\\\Domains\\\\": "src/"
+      "Academorix\\Domains\\": "src/",
+      "Academorix\\Domains\\Database\\Factories\\": "database/factories/",
+      "Academorix\\Domains\\Database\\Seeders\\": "database/seeders/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Academorix\\\\Domains\\\\Tests\\\\": "tests/"
+      "Academorix\\Domains\\Tests\\": "tests/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Academorix\\Domains\\\\Providers\\\\DomainsServiceProvider"
+        "Academorix\\Domains\\Providers\\DomainsServiceProvider"
       ],
       "aliases": {}
     }
   },
-  "scripts": {
-    "test": "./vendor/bin/pest",
-    "test:coverage": "./vendor/bin/pest --coverage --min=80",
-    "lint": "./vendor/bin/pint --test",
-    "format": "./vendor/bin/pint",
-    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
-  },
   "config": {
     "sort-packages": true,
     "allow-plugins": {
-      "pestphp/pest-plugin": true,
-      "olvlvl/composer-attribute-collector": true
+      "pestphp/pest-plugin": true
     }
   },
   "minimum-stability": "stable",

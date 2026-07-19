@@ -1,51 +1,26 @@
 # academorix/subscription
 
-Server-side Laravel package for the `subscription` module. Auto-generated from
-the blueprint at `modules/billing/blueprints/subscription/`.
+Tenant subscription lifecycle. Wave 5 infrastructure. Wraps `laravel/cashier`
+for payment-provider-agnostic billing (Stripe + Paddle).
 
-## Entities
+See `modules/billing/blueprints/subscription/readme.md` for the full design
+narrative.
 
-- **Plan** (`pln_...`) — Per-Application plan definition.
-- **SubscriptionEvent** (`sev_...`) — Append-only audit row for every
-  Subscription state change.
-- **Subscription** (`sub_...`) — Tenant's active subscription.
+## What this package owns
 
-## Layout
+- `Plan` — per-Application plan catalogue with `default_entitlements` map.
+- `Subscription` — tenant's active plan, wrapping Cashier's own row via
+  `provider_subscription_id`; adds our own state layer with grace period beyond
+  provider default.
+- `SubscriptionEvent` — 7-year append-only SOX audit trail of every state
+  transition.
 
-```
-src/
-├── Providers/                     # <Name>ServiceProvider (module boot)
-├── Contracts/
-│   ├── Data/*Interface.php        # TABLE + ATTR_* constants (#[Bind]-bound to Model)
-│   └── Repositories/*Interface.php
-├── Models/*.php                   # Eloquent, attribute-first
-├── Repositories/*.php             # #[AsRepository] + #[UseModel]
-├── Data/*.php                     # Spatie Data output DTOs
-├── Policies/*.php                 # Wired via #[UsePolicy] on the Model
-├── Events/*.php                   # Domain events (ShouldDispatchAfterCommit)
-└── Actions/*.php                  # Single-invoke controllers (#[AsController])
-database/
-├── migrations/*.php
-├── factories/*.php
-└── seeders/*.php                  # (dual-source catalogues only)
-tests/
-├── Feature/
-└── Unit/
-```
+## Layers ship attribute-first per the repo's canonical shape
 
-## Regeneration
-
-```bash
-python3 modules/shared/blueprints/foundation/scripts/generate-module.py \
-    billing subscription --force
-```
-
-Files carrying the `AUTO-GENERATED` header are safe to regenerate; every other
-file is a hand-tuned override that survives regeneration.
-
-## Companion wire SDK
-
-The wire-visible Saloon + Spatie Data package lives at
-`academorix-billing/subscription-sdk` under `sdk/billing-subscription-sdk/`.
-Consumers cross the service boundary through the SDK; this package is the
-SERVER-side owner of the domain.
+- `#[Bind]` on the interfaces (Pattern A).
+- `#[AsRepository]` + `#[Cacheable]` + `#[Filterable]` on the repositories.
+- `#[AsAction]` + verb attribute + `#[RequirePermission]` on every action.
+- `#[AsSeeder(priority: 49)]` on the permission seeder — composes
+  `SeedsPermissionEnum`.
+- `#[AsEvent]` on every event.
+- `#[ObservedBy]` + `#[UsePolicy]` on the models.
