@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/formations/subprocessors",
+  "$version": 1,
+  "title": "formations — subprocessors used",
+  "description": "Third-party subprocessors this module uses for its own operation.",
+  "subprocessors": []
+}

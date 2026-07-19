@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/hooks",
+  "$version": 1,
+  "title": "offline-sync — tenant hooks",
+  "description": "Per-tenant lifecycle callbacks (log context, cache prefix, cache invalidation).",
+  "hooks": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/permissions",
+  "$version": 1,
+  "title": "offline-sync — permissions",
+  "description": "Permission strings the module seeds + the guard they target.",
+  "permissions": []
+}

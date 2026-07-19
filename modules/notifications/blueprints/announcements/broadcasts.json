@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/announcements/broadcasts",
+  "$version": 1,
+  "title": "announcements — broadcast channels",
+  "description": "Channels this module publishes to for real-time UI updates.",
+  "channels": []
+}

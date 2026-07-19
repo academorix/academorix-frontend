@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/private-sessions/errors",
+  "$version": 1,
+  "title": "private-sessions — error catalogue",
+  "description": "Domain exception classes + HTTP status + translation keys.",
+  "errors": []
+}

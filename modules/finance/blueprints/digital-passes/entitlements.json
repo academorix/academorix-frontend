@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/digital-passes/entitlements",
+  "$version": 1,
+  "title": "digital-passes — entitlements consumed",
+  "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",
+  "consumed": []
+}

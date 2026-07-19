@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/features",
+  "$version": 1,
+  "title": "offline-sync — feature keys",
+  "description": "Feature keys this module publishes for tenant entitlement gating.",
+  "features": []
+}

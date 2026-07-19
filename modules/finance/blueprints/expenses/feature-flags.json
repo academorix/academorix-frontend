@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/expenses/feature-flags",
+  "$version": 1,
+  "title": "expenses — feature flags",
+  "description": "Kill switches + gradual-rollout flags this module publishes.",
+  "flags": []
+}

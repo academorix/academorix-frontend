@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/crm-leads/rules",
+  "$version": 1,
+  "title": "crm-leads — validation rules",
+  "description": "Named validation rules this module ships (registered via Validator::extend).",
+  "rules": []
+}

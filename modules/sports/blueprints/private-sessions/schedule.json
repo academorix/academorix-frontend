@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/private-sessions/schedule",
+  "$version": 1,
+  "title": "private-sessions — scheduled tasks",
+  "description": "Artisan / cron entries this module registers.",
+  "schedule": []
+}

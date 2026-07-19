@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/digital-passes/features",
+  "$version": 1,
+  "title": "digital-passes — feature keys",
+  "description": "Feature keys this module publishes for tenant entitlement gating.",
+  "features": []
+}

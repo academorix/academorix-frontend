@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/progress/caches",
+  "$version": 1,
+  "title": "progress — cache keys",
+  "description": "Cache keys the module owns + TTLs + invalidation triggers + tags.",
+  "keys": []
+}

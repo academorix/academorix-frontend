@@ -1,0 +1,9 @@
+{
+  "id": "academorix://modules/private-sessions/relations",
+  "$version": 1,
+  "title": "private-sessions — model relationships",
+  "description": "Eloquent relations rooted at this module's models. `internal` = same-module edges; `outbound` = edges to other modules' models.",
+  "internal": [],
+  "outbound": [],
+  "inbound_expected": []
+}

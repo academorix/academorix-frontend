@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/private-sessions/features",
+  "$version": 1,
+  "title": "private-sessions — feature keys",
+  "description": "Feature keys this module publishes for tenant entitlement gating.",
+  "features": []
+}

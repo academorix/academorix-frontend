@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/people/config",
+  "$version": 1,
+  "title": "people — config keys",
+  "description": "config/<module>.php shape + defaults.",
+  "keys": []
+}

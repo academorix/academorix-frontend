@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/config",
+  "$version": 1,
+  "title": "offline-sync — config keys",
+  "description": "config/<module>.php shape + defaults.",
+  "keys": []
+}

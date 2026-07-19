@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/errors",
+  "$version": 1,
+  "title": "admin-console — error catalogue",
+  "description": "Domain exception classes + HTTP status + translation keys.",
+  "errors": []
+}

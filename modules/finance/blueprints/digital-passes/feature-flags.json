@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/digital-passes/feature-flags",
+  "$version": 1,
+  "title": "digital-passes — feature flags",
+  "description": "Kill switches + gradual-rollout flags this module publishes.",
+  "flags": []
+}

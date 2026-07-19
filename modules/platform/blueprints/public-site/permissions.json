@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/public-site/permissions",
+  "$version": 1,
+  "title": "public-site — permissions",
+  "description": "Permission strings the module seeds + the guard they target.",
+  "permissions": []
+}

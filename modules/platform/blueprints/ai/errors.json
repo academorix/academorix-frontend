@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/ai/errors",
+  "$version": 1,
+  "title": "ai — error catalogue",
+  "description": "Domain exception classes + HTTP status + translation keys.",
+  "errors": []
+}

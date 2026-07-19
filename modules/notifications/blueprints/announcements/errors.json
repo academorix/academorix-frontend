@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/announcements/errors",
+  "$version": 1,
+  "title": "announcements — error catalogue",
+  "description": "Domain exception classes + HTTP status + translation keys.",
+  "errors": []
+}

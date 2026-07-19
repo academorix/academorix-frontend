@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/digital-passes/errors",
+  "$version": 1,
+  "title": "digital-passes — error catalogue",
+  "description": "Domain exception classes + HTTP status + translation keys.",
+  "errors": []
+}

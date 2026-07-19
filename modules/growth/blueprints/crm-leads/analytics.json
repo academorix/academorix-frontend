@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/crm-leads/analytics",
+  "$version": 1,
+  "title": "crm-leads — product-analytics events",
+  "description": "PostHog / Mixpanel / Segment events this module emits.",
+  "events": []
+}

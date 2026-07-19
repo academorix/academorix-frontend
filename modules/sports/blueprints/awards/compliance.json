@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/awards/compliance",
+  "$version": 1,
+  "title": "awards — self-compliance posture",
+  "description": "Regulatory regimes this module's data touches + how each is discharged.",
+  "regimes": []
+}

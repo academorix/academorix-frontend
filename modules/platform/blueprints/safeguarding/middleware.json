@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/safeguarding/middleware",
+  "$version": 1,
+  "title": "safeguarding — HTTP middleware",
+  "description": "Middleware aliases this module contributes.",
+  "middleware": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/private-sessions/metrics",
+  "$version": 1,
+  "title": "private-sessions — OpenTelemetry metrics",
+  "description": "OTel / Prometheus metrics this module emits.",
+  "metrics": []
+}

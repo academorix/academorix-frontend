@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/messaging/listeners",
+  "$version": 1,
+  "title": "messaging — event listeners",
+  "description": "Listeners this module registers, keyed by the event they consume.",
+  "listeners": []
+}

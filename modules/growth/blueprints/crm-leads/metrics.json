@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/crm-leads/metrics",
+  "$version": 1,
+  "title": "crm-leads — OpenTelemetry metrics",
+  "description": "OTel / Prometheus metrics this module emits.",
+  "metrics": []
+}

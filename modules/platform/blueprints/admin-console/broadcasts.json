@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/broadcasts",
+  "$version": 1,
+  "title": "admin-console — broadcast channels",
+  "description": "Channels this module publishes to for real-time UI updates.",
+  "channels": []
+}

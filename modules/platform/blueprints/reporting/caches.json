@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/reporting/caches",
+  "$version": 1,
+  "title": "reporting — cache keys",
+  "description": "Cache keys the module owns + TTLs + invalidation triggers + tags.",
+  "keys": []
+}

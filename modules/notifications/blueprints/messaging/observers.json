@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/messaging/observers",
+  "$version": 1,
+  "title": "messaging — model observers",
+  "description": "Eloquent observers this module registers, wired via `#[ObservedBy]` on models.",
+  "observers": []
+}

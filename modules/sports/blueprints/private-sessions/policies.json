@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/private-sessions/policies",
+  "$version": 1,
+  "title": "private-sessions — authorization policies",
+  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
+  "policies": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/compliance",
+  "$version": 1,
+  "title": "admin-console — self-compliance posture",
+  "description": "Regulatory regimes this module's data touches + how each is discharged.",
+  "regimes": []
+}

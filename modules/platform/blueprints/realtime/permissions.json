@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/realtime/permissions",
+  "$version": 1,
+  "title": "realtime — permissions",
+  "description": "Permission strings the module seeds + the guard they target.",
+  "permissions": []
+}

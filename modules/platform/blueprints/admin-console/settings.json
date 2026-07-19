@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/settings",
+  "$version": 1,
+  "title": "admin-console — tenant-editable settings",
+  "description": "Settings this module registers against the settings substrate.",
+  "settings": []
+}

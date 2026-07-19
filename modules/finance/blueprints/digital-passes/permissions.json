@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/digital-passes/permissions",
+  "$version": 1,
+  "title": "digital-passes — permissions",
+  "description": "Permission strings the module seeds + the guard they target.",
+  "permissions": []
+}

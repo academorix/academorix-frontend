@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/reception/feature-flags",
+  "$version": 1,
+  "title": "reception — feature flags",
+  "description": "Kill switches + gradual-rollout flags this module publishes.",
+  "flags": []
+}

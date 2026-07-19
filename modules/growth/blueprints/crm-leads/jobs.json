@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/crm-leads/jobs",
+  "$version": 1,
+  "title": "crm-leads — queued jobs",
+  "description": "Queued jobs this module dispatches.",
+  "jobs": []
+}

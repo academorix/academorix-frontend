@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/formations/entitlements",
+  "$version": 1,
+  "title": "formations — entitlements consumed",
+  "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",
+  "consumed": []
+}

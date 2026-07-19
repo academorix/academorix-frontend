@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/awards/rules",
+  "$version": 1,
+  "title": "awards — validation rules",
+  "description": "Named validation rules this module ships (registered via Validator::extend).",
+  "rules": []
+}

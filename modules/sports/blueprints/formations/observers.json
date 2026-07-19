@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/formations/observers",
+  "$version": 1,
+  "title": "formations — model observers",
+  "description": "Eloquent observers this module registers, wired via `#[ObservedBy]` on models.",
+  "observers": []
+}

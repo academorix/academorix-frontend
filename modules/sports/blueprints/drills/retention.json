@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/drills/retention",
+  "$version": 1,
+  "title": "drills — data retention windows",
+  "description": "Per-entity retention windows the retention runner respects.",
+  "policies": []
+}

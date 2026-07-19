@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/private-sessions/broadcasts",
+  "$version": 1,
+  "title": "private-sessions — broadcast channels",
+  "description": "Channels this module publishes to for real-time UI updates.",
+  "channels": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/competition/config",
+  "$version": 1,
+  "title": "competition — config keys",
+  "description": "config/<module>.php shape + defaults.",
+  "keys": []
+}

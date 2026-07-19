@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/public-site/features",
+  "$version": 1,
+  "title": "public-site — feature keys",
+  "description": "Feature keys this module publishes for tenant entitlement gating.",
+  "features": []
+}

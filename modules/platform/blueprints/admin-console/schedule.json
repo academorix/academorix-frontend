@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/schedule",
+  "$version": 1,
+  "title": "admin-console — scheduled tasks",
+  "description": "Artisan / cron entries this module registers.",
+  "schedule": []
+}

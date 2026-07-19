@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/people/middleware",
+  "$version": 1,
+  "title": "people — HTTP middleware",
+  "description": "Middleware aliases this module contributes.",
+  "middleware": []
+}

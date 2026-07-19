@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/safeguarding/retention",
+  "$version": 1,
+  "title": "safeguarding — data retention windows",
+  "description": "Per-entity retention windows the retention runner respects.",
+  "policies": []
+}

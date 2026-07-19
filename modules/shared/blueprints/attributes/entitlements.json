@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/attributes/entitlements",
+  "$version": 1,
+  "title": "attributes — entitlements consumed",
+  "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",
+  "consumed": []
+}

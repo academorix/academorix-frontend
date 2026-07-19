@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/reception/metrics",
+  "$version": 1,
+  "title": "reception — OpenTelemetry metrics",
+  "description": "OTel / Prometheus metrics this module emits.",
+  "metrics": []
+}

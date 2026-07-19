@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/formations/retention",
+  "$version": 1,
+  "title": "formations — data retention windows",
+  "description": "Per-entity retention windows the retention runner respects.",
+  "policies": []
+}

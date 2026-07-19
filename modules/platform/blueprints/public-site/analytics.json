@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/public-site/analytics",
+  "$version": 1,
+  "title": "public-site — product-analytics events",
+  "description": "PostHog / Mixpanel / Segment events this module emits.",
+  "events": []
+}

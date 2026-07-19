@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/crm-leads/routes",
+  "$version": 1,
+  "title": "crm-leads — HTTP routes",
+  "description": "Routes grouped by host audience. Discovery is attribute-driven at boot; this file is the machine-readable inventory + admin-visible surface.",
+  "hosts": {}
+}

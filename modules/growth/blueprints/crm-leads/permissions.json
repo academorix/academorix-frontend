@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/crm-leads/permissions",
+  "$version": 1,
+  "title": "crm-leads — permissions",
+  "description": "Permission strings the module seeds + the guard they target.",
+  "permissions": []
+}

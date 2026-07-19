@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/safeguarding/settings",
+  "$version": 1,
+  "title": "safeguarding — tenant-editable settings",
+  "description": "Settings this module registers against the settings substrate.",
+  "settings": []
+}

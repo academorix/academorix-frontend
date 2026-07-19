@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/public-site/policies",
+  "$version": 1,
+  "title": "public-site — authorization policies",
+  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
+  "policies": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/competition/broadcasts",
+  "$version": 1,
+  "title": "competition — broadcast channels",
+  "description": "Channels this module publishes to for real-time UI updates.",
+  "channels": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/ai/hooks",
+  "$version": 1,
+  "title": "ai — tenant hooks",
+  "description": "Per-tenant lifecycle callbacks (log context, cache prefix, cache invalidation).",
+  "hooks": []
+}

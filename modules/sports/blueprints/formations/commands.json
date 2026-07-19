@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/formations/commands",
+  "$version": 1,
+  "title": "formations — Artisan commands",
+  "description": "Console commands this module ships.",
+  "commands": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/observers",
+  "$version": 1,
+  "title": "offline-sync — model observers",
+  "description": "Eloquent observers this module registers, wired via `#[ObservedBy]` on models.",
+  "observers": []
+}

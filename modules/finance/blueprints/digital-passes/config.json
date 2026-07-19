@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/digital-passes/config",
+  "$version": 1,
+  "title": "digital-passes — config keys",
+  "description": "config/<module>.php shape + defaults.",
+  "keys": []
+}

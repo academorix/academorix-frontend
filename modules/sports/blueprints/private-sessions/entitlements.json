@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/private-sessions/entitlements",
+  "$version": 1,
+  "title": "private-sessions — entitlements consumed",
+  "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",
+  "consumed": []
+}

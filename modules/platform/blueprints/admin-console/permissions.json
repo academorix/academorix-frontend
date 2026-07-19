@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/permissions",
+  "$version": 1,
+  "title": "admin-console — permissions",
+  "description": "Permission strings the module seeds + the guard they target.",
+  "permissions": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/ai/middleware",
+  "$version": 1,
+  "title": "ai — HTTP middleware",
+  "description": "Middleware aliases this module contributes.",
+  "middleware": []
+}

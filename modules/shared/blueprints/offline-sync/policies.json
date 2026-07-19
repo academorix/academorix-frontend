@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/policies",
+  "$version": 1,
+  "title": "offline-sync — authorization policies",
+  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
+  "policies": []
+}

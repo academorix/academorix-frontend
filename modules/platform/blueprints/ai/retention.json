@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/ai/retention",
+  "$version": 1,
+  "title": "ai — data retention windows",
+  "description": "Per-entity retention windows the retention runner respects.",
+  "policies": []
+}

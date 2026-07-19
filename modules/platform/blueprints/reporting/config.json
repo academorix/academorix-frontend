@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/reporting/config",
+  "$version": 1,
+  "title": "reporting — config keys",
+  "description": "config/<module>.php shape + defaults.",
+  "keys": []
+}

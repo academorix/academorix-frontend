@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/progress/observers",
+  "$version": 1,
+  "title": "progress — model observers",
+  "description": "Eloquent observers this module registers, wired via `#[ObservedBy]` on models.",
+  "observers": []
+}

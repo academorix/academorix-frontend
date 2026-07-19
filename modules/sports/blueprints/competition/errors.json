@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/competition/errors",
+  "$version": 1,
+  "title": "competition — error catalogue",
+  "description": "Domain exception classes + HTTP status + translation keys.",
+  "errors": []
+}

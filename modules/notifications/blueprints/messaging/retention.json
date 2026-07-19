@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/messaging/retention",
+  "$version": 1,
+  "title": "messaging — data retention windows",
+  "description": "Per-entity retention windows the retention runner respects.",
+  "policies": []
+}

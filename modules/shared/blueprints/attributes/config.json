@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/attributes/config",
+  "$version": 1,
+  "title": "attributes — config keys",
+  "description": "config/<module>.php shape + defaults.",
+  "keys": []
+}

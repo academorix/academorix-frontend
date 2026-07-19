@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/metrics",
+  "$version": 1,
+  "title": "admin-console — OpenTelemetry metrics",
+  "description": "OTel / Prometheus metrics this module emits.",
+  "metrics": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/reception/middleware",
+  "$version": 1,
+  "title": "reception — HTTP middleware",
+  "description": "Middleware aliases this module contributes.",
+  "middleware": []
+}

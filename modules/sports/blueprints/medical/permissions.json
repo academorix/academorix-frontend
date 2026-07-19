@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/medical/permissions",
+  "$version": 1,
+  "title": "medical — permissions",
+  "description": "Permission strings the module seeds + the guard they target.",
+  "permissions": []
+}

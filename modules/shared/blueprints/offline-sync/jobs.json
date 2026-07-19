@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/jobs",
+  "$version": 1,
+  "title": "offline-sync — queued jobs",
+  "description": "Queued jobs this module dispatches.",
+  "jobs": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/messaging/schedule",
+  "$version": 1,
+  "title": "messaging — scheduled tasks",
+  "description": "Artisan / cron entries this module registers.",
+  "schedule": []
+}

@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/crm-leads/retention",
+  "$version": 1,
+  "title": "crm-leads — data retention windows",
+  "description": "Per-entity retention windows the retention runner respects.",
+  "policies": []
+}

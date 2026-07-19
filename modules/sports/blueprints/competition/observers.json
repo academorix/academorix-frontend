@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/competition/observers",
+  "$version": 1,
+  "title": "competition — model observers",
+  "description": "Eloquent observers this module registers, wired via `#[ObservedBy]` on models.",
+  "observers": []
+}

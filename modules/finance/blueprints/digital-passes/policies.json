@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/digital-passes/policies",
+  "$version": 1,
+  "title": "digital-passes — authorization policies",
+  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
+  "policies": []
+}

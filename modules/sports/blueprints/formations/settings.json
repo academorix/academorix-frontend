@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/formations/settings",
+  "$version": 1,
+  "title": "formations — tenant-editable settings",
+  "description": "Settings this module registers against the settings substrate.",
+  "settings": []
+}

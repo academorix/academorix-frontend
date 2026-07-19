@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/crm-leads/features",
+  "$version": 1,
+  "title": "crm-leads — feature keys",
+  "description": "Feature keys this module publishes for tenant entitlement gating.",
+  "features": []
+}

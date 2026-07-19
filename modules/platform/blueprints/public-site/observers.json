@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/public-site/observers",
+  "$version": 1,
+  "title": "public-site — model observers",
+  "description": "Eloquent observers this module registers, wired via `#[ObservedBy]` on models.",
+  "observers": []
+}

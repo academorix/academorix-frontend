@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/schedule",
+  "$version": 1,
+  "title": "offline-sync — scheduled tasks",
+  "description": "Artisan / cron entries this module registers.",
+  "schedule": []
+}

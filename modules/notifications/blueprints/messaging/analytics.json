@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/messaging/analytics",
+  "$version": 1,
+  "title": "messaging — product-analytics events",
+  "description": "PostHog / Mixpanel / Segment events this module emits.",
+  "events": []
+}

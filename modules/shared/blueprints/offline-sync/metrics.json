@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/metrics",
+  "$version": 1,
+  "title": "offline-sync — OpenTelemetry metrics",
+  "description": "OTel / Prometheus metrics this module emits.",
+  "metrics": []
+}

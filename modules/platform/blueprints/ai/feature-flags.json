@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/ai/feature-flags",
+  "$version": 1,
+  "title": "ai — feature flags",
+  "description": "Kill switches + gradual-rollout flags this module publishes.",
+  "flags": []
+}

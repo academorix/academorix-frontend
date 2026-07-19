@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/rules",
+  "$version": 1,
+  "title": "admin-console — validation rules",
+  "description": "Named validation rules this module ships (registered via Validator::extend).",
+  "rules": []
+}

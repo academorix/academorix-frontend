@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/offline-sync/entitlements",
+  "$version": 1,
+  "title": "offline-sync — entitlements consumed",
+  "description": "Entitlements this module reads (slot / pool / boolean / unlimited).",
+  "consumed": []
+}

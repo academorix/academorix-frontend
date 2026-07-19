@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/realtime/policies",
+  "$version": 1,
+  "title": "realtime — authorization policies",
+  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
+  "policies": []
+}

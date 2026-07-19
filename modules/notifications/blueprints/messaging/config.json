@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/messaging/config",
+  "$version": 1,
+  "title": "messaging — config keys",
+  "description": "config/<module>.php shape + defaults.",
+  "keys": []
+}

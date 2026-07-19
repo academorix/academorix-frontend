@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/drills/policies",
+  "$version": 1,
+  "title": "drills — authorization policies",
+  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
+  "policies": []
+}

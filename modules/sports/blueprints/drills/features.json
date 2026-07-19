@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/drills/features",
+  "$version": 1,
+  "title": "drills — feature keys",
+  "description": "Feature keys this module publishes for tenant entitlement gating.",
+  "features": []
+}

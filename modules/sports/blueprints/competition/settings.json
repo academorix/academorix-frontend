@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/competition/settings",
+  "$version": 1,
+  "title": "competition — tenant-editable settings",
+  "description": "Settings this module registers against the settings substrate.",
+  "settings": []
+}

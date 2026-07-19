@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/policies",
+  "$version": 1,
+  "title": "admin-console — authorization policies",
+  "description": "Policies + abilities. Wired via `#[UsePolicy]` on the model.",
+  "policies": []
+}

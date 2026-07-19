@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/ai/commands",
+  "$version": 1,
+  "title": "ai — Artisan commands",
+  "description": "Console commands this module ships.",
+  "commands": []
+}

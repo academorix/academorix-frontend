@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/admin-console/hooks",
+  "$version": 1,
+  "title": "admin-console — tenant hooks",
+  "description": "Per-tenant lifecycle callbacks (log context, cache prefix, cache invalidation).",
+  "hooks": []
+}

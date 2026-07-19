@@ -1,0 +1,7 @@
+{
+  "id": "academorix://modules/private-sessions/hooks",
+  "$version": 1,
+  "title": "private-sessions — tenant hooks",
+  "description": "Per-tenant lifecycle callbacks (log context, cache prefix, cache invalidation).",
+  "hooks": []
+}
