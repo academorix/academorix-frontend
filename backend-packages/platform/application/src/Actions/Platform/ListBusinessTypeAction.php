@@ -6,15 +6,10 @@ declare(strict_types=1);
 
 namespace Academorix\Application\Actions\Platform;
 
-use Academorix\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
-use Academorix\Application\Data\BusinessTypeData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
 use Academorix\Routing\Attributes\Get;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Spatie\LaravelData\PaginatedDataCollection;
 
 /**
  * `GET /api/v1/platform/business-types` — list action (platform-admin audience).
@@ -34,27 +29,14 @@ final class ListBusinessTypeAction
 {
     use AsController;
 
-    public function __construct(
-        private readonly BusinessTypeRepositoryInterface $repository,
-    ) {
-    }
-
     /**
-     * List `business-types` for the current caller.
+     * Execute the action.
      *
-     * The `Repository` base picks up `filter[...]` / `sort=...` /
-     * `include=...` query parameters via the `#[Filterable]` attribute
-     * on the concrete repository — no per-Action wiring needed.
-     *
-     * @return PaginatedDataCollection<int, BusinessTypeData>  Paginated wire-visible DTOs.
+     * TODO(gen): wire the required services + implement the handler body.
      */
-    public function __invoke(Request $request): PaginatedDataCollection
+    public function __invoke(): mixed
     {
-        /** @var LengthAwarePaginator<int, \Academorix\Application\Models\BusinessType> $page */
-        $page = $this->repository->paginate(
-            perPage: (int) $request->integer('per_page', 15),
-        );
-
-        return BusinessTypeData::collect($page, PaginatedDataCollection::class);
+        // Hand-implement the domain logic here.
+        return null;
     }
 }

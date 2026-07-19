@@ -8,7 +8,7 @@ namespace Academorix\Facility\Services;
 
 use Academorix\Facility\Contracts\Services\DayPassIssuerInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Facility\Contracts\Repositories\AvailabilityRepositoryInterface;
+use Academorix\Facility\Contracts\Repositories\DayPassRepositoryInterface;
 
 /**
  * Concrete service — DayPassIssuer.
@@ -26,10 +26,10 @@ use Academorix\Facility\Contracts\Repositories\AvailabilityRepositoryInterface;
 final class DayPassIssuer implements DayPassIssuerInterface
 {
     /**
-     * @param  AvailabilityRepositoryInterface  $availabilityRepository  Primary persistence boundary.
+     * @param  DayPassRepositoryInterface  $dayPassRepository  Primary persistence boundary.
      */
     public function __construct(
-        private readonly AvailabilityRepositoryInterface $availabilityRepository,
+        private readonly DayPassRepositoryInterface $dayPassRepository,
     ) {
     }
 }

@@ -327,6 +327,33 @@ def _extract_columns(schema: dict[str, Any]) -> list[Column]:
     return columns
 
 
+def _is_sub_shape_schema(schema_path: Path) -> bool:
+    """A schema is a sub-shape (embedded JSON field on a parent aggregate,
+    not a first-class entity/table) when EITHER:
+
+    - Its `title` ends with " — sub-shape" (naming convention adopted for
+      facility's `pricing_json` + `availability_json` maps), OR
+    - It has no `x-eloquent` AND no `x-database` block (nothing to emit as
+      an entity — this is JSON-schema-only, referenced by another schema
+      via `$ref`).
+
+    Fail-open: unreadable / malformed schemas fall through to the normal
+    entity extractor which will surface a specific error.
+    """
+    try:
+        data = json.loads(schema_path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return False
+
+    title = str(data.get("title", ""))
+    if "sub-shape" in title.lower():
+        return True
+
+    has_x_eloquent = "x-eloquent" in data
+    has_x_database = "x-database" in data
+    return not (has_x_eloquent or has_x_database)
+
+
 def _extract_entity(schema_path: Path, module_name: str) -> Entity:
     """Parse one `schemas/<entity>.schema.json` into an `Entity`."""
     data = json.loads(schema_path.read_text())
@@ -505,11 +532,17 @@ def read_module(tier: str, name: str) -> Module:
     module_json_path = module_dir / "module.json"
     module_json = json.loads(module_json_path.read_text())
 
-    # Parse every schema in the schemas/ dir.
+    # Parse every schema in the schemas/ dir. Sub-shapes (JSON schemas that
+    # describe an embedded field inside a parent aggregate — e.g. facility's
+    # `pricing_json` or `availability_json` maps) are NOT entities and MUST
+    # be skipped. They lack `x-eloquent` / `x-database` blocks and typically
+    # carry a title ending in "— sub-shape" per convention.
     schemas_dir = module_dir / "schemas"
     entities: list[Entity] = []
     if schemas_dir.is_dir():
         for schema_path in sorted(schemas_dir.glob("*.schema.json")):
+            if _is_sub_shape_schema(schema_path):
+                continue
             entities.append(_extract_entity(schema_path, name))
 
     routes = _extract_routes(module_json, entities)

@@ -6,12 +6,10 @@ declare(strict_types=1);
 
 namespace Academorix\Application\Actions\Platform;
 
-use Academorix\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
 use Academorix\Routing\Attributes\Delete;
-use Illuminate\Http\Response;
 
 /**
  * `DELETE /api/v1/platform/business-types/{id}` — delete action (platform-admin audience).
@@ -31,22 +29,14 @@ final class DeleteBusinessTypeAction
 {
     use AsController;
 
-    public function __construct(
-        private readonly BusinessTypeRepositoryInterface $repository,
-    ) {
-    }
-
     /**
-     * Soft-delete one `business-type` by id.
+     * Execute the action.
      *
-     * @param  string  $id  Primary key.
-     *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
+     * TODO(gen): wire the required services + implement the handler body.
      */
-    public function __invoke(string $id): Response
+    public function __invoke(): mixed
     {
-        $this->repository->delete($id);
-
-        return response()->noContent();
+        // Hand-implement the domain logic here.
+        return null;
     }
 }

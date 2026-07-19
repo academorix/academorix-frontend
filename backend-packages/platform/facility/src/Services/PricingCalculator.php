@@ -8,7 +8,7 @@ namespace Academorix\Facility\Services;
 
 use Academorix\Facility\Contracts\Services\PricingCalculatorInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Facility\Contracts\Repositories\AvailabilityRepositoryInterface;
+use Academorix\Facility\Contracts\Repositories\DayPassRepositoryInterface;
 
 /**
  * Concrete service — PricingCalculator.
@@ -26,10 +26,10 @@ use Academorix\Facility\Contracts\Repositories\AvailabilityRepositoryInterface;
 final class PricingCalculator implements PricingCalculatorInterface
 {
     /**
-     * @param  AvailabilityRepositoryInterface  $availabilityRepository  Primary persistence boundary.
+     * @param  DayPassRepositoryInterface  $dayPassRepository  Primary persistence boundary.
      */
     public function __construct(
-        private readonly AvailabilityRepositoryInterface $availabilityRepository,
+        private readonly DayPassRepositoryInterface $dayPassRepository,
     ) {
     }
 }

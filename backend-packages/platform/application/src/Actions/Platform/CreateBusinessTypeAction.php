@@ -6,14 +6,10 @@ declare(strict_types=1);
 
 namespace Academorix\Application\Actions\Platform;
 
-use Academorix\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
-use Academorix\Application\Data\BusinessTypeData;
-use Academorix\Application\Data\Requests\CreateBusinessTypeRequestData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
 use Academorix\Routing\Attributes\Post;
-use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/platform/business-types` — create action (platform-admin audience).
@@ -33,22 +29,14 @@ final class CreateBusinessTypeAction
 {
     use AsController;
 
-    public function __construct(
-        private readonly BusinessTypeRepositoryInterface $repository,
-    ) {
-    }
-
     /**
-     * Create a `business-type` from the validated request payload.
+     * Execute the action.
      *
-     * @param  CreateBusinessTypeRequestData  $data  Validated payload (Spatie Data DTO).
-     *
-     * @return JsonResponse  201 Created with the newly-persisted DTO.
+     * TODO(gen): wire the required services + implement the handler body.
      */
-    public function __invoke(CreateBusinessTypeRequestData $data): JsonResponse
+    public function __invoke(): mixed
     {
-        $model = $this->repository->create($data->toArray());
-
-        return response()->json(BusinessTypeData::from($model), JsonResponse::HTTP_CREATED);
+        // Hand-implement the domain logic here.
+        return null;
     }
 }

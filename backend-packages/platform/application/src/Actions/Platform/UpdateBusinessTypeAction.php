@@ -6,9 +6,6 @@ declare(strict_types=1);
 
 namespace Academorix\Application\Actions\Platform;
 
-use Academorix\Application\Contracts\Repositories\BusinessTypeRepositoryInterface;
-use Academorix\Application\Data\BusinessTypeData;
-use Academorix\Application\Data\Requests\UpdateBusinessTypeRequestData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
@@ -32,23 +29,14 @@ final class UpdateBusinessTypeAction
 {
     use AsController;
 
-    public function __construct(
-        private readonly BusinessTypeRepositoryInterface $repository,
-    ) {
-    }
-
     /**
-     * Update one `business-type` and return the wire DTO.
+     * Execute the action.
      *
-     * @param  string  $id  Primary key.
-     * @param  UpdateBusinessTypeRequestData  $data  Validated payload.
-     *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
+     * TODO(gen): wire the required services + implement the handler body.
      */
-    public function __invoke(string $id, UpdateBusinessTypeRequestData $data): BusinessTypeData
+    public function __invoke(): mixed
     {
-        $model = $this->repository->update($id, $data->toArray());
-
-        return BusinessTypeData::from($model);
+        // Hand-implement the domain logic here.
+        return null;
     }
 }

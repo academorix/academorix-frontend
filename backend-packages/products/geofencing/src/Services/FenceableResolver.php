@@ -8,7 +8,7 @@ namespace Academorix\Geofencing\Services;
 
 use Academorix\Geofencing\Contracts\Services\FenceableResolverInterface;
 use Illuminate\Container\Attributes\Scoped;
-use Academorix\Geofencing\Contracts\Repositories\FenceableGeometryRepositoryInterface;
+use Academorix\Geofencing\Contracts\Repositories\GeofenceCheckRepositoryInterface;
 
 /**
  * Concrete service — FenceableResolver.
@@ -26,10 +26,10 @@ use Academorix\Geofencing\Contracts\Repositories\FenceableGeometryRepositoryInte
 final class FenceableResolver implements FenceableResolverInterface
 {
     /**
-     * @param  FenceableGeometryRepositoryInterface  $fenceableGeometryRepository  Primary persistence boundary.
+     * @param  GeofenceCheckRepositoryInterface  $geofenceCheckRepository  Primary persistence boundary.
      */
     public function __construct(
-        private readonly FenceableGeometryRepositoryInterface $fenceableGeometryRepository,
+        private readonly GeofenceCheckRepositoryInterface $geofenceCheckRepository,
     ) {
     }
 }

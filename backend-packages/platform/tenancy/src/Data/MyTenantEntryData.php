@@ -27,25 +27,32 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 final class MyTenantEntryData extends Data
 {
     /**
-     * @param  string        $id            `ten_<ulid>`.
-     * @param  string        $slug          URL-safe identifier.
-     * @param  string        $name          Display name.
-     * @param  string        $workspaceUrl  Deep-link to the tenant host.
-     * @param  TenantStatus  $status        Lifecycle state (drives UI badge).
-     * @param  string|null   $logoUrl       Logo URL from `tenants.branding`.
+     * @param  string        $id         `ten_<ulid>`.
+     * @param  string        $slug       URL-safe identifier.
+     * @param  string        $name       Display name.
+     * @param  string        $tenantUrl  Deep-link to the tenant host.
+     *                                   Wire key `tenant_url`. Renamed
+     *                                   from the previous URL-field name
+     *                                   per ADR-0017 — the terminology
+     *                                   moved to `tenant`. Frontends
+     *                                   that still read the older wire
+     *                                   key update in their next release
+     *                                   cycle.
+     * @param  TenantStatus  $status     Lifecycle state (drives UI badge).
+     * @param  string|null   $logoUrl    Logo URL from `tenants.branding`.
      */
     public function __construct(
         public string $id,
         public string $slug,
         public string $name,
-        public string $workspaceUrl,
+        public string $tenantUrl,
         public TenantStatus $status,
         public ?string $logoUrl = null,
     ) {
     }
 
     /**
-     * Build from a Model. `workspaceUrl` is composed from the parent
+     * Build from a Model. `tenantUrl` is composed from the parent
      * Application's `central_host`.
      */
     public static function fromModel(Tenant $tenant): self
@@ -54,7 +61,7 @@ final class MyTenantEntryData extends Data
         $centralHost = (string) ($application?->central_host ?? '');
         $slug        = (string) $tenant->{TenantInterface::ATTR_SLUG};
 
-        $workspaceUrl = $centralHost !== ''
+        $tenantUrl = $centralHost !== ''
             ? 'https://' . $slug . '.' . $centralHost
             : 'https://' . $slug;
 
@@ -67,7 +74,7 @@ final class MyTenantEntryData extends Data
             id: (string) $tenant->getKey(),
             slug: $slug,
             name: (string) $tenant->{TenantInterface::ATTR_NAME},
-            workspaceUrl: $workspaceUrl,
+            tenantUrl: $tenantUrl,
             status: $tenant->{TenantInterface::ATTR_STATUS} ?? TenantStatus::Trialing,
             logoUrl: $logoUrl,
         );

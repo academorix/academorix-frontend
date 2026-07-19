@@ -109,8 +109,21 @@ def emit_composer_json(m: Module) -> str:
     backslashes) and PSR-4 to silently fail for every module.
     """
     provider = f"{m.ns_module_root}\\Providers\\{m.studly_name}ServiceProvider"
+    # Disambiguation map for module-vs-shared duplicates.
+    # `shared/audit` + `shared/activity` are hand-tuned real-impl packages
+    # under the framework `academorix/audit` + `academorix/activity` names;
+    # the `observability/*` blueprint-emitted equivalents own the storage
+    # schema adaptation and MUST live under a distinct composer name to
+    # coexist. Every other module keeps the default flat `academorix/<name>`.
+    composer_name_overrides = {
+        ("observability", "audit"): "academorix-observability/audit",
+        ("observability", "activity"): "academorix-observability/activity",
+    }
+    composer_name = composer_name_overrides.get(
+        (m.tier, m.name), m.composer_module_name,
+    )
     payload = {
-        "name": m.composer_module_name,
+        "name": composer_name,
         "type": "library",
         "description": (
             f"Academorix {m.studly_name} module — server-side Laravel package "
