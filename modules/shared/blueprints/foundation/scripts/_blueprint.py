@@ -180,13 +180,13 @@ class Module:
 
     @property
     def ns_module_root(self) -> str:
-        """Namespace prefix for the server-side module package (no Sdk suffix).
+        """Namespace prefix for the server-side module package.
 
-        Consumed by `generate-module.py`. Tier prefix keeps namespaces globally
-        unique across the monorepo (e.g. `Academorix\\Sports\\Registrations`
-        vs `Academorix\\Growth\\CrmLeads`).
+        Matches the framework convention (`Academorix\\Crud`,
+        `Academorix\\Foundation`) — one word, no tier prefix. Module names
+        are globally unique across tiers so collision is not a concern.
         """
-        return f"Academorix\\{studly(self.tier)}\\{studly(self.name)}"
+        return f"Academorix\\{studly(self.name)}"
 
     @property
     def composer_name(self) -> str:
@@ -194,8 +194,12 @@ class Module:
 
     @property
     def composer_module_name(self) -> str:
-        """Composer name for the server-side module (no `-sdk` suffix)."""
-        return f"academorix-{self.tier}/{self.name}"
+        """Composer name for the server-side module.
+
+        Matches the framework convention (`academorix/crud`,
+        `academorix/foundation`) — single-word, no tier prefix.
+        """
+        return f"academorix/{self.name}"
 
     @property
     def sdk_dir_name(self) -> str:
@@ -203,8 +207,17 @@ class Module:
 
     @property
     def module_dir_name(self) -> str:
-        """Output dir name for the server-side module package."""
+        """Output dir name (legacy — flat `<tier>-<name>` under packages/)."""
         return f"{self.tier}-{self.name}"
+
+    @property
+    def module_pkg_path(self) -> str:
+        """Output path relative to REPO_ROOT — `backend-packages/<tier>/<name>`.
+
+        Mirrors the blueprint layout `modules/<tier>/blueprints/<name>/`
+        so navigating between the two is one-to-one.
+        """
+        return f"backend-packages/{self.tier}/{self.name}"
 
 
 # ---------------------------------------------------------------------------

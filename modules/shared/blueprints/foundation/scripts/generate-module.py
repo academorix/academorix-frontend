@@ -2,7 +2,7 @@
 """generate-module.py — blueprint-driven Laravel module package generator.
 
 Sibling to `generate-sdk.py`. Reads the same module blueprint and emits the
-**server-side** Laravel package under `packages/<tier>-<module>/`:
+**server-side** Laravel package under `backend-packages/<tier>/<module>/`:
 
     - composer.json / phpstan.neon / phpunit.xml / README.md
     - src/Providers/<Name>ServiceProvider.php
@@ -116,11 +116,16 @@ def emit_composer_json(m: Module) -> str:
         ],
         "require": {
             "php": "^8.3",
-            "illuminate/support": "^11.0 || ^12.0",
-            "illuminate/database": "^11.0 || ^12.0",
-            "illuminate/container": "^11.0 || ^12.0",
+            "illuminate/support": "^13.0",
+            "illuminate/database": "^13.0",
+            "illuminate/container": "^13.0",
+            "illuminate/contracts": "^13.0",
             "spatie/laravel-data": "^4.11",
             "academorix/foundation": "@dev",
+            "academorix/crud": "@dev",
+            "academorix/routing": "@dev",
+            "academorix/service-provider": "@dev",
+            "academorix/support": "@dev",
             f"{m.composer_name}": "@dev",
         },
         "require-dev": {
@@ -1210,7 +1215,7 @@ it('is a placeholder — replace with actual {e.class_name} unit tests', functio
 
 def write_module(m: Module, out_root: Path, *, force: bool, dry_run: bool) -> tuple[int, int]:
     """Emit the complete server-side module package."""
-    pkg_dir = out_root / "packages" / m.module_dir_name
+    pkg_dir = out_root / m.module_pkg_path
 
     if pkg_dir.exists() and not force and not dry_run:
         raise SystemExit(

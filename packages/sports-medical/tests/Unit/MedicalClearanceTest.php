@@ -1,9 +1,0 @@
-<?php
-
-declare(strict_types=1);
-
-use Academorix\Sports\Medical\Models\MedicalClearance;
-
-it('is a placeholder — replace with actual MedicalClearance unit tests', function (): void {
-    expect(MedicalClearance::class)->toBeString();
-});

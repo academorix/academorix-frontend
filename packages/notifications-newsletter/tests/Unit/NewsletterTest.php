@@ -1,9 +1,0 @@
-<?php
-
-declare(strict_types=1);
-
-use Academorix\Notifications\Newsletter\Models\Newsletter;
-
-it('is a placeholder — replace with actual Newsletter unit tests', function (): void {
-    expect(Newsletter::class)->toBeString();
-});

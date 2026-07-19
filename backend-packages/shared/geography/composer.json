@@ -1,0 +1,68 @@
+{
+  "name": "academorix/geography",
+  "type": "library",
+  "description": "Academorix Geography module — server-side Laravel package emitted from the module blueprint at `modules/shared/blueprints/geography/`. Complements the wire SDK at `academorix-shared/geography-sdk`.",
+  "license": "proprietary",
+  "keywords": [
+    "academorix",
+    "module",
+    "laravel",
+    "shared",
+    "geography"
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/support": "^13.0",
+    "illuminate/database": "^13.0",
+    "illuminate/container": "^13.0",
+    "illuminate/contracts": "^13.0",
+    "spatie/laravel-data": "^4.11",
+    "academorix/foundation": "@dev",
+    "academorix/crud": "@dev",
+    "academorix/routing": "@dev",
+    "academorix/service-provider": "@dev",
+    "academorix/support": "@dev",
+    "academorix-shared/geography-sdk": "@dev"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.0",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "phpstan/phpstan": "^2.0",
+    "mockery/mockery": "^1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Academorix\\\\Geography\\\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Academorix\\\\Geography\\\\Tests\\\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Academorix\\Geography\\\\Providers\\\\GeographyServiceProvider"
+      ],
+      "aliases": {}
+    }
+  },
+  "scripts": {
+    "test": "./vendor/bin/pest",
+    "test:coverage": "./vendor/bin/pest --coverage --min=80",
+    "lint": "./vendor/bin/pint --test",
+    "format": "./vendor/bin/pint",
+    "analyse": "./vendor/bin/phpstan analyse --memory-limit=2G"
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "olvlvl/composer-attribute-collector": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
