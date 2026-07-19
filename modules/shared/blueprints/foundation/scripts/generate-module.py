@@ -264,53 +264,169 @@ through the SDK; this package is the SERVER-side owner of the domain.
 
 
 def emit_service_provider(m: Module) -> str:
-    """Emit the module's service provider skeleton."""
+    """Emit the module's service provider skeleton.
+
+    Matches the `platform/application` + `shared/activity` exemplar
+    shape: `#[AsModule]` + `#[LoadsResources(...)]` + a `## Discoverables
+    (zero code)` docblock listing every attribute contribution the
+    module makes. Register/boot lifecycles come from the base class —
+    the provider itself is a thin identity declaration.
+    """
     ns = f"{m.ns_module_root}\\Providers"
-    class_doc = _php_docblock([
-        f"Service provider for the `{m.name}` module.",
+
+    # Priority per tier — matches the shared/activity + platform/application
+    # exemplars. Framework substrate seeds first, tenancy after, then
+    # domain modules layered above.
+    tier_priority = {
+        "identity": 8,
+        "billing": 15,
+        "access": 18,
+        "compliance": 20,
+        "observability": 20,
+        "notifications": 25,
+        "platform": 12,
+        "finance": 30,
+        "shared": 15,
+        "growth": 35,
+        "sports": 40,
+        "products": 40,
+        "workflow": 40,
+    }
+    priority = tier_priority.get(m.tier, 30)
+
+    # Assemble the `## Discoverables (zero code)` docblock. Each item
+    # documents a discovery seam this module contributes to.
+    discoverables: list[str] = []
+    module_dir = module_dir_path(m.tier, m.name)
+
+    # Repositories — always emitted per entity (schema-driven).
+    if _entities_exist(m):
+        discoverables.append(
+            "  - Repositories: `#[AsRepository]` + `#[UseModel]` on the concretes; "
+            "`#[Bind]` on the interfaces (Laravel-canonical placement per ADR 0006)."
+        )
+        discoverables.append(
+            "  - Models: attribute-first — `#[Table]`, `#[Fillable]`, `#[UseFactory]`, "
+            "`#[UsePolicy]`, `#[ObservedBy]`."
+        )
+
+    # Actions — always when routes are declared.
+    if m.routes:
+        discoverables.append(
+            "  - Actions: `#[AsAction]` + verb attribute (ADR 0016 actions-only)."
+        )
+
+    # Commands from module.json contributes.commands.
+    try:
+        contrib = json.loads((module_dir / "module.json").read_text()).get("contributes", {}) or {}
+    except (FileNotFoundError, json.JSONDecodeError):
+        contrib = {}
+
+    if contrib.get("commands"):
+        discoverables.append(
+            "  - Console commands: `#[AsCommand]` — auto-discovered by the base "
+            "provider's `LoadsResources(commands: true)`."
+        )
+
+    # Permissions + seeder.
+    permissions_raw = _load_aux(module_dir, "permissions.json")
+    if permissions_raw.get("permissions"):
+        discoverables.append(
+            f"  - Seeder: `#[AsSeeder]` on `{m.studly_name}PermissionSeeder` — projects "
+            f"`{m.studly_name}Permission` cases into spatie/laravel-permission."
+        )
+
+    # Events from events.json.
+    events = _load_aux(module_dir, "events.json").get("events", []) or []
+    if events:
+        discoverables.append(
+            "  - Events: `#[AsEvent]` (discovered by `academorix/events`)."
+        )
+
+    # Policies from policies.json.
+    policies = _load_aux(module_dir, "policies.json").get("policies", []) or []
+    if policies:
+        discoverables.append(
+            "  - Policies: `#[UsePolicy]` on the models."
+        )
+
+    # Observers — emitted when the model has observed-by markers (heuristic:
+    # every model gets an observer skeleton, so include when entities exist).
+    # This mirrors what the platform/application exemplar declares.
+    if _entities_exist(m):
+        discoverables.append(
+            "  - Observers: `#[ObservedBy]` on the models."
+        )
+
+    # Middleware from contributes.middleware.
+    if contrib.get("middleware"):
+        discoverables.append(
+            "  - Middleware: `#[AsMiddleware]` on each middleware class."
+        )
+
+    discoverables_block = "\n".join(discoverables) if discoverables else (
+        "  - This module is a thin lifecycle shell — no attribute contributions."
+    )
+
+    file_doc = _php_docblock([
+        f"@file modules/{m.tier}/{m.name}/src/Providers/{m.studly_name}ServiceProvider.php",
         "",
-        "Registers the module's discovery-driven bindings (attribute-first).",
-        "Repository / policy / observer / event wiring is auto-discovered via",
-        "the `Academorix\\Foundation\\Contracts\\DiscoversAttributes` seam;",
-        "this provider is a thin lifecycle shell.",
+        "@description",
+        f"Root service provider for the {m.studly_name} domain module —",
+        "attribute-first end-to-end. Every contribution is attribute-",
+        "discovered by the shared framework loaders. The provider itself",
+        "declares just the module identity and which conventional resources",
+        "auto-load.",
+        "",
+        "## Discoverables (zero code)",
+        "",
+    ] + discoverables + [""])
+
+    class_doc = _php_docblock([
+        f"{m.studly_name} module service provider.",
+        "",
+        f"Priority `{priority}` places {m.name} in the `{m.tier}` tier",
+        "boot order. Downstream modules load at a higher priority so",
+        "their attribute-driven wiring resolves after this module's",
+        "contributions land.",
         "",
         f"@category {m.studly_name}",
         "",
         "@since    0.1.0",
     ])
+
     return f"""<?php
 
-declare(strict_types=1);
+{file_doc}
 
 // {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+declare(strict_types=1);
+
 namespace {ns};
 
-use Illuminate\\Support\\ServiceProvider;
+use Academorix\\ServiceProvider\\Attributes\\AsModule;
+use Academorix\\ServiceProvider\\Attributes\\LoadsResources;
+use Academorix\\ServiceProvider\\Providers\\ServiceProvider;
 
 {class_doc}
+#[AsModule(name: '{m.studly_name}', priority: {priority})]
+#[LoadsResources(
+    config: true,
+    migrations: true,
+    commands: true,
+    seeders: true,
+    publishables: true,
+    translations: true,
+)]
 final class {m.studly_name}ServiceProvider extends ServiceProvider
 {{
-    /**
-     * Register container bindings.
-     */
-    public function register(): void
-    {{
-        // Attribute-first: #[Bind] on interfaces + #[AsRepository] /
-        // #[AsSeeder] / #[AsAiTool] on concretes are picked up by the
-        // Foundation discovery seam. Manual bindings only when a concern
-        // cannot be expressed declaratively.
-    }}
-
-    /**
-     * Bootstrap module services.
-     */
-    public function boot(): void
-    {{
-        $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
-        $this->loadTranslationsFrom(__DIR__ . '/../../lang', '{m.name}');
-    }}
 }}
 """
+
+
+def _entities_exist(m: Module) -> bool:
+    """Return True when the module declares at least one entity."""
+    return len(m.entities) > 0
 
 
 # ---------------------------------------------------------------------------
@@ -1920,6 +2036,269 @@ enum {class_name}: string
 
 
 # ---------------------------------------------------------------------------
+# Permission enum + seeder — from permissions.json.
+# ---------------------------------------------------------------------------
+
+_PERM_GUARD_MAP = {
+    "sanctum": "Sanctum",
+    "platform_admin": "PlatformAdmin",
+    "web": "Web",
+    "api": "Sanctum",  # legacy alias — Sanctum is the tenant guard
+}
+
+
+_PERM_SPLIT_RE = re.compile(r"[^A-Za-z0-9]+")
+
+
+def _perm_case_name(perm_name: str) -> str:
+    """Convert `roles.viewAny.tenant` → `RolesViewAnyTenant`.
+
+    Splits on any non-alphanumeric run (`.`, `_`, `-`), PascalCases each
+    segment, preserves camelCase inside a segment. The output is a valid
+    PHP identifier by construction.
+    """
+    parts: list[str] = []
+    for chunk in _PERM_SPLIT_RE.split(perm_name):
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        # Preserve camelCase: capitalize first char only, keep the rest.
+        parts.append(chunk[0].upper() + chunk[1:] if chunk else chunk)
+    return "".join(parts) or "Unknown"
+
+
+def _perm_label(perm_name: str, description: str | None) -> str:
+    """Emit a short human-readable label for `#[Label]`.
+
+    Prefers the first sentence of the description; falls back to a
+    humanised permission name.
+    """
+    if description:
+        first = _first_sentence(description, 80)
+        if first:
+            return first.rstrip(".")
+    # Humanise from the permission name.
+    parts = [p for p in perm_name.replace("_", " ").replace(".", " ").split() if p]
+    # Title-case each token but preserve internal camelCase.
+    humanised = " ".join(
+        p[0].upper() + p[1:] if p else p for p in parts
+    )
+    return humanised or perm_name
+
+
+def _escape_php_single_quoted(s: str) -> str:
+    """Escape a Python string for embedding in a PHP single-quoted literal."""
+    return s.replace("\\", "\\\\").replace("'", "\\'")
+
+
+def emit_permission_enum(m: Module, permissions: list[dict[str, Any]]) -> tuple[str, str] | None:
+    """Emit `src/Enums/<StudlyName>Permission.php`.
+
+    Matches the `shared/activity/src/Enums/ActivityPermission.php` shape:
+    implements `PermissionEnum`, uses `#[Meta([Label, Description])]`,
+    per-case `#[Label]` + `#[Description]`, and provides a `guard()`
+    method returning the correct `Academorix\\Authorization\\Enums\\Guard`
+    case based on each permission's declared guard.
+    """
+    if not permissions:
+        return None
+
+    ns = f"{m.ns_module_root}\\Enums"
+    class_name = f"{m.studly_name}Permission"
+
+    # Deduplicate by permission name — the blueprint may repeat the same
+    # permission across guard sections.
+    seen: set[str] = set()
+    deduped: list[dict[str, Any]] = []
+    for perm in permissions:
+        if not isinstance(perm, dict):
+            continue
+        name = perm.get("name")
+        if not isinstance(name, str) or not name.strip():
+            continue
+        name = name.strip()
+        if name in seen:
+            continue
+        seen.add(name)
+        deduped.append(perm)
+
+    if not deduped:
+        return None
+
+    case_blocks: list[str] = []
+    match_arms: list[str] = []
+    used_case_names: set[str] = set()
+
+    for perm in deduped:
+        name = perm["name"]
+        raw_case = _perm_case_name(name)
+        # Ensure uniqueness — dedupe by suffix bump.
+        case_name = raw_case
+        suffix = 2
+        while case_name in used_case_names:
+            case_name = f"{raw_case}{suffix}"
+            suffix += 1
+        used_case_names.add(case_name)
+
+        guard = str(perm.get("guard", "sanctum")).lower()
+        guard_case = _PERM_GUARD_MAP.get(guard, "Sanctum")
+        description = perm.get("description") or ""
+        label = _perm_label(name, description)
+
+        # Docblock — one-line summary of the permission.
+        doc_line = _first_sentence(description or label, 200) or label
+        case_doc = _php_docblock([
+            f"`{name}` — {doc_line}",
+        ], indent="    ")
+
+        case_blocks.append(
+            f"""{case_doc}
+    #[Label('{_escape_php_single_quoted(label)}')]
+    #[Description('{_escape_php_single_quoted(description or label)}')]
+    case {case_name} = '{_escape_php_single_quoted(name)}';"""
+        )
+        match_arms.append(f"            self::{case_name} => Guard::{guard_case},")
+
+    match_body = "\n".join(match_arms)
+    cases_body = "\n\n".join(case_blocks)
+
+    class_doc = _php_docblock([
+        f"Permissions the {m.studly_name} module contributes.",
+        "",
+        f"Every case pairs a `PermissionEnum` contract entry with the guard",
+        f"it binds to (tenant reads via `sanctum`; platform-admin reads via",
+        f"`platform_admin`). See `.kiro/steering/enum-db-seed-dual-source.md`",
+        "for the enum-primary catalogue pattern.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use Academorix\\Authorization\\Contracts\\PermissionEnum;
+use Academorix\\Authorization\\Enums\\Guard;
+use Academorix\\Enum\\Attributes\\Description;
+use Academorix\\Enum\\Attributes\\Label;
+use Academorix\\Enum\\Attributes\\Meta;
+use Academorix\\Enum\\Enum;
+
+{class_doc}
+#[Meta([Label::class, Description::class])]
+enum {class_name}: string implements PermissionEnum
+{{
+    use Enum;
+
+{cases_body}
+
+    /**
+     * The Laravel guard this permission binds to. Tenant-plane
+     * permissions target `sanctum`; platform-admin permissions target
+     * `platform_admin`.
+     */
+    public function guard(): Guard
+    {{
+        return match ($this) {{
+{match_body}
+        }};
+    }}
+}}
+"""
+    return f"src/Enums/{class_name}.php", body
+
+
+def emit_permission_seeder(m: Module, permissions: list[dict[str, Any]]) -> tuple[str, str] | None:
+    """Emit `database/seeders/<StudlyName>PermissionSeeder.php`.
+
+    Uses the shared `SeedsPermissionEnum` trait from
+    `academorix/authorization` — six-line trait-based shape. Matches
+    `shared/activity/database/seeders/ActivityPermissionSeeder.php`.
+    """
+    if not permissions:
+        return None
+    # Skip if we would emit no enum (same guard rail as emit_permission_enum).
+    has_named = any(
+        isinstance(p, dict) and isinstance(p.get("name"), str) and p["name"].strip()
+        for p in permissions
+    )
+    if not has_named:
+        return None
+
+    ns = f"{m.ns_module_root}\\Database\\Seeders"
+    enum_ns = f"{m.ns_module_root}\\Enums"
+    class_name = f"{m.studly_name}PermissionSeeder"
+    enum_class = f"{m.studly_name}Permission"
+
+    class_doc = _php_docblock([
+        f"Seed the {{@see {enum_class}}} cases into spatie/laravel-permission's",
+        "`permissions` table.",
+        "",
+        "All the boilerplate (spatie model resolution, `updateOrCreate` loop,",
+        "cache flush) lives in the shared {@see SeedsPermissionEnum} trait.",
+        "",
+        f"@category {m.studly_name}",
+        "",
+        "@since    0.1.0",
+    ])
+
+    # Priority — reserve a slot per tier. Framework-plane modules seed
+    # BEFORE domain-plane modules so cross-module references resolve.
+    tier_priority = {
+        "identity": 25,
+        "access": 30,
+        "billing": 35,
+        "compliance": 40,
+        "observability": 42,
+        "notifications": 44,
+        "platform": 46,
+        "finance": 48,
+        "shared": 45,
+        "growth": 50,
+        "sports": 55,
+        "products": 55,
+        "workflow": 55,
+    }
+    priority = tier_priority.get(m.tier, 45)
+
+    body = f"""<?php
+
+// {AUTOGEN_HEADER.format(tier=m.tier, name=m.name)}
+
+declare(strict_types=1);
+
+namespace {ns};
+
+use {enum_ns}\\{enum_class};
+use Academorix\\Authorization\\Database\\Seeders\\Concerns\\SeedsPermissionEnum;
+use Academorix\\ServiceProvider\\Attributes\\AsSeeder;
+use Illuminate\\Database\\Seeder;
+
+{class_doc}
+#[AsSeeder(priority: {priority}, environments: [])]
+final class {class_name} extends Seeder
+{{
+    use SeedsPermissionEnum;
+
+    /**
+     * {{@inheritDoc}}
+     */
+    protected function permissionEnums(): array
+    {{
+        return [{enum_class}::class];
+    }}
+}}
+"""
+    return f"database/seeders/{class_name}.php", body
+
+
+# ---------------------------------------------------------------------------
 # Exception emitter — from errors.json.
 # ---------------------------------------------------------------------------
 
@@ -2913,6 +3292,20 @@ def write_module(m: Module, out_root: Path, *, force: bool, dry_run: bool) -> tu
         if entity is None:
             continue
         files.append((f"src/Policies/{entity.class_name}Policy.php", emit_policy(m, entity, pol)))
+
+    # Permission enum + seeder from permissions.json.
+    # Matches the `shared/activity` + `platform/application` exemplar shape:
+    # a `<StudlyName>Permission` enum implementing `PermissionEnum` with a
+    # `guard()` method, plus a six-line seeder using `SeedsPermissionEnum`.
+    permissions_raw = _load_aux(module_dir, "permissions.json")
+    permissions_list = permissions_raw.get("permissions", []) or []
+    if permissions_list:
+        enum_emitted = emit_permission_enum(m, permissions_list)
+        if enum_emitted is not None:
+            files.append(enum_emitted)
+        seeder_emitted = emit_permission_seeder(m, permissions_list)
+        if seeder_emitted is not None:
+            files.append(seeder_emitted)
 
     # Events from events.json.
     events = _load_aux(module_dir, "events.json").get("events", []) or []
