@@ -336,9 +336,26 @@ def _next_migration_timestamp(base: datetime) -> str:
     return seq_str
 
 
-def _migration_column_line(col: Column, table_col_spec: dict[str, Any]) -> str:
-    """Build one $table->TYPE('name') line from an x-database column spec."""
+def _attr_const(entity_class: str, col_name: str) -> str:
+    """Return the ATTR_ constant reference for a column.
+
+    e.g. `_attr_const('RoleDelegation', 'tenant_id')` -> `'RoleDelegationInterface::ATTR_TENANT_ID'`.
+    Every migration + repository + model per the `models` steering
+    rule §1 reads column names via `<Model>Interface::ATTR_*` — never
+    raw string literals.
+    """
+    return f"{entity_class}Interface::ATTR_{col_name.upper()}"
+
+
+def _migration_column_line(entity_class: str, col: Column, table_col_spec: dict[str, Any]) -> str:
+    """Build one `$table->TYPE(<Interface>::ATTR_<NAME>)` line.
+
+    Every column reference goes through the entity's `Contracts/Data/
+    <Model>Interface::ATTR_*` constant per the `models` steering rule
+    §1. String literals like `'tenant_id'` are compliance failures.
+    """
     name = col.name
+    attr_const = _attr_const(entity_class, name)
     t = (table_col_spec.get("type") or "string").lower()
     length = table_col_spec.get("length")
     nullable = bool(table_col_spec.get("nullable", col.nullable))
@@ -346,49 +363,44 @@ def _migration_column_line(col: Column, table_col_spec: dict[str, Any]) -> str:
     primary = bool(table_col_spec.get("primary", False))
     foreign = table_col_spec.get("foreign") or {}
 
-    # Blueprint kind -> Blueprint::method mapping.
+    # Blueprint kind -> Blueprint::method mapping. Every one takes
+    # the interface-constant reference as its column-name argument.
     if t == "string" or t == "citext":
-        if length:
-            call = f"string('{name}', {length})"
-        else:
-            call = f"string('{name}')"
+        call = f"string({attr_const}, {length})" if length else f"string({attr_const})"
     elif t == "text":
-        call = f"text('{name}')"
+        call = f"text({attr_const})"
     elif t in ("bigint",):
-        call = f"unsignedBigInteger('{name}')"
+        call = f"unsignedBigInteger({attr_const})"
     elif t in ("integer", "int"):
-        call = f"integer('{name}')"
+        call = f"integer({attr_const})"
     elif t == "boolean" or t == "bool":
-        call = f"boolean('{name}')"
+        call = f"boolean({attr_const})"
     elif t in ("timestamptz", "timestamp"):
-        call = f"timestampTz('{name}')"
+        call = f"timestampTz({attr_const})"
     elif t == "date":
-        call = f"date('{name}')"
+        call = f"date({attr_const})"
     elif t in ("date-time", "datetime"):
-        call = f"dateTimeTz('{name}')"
+        call = f"dateTimeTz({attr_const})"
     elif t in ("jsonb", "json"):
-        call = f"jsonb('{name}')"
+        call = f"jsonb({attr_const})"
     elif t in ("uuid",):
-        call = f"uuid('{name}')"
+        call = f"uuid({attr_const})"
     elif t in ("ulid",):
-        call = f"string('{name}', 30)"
+        call = f"string({attr_const}, 30)"
     elif t in ("number", "float", "decimal"):
-        call = f"decimal('{name}', 15, 4)"
+        call = f"decimal({attr_const}, 15, 4)"
     else:
-        call = f"string('{name}')"
+        call = f"string({attr_const})"
 
     line = f"            $table->{call}"
 
     if nullable and not primary:
         line += "->nullable()"
     if default is not None and not primary:
-        # Default is emitted as literal PHP — best effort, wrap strings in quotes.
         if isinstance(default, str):
-            # `default` in blueprint may already carry SQL-style quotes.
             if default.startswith("'") and default.endswith("'"):
                 literal = default
             else:
-                # Escape single quotes.
                 escaped = default.replace("'", "\\'")
                 literal = f"'{escaped}'"
             line += f"->default({literal})"
@@ -401,14 +413,15 @@ def _migration_column_line(col: Column, table_col_spec: dict[str, Any]) -> str:
 
     line += ";"
 
-    # Foreign key reference.
+    # Foreign key reference. The `$table->foreign(...)` call keys on
+    # the column name — same interface constant.
     if foreign:
         f_table = foreign.get("table", "")
         f_col = foreign.get("column", "id")
         on_delete = foreign.get("onDelete", "cascade")
         if f_table:
             line += (
-                f"\n            $table->foreign('{name}')->references('{f_col}')"
+                f"\n            $table->foreign({attr_const})->references('{f_col}')"
                 f"->on('{f_table}')->onDelete('{on_delete}');"
             )
 
@@ -437,52 +450,86 @@ def emit_migration(m: Module, e: Entity, filename_ts: str) -> tuple[str, str]:
 
     table_name = _table_name_from_entity(e, x_db)
     filename = f"{filename_ts}_create_{table_name}_table.php"
+    interface_fqcn = f"{m.ns_module_root}\\Contracts\\Data\\{e.class_name}Interface"
 
     # Column lines.
     column_lines = []
     for col in e.columns:
         col_spec = columns_spec.get(col.name, {}) or {}
-        column_lines.append(_migration_column_line(col, col_spec))
+        column_lines.append(_migration_column_line(e.class_name, col, col_spec))
     columns_block = "\n".join(column_lines) if column_lines else "            // No columns declared on the blueprint."
 
-    # Index lines. Skip functional indexes (columns containing SQL expressions
-    # like `COALESCE(...)` or `LOWER(...)`) — Blueprint can't express them;
-    # emit a hand-implement note instead.
-    index_lines = []
+    # Index lines. Two flavours: (a) plain B-tree/unique indexes via
+    # the Blueprint methods; (b) partial + functional indexes emitted
+    # AFTER the Schema::create closure via DB::statement (Postgres-
+    # specific CREATE [UNIQUE] INDEX ... WHERE ... syntax). Every
+    # column reference goes through the interface constant.
+    index_lines: list[str] = []
+    post_create_statements: list[str] = []
     _ident_re = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
     for idx in indexes_spec:
         cols = idx.get("columns") or []
-        name = idx.get("name")
+        idx_name = idx.get("name")
         unique = bool(idx.get("unique", False))
         predicate = idx.get("predicate")
         if not cols:
             continue
-        if not all(isinstance(c, str) and _ident_re.match(c) for c in cols):
-            # Functional index — hand-implement via DB::statement.
-            expr = ", ".join(cols)
-            index_lines.append(
-                f"            // TODO(gen): hand-implement functional index — "
-                f"columns=[{expr}]{' UNIQUE' if unique else ''}"
-                f"{' WHERE ' + predicate if predicate else ''}"
+
+        cols_valid_idents = all(isinstance(c, str) and _ident_re.match(c) for c in cols)
+
+        if not cols_valid_idents or predicate:
+            # Partial and/or functional index — build a raw CREATE INDEX.
+            unique_kw = "UNIQUE " if unique else ""
+            expr_parts = []
+            for c in cols:
+                if isinstance(c, str) and _ident_re.match(c):
+                    # Plain column reference — quote via the interface constant.
+                    expr_parts.append("' . " + _attr_const(e.class_name, c) + " . '")
+                else:
+                    # Function or expression — keep verbatim.
+                    expr_parts.append(str(c))
+            expr = ", ".join(expr_parts)
+            # Escape single quotes in the predicate — SQL literals
+            # inside the WHERE clause (e.g. `state IN ('pending', 'expired')`)
+            # would otherwise close the PHP string literal we're
+            # emitting.
+            predicate_escaped = predicate.replace("'", "\\'") if predicate else ""
+            where_clause = f" WHERE {predicate_escaped}" if predicate else ""
+            index_alias = idx_name or f"{table_name}_partial_idx"
+            statement = (
+                f"        DB::statement('CREATE {unique_kw}INDEX {index_alias} ON ' "
+                f". {e.class_name}Interface::TABLE . ' ({expr}){where_clause}');"
             )
+            post_create_statements.append(statement)
             continue
-        cols_php = "[" + ", ".join(f"'{c}'" for c in cols) + "]"
+
+        cols_php = "[" + ", ".join(_attr_const(e.class_name, c) for c in cols) + "]"
         method = "unique" if unique else "index"
-        if name:
-            index_lines.append(f"            $table->{method}({cols_php}, '{name}');")
+        if idx_name:
+            index_lines.append(f"            $table->{method}({cols_php}, '{idx_name}');")
         else:
             index_lines.append(f"            $table->{method}({cols_php});")
-        if predicate:
-            index_lines.append(f"            // Partial-index predicate — hand-add via DB::statement: WHERE {predicate}")
+
     indexes_block = "\n".join(index_lines) if index_lines else ""
+    post_create_block = "\n".join(post_create_statements) if post_create_statements else ""
+
+    # Post-create DB::statement uses require the DB facade — inject
+    # the import + drop-side handling only when we actually emit
+    # partial/functional indexes for this migration.
+    db_facade_import = (
+        "use Illuminate\\Support\\Facades\\DB;\n" if post_create_statements else ""
+    )
+    post_create_section = f"\n\n{post_create_block}" if post_create_block else ""
 
     class_doc = _php_docblock([
         f"@file database/migrations/{filename}",
         "",
         "@description",
         f"Create the `{table_name}` table for the `{e.class_name}` entity.",
-        f"Owned by the {m.name} module. Emitted from the module blueprint —",
-        f"regenerate via `generate-module.py {m.tier} {m.name} --force`.",
+        f"Owned by the {m.name} module. Every column + index reference",
+        f"goes through {{@see {interface_fqcn}}} per the `models` steering",
+        "rule §1 — no raw string literals.",
     ])
 
     return filename, f"""<?php
@@ -492,9 +539,10 @@ def emit_migration(m: Module, e: Entity, filename_ts: str) -> tuple[str, str]:
 
 declare(strict_types=1);
 
+use {interface_fqcn};
 use Illuminate\\Database\\Migrations\\Migration;
 use Illuminate\\Database\\Schema\\Blueprint;
-use Illuminate\\Support\\Facades\\Schema;
+{db_facade_import}use Illuminate\\Support\\Facades\\Schema;
 
 return new class() extends Migration {{
     /**
@@ -502,10 +550,10 @@ return new class() extends Migration {{
      */
     public function up(): void
     {{
-        Schema::create('{table_name}', function (Blueprint $table): void {{
+        Schema::create({e.class_name}Interface::TABLE, function (Blueprint $table): void {{
 {columns_block}
 {indexes_block}
-        }});
+        }});{post_create_section}
     }}
 
     /**
@@ -513,7 +561,7 @@ return new class() extends Migration {{
      */
     public function down(): void
     {{
-        Schema::dropIfExists('{table_name}');
+        Schema::dropIfExists({e.class_name}Interface::TABLE);
     }}
 }};
 """
@@ -2814,10 +2862,32 @@ def write_module(m: Module, out_root: Path, *, force: bool, dry_run: bool) -> tu
     ))
 
     # Migrations — one per entity. Use a shared base timestamp so relative
-    # ordering matches entity discovery order.
+    # ordering matches entity discovery order. Skip emission when a
+    # hand-written migration already creates the same table (real-impl
+    # packages ship their own migrations at earlier timestamps; the
+    # generator's peer would collide on `Schema::create`).
     _reset_migration_sequence()
     base_ts = datetime(2026, 7, 15, 12, 0, 0)
+    existing_migrations = list(pkg_dir.glob("database/migrations/*.php")) if pkg_dir.is_dir() else []
     for e in m.entities:
+        target_table = _table_name_from_entity(
+            e,
+            (json.loads((module_dir_path(m.tier, m.name) / "schemas" / f"{e.name}.schema.json").read_text()).get("x-database", {}) or {})
+            if (module_dir_path(m.tier, m.name) / "schemas" / f"{e.name}.schema.json").is_file()
+            else {},
+        )
+        # Detect an existing `_create_<table>_table.php` (any timestamp).
+        collision_suffix = f"_create_{target_table}_table.php"
+        collides_with_hand_written = any(
+            existing.name.endswith(collision_suffix)
+            and "AUTO-GENERATED by generate-module.py" not in existing.read_text()
+            for existing in existing_migrations
+        )
+        if collides_with_hand_written:
+            # Real-impl already ships this table's migration. Skip
+            # generator emission so re-fanouts don't reintroduce
+            # duplicate CREATE TABLE statements.
+            continue
         ts_str = _next_migration_timestamp(base_ts)
         filename, body = emit_migration(m, e, ts_str)
         files.append((f"database/migrations/{filename}", body))

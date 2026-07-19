@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file database/migrations/2026_07_15_120001_create_theme_token_overrides_table.php
+ * @file database/migrations/2026_07_15_120000_create_theme_token_overrides_table.php
  *
  * @description
  * Create the `theme_token_overrides` table for the `ThemeTokenOverride` entity.

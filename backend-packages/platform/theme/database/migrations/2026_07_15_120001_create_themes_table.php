@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file database/migrations/2026_07_15_120002_create_themes_table.php
+ * @file database/migrations/2026_07_15_120001_create_themes_table.php
  *
  * @description
  * Create the `themes` table for the `Theme` entity.

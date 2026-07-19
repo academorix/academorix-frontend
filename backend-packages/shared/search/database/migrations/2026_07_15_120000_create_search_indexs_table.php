@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file database/migrations/2026_07_15_120001_create_search_indexs_table.php
+ * @file database/migrations/2026_07_15_120000_create_search_indexs_table.php
  *
  * @description
  * Create the `search_indexs` table for the `SearchIndex` entity.
