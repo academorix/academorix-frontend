@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/marketplace-fee/permissions",
+  "$version": 1,
+  "title": "marketplace-fee — permissions",
+  "seeder": "Academorix\\Finance\\MarketplaceFee\\Database\\Seeders\\MarketplaceFeePermissionSeeder",
+  "isSystem": true,
+  "description": "Tenant plane — read-only visibility into what fees are applied to them (transparency). Platform plane — Academorix ops team creates + activates schedules + settles payouts.",
+  "permissions": [
+    { "name": "fee-schedules.viewAny", "guard": "sanctum", "description": "Tenant reads their own fee schedule.", "seededOn": ["admin", "owner", "finance"] },
+    { "name": "fee-schedules.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
+    { "name": "fee-applications.viewAny", "guard": "sanctum", "description": "Tenant reads fee applications applied to their payments (transparency).", "seededOn": ["admin", "owner", "finance"] },
+    { "name": "fee-applications.view", "guard": "sanctum", "seededOn": ["admin", "owner", "finance"] },
+    { "name": "platform.fee-schedules.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "finance"] },
+    { "name": "platform.fee-schedules.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "finance"] },
+    { "name": "platform.fee-schedules.create", "guard": "platform_admin", "description": "Create a new fee schedule for a tenant.", "seededOn": ["super_admin", "ops"] },
+    { "name": "platform.fee-schedules.update", "guard": "platform_admin", "seededOn": ["super_admin", "ops"] },
+    { "name": "platform.fee-schedules.activate", "guard": "platform_admin", "description": "Activate a draft schedule — future-dated only, never retroactive.", "seededOn": ["super_admin", "ops"] },
+    { "name": "platform.fee-schedules.deactivate", "guard": "platform_admin", "seededOn": ["super_admin", "ops"] },
+    { "name": "platform.fee-payouts.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "finance"] },
+    { "name": "platform.fee-payouts.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "finance"] },
+    { "name": "platform.fee-payouts.settle", "guard": "platform_admin", "description": "Trigger Stripe transfer of pending fee_payout.", "seededOn": ["super_admin", "ops"] }
+  ]
+}

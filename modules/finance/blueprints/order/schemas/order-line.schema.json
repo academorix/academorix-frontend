@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/order/schemas/order-line",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "OrderLine",
+  "description": "One line on an Order. Polymorphic on purchasable (Product / MembershipPlan / PassPackage / EventTicket / ClinicSession). Belongs to Tenant + Order (cascade). NEVER carries application_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "order",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "order_lines",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "orl_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Order\\Models\\OrderLine",
+    "interface": "Academorix\\Finance\\Order\\Contracts\\Data\\OrderLineInterface",
+    "implements": ["Academorix\\Finance\\Order\\Contracts\\Data\\OrderLineInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "unit_price_minor": "integer",
+      "quantity": "integer",
+      "subtotal_minor": "integer",
+      "tax_minor": "integer",
+      "total_minor": "integer",
+      "purchasable_snapshot": "array",
+      "metadata": "array"
+    },
+    "observers": ["OrderLineObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `orl_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "order_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "orders", "column": "id", "onDelete": "cascade" } },
+      "purchasable_type": { "type": "string", "length": 64, "nullable": false, "description": "Alias registered via #[AsPurchasable]. Not the FQCN." },
+      "purchasable_id": { "type": "string", "length": 64, "nullable": false },
+      "name": { "type": "string", "length": 255, "nullable": false, "description": "Display name at time of order. Snapshotted to survive purchasable renames." },
+      "sku": { "type": "string", "length": 128, "nullable": true },
+      "unit_price_minor": { "type": "integer", "nullable": false, "description": "Price per unit, snapshotted. Minor units." },
+      "quantity": { "type": "integer", "nullable": false, "default": 1 },
+      "subtotal_minor": { "type": "integer", "nullable": false, "description": "unit_price * quantity." },
+      "tax_rate": { "type": "decimal", "precision": 6, "scale": 4, "nullable": false, "default": 0, "description": "Tax rate applied to this line (e.g. 0.0500 for 5%)." },
+      "tax_minor": { "type": "integer", "nullable": false, "default": 0 },
+      "total_minor": { "type": "integer", "nullable": false, "description": "subtotal + tax for this line." },
+      "purchasable_snapshot": { "type": "jsonb", "nullable": true, "description": "Full snapshot of purchasable at order time. Freezes the purchase against future edits to the source record." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "order_id"], "name": "order_lines_order_idx" },
+      { "columns": ["tenant_id", "purchasable_type", "purchasable_id"], "name": "order_lines_purchasable_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "order_id", "purchasable_type", "purchasable_id", "name", "unit_price_minor", "quantity", "subtotal_minor", "tax_rate", "tax_minor", "total_minor", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^orl_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "order_id": { "type": "string", "pattern": "^ord_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "purchasable_type": { "type": "string", "enum": ["product", "membership_plan", "pass_package", "event_ticket", "clinic_session", "extra_service"] },
+    "purchasable_id": { "type": "string" },
+    "name": { "type": "string", "maxLength": 255 },
+    "sku": { "type": ["string", "null"], "maxLength": 128 },
+    "unit_price_minor": { "type": "integer", "minimum": 0 },
+    "quantity": { "type": "integer", "minimum": 1 },
+    "total_minor": { "type": "integer", "minimum": 0 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

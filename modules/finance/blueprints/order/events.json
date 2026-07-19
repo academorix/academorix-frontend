@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/order/events",
+  "$version": 1,
+  "title": "order — published events",
+  "namespace": "Academorix\\Finance\\Order\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "State-machine transitions + line-item events. OrderPaid is the load-bearing signal — feeds invoice generation, wallet-hold settlement, membership provisioning, entitlement grants.",
+  "events": [
+    {
+      "name": "OrderCreated",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderCreated",
+      "trigger": "New draft Order committed.",
+      "queue": "order",
+      "consumers": ["audit::WriteToAuditLog", "activity::LogActivity"],
+      "payload": { "order_id": "ULID (ord_*)", "tenant_id": "ULID", "buyer_type": "string", "buyer_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderLineAdded",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderLineAdded",
+      "trigger": "New OrderLine committed. Triggers total recalculation.",
+      "queue": "order",
+      "consumers": ["order::RecalculateOrderTotalsListener"],
+      "payload": { "order_id": "ULID", "order_line_id": "ULID (orl_*)", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderLineRemoved",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderLineRemoved",
+      "trigger": "OrderLine deleted. Triggers total recalculation.",
+      "queue": "order",
+      "consumers": ["order::RecalculateOrderTotalsListener"],
+      "payload": { "order_id": "ULID", "order_line_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderAdjustmentApplied",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderAdjustmentApplied",
+      "trigger": "New OrderAdjustment (coupon, credit, discount) committed.",
+      "queue": "order",
+      "consumers": ["order::RecalculateOrderTotalsListener", "coupon::MarkCouponRedeemedListener", "wallet::HoldWalletBalanceListener"],
+      "payload": { "order_id": "ULID", "adjustment_id": "ULID (adj_*)", "kind": "string", "amount_minor": "integer", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderAdjustmentRemoved",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderAdjustmentRemoved",
+      "trigger": "OrderAdjustment deleted.",
+      "queue": "order",
+      "consumers": ["order::RecalculateOrderTotalsListener", "coupon::ReleaseCouponReservationListener", "wallet::ReleaseWalletHoldListener"],
+      "payload": { "order_id": "ULID", "adjustment_id": "ULID", "kind": "string", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderTotalsRecalculated",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderTotalsRecalculated",
+      "trigger": "OrderTotalsCalculator ran + updated the order.",
+      "queue": "order",
+      "consumers": [],
+      "payload": { "order_id": "ULID", "subtotal_minor": "integer", "total_minor": "integer", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderPending",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderPending",
+      "trigger": "Order status draft -> pending (checkout initiated).",
+      "queue": "order",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "order_id": "ULID", "tenant_id": "ULID", "total_minor": "integer", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderPaid",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderPaid",
+      "trigger": "Order status -> paid. Sum of successful payments >= total. LOAD-BEARING EVENT.",
+      "queue": "order-critical",
+      "consumers": ["invoice::GenerateInvoiceFromOrderListener", "wallet::CommitWalletHoldsListener", "coupon::FinalizeCouponRedemptionListener", "membership::ProvisionMembershipListener", "entitlements::GrantEntitlementsListener", "notifications::DispatchOrderPaidNotificationListener", "audit::WriteToAuditLog"],
+      "payload": { "order_id": "ULID", "tenant_id": "ULID", "total_minor": "integer", "amount_paid_minor": "integer", "paid_at": "ISO 8601" }
+    },
+    {
+      "name": "OrderPartiallyPaid",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderPartiallyPaid",
+      "trigger": "Order status -> partially_paid. Partial payment received.",
+      "queue": "order",
+      "consumers": ["audit::WriteToAuditLog", "notifications::DispatchOrderPartiallyPaidNotificationListener"],
+      "payload": { "order_id": "ULID", "tenant_id": "ULID", "amount_paid_minor": "integer", "remaining_minor": "integer", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderAbandoned",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderAbandoned",
+      "trigger": "Order status -> abandoned via TTL sweeper.",
+      "queue": "order",
+      "consumers": ["wallet::ReleaseWalletHoldsListener", "coupon::ReleaseCouponReservationsListener", "notifications::DispatchOrderAbandonedNotificationListener"],
+      "payload": { "order_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "OrderCancelled",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderCancelled",
+      "trigger": "Order status -> cancelled (manual by staff or buyer).",
+      "queue": "order",
+      "consumers": ["wallet::ReleaseWalletHoldsListener", "coupon::ReleaseCouponReservationsListener", "notifications::DispatchOrderCancelledNotificationListener", "audit::WriteToAuditLog"],
+      "payload": { "order_id": "ULID", "tenant_id": "ULID", "cancelled_at": "ISO 8601", "reason": "string | null" }
+    },
+    {
+      "name": "OrderRefunded",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderRefunded",
+      "trigger": "Order status -> refunded. Sum of refunds >= amount_paid.",
+      "queue": "order-critical",
+      "consumers": ["invoice::MarkInvoiceRefundedListener", "membership::RevokeMembershipListener", "entitlements::RevokeEntitlementsListener", "notifications::DispatchOrderRefundedNotificationListener", "audit::WriteToAuditLog"],
+      "payload": { "order_id": "ULID", "tenant_id": "ULID", "amount_refunded_minor": "integer", "refunded_at": "ISO 8601" }
+    },
+    {
+      "name": "OrderFulfilled",
+      "class": "Academorix\\Finance\\Order\\Events\\OrderFulfilled",
+      "trigger": "Order status -> fulfilled (goods delivered / service performed).",
+      "queue": "order",
+      "consumers": ["notifications::DispatchOrderFulfilledNotificationListener", "audit::WriteToAuditLog"],
+      "payload": { "order_id": "ULID", "tenant_id": "ULID", "fulfilled_at": "ISO 8601" }
+    }
+  ]
+}

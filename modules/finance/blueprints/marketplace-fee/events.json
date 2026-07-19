@@ -1,0 +1,16 @@
+{
+  "id": "academorix://modules/marketplace-fee/events",
+  "$version": 1,
+  "title": "marketplace-fee — published events",
+  "namespace": "Academorix\\Finance\\MarketplaceFee\\Events",
+  "dispatchMode": "afterCommit",
+  "events": [
+    { "name": "FeeScheduleCreated", "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeScheduleCreated", "trigger": "New draft FeeSchedule committed.", "queue": "marketplace-fee", "consumers": ["audit::WriteToAuditLog"], "payload": { "fee_schedule_id": "ULID (fsc_*)", "tenant_id": "ULID", "application_id": "ULID", "version": "integer", "at": "ISO 8601" } },
+    { "name": "FeeScheduleActivated", "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeScheduleActivated", "trigger": "FeeSchedule.status draft -> active. Supersedes any prior active version.", "queue": "marketplace-fee", "consumers": ["audit::WriteToAuditLog", "notifications::DispatchFeeScheduleChangedNotificationListener"], "payload": { "fee_schedule_id": "ULID", "tenant_id": "ULID", "application_id": "ULID", "version": "integer", "effective_from": "ISO 8601", "at": "ISO 8601" } },
+    { "name": "FeeScheduleDeactivated", "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeScheduleDeactivated", "trigger": "FeeSchedule.status active -> archived.", "queue": "marketplace-fee", "consumers": ["audit::WriteToAuditLog", "notifications::DispatchFeeScheduleChangedNotificationListener"], "payload": { "fee_schedule_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" } },
+    { "name": "FeeApplied", "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeApplied", "trigger": "New FeeApplication row committed. Fires from FeeCalculator when a payment succeeds.", "queue": "marketplace-fee", "consumers": ["audit::WriteToAuditLog"], "payload": { "fee_application_id": "ULID (fap_*)", "tenant_id": "ULID", "payment_id": "ULID", "fee_amount_minor": "integer", "at": "ISO 8601" } },
+    { "name": "FeeReversed", "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeeReversed", "trigger": "FeeApplication.status -> reversed (refund / chargeback).", "queue": "marketplace-fee", "consumers": ["audit::WriteToAuditLog"], "payload": { "fee_application_id": "ULID", "tenant_id": "ULID", "reason": "string", "at": "ISO 8601" } },
+    { "name": "FeePayoutCreated", "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeePayoutCreated", "trigger": "New FeePayout roll-up committed. Includes N fee_applications.", "queue": "marketplace-fee", "consumers": ["audit::WriteToAuditLog"], "payload": { "fee_payout_id": "ULID (fpo_*)", "tenant_id": "ULID", "application_id": "ULID", "period_start": "ISO 8601", "period_end": "ISO 8601", "total_fee_minor": "integer", "application_count": "integer" } },
+    { "name": "FeePayoutSettled", "class": "Academorix\\Finance\\MarketplaceFee\\Events\\FeePayoutSettled", "trigger": "FeePayout.status pending -> settled. Stripe transfer succeeded.", "queue": "marketplace-fee-critical", "consumers": ["audit::WriteToAuditLog", "notifications::DispatchFeePayoutSettledNotificationListener"], "payload": { "fee_payout_id": "ULID", "tenant_id": "ULID", "total_fee_minor": "integer", "settlement_transfer_id": "string", "settled_at": "ISO 8601" } }
+  ]
+}

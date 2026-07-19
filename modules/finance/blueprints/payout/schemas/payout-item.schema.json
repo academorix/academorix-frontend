@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/payout/schemas/payout-item",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PayoutItem",
+  "description": "Line item inside a payout: an order payment, refund, chargeback, or marketplace fee. Signed amounts. Belongs to Tenant + Payout (cascade). NEVER carries application_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "payout",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "payout_items",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pyi_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Payout\\Models\\PayoutItem",
+    "interface": "Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutItemInterface",
+    "implements": ["Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutItemInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "kind": "PayoutItemKind",
+      "amount_minor": "bigint",
+      "fee_minor": "bigint",
+      "net_minor": "bigint",
+      "provider_snapshot": "array",
+      "metadata": "array"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "payout_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "payouts", "column": "id", "onDelete": "cascade" } },
+      "kind": { "type": "string", "length": 24, "nullable": false, "description": "Enum: payment / refund / chargeback / dispute_reversal / fee / adjustment / transfer." },
+      "source_type": { "type": "string", "length": 32, "nullable": true, "description": "Polymorphic: payment / refund / chargeback / marketplace_fee_application." },
+      "source_id": { "type": "string", "length": 64, "nullable": true },
+      "provider_reference": { "type": "string", "length": 255, "nullable": true, "description": "e.g. Stripe ch_*, re_*, dp_*." },
+      "amount_minor": { "type": "bigint", "nullable": false, "description": "Signed. Positive = credit to payout; negative = deducted." },
+      "fee_minor": { "type": "bigint", "nullable": false, "default": 0 },
+      "net_minor": { "type": "bigint", "nullable": false },
+      "description": { "type": "string", "length": 500, "nullable": false },
+      "provider_snapshot": { "type": "jsonb", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "payout_id", "kind"], "name": "payout_items_payout_kind_idx" },
+      { "columns": ["tenant_id", "source_type", "source_id"], "name": "payout_items_source_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "payout_id", "kind", "amount_minor", "fee_minor", "net_minor", "description", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pyi_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "payout_id": { "type": "string", "pattern": "^pyo_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": { "type": "string", "enum": ["payment", "refund", "chargeback", "dispute_reversal", "fee", "adjustment", "transfer"] },
+    "amount_minor": { "type": "integer" },
+    "description": { "type": "string", "maxLength": 500 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

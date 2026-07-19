@@ -1,0 +1,110 @@
+{
+  "$version": 1,
+  "name": "gateway",
+  "alias": "gateway",
+  "namespace": "Academorix\\Finance\\Gateway",
+  "description": "Multi-provider payment-gateway abstraction. Every tenant configures their own provider (Stripe / Paddle / Checkout.com / Square / Razorpay / Custom) with encrypted credentials, and every finance action resolves the tenant's active gateway through PaymentGatewayInterface. Uses Laravel Cashier where possible (Stripe + Paddle) plus custom adapters for the rest. Handles Stripe Connect (charge splits: tenant Connect account receives charge minus platform fee; Academorix platform account receives the fee) plus direct-mode (tenant's own account, no Connect). Every provider webhook lands via gateway_webhook_events with idempotency + retry. Ships three tables: payment_gateway_configs (per-tenant encrypted credentials + provider + mode + connect_account_id + webhook_secret_encrypted + supported_currencies_json), payment_methods (tokenized cards on file at owner_type = guardian OR tenant, provider_token + card_brand + card_last4 + is_default), gateway_webhook_events (per-tenant per-provider webhook ledger — provider_event_id unique, payload_json, processed_at, processing_error, retry_count). Consent-gated (payment-method vault). Adapter registry via #[Bind]. See DL-4 + DL-5 in tasks.md for the multi-gateway + Stripe Connect decisions.",
+  "keywords": [
+    "gateway",
+    "payment-gateway",
+    "payment-provider",
+    "stripe",
+    "paddle",
+    "checkout-com",
+    "stripe-connect",
+    "square",
+    "razorpay",
+    "payment-method",
+    "tokenization",
+    "webhook",
+    "webhook-idempotency",
+    "connect-account",
+    "cashier",
+    "finance"
+  ],
+  "priority": 48,
+  "providers": ["Academorix\\Finance\\Gateway\\Providers\\GatewayServiceProvider"],
+  "dependencies": ["foundation", "tenancy", "application", "notifications"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasPaymentMethods"],
+    "attributes": ["AsPaymentGatewayDriver"],
+    "blueprints": ["payment_gateway_configs", "payment_methods", "gateway_webhook_events"],
+    "middleware": ["gateway.enforce_active"],
+    "events": [
+      "PaymentGatewayConnected",
+      "PaymentGatewayDisconnected",
+      "PaymentGatewayConfigured",
+      "PaymentGatewayDeactivated",
+      "PaymentMethodAdded",
+      "PaymentMethodRemoved",
+      "PaymentMethodMadeDefault",
+      "PaymentMethodVerified",
+      "WebhookReceived",
+      "WebhookProcessed",
+      "WebhookProcessingFailed"
+    ],
+    "policies": ["PaymentGatewayConfigPolicy", "PaymentMethodPolicy", "GatewayWebhookEventPolicy"],
+    "hooks": ["PurgeGatewayForErasedTenant", "DeactivateGatewaysOnTenantSuspended"],
+    "commands": ["gateway:list", "gateway:configure", "gateway:test", "gateway:list-methods", "gateway:list-webhooks", "gateway:replay-webhook"],
+    "jobs": ["ProcessGatewayWebhookJob", "VerifyPaymentMethodJob", "RetryFailedWebhookJob"],
+    "notifications": ["PaymentGatewayConnectedNotification", "PaymentGatewayFailureNotification", "WebhookProcessingFailedNotification"],
+    "broadcasts": ["tenant.{tenantId}.gateway"],
+    "observers": ["PaymentGatewayConfigObserver", "PaymentMethodObserver", "GatewayWebhookEventObserver"],
+    "rules": ["valid_provider", "valid_mode", "valid_currency", "valid_card_last4"],
+    "casts": ["PaymentGatewayProvider", "PaymentGatewayMode", "GatewayWebhookStatus"],
+    "views": [],
+    "lang": ["gateway"],
+    "config": ["gateway"],
+    "macros": [],
+    "bindings": [
+      "PaymentGatewayConfigRepository",
+      "PaymentMethodRepository",
+      "GatewayWebhookEventRepository",
+      "PaymentGatewayManager",
+      "StripeGatewayDriver",
+      "PaddleGatewayDriver",
+      "CheckoutComGatewayDriver",
+      "WebhookHandler",
+      "PaymentGatewayInterface"
+    ],
+    "resources": ["payment-gateway-config", "payment-method", "gateway-webhook-event"]
+  },
+  "wraps": {
+    "packages": [
+      "laravel/cashier-stripe ^15",
+      "laravel/cashier-paddle ^2",
+      "guzzlehttp/guzzle ^7.8"
+    ],
+    "rationale": "Cashier handles Stripe + Paddle idiomatically (card vaulting, SCA, webhooks, subscriptions). Custom adapters extend the same PaymentGatewayInterface for Checkout.com / Square / Razorpay + a Custom Webhook provider. Guzzle powers non-cashier providers with retry-safe + connection-pooled HTTP."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing gateway configuration + webhook ledger. Owner + admin configure providers + rotate credentials; support role reads the webhook ledger.",
+      "routes": [
+        "GET /api/v1/gateways",
+        "POST /api/v1/gateways",
+        "GET /api/v1/gateways/{gateway}",
+        "PATCH /api/v1/gateways/{gateway}",
+        "DELETE /api/v1/gateways/{gateway}",
+        "POST /api/v1/gateways/{gateway}/test",
+        "POST /api/v1/gateways/{gateway}/connect-oauth",
+        "GET /api/v1/payment-methods",
+        "POST /api/v1/payment-methods",
+        "GET /api/v1/payment-methods/{payment_method}",
+        "DELETE /api/v1/payment-methods/{payment_method}",
+        "POST /api/v1/payment-methods/{payment_method}/default",
+        "GET /api/v1/gateway-webhooks",
+        "GET /api/v1/gateway-webhooks/{event}",
+        "POST /api/v1/gateway-webhooks/{event}/replay"
+      ]
+    },
+    "central_admin": {
+      "description": "Cross-tenant gateway support (no credential reads).",
+      "routes": [
+        "GET /api/v1/platform/gateways",
+        "GET /api/v1/platform/gateway-webhooks"
+      ]
+    }
+  }
+}

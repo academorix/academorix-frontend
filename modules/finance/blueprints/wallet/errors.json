@@ -1,0 +1,17 @@
+{
+  "id": "academorix://modules/wallet/errors",
+  "$version": 1,
+  "title": "wallet — error codes",
+  "namespace": "wallet",
+  "errors": [
+    { "code": "WALLET_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "wallet.errors.not_found" },
+    { "code": "WALLET_CLOSED", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "wallet.errors.closed", "description": "Wallet is closed — no new transactions accepted." },
+    { "code": "WALLET_INSUFFICIENT_BALANCE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "wallet.errors.insufficient_balance", "description": "Debit or hold amount exceeds available balance (balance - reserved)." },
+    { "code": "WALLET_CURRENCY_MISMATCH", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "wallet.errors.currency_mismatch", "description": "Transaction currency does not match wallet currency." },
+    { "code": "WALLET_KIND_MISMATCH", "http": 422, "retryable": false, "user_facing": false, "audit_severity": "warn", "i18n_key": "wallet.errors.kind_mismatch", "description": "Attempted a points operation on a cash/credit wallet or vice versa." },
+    { "code": "WALLET_HOLD_NOT_FOUND", "http": 404, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "wallet.errors.hold_not_found" },
+    { "code": "WALLET_HOLD_NOT_ACTIVE", "http": 409, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "wallet.errors.hold_not_active", "description": "Hold is already settled / released / expired." },
+    { "code": "WALLET_RECONCILIATION_FAILED", "http": 502, "retryable": true, "user_facing": false, "audit_severity": "warn", "i18n_key": "wallet.errors.reconciliation_failed", "description": "Upstream (Stripe balance) API failure. Retry with exponential backoff." },
+    { "code": "WALLET_POINTS_NEGATIVE", "http": 422, "retryable": false, "user_facing": true, "audit_severity": "info", "i18n_key": "wallet.errors.points_negative", "description": "Points balance cannot go negative. Redemption exceeds current earning." }
+  ]
+}

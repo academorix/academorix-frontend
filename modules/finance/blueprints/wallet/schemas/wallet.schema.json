@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/wallet/schemas/wallet",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Wallet",
+  "description": "One wallet per (owner_type, owner_id, kind, currency). Balance is materialized (running sum of transactions minus active holds). Reconciled nightly for kind=cash against Stripe Connect Balance API. Belongs to Tenant (cascade). NEVER carries application_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "wallet",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "wallets",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "wal_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Wallet\\Models\\Wallet",
+    "interface": "Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletInterface",
+    "implements": ["Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "casts": {
+      "kind": "WalletKind",
+      "balance_minor": "integer",
+      "reserved_minor": "integer",
+      "lifetime_credit_minor": "integer",
+      "lifetime_debit_minor": "integer",
+      "reconciled_at": "datetime",
+      "closed_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["WalletObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `wal_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "owner_type": { "type": "string", "length": 32, "nullable": false, "description": "Polymorphic: guardian / tenant / athlete." },
+      "owner_id": { "type": "string", "length": 64, "nullable": false },
+      "kind": { "type": "string", "length": 16, "nullable": false, "description": "Enum: cash / credit / points." },
+      "currency": { "type": "string", "length": 3, "nullable": false, "description": "ISO 4217 for cash+credit; 'PTS' for points." },
+      "balance_minor": { "type": "bigint", "nullable": false, "default": 0, "description": "Available balance = lifetime_credit - lifetime_debit - reserved." },
+      "reserved_minor": { "type": "bigint", "nullable": false, "default": 0, "description": "Sum of active wallet_holds against this wallet." },
+      "lifetime_credit_minor": { "type": "bigint", "nullable": false, "default": 0 },
+      "lifetime_debit_minor": { "type": "bigint", "nullable": false, "default": 0 },
+      "reconciled_at": { "type": "timestamptz", "nullable": true, "description": "Last successful reconciliation against upstream source (Stripe balance for cash)." },
+      "closed_at": { "type": "timestamptz", "nullable": true, "description": "Wallet closed (owner erased, tenant deactivated, etc.). No new transactions accepted." },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "owner_type", "owner_id", "kind", "currency"], "unique": true, "name": "wallets_owner_kind_currency_unique" },
+      { "columns": ["tenant_id", "kind", "reconciled_at"], "name": "wallets_reconciliation_idx", "predicate": "kind = 'cash' AND deleted_at IS NULL" },
+      { "columns": ["tenant_id", "closed_at"], "name": "wallets_closed_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "owner_type", "owner_id", "kind", "currency", "balance_minor", "reserved_minor", "lifetime_credit_minor", "lifetime_debit_minor", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^wal_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "owner_type": { "type": "string", "enum": ["guardian", "tenant", "athlete"] },
+    "kind": { "type": "string", "enum": ["cash", "credit", "points"] },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "balance_minor": { "type": "integer" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

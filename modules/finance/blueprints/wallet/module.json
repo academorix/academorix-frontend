@@ -1,0 +1,86 @@
+{
+  "$version": 1,
+  "name": "wallet",
+  "alias": "wallet",
+  "namespace": "Academorix\\Finance\\Wallet",
+  "description": "Unified ledger for non-cash entitlements: cash-balance mirror + prepaid store credit + loyalty points. One table serves all three via a kind discriminator (per DL-2 in tasks.md). Model A (non-custodial mirror) — Academorix never holds customer funds; the wallet is a materialized view over gateway balances + tenant-issued entitlements. Rejected Model B (custodial) because triggers money-transmitter licensing (state-by-state US, EMI in EU, DFSA in UAE). Owns three tables: wallets (one per owner+kind+currency), wallet_transactions (immutable debit/credit log, composed reference to source), wallet_holds (reserved balance during in-progress checkouts, settled/released on order state transition). Cross-integrates with finance/order (holds on checkout, transactions on paid), finance/refund (credit-refund alternative), finance/gateway (cash-mirror nightly reconciliation via Stripe Connect balance API).",
+  "keywords": [
+    "wallet",
+    "ledger",
+    "credit",
+    "store-credit",
+    "loyalty-points",
+    "cash-balance",
+    "stripe-connect-balance",
+    "hold",
+    "reservation",
+    "non-custodial",
+    "reconciliation",
+    "finance"
+  ],
+  "priority": 46,
+  "providers": ["Academorix\\Finance\\Wallet\\Providers\\WalletServiceProvider"],
+  "dependencies": ["foundation", "tenancy", "application", "gateway"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasWallets"],
+    "attributes": ["AsWalletKind", "AsWalletHoldSource"],
+    "blueprints": ["wallets", "wallet_transactions", "wallet_holds"],
+    "middleware": [],
+    "events": [
+      "WalletOpened",
+      "WalletClosed",
+      "WalletCredited",
+      "WalletDebited",
+      "WalletHoldPlaced",
+      "WalletHoldReleased",
+      "WalletHoldCommitted",
+      "WalletReconciled",
+      "WalletReconciliationDrift",
+      "PointsEarned",
+      "PointsRedeemed",
+      "PointsExpired"
+    ],
+    "policies": ["WalletPolicy", "WalletTransactionPolicy", "WalletHoldPolicy"],
+    "hooks": ["PurgeWalletsForErasedTenant", "CloseWalletsOnOwnerErased"],
+    "commands": ["wallet:list", "wallet:show", "wallet:reconcile", "wallet:reconcile-all", "wallet:expire-points", "wallet:issue-credit", "wallet:release-stale-holds"],
+    "jobs": ["ReconcileWalletJob", "SettleWalletHoldsJob", "ReleaseStaleWalletHoldsJob", "ExpirePointsJob"],
+    "notifications": ["WalletCreditedNotification", "WalletReconciliationDriftNotification", "PointsExpiredNotification"],
+    "broadcasts": ["tenant.{tenantId}.wallets", "guardian.{guardianId}.wallets"],
+    "observers": ["WalletObserver", "WalletTransactionObserver", "WalletHoldObserver"],
+    "rules": ["valid_wallet_kind", "valid_currency", "positive_amount", "non_negative_balance"],
+    "casts": ["WalletKind", "WalletHoldStatus", "WalletTransactionKind"],
+    "views": [],
+    "lang": ["wallet"],
+    "config": ["wallet"],
+    "macros": [],
+    "bindings": [
+      "WalletRepository",
+      "WalletTransactionRepository",
+      "WalletHoldRepository",
+      "WalletFactory",
+      "WalletReconciler",
+      "PointsEarnRuleEngine",
+      "PointsRedemptionCalculator",
+      "WalletInterface"
+    ],
+    "resources": ["wallet", "wallet-transaction", "wallet-hold"]
+  },
+  "wraps": {
+    "packages": ["spatie/laravel-data ^4"],
+    "rationale": "Data DTOs for wire contracts. No custodial vendor — the module is a mirror ledger, not a wallet product."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing wallet ledger. Guardians see own wallets (all kinds); staff+finance see tenant wallets.",
+      "routes": [
+        "GET /api/v1/wallets",
+        "GET /api/v1/wallets/{wallet}",
+        "GET /api/v1/wallets/{wallet}/transactions",
+        "POST /api/v1/wallets/{wallet}/adjust",
+        "GET /api/v1/wallet-holds",
+        "GET /api/v1/wallet-holds/{hold}"
+      ]
+    }
+  }
+}

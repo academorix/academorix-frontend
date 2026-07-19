@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/payout/policies",
+  "$version": 1,
+  "title": "payout — authorization policies",
+  "description": "Every payout is finance-only. Sync refuses when payout status is already terminal.",
+  "policies": [
+    {
+      "model": "Payout",
+      "class": "Academorix\\Finance\\Payout\\Policies\\PayoutPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "payouts.viewAny" },
+        { "action": "view", "permission": "payouts.view" },
+        { "action": "sync", "permission": "payouts.sync", "scope": "refuses when status IN ('paid', 'failed', 'cancelled') AND reconciled_at IS NOT NULL." },
+        { "action": "platformViewAny", "permission": "platform.payouts.viewAny" }
+      ]
+    },
+    {
+      "model": "PayoutItem",
+      "class": "Academorix\\Finance\\Payout\\Policies\\PayoutItemPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "payout-items.viewAny" },
+        { "action": "view", "permission": "payout-items.view" }
+      ]
+    },
+    {
+      "model": "PayoutReconciliation",
+      "class": "Academorix\\Finance\\Payout\\Policies\\PayoutReconciliationPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "payout-reconciliations.viewAny" },
+        { "action": "view", "permission": "payout-reconciliations.view" },
+        { "action": "resolve", "permission": "payout-reconciliations.resolve", "scope": "refuses when status != 'drift'." }
+      ]
+    }
+  ]
+}

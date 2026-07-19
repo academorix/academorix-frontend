@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/order/schemas/order-adjustment",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "OrderAdjustment",
+  "description": "Signed adjustment on an Order: coupon / credit / manual-discount / tax / fee. Positive amount = adds cost (fee, tax). Negative amount = deducts cost (discount, credit). Belongs to Tenant + Order (cascade). NEVER carries application_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "order",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "order_adjustments",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "adj_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Order\\Models\\OrderAdjustment",
+    "interface": "Academorix\\Finance\\Order\\Contracts\\Data\\OrderAdjustmentInterface",
+    "implements": ["Academorix\\Finance\\Order\\Contracts\\Data\\OrderAdjustmentInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "kind": "OrderAdjustmentKind",
+      "amount_minor": "integer",
+      "source_snapshot": "array",
+      "metadata": "array"
+    },
+    "observers": ["OrderAdjustmentObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `adj_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "order_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "orders", "column": "id", "onDelete": "cascade" } },
+      "order_line_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "order_lines", "column": "id", "onDelete": "cascade" }, "description": "Set for per-line adjustments; NULL for order-wide adjustments." },
+      "kind": { "type": "string", "length": 24, "nullable": false, "description": "Enum: coupon / credit / manual_discount / tax / fee / round." },
+      "source_type": { "type": "string", "length": 32, "nullable": true, "description": "Polymorphic reference to the source record: coupon / credit_memo / wallet / tax_rule / fee_schedule." },
+      "source_id": { "type": "string", "length": 64, "nullable": true },
+      "code": { "type": "string", "length": 128, "nullable": true, "description": "Human code (e.g. 'BLACKFRIDAY2026'). Snapshotted from the coupon." },
+      "label": { "type": "string", "length": 255, "nullable": false, "description": "Display label shown on invoices + receipts." },
+      "amount_minor": { "type": "integer", "nullable": false, "description": "Signed minor units. Positive = fee/tax; negative = discount/credit." },
+      "source_snapshot": { "type": "jsonb", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "order_id", "kind"], "name": "order_adjustments_kind_idx" },
+      { "columns": ["tenant_id", "source_type", "source_id"], "name": "order_adjustments_source_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "order_id", "kind", "label", "amount_minor", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^adj_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "order_id": { "type": "string", "pattern": "^ord_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": { "type": "string", "enum": ["coupon", "credit", "manual_discount", "tax", "fee", "round"] },
+    "label": { "type": "string", "maxLength": 255 },
+    "amount_minor": { "type": "integer" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

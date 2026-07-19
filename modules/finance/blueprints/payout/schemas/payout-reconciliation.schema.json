@@ -1,0 +1,66 @@
+{
+  "id": "academorix://modules/payout/schemas/payout-reconciliation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PayoutReconciliation",
+  "description": "Per-payout reconciliation record. Compares local SUM(payout_items.amount_minor) vs gateway payout.amount_minor. Non-zero drift is an incident signal. Belongs to Tenant + Payout (cascade). NEVER carries application_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "payout",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "payout_reconciliations",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pyr_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Payout\\Models\\PayoutReconciliation",
+    "interface": "Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutReconciliationInterface",
+    "implements": ["Academorix\\Finance\\Payout\\Contracts\\Data\\PayoutReconciliationInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "status": "PayoutReconciliationStatus",
+      "local_total_minor": "bigint",
+      "provider_total_minor": "bigint",
+      "drift_minor": "bigint",
+      "reconciled_at": "datetime",
+      "resolved_at": "datetime",
+      "notes": "array",
+      "metadata": "array"
+    }
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "payout_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "payouts", "column": "id", "onDelete": "cascade" } },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'pending'", "description": "Enum: pending / matched / drift / resolved / failed." },
+      "local_total_minor": { "type": "bigint", "nullable": false },
+      "provider_total_minor": { "type": "bigint", "nullable": false },
+      "drift_minor": { "type": "bigint", "nullable": false, "default": 0 },
+      "reconciled_at": { "type": "timestamptz", "nullable": true },
+      "resolved_at": { "type": "timestamptz", "nullable": true },
+      "resolved_by": { "type": "string", "length": 64, "nullable": true },
+      "notes": { "type": "jsonb", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "payout_id"], "unique": true, "name": "payout_reconciliations_payout_unique" },
+      { "columns": ["tenant_id", "status", "reconciled_at"], "name": "payout_reconciliations_status_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "payout_id", "status", "local_total_minor", "provider_total_minor", "drift_minor", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pyr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "payout_id": { "type": "string", "pattern": "^pyo_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["pending", "matched", "drift", "resolved", "failed"] },
+    "drift_minor": { "type": "integer" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

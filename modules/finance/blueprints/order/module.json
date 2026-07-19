@@ -1,0 +1,94 @@
+{
+  "$version": 1,
+  "name": "order",
+  "alias": "order",
+  "namespace": "Academorix\\Finance\\Order",
+  "description": "Order model as parent aggregate to Invoice. Represents 'intent to purchase' composing multiple line items with totals, adjustments, and split-payment resolution. The Order is the source of truth for what the customer intended to buy; the Invoice mirrors what actually happened for accounting. Owns three tables: orders (checkout attempts, polymorphic buyer, state machine: draft -> pending -> paid | partially_paid | abandoned | cancelled | refunded), order_lines (line items, polymorphic purchasable — Product / MembershipPlan / PassPackage / EventTicket / ClinicSession), order_adjustments (coupon / credit / manual-discount / tax / fee rows, signed). Line-item purchasable resolution via a purchasable_type registry (module extensions register their own resolvers via #[AsPurchasable]). Coupon integration wires through finance/coupon; wallet integration wires through finance/wallet (wallet_hold at checkout, wallet_transaction on commit). Per DL-2 in tasks.md: Orders reference wallet + coupon + invoice + payment.",
+  "keywords": [
+    "order",
+    "checkout",
+    "cart",
+    "line-item",
+    "adjustment",
+    "coupon",
+    "purchasable",
+    "state-machine",
+    "totals",
+    "tax",
+    "finance"
+  ],
+  "priority": 47,
+  "providers": ["Academorix\\Finance\\Order\\Providers\\OrderServiceProvider"],
+  "dependencies": ["foundation", "tenancy", "application", "gateway", "wallet", "coupon"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasOrders"],
+    "attributes": ["AsPurchasable", "AsOrderAdjustmentResolver"],
+    "blueprints": ["orders", "order_lines", "order_adjustments"],
+    "middleware": [],
+    "events": [
+      "OrderCreated",
+      "OrderLineAdded",
+      "OrderLineRemoved",
+      "OrderAdjustmentApplied",
+      "OrderAdjustmentRemoved",
+      "OrderTotalsRecalculated",
+      "OrderPending",
+      "OrderPaid",
+      "OrderPartiallyPaid",
+      "OrderAbandoned",
+      "OrderCancelled",
+      "OrderRefunded",
+      "OrderFulfilled"
+    ],
+    "policies": ["OrderPolicy", "OrderLinePolicy", "OrderAdjustmentPolicy"],
+    "hooks": ["PurgeOrdersForErasedTenant", "ExpireAbandonedOrders"],
+    "commands": ["order:list", "order:show", "order:cancel", "order:refund", "order:expire-abandoned", "order:recalculate-totals"],
+    "jobs": ["ExpireAbandonedOrderJob", "RecalculateOrderTotalsJob", "SettleWalletHoldsJob"],
+    "notifications": ["OrderPaidNotification", "OrderAbandonedNotification", "OrderCancelledNotification", "OrderRefundedNotification"],
+    "broadcasts": ["tenant.{tenantId}.orders", "guardian.{guardianId}.orders"],
+    "observers": ["OrderObserver", "OrderLineObserver", "OrderAdjustmentObserver"],
+    "rules": ["valid_currency", "valid_order_state", "valid_adjustment_kind", "positive_quantity"],
+    "casts": ["OrderStatus", "OrderAdjustmentKind", "OrderChannel"],
+    "views": [],
+    "lang": ["order"],
+    "config": ["order"],
+    "macros": [],
+    "bindings": [
+      "OrderRepository",
+      "OrderLineRepository",
+      "OrderAdjustmentRepository",
+      "OrderFactory",
+      "OrderTotalsCalculator",
+      "PurchasableResolver",
+      "OrderStateMachine",
+      "OrderInterface"
+    ],
+    "resources": ["order", "order-line", "order-adjustment"]
+  },
+  "wraps": {
+    "packages": ["spatie/laravel-data ^4", "spatie/laravel-model-states ^2"],
+    "rationale": "Data DTOs for wire contracts; model-states drives the Order status machine with typed transitions + guards + transition events."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing checkout + order-management surface.",
+      "routes": [
+        "GET /api/v1/orders",
+        "POST /api/v1/orders",
+        "GET /api/v1/orders/{order}",
+        "PATCH /api/v1/orders/{order}",
+        "DELETE /api/v1/orders/{order}",
+        "POST /api/v1/orders/{order}/lines",
+        "PATCH /api/v1/orders/{order}/lines/{line}",
+        "DELETE /api/v1/orders/{order}/lines/{line}",
+        "POST /api/v1/orders/{order}/adjustments",
+        "DELETE /api/v1/orders/{order}/adjustments/{adjustment}",
+        "POST /api/v1/orders/{order}/checkout",
+        "POST /api/v1/orders/{order}/cancel",
+        "POST /api/v1/orders/{order}/refund",
+        "POST /api/v1/orders/{order}/recalculate"
+      ]
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/marketplace-fee/schemas/fee-schedule",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "FeeSchedule",
+  "description": "Per-tenant fee configuration. Multiple versions retain history — an increase applies to future transactions, never retroactively. This is one of the 8 rows that carries application_id directly (per tenancy-columns.md - the platform charges different rates on different Applications). Belongs to Tenant (cascade) + Application (restrict). NEVER carries organization_id, region_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "marketplace-fee",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "fee_schedules",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "fsc_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\MarketplaceFee\\Models\\FeeSchedule",
+    "interface": "Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeScheduleInterface",
+    "implements": ["Academorix\\Finance\\MarketplaceFee\\Contracts\\Data\\FeeScheduleInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "BelongsToApplication", "HasMetadata", "HasUserstamps", "Auditable", "SoftDeletes"],
+    "casts": {
+      "status": "FeeScheduleStatus",
+      "base_rate": "decimal:4",
+      "flat_fee_minor": "integer",
+      "tiers_json": "array",
+      "effective_from": "datetime",
+      "effective_to": "datetime",
+      "is_active": "boolean",
+      "metadata": "array"
+    },
+    "observers": ["FeeScheduleObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `fsc_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "application_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "applications", "column": "id", "onDelete": "restrict" }, "description": "Which Application this schedule applies to. Per tenancy-columns.md, fee_schedules is one of the 8 rows carrying application_id directly." },
+      "version": { "type": "integer", "nullable": false, "default": 1, "description": "Monotonic version per (tenant_id, application_id). Auto-increments on new schedule." },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'draft'", "description": "Enum: draft / active / superseded / archived." },
+      "currency": { "type": "string", "length": 3, "nullable": false },
+      "base_rate": { "type": "decimal", "precision": 6, "scale": 4, "nullable": false, "description": "Base percentage rate (e.g. 0.0290 = 2.9%). Applied on top of any tier config." },
+      "flat_fee_minor": { "type": "integer", "nullable": false, "default": 0, "description": "Fixed fee per transaction in minor units (e.g. 30 = $0.30)." },
+      "tiers_json": { "type": "jsonb", "nullable": true, "description": "Optional progressive tier config: [{'up_to_minor': 100000, 'rate': 0.029}, {'up_to_minor': null, 'rate': 0.02}]. NULL = flat base_rate only." },
+      "effective_from": { "type": "timestamptz", "nullable": false, "description": "When this schedule becomes active. Never retroactive — always future-dated." },
+      "effective_to": { "type": "timestamptz", "nullable": true, "description": "When superseded by a newer version. NULL = current." },
+      "is_active": { "type": "boolean", "nullable": false, "default": false },
+      "activated_at": { "type": "timestamptz", "nullable": true },
+      "notes": { "type": "text", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "application_id", "version"], "unique": true, "name": "fee_schedules_version_unique" },
+      { "columns": ["tenant_id", "application_id", "is_active"], "unique": true, "name": "fee_schedules_active_unique", "predicate": "is_active = TRUE AND deleted_at IS NULL" },
+      { "columns": ["tenant_id", "application_id", "status", "effective_from"], "name": "fee_schedules_lookup_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "application_id", "version", "status", "currency", "base_rate", "flat_fee_minor", "effective_from", "is_active", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^fsc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": { "type": "string", "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "version": { "type": "integer", "minimum": 1 },
+    "status": { "type": "string", "enum": ["draft", "active", "superseded", "archived"] },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "base_rate": { "type": "number", "minimum": 0, "maximum": 1 },
+    "flat_fee_minor": { "type": "integer", "minimum": 0 },
+    "is_active": { "type": "boolean" },
+    "effective_from": { "type": "string", "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/order/policies",
+  "$version": 1,
+  "title": "order — authorization policies",
+  "description": "Buyer-scoped: guardians see only their own orders. State-gated: adjustments/lines editable only while order.status IN ('draft', 'pending'). Refund-gated: only paid orders refundable.",
+  "policies": [
+    {
+      "model": "Order",
+      "class": "Academorix\\Finance\\Order\\Policies\\OrderPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "orders.viewAny", "scope": "guardian narrowed to own (buyer_type='guardian' AND buyer_id=current_user_id)." },
+        { "action": "view", "permission": "orders.view", "scope": "same narrowing." },
+        { "action": "create", "permission": "orders.create" },
+        { "action": "update", "permission": "orders.update", "scope": "refuses when status NOT IN ('draft', 'pending')." },
+        { "action": "delete", "permission": "orders.delete", "scope": "refuses when status != 'draft'." },
+        { "action": "checkout", "permission": "orders.checkout", "scope": "refuses when status != 'draft' OR order has zero lines OR total < 0." },
+        { "action": "cancel", "permission": "orders.cancel", "scope": "refuses when status IN ('cancelled', 'refunded', 'abandoned')." },
+        { "action": "refund", "permission": "orders.refund", "scope": "refuses when status NOT IN ('paid', 'partially_paid', 'fulfilled')." },
+        { "action": "recalculate", "permission": "orders.recalculate" }
+      ]
+    },
+    {
+      "model": "OrderLine",
+      "class": "Academorix\\Finance\\Order\\Policies\\OrderLinePolicy",
+      "abilities": [
+        { "action": "create", "permission": "order-lines.create", "scope": "parent order must be editable (status IN ('draft', 'pending'))." },
+        { "action": "update", "permission": "order-lines.update", "scope": "same parent-state gate." },
+        { "action": "delete", "permission": "order-lines.delete", "scope": "same parent-state gate." }
+      ]
+    },
+    {
+      "model": "OrderAdjustment",
+      "class": "Academorix\\Finance\\Order\\Policies\\OrderAdjustmentPolicy",
+      "abilities": [
+        { "action": "create", "permission": "order-adjustments.create", "scope": "parent-state gate + coupon+credit adjustments narrower (guardian can apply own credits; only staff can apply manual discount)." },
+        { "action": "delete", "permission": "order-adjustments.delete", "scope": "kind='tax' adjustments cannot be manually deleted (recomputed only)." }
+      ]
+    }
+  ]
+}

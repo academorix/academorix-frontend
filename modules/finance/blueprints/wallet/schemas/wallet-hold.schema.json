@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/wallet/schemas/wallet-hold",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "WalletHold",
+  "description": "Reserved balance during in-progress checkout. Prevents over-spending when the same wallet is referenced by two concurrent orders. Auto-releases via TTL sweeper. Committed to a wallet_transaction on OrderPaid; released on OrderAbandoned / OrderCancelled. Belongs to Tenant + Wallet (cascade). NEVER carries application_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "wallet",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "wallet_holds",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "whd_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Wallet\\Models\\WalletHold",
+    "interface": "Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletHoldInterface",
+    "implements": ["Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletHoldInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "status": "WalletHoldStatus",
+      "amount_minor": "bigint",
+      "expires_at": "datetime",
+      "settled_at": "datetime",
+      "released_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["WalletHoldObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `whd_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "wallet_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "wallets", "column": "id", "onDelete": "cascade" } },
+      "source_type": { "type": "string", "length": 32, "nullable": false, "description": "Polymorphic: order / order_adjustment / manual_hold." },
+      "source_id": { "type": "string", "length": 64, "nullable": false },
+      "amount_minor": { "type": "bigint", "nullable": false, "description": "Positive amount reserved from the wallet." },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'active'", "description": "Enum: active / settled / released / expired." },
+      "expires_at": { "type": "timestamptz", "nullable": false, "description": "Auto-release deadline. Defaults to source order's expires_at." },
+      "settled_at": { "type": "timestamptz", "nullable": true, "description": "When hold was converted to a wallet_transaction (OrderPaid)." },
+      "released_at": { "type": "timestamptz", "nullable": true, "description": "When hold was released (OrderAbandoned / OrderCancelled / TTL expiry)." },
+      "settled_transaction_id": { "type": "string", "length": 64, "nullable": true, "foreign": { "table": "wallet_transactions", "column": "id", "onDelete": "set null" } },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "wallet_id", "status"], "name": "wallet_holds_wallet_status_idx" },
+      { "columns": ["tenant_id", "status", "expires_at"], "name": "wallet_holds_ttl_sweeper_idx", "predicate": "status = 'active'" },
+      { "columns": ["tenant_id", "source_type", "source_id"], "name": "wallet_holds_source_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "wallet_id", "source_type", "source_id", "amount_minor", "status", "expires_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^whd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "wallet_id": { "type": "string", "pattern": "^wal_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "status": { "type": "string", "enum": ["active", "settled", "released", "expired"] },
+    "amount_minor": { "type": "integer", "minimum": 0 },
+    "expires_at": { "type": "string", "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

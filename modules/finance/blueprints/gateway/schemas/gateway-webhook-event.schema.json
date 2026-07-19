@@ -1,0 +1,68 @@
+{
+  "id": "academorix://modules/gateway/schemas/gateway-webhook-event",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "GatewayWebhookEvent",
+  "description": "Per-tenant per-provider webhook ledger. Idempotent on (tenant_id, provider, provider_event_id). Belongs to Tenant + PaymentGatewayConfig (CASCADE). NEVER carries application_id, region_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "gateway",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "gateway_webhook_events",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "gwe_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Gateway\\Models\\GatewayWebhookEvent",
+    "interface": "Academorix\\Finance\\Gateway\\Contracts\\Data\\GatewayWebhookEventInterface",
+    "implements": ["Academorix\\Finance\\Gateway\\Contracts\\Data\\GatewayWebhookEventInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "provider": "PaymentGatewayProvider",
+      "status": "GatewayWebhookStatus",
+      "payload_json": "array",
+      "processed_at": "datetime",
+      "retry_count": "integer"
+    },
+    "observers": ["GatewayWebhookEventObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `gwe_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "gateway_config_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "payment_gateway_configs", "column": "id", "onDelete": "cascade" } },
+      "provider": { "type": "string", "length": 32, "nullable": false },
+      "provider_event_id": { "type": "string", "length": 255, "nullable": false, "description": "The provider's unique event ID (evt_* for Stripe). Used as the idempotency key." },
+      "event_type": { "type": "string", "length": 128, "nullable": false, "description": "The provider's event type (charge.succeeded, payment_intent.succeeded, invoice.paid, etc.)." },
+      "status": { "type": "string", "length": 16, "nullable": false, "default": "'pending'", "description": "Enum: pending / processing / processed / failed / retrying / dead_letter." },
+      "payload_json": { "type": "jsonb", "nullable": false, "description": "Full webhook payload as received. Compressed at rest when > 32KB." },
+      "processed_at": { "type": "timestamptz", "nullable": true },
+      "processing_error": { "type": "text", "nullable": true, "description": "Stringified exception on last failed attempt." },
+      "retry_count": { "type": "integer", "nullable": false, "default": 0 },
+      "next_retry_at": { "type": "timestamptz", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "provider", "provider_event_id"], "unique": true, "name": "gateway_webhook_events_idempotency_unique" },
+      { "columns": ["tenant_id", "status", "next_retry_at"], "name": "gateway_webhook_events_retry_idx", "predicate": "status IN ('pending', 'retrying')" },
+      { "columns": ["tenant_id", "event_type", "created_at"], "name": "gateway_webhook_events_type_time_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "gateway_config_id", "provider", "provider_event_id", "event_type", "status", "payload_json", "retry_count", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^gwe_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "gateway_config_id": { "type": "string", "pattern": "^pgc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": { "type": "string", "enum": ["stripe", "paddle", "checkout_com", "square", "razorpay", "custom"] },
+    "provider_event_id": { "type": "string", "maxLength": 255 },
+    "event_type": { "type": "string", "maxLength": 128 },
+    "status": { "type": "string", "enum": ["pending", "processing", "processed", "failed", "retrying", "dead_letter"] },
+    "retry_count": { "type": "integer", "minimum": 0 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "$version": 1,
+  "name": "payout",
+  "alias": "payout",
+  "namespace": "Academorix\\Finance\\Payout",
+  "description": "Stripe Connect payout mirror. The gateway (Stripe Connect) executes the payout to the tenant's connected bank account; Academorix ledgers what happened locally for reporting + reconciliation. Owns three tables: payouts (one row per gateway payout event, mirrors provider.payouts.*), payout_items (line items inside a payout — the transactions being paid out: order payments, refunds, chargebacks, marketplace fees), payout_reconciliations (nightly per-tenant reconciliation report comparing local total vs gateway total). Not a wallet product — Academorix never touches the money. Cross-integrates with finance/gateway (webhook receiver for payout.* events), finance/marketplace-fee (fees deducted from payouts), finance/chargeback (reversal items).",
+  "keywords": ["payout", "stripe-connect", "settlement", "bank-transfer", "reconciliation", "marketplace-payout", "finance"],
+  "priority": 45,
+  "providers": ["Academorix\\Finance\\Payout\\Providers\\PayoutServiceProvider"],
+  "dependencies": ["foundation", "tenancy", "application", "gateway"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["HasPayouts"],
+    "attributes": [],
+    "blueprints": ["payouts", "payout_items", "payout_reconciliations"],
+    "middleware": [],
+    "events": ["PayoutInitiated", "PayoutInTransit", "PayoutPaid", "PayoutFailed", "PayoutCancelled", "PayoutReconciled", "PayoutReconciliationDrift"],
+    "policies": ["PayoutPolicy", "PayoutItemPolicy", "PayoutReconciliationPolicy"],
+    "hooks": ["PurgePayoutsForErasedTenant"],
+    "commands": ["payout:list", "payout:show", "payout:reconcile", "payout:sync-provider"],
+    "jobs": ["SyncPayoutFromProviderJob", "ReconcilePayoutJob"],
+    "notifications": ["PayoutPaidNotification", "PayoutFailedNotification", "PayoutReconciliationDriftNotification"],
+    "broadcasts": ["tenant.{tenantId}.payouts"],
+    "observers": ["PayoutObserver", "PayoutItemObserver"],
+    "rules": ["valid_payout_status", "valid_currency", "positive_amount"],
+    "casts": ["PayoutStatus", "PayoutItemKind"],
+    "views": [],
+    "lang": ["payout"],
+    "config": ["payout"],
+    "macros": [],
+    "bindings": ["PayoutRepository", "PayoutItemRepository", "PayoutReconciliationRepository", "PayoutSyncer", "PayoutReconciler", "PayoutInterface"],
+    "resources": ["payout", "payout-item", "payout-reconciliation"]
+  },
+  "wraps": {
+    "packages": ["laravel/cashier-stripe ^15"],
+    "rationale": "Cashier ships Stripe Connect payout helpers; wrap them into Academorix's payout ledger."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing payout ledger. Finance role only.",
+      "routes": [
+        "GET /api/v1/payouts",
+        "GET /api/v1/payouts/{payout}",
+        "GET /api/v1/payouts/{payout}/items",
+        "GET /api/v1/payouts/{payout}/reconciliation",
+        "POST /api/v1/payouts/{payout}/reconcile"
+      ]
+    },
+    "central_admin": {
+      "description": "Cross-tenant payout audit.",
+      "routes": ["GET /api/v1/platform/payouts"]
+    }
+  }
+}

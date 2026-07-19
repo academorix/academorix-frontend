@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/gateway/events",
+  "$version": 1,
+  "title": "gateway — published events",
+  "namespace": "Academorix\\Finance\\Gateway\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements ShouldDispatchAfterCommit. WebhookReceived is the load-bearing signal — feeds finance/payment, finance/refund, finance/chargeback listener chains. PaymentGatewayFailureNotification alerts the tenant when a gateway goes unhealthy.",
+  "events": [
+    {
+      "name": "PaymentGatewayConnected",
+      "class": "Academorix\\Finance\\Gateway\\Events\\PaymentGatewayConnected",
+      "trigger": "New PaymentGatewayConfig row committed with is_active=true.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog", "notifications::DispatchPaymentGatewayConnectedNotification"],
+      "payload": { "gateway_config_id": "ULID (pgc_*)", "tenant_id": "ULID", "provider": "string", "mode": "'direct' | 'connect'", "at": "ISO 8601" }
+    },
+    {
+      "name": "PaymentGatewayDisconnected",
+      "class": "Academorix\\Finance\\Gateway\\Events\\PaymentGatewayDisconnected",
+      "trigger": "PaymentGatewayConfig.is_active flipped to false or deleted_at set.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog", "notifications::DispatchPaymentGatewayDisconnectedNotification"],
+      "payload": { "gateway_config_id": "ULID", "tenant_id": "ULID", "provider": "string", "reason": "string | null", "at": "ISO 8601" }
+    },
+    {
+      "name": "PaymentGatewayConfigured",
+      "class": "Academorix\\Finance\\Gateway\\Events\\PaymentGatewayConfigured",
+      "trigger": "PaymentGatewayConfig credentials or webhook_secret rotated.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "gateway_config_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "PaymentGatewayDeactivated",
+      "class": "Academorix\\Finance\\Gateway\\Events\\PaymentGatewayDeactivated",
+      "trigger": "Tenant deactivated / suspended / gateway credentials revoked at provider.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog", "notifications::DispatchPaymentGatewayDeactivatedNotification"],
+      "payload": { "gateway_config_id": "ULID", "tenant_id": "ULID", "reason": "string", "at": "ISO 8601" }
+    },
+    {
+      "name": "PaymentMethodAdded",
+      "class": "Academorix\\Finance\\Gateway\\Events\\PaymentMethodAdded",
+      "trigger": "New PaymentMethod committed.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "payment_method_id": "ULID (pm_*)", "tenant_id": "ULID", "owner_type": "string", "owner_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "PaymentMethodRemoved",
+      "class": "Academorix\\Finance\\Gateway\\Events\\PaymentMethodRemoved",
+      "trigger": "PaymentMethod deleted_at set.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "payment_method_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "PaymentMethodMadeDefault",
+      "class": "Academorix\\Finance\\Gateway\\Events\\PaymentMethodMadeDefault",
+      "trigger": "PaymentMethod.is_default flipped to true.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "payment_method_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "PaymentMethodVerified",
+      "class": "Academorix\\Finance\\Gateway\\Events\\PaymentMethodVerified",
+      "trigger": "PaymentMethod.verified_at set — setup intent succeeded / small-amount charge succeeded.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "payment_method_id": "ULID", "tenant_id": "ULID", "at": "ISO 8601" }
+    },
+    {
+      "name": "WebhookReceived",
+      "class": "Academorix\\Finance\\Gateway\\Events\\WebhookReceived",
+      "trigger": "Provider webhook lands + passes HMAC verification + is a new (provider_event_id) entry. Feeds every downstream finance listener chain.",
+      "queue": "gateway-critical",
+      "consumers": ["audit::WriteToAuditLog", "finance::PaymentEventHandler", "finance::RefundEventHandler", "finance::ChargebackEventHandler", "finance::PayoutEventHandler"],
+      "payload": { "webhook_event_id": "ULID (gwe_*)", "tenant_id": "ULID", "provider": "string", "provider_event_id": "string", "event_type": "string", "at": "ISO 8601" }
+    },
+    {
+      "name": "WebhookProcessed",
+      "class": "Academorix\\Finance\\Gateway\\Events\\WebhookProcessed",
+      "trigger": "GatewayWebhookEvent.status transitions processing -> processed.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": { "webhook_event_id": "ULID", "tenant_id": "ULID", "processed_at": "ISO 8601" }
+    },
+    {
+      "name": "WebhookProcessingFailed",
+      "class": "Academorix\\Finance\\Gateway\\Events\\WebhookProcessingFailed",
+      "trigger": "Webhook processing raised an exception. Retry ladder scheduled unless dead_letter reached.",
+      "queue": "gateway",
+      "consumers": ["audit::WriteToAuditLog", "notifications::DispatchWebhookProcessingFailedNotification", "monitoring::MetricsCollector"],
+      "payload": { "webhook_event_id": "ULID", "tenant_id": "ULID", "provider": "string", "event_type": "string", "retry_count": "integer", "error": "string", "at": "ISO 8601" }
+    }
+  ]
+}

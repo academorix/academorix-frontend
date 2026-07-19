@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/wallet/schemas/wallet-transaction",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "WalletTransaction",
+  "description": "Immutable debit/credit against a wallet. Composed reference to the source (order, refund, manual_adjustment, points_grant, points_redemption). Belongs to Tenant + Wallet (cascade). NEVER carries application_id, organization_id, or scope_node_id.",
+  "type": "object",
+  "x-module": "wallet",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "wallet_transactions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "wtx_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Wallet\\Models\\WalletTransaction",
+    "interface": "Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletTransactionInterface",
+    "implements": ["Academorix\\Finance\\Wallet\\Contracts\\Data\\WalletTransactionInterface"],
+    "traits": ["HasFactory", "HasUlids", "BelongsToTenant", "HasMetadata", "HasUserstamps", "Auditable"],
+    "casts": {
+      "kind": "WalletTransactionKind",
+      "amount_minor": "bigint",
+      "balance_after_minor": "bigint",
+      "source_snapshot": "array",
+      "metadata": "array",
+      "expires_at": "datetime"
+    },
+    "observers": ["WalletTransactionObserver"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `wtx_<26>`." },
+      "tenant_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" } },
+      "wallet_id": { "type": "string", "length": 64, "nullable": false, "foreign": { "table": "wallets", "column": "id", "onDelete": "cascade" } },
+      "kind": { "type": "string", "length": 24, "nullable": false, "description": "Enum: credit / debit / adjustment_credit / adjustment_debit / points_earn / points_redeem / points_expire / points_grant / reconciliation." },
+      "amount_minor": { "type": "bigint", "nullable": false, "description": "Signed. Positive = credit; negative = debit." },
+      "balance_after_minor": { "type": "bigint", "nullable": false, "description": "Wallet balance immediately after this transaction. Enables O(1) audit queries." },
+      "source_type": { "type": "string", "length": 32, "nullable": true, "description": "Polymorphic: order / refund / manual_adjustment / points_rule / reconciliation." },
+      "source_id": { "type": "string", "length": 64, "nullable": true },
+      "description": { "type": "string", "length": 500, "nullable": false, "description": "Human-readable line for the customer-facing ledger view." },
+      "expires_at": { "type": "timestamptz", "nullable": true, "description": "For points kind: when this earning expires. NULL for non-expiring." },
+      "source_snapshot": { "type": "jsonb", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "wallet_id", "created_at"], "name": "wallet_transactions_wallet_time_idx" },
+      { "columns": ["tenant_id", "source_type", "source_id"], "name": "wallet_transactions_source_idx" },
+      { "columns": ["tenant_id", "kind", "expires_at"], "name": "wallet_transactions_expiry_idx", "predicate": "kind = 'points_earn' AND expires_at IS NOT NULL" }
+    ]
+  },
+  "required": ["id", "tenant_id", "wallet_id", "kind", "amount_minor", "balance_after_minor", "description", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^wtx_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "wallet_id": { "type": "string", "pattern": "^wal_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "kind": { "type": "string", "enum": ["credit", "debit", "adjustment_credit", "adjustment_debit", "points_earn", "points_redeem", "points_expire", "points_grant", "reconciliation"] },
+    "amount_minor": { "type": "integer" },
+    "description": { "type": "string", "maxLength": 500 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}
