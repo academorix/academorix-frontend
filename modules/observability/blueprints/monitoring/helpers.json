@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/monitoring/helpers",
+  "$version": 1,
+  "title": "monitoring — helper functions",
+  "description": "Ergonomic helpers for firing alerts, resolving providers, and reading dashboard state. All helpers are thin wrappers around bound services — never business logic. Callers who need the wire-shape of alerts use the FireAlertJob path; helpers here are for imperative flows (support tools, tests, ad-hoc scripts).",
+  "namespace": "Academorix\\Observability\\Monitoring\\Support",
+  "helpers": [
+    {
+      "signature": "fire_monitoring_alert(MonitoringAlertPolicy $policy, float $signal_value, array $signal_context = []): ?MonitoringAlert",
+      "purpose": "Imperative fire path. Returns the created MonitoringAlert OR null when the policy's suppression_config matched. Wraps FireAlertJob::dispatchSync() for imperative flows. Reserved for support tooling — evaluator-driven flow uses FireAlertJob via the queue.",
+      "delegates_to": "FireAlertJob::dispatchSync()"
+    },
+    {
+      "signature": "resolve_monitoring_provider(MonitoringProviderConfig $config): IMonitoringProvider",
+      "purpose": "Returns the driver instance for a provider_config row. Delegates to MonitoringProviderManager::forConfig() which reads $config->provider + $config->config and calls the appropriate createXxxDriver factory. Reserved for advanced consumers — typical dispatch flows go through NotifyProvidersJob.",
+      "delegates_to": "MonitoringProviderManager::forConfig()"
+    },
+    {
+      "signature": "eligible_providers_for(Tenant $tenant, MonitoringSeverity $severity): Collection<MonitoringProviderConfig>",
+      "purpose": "Returns the active provider_configs for (tenant, severity) — is_active=true AND severity IN enabled_severities AND circuit_breaker_open_until IS NULL OR <= now(). Used by MonitoringPagingCoordinator AND by support tooling that pre-computes the fan-out plan.",
+      "delegates_to": "MonitoringProviderConfigRepository::activeForTenantAndSeverity()"
+    },
+    {
+      "signature": "run_health_check(HealthCheck $check): HealthCheckRun",
+      "purpose": "Manually execute a health check + return the resulting HealthCheckRun row. Delegates to HealthCheckExecutor::execute($check). Used by the POST /health-checks/{h}/run endpoint + tests. Rate-limited by monitoring.rate_limit middleware.",
+      "delegates_to": "HealthCheckExecutor::execute()"
+    },
+    {
+      "signature": "hmac_sign(string $secret, string $payload, ?int $timestamp = null): array",
+      "purpose": "Builds the { signature, timestamp } pair used by CustomWebhookProvider. Signature = SHA256(secret + timestamp + payload). timestamp defaults to time() when omitted. Consumers add these to request headers.",
+      "delegates_to": "HmacSigner::sign()"
+    },
+    {
+      "signature": "monitoring_dashboard_read_model(Tenant $tenant): array",
+      "purpose": "Returns the aggregated dashboard read-model for a tenant: { health_checks_summary, active_alerts_by_severity, open_incidents_count, mttr_last_7d_seconds, top_failing_checks, provider_health }. Read from the mon:dashboard:{tenant_id} cache OR computed on-the-fly + cached 60s. Feeds GET /dashboard endpoint.",
+      "delegates_to": "MonitoringDashboardService::readModel()"
+    },
+    {
+      "signature": "compute_mttr(Tenant $tenant, ?int $days = 7): int",
+      "purpose": "Mean-Time-To-Resolve in seconds over the trailing $days days for a tenant. Feeds SLO reporting + the dashboard read-model + weekly digest.",
+      "delegates_to": "MonitoringIncidentRepository::mttrForTenant()"
+    },
+    {
+      "signature": "compute_mtta(Tenant $tenant, ?int $days = 7): int",
+      "purpose": "Mean-Time-To-Acknowledge in seconds over the trailing $days days.",
+      "delegates_to": "MonitoringAlertRepository::mttaForTenant()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services. Keeps the boundary clean.",
+    "The fire_monitoring_alert helper is intentionally NOT the primary fire path. Production code uses the evaluator → FireAlertJob path; the helper exists for support scripts + tests + one-off backfills."
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/coupon/features",
+  "$version": 1,
+  "title": "coupon — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me -> data.features"
+  },
+  "features": [
+    {
+      "key": "coupon.core",
+      "displayName": "Coupons",
+      "description": "Master feature key. Off = the whole module is invisible: no admin surfaces, no validate/preview endpoints, no coupon rendering on invoices.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "coupon.advanced_discount_types",
+      "displayName": "Advanced discount types",
+      "description": "Unlocks free_period, first_month_free, bogo discount types. Small tier is limited to percent + fixed_amount + free_shipping.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "coupon.bulk_issue",
+      "displayName": "Bulk issue",
+      "description": "Enables POST /api/v1/coupons/bulk-issue — batch-create N unique campaign codes. Small tenants create coupons one at a time.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "coupon.stackable",
+      "displayName": "Stackable coupons",
+      "description": "Enables applying multiple coupons to a single invoice with defined precedence order. When off, one coupon per invoice.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "coupon.extended_retention",
+      "displayName": "Extended retention (10 years)",
+      "description": "Enterprise-only. Extends retention 7y -> 10y for financial audit alignment.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "coupon.weekly_report",
+      "displayName": "Weekly coupon usage report",
+      "description": "Enables the /api/v1/coupons/report endpoint + the weekly GenerateCouponUsageReportJob. All tiers get the report; the feature key exists to allow admins to disable the automated email fanout independently of the endpoint.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "coupon.real_time_redemption_stream",
+      "displayName": "Real-time redemption stream",
+      "description": "Enables the tenant.{id}.coupon-redemptions broadcast channel + opt-in CouponRedeemedNotification. Disabled by default (high volume — most tenants don't want per-redemption pings).",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

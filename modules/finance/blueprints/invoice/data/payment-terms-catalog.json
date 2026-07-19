@@ -1,0 +1,52 @@
+{
+  "$version": 1,
+  "title": "Invoice payment terms catalogue",
+  "description": "The 5 payment_terms values shipped day-1. Each maps to a due_date offset formula (issue_date + N days). 'custom' takes payment_terms_custom_days from the invoice column. Regulatory notes: some jurisdictions require specific payment terms; the tenant admin must select the appropriate default per region.",
+  "payment_terms": [
+    {
+      "slug": "due_on_receipt",
+      "display_name": "Due on receipt",
+      "description": "Payment due immediately on invoice issuance. due_date = issue_date. Common for one-time purchases + walk-in retail. Small tenants use this by default.",
+      "days_offset": 0,
+      "typical_use_case": "One-time purchases, retail, cash-on-delivery",
+      "regulatory_note": null
+    },
+    {
+      "slug": "net_15",
+      "display_name": "Net 15",
+      "description": "Payment due 15 days after issue. due_date = issue_date + 15 days. Common for B2C subscriptions.",
+      "days_offset": 15,
+      "typical_use_case": "B2C subscriptions, individual customers",
+      "regulatory_note": null
+    },
+    {
+      "slug": "net_30",
+      "display_name": "Net 30",
+      "description": "Payment due 30 days after issue. due_date = issue_date + 30 days. Standard for B2B invoicing. This is the platform default.",
+      "days_offset": 30,
+      "typical_use_case": "B2B invoicing, organizations",
+      "regulatory_note": "EU Late Payment Directive 2011/7/EU: B2B transactions default to 30 days unless contract states otherwise. Compliant."
+    },
+    {
+      "slug": "net_60",
+      "display_name": "Net 60",
+      "description": "Payment due 60 days after issue. due_date = issue_date + 60 days. Enterprise B2B with negotiated terms.",
+      "days_offset": 60,
+      "typical_use_case": "Enterprise B2B with negotiated payment cycles",
+      "regulatory_note": "EU Late Payment Directive: 60 days requires contractual agreement + reason. Ensure the tenant has the underlying contract documented."
+    },
+    {
+      "slug": "custom",
+      "display_name": "Custom",
+      "description": "Payment due N days after issue, where N is specified in payment_terms_custom_days. Range: 1-365. due_date = issue_date + payment_terms_custom_days days.",
+      "days_offset": null,
+      "typical_use_case": "Bespoke enterprise contracts",
+      "regulatory_note": "EU Late Payment Directive: > 60 days requires 'grossly unfair to creditor' review. Tenant admin is responsible for compliance with local payment-term regulations."
+    }
+  ],
+  "notes": [
+    "The tenant's default_payment_terms is a setting under invoice.default_payment_terms (default 'net_30'). Individual invoices may override.",
+    "payment_terms='custom' + payment_terms_custom_days is the ONLY case where the observer accepts a numeric override.",
+    "Dunning cadence is measured from due_date, not issue_date. A net_60 invoice's day+3 dunning notification fires 63 days after issuance."
+  ]
+}

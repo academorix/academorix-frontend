@@ -1,0 +1,124 @@
+{
+  "id": "payment.resources.payment.view",
+  "title": "Payment detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payments/{payment}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment", "action": "view" },
+  "requiresPermission": "payment.payments.view",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "payment",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/payments/' + params.payment",
+      "unwrap": "data"
+    },
+    {
+      "name": "invoice",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/invoices/' + payment.invoice_id",
+      "unwrap": "data",
+      "dependsOn": ["payment"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$ref": "payment.payment_number" } } },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-2 mt-1" },
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Captured" } },
+                    { "kind": "Text", "props": { "className": "text-sm" }, "bindings": { "children": { "$ref": "payment.captured_at", "formatter": "datetime" } } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                { "kind": "Widget", "widget": "payment.payment-status-chip", "bindings": { "props.status": { "$expr": "payment.amount_refunded_cents >= payment.amount_cents ? 'fully_refunded' : (payment.amount_refunded_cents > 0 ? 'partially_refunded' : (payment.amount_disputed_cents > 0 ? 'disputed' : 'succeeded'))" } } },
+                { "kind": "Widget", "widget": "payment.3ds-badge", "bindings": { "props.result": { "$ref": "payment.three_ds_result" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Amount" } }] },
+            {
+              "kind": "CardContent",
+              "props": { "className": "grid grid-cols-2 md:grid-cols-4 gap-4" },
+              "children": [
+                { "kind": "Stat", "props": { "label": "Amount" }, "bindings": { "value": { "$ref": "payment.amount_cents", "formatter": "currency" } } },
+                { "kind": "Stat", "props": { "label": "Fees" }, "bindings": { "value": { "$ref": "payment.fee_cents", "formatter": "currency" } } },
+                { "kind": "Stat", "props": { "label": "Net" }, "bindings": { "value": { "$ref": "payment.net_cents", "formatter": "currency" } } },
+                { "kind": "Stat", "props": { "label": "Currency" }, "bindings": { "value": { "$ref": "payment.currency" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Payment method" } }] },
+            {
+              "kind": "CardContent",
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-4" },
+                  "children": [
+                    { "kind": "Widget", "widget": "payment.method-brand-badge", "bindings": { "props.brand": { "$ref": "payment.payment_method_brand" }, "props.last4": { "$ref": "payment.payment_method_last4" } } },
+                    {
+                      "kind": "View",
+                      "children": [
+                        { "kind": "Text", "props": { "className": "text-sm font-medium" }, "bindings": { "children": { "$ref": "payment.payment_method_type", "formatter": "titlecase" } } },
+                        { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "payment.payment_method_exp_month + '/' + payment.payment_method_exp_year" } } }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Invoice" } }] },
+            {
+              "kind": "CardContent",
+              "children": [
+                {
+                  "kind": "Link",
+                  "props": { "className": "text-primary underline" },
+                  "bindings": {
+                    "href": { "$expr": "'/tenant/invoices/' + payment.invoice_id" },
+                    "children": { "$ref": "invoice.invoice_number" }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

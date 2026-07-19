@@ -1,0 +1,31 @@
+{
+  "id": "academorix://modules/monitoring/middleware",
+  "$version": 1,
+  "title": "monitoring — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "monitoring.rate_limit",
+      "class": "Academorix\\Observability\\Monitoring\\Http\\Middleware\\MonitoringRateLimit",
+      "priority": 46,
+      "description": "Rate limits the two write endpoints that dispatch external side-effects: POST /health-checks/{h}/run + POST /providers/{p}/test. Prevents test spam that would DDoS the tenant's own infrastructure OR the tenant's monitoring provider. Default: 1 request per (route, resource_id) per 60s. Response includes Retry-After header on 429.",
+      "auto_applied": false,
+      "auto_applied_to": []
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    {
+      "middleware": "entitlements::entitlement.enforce",
+      "note": "Applied per-route with the specific entitlement key (monitoring_capture for base surface, monitoring_paging / monitoring_apm / monitoring_prometheus for advanced provider routes, monitoring_custom_metrics for custom_script / custom_metric routes)."
+    },
+    {
+      "middleware": "access::authorize",
+      "note": "Permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json."
+    }
+  ]
+}

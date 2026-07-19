@@ -1,0 +1,115 @@
+{
+  "id": "academorix://modules/payment/subprocessors",
+  "$version": 1,
+  "title": "payment — subprocessors",
+  "description": "The Payment module engages SIX third-party subprocessors — one per provider driver. Every subprocessor receives payment identifiers (invoice ref + amount + currency) + customer identifiers (name, email, phone, billing address) + tokenized card references. GDPR Art. 28 DPA references + Art. 30 records of processing activities. Every tenant that activates a provider effectively adds that subprocessor to their processing register; the tenant admin acknowledges the DPA reference before configuring.",
+  "subprocessors": [
+    {
+      "slug": "stripe",
+      "vendor_name": "Stripe, Inc.",
+      "vendor_url": "https://stripe.com/legal",
+      "purpose": "Payment processing — Stripe Payments (accept + capture) + Stripe Billing (subscription + invoice) + Stripe Radar (fraud detection) + 3D Secure 2 authentication + Stripe Connect (marketplaces).",
+      "data_categories": ["cardholder_name", "email", "phone", "billing_address", "ip_address", "device_fingerprint", "amount", "currency", "invoice_reference", "3ds_authentication_result"],
+      "data_hashing": "Stripe hashes card PAN client-side via Stripe Elements; we NEVER see the PAN. Device fingerprint SHA-256'd before egress.",
+      "endpoint": "api.stripe.com (region-dependent: us / eu)",
+      "sub_processing_locations": ["USA", "Ireland", "Singapore", "Australia"],
+      "dpa_url": "https://stripe.com/legal/dpa",
+      "certifications": ["PCI-DSS Level 1", "SOC 2 Type 2", "ISO 27001", "ISO 27018", "PCI-3DS"],
+      "activation_gate": "tenant admin acknowledges the DPA before saving the provider config"
+    },
+    {
+      "slug": "paddle",
+      "vendor_name": "Paddle.com Market Ltd",
+      "vendor_url": "https://www.paddle.com/legal",
+      "purpose": "Merchant of Record payment processing — Paddle Classic (checkout overlay) + Paddle Billing v2 (subscription + invoice). Paddle is the MoR (they collect taxes, handle chargebacks, remit VAT to authorities).",
+      "data_categories": ["cardholder_name", "email", "phone", "billing_address", "amount", "currency", "invoice_reference"],
+      "data_hashing": "Paddle handles PCI-DSS; we NEVER see the PAN.",
+      "endpoint": "api.paddle.com",
+      "sub_processing_locations": ["UK", "USA", "Ireland"],
+      "dpa_url": "https://www.paddle.com/legal/data-processing-agreement",
+      "certifications": ["PCI-DSS Level 1", "SOC 2 Type 2", "ISO 27001"],
+      "activation_gate": "tenant admin acknowledges DPA + confirms MoR relationship (Paddle becomes the seller-of-record for tax purposes)"
+    },
+    {
+      "slug": "adyen",
+      "vendor_name": "Adyen N.V.",
+      "vendor_url": "https://www.adyen.com/legal",
+      "purpose": "Global payment processing — Adyen Checkout (accept + capture) + Adyen Marketplace (multi-party splits + sub-merchants) + Adyen Risk (fraud) + 3DS2. Adyen is the acquirer + processor (not MoR).",
+      "data_categories": ["cardholder_name", "email", "phone", "billing_address", "shopper_reference", "ip_address", "device_fingerprint", "amount", "currency", "invoice_reference", "3ds_authentication_result"],
+      "data_hashing": "Adyen handles PCI-DSS via Adyen.js client-side tokenization; we NEVER see the PAN.",
+      "endpoint": "checkout-live.adyen.com (or checkout-test.adyen.com for test-mode)",
+      "sub_processing_locations": ["Netherlands", "USA", "Singapore", "Australia"],
+      "dpa_url": "https://www.adyen.com/legal/data-processing-agreement",
+      "certifications": ["PCI-DSS Level 1", "SOC 2 Type 2", "ISO 27001", "PCI-3DS"],
+      "activation_gate": "tenant admin acknowledges DPA. Marketplaces flow requires additional Adyen KYC on sub-merchants."
+    },
+    {
+      "slug": "square",
+      "vendor_name": "Block, Inc. (Square)",
+      "vendor_url": "https://squareup.com/us/en/legal",
+      "purpose": "Payment processing — Square Payments + Cards API + Cash App Pay + Square Terminal (POS integration). US-heavy footprint.",
+      "data_categories": ["cardholder_name", "email", "phone", "billing_address", "cash_app_cashtag", "amount", "currency", "invoice_reference"],
+      "data_hashing": "Square handles PCI-DSS via Square Web Payments SDK client-side; we NEVER see the PAN.",
+      "endpoint": "connect.squareup.com",
+      "sub_processing_locations": ["USA", "Canada", "UK", "Australia", "Japan"],
+      "dpa_url": "https://squareup.com/us/en/legal/data-processing-addendum",
+      "certifications": ["PCI-DSS Level 1", "SOC 2 Type 2", "ISO 27001"],
+      "activation_gate": "tenant admin acknowledges DPA. Cash App Pay is US-only + requires additional Cash App Terms acknowledgement."
+    },
+    {
+      "slug": "paypal",
+      "vendor_name": "PayPal Holdings, Inc.",
+      "vendor_url": "https://www.paypal.com/legalhub",
+      "purpose": "Payment processing — PayPal Checkout (accept via PayPal balance + card via Braintree) + Braintree (card acquiring) + Venmo (US consumer wallet).",
+      "data_categories": ["cardholder_name", "email", "phone", "billing_address", "paypal_email", "venmo_username", "amount", "currency", "invoice_reference"],
+      "data_hashing": "PayPal handles PCI-DSS via Braintree client-side tokenization; we NEVER see the PAN.",
+      "endpoint": "api-m.paypal.com (or api-m.sandbox.paypal.com for test-mode)",
+      "sub_processing_locations": ["USA", "Ireland", "Singapore", "Australia"],
+      "dpa_url": "https://www.paypal.com/legalhub/dpa",
+      "certifications": ["PCI-DSS Level 1", "SOC 2 Type 2", "ISO 27001"],
+      "activation_gate": "tenant admin acknowledges DPA. Venmo is US-consumer-only."
+    },
+    {
+      "slug": "custom_webhook",
+      "vendor_name": "caller-configured",
+      "vendor_url": "N/A (tenant-owned endpoint)",
+      "purpose": "Generic HMAC-signed JSON webhook. Escape hatch for tenants using their own payment gateway (Braintree direct, dLocal, PayFast, etc.). Data ultimately delivered to a caller-configured URL. Enterprise-only.",
+      "data_categories": ["full payment intent payload — cardholder_name, email, phone, billing_address, amount, currency, invoice_reference"],
+      "data_hashing": "none by Academorix — caller's endpoint responsible for handling. Caller MUST NOT accept raw PAN over this webhook (PCI-DSS scope violation).",
+      "endpoint": "caller-configured (HTTPS-only, enforced by config schema)",
+      "sub_processing_locations": ["caller-hosted"],
+      "dpa_url": "N/A — the tenant is responsible for their downstream endpoint's DPA if any",
+      "certifications": ["depends on caller — tenant admin attests to PCI-DSS Level 1 compliance"],
+      "activation_gate": "Enterprise tenant admin confirms webhook URL + acknowledges DPA responsibility + attests to PCI-DSS Level 1 compliance on the receiving endpoint + explicit compliance-review workflow (manual security approval required)"
+    }
+  ],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching PaymentSucceededNotification / PaymentFailedNotification / PaymentActionRequiredNotification / PaymentMethodExpiringNotification / PaymentMethodAttachedNotification / PaymentDisputeOpenedNotification / PaymentDisputeEvidenceDueNotification / PaymentDisputeWonNotification / PaymentDisputeLostNotification / PaymentProviderCircuitBreakerOpenedNotification / PaymentReconcileDriftNotification via mail / SMS / push channels."
+    },
+    {
+      "module": "invoice",
+      "reference": "The invoice module is the parent — every Payment references its parent invoice. Invoice PDF renderer + email sender are invoice-module concerns."
+    },
+    {
+      "module": "transaction",
+      "reference": "The transaction module receives PaymentCaptured events + records the double-entry ledger movement. transaction::subprocessors.json for downstream ledger sub-processing."
+    },
+    {
+      "module": "compliance/encryption",
+      "reference": "compliance::encryption owns the encryption service used for at-rest encryption of payment_methods.provider_reference_id + payment_intents.provider_reference_id + payment_intents.client_secret + payments.provider_metadata + payment_disputes.evidence."
+    },
+    {
+      "module": "growth::marketing",
+      "reference": "growth::marketing subscribes to PaymentCaptured events for attribution. Marketing signals dispatch to a further 9 sub-processors (see growth::marketing::subprocessors.json) — separate consent gate applies (marketing + advertising consent categories)."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately with 6 active subprocessors. Every tenant that configures a payment provider effectively activates that subprocessor for their tenant. The activation flow prompts the tenant admin to acknowledge the DPA reference before saving.",
+    "The tenant-facing subprocessor list (compliance/subprocessors surface) reads from this file + shows only the active subset per tenant (based on which providers the tenant has configured).",
+    "Adding a new provider driver = adding a new entry here + updating the tenant-facing subprocessor list + updating compliance.json Art. 28 evidence + updating the provider capability matrix.",
+    "CustomWebhook has the most restricted activation gate — Enterprise-only, manual security review, PCI-DSS attestation required. This is deliberate: caller-hosted gateways bypass the vendor-driven PCI-DSS scope reduction that the 5 first-party providers guarantee."
+  ]
+}

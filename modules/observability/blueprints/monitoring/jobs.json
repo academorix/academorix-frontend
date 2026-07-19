@@ -1,0 +1,178 @@
+{
+  "id": "academorix://modules/monitoring/jobs",
+  "$version": 1,
+  "title": "monitoring — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\RunHealthCheckJob",
+      "queue": "monitoring",
+      "purpose": "Per health check per interval. Dispatched by the HealthCheckObserver.created path + rescheduled by itself for the next interval. Executes the check via the appropriate HealthCheckExecutor strategy (db_ping / redis_ping / http_endpoint / …) + persists a health_check_runs row.",
+      "steps": [
+        "Load health_checks row; refuse when is_enabled = false OR deleted_at IS NOT NULL",
+        "Refuse when the tenant no longer holds monitoring_capture entitlement (logs warning; disables the check)",
+        "Resolve HealthCheckExecutor strategy for check.check_type",
+        "Execute the probe with check.timeout_seconds abort threshold; record start + end time",
+        "Scan response_body for PII regex matches; redact detected patterns",
+        "Truncate response_body to 8KB max",
+        "Insert health_check_runs row with status + latency_ms + response_body + error_details",
+        "Fire HealthCheckRun event",
+        "Reschedule self at now() + check.interval_seconds"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": "check.interval_seconds",
+      "uniqueVia": "health_check_id",
+      "tries": 1,
+      "note": "tries=1 because the retry semantics for health checks are handled by the next scheduled run — a transient timeout is captured as a status='timeout' run, not retried."
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\EvaluateAlertPoliciesJob",
+      "queue": "monitoring",
+      "purpose": "Every 30s sweep. Scans monitoring_alert_policies for each tenant + evaluates thresholds against the trailing window_seconds of health_check_runs (for health_check_status signals) OR pulled metrics (for error_rate / latency_p95 / queue_depth / worker_health / custom_metric signals).",
+      "steps": [
+        "SELECT id FROM monitoring_alert_policies WHERE is_enabled = true AND (suppression_config->>'silenced_until')::timestamptz IS NULL OR (suppression_config->>'silenced_until')::timestamptz < now() FOR UPDATE SKIP LOCKED LIMIT 1000",
+        "For each policy: check the after_hours_suppress + weekend_suppress flags against the tenant's timezone; skip when suppressed",
+        "Compute the aggregate signal over the trailing window_seconds via AlertPolicyEvaluator",
+        "Compare against threshold_operator + threshold_value",
+        "When threshold breached: increment consecutive_breach_count; when count >= consecutive_breaches_required: fire FireAlertJob(policy_id, signal_value, signal_context)",
+        "When threshold no longer breached AND an alert is currently firing for this policy: dispatch MonitoringAlertObserver.autoResolve via MonitoringAlertRepository::autoResolveForPolicy()"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 60,
+      "uniqueVia": "monitoring-evaluate-policies",
+      "tries": 3,
+      "backoff": [10, 30, 90]
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\FireAlertJob",
+      "queue": "monitoring-critical",
+      "purpose": "Fired by EvaluateAlertPoliciesJob when a threshold breach is confirmed. Inserts the monitoring_alerts row + fires MonitoringAlertFired.",
+      "steps": [
+        "Load monitoring_alert_policies row; refuse when is_enabled = false (someone silenced between eval and fire)",
+        "Re-check suppression_config (idempotency guard); when suppressed: insert alert with status='suppressed' + fire MonitoringAlertSuppressed + return",
+        "Insert monitoring_alerts row with status='firing' + severity from policy + signal_value + signal_context",
+        "Fire MonitoringAlertFired (this triggers the GroupAlertsIntoIncidentJob + NotifyProvidersJob fan-out)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": false,
+      "note": "NOT unique — multiple fires for the same policy within the window are expected when the breach is sustained. Deduplication happens at the incident-grouping layer.",
+      "tries": 5,
+      "backoff": [10, 30, 90, 300, 900]
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\GroupAlertsIntoIncidentJob",
+      "queue": "monitoring",
+      "purpose": "Fired on MonitoringAlertFired. Attaches the alert to an existing incident OR opens a new one.",
+      "steps": [
+        "Load monitoring_alerts row",
+        "SELECT id FROM monitoring_incidents WHERE tenant_id = ? AND status IN ('open', 'acknowledged', 'investigating', 'mitigating') AND severity = ? AND opened_at > now() - interval '5 minutes' AND (affected_services @> to_jsonb(?) OR affected_services @> '[]')",
+        "When found: update alert.monitoring_incident_id + increment incident.alert_count; return",
+        "When not found: insert monitoring_incidents row with status='open' + affected_services from alert.signal_context + oncall_page_config from policy + fire MonitoringIncidentOpened"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "monitoring_alert_id",
+      "tries": 5,
+      "backoff": [5, 15, 60, 300, 900]
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\EscalateIncidentJob",
+      "queue": "monitoring-critical",
+      "purpose": "Delayed job. Fires when the incident's SLA elapses without acknowledgment. Pages the escalation contacts per oncall_page_config.escalation_policy.",
+      "steps": [
+        "Load monitoring_incidents row; refuse when status != 'open' (someone ack'd or resolved between schedule and fire)",
+        "Refuse when acknowledged_at IS NOT NULL",
+        "Fire MonitoringIncidentEscalatedNotification (pages backup on-call via oncall_page_config.escalation_policy)",
+        "Dispatch NotifyProvidersJob for the escalation targets"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "monitoring_incident_id",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\AutoResolveIncidentJob",
+      "queue": "monitoring",
+      "purpose": "Nightly. Sweeps monitoring_incidents where status IN ('open', 'acknowledged') AND every attached alert has status IN ('resolved', 'suppressed', 'expired'). Auto-transitions the incident to 'resolved'.",
+      "steps": [
+        "SELECT i.id FROM monitoring_incidents i WHERE i.status IN ('open', 'acknowledged') AND NOT EXISTS (SELECT 1 FROM monitoring_alerts a WHERE a.monitoring_incident_id = i.id AND a.status = 'firing') AND i.opened_at < now() - interval '1 hour' LIMIT 500",
+        "For each: transition incident.status = 'resolved' + resolved_at = now() + resolved_by = 'auto' + fire MonitoringIncidentResolved"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "monitoring-auto-resolve",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\NotifyProvidersJob",
+      "queue": "monitoring",
+      "purpose": "Fan-out job. Loads the policy's notify_provider_configs (or the incident's oncall_page_config), evaluates severity routing via MonitoringPagingCoordinator, dispatches one HTTP call per eligible provider.",
+      "steps": [
+        "Load monitoring_alert OR monitoring_incident (payload discriminant)",
+        "Resolve targets via MonitoringPagingCoordinator::providersForSeverity($severity, $notify_provider_configs)",
+        "For each provider_config: check CircuitBreakerGate::allow($tenant, $provider); when open: fire MonitoringProviderDispatchSuppressedByBreaker + skip",
+        "Transform payload via MonitoringPayloadTransformer::transformFor($provider, $alert_or_incident, $config)",
+        "Dispatch via Guzzle with per-provider timeout (default 15s, config.timeout_seconds override)",
+        "On 2xx + validation pass: increment last_success_at + reset consecutive_failure_count = 0",
+        "On failure: increment consecutive_failure_count + set last_failure_at; when count >= failure_threshold: fire OpenCircuitBreakerJob(tenant_id, provider); schedule retry via RetryFailedNotificationsJob"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(alert_or_incident_id, provider_config_id, attempt_number)",
+      "tries": 1,
+      "note": "tries=1 because retry semantics are OWNED by this module via RetryFailedNotificationsJob + backoff schedule. Do NOT enable Laravel-level retry — it would bypass the circuit-breaker gate."
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\RetryFailedNotificationsJob",
+      "queue": "monitoring",
+      "purpose": "Every 5 min sweep. Picks up failed provider notifications (transient failures) + re-dispatches via NotifyProvidersJob with attempt_number+1.",
+      "steps": [
+        "SELECT id FROM monitoring_notification_attempts WHERE status='failed' AND is_transient=true AND next_retry_at <= now() AND attempt_number < max_attempts FOR UPDATE SKIP LOCKED LIMIT 500",
+        "For each: enqueue NotifyProvidersJob with attempt_number + 1",
+        "Clear next_retry_at to avoid double-fire before the new attempt runs"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "monitoring-retry-failed-notifications",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\PurgeExpiredHealthCheckRunsJob",
+      "queue": "monitoring",
+      "purpose": "Nightly. Applies the health_check_runs retention window: 7-day hot / 30-day cold default; 30-day hot / 90-day cold for Enterprise tenants with monitoring_extended_retention.",
+      "steps": [
+        "For each tenant: determine retention window from monitoring_extended_retention entitlement",
+        "DELETE FROM health_check_runs WHERE tenant_id = ? AND created_at < now() - (?::int * interval '1 day') LIMIT 10000",
+        "Emit metric academorix.monitoring.retention.health_check_runs_purged_total"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "monitoring-purge-health-check-runs",
+      "tries": 1
+    },
+    {
+      "class": "Academorix\\Observability\\Monitoring\\Jobs\\PurgeResolvedIncidentsJob",
+      "queue": "monitoring",
+      "purpose": "Weekly. Applies the monitoring_alerts + monitoring_incidents retention window: 30-day hot / 90-day cold default; 90-day hot / 1-year cold for Enterprise; indefinite retention on incidents for Enterprise with monitoring_extended_retention.",
+      "steps": [
+        "For each tenant: determine retention windows from monitoring_extended_retention entitlement",
+        "DELETE FROM monitoring_alerts WHERE tenant_id = ? AND status IN ('resolved', 'expired', 'suppressed') AND created_at < now() - (?::int * interval '1 day') LIMIT 10000",
+        "DELETE FROM monitoring_incidents WHERE tenant_id = ? AND status = 'resolved' AND resolved_at < now() - (?::int * interval '1 day') AND NOT (?::boolean AND severity = 'p1') LIMIT 5000",
+        "Note: P1 incidents on Enterprise-with-extended-retention tenants are NEVER auto-purged (postmortem archive)",
+        "Emit metrics academorix.monitoring.retention.alerts_purged_total + academorix.monitoring.retention.incidents_purged_total"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "monitoring-purge-incidents",
+      "tries": 1
+    }
+  ]
+}

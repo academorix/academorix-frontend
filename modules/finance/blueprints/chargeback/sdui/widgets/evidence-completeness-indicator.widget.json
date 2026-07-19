@@ -1,0 +1,40 @@
+{
+  "id": "chargeback.evidence-completeness-indicator",
+  "title": "Evidence completeness indicator",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Progress bar (0-100%) showing how many of the 8 evidence fields (invoice_evidence / receipt_evidence / service_documentation / refund_policy / communication_log / shipping_docs / customer_signature_evidence / uncategorized_text) are populated. Colour-coded: red < 50%, yellow 50-80%, green > 80%. Rendered inline on pending-evidence queue rows + evidence-submission wizard step transitions.",
+  "props": {
+    "percent": { "type": "integer", "required": true, "min": 0, "max": 100, "description": "Completeness percentage 0-100." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showLabel": { "type": "boolean", "default": true, "description": "Show '<percent>% complete' text next to the bar." }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-2" },
+      "children": [
+        {
+          "kind": "ProgressBar",
+          "props": { "aria-label": "Evidence completeness", "minValue": 0, "maxValue": 100 },
+          "bindings": {
+            "value": { "$ref": "props.percent" },
+            "size": { "$ref": "props.size" },
+            "variant": {
+              "$expr": "props.percent < 50 ? 'danger' : (props.percent < 80 ? 'warning' : 'success')"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted whitespace-nowrap" },
+          "bindings": {
+            "hidden": { "$expr": "!props.showLabel" },
+            "children": { "$expr": "props.percent + '% complete'" }
+          }
+        }
+      ]
+    }
+  ]
+}

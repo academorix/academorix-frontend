@@ -1,0 +1,80 @@
+{
+  "$version": 1,
+  "title": "Visa Rapid Dispute Resolution (RDR) configuration",
+  "description": "RDR is Visa's fast-lane to close pre-chargeback disputes: instead of fighting through the full chargeback flow, the merchant pre-agrees to auto-refund below a configured amount. Cheapest defense (no network fee, no rate impact). Eligibility rules + thresholds captured here so RdrHandler + admin UI stay consistent.",
+  "eligibility": {
+    "network": "visa (only)",
+    "amount_condition": "chargeback.amount_cents <= tenant.chargeback.rdr.auto_refund_threshold_cents",
+    "entitlement_condition": "tenant holds chargeback_rdr entitlement (Medium+ tier)",
+    "payment_condition": "payment.amount_refunded_cents == 0 (payment hasn't been previously refunded)",
+    "customer_condition": "customer has >= tenant.chargeback.rdr.min_customer_purchase_history_days days of purchase history (default 30d)",
+    "status_condition": "chargeback.status == 'pending_evidence'",
+    "notes": "All 5 conditions must be true for RDR eligibility. rdr_eligible flag is computed at chargeback creation + frozen."
+  },
+  "thresholds": {
+    "default_auto_refund_cents": 5000,
+    "default_auto_refund_display": "$50.00",
+    "min_permitted_cents": 100,
+    "max_permitted_cents": 100000,
+    "notes": "Default threshold = $50. Tenant may configure 1-1000 dollars. Below $50 = auto-refund is cheaper than the ~$25 network fee + rate impact. Above $50 = merchant should typically fight; RDR becomes uneconomical."
+  },
+  "cost_comparison": {
+    "rdr_path": {
+      "cost_cents": "chargeback.amount_cents (refunded to customer)",
+      "network_fee_cents": 0,
+      "rate_impact": "0 (not counted in VDMP)",
+      "notes": "Merchant loses the disputed amount but avoids the network fee + rate impact. Cheapest path for low-value disputes."
+    },
+    "fight_and_win": {
+      "cost_cents": "0 (money returned to merchant)",
+      "network_fee_cents": 1500,
+      "rate_impact": "1 chargeback counts toward VDMP rate",
+      "notes": "Money returned + network fee retained by bank + counts toward VDMP. Best outcome IF you win, but win rate baseline is 15-30% for fraud disputes."
+    },
+    "fight_and_lose": {
+      "cost_cents": "chargeback.amount_cents (money gone)",
+      "network_fee_cents": 1500,
+      "rate_impact": "1 chargeback counts toward VDMP rate",
+      "notes": "Worst outcome — you lose the disputed amount AND pay the network fee AND increment the VDMP rate."
+    },
+    "expired_auto_loss": {
+      "cost_cents": "chargeback.amount_cents (money gone)",
+      "network_fee_cents": 1500,
+      "rate_impact": "1 chargeback counts toward VDMP rate",
+      "notes": "Same as fight_and_lose. Never let evidence deadline pass — always at minimum accept via RDR when eligible."
+    }
+  },
+  "recommendation_rules": {
+    "amount_lte_5000": {
+      "condition": "amount_cents <= $50",
+      "recommendation": "accept_rdr",
+      "rationale": "Loss ($50) < network fee ($15-25) + rate impact. Accept."
+    },
+    "amount_5000_to_25000": {
+      "condition": "$50 < amount_cents <= $250",
+      "recommendation": "fight_with_evidence",
+      "rationale": "Amount worth fighting for. Submit auto-collected evidence."
+    },
+    "amount_gt_25000_fraud_reason": {
+      "condition": "amount_cents > $250 AND reason_category='fraud'",
+      "recommendation": "fight_with_ce3_evidence",
+      "rationale": "High-value fraud dispute. CE3.0 evidence dramatically improves win rate (75% vs 15% baseline)."
+    },
+    "amount_gt_25000_consumer_dispute": {
+      "condition": "amount_cents > $250 AND reason_category='consumer_disputes'",
+      "recommendation": "fight_with_service_documentation",
+      "rationale": "Service documentation (attendance records, communication logs, refund policy snapshot) drives win rate for consumer disputes."
+    },
+    "amount_gt_25000_processing_error": {
+      "condition": "amount_cents > $250 AND reason_category='processing_errors'",
+      "recommendation": "review_and_fight_or_accept",
+      "rationale": "Some processing errors (duplicate_processing) always favor cardholder — accept via refund. Others (late_presentment) winnable with clear records."
+    }
+  },
+  "operational_notes": [
+    "Visa enrolls merchants in RDR by application. Merchants must apply through their acquirer (Stripe, Adyen, etc.) to be enrolled — this module ASSUMES enrollment is in place for tenants holding chargeback_rdr entitlement.",
+    "RDR pre-agrees to auto-refund; the merchant does NOT click accept once the chargeback is filed — the refund fires automatically pre-chargeback. Our RDR path is admin-initiated (POST /chargebacks/{chargeback}/accept) because we track the RDR outcome + create the refund + close the chargeback within our system.",
+    "Some Visa transactions may auto-refund via RDR BEFORE we see a chargeback (Visa auto-refunds and never files) — in that case, the chargeback module never sees the event. Only chargebacks that DO get filed pass through this module.",
+    "Mastercard's equivalent to RDR is 'Dispute Resolution 2.0' — different mechanics + not currently supported by this module. Extend when Mastercard DR2 support lands (Wave 5+)."
+  ]
+}

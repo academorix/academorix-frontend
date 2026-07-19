@@ -1,0 +1,88 @@
+{
+  "$version": 1,
+  "title": "Reason category catalogue",
+  "description": "Five canonical reason categories that group per-network reason codes. Used by rate reports + fraud model signals + evidence collection strategy. Each category has typical dispute rate + evidence-defense hints.",
+  "categories": [
+    {
+      "category": "fraud",
+      "display_name": "Fraud",
+      "description": "Cardholder claims the transaction was unauthorized — the card was stolen / cloned / used without permission. Highest fraud correlation signal for ad-network fraud model retraining.",
+      "typical_dispute_rate_percent": 0.4,
+      "evidence_defense_hints": [
+        "Customer signature evidence (checkout signature + IP + device fingerprint hash)",
+        "Prior purchase history from same customer (CE3.0-eligible on Visa)",
+        "SCA/3DS authentication records (PSD2 compliance)",
+        "IP geolocation matching customer's billing address",
+        "Device fingerprint matching prior legitimate purchases"
+      ],
+      "win_rate_baseline_percent": 15,
+      "win_rate_with_ce3_percent": 75,
+      "marketing_signal_weight": "high",
+      "notes": "Fraud chargebacks feed ad-network fraud model retraining MORE HEAVILY than other categories. Ad networks reduce bidding on click IDs correlated with fraud chargebacks. CE3.0 evidence framework (Visa) dramatically improves win rates when applicable."
+    },
+    {
+      "category": "authorization",
+      "reason_category": "authorization",
+      "display_name": "Authorization",
+      "description": "Auth issues — transaction was declined but processed anyway, card was expired, no authorization was obtained. Merchant liability.",
+      "typical_dispute_rate_percent": 0.05,
+      "evidence_defense_hints": [
+        "Authorization approval records from provider",
+        "Timestamp of authorization vs capture",
+        "Auth reversal handling proof"
+      ],
+      "win_rate_baseline_percent": 30,
+      "marketing_signal_weight": "low",
+      "notes": "Rare category. Almost always merchant fault (declined-then-processed, expired-card processing, offline forcing). Hard to win — evidence typically doesn't help when the technical fault is on merchant side."
+    },
+    {
+      "category": "processing_errors",
+      "display_name": "Processing errors",
+      "description": "Merchant processed the transaction incorrectly — duplicate charge, wrong amount, wrong currency, credit not processed, late presentment.",
+      "typical_dispute_rate_percent": 0.1,
+      "evidence_defense_hints": [
+        "Transaction detail records showing correct amount / currency / timing",
+        "Duplicate-charge detection logs (proves single processing)",
+        "Credit processing records (when reason=credit_not_processed)"
+      ],
+      "win_rate_baseline_percent": 50,
+      "marketing_signal_weight": "low",
+      "notes": "Often winnable with clear transaction detail records. Some codes (duplicate_processing) always favor cardholder — resolve via refund instead of fighting."
+    },
+    {
+      "category": "consumer_disputes",
+      "display_name": "Consumer disputes",
+      "description": "Cardholder received the goods/services but has a service quality issue — not as described, defective, not received, cancelled subscription still charged.",
+      "typical_dispute_rate_percent": 0.35,
+      "evidence_defense_hints": [
+        "Service documentation (attendance records for fitness academies, delivery confirmation for goods)",
+        "Communication log (customer support conversations, terms acceptance)",
+        "Refund policy snapshot at purchase time",
+        "Cancellation flow records (proves cardholder DID NOT cancel prior to billing)",
+        "Delivery/attendance photo evidence"
+      ],
+      "win_rate_baseline_percent": 40,
+      "marketing_signal_weight": "medium",
+      "notes": "Product-quality signal for ad networks — feeds bidding adjustments on customer segments with high dispute rates, but does NOT aggressively retrain fraud models. Winnable with strong service documentation."
+    },
+    {
+      "category": "card_recovery",
+      "display_name": "Card recovery",
+      "description": "Special card status (card recovery bulletin, hot card list). Rare — cardholder or issuer flagged the card as compromised but merchant processed anyway.",
+      "typical_dispute_rate_percent": 0.01,
+      "evidence_defense_hints": [
+        "Authorization records showing the card was NOT flagged at time of transaction",
+        "Timing evidence — did the card recovery bulletin arrive before or after our transaction"
+      ],
+      "win_rate_baseline_percent": 20,
+      "marketing_signal_weight": "low",
+      "notes": "Very rare. Almost always resolves via issuer records showing the flag was in place at transaction time."
+    }
+  ],
+  "notes": [
+    "typical_dispute_rate_percent is INFORMATIONAL — real rates vary by industry + tenant. Used for report benchmarking + admin education.",
+    "evidence_defense_hints inform the SDUI evidence-submission wizard (suggests what to include per category).",
+    "win_rate_baseline_percent is INFORMATIONAL — real win rates depend on evidence quality + reason code specifics. Enterprise-tier customers may see higher win rates with CE3.0 evidence.",
+    "marketing_signal_weight informs the marketing::ChargebackFiled event's fraud_signal flag semantics + weight passed to ad networks."
+  ]
+}

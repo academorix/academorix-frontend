@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/activity/retention",
+  "$version": 1,
+  "title": "activity — data retention windows",
+  "description": "Retention per model. Activity rows: 90d default (all tiers); extendable to 365d with `activity_retention_extended` (Enterprise); up to 730d for regulator holds. Retention policies: retained while active. Cold-storage archive at 90d for Enterprise tenants; hard-delete at retention_days for every tenant. TenantErased: cascade delete all activity rows (unlike audit which anonymises).",
+  "retention": [
+    {
+      "model": "Activity (standard tier — no policy override)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P90D",
+      "description": "Default 90-day retention. Rows past 90d are hard-deleted by PurgeExpiredActivitiesJob nightly. No soft-delete window — activity is a user-facing feed; there's no admin recovery path.",
+      "complianceTier": "user_activity_data",
+      "erasureOnRequest": "P0D"
+    },
+    {
+      "model": "Activity (extended tier — 91..365d policy)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "per-tenant retention_days",
+      "description": "Extended retention via ActivityRetentionPolicy. Rows past 90d are moved to cold storage by ArchiveActivitiesToColdStorageJob weekly. Rows past retention_days are hard-deleted from cold storage by the retention job. Requires `activity_retention_extended` entitlement (Enterprise).",
+      "complianceTier": "user_activity_data",
+      "erasureOnRequest": "P0D"
+    },
+    {
+      "model": "Activity (regulator-hold tier — 366..730d policy)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "per-tenant retention_days (max 730d)",
+      "description": "Regulator-hold retention. SHOULD carry an expires_at on the policy so the override doesn't drift to permanent. Rows past 90d in cold storage; rows past retention_days hard-deleted.",
+      "complianceTier": "user_activity_data_regulator_hold",
+      "erasureOnRequest": "P0D (subject-request erasure still fires; regulator hold does NOT block GDPR Art. 17 — the tenant must document the conflict in a legal hold record)"
+    },
+    {
+      "model": "ActivityRetentionPolicy (active)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": null,
+      "description": "Active policies retained indefinitely — they govern retention behaviour on live data.",
+      "complianceTier": "tenant_configuration",
+      "erasureOnRequest": "cascade on tenant erasure"
+    },
+    {
+      "model": "ActivityRetentionPolicy (soft-deleted)",
+      "softDeleteAfter": null,
+      "hardDeleteAfter": "P365D",
+      "description": "Soft-deleted policies retained 1 year for audit visibility ('why was retention set to X during time period Y'). Then hard-deleted.",
+      "complianceTier": "tenant_configuration",
+      "erasureOnRequest": "P0D"
+    },
+    {
+      "model": "ActivityRetentionPolicy audit rows (owen-it audits)",
+      "hardDeleteAfter": "P2555D",
+      "description": "audit rows on the retention policy (via HasAudit trait) retain 7 years per SOC 2 evidence retention. Owned by audit module.",
+      "complianceTier": "audit_log",
+      "ownedBy": "audit"
+    }
+  ],
+  "complianceTiers": {
+    "user_activity_data": "User-visible feed data. Retained for the tenant's operational benefit. Purged automatically past the retention window. Erasable on subject request.",
+    "user_activity_data_regulator_hold": "Same as user_activity_data but with a regulator-hold flag. Retention extended per policy; erasure still fires but the tenant must record the conflict with the hold in a legal record.",
+    "tenant_configuration": "Tenant-owned configuration state. Retained while active; short soft-delete window for audit trace.",
+    "audit_log": "Immutable audit records on tenant configuration mutations."
+  },
+  "erasureBehavior": {
+    "identityErasure": {
+      "description": "When a User's Identity is erased under GDPR Art. 17, this module cascades: every activity WHERE causer OR subject is a User linked to the erased identity is HARD-DELETED. Activity does NOT anonymise (unlike audit) — activity rows are user-facing narrative and preserving them post-erasure would leak the erased identity's actions on other users' feeds.",
+      "cascadeVia": "PurgeActivitiesForErasedIdentity listener on user::IdentityErased",
+      "note": "Compare with audit: audit anonymises subject_id → 'erased-<hash>' but preserves rows for compliance evidence. Activity purges outright because the surface is user-facing narrative, not regulator record."
+    },
+    "tenantErasure": {
+      "description": "When a Tenant is erased, EVERY activity row in the tenant is hard-deleted via the tenant_id CASCADE FK. Cold-storage archives for the tenant are also purged.",
+      "cascadeVia": "PurgeActivitiesForErasedTenant listener on tenancy::TenantErased"
+    },
+    "subjectErasure": {
+      "description": "When a User is soft-deleted (not identity-erased — just account soft-delete), activity rows attributed to them as CAUSER get their causer_id nulled. The row stays; the causer reference becomes NULL. This is a narrative-preservation choice — a booking's activity ('Alice booked Court 3 for tomorrow') stays even after Alice's account is soft-deleted; the row just renders 'Someone booked Court 3'.",
+      "cascadeVia": "NullifyActivityCauserForDeletedUser listener on user::UserDeleted"
+    },
+    "legalHold": {
+      "description": "When compliance places a legal hold on a tenant / entity, related activity rows get a `hold_until` marker (via metadata) so the purge pipeline skips them. Hold placement + release fires SuspendPurgeForLegalHold + ResumePurgeAfterLegalHold listeners.",
+      "cascadeVia": "compliance::LegalHoldPlaced / LegalHoldReleased listeners"
+    }
+  }
+}

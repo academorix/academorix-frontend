@@ -1,0 +1,39 @@
+{
+  "id": "academorix://modules/coupon/subprocessors",
+  "$version": 1,
+  "title": "coupon — subprocessors",
+  "description": "The Coupon module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) to receive marketing events fired from coupons with issuance_source IN ('referral', 'marketing_campaign'); the notifications module engages email/SMS subprocessors to deliver coupon lifecycle notifications; the tax module (finance::tax) engages tax-computation subprocessors (TaxJar / Avalara / Stripe Tax) — coupons feed into their calculation but do not directly engage. All are declared in their respective modules' subprocessors.json.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "marketing",
+      "reference": "marketing::subprocessors.json (Wave 5)",
+      "used_for": "Forwarding Referral Coupon Redeemed + Campaign Coupon Redeemed + reversal events to ad networks (Meta CAPI, Google Ads Enhanced Conversions, TikTok Events API, Microsoft UET, Snapchat CAPI) when coupon.issuance_source IN ('referral', 'marketing_campaign')."
+    },
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Delivering CouponUsageCapReachedNotification + CouponExpiredNotification + CouponRedeemedNotification (opt-in) + CouponClawbackNotification via email / SMS / in-app / push."
+    },
+    {
+      "module": "finance::tax",
+      "reference": "finance::tax::subprocessors.json (Wave 4)",
+      "used_for": "The tax module engages TaxJar / Avalara / Stripe Tax when computing tax on the post-discount invoice line. Coupons feed into that calculation via final_amount_cents but do not directly engage the tax providers."
+    },
+    {
+      "module": "finance::invoice",
+      "reference": "finance::invoice::subprocessors.json (Wave 4)",
+      "used_for": "Processing the actual invoice line + payment via Stripe / Paddle / Adyen. Coupon redemption is a service call inside the invoice-creation transaction; the invoice module dispatches the payment through its subprocessors."
+    },
+    {
+      "module": "growth::referrals",
+      "reference": "growth::referrals::subprocessors.json (Wave 5)",
+      "used_for": "None — referrals module also engages zero direct subprocessors. Coupons is a downstream of referrals (referrals issues coupons when a discount-reward vests); the reverse dependency (referrals module invoking a coupon subprocessor) does not exist."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately with an empty subprocessors array. The GDPR Art. 30 record of processing activities requires per-module subprocessor lists; an empty list is the correct declaration for a module that engages none directly.",
+    "The Wave 4 tenant-facing 'subprocessor disclosure' page reads THIS FILE'S downstream_subprocessors_referenced list to compose the full disclosure — every downstream that this module transitively engages is surfaced to the tenant admin.",
+    "Ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) are the highest-risk category — they receive PII (hashed) + click IDs + conversion values (source_amount_cents). Tenants opt into which providers via marketing module's provider configuration."
+  ]
+}

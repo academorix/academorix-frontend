@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/refund/rules",
+  "$version": 1,
+  "title": "refund — validation rules",
+  "description": "Custom Laravel validation rules published by RefundServiceProvider::boot(). All rules are used both by the observer chain (authoritative refusal on write) AND by FormRequest data classes (early request-time validation with clear error surfaces).",
+  "namespace": "Academorix\\Finance\\Refund\\Rules",
+  "rules": [
+    {
+      "name": "valid_reason",
+      "class": "Academorix\\Finance\\Refund\\Rules\\ValidReason",
+      "signature": "valid_reason",
+      "description": "Refund reason enum: customer_requested / product_not_received / product_unacceptable / duplicate_charge / fraud_confirmed / subscription_cancelled / admin_correction / chargeback_prevention / regulator_required / accounting_correction. Reader-facing reasons (customer_requested, product_not_received, product_unacceptable, subscription_cancelled, admin_correction, chargeback_prevention) accepted from customer path; admin-only reasons (fraud_confirmed, regulator_required, accounting_correction) refused from POST /refunds/mine.",
+      "default_message": "The :attribute must be one of the allowed refund reasons."
+    },
+    {
+      "name": "valid_refund_type",
+      "class": "Academorix\\Finance\\Refund\\Rules\\ValidRefundType",
+      "signature": "valid_refund_type",
+      "description": "Refund type enum: full / partial / prorated. Small tier limited to `full`. Medium+ unlocks `partial` + `prorated` via `refund_partial` + `refund_prorated` entitlements. Prorated additionally requires the target be a Membership (checked via parent invoice.applied_to_type='membership').",
+      "default_message": "The :attribute must be one of: full, partial, prorated."
+    },
+    {
+      "name": "valid_currency",
+      "class": "Academorix\\Finance\\Refund\\Rules\\ValidCurrency",
+      "signature": "valid_currency",
+      "description": "ISO 4217 three-letter uppercase currency code (USD / EUR / GBP / etc.). Validates against foundation's shared ISO 4217 registry. Additionally validates that the refund's currency matches the parent payment's currency, UNLESS the tenant holds `refund_multi_currency` (Medium+) — in which case a cross-currency refund is permitted with an fx-computed amount_cents.",
+      "default_message": "The :attribute must be a valid ISO 4217 currency code matching the parent payment's currency (or the tenant holds refund_multi_currency)."
+    },
+    {
+      "name": "valid_positive_amount_within_refundable",
+      "class": "Academorix\\Finance\\Refund\\Rules\\ValidPositiveAmountWithinRefundable",
+      "signature": "valid_positive_amount_within_refundable",
+      "description": "amount_cents > 0 AND amount_cents <= parent payment.amount_cents - payment.amount_refunded_cents (the remaining refundable amount). Refuses zero-amount refunds (a refund with amount_cents=0 is nonsensical). Refuses amounts exceeding the remaining refundable — never over-refund a payment.",
+      "default_message": "The refund amount must be positive and at most the remaining refundable amount (payment - previously_refunded)."
+    },
+    {
+      "name": "valid_state_transition",
+      "class": "Academorix\\Finance\\Refund\\Rules\\ValidStateTransition",
+      "signature": "valid_state_transition",
+      "description": "The refund state machine one-way path enforcement. Allowed transitions: pending -> awaiting_approval; pending -> approved; awaiting_approval -> approved; awaiting_approval -> rejected; awaiting_approval -> cancelled; approved -> processing; approved -> cancelled; processing -> succeeded; processing -> failed; processing -> provider_error; provider_error -> processing (retry); provider_error -> failed (force-fail). Every other transition refused with REFUND_INVALID_STATE_TRANSITION. Succeeded / failed / rejected / cancelled are terminal states (no outbound edges).",
+      "default_message": "The requested state transition (:from -> :to) is not allowed by the refund state machine."
+    },
+    {
+      "name": "unique_refund_number",
+      "class": "Academorix\\Finance\\Refund\\Rules\\UniqueRefundNumber",
+      "signature": "unique_refund_number",
+      "description": "Enforces the composite unique index (tenant_id, refund_number). Two refunds with the same generated refund_number for the same tenant refuse. Runs both at request-validation time (early feedback) + the observer re-checks under the DB unique index (authoritative). The RefundNumberGenerator's collision-retry loop handles the rare race where two concurrent creates try the same next-in-sequence — the DB unique constraint refuses one, retry allocates the next number.",
+      "default_message": "A refund with this number already exists for this tenant (should not surface; indicates a generator race)."
+    },
+    {
+      "name": "valid_proration_config",
+      "class": "Academorix\\Finance\\Refund\\Rules\\ValidProrationConfig",
+      "signature": "valid_proration_config",
+      "description": "proration_config JSONB shape validation. Required keys: unused_period_start (ISO 8601), unused_period_end (ISO 8601), total_period_days (positive int), unused_days (non-negative int <= total_period_days), unused_pass_count (non-negative int), unused_pass_credit_cents (non-negative int). unused_period_end > unused_period_start. Additional keys refused via additionalProperties=false semantics. Refuses when populated on refund_type != 'prorated' (misuse).",
+      "default_message": "The proration_config is malformed. Expected shape: { unused_period_start, unused_period_end, total_period_days, unused_days, unused_pass_count, unused_pass_credit_cents }."
+    },
+    {
+      "name": "refunded_amount_never_exceeds_payment",
+      "class": "Academorix\\Finance\\Refund\\Rules\\RefundedAmountNeverExceedsPayment",
+      "signature": "refunded_amount_never_exceeds_payment",
+      "description": "Cross-refund invariant. Sum of amount_cents across all NON-cancelled + NON-rejected + NON-failed refunds for a given payment_id must not exceed payment.amount_cents. Runs at request-validation time for early feedback; observer re-checks under a payment-row lock (SELECT ... FOR UPDATE) to prevent race between two concurrent refunds each thinking they're under the cap. Refuses with REFUND_AMOUNT_EXCEEDS_REFUNDABLE.",
+      "default_message": "The total refunded amount would exceed the original payment amount (:existing_refunds_cents already refunded + :new_refund_cents requested > :payment_amount_cents payment)."
+    },
+    {
+      "name": "immutable_after_succeeded",
+      "class": "Academorix\\Finance\\Refund\\Rules\\ImmutableAfterSucceeded",
+      "signature": "immutable_after_succeeded",
+      "description": "Post-succeeded immutability guard. When the current refund.status='succeeded', REFUSE any mutation of any field. Refuses with REFUND_IMMUTABLE. Corrections after succeeded require: (1) create a new refund with reason='accounting_correction' issuing the money BACK to the customer, OR (2) initiate a chargeback (chargeback module) if the refund was in error.",
+      "default_message": "This refund is immutable — succeeded refunds cannot be modified. Create a new refund with reason='accounting_correction' if a correction is needed."
+    },
+    {
+      "name": "requires_approval_when_over_threshold_or_stale",
+      "class": "Academorix\\Finance\\Refund\\Rules\\RequiresApprovalWhenOverThresholdOrStale",
+      "signature": "requires_approval_when_over_threshold_or_stale",
+      "description": "Computes requires_approval based on: (1) amount_cents > refund.approval.threshold_amount_cents (default 10000 = $100), OR (2) days_since_payment > refund.approval.threshold_days_since_payment (default 30), OR (3) reason IN ('fraud_confirmed', 'admin_correction', 'chargeback_prevention', 'regulator_required', 'accounting_correction'), OR (4) tenant setting refund.approval.always_require=true. Reason='duplicate_charge' FORCES requires_approval=false (system-initiated auto-approve). Rule is advisory-only (the observer computes the same value authoritatively); FormRequest may pre-populate to give the caller early feedback on which path they're heading into.",
+      "default_message": "Approval is required for this refund based on amount / staleness / reason."
+    }
+  ]
+}

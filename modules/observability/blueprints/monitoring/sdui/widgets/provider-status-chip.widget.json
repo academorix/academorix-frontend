@@ -1,0 +1,38 @@
+{
+  "id": "monitoring.provider-status-chip",
+  "title": "Monitoring provider status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for monitoring provider health. States: active + circuit closed = success; active + circuit half-open = warning; active + circuit open = danger; inactive = neutral. Reads from provider_config object.",
+  "props": {
+    "provider_config": { "type": "object", "required": true },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "!props.provider_config.is_active ? 'neutral' : (props.provider_config.circuit_breaker_open_until ? 'danger' : 'success')"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "!props.provider_config.is_active ? 'no-symbol' : (props.provider_config.circuit_breaker_open_until ? 'x-circle' : 'check-circle')"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "!props.provider_config.is_active ? 'Inactive' : (props.provider_config.circuit_breaker_open_until ? 'Circuit open' : 'Healthy')"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

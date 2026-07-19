@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/tax/health",
+  "$version": 1,
+  "title": "tax — health probes",
+  "probes": [
+    {
+      "name": "tax-schema-migrations-applied",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every migration this module ships has run: tax_rates, tax_jurisdictions, tax_exemptions, tax_calculations, plus their indexes.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "tax-rate-effective-range-index-present",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\RateEffectiveRangeIndexPresentProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the composite index on tax_rates (tenant_id, tax_jurisdiction_id, rate_type, effective_from, effective_to) exists. Missing this index makes rate resolution O(N) — every calculation becomes a table scan.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "tax-provider-drivers-registered",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\ProviderDriversRegisteredProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every advertised provider (via #[AsTaxProvider]) is registered with the TaxProviderManager + its createXxxDriver factory resolves without errors. Fails hard when a provider driver class is missing.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "tax-provider-schemas-loaded",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\ProviderSchemasLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every data/providers/<provider>-config.schema.json is present + parseable. Missing schemas would make provider config create silently accept invalid credentials.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "tax-jurisdiction-catalog-loaded",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\JurisdictionCatalogLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms data/jurisdiction-country-catalog.json is loaded + the league/iso3166 library resolves. Missing = valid_country_code + valid_state_code validators silently accept invalid values.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "tax-blocked-invoice-lines",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\BlockedInvoiceLinesProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts invoice_lines where tax_calculation_id IS NULL AND last-attempted TaxCalculationFailed within past 60 min. Non-zero = P1 tax pipeline degradation.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "tax-open-circuit-breakers",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\OpenCircuitBreakersProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Reads count of tax provider configs with circuit_breaker_open_until IS NOT NULL AND > now(). Non-zero = at least one tenant × provider has tax calculation degraded.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "tax-pending-exemption-verification-backlog",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\PendingExemptionBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 100 tax_exemptions rows are in verification_status='pending' for > 48h. Indicates verification workflow is stalled.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "tax-expiring-exemptions",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\ExpiringExemptionsProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts verified exemptions with valid_until between now() and now()+7 days that have NOT yet been warned. Feeds the NotifyExemptionExpiringJob cadence health check.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "tax-calculation-drift-rate",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\DriftRateProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Reads the trailing 7-day drift-detection rate from ReconcileProviderCalculationsJob. > 1% drift triggers a warning; > 5% triggers a P1 alert.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "tax-encryption-key-rotated",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\EncryptionKeyRotatedProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when the encryption key used for tax_provider_configs.config + tax_exemptions.certificate_document_url has not been rotated in > 90 days. Delegated to the compliance/encryption service's rotation cadence.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "tax-provider-health-per-tenant",
+      "class": "Academorix\\Finance\\Tax\\Health\\Probes\\ProviderHealthPerTenantProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "For each (tenant, provider) with is_active=true: reports success_rate + circuit_breaker_state + last_success_at. Feeds the platform ops dashboard.",
+      "timeoutMs": 3000
+    }
+  ]
+}

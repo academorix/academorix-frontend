@@ -1,0 +1,49 @@
+{
+  "id": "payment.circuit-breaker-badge",
+  "title": "Payment provider circuit breaker badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Small badge showing circuit-breaker state for a payment provider config. When circuit_breaker_open_until is null: green 'Closed'. When circuit_breaker_open_until > now: red 'Open until <time>'. When circuit_breaker_open_until <= now: amber 'Half-open (probing)'.",
+  "props": {
+    "openUntil": { "type": ["string", "null"], "required": false },
+    "consecutiveFailures": { "type": ["integer", "null"], "required": false },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Tooltip",
+      "props": {
+        "content": {
+          "$expr": "props.openUntil ? ('Circuit breaker open until ' + props.openUntil + '. Consecutive failures: ' + (props.consecutiveFailures || 0)) : 'Circuit breaker closed. Provider healthy.'"
+        }
+      },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "variant": {
+              "$expr": "props.openUntil ? 'danger' : 'success'"
+            },
+            "size": { "$ref": "props.size" }
+          },
+          "props": {
+            "leadingIcon": {
+              "$expr": "props.openUntil ? 'bolt-slash' : 'bolt'"
+            }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "props.openUntil ? 'Open' : 'Closed'"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

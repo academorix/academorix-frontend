@@ -1,0 +1,287 @@
+{
+  "$version": 1,
+  "title": "Health check type catalogue",
+  "description": "The 10 health check types the module supports day-1. Each type documents its purpose, target-shape schema, execution semantics, and typical intervals. HealthCheckObserver reads this catalogue to validate the target jsonb against the per-type schema.",
+  "check_types": [
+    {
+      "check_type": "db_ping",
+      "display_name": "Database ping",
+      "description": "Runs a lightweight SELECT 1 against a configured database connection. Reports healthy on 2xx-equivalent (row returned), degraded if latency exceeds threshold, unhealthy on connection error, timeout on abort.",
+      "typical_interval_seconds": 60,
+      "typical_timeout_seconds": 5,
+      "target_schema": {
+        "type": "object",
+        "required": ["connection_name"],
+        "properties": {
+          "connection_name": {
+            "type": "string",
+            "description": "Laravel DB connection name (matches config/database.php)."
+          },
+          "degraded_latency_ms_threshold": {
+            "type": "integer",
+            "minimum": 10,
+            "maximum": 30000,
+            "default": 500
+          },
+          "query": {
+            "type": "string",
+            "description": "Optional custom query. Defaults to 'SELECT 1'."
+          }
+        }
+      }
+    },
+    {
+      "check_type": "redis_ping",
+      "display_name": "Redis ping",
+      "description": "Runs a Redis PING against a configured Redis connection. Reports healthy on PONG, degraded if latency exceeds threshold, unhealthy on connection error.",
+      "typical_interval_seconds": 60,
+      "typical_timeout_seconds": 3,
+      "target_schema": {
+        "type": "object",
+        "required": ["connection_name"],
+        "properties": {
+          "connection_name": {
+            "type": "string",
+            "description": "Redis connection name (matches config/database.php redis)."
+          },
+          "degraded_latency_ms_threshold": {
+            "type": "integer",
+            "minimum": 10,
+            "maximum": 10000,
+            "default": 200
+          }
+        }
+      }
+    },
+    {
+      "check_type": "queue_depth",
+      "display_name": "Queue depth",
+      "description": "Reads the pending job count on a named queue. Reports healthy when count < threshold, degraded when between threshold and 2×threshold, unhealthy when >2×threshold.",
+      "typical_interval_seconds": 60,
+      "typical_timeout_seconds": 5,
+      "target_schema": {
+        "type": "object",
+        "required": ["queue_name", "threshold"],
+        "properties": {
+          "queue_name": { "type": "string" },
+          "threshold": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Pending job count above which the check reports degraded."
+          },
+          "critical_multiplier": {
+            "type": "number",
+            "minimum": 1.1,
+            "maximum": 100,
+            "default": 2
+          }
+        }
+      }
+    },
+    {
+      "check_type": "memory_usage",
+      "display_name": "Memory usage",
+      "description": "Reports the app-server memory usage as a percentage of the container's cgroup limit. Reports healthy when below threshold_percent, degraded above threshold_percent, unhealthy above critical_percent.",
+      "typical_interval_seconds": 30,
+      "typical_timeout_seconds": 2,
+      "target_schema": {
+        "type": "object",
+        "required": ["threshold_percent"],
+        "properties": {
+          "threshold_percent": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 99,
+            "default": 80
+          },
+          "critical_percent": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 95
+          }
+        }
+      }
+    },
+    {
+      "check_type": "cpu_usage",
+      "display_name": "CPU usage",
+      "description": "Reports the app-server CPU load-average as a percentage. Same threshold model as memory_usage.",
+      "typical_interval_seconds": 30,
+      "typical_timeout_seconds": 2,
+      "target_schema": {
+        "type": "object",
+        "required": ["threshold_percent"],
+        "properties": {
+          "threshold_percent": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 99,
+            "default": 80
+          },
+          "critical_percent": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 95
+          }
+        }
+      }
+    },
+    {
+      "check_type": "disk_usage",
+      "display_name": "Disk usage",
+      "description": "Reports the used percentage of a configured filesystem path. Healthy when below threshold, unhealthy above critical.",
+      "typical_interval_seconds": 300,
+      "typical_timeout_seconds": 5,
+      "target_schema": {
+        "type": "object",
+        "required": ["path", "threshold_percent"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Filesystem path to check (e.g. '/', '/var/lib/postgres')."
+          },
+          "threshold_percent": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 99,
+            "default": 80
+          },
+          "critical_percent": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 95
+          }
+        }
+      }
+    },
+    {
+      "check_type": "http_endpoint",
+      "display_name": "HTTP endpoint probe",
+      "description": "Fetches a URL. Reports healthy on expected_status (default 200), degraded on unexpected 2xx/3xx, unhealthy on 4xx/5xx or connection error, timeout on abort.",
+      "typical_interval_seconds": 60,
+      "typical_timeout_seconds": 30,
+      "target_schema": {
+        "type": "object",
+        "required": ["url"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "pattern": "^https?://"
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "HEAD", "POST"],
+            "default": "GET"
+          },
+          "expected_status": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 599,
+            "default": 200
+          },
+          "expected_body_contains": {
+            "type": "string",
+            "description": "Optional substring the response body must contain to be healthy."
+          },
+          "follow_redirects": {
+            "type": "boolean",
+            "default": true
+          },
+          "custom_headers": {
+            "type": "object",
+            "description": "Optional headers on the probe request (auth tokens, X-Probe: true). Encrypted at rest as part of target."
+          }
+        }
+      }
+    },
+    {
+      "check_type": "dns_lookup",
+      "display_name": "DNS lookup",
+      "description": "Resolves a hostname. Reports healthy when resolution succeeds within timeout + returns expected IPs (if configured). Unhealthy on NXDOMAIN / SERVFAIL / timeout.",
+      "typical_interval_seconds": 300,
+      "typical_timeout_seconds": 5,
+      "target_schema": {
+        "type": "object",
+        "required": ["hostname"],
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9.-]+$"
+          },
+          "record_type": {
+            "type": "string",
+            "enum": ["A", "AAAA", "CNAME", "MX", "TXT"],
+            "default": "A"
+          },
+          "expected_ips": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Optional list of expected resolutions. If set + resolution returns different set: reports degraded (not unhealthy — DNS changes may be intentional)."
+          }
+        }
+      }
+    },
+    {
+      "check_type": "tls_expiry",
+      "display_name": "TLS certificate expiry",
+      "description": "Connects to a hostname:port + reads the TLS certificate expiry date. Reports healthy when days_remaining > min_days_remaining, degraded within 2× threshold, unhealthy below threshold.",
+      "typical_interval_seconds": 3600,
+      "typical_timeout_seconds": 10,
+      "target_schema": {
+        "type": "object",
+        "required": ["hostname", "port", "min_days_remaining"],
+        "properties": {
+          "hostname": { "type": "string" },
+          "port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535,
+            "default": 443
+          },
+          "min_days_remaining": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 365,
+            "default": 30
+          }
+        }
+      }
+    },
+    {
+      "check_type": "custom_script",
+      "display_name": "Custom script",
+      "description": "Enterprise-only via monitoring_custom_metrics entitlement. Executes a registered tenant-provided script + reads its exit code + stdout. Healthy on exit 0 + expected stdout pattern; unhealthy otherwise.",
+      "typical_interval_seconds": 300,
+      "typical_timeout_seconds": 60,
+      "requires_entitlement": "monitoring_custom_metrics",
+      "target_schema": {
+        "type": "object",
+        "required": ["script_id"],
+        "properties": {
+          "script_id": {
+            "type": "string",
+            "description": "Registered custom script ID (via /api/v1/monitoring/custom-scripts CRUD — separate concern)."
+          },
+          "timeout_ms": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 60000,
+            "default": 30000
+          },
+          "expected_exit_code": {
+            "type": "integer",
+            "default": 0
+          },
+          "expected_stdout_pattern": {
+            "type": "string",
+            "description": "Regex the stdout must match to be healthy."
+          }
+        }
+      }
+    }
+  ]
+}

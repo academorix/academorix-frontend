@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/chargeback/helpers",
+  "$version": 1,
+  "title": "chargeback — helper functions",
+  "description": "Ergonomic helpers for resolving chargebacks, computing rate, computing RDR eligibility, reading approaching-deadline chargebacks. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Finance\\Chargeback\\Support",
+  "helpers": [
+    {
+      "signature": "resolve_chargeback(string $chargebackId, string $tenantId): ?Chargeback",
+      "purpose": "Cache-aware lookup for a chargeback within a tenant. Returns the Chargeback model or null when unknown / soft-deleted.",
+      "delegates_to": "ChargebackRepository::findById()"
+    },
+    {
+      "signature": "chargeback_rate(string $tenantId, string $network, int $windowDays = 60): float",
+      "purpose": "Returns the rolling chargeback rate for a tenant + network over the specified window in days (default 60 — matches VDMP/MDMP windows). Returns 0.0 when no transactions exist. Cached via cbk:rate:{tenant_id}:{network} (24h TTL — invalidated by nightly MonitorChargebackRateJob run).",
+      "delegates_to": "ChargebackRateCalculator::compute()"
+    },
+    {
+      "signature": "chargeback_rate_threshold(string $network): float",
+      "purpose": "Returns the VDMP/MDMP threshold percent for a network (0.009 Visa / 0.015 Mastercard / 0.01 Amex / 0.01 Discover). Reads from config chargeback.rate_monitoring.threshold_<network>_percent.",
+      "delegates_to": "config('chargeback.rate_monitoring.threshold_'.strtolower($network).'_percent')"
+    },
+    {
+      "signature": "is_rdr_eligible(Chargeback $chargeback): bool",
+      "purpose": "Read-only computation of RDR eligibility for an existing chargeback. Returns true when: network='visa' AND amount_cents <= chargeback.rdr.auto_refund_threshold_cents AND tenant holds chargeback_rdr entitlement AND parent payment.amount_refunded_cents == 0. Used by SDUI to conditionally show the accept-via-RDR button.",
+      "delegates_to": "RdrHandler::computeEligibility()"
+    },
+    {
+      "signature": "is_ce3_eligible(Chargeback $chargeback): bool",
+      "purpose": "Read-only computation of CE3.0 eligibility. Returns true when: network='visa' AND reason_category='fraud' AND tenant holds chargeback_ce3 entitlement AND customer has >= 2 prior successful payments in last 120 days.",
+      "delegates_to": "Ce3EvidenceBuilder::computeEligibility()"
+    },
+    {
+      "signature": "next_chargeback_number(string $tenantId, ?int $year = null): string",
+      "purpose": "Generate the next sequential chargeback number for a tenant + year. Uses the cbk:sequence:{tenant_id}:{year} counter. Returns a formatted string like 'CBK-2026-00000042'.",
+      "delegates_to": "ChargebackNumberGenerator::next()"
+    },
+    {
+      "signature": "reason_code_metadata(string $network, string $reasonCode): array{category: string, description: string, dispute_time_limit_days: int}",
+      "purpose": "Look up metadata for a specific reason code within a network. Returns the reason_category + human-readable description + network's dispute time limit (typical evidence deadline). Reads data/reason-code-catalog.json.",
+      "delegates_to": "ReasonCodeCatalog::lookup()"
+    },
+    {
+      "signature": "days_until_evidence_deadline(Chargeback $chargeback): int",
+      "purpose": "Returns days remaining until evidence_due_by. Negative when past deadline. Used by SDUI to render approaching-deadline badges.",
+      "delegates_to": "computed inline via CarbonDiff"
+    },
+    {
+      "signature": "evidence_completeness_percent(string $chargebackId): int",
+      "purpose": "Given the cached auto-collected evidence draft (cbk:evidence-draft:{chargeback_id}) OR the latest submitted evidence row, returns 0-100 percent — how many of the 8 evidence fields (invoice_evidence / receipt_evidence / service_documentation / refund_policy / communication_log / shipping_docs / customer_signature_evidence / uncategorized_text) are populated. Used by SDUI + evidence-overdue notifications for signal.",
+      "delegates_to": "EvidenceCollector::computeCompleteness()"
+    },
+    {
+      "signature": "chargeback_defenders(string $tenantId): array<string>",
+      "purpose": "Returns the list of user_ids holding chargebacks.submit-evidence permission for a tenant. Cached via cbk:defenders:{tenant_id} (10min TTL).",
+      "delegates_to": "ChargebackApprovalManager::resolveDefenders()"
+    },
+    {
+      "signature": "network_fee(string $network): int",
+      "purpose": "Returns the configured network chargeback fee in cents for a network. Reads config chargeback.fees.default_by_network.<network>. Used by NetworkFeeCalculator + display in SDUI.",
+      "delegates_to": "NetworkFeeCalculator::compute()"
+    },
+    {
+      "signature": "provider_polling_interval(string $provider): ?int",
+      "purpose": "Returns the configured polling interval in seconds for a specific provider (from config chargeback.providers.<provider>.polling_interval_seconds). Returns null when polling is disabled (e.g. custom_webhook default). Used by scheduler to dispatch CheckChargebackStatusJob at the right cadence.",
+      "delegates_to": "config('chargeback.providers.'.$provider.'.polling_interval_seconds')"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services.",
+    "chargeback_rate() is intentionally a `read` — the write path is MonitorChargebackRateJob nightly. Ad-hoc reads use the cached value; if the cache is stale, the caller must dispatch MonitorChargebackRateJob directly.",
+    "is_rdr_eligible() + is_ce3_eligible() are pure reads — they do NOT freeze the eligibility flags on the chargeback row. Freezing happens at chargeback creation via ChargebackObserver.creating."
+  ]
+}

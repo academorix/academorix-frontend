@@ -1,0 +1,147 @@
+{
+  "id": "tax.resources.tax-provider.list",
+  "title": "Tax providers",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/providers",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-provider", "action": "list" },
+  "requiresPermission": "tax.providers.viewAny",
+  "requiresEntitlement": "tax_capture",
+  "dataSources": [
+    {
+      "name": "providers",
+      "kind": "http.get",
+      "url": "/api/v1/tax/providers",
+      "unwrap": "data"
+    },
+    {
+      "name": "slot",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/tax_provider_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax providers" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "TaxJar / Avalara / Stripe Tax / Native Calculator / Custom Webhook connections." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": { "size": "sm", "label": "Provider slots" },
+                  "bindings": {
+                    "cap": { "$ref": "slot.value_cap" },
+                    "used": { "$ref": "slot.value_used" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add provider" },
+                  "requiresPermission": "tax.providers.create",
+                  "bindings": { "disabled": { "$ref": "slot.is_exceeded" } },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/tax/providers/new" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "bindings": {
+            "items": { "$ref": "providers" },
+            "isLoading": { "$ref": "providers.isLoading" }
+          },
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "col-span-full text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "cog-6-tooth", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No tax providers configured" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Small-tier tenants: NativeCalculator is used by default. Add TaxJar / Avalara / Stripe Tax for advanced tax handling." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 hover:shadow-md transition-shadow cursor-pointer" },
+            "actions": {
+              "onPress": { "kind": "navigate", "toExpr": "'/tenant/tax/providers/' + row.id" }
+            },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-2 mb-2" },
+                "children": [
+                  { "kind": "Text", "props": { "className": "font-medium text-lg" }, "bindings": { "children": { "$ref": "row.provider" } } },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "warning" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.circuit_breaker_open_until" },
+                      "children": "Circuit open"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2 flex-wrap mb-3" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "success" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.is_active" },
+                      "children": "Active"
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "neutral" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.is_active" },
+                      "children": "Inactive"
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": { "children": { "$expr": "(row.enabled_jurisdictions?.length || 0) + ' jurisdictions enabled'" } }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted mt-1" },
+                "bindings": {
+                  "children": { "$expr": "row.last_success_at ? ('Last success: ' + row.last_success_at) : 'No successful calculations yet'" }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

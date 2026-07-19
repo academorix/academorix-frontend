@@ -1,0 +1,163 @@
+{
+  "id": "academorix://modules/activity/schemas/activity-retention-policy",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ActivityRetentionPolicy",
+  "description": "Per-tenant, per-log_name override on top of the module-level default retention (90 days). Enterprise entitlement `activity_retention_extended` gates the write path — without it, the default applies uniformly. `log_name` is optional (NULL = applies to every log_name in the tenant); when set, only activities on that log_name follow this override. `retention_days` is between 30 (never shorter than 1 month of forensic memory) and 730 (regulator-hold ceiling — a compliance officer setting this to 730 must document the override in `override_reason` per SOC 2). Composite unique on `(tenant_id, log_name)` partial WHERE deleted_at IS NULL — one policy per (tenant, log_name) pair.",
+  "type": "object",
+  "x-module": "activity",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "activity_retention_policies",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "art_",
+    "incrementing": false,
+    "model": "Academorix\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
+    "interface": "Academorix\\Observability\\Activity\\Contracts\\Data\\ActivityRetentionPolicyInterface",
+    "implements": [
+      "Academorix\\Observability\\Activity\\Contracts\\Data\\ActivityRetentionPolicyInterface",
+      "OwenIt\\Auditing\\Contracts\\Auditable"
+    ],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "retention_days": "integer",
+      "expires_at": "datetime"
+    },
+    "appends": ["is_extended", "is_regulator_hold"],
+    "observers": ["ActivityRetentionPolicyObserver"],
+    "hidden": [],
+    "guarded": []
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `art_<26 chars>` (Activity ReTention — distinct from `arp_` which is AuditRetentionPolicy)."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "Owning tenant. Auto-filled by BelongsToTenant."
+      },
+      "log_name": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Restricts the policy to a specific log_name. NULL = applies to every log_name in the tenant (the default). When set, must match a name in data/log-names-catalog.json."
+      },
+      "retention_days": {
+        "type": "integer",
+        "nullable": false,
+        "description": "How many days to retain activity rows on this scope. Between 30 (floor — never shorter than 1 month of forensic memory) and 730 (regulator-hold ceiling). Default fallback (when no policy exists): 90 days from config."
+      },
+      "override_reason": {
+        "type": "text",
+        "nullable": false,
+        "description": "Free-text justification for the override. Required. Retained on the audit stream indefinitely (`HasAudit` composes into `audits` — a compliance officer can later verify why the ceiling was raised)."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Optional wall-clock at which the policy reverts to the module default. NULL = permanent. Regulator-hold overrides (>365d) SHOULD set expires_at."
+      },
+      "created_by": { "type": "uuid", "nullable": true },
+      "updated_by": { "type": "uuid", "nullable": true },
+      "deleted_by": { "type": "uuid", "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "log_name"],
+        "unique": true,
+        "name": "activity_retention_policies_tenant_log_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "One active policy per (tenant, log_name) pair. Partial unique to allow re-creation after soft-delete."
+      },
+      {
+        "columns": ["tenant_id", "retention_days"],
+        "unique": false,
+        "name": "activity_retention_policies_tenant_retention_days_index",
+        "description": "Powers the retention-summary view — 'show me every policy above 365 days in this tenant'."
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "retention_days", "override_reason", "created_at", "updated_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^art_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tenant_id": {
+      "type": "string",
+      "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "log_name": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "maxLength": 128
+    },
+    "retention_days": {
+      "type": "integer",
+      "minimum": 30,
+      "maximum": 730,
+      "description": "30..730 inclusive. 30 = 1 month; 90 = default; 365 = 1 year (Enterprise entitlement); 730 = regulator hold."
+    },
+    "override_reason": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 2000,
+      "description": "Human-readable justification. Min 20 chars — matches the reason-quality rule from grants."
+    },
+    "expires_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "is_extended": {
+      "type": "boolean",
+      "description": "Computed. `retention_days > 90` — this override is beyond the config default."
+    },
+    "is_regulator_hold": {
+      "type": "boolean",
+      "description": "Computed. `retention_days > 365` — this is a regulator-hold level override."
+    },
+    "created_by": { "type": ["string", "null"], "format": "uuid" },
+    "updated_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_by": { "type": ["string", "null"], "format": "uuid" },
+    "deleted_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["created_by", "updated_by", "deleted_by"],
+    "computed": ["is_extended", "is_regulator_hold"]
+  },
+  "x-route-binding": {
+    "strategy": "resolveRouteBinding",
+    "accepts": ["ULID (`art_<26>`)"]
+  }
+}

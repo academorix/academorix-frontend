@@ -1,0 +1,144 @@
+{
+  "id": "academorix://modules/payment/notifications",
+  "$version": 1,
+  "title": "payment — notification classes + categories",
+  "namespace": "Academorix\\Finance\\Payment\\Notifications",
+  "notifications": [
+    "PaymentSucceededNotification",
+    "PaymentFailedNotification",
+    "PaymentActionRequiredNotification",
+    "PaymentMethodExpiringNotification",
+    "PaymentMethodAttachedNotification",
+    "PaymentDisputeOpenedNotification",
+    "PaymentDisputeEvidenceDueNotification",
+    "PaymentDisputeWonNotification",
+    "PaymentDisputeLostNotification",
+    "PaymentProviderCircuitBreakerOpenedNotification",
+    "PaymentReconcileDriftNotification"
+  ],
+  "categories": [
+    {
+      "slug": "payment.succeeded",
+      "display_name": "Payment succeeded",
+      "description": "Your payment was successfully captured. Includes payment number, amount, currency, invoice reference, receipt URL, and payment method summary (brand + last4).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer (user or athlete's guardian) + tenant_owner + tenant_admin"
+    },
+    {
+      "slug": "payment.failed",
+      "display_name": "Payment failed",
+      "description": "Your payment could not be processed. Includes error reason (customer-friendly translation of the provider error code), the amount that was attempted, and a Try Again CTA linking back to the invoice.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer + tenant_admin"
+    },
+    {
+      "slug": "payment.action_required",
+      "display_name": "Additional verification required",
+      "description": "Your payment needs additional verification (3DS2 / bank challenge). Includes a link to complete the step-up flow via the provider SDK. Time-sensitive — the customer must complete before the intent times out.",
+      "default_channels": ["mail", "sms", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer only"
+    },
+    {
+      "slug": "payment.method_expiring",
+      "display_name": "Payment method expiring soon",
+      "description": "Your saved payment method (card ending in {last4}) expires in {days} days. Update it now to avoid interrupted service. 30-day and 7-day pre-expiry notifications.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "customer"
+    },
+    {
+      "slug": "payment.method_attached",
+      "display_name": "Payment method saved",
+      "description": "A new payment method was saved to your account. Includes brand + last4 + expiry summary. Audit-trail notification — the customer should confirm they added it.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer"
+    },
+    {
+      "slug": "payment.dispute_opened",
+      "display_name": "Payment dispute opened",
+      "description": "A customer has opened a dispute against a payment. Includes payment reference, disputed amount, reason, and evidence submission deadline. High-value disputes (> $500 configurable) fire as P1.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role"
+    },
+    {
+      "slug": "payment.dispute_evidence_due",
+      "display_name": "Dispute evidence due soon",
+      "description": "The evidence submission deadline for a payment dispute is approaching (3 days out). Includes a link to review + submit the auto-collected evidence pack.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role"
+    },
+    {
+      "slug": "payment.dispute_won",
+      "display_name": "Payment dispute won",
+      "description": "You successfully defended a payment dispute. Funds have been returned. Includes payment reference and dispute summary.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role"
+    },
+    {
+      "slug": "payment.dispute_lost",
+      "display_name": "Payment dispute lost",
+      "description": "A payment dispute was decided in the customer's favour. Funds have been permanently reversed. Includes payment reference, amount, and next-step guidance (the dispute has been escalated to a Chargeback via the chargeback module).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role"
+    },
+    {
+      "slug": "payment.provider_circuit_breaker_opened",
+      "display_name": "Payment provider unreachable",
+      "description": "A payment provider (Stripe / Paddle / Adyen / etc.) has been marked unreachable after N consecutive failures. Payment captures against this provider are paused until the breaker auto-resets or ops manually resets it. Includes provider name, last error, open-until timestamp, and reset instructions.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + platform_ops"
+    },
+    {
+      "slug": "payment.reconcile_drift",
+      "display_name": "Payment reconciliation drift detected",
+      "description": "Nightly reconciliation found intents where our record does not match the provider record. Detail includes drift count + affected intents. Signal for support to investigate lost webhooks or async completions.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role + platform_ops"
+    }
+  ]
+}

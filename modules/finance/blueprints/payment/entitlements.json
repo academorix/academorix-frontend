@@ -1,0 +1,109 @@
+{
+  "id": "academorix://modules/payment/entitlements",
+  "$version": 1,
+  "title": "payment — declared entitlements",
+  "description": "Ten entitlement keys. `payment_capture` is the boolean master gate. `payment_provider_slot` caps provider configs per tenant. `payment_advanced_providers` unlocks Adyen + Square on Medium+ (Small tenants get Stripe + Paddle + PayPal + CustomWebhook only). `payment_manual_capture` unlocks authorization holds on Medium+. `payment_saved_methods` (all tiers) enables tokenized-method reuse. `payment_multi_currency` (Medium+) enables non-tenant-default currency captures. `payment_3ds2_forced` (Enterprise) forces 3DS2 on ALL card transactions (not just PSD2-mandated). `payment_dispute_management` (all tiers) enables the dispute workflow. `payment_custom_webhook` (Enterprise) enables the generic HMAC-signed webhook driver. `payment_extended_retention` (Enterprise) extends retention from 7y to 10y.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "payment_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is invisible: no captures, no provider CRUD, no saved methods. All tiers get this on — Small tenants get a reduced provider set via payment_advanced_providers = 0.",
+      "enforcedBy": [
+        "entitlement.enforce:payment_capture middleware on every /api/v1/payments/* + /api/v1/payment-methods/* + /api/v1/payment-intents/* + /api/v1/payment-disputes/* route",
+        "PaymentMethodObserver refuses creating when the gate is closed",
+        "PaymentIntentObserver refuses creating when the gate is closed",
+        "SDUI payment surfaces hidden when features array does not include 'payment.core'"
+      ]
+    },
+    {
+      "key": "payment_provider_slot",
+      "kind": "slot",
+      "unit": "providers",
+      "defaultsByPlan": { "small": 1, "medium": 3, "enterprise": null },
+      "description": "How many payment provider configs a tenant can have. Small: 1 (typically Stripe). Medium: 3 (e.g. Stripe US + Adyen EU + Paddle SaaS). Enterprise: unlimited. Consumed on provider config create; released on soft-delete.",
+      "enforcedBy": [
+        "Provider config create action consumes 1 unit via EntitlementGate::consume('payment_provider_slot')",
+        "Provider config soft-delete releases 1 unit"
+      ]
+    },
+    {
+      "key": "payment_advanced_providers",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables Adyen and Square providers. Small tenants get only Stripe + Paddle + PayPal + CustomWebhook (4 providers). Medium + Enterprise get all 6 providers.",
+      "enforcedBy": [
+        "Provider config create action refuses when provider IN ('adyen', 'square') AND gate is closed",
+        "SDUI provider picker filters the provider list per this gate"
+      ]
+    },
+    {
+      "key": "payment_manual_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables authorization holds (capture_method='manual') via POST /payments/{payment}/capture. Small tenants get automatic capture only. Manual capture is common for pre-authorized bookings (hold funds now, capture at check-in).",
+      "enforcedBy": [
+        "PaymentIntentObserver refuses creating with capture_method='manual' when the gate is closed",
+        "SDUI payment-intent create form hides the manual-capture toggle when gate is closed"
+      ]
+    },
+    {
+      "key": "payment_saved_methods",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Enables saved payment tokens for repeat customers. All tiers get this — without it, every payment requires re-entering card details.",
+      "enforcedBy": [
+        "PaymentMethodObserver refuses creating when gate is closed",
+        "SDUI 'save this card' toggle hidden when gate is closed"
+      ]
+    },
+    {
+      "key": "payment_multi_currency",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables captures in currencies other than the tenant's default currency. Small tenants are locked to their default currency. Medium+ can accept multi-currency payments (e.g. a tenant with default USD accepts EUR + GBP).",
+      "enforcedBy": [
+        "PaymentIntentObserver refuses creating when intent.currency != tenant.default_currency AND gate is closed → returns PAYMENT_MULTI_CURRENCY_NOT_ENTITLED"
+      ]
+    },
+    {
+      "key": "payment_3ds2_forced",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Forces 3DS2 on ALL card transactions regardless of amount or PSD2 threshold. Useful for high-fraud-risk industries where every card charge should be authenticated. Default off — Small + Medium apply PSD2-mandated 3DS2 only.",
+      "enforcedBy": [
+        "ThreeDsGate always requires 3DS2 when the gate is set + payment method is a card"
+      ]
+    },
+    {
+      "key": "payment_dispute_management",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Enables the dispute lifecycle: evidence collection, submission, accept-vs-fight decisions. All tiers get this — every tenant faces disputes eventually.",
+      "enforcedBy": [
+        "entitlement.enforce:payment_dispute_management middleware on /api/v1/payment-disputes/*",
+        "PaymentDisputeObserver refuses creating when gate is closed (defense-in-depth — the webhook path is the actual creator)"
+      ]
+    },
+    {
+      "key": "payment_custom_webhook",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables the generic HMAC-signed CustomWebhook provider driver. Escape hatch for tenants running their own payment gateway (Braintree direct, dLocal, PayFast, etc.). Not permitted on Small + Medium — the risk profile of caller-hosted gateways requires manual security review.",
+      "enforcedBy": [
+        "Provider config create action refuses when provider = 'custom_webhook' AND gate is closed"
+      ]
+    },
+    {
+      "key": "payment_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends payments retention from 7 years (default) to 10 years. Some finance regimes require > 7 years for ad-spend + revenue audit trails. payment_methods retention stays fixed (while active + 90d grace). payment_intents retention stays fixed (90d). payment_disputes retention extends to 10y with this gate.",
+      "enforcedBy": [
+        "PurgeExpiredPaymentDataJob checks this gate + applies 10-year retention on payments + payment_disputes when set"
+      ]
+    }
+  ]
+}

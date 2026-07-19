@@ -1,0 +1,196 @@
+{
+  "id": "academorix://modules/refund/settings",
+  "$version": 1,
+  "title": "refund — settings",
+  "description": "Tenant-facing preferences (approval thresholds, notification cadence, retention window, refund policy configuration). No user-level preferences — refunds are admin-managed workflows, not user preferences.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "refund",
+      "class": "Academorix\\Finance\\Refund\\Settings\\RefundSettings",
+      "label": "Refunds",
+      "description": "Tenant-wide refund workflow configuration.",
+      "icon": "arrow-uturn-left",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 58,
+      "permission": "refunds.viewAny",
+      "requiresEntitlement": "refund_capture",
+      "sections": [
+        {
+          "label": "Approval workflow",
+          "description": "Thresholds that trigger the require-approval flow.",
+          "icon": "shield-check",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "approval_threshold_amount_cents",
+              "controlType": "number",
+              "label": "Approval threshold amount (cents)",
+              "defaultValue": 10000,
+              "min": 0,
+              "helpText": "Refunds above this cents amount require approval. Default 10000 = $100.",
+              "requiresEntitlement": "refund_approval_workflow",
+              "sortOrder": 1
+            },
+            {
+              "name": "approval_threshold_days_since_payment",
+              "controlType": "number",
+              "label": "Approval threshold days-since-payment",
+              "defaultValue": 30,
+              "min": 0,
+              "max": 3650,
+              "helpText": "Refunds initiated more than N days after the parent payment.processed_at require approval. Default 30. Stale refunds are higher-risk.",
+              "requiresEntitlement": "refund_approval_workflow",
+              "sortOrder": 2
+            },
+            {
+              "name": "approval_always_require",
+              "controlType": "toggle",
+              "label": "Always require approval",
+              "defaultValue": false,
+              "helpText": "Every refund requires approval regardless of amount / staleness / reason. High-risk industries only.",
+              "requiresEntitlement": "refund_approval_workflow",
+              "sortOrder": 3
+            },
+            {
+              "name": "approval_sla_hours",
+              "controlType": "number",
+              "label": "Approval SLA hours",
+              "defaultValue": 24,
+              "min": 1,
+              "max": 720,
+              "helpText": "Hours after which an unapproved refund fires a P2 signal. Actionable — consumer-protection-law SLAs often require 14-30 day refund resolution.",
+              "requiresEntitlement": "refund_approval_workflow",
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Customer self-service",
+          "description": "Customer-initiated refund request configuration.",
+          "icon": "user-circle",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "customer_self_service_enabled",
+              "controlType": "toggle",
+              "label": "Enable customer self-service",
+              "defaultValue": true,
+              "helpText": "When on, customers can request refunds via POST /refunds/mine. When off, only admin can initiate refunds.",
+              "requiresEntitlement": "refund_customer_self_service",
+              "sortOrder": 1
+            },
+            {
+              "name": "customer_allowed_reasons",
+              "controlType": "multi-select",
+              "label": "Customer-allowed reasons",
+              "defaultValue": ["customer_requested", "product_not_received", "product_unacceptable", "subscription_cancelled"],
+              "options": {
+                "customer_requested": "Customer requested",
+                "product_not_received": "Product not received",
+                "product_unacceptable": "Product unacceptable",
+                "subscription_cancelled": "Subscription cancelled"
+              },
+              "helpText": "Reasons a customer can specify via POST /refunds/mine. Admin-only reasons are always excluded.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "notify_customer_cadence",
+              "controlType": "select",
+              "label": "Customer notification cadence",
+              "defaultValue": "state_transitions",
+              "options": {
+                "state_transitions": "Every state transition (recommended)",
+                "terminal_only": "Terminal states only (succeeded / failed / rejected)"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_admins_on_status",
+              "controlType": "multi-select",
+              "label": "Admin notifications on statuses",
+              "defaultValue": ["approval_required", "failed", "provider_error", "succeeded"],
+              "options": {
+                "requested": "Requested",
+                "approval_required": "Approval required",
+                "approved": "Approved",
+                "processing": "Processing",
+                "succeeded": "Succeeded",
+                "failed": "Failed",
+                "provider_error": "Provider error",
+                "rejected": "Rejected",
+                "cancelled": "Cancelled"
+              },
+              "sortOrder": 2
+            },
+            {
+              "name": "notification_recipients",
+              "controlType": "multi-user-select",
+              "label": "Additional admin notification recipients",
+              "helpText": "Users to always notify on admin-cadence events. Overrides the default (any user holding refunds.viewAny permission).",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Proration",
+          "icon": "chart-bar",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "pass_valuation_cents",
+              "controlType": "number",
+              "label": "Pass valuation (cents)",
+              "defaultValue": 500,
+              "min": 0,
+              "helpText": "Per-pass valuation for pass-credit accounting during prorated refunds. Used to compute unused_pass_credit_cents = unused_pass_count × pass_valuation_cents.",
+              "requiresEntitlement": "refund_prorated",
+              "sortOrder": 1
+            },
+            {
+              "name": "month_day_count",
+              "controlType": "select",
+              "label": "Monthly billing day count",
+              "defaultValue": 30,
+              "options": {
+                "30": "30 days (accountant-friendly, default)"
+              },
+              "helpText": "How many days a monthly billing interval counts as for proration. Default 30 avoids DST + month-length nondeterminism.",
+              "requiresEntitlement": "refund_prorated",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "icon": "archive-box",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "retention_years",
+              "controlType": "select",
+              "label": "Retention window",
+              "defaultValue": 7,
+              "options": {
+                "7": "7 years (default)",
+                "10": "10 years (Enterprise)"
+              },
+              "helpText": "10 years requires the refund_extended_retention entitlement.",
+              "requiresEntitlement": "refund_extended_retention",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "academorix://modules/membership/config",
+  "$version": 1,
+  "title": "membership — developer configuration",
+  "configFile": "config/membership.php",
+  "envPrefix": "MEMBERSHIP_",
+  "sections": {
+    "billing": {
+      "keys": [
+        { "path": "membership.billing.default_currency", "type": "string", "default": "USD", "description": "Fallback currency when tenant's home Region has none set." },
+        { "path": "membership.billing.retry_ladder_days", "type": "array", "default": [3, 7, 14], "description": "Retry attempt intervals (in days). Position 0 = day+N for attempt 2; position 1 = day+N for attempt 3; position 2 = day+N for attempt 4. After attempt 4, membership lapses." },
+        { "path": "membership.billing.max_retry_attempts", "type": "int", "default": 3, "description": "Number of retry attempts after the initial failed attempt. Reaching this + all failing lapses the membership." },
+        { "path": "membership.billing.hourly_renewal_batch_size", "type": "int", "default": 500, "description": "Max memberships processed per hourly ProcessMembershipRenewalJob run." }
+      ]
+    },
+    "renewal": {
+      "keys": [
+        { "path": "membership.renewal.grace_days_after_final_failure", "type": "int", "default": 3, "description": "Additional grace days between the 4th failed attempt and the lapse transition. Allows customer to update payment method after seeing final dunning email." },
+        { "path": "membership.renewal.reuse_coupon_on_renewal", "type": "boolean", "default": true, "description": "When true, coupons that were used at signing may re-apply to renewals (subject to coupon.applies_to_renewals + coupon.max_redemptions_per_customer). When false, each renewal is billed at plan price + tax without coupon." }
+      ]
+    },
+    "passes": {
+      "keys": [
+        { "path": "membership.passes.default_carry_over", "type": "boolean", "default": false, "description": "Fallback policy when plan.passes_carry_over is null (should never happen — schema defaults to false)." },
+        { "path": "membership.passes.expiring_notification_days_before", "type": "int", "default": 7, "description": "Days before valid_until to fire PassExpiring notification. 0 disables." },
+        { "path": "membership.passes.stale_expiry_job_batch_size", "type": "int", "default": 5000, "description": "Max passes processed per ExpireStalePassesJob run." }
+      ]
+    },
+    "cancellation": {
+      "keys": [
+        { "path": "membership.cancellation.default_kind", "type": "string", "default": "soft_period_end", "description": "Default cancellation_kind when endpoint body omits it. soft_period_end = no refund, ends at period boundary; hard_immediate = immediate termination + prorated refund (Enterprise-only)." },
+        { "path": "membership.cancellation.require_reason_min_length", "type": "int", "default": 3, "description": "Minimum length for cancellation_reason. Anti-anonymous cancel." },
+        { "path": "membership.cancellation.self_serve_grace_hours", "type": "int", "default": 24, "description": "Hours after MembershipCreated during which the customer can hard-cancel without admin approval (regardless of entitlement) — 'buyer's remorse' window." }
+      ]
+    },
+    "retention": {
+      "keys": [
+        { "path": "membership.retention.years", "type": "int", "default": 7, "description": "Standard retention window past terminal transition." },
+        { "path": "membership.retention.extended_years", "type": "int", "default": 10, "description": "Extended retention window applied when tenant holds `membership_extended_retention` entitlement." }
+      ]
+    },
+    "dunning": {
+      "keys": [
+        { "path": "membership.dunning.hours_after_failure_first_reminder", "type": "int", "default": 24 },
+        { "path": "membership.dunning.hours_after_failure_second_reminder", "type": "int", "default": 72 },
+        { "path": "membership.dunning.hours_after_failure_third_reminder", "type": "int", "default": 168, "description": "7 days." },
+        { "path": "membership.dunning.sms_after_attempt_number", "type": "int", "default": 3, "description": "Attempt number at which SMS channel is added to dunning (email is default at every attempt). SMS is transactional_required — customer cannot opt out during active dunning." }
+      ]
+    }
+  }
+}

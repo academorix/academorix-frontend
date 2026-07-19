@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/coupon/jobs",
+  "$version": 1,
+  "title": "coupon — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Finance\\Coupon\\Jobs\\ExpireCouponsJob",
+      "queue": "coupons",
+      "purpose": "Nightly sweep. Flips coupons past their valid_until timestamp to is_active=false + fires CouponExpired + releases the `coupon_slot` entitlement unit. Idempotent — refuses re-fire on already-inactive coupons.",
+      "steps": [
+        "SELECT id FROM coupons WHERE is_active=true AND valid_until IS NOT NULL AND valid_until < now() AND deleted_at IS NULL FOR UPDATE SKIP LOCKED LIMIT 2000",
+        "For each: UPDATE coupons SET is_active=false + fire CouponExpired + fire CouponDeactivated with reason='expired_via_job'",
+        "Release 1 unit of `coupon_slot` entitlement per expired coupon",
+        "Emit academorix.coupon.expirations_total counter"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Coupon\\Jobs\\ReconcileUsageCountJob",
+      "queue": "coupons",
+      "purpose": "Nightly. Recomputes coupon.usage_count from a COUNT(*) over coupon_redemptions filtered to reversed_at IS NULL, for each active coupon in the tenant. Defense against counter drift. Detects any drift > 0 as a P2 signal.",
+      "steps": [
+        "For each active coupon: SELECT count(*) FROM coupon_redemptions WHERE coupon_id = ? AND reversed_at IS NULL AND deleted_at IS NULL",
+        "Compare to coupons.usage_count",
+        "If drift != 0: UPDATE coupons SET usage_count = <recomputed> + emit academorix.coupon.usage_count.drift_ratio metric + notify observability with severity=warn",
+        "If usage_count hits usage_cap after reconciliation: fire CouponUsageCapReached + flip is_active=false + fire CouponDeactivated with reason='usage_cap_reached'"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Coupon\\Jobs\\ProcessCouponClawbackJob",
+      "queue": "coupons-critical",
+      "purpose": "Dispatched by ProcessCouponClawbackOnInvoiceRefunded hook when finance::RefundIssued or finance::ChargebackFiled fires. Reverses every CouponRedemption tied (via applied_to) to the refunded invoice/transaction. Sets reversed_at + clawback_reason + decrements coupon.usage_count. Fires CouponClawbackCompleted per redemption.",
+      "steps": [
+        "Load the triggering event (finance module payload provides invoice_id / transaction_id + refund_amount + refund_reason)",
+        "SELECT coupon_redemptions WHERE tenant_id = ? AND applied_to_type IN ('invoice','transaction') AND applied_to_id = ? AND reversed_at IS NULL FOR UPDATE SKIP LOCKED",
+        "For each redemption: fire CouponClawbackRequested + open a nested transaction",
+        "Under the transaction: UPDATE coupon_redemptions SET reversed_at=now(), clawback_reason=?, reversed_by_user_id=null (system cascade)",
+        "Under the same transaction: SELECT ... FOR UPDATE ON coupons + UPDATE coupons SET usage_count = usage_count - 1 (clamped to >= 0)",
+        "Fire CouponClawbackCompleted after commit",
+        "Metrics: academorix.coupon.clawbacks_total labelled by clawback_reason"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 600,
+      "uniqueVia": "(applied_to_type, applied_to_id, clawback_reason)",
+      "tries": 5,
+      "backoff": [60, 300, 900, 1800, 3600]
+    },
+    {
+      "class": "Academorix\\Finance\\Coupon\\Jobs\\NotifyExpiringCouponsJob",
+      "queue": "notifications",
+      "purpose": "Daily. Sends notification warnings at 14-day, 7-day, and 1-day windows before valid_until. Notifies the tenant admin + marketing role. Applies only to coupons with usage_count > 0 (unused coupons don't need warning).",
+      "steps": [
+        "For each active coupon with valid_until IS NOT NULL AND usage_count > 0: compute days_until_expiry",
+        "If days_until_expiry IN (14, 7, 1): check if notification already sent for this coupon + window (idempotent via a per-window sent-flag in metadata)",
+        "If not yet sent: dispatch CouponExpiredNotification with window=days_until_expiry (informational — not the terminal CouponExpired event)",
+        "Update metadata.expiry_warnings_sent to record the window"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Coupon\\Jobs\\GenerateCouponUsageReportJob",
+      "queue": "coupons",
+      "purpose": "Weekly. Generates per-tenant coupon usage report (coupons issued, redeemed, total discount cents, clawback count, top campaign codes, per-issuance_source breakdown). Stores CSV + JSON to S3 with a signed URL + fires CouponReportGenerated + optionally notifies opt-in admin/marketing.",
+      "steps": [
+        "For each active tenant: compute the aggregate over the past 7 days from coupons + coupon_redemptions tables",
+        "Render CSV export to a tenant-scoped S3 prefix with 7-day-signed URL",
+        "Render JSON summary for inline display",
+        "Fire CouponReportGenerated with report_url + summary counters",
+        "Dispatch WeeklyCouponReportNotification to opt-in recipients"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "tries": 2
+    }
+  ]
+}

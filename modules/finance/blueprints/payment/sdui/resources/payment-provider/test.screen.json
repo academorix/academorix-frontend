@@ -1,0 +1,92 @@
+{
+  "id": "payment.resources.payment-provider.test",
+  "title": "Test payment provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-providers/{provider}/test",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-provider", "action": "test" },
+  "requiresPermission": "payment.providers.test",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/payment-providers/' + params.provider",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Test ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)" } }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Sandbox dispatch",
+            "description": "Sends a synthetic $1.00 payment through the provider's sandbox endpoint. Does NOT touch production data. Excluded from ROAS + financial reports."
+          }
+        },
+        {
+          "kind": "View",
+          "bindings": { "hidden": { "$expr": "form.result !== undefined" } },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "children": "Send test payment" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/payment-providers/' + params.provider + '/test'",
+                  "body": { "amount_cents": 100, "currency": "USD" },
+                  "onSuccess": {
+                    "kind": "form.setMany",
+                    "fields": { "result": "$response.data" }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "bindings": { "hidden": { "$expr": "!form.result" } },
+          "children": [
+            {
+              "kind": "CardHeader",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-medium" },
+                  "bindings": { "children": { "$expr": "form.result?.outcome === 'succeeded' ? 'Test succeeded' : 'Test failed'" } }
+                }
+              ]
+            },
+            {
+              "kind": "CardContent",
+              "children": [
+                {
+                  "kind": "DescriptionList",
+                  "bindings": {
+                    "items": {
+                      "$expr": "[{label: 'Outcome', value: form.result?.outcome}, {label: 'Latency', value: form.result?.latency_ms + 'ms'}, {label: 'Response', value: JSON.stringify(form.result?.provider_response)}]"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

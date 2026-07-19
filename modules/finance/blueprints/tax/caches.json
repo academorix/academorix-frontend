@@ -1,0 +1,95 @@
+{
+  "id": "academorix://modules/tax/caches",
+  "$version": 1,
+  "title": "tax — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["tax", "tax.rates", "tax.jurisdictions", "tax.exemptions", "tax.providers", "tax.reports"],
+  "keys": [
+    {
+      "pattern": "tax:rate:{tenant_id}:{jurisdiction_id}:{rate_type}:{effective_date}",
+      "description": "Resolved TaxRate for (tenant, jurisdiction, rate_type, effective_date). Read by TaxRateResolver on every calculation. Hot path.",
+      "ttlSeconds": 3600,
+      "tags": ["tax", "tax.rates", "tenant"],
+      "invalidatedBy": [
+        "TaxRateObserver.created",
+        "TaxRateObserver.updated",
+        "TaxRateObserver.deleted",
+        "TaxRateCreated",
+        "TaxRateUpdated",
+        "TaxRateExpired"
+      ]
+    },
+    {
+      "pattern": "tax:jurisdiction:{country_code}:{state_code}:{postal_code}",
+      "description": "Resolved TaxJurisdiction for (country, state, postal_code). Read by TaxAddressResolver on every calculation. Platform-wide (tenant-independent — the jurisdiction catalog is mostly reference data).",
+      "ttlSeconds": 86400,
+      "tags": ["tax", "tax.jurisdictions"],
+      "invalidatedBy": [
+        "TaxJurisdictionObserver.created",
+        "TaxJurisdictionObserver.updated",
+        "TaxJurisdictionObserver.deleted"
+      ]
+    },
+    {
+      "pattern": "tax:jurisdiction:custom:{tenant_id}",
+      "description": "Tenant-scoped custom jurisdictions (Enterprise via `tax_jurisdiction_custom` entitlement). Merged with the platform reference set at resolution time.",
+      "ttlSeconds": 3600,
+      "tags": ["tax", "tax.jurisdictions", "tenant"],
+      "invalidatedBy": [
+        "TaxJurisdictionObserver.* (tenant_id IS NOT NULL only)"
+      ]
+    },
+    {
+      "pattern": "tax:exemptions:{tenant_id}:{customer_type}:{customer_id}:{jurisdiction_id}",
+      "description": "Active exemptions for (tenant, customer, jurisdiction) with verification_status='verified' AND valid_from <= today < valid_until. Read by TaxCalculator at every calculation.",
+      "ttlSeconds": 600,
+      "tags": ["tax", "tax.exemptions", "tenant"],
+      "invalidatedBy": [
+        "TaxExemptionObserver.* (created / updated / deleted / verified / rejected / expired)"
+      ]
+    },
+    {
+      "pattern": "tax:circuit-breaker:{tenant_id}:{provider}",
+      "description": "Circuit-breaker state per (tenant, provider). Read by pre-dispatch gate on every calculation.",
+      "ttlSeconds": 30,
+      "tags": ["tax", "tax.providers"],
+      "invalidatedBy": [
+        "TaxProviderCircuitBreakerOpened",
+        "TaxProviderCircuitBreakerClosed (manual reset)"
+      ]
+    },
+    {
+      "pattern": "tax:provider-schemas:{provider}",
+      "description": "Parsed data/providers/<provider>-config.schema.json JSON Schema object. Read by config observers on create/update. Loaded once at boot + rarely invalidated.",
+      "ttlSeconds": 86400,
+      "tags": ["tax"],
+      "invalidatedBy": ["boot-time reload", "manual"]
+    },
+    {
+      "pattern": "tax:calculations:count:{tenant_id}:{year}",
+      "description": "Per-year calculation count per tenant. Feeds the SDUI annual-report readiness indicator + entitlement consumption.",
+      "ttlSeconds": 300,
+      "tags": ["tax", "tax.reports", "tenant"],
+      "invalidatedBy": [
+        "TaxCalculationCompleted"
+      ]
+    },
+    {
+      "pattern": "tax:annual-report:{tenant_id}:{year}",
+      "description": "Materialised annual tax summary. Fed by GET /reports/annual endpoint. Long TTL because tax_calculations are immutable — the underlying data cannot change.",
+      "ttlSeconds": 86400,
+      "tags": ["tax", "tax.reports", "tenant"],
+      "invalidatedBy": [
+        "manual: tax:regenerate-annual-report (rare — used only after a bulk correction)",
+        "TTL"
+      ]
+    },
+    {
+      "pattern": "tax:iso3166-catalog",
+      "description": "Parsed league/iso3166 country + subdivision reference. Loaded once at boot; used by the valid_country_code + valid_state_code validators.",
+      "ttlSeconds": 604800,
+      "tags": ["tax"],
+      "invalidatedBy": ["boot-time reload", "library upgrade"]
+    }
+  ]
+}

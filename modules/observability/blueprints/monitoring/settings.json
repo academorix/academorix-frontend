@@ -1,0 +1,199 @@
+{
+  "id": "academorix://modules/monitoring/settings",
+  "$version": 1,
+  "title": "monitoring — settings",
+  "description": "Tenant-facing monitoring configuration + per-user preferences for alert notifications + weekly digest subscription. The monitoring_provider_configs table is NOT settings — those are per-provider credentials owned by the monitoring module itself. This file declares tenant-level defaults (default alert routing, escalation contacts, suppression windows) + per-user preferences (which severities to page).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "monitoring",
+      "class": "Academorix\\Observability\\Monitoring\\Settings\\MonitoringSettings",
+      "label": "System monitoring",
+      "description": "Tenant-wide defaults for monitoring capture + notification routing.",
+      "icon": "signal",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 20,
+      "permission": "monitoring.providers.viewAny",
+      "requiresEntitlement": "monitoring_capture",
+      "sections": [
+        {
+          "label": "Alert defaults",
+          "description": "Tenant-wide defaults applied to newly-configured alert policies.",
+          "icon": "bell-alert",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_consecutive_breaches_required",
+              "controlType": "number",
+              "label": "Default consecutive breaches required",
+              "defaultValue": 2,
+              "min": 1,
+              "max": 10,
+              "helpText": "How many consecutive threshold breaches before an alert fires. 2 filters transient spikes; 1 fires on every single breach.",
+              "sortOrder": 1
+            },
+            {
+              "name": "default_window_seconds",
+              "controlType": "number",
+              "label": "Default threshold window (seconds)",
+              "defaultValue": 300,
+              "min": 60,
+              "max": 3600,
+              "helpText": "How much history the evaluator considers when computing the threshold value. 300s = 5min.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Suppression windows",
+          "description": "When to silence non-P1 alerts automatically.",
+          "icon": "moon",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "after_hours_start",
+              "controlType": "time",
+              "label": "After-hours start (tenant-local)",
+              "defaultValue": "18:00",
+              "sortOrder": 1
+            },
+            {
+              "name": "after_hours_end",
+              "controlType": "time",
+              "label": "After-hours end (tenant-local)",
+              "defaultValue": "09:00",
+              "sortOrder": 2
+            },
+            {
+              "name": "weekend_days",
+              "controlType": "multi-select",
+              "label": "Weekend days",
+              "defaultValue": ["saturday", "sunday"],
+              "options": {
+                "monday": "Monday",
+                "tuesday": "Tuesday",
+                "wednesday": "Wednesday",
+                "thursday": "Thursday",
+                "friday": "Friday",
+                "saturday": "Saturday",
+                "sunday": "Sunday"
+              },
+              "sortOrder": 3
+            },
+            {
+              "name": "suppress_p1_after_hours",
+              "controlType": "toggle",
+              "label": "Also suppress P1 alerts after hours",
+              "defaultValue": false,
+              "helpText": "WARNING. Default off — P1 alerts are pageable regardless of hours. Only enable when your on-call rotation is truly 09:00-18:00.",
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Notification routing",
+          "description": "Where alert + incident notifications are delivered.",
+          "icon": "bell",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "primary_oncall_users",
+              "controlType": "user-multi-select",
+              "label": "Primary on-call users",
+              "defaultValue": [],
+              "helpText": "Every user listed receives P1 + P2 MonitoringAlertFiredNotification. Tenant owners are always notified regardless.",
+              "sortOrder": 1
+            },
+            {
+              "name": "escalation_oncall_users",
+              "controlType": "user-multi-select",
+              "label": "Escalation on-call users",
+              "defaultValue": [],
+              "helpText": "Every user listed receives MonitoringIncidentEscalatedNotification when the primary on-call misses the SLA.",
+              "sortOrder": 2
+            },
+            {
+              "name": "postmortem_reviewer_users",
+              "controlType": "user-multi-select",
+              "label": "Postmortem reviewers",
+              "defaultValue": [],
+              "helpText": "Every user listed receives MonitoringPostmortemRequiredNotification when a P1 incident resolves.",
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "monitoring_user",
+      "class": "Academorix\\Observability\\Monitoring\\Settings\\MonitoringUserSettings",
+      "label": "My monitoring preferences",
+      "description": "Per-user preferences for monitoring alerts + digest.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 25,
+      "sections": [
+        {
+          "label": "Alert subscriptions",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "receive_p1_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on P1 alerts",
+              "defaultValue": true,
+              "helpText": "P1 alerts are cannot-opt-out for the primary on-call user; this preference only applies when you are NOT the primary on-call.",
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_p2_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on P2 alerts",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "receive_p3_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on P3 alerts",
+              "defaultValue": false,
+              "sortOrder": 3
+            },
+            {
+              "name": "alert_channels",
+              "controlType": "multi-select",
+              "label": "Delivery channels",
+              "defaultValue": ["mail", "in_app", "push"],
+              "options": {
+                "mail": "Email",
+                "in_app": "In-app",
+                "push": "Push notification",
+                "sms": "SMS (P1 only)"
+              },
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Weekly digest",
+          "icon": "chart-bar",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "receive_weekly_digest",
+              "controlType": "toggle",
+              "label": "Send me the weekly SLO digest",
+              "defaultValue": false,
+              "helpText": "Every Monday 09:00 tenant-local: alert counts by severity, MTTR, top 5 firing policies, top 5 unhealthy checks.",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

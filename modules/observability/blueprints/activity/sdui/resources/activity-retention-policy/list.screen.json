@@ -1,0 +1,276 @@
+{
+  "id": "activity.resources.activity-retention-policy.list",
+  "title": "Activity retention",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings/activity-retention",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "activity",
+    "entity": "activity-retention-policy",
+    "action": "list"
+  },
+  "requiresPermission": "activity.retention.manage",
+  "requiresFeature": "activity.retention_control",
+  "dataSources": [
+    {
+      "name": "policies",
+      "kind": "http.get",
+      "url": "/api/v1/activity-retention-policies",
+      "unwrap": "data",
+      "paginated": true,
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "identity",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Activity retention"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "p",
+                    "className": "text-muted text-sm",
+                    "children": "How long activity data stays available in your tenant. Default: 90 days."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "size": "sm",
+                "leadingIcon": "plus",
+                "children": "Add override"
+              },
+              "bindings": {
+                "isDisabled": {
+                  "$expr": "!identity.entitlements.activity_retention_extended"
+                }
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/settings/activity-retention/new" }
+              }
+            }
+          ]
+        },
+        {
+          "id": "entitlement-banner",
+          "kind": "Alert",
+          "props": { "variant": "info", "leadingIcon": "sparkles" },
+          "bindings": {
+            "hidden": {
+              "$expr": "identity.entitlements.activity_retention_extended === true"
+            }
+          },
+          "children": [
+            {
+              "kind": "AlertTitle",
+              "props": { "children": "Extended retention is an Enterprise feature" }
+            },
+            {
+              "kind": "AlertDescription",
+              "props": {
+                "children": "Your plan retains activity for 90 days. Upgrade to Enterprise to configure retention up to 730 days per feed."
+              }
+            }
+          ]
+        },
+        {
+          "id": "default-row",
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "CardBody",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                {
+                  "kind": "View",
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "h3",
+                        "className": "text-base font-medium",
+                        "children": "Default (all feeds)"
+                      }
+                    },
+                    {
+                      "kind": "Text",
+                      "props": {
+                        "as": "p",
+                        "className": "text-muted text-sm",
+                        "children": "Applies to every feed without an override."
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "variant": "neutral", "children": "90 days" }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "policies-table",
+          "kind": "DataGrid",
+          "props": {
+            "selection": "none",
+            "emptyState": {
+              "title": "No overrides yet",
+              "description": "Configure per-feed retention with an override.",
+              "action": {
+                "label": "Add override",
+                "route": "/tenant/settings/activity-retention/new",
+                "variant": "primary"
+              }
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "policies" },
+            "isLoading": { "$ref": "policies.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "log_name",
+              "header": "Feed",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm font-medium" },
+                "bindings": {
+                  "children": { "$expr": "row.log_name || 'All feeds'" }
+                }
+              }
+            },
+            {
+              "id": "retention_days",
+              "header": "Retention",
+              "sortable": true,
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": {
+                      "children": { "$expr": "row.retention_days + ' days'" }
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "variant": "warning", "size": "xs", "children": "Regulator hold" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.is_regulator_hold" }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "override_reason",
+              "header": "Reason",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted line-clamp-2" },
+                "bindings": {
+                  "children": { "$ref": "row.override_reason" }
+                }
+              }
+            },
+            {
+              "id": "expires_at",
+              "header": "Expires",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.expires_at ? formatRelative(row.expires_at) : 'Never'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Menu",
+                "props": {
+                  "trigger": {
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "isIconOnly": true,
+                      "leadingIcon": "ellipsis-horizontal",
+                      "ariaLabel": "Policy actions"
+                    }
+                  }
+                },
+                "items": [
+                  {
+                    "id": "view",
+                    "label": "View details",
+                    "leadingIcon": "eye",
+                    "action": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/settings/activity-retention/' + row.id"
+                    }
+                  },
+                  {
+                    "id": "delete",
+                    "label": "Revert to default",
+                    "leadingIcon": "arrow-uturn-left",
+                    "variant": "danger",
+                    "action": {
+                      "kind": "http.delete",
+                      "urlExpr": "'/api/v1/activity-retention-policies/' + row.id",
+                      "confirm": {
+                        "title": "Revert this override?",
+                        "description": "The feed will fall back to the default retention (90 days). This does NOT delete existing activity rows immediately, but rows past the default will be purged on the next daily sweep."
+                      },
+                      "onSuccess": {
+                        "kind": "toast.success",
+                        "message": "Reverted to default retention"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

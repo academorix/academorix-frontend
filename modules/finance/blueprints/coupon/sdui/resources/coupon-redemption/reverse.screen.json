@@ -1,0 +1,122 @@
+{
+  "id": "coupon.resources.coupon-redemption.reverse",
+  "title": "Reverse redemption",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coupons/redemptions/{redemption}/reverse",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coupon", "entity": "coupon-redemption", "action": "reverse" },
+  "requiresPermission": "coupon_redemptions.reverse",
+  "requiresEntitlement": "coupon_capture",
+  "dataSources": [
+    {
+      "name": "redemption",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/coupons/redemptions/' + params.redemption",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Reverse redemption" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reverse a coupon redemption. Financial reversal — audit-critical. Notifies the customer + Finance module." } }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "danger" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium", "children": "Financial reversal warning" } },
+            { "kind": "Text", "props": { "className": "text-sm mt-1", "children": "This will decrement the coupon's usage_count, notify the customer that their discount has been reversed, and notify the Finance module to adjust revenue recognition on the underlying invoice line. This action is audit-logged with 7-year retention." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-3", "children": "Redemption details" } },
+            {
+              "kind": "DefinitionList",
+              "children": [
+                { "kind": "DefinitionItem", "props": { "term": "Coupon code" }, "bindings": { "value": { "$ref": "redemption.coupon.code" } } },
+                { "kind": "DefinitionItem", "props": { "term": "Customer" }, "bindings": { "value": { "$expr": "redemption.customer_type + ': ' + (redemption.customer_display_name || redemption.customer_id)" } } },
+                { "kind": "DefinitionItem", "props": { "term": "Applied to" }, "bindings": { "value": { "$expr": "redemption.applied_to_type + ': ' + redemption.applied_to_id" } } },
+                {
+                  "kind": "DefinitionItem",
+                  "props": { "term": "Discount amount" },
+                  "requiresPermission": "coupons.view-financials",
+                  "bindings": {
+                    "value": { "$expr": "formatMoney(redemption.discount_amount_cents, redemption.source_currency)" }
+                  }
+                },
+                { "kind": "DefinitionItem", "props": { "term": "Redeemed at" }, "bindings": { "value": { "$expr": "formatDate(redemption.redeemed_at, 'full')" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "id": "reverse-form",
+            "onSubmit": {
+              "kind": "http.post",
+              "urlExpr": "'/api/v1/coupons/redemptions/' + params.redemption + '/reverse'",
+              "onSuccessNavigate": "/tenant/coupons/redemptions"
+            }
+          },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": {
+                "name": "reason",
+                "label": "Reason",
+                "menuTrigger": "focus",
+                "isRequired": true
+              },
+              "props_items": [
+                { "id": "manual_admin", "label": "Manual admin correction" },
+                { "id": "fraud", "label": "Fraud" },
+                { "id": "refund", "label": "Refund (out-of-band from Finance)" },
+                { "id": "chargeback", "label": "Chargeback (out-of-band from Finance)" }
+              ]
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "name": "notes",
+                "label": "Notes",
+                "helpText": "Audit-logged. Include enough context that a future reviewer understands the reversal decision.",
+                "isRequired": true,
+                "minLength": 10,
+                "maxLength": 1000
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex justify-end gap-2 pt-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/coupons/redemptions" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "danger", "type": "submit", "children": "Reverse redemption" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

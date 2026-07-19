@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/tax/data/providers/stripe-tax-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Stripe Tax provider config",
+  "description": "Configuration shape for a Stripe Tax integration. Stripe Tax is integrated with Stripe billing — the tenant's existing Stripe API key is reused.",
+  "type": "object",
+  "required": ["stripe_account_id"],
+  "additionalProperties": false,
+  "properties": {
+    "stripe_account_id": {
+      "type": "string",
+      "pattern": "^acct_[A-Za-z0-9]+$",
+      "description": "The tenant's Stripe account ID. Reused from the tenant's Stripe billing config (transaction module in Wave 4)."
+    },
+    "api_key_reference": {
+      "type": "string",
+      "description": "Reference to the tenant's Stripe secret key stored in the transaction module (finance::TransactionProviderConfig). NOT the raw key — a lookup ID to prevent duplicate credential storage.",
+      "minLength": 10
+    },
+    "tax_behaviour_default": {
+      "type": "string",
+      "enum": ["exclusive", "inclusive"],
+      "default": "exclusive",
+      "description": "Stripe Tax tax_behaviour default. 'exclusive' = tax added to price; 'inclusive' = tax included in displayed price."
+    },
+    "tax_id_collection": {
+      "type": "boolean",
+      "default": true,
+      "description": "true = collect customer tax IDs (VAT / GST / EIN) via Stripe Checkout. Improves accuracy for B2B."
+    },
+    "monitoring_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "true = enable Stripe Tax's nexus monitoring (economic-nexus threshold tracking + registration recommendations)."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 30,
+      "default": 10
+    }
+  }
+}

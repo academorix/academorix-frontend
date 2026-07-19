@@ -1,0 +1,155 @@
+{
+  "id": "academorix://modules/refund/schemas/refund-line",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "RefundLine",
+  "description": "Per-invoice-line refund detail. Supports partial refunds where only some invoice lines are reversed. Freezes proration_config for period-based refunds. IMMUTABLE at creation — corrections require cancelling the parent refund + creating a new one. Carries `tenant_id` — cascades application through tenant per hierarchy.md §2. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, `scope_node_id`.",
+  "type": "object",
+  "x-module": "refund",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "refund_lines",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "rfl_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Refund\\Models\\RefundLine",
+    "interface": "Academorix\\Finance\\Refund\\Contracts\\Data\\RefundLineInterface",
+    "implements": ["Academorix\\Finance\\Refund\\Contracts\\Data\\RefundLineInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToRefund",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "amount_cents": "integer",
+      "proration_config": "array",
+      "metadata": "array"
+    },
+    "observers": ["RefundLineObserver"],
+    "appends": ["has_proration"],
+    "no_soft_deletes": "true - RefundLine is 7y-retained HARD as a pivot row. Cascade delete only via parent refund purge."
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `rfl_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "refund_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "refunds", "column": "id", "onDelete": "cascade" },
+        "description": "Parent refund. CASCADE — refund lines co-terminous with parent."
+      },
+      "invoice_line_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "invoice_lines", "column": "id", "onDelete": "restrict" },
+        "description": "The invoice line being refunded. RESTRICT — invoice line cannot be deleted while refund_lines reference it."
+      },
+      "amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Portion of this invoice line being refunded. Must be <= invoice_line.total_cents - invoice_line.amount_refunded_cents."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217. Matches parent refund.currency + invoice_line.currency."
+      },
+      "proration_config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Frozen unused_period + pass_credit config for period-based refunds. Required when parent refund.refund_type='prorated'; NULL for full/partial refunds. Shape: { unused_period_start, unused_period_end, total_period_days, unused_days, unused_pass_count, unused_pass_credit_cents, used_pass_count?, used_pass_penalty_cents?, billing_interval, formula_schema_version }. IMMUTABLE post-create."
+      },
+      "reason_note": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Line-specific customer-visible note. Different from parent refund.reason_note (which is refund-wide)."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "refund_id", "invoice_line_id"],
+        "unique": true,
+        "name": "refund_lines_target_unique"
+      },
+      { "columns": ["tenant_id", "refund_id"], "name": "refund_lines_refund_idx" },
+      { "columns": ["tenant_id", "invoice_line_id"], "name": "refund_lines_invoice_line_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "refund_id",
+    "invoice_line_id",
+    "amount_cents",
+    "currency",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^rfl_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "refund_id": { "type": "string", "pattern": "^rfd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "invoice_line_id": { "type": "string", "pattern": "^iln_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "amount_cents": { "type": "integer", "minimum": 1 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "proration_config": {
+      "type": ["object", "null"],
+      "required": ["unused_period_start", "unused_period_end", "total_period_days", "unused_days", "unused_pass_count", "unused_pass_credit_cents", "billing_interval", "formula_schema_version"],
+      "properties": {
+        "unused_period_start": { "type": "string", "format": "date-time" },
+        "unused_period_end": { "type": "string", "format": "date-time" },
+        "total_period_days": { "type": "integer", "minimum": 1 },
+        "unused_days": { "type": "integer", "minimum": 0 },
+        "unused_pass_count": { "type": "integer", "minimum": 0 },
+        "unused_pass_credit_cents": { "type": "integer", "minimum": 0 },
+        "used_pass_count": { "type": ["integer", "null"], "minimum": 0 },
+        "used_pass_penalty_cents": { "type": ["integer", "null"], "minimum": 0 },
+        "billing_interval": {
+          "type": "string",
+          "enum": ["daily", "weekly", "monthly", "quarterly", "annual", "one_time"]
+        },
+        "formula_schema_version": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "reason_note": { "type": ["string", "null"], "maxLength": 256 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "amount_cents > 0 AND amount_cents <= invoice_line.total_cents - invoice_line.amount_refunded_cents (checked at observer time)",
+    "currency matches parent refund.currency AND invoice_line.currency (three-way match)",
+    "parent refund.invoice_id == invoice_line.invoice_id (cross-invoice guard — refund_line's invoice_line must belong to the parent refund's invoice)",
+    "unused_period_end > unused_period_start (when proration_config is populated)",
+    "unused_days <= total_period_days (when proration_config is populated)",
+    "proration_config populated iff parent refund.refund_type='prorated' (REFUND_LINE_PRORATION_CONFIG_MISUSE otherwise)",
+    "billing_interval='one_time' in proration_config is invalid (REFUND_LINE_INVALID_PRORATION_CONFIG — one-time purchases don't proration)",
+    "composite unique (tenant_id, refund_id, invoice_line_id) — a single refund cannot double-refund the same invoice line",
+    "IMMUTABLE post-create (REFUND_LINE_IMMUTABLE) — cannot mutate any field; corrections require cancelling the parent refund + creating a new one",
+    "SUM of refund_lines.amount_cents across all lines of a parent refund == parent refund.amount_cents (invariant enforced at observer + at final-line creation)",
+    "parent refund.status must be IN ('pending', 'awaiting_approval', 'approved') at refund_line creation (REFUND_LINE_PARENT_LOCKED past that)"
+  ]
+}

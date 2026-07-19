@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/audit/jobs",
+  "$version": 1,
+  "title": "audit — background jobs",
+  "description": "5 queued jobs covering the one-shot tenant_id backfill (module install / vendor-row migration), nightly per-tenant retention purge, nightly retention-override expiry sweep, weekly hot-to-cold archive migration, and monthly regulator compliance report generation.",
+  "jobs": [
+    {
+      "class": "Academorix\\Observability\\Audit\\Jobs\\BackfillAuditTenantIdFromJsonbJob",
+      "queue": "audit",
+      "purpose": "One-shot on module install (or subsequent runs if new vendor rows landed without tenant_id column). Reads audit rows where tenant_id IS NULL, extracts the value from new_values.tenant_id (fallback: old_values.tenant_id for delete events), and populates the new column. Batched (10k rows/batch by default, pause 200ms between batches to keep pressure off the hot read path). Idempotent — re-runs skip already-populated rows.",
+      "steps": [
+        "SELECT id, new_values, old_values FROM audits WHERE tenant_id IS NULL ORDER BY id ASC LIMIT batch_size FOR UPDATE SKIP LOCKED.",
+        "For each row: extract tenant_id from new_values.tenant_id (JSON path); fallback to old_values.tenant_id.",
+        "UPDATE audits SET tenant_id = <extracted> WHERE id = <row_id>.",
+        "Sleep pause_ms_between_batches.",
+        "Repeat until no more null rows.",
+        "Emit AuditBackfillCompleted event (informational; not published-events)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "'audit-tenant-id-backfill'",
+      "tries": 5,
+      "backoff": [60, 300, 900, 3600, 7200],
+      "notes": "Consumers invoke via `php artisan audit:backfill-tenant-id` (which dispatches this job) or manually via Horizon. The command supports `--tenant=<slug>` to backfill a single tenant + `--all` to sweep every tenant + `--dry-run` for a count-only preview."
+    },
+    {
+      "class": "Academorix\\Observability\\Audit\\Jobs\\PurgeExpiredAuditsJob",
+      "queue": "audit-critical",
+      "purpose": "Nightly per-tenant retention purge. Reads the active AuditRetentionPolicy (or falls back to config.audit.retention.default_years=7). Computes cutoff = now() - retention_years. Hard-deletes rows with created_at < cutoff. Writes a summary meta-audit ('audit.purged { tenant_id, cutoff_at, row_count }') so the trail records itself being purged.",
+      "steps": [
+        "Load AuditRetentionPolicy for tenant (fall back to config default).",
+        "Compute cutoff_at = now() - retention_years.",
+        "Count hot-tier rows to purge (SELECT COUNT WHERE tenant_id AND created_at < cutoff_at).",
+        "Count cold-tier files to purge (S3 archive object listing).",
+        "IF --dry-run flag: emit AuditPurgeExecuted with dry_run=true; return.",
+        "DELETE FROM audits WHERE tenant_id AND created_at < cutoff_at (batched 10k rows/batch to control lock duration).",
+        "Delete matching S3 archive objects.",
+        "Write meta-audit summary row via vendor Auditable trait if config.audit.compliance.write_purge_meta_audit=true.",
+        "Emit AuditPurgeExecuted event.",
+        "Send AuditPurgeCompletedNotification (weekly digest — accumulates until Sunday)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "tenant_id",
+      "tries": 2,
+      "backoff": [600, 3600],
+      "critical_note": "Runs on the `audit-critical` queue to prevent contention with non-critical audit jobs (export, backfill). Purge must complete on schedule to keep compliance windows honored."
+    },
+    {
+      "class": "Academorix\\Observability\\Audit\\Jobs\\ExpireRetentionOverridesJob",
+      "queue": "audit",
+      "purpose": "Nightly retention-override expiry sweep. Scans every AuditRetentionPolicy where override_ends_at <= now() AND soft_deleted_at IS NULL. Resets retention_years to config.audit.retention.default_years (7), soft-deletes the policy (deleted_at = override_ends_at), and fires AuditRetentionExtensionExpired. Also fires AuditRetentionExtensionExpiringSoonNotification 30 days ahead of expiry.",
+      "steps": [
+        "SELECT policies WHERE override_ends_at <= now() AND deleted_at IS NULL FOR UPDATE.",
+        "For each policy: mark deleted_at = override_ends_at, fire AuditRetentionExtensionExpired event.",
+        "Also SELECT policies WHERE override_ends_at BETWEEN (now() + 30d - 1d) AND (now() + 30d + 1d) AND deleted_at IS NULL AND expiring_soon_notified_at IS NULL.",
+        "For each of those: fire AuditRetentionExtensionExpiringSoonNotification + set expiring_soon_notified_at = now()."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "'audit-retention-override-expiry-sweep'",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Observability\\Audit\\Jobs\\ExportAuditsToArchiveJob",
+      "queue": "audit",
+      "purpose": "Weekly Sunday 05:00 UTC. Enterprise tenants only (implicit via audit_capture_advanced flag). Writes tenant-scoped audit rows past 90d to a jsonl.gz file in the archive S3 bucket (`AUDIT_ARCHIVE_S3_BUCKET`). Prunes the hot-table rows after successful S3 upload verification (HEAD check). Idempotent — re-runs against the same window skip already-archived rows.",
+      "steps": [
+        "SELECT rows WHERE tenant_id AND created_at BETWEEN (now() - retention_years) AND (now() - 90d).",
+        "Stream rows to a jsonl.gz file, chunked by month (one archive object per tenant per month).",
+        "Multipart upload to S3 with server-side encryption + object-lock (compliance mode).",
+        "HEAD-check the uploaded object to verify integrity (content-md5 match).",
+        "DELETE the archived rows from the hot table.",
+        "Write a summary AuditArchive row (metadata pointer: bucket, key, row_count, min_created_at, max_created_at, sha256)."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 7200,
+      "uniqueVia": "(tenant_id, target_month_bucket)",
+      "tries": 3,
+      "backoff": [600, 3600, 7200]
+    },
+    {
+      "class": "Academorix\\Observability\\Audit\\Jobs\\GenerateComplianceReportJob",
+      "queue": "audit",
+      "purpose": "Monthly on the 1st of each month. Runs per-tenant. Produces a regulator-shaped export (jsonl format by default, per config.audit.export.format) covering the past month's audit rows. Composed of: (a) a manifest jsonl with SHA-256 of the payload + row count + tenant/application ids + date range + signing timestamp; (b) the payload jsonl.gz with every audit row grouped by auditable_type. Uploaded to the archive bucket with object-lock (compliance mode, 7y retention).",
+      "steps": [
+        "Load the tenant's compliance-reporting recipients (compliance officer emails from settings).",
+        "Query audit rows for the past month.",
+        "Stream to jsonl.gz + generate the manifest.",
+        "Sign the manifest (HMAC-SHA256 with the platform's regulator-signing key from Doppler).",
+        "Upload manifest + payload to S3 archive bucket under key `compliance-reports/{application_id}/{tenant_id}/{yyyy-mm}/manifest.json` + `.../payload.jsonl.gz`.",
+        "Generate signed URL (24h expiry).",
+        "Fire AuditExportReadyNotification to the compliance officers.",
+        "Write an AuditExport row + a summary audit row (via vendor Auditable) recording the export."
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "(tenant_id, report_month_bucket)",
+      "tries": 3,
+      "backoff": [3600, 7200, 14400]
+    }
+  ]
+}

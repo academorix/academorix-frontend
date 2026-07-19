@@ -1,0 +1,37 @@
+{
+  "id": "academorix://modules/payment/middleware",
+  "$version": 1,
+  "title": "payment — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "payment.webhook_verify",
+      "class": "Academorix\\Finance\\Payment\\Http\\Middleware\\VerifyPaymentWebhookSignature",
+      "priority": 30,
+      "description": "Guards the public webhook plane (POST /webhooks/payment/{provider}). Extracts the provider's signature header + verifies HMAC-SHA256 over the request body + timestamp per per-provider signing scheme (Stripe: `Stripe-Signature`; Paddle: `Paddle-Signature`; Adyen: `HmacSignature`; Square: `Square-Signature`; PayPal: `Paypal-Transmission-Sig` with cert verification; CustomWebhook: `X-Payment-Signature`). Refuses (400) with `payment_webhook_signature_invalid` on failure. No body echoed on refuse. Runs BEFORE any tenant/application resolution (the webhook body carries the tenant identifier).",
+      "auto_applied": false,
+      "auto_applied_to": [
+        "POST /webhooks/payment/{provider}"
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve", "note": "Applied on tenant + platform-admin plane routes. NOT applied on the webhook plane (webhook body carries the provider's tenant identifier)." },
+    { "middleware": "tenancy::tenant.resolve", "note": "Applied on tenant plane. Webhook plane resolves tenant from the verified webhook body." },
+    {
+      "middleware": "entitlements::entitlement.enforce",
+      "note": "Applied per-route with the specific entitlement key (payment_capture for base surface, payment_manual_capture on POST /payments/{payment}/capture, payment_dispute_management on /payment-disputes/*, etc.)."
+    },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json. Route-level `permission` metadata resolves through this middleware."
+    },
+    {
+      "middleware": "compliance::consent.enforce",
+      "note": "Consent gate is NOT applied on payment routes — payment processing is a contractual data-processing activity under GDPR Art. 6(1)(b), not consent-based. Customers cannot opt out of a bill they owe."
+    }
+  ]
+}

@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/audit/relations",
+  "$version": 1,
+  "title": "audit — model relationships",
+  "description": "Two owned entities with sparse relations — Audit is a leaf in the graph (its only outbound FKs are polymorphic to auditable + user; those are morphs, not enforced FKs). AuditRetentionPolicy belongs to Tenant. Cross-module: every audited model implicitly relates to Audit rows via polymorphic morphMany, but that reverse relation is provided by the vendor `Auditable` trait — not declared here.",
+  "internal": [],
+  "outbound": [
+    {
+      "from": "Audit",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "no action",
+      "description": "Every audit row is tenant-scoped. On tenant erasure the row is NOT cascade-deleted — audit rows MIGRATE to a compliance archive per the PurgeAuditDataForErasedTenantHook. Regulators may need proof of erasure years later, and audit rows are the record of what happened before + during the erasure."
+    },
+    {
+      "from": "Audit",
+      "kind": "belongsTo",
+      "to": "application::Application",
+      "foreignKey": "application_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Nullable — platform-plane audits have no application context. Set-null on application delete so the audit row survives an application decommission (rare)."
+    },
+    {
+      "from": "Audit",
+      "kind": "morphTo",
+      "to": "auditable (any model composing the vendor Auditable trait)",
+      "foreignKey": "auditable_id + auditable_type",
+      "description": "Polymorphic subject. Every module that adds the vendor Auditable trait becomes a valid morph target: Membership, TenantSubscription, Athlete, Team, etc. The morph is INFORMATIONAL only — a soft reference. When the underlying subject is deleted, the audit row survives (the deletion itself created a `deleted` audit row)."
+    },
+    {
+      "from": "Audit",
+      "kind": "morphTo",
+      "to": "user (User | PlatformUser | ServiceAccount)",
+      "foreignKey": "user_id + user_type",
+      "nullable": true,
+      "description": "Polymorphic actor. NULL for system-fired mutations (queue jobs without a user context). PlatformUser::class for platform-admin actions. ServiceAccount::class for machine-to-machine mutations. User::class for the standard tenant-actor path."
+    },
+    {
+      "from": "AuditRetentionPolicy",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Retention policies are strictly tenant-scoped. On tenant erasure, cascade deletes the policy (the audit rows themselves migrate to the compliance archive; the policy no longer applies)."
+    },
+    {
+      "from": "AuditExport",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Export request metadata — tenant-scoped. Cascade delete on tenant erasure removes the request record (the archived export payload in S3 is deleted separately by PurgeExpiredAuditsJob at retention boundary)."
+    },
+    {
+      "from": "AuditExport",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "requested_by_user_id",
+      "nullable": true,
+      "onDelete": "set null",
+      "description": "Requester. Nullable because platform-admin exports are attributed to requested_by_platform_admin_id instead."
+    }
+  ],
+  "inbound": {
+    "description": "Every audited model implicitly gets a morphMany relation to Audit rows via the vendor `Auditable` trait's `audits()` method — this reverse relation is provided by the vendor package, not declared in this module. Consumers query with $membership->audits()->orderByDesc('created_at')->limit(20)->get() etc.",
+    "consumer_patterns": [
+      "any Eloquent model composing OwenIt\\Auditing\\Auditable and implementing OwenIt\\Auditing\\Contracts\\Auditable — gets $model->audits() morphMany automatically",
+      "any queue subscribed to AuditRecorded (via listeners.json here or in another module) — receives the event with tenant_id + auditable_type + auditable_id + user_type + user_id + event"
+    ],
+    "consumer_examples": [
+      "compliance::PublishComplianceMetricsListener — subscribes to AuditRecorded to increment the compliance metrics counter",
+      "monitoring::EmitAuditFireRateListener — subscribes to AuditRecorded to emit ops metrics",
+      "activity::CorrelateAuditToActivityListener (planned Wave 6) — subscribes to AuditRecorded to correlate an audit row to an activity_log row when both are created in the same request cycle",
+      "growth::analytics — does NOT subscribe (analytics is behavioral, audit is compliance; different lanes per hierarchy.md §11)",
+      "growth::marketing — does NOT subscribe (same reason)"
+    ]
+  },
+  "consumed": [
+    {
+      "from": "tenancy::Tenant",
+      "usage": "Every audit row is tenant-scoped via BelongsToTenant on our Audit model wrapper. Every retention policy belongs to a tenant (cascade delete)."
+    },
+    {
+      "from": "application::Application",
+      "usage": "Audit rows carry application_id directly (per tenancy-columns.md §2 — audits is one of 8 named rows that DO carry application_id). NULL for platform-plane audits. Populated from request context (X-Application-Id middleware) when caller has one."
+    },
+    {
+      "from": "user::User",
+      "usage": "Polymorphic actor on Audit. NULL for system-fired. Populated by the vendor observer from Auth::user() at the time of the mutation."
+    },
+    {
+      "from": "user::PlatformUser",
+      "usage": "Polymorphic actor on Audit for platform-admin actions."
+    },
+    {
+      "from": "user::ServiceAccount",
+      "usage": "Polymorphic actor on Audit for machine-to-machine mutations (e.g. Stripe webhook processing that fires our Auditable trait)."
+    },
+    {
+      "from": "entitlements::Entitlement",
+      "usage": "audit_capture (all-tier master gate). audit_export (Medium+, self-service DSAR). audit_retention_extended (Enterprise, extend past 7y to 10y). audit_regulator_export (Enterprise, cross-application regulator export)."
+    },
+    {
+      "from": "notifications::NotificationCategory",
+      "usage": "Three notification categories seeded under the `audit` namespace for retention-policy, purge, and export lifecycle notifications."
+    },
+    {
+      "from": "compliance::ConsentRecord",
+      "usage": "NOT consumed directly. Audit is NEVER consent-gated. Cross-reference is one-way: consent operations THEMSELVES generate audit rows (a ConsentGranted / ConsentRevoked mutation writes audit rows via the vendor Auditable trait on the ConsentRecord model)."
+    },
+    {
+      "from": "vendor:owen-it/laravel-auditing",
+      "usage": "Third-party dependency. Provides the Auditable trait, the AuditableObserver, and the base Audit model shape. This module extends the vendor schema + wraps the model."
+    }
+  ]
+}

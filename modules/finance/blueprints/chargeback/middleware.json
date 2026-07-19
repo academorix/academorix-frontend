@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/chargeback/middleware",
+  "$version": 1,
+  "title": "chargeback — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "chargeback.webhook_verify",
+      "class": "Academorix\\Finance\\Chargeback\\Http\\Middleware\\VerifyChargebackWebhook",
+      "priority": 20,
+      "description": "Applied to provider webhook routes that carry chargeback-typed events. Delegates to payment::PaymentWebhookVerifier for signature verification (this module does NOT own signature-verification code — the payment module does). On success: dispatches ChargebackWebhookReceived event which the HandleChargebackWebhook listener consumes. On failure: returns 403 `CHARGEBACK_WEBHOOK_INVALID_SIGNATURE` OR 409 `CHARGEBACK_WEBHOOK_STALE_TIMESTAMP`.",
+      "auto_applied": false,
+      "auto_applied_to": [
+        "Provider webhook routes owned by payment module — this middleware is a thin adapter"
+      ]
+    },
+    {
+      "alias": "chargeback.enforce_management_entitlement",
+      "class": "Academorix\\Finance\\Chargeback\\Http\\Middleware\\EnforceManagementEntitlement",
+      "priority": 40,
+      "description": "Thin wrapper over entitlement.enforce that specifically checks the `chargeback_management` entitlement. On refusal returns 402 `CHARGEBACK_MANAGEMENT_NOT_ENTITLED` with an upgrade CTA in the response envelope's .errors[0].meta.upgrade_url. Auto-applied via the `entitlement.enforce:chargeback_management` middleware chain on every /api/v1/chargebacks/* route.",
+      "auto_applied": false,
+      "auto_applied_to": []
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "entitlements::entitlement.enforce" },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json."
+    },
+    {
+      "middleware": "payment::PaymentWebhookVerifier",
+      "note": "Chargeback webhook verification delegates to the payment module's verifier. Signature-verification code is centralized there."
+    },
+    {
+      "middleware": "throttle:chargebacks-admin",
+      "note": "Rate-limit bucket for admin chargeback routes. Default: 120 requests/min per authenticated admin. Generous — admin workflows may bulk-process evidence."
+    },
+    {
+      "middleware": "throttle:chargebacks-platform",
+      "note": "Rate-limit bucket for platform-plane cross-tenant support routes. Default: 60 requests/min per platform_admin."
+    }
+  ]
+}

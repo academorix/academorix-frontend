@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/refund/traits",
+  "$version": 1,
+  "title": "refund — trait composition",
+  "description": "Two owned traits. `BelongsToRefund` is the FK trait for downstream models (RefundLine + future marketing-event rows tied to a specific refund). `HasRefundLines` is the inverse-side convenience on the parent Refund model. Order matters when composed with `BelongsToTenant`: tenant MUST come first so subsequent traits observe the tenant context.",
+  "owned": [
+    {
+      "trait": "Academorix\\Finance\\Refund\\Concerns\\BelongsToRefund",
+      "description": "Mixed into any domain model that carries a `refund_id` FK. Adds the `refund()` belongsTo relation and refuses cross-tenant writes at save time. Applied to RefundLine directly + planned growth::marketing::MarketingEvent (Wave 5) that carries refund_id for negative-value conversion attribution.",
+      "public": true,
+      "usedBy": [
+        "refund::RefundLine (required refund_id)",
+        "growth::marketing::MarketingEvent (Wave 5 — marketing events fired on RefundSucceeded carry refund_id for negative-value conversion attribution)"
+      ]
+    },
+    {
+      "trait": "Academorix\\Finance\\Refund\\Concerns\\HasRefundLines",
+      "description": "Composed onto the Refund model. Adds `->lines()` (hasMany), `->hasProration()` (scope filter refund_type='prorated'), `->totalLineAmount()` (SUM of line.amount_cents for invariant check). Convenience: `$refund->lines_count` for the count.",
+      "public": true,
+      "usedBy": ["refund::Refund"]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Refund model only — RefundLine is NOT soft-deletable (immutable pivot rows). Retention pipeline handles hard-delete of refunds post 7y."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write is compliance-relevant (financial-record 7-year retention). Every state transition on Refund (status, approved_by, rejected_by, processed_at, credit_note_id, transaction_id) + every RefundLine creation is audit-critical." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Refund lifecycle transitions (requested / approved / rejected / cancelled / succeeded / failed) feed the staff-visible activity feed. NOT on RefundLine (immutable pivot row — already covered by parent refund activity log)." }
+    ]
+  },
+  "composition": {
+    "refund": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasRefundLines",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order: BelongsToTenant first. HasRefundLines is the inverse-side convenience. SoftDeletes permits marking a refund as deleted while retaining the audit trail through the retention window. SoftDeletes ONLY functional pre-succeeded — Post-succeeded refunds are immutable + retention-pipeline-managed."
+    },
+    "refund_line": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToRefund",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable"
+      ],
+      "notes": "NO SoftDeletes — RefundLine is 7y-retained HARD as a pivot row. NO HasActivityLog — already covered by parent Refund activity log. Auditable is required for the 7-year financial audit trail. NO Searchable — refund line lookup is always by (refund_id, invoice_line_id), never full-text search."
+    }
+  }
+}

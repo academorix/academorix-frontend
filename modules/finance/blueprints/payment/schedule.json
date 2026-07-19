@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/payment/schedule",
+  "$version": 1,
+  "title": "payment — scheduled tasks",
+  "entries": [
+    {
+      "name": "payment-reconcile-nightly",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Payment\\Jobs\\ReconcilePaymentIntentsJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03:00 UTC: per active provider polls provider intent list (last 24h + all in-flight) + reconciles drift between our records + provider records. Findings above 0 fire PaymentReconcileDriftNotification."
+    },
+    {
+      "name": "payment-expire-stale-intents",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Payment\\Jobs\\ExpireStalePaymentIntentsJob",
+      "cron": "0 1 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 01:00 UTC: marks intents in non-terminal status for > 24h as 'cancelled' with cancellation_reason='expired'. Signals abandoned checkouts. Best-effort provider-side cleanup dispatched."
+    },
+    {
+      "name": "payment-purge-expired-data",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Payment\\Jobs\\PurgeExpiredPaymentDataJob",
+      "cron": "0 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05:00 UTC: applies the per-entity retention windows. Payments > 7y (or 10y Enterprise) hard-deleted (with financial-record archive first). Payment intents > 90d hard-deleted. Payment disputes > 7y (10y Enterprise) hard-deleted. Payment methods soft-deleted > 90d hard-purged."
+    },
+    {
+      "name": "payment-sync-method-expiry",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Payment\\Jobs\\SyncPaymentMethodExpiryJob",
+      "cron": "0 6 * * 1",
+      "timezone": "UTC",
+      "purpose": "Weekly Monday 06:00 UTC: flags cards expiring in 30 + 7 days + hard-expires cards past their expiry. Fires PaymentMethodExpiringNotification (30d + 7d out) + PaymentMethodExpired (post-expiry)."
+    },
+    {
+      "name": "payment-notify-dispute-evidence-due",
+      "command": "payment:notify-evidence-due",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every hour: scans payment_disputes for evidence_due_by within the next 3 days AND evidence_submitted_at IS NULL. Fires NotifyDisputeEvidenceDueJob per matching row. Debounced per (dispute) to fire at most once per 3-day window."
+    },
+    {
+      "name": "payment-detect-high-failure-rate",
+      "command": "payment:detect-high-failure-rate",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 min: computes per-provider capture failure rate over the last 15 min window. If > 10% failed AND > 10 total attempts: fires PaymentProviderCircuitBreakerOpenedNotification (if not already open). Debounced: at most 1 notification per (tenant, provider) per hour."
+    },
+    {
+      "name": "payment-half-open-circuit-probes",
+      "command": "payment:half-open-circuit-probes",
+      "cron": "*/10 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 10 min: sweep payment_provider_configs where circuit_breaker_open_until <= now() AND is still marked open. Transitions to HALF_OPEN + dispatches a probe payment. Safety net for cases where the delayed enqueue was lost (crashed worker, queue restart)."
+    },
+    {
+      "name": "payment-monthly-provider-health-report",
+      "command": "payment:provider-health-report",
+      "cron": "0 7 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly 07:00 UTC on the 1st: computes per-tenant per-provider metrics (capture success rate, average latency, dispute rate, chargeback rate) + emails the tenant admin. Enterprise tier only."
+    }
+  ]
+}

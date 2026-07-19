@@ -1,0 +1,57 @@
+{
+  "$version": 1,
+  "title": "Refund policy catalog",
+  "description": "Reference table for MembershipPlan.refund_policy enum. Each policy defines the customer-facing refund behaviour when a membership is cancelled. Displayed to the customer at signup + snapshotted on the membership at signing.",
+  "policies": [
+    {
+      "value": "no_refund",
+      "display_name": "No refunds",
+      "description": "Once payment is captured, no refund is issued regardless of cancellation timing. Soft-cancel ends at period-end; hard-cancel refused unless the buyer's remorse window (config-controlled) still applies.",
+      "typical_use": "Low-margin high-volume programmes; drop-in classes with tight capacity",
+      "required_grace_days": 0,
+      "customer_disclosure_required": true,
+      "customer_disclosure_text_default": "All membership payments are final. Cancelling will stop future renewals but no refund will be issued for the current period.",
+      "hard_cancel_allowed_when_entitled": false,
+      "prorated_refund_allowed": false
+    },
+    {
+      "value": "prorated",
+      "display_name": "Prorated refund",
+      "description": "Hard-cancel yields a refund proportional to remaining days in the current period. Requires the Enterprise `membership_hard_cancel_prorated_refund` entitlement.",
+      "typical_use": "Premium academies competing on customer-friendly policies",
+      "required_grace_days": 0,
+      "customer_disclosure_required": true,
+      "customer_disclosure_text_default": "You may cancel at any time. If you cancel mid-period, you'll receive a refund proportional to the unused portion of your current billing period.",
+      "hard_cancel_allowed_when_entitled": true,
+      "prorated_refund_allowed": true
+    },
+    {
+      "value": "full_within_grace",
+      "display_name": "Full refund within grace window",
+      "description": "Full refund of the current period's payment IF cancelled within refund_grace_days of contract signing. After the grace window, refund_policy behaves as 'no_refund'. Consumer-protection-friendly.",
+      "typical_use": "Cooling-off compliance in EU / UK / CA jurisdictions where 14-day return-right applies",
+      "required_grace_days": 14,
+      "customer_disclosure_required": true,
+      "customer_disclosure_text_default": "You may cancel within :grace_days days of signing for a full refund. After that, cancellation will stop future renewals but no refund will be issued for the current period.",
+      "hard_cancel_allowed_when_entitled": true,
+      "prorated_refund_allowed": false
+    },
+    {
+      "value": "by_admin_approval",
+      "display_name": "Refund by admin approval",
+      "description": "No automatic refund on cancellation. Customer requests a refund; admin manually reviews and issues a credit memo via the refund module. Highest admin overhead, most flexible outcomes.",
+      "typical_use": "Case-by-case handling — small academies without a firm policy",
+      "required_grace_days": 0,
+      "customer_disclosure_required": true,
+      "customer_disclosure_text_default": "Refunds are handled case-by-case at the discretion of academy staff. Cancelling stops future renewals; contact us to request a refund review.",
+      "hard_cancel_allowed_when_entitled": false,
+      "prorated_refund_allowed": false
+    }
+  ],
+  "cross_reference": [
+    "MembershipPlanObserver.creating validates refund_policy + refund_grace_days consistency via valid_refund_policy rule",
+    "CalculateProratedRefundOnHardCancel hook branches on refund_policy: prorated → compute unused days; full_within_grace + within grace → refund full; else no automated refund",
+    "SDUI signup screen surfaces the customer_disclosure_text_default from this catalog, substituting :grace_days for the plan's actual value",
+    "Snapshotted at signing on membership.metadata → refund_policy_at_signing preserves the policy against future plan-level policy changes"
+  ]
+}

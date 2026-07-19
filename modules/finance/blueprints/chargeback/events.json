@@ -1,0 +1,374 @@
+{
+  "id": "academorix://modules/chargeback/events",
+  "$version": 1,
+  "title": "chargeback — published events",
+  "namespace": "Academorix\\Finance\\Chargeback\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Three P0 events: `ChargebackFiled` (money forcibly reversed by bank — P0 admin signal); `ChargebackLost` (P1 signal — the finalization chain fires TWO offsetting transactions + invoice state update + clawback fan-out + marketing negative-value-conversion + fraud signal), `ChargebackRateThresholdExceeded` (P1 signal — tenant's chargeback rate crossed VDMP/MDMP threshold, merchant-account termination risk). Financial events (`ChargebackLost` / `ChargebackClawbackReferral` / `ChargebackClawbackCoupon`) additionally fan out to finance::invoice for state update + finance::transaction for double-entry offset + finance::credit-note (via invoice module) for reversal document. `ChargebackLost` fires a marketing negative-value conversion downstream to protect ROAS + retrain fraud models on ad networks — MORE HEAVILY than refunds because chargebacks are a fraud correlation signal.",
+  "events": [
+    {
+      "name": "ChargebackFiled",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackFiled",
+      "trigger": "ChargebackRepository finished a successful create. Fires exactly once per chargeback. P0 signal — money has been forcibly reversed by the bank. Distinct from a customer-initiated PaymentDispute (which fires payment::PaymentDisputeFiled) — this fires when the bank ESCALATES to a full chargeback.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial-audit)",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateTenantChargebackListCache",
+        "notifications::DispatchChargebackFiledNotification (P0 admin — immediate SMS + push + email)",
+        "chargeback::CollectChargebackEvidenceJob (auto-collect evidence)",
+        "observability::MetricsCollector (academorix.chargeback.filed_total labelled by network + reason_category)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID (cbk_*)",
+        "tenant_id": "ULID (ten_*)",
+        "chargeback_number": "string (CBK-2026-00000001)",
+        "payment_id": "ULID (pay_*)",
+        "invoice_id": "ULID (ivc_*)",
+        "payment_dispute_id": "ULID (pdi_*) | null (null when originated directly via webhook, not escalated from a dispute)",
+        "network": "'visa' | 'mastercard' | 'amex' | 'discover' | 'jcb' | 'unionpay' | 'diners' | 'other'",
+        "reason_code": "string (network-native like '10.4' or '4837' or 'F24')",
+        "reason_category": "'fraud' | 'authorization' | 'processing_errors' | 'consumer_disputes' | 'card_recovery'",
+        "reason_description": "string (human-readable)",
+        "amount_cents": "integer",
+        "currency": "string (ISO 4217)",
+        "fee_cents": "integer (network chargeback fee)",
+        "evidence_due_by": "ISO 8601",
+        "provider": "'stripe' | 'paddle' | 'adyen' | 'square' | 'paypal' | 'custom_webhook'",
+        "rdr_eligible": "boolean",
+        "ce3_eligible": "boolean",
+        "filed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ChargebackEvidenceRequested",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackEvidenceRequested",
+      "trigger": "The bank has requested evidence — this fires alongside ChargebackFiled (initial request) OR later when the bank requests ADDITIONAL evidence after reviewing an initial submission (CE3.0 second pass). Sets evidence_due_by on the chargeback.",
+      "queue": "chargebacks",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchChargebackEvidenceReminderNotification (admin — asks for evidence)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "submission_attempt_number": "integer",
+        "evidence_due_by": "ISO 8601",
+        "additional_evidence_requested": "boolean (false on initial request; true on CE3.0 second pass)",
+        "network_request_notes": "string | null (bank's rationale for additional evidence)"
+      }
+    },
+    {
+      "name": "ChargebackEvidenceSubmitted",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackEvidenceSubmitted",
+      "trigger": "ChargebackEvidenceRepository finished a successful create. Fires per submission attempt. Distinct from ChargebackFiled — this fires each time the merchant submits (or resubmits) evidence.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchChargebackEvidenceSubmittedNotification (admin — confirmation)",
+        "observability::MetricsCollector (academorix.chargeback.evidence_submissions_total labelled by submission_attempt_number)"
+      ],
+      "payload": {
+        "chargeback_evidence_id": "ULID (cev_*)",
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "submission_attempt_number": "integer",
+        "submitted_by_user_id": "ULID (usr_*)",
+        "submitted_at": "ISO 8601",
+        "evidence_shape_completeness_percent": "integer 0-100 (how many of the 8 evidence fields are populated)"
+      }
+    },
+    {
+      "name": "ChargebackUnderReview",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackUnderReview",
+      "trigger": "Chargeback.status transitioned evidence_submitted -> under_bank_review. The bank confirmed receipt of evidence + started internal review. Typical wait 30-45 days.",
+      "queue": "chargebacks",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchChargebackStatusNotification (admin — waiting on bank)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "under_review_at": "ISO 8601",
+        "estimated_decision_by": "ISO 8601 | null (provider-communicated when available)"
+      }
+    },
+    {
+      "name": "ChargebackWon",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackWon",
+      "trigger": "Chargeback.status transitioned under_bank_review -> won. Bank sided with the merchant. Money returned. Note: won chargebacks still incur the initial network fee — banks don't refund the fee they collected. P1 event.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "payment::ReducePaymentDisputedOnChargebackWon (reduces parent payment.amount_disputed_cents back)",
+        "notifications::DispatchChargebackWonNotification (admin only — no customer message)",
+        "observability::MetricsCollector (academorix.chargeback.won_total labelled by network + reason_category)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "chargeback_number": "string",
+        "payment_id": "ULID",
+        "invoice_id": "ULID",
+        "network": "string",
+        "reason_code": "string",
+        "amount_cents": "integer",
+        "currency": "string",
+        "decision_at": "ISO 8601",
+        "decision_reason": "string | null (bank's rationale)",
+        "days_to_decision": "integer"
+      }
+    },
+    {
+      "name": "ChargebackLost",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackLost",
+      "trigger": "Chargeback.status transitioned under_bank_review -> lost. Bank sided with the customer. Money permanently gone. FIRES THE FINALIZATION CHAIN: offsetting transaction (disputed amount) + network fee transaction + invoice state update + clawback fan-out + marketing negative-conversion + fraud signal. P1 event.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "chargeback::RecordOffsettingTransactionOnChargebackLost (via TransactionRecorder — debit chargebacks_expense, credit cash)",
+        "chargeback::RecordNetworkFeeOnChargebackLost (via TransactionRecorder — debit chargeback_fees, credit cash)",
+        "invoice::MarkInvoiceDisputedOnChargebackLost (state update + persist amount_disputed_cents)",
+        "invoice::CreateCreditNoteOnChargebackLost (via CreditNoteIssuer — creates reversal invoice)",
+        "chargeback::ClawbackCoordinator (dispatches ChargebackClawbackReferral + ChargebackClawbackCoupon downstream)",
+        "marketing::FireMarketingChargebackFiledOnChargebackLost (negative-value conversion + fraud signal — ad-network ROAS adjustment + fraud model retraining)",
+        "notifications::DispatchChargebackLostNotification (P1 admin — includes support-contact + reason breakdown)",
+        "observability::MetricsCollector (academorix.chargeback.lost_total labelled by network + reason_category + reason_code)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "chargeback_number": "string",
+        "payment_id": "ULID",
+        "invoice_id": "ULID",
+        "transaction_id": "ULID (trx_*) | null (populated post-TransactionRecorder step 1)",
+        "fee_transaction_id": "ULID (trx_*) | null (populated post-TransactionRecorder step 2)",
+        "network": "string",
+        "reason_code": "string",
+        "reason_category": "string",
+        "reason_description": "string",
+        "amount_cents": "integer",
+        "fee_cents": "integer",
+        "currency": "string",
+        "decision_at": "ISO 8601",
+        "decision_reason": "string | null (bank's rationale)",
+        "days_to_decision": "integer"
+      }
+    },
+    {
+      "name": "ChargebackExpired",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackExpired",
+      "trigger": "Chargeback.status transitioned pending_evidence -> expired. Evidence window passed with no submission. Treated as an auto-loss — the finalization chain fires with the same steps as ChargebackLost.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "chargeback::FinalizeChargebackJob (invokes the LOST finalization chain — auto-loss)",
+        "notifications::DispatchChargebackLostNotification (P1 admin — 'auto-lost due to missed evidence deadline')",
+        "observability::MetricsCollector (academorix.chargeback.expired_total labelled by network)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "chargeback_number": "string",
+        "payment_id": "ULID",
+        "invoice_id": "ULID",
+        "network": "string",
+        "amount_cents": "integer",
+        "currency": "string",
+        "expired_at": "ISO 8601",
+        "evidence_due_by": "ISO 8601 (missed deadline)"
+      }
+    },
+    {
+      "name": "ChargebackAcceptedRefund",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackAcceptedRefund",
+      "trigger": "Chargeback.status transitioned pending_evidence -> accepted_refund via RDR. RdrHandler created a Refund via refund::RefundOrchestrator + closed the pre-chargeback state. Terminal — cheapest defense (no network fee, no rate impact).",
+      "queue": "chargebacks",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchChargebackAcceptedRefundNotification (customer + admin — 'refund issued via RDR')",
+        "observability::MetricsCollector (academorix.chargeback.rdr_accepted_total)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "chargeback_number": "string",
+        "payment_id": "ULID",
+        "invoice_id": "ULID",
+        "refund_id": "ULID (rfd_*) — the created refund",
+        "network": "'visa' (RDR is Visa-only)",
+        "amount_cents": "integer",
+        "currency": "string",
+        "accepted_at": "ISO 8601",
+        "rdr_threshold_cents": "integer (the tenant's configured threshold at accept time)"
+      }
+    },
+    {
+      "name": "ChargebackEvidenceOverdue",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackEvidenceOverdue",
+      "trigger": "NotifyChargebackEvidenceOverdueJob detected a chargeback with evidence_due_by approaching (7 / 3 / 1 day cadence). Actionable — deadline missed = auto-loss. Not fired on the deadline itself; the transition to expired handles that separately via MarkExpiredChargebacksJob.",
+      "queue": "chargebacks",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchChargebackEvidenceOverdueNotification (admin — escalating cadence with days_remaining)",
+        "observability::MetricsCollector (academorix.chargeback.evidence_overdue_total labelled by days_remaining)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "chargeback_number": "string",
+        "days_remaining": "integer (7 | 3 | 1)",
+        "evidence_due_by": "ISO 8601",
+        "current_evidence_completeness_percent": "integer 0-100"
+      }
+    },
+    {
+      "name": "ChargebackClawbackReferral",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackClawbackReferral",
+      "trigger": "ChargebackLost fired + ClawbackCoordinator detected that the disputed invoice was linked to a materialized ReferralReward. Cascades to growth::referrals for reward reversal.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "referrals::ProcessReferralClawbackOnChargeback (Wave 5 — reverses the reward + notifies the referrer with a 'chargeback loss' reason)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_id": "ULID",
+        "referral_reward_id": "ULID (rrw_*)",
+        "reward_type": "'percent_discount' | 'fixed_amount' | 'credit' | 'points'",
+        "reward_amount_cents": "integer",
+        "requested_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ChargebackClawbackCoupon",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackClawbackCoupon",
+      "trigger": "ChargebackLost fired + ClawbackCoordinator detected that the disputed invoice had a redeemed coupon. Cascades to coupon module for redemption reversal.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "coupon::ProcessCouponClawbackOnInvoiceCharged (reverses redemption + decrements coupon.usage_count with clawback_reason='chargeback')"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_id": "ULID",
+        "coupon_redemption_id": "ULID (crd_*)",
+        "coupon_id": "ULID (cpn_*)",
+        "requested_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ChargebackNetworkFeeRecorded",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackNetworkFeeRecorded",
+      "trigger": "FinalizeChargebackJob step 2 completed — the network fee ($15-25 typical) recorded as a secondary offsetting Transaction. Fires alongside ChargebackTransactionRecorded (step 1) but for the network fee entry specifically.",
+      "queue": "chargebacks",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "observability::MetricsCollector (academorix.chargeback.network_fees_total_cents counter — sum of fee_cents)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "fee_transaction_id": "ULID (trx_*)",
+        "network": "string",
+        "fee_cents": "integer",
+        "currency": "string",
+        "recorded_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ChargebackTransactionRecorded",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackTransactionRecorded",
+      "trigger": "FinalizeChargebackJob step 1 completed — the disputed amount recorded as an offsetting Transaction (debit chargebacks_expense, credit cash).",
+      "queue": "chargebacks",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "observability::MetricsCollector (academorix.chargeback.losses_total_cents counter — sum of amount_cents)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "transaction_id": "ULID (trx_*)",
+        "amount_cents": "integer",
+        "currency": "string",
+        "recorded_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ChargebackWebhookReceived",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackWebhookReceived",
+      "trigger": "payment::PaymentWebhookHandler dispatched a chargeback-typed webhook event. This event fires FIRST (before the chargeback is created or reconciled) to record the webhook receipt itself. HandleChargebackWebhook listener consumes it + calls ChargebackOrchestrator::createFromWebhook / ChargebackReconciler::reconcileFromWebhook.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "chargeback::HandleChargebackWebhook (creates or reconciles the local chargeback)",
+        "observability::MetricsCollector (academorix.chargeback.webhooks_received_total labelled by provider + webhook_type)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "provider": "'stripe' | 'paddle' | 'adyen' | 'square' | 'paypal' | 'custom_webhook'",
+        "provider_event_type": "string (provider-native event name)",
+        "provider_reference_id": "string (dp_..., etc.)",
+        "webhook_id": "ULID (from payment module's PaymentWebhook)",
+        "received_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ChargebackReconciled",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackReconciled",
+      "trigger": "Provider webhook OR CheckChargebackStatusJob detected a state change on the provider side. The chargeback's status is now aligned with the provider's authoritative record. Distinct from ChargebackWon / ChargebackLost — this event fires FIRST (before terminal transition) to record the reconciliation itself. drift_detected=true when the local status differed from provider.",
+      "queue": "chargebacks",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "observability::MetricsCollector (academorix.chargeback.reconciliations_total labelled by drift_detected)"
+      ],
+      "payload": {
+        "chargeback_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "provider_reference_id": "string",
+        "provider_status": "string (provider-native status)",
+        "reconciled_local_status": "string (our terminal status after reconciliation)",
+        "drift_detected": "boolean (true when the local status differed from provider)",
+        "reconciled_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "ChargebackRateThresholdExceeded",
+      "class": "Academorix\\Finance\\Chargeback\\Events\\ChargebackRateThresholdExceeded",
+      "trigger": "MonitorChargebackRateJob detected the tenant's rolling 60-day chargeback rate crossed the network's VDMP/MDMP threshold (0.9% Visa / 1.5% Mastercard / 1.0% Amex / 1.0% Discover). P1 signal — merchant-account termination risk if sustained. Actionable — ops must intervene.",
+      "queue": "chargebacks-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchChargebackRateThresholdExceededNotification (P1 admin + Academorix platform ops)",
+        "observability::MetricsCollector (academorix.chargeback.rate_threshold_exceeded_total labelled by network)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "network": "string",
+        "rolling_window_days": "integer (default 60)",
+        "chargebacks_count": "integer",
+        "transactions_count": "integer",
+        "current_rate_percent": "number (basis points as decimal — 0.0092 = 0.92%)",
+        "threshold_percent": "number",
+        "days_over_threshold": "integer (how long the rate has been over threshold)",
+        "computed_at": "ISO 8601"
+      }
+    }
+  ]
+}

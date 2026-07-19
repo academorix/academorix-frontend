@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/chargeback/observers",
+  "$version": 1,
+  "title": "chargeback — Eloquent observers",
+  "description": "Two observers enforce this module's write-time invariants. ChargebackObserver validates network + reason_code + amount + currency at creation; snapshots reason fields from parent PaymentDispute when escalated; sets initial status='pending_evidence' + computes evidence_due_by + rdr_eligible + ce3_eligible; increments parent payment.amount_disputed_cents; runs the finalization chain on `lost` / `expired` (two offsetting transactions + invoice state update + clawback fan-out + marketing negative-conversion + fraud signal); REFUSES ALL mutations after terminal status (chargebacks are IMMUTABLE). ChargebackEvidenceObserver enforces submission-attempt monotonicity, refuses submission when the parent chargeback is not in a submitting state, freezes all evidence fields on save (immutable audit trail).",
+  "observers": [
+    {
+      "model": "Chargeback",
+      "observer": "Academorix\\Finance\\Chargeback\\Observers\\ChargebackObserver",
+      "handles": [
+        "creating -> populate ULID prefix `cbk_`",
+        "creating -> refuse when tenant does NOT hold `chargeback_management` entitlement (returns `CHARGEBACK_MANAGEMENT_NOT_ENTITLED`) — chargebacks still fire regardless because they're bank-forced, but the workflow features gate here",
+        "creating -> generate chargeback_number via ChargebackNumberGenerator (sequential per tenant per year — CBK-<year>-<zero-padded-seq>); refuse duplicate via composite unique (tenant_id, chargeback_number)",
+        "creating -> validate network against enum (returns `CHARGEBACK_INVALID_NETWORK`)",
+        "creating -> validate reason_code against data/reason-code-catalog.json for the declared network (returns `CHARGEBACK_INVALID_REASON_CODE` on mismatch — e.g. Visa reason code on Mastercard chargeback)",
+        "creating -> derive reason_category + reason_description from data/reason-code-catalog.json (frozen at creation)",
+        "creating -> validate reason_category against enum (returns `CHARGEBACK_INVALID_REASON_CATEGORY`)",
+        "creating -> validate amount_cents > 0 (returns `CHARGEBACK_INVALID_AMOUNT`)",
+        "creating -> validate currency matches parent payment.currency (returns `CHARGEBACK_CURRENCY_MISMATCH`) — no multi-currency chargebacks (banks file in the payment's original currency)",
+        "creating -> validate payment_id parent exists + payment.status='succeeded' (cannot chargeback a failed / pending payment)",
+        "creating -> validate invoice_id parent exists + matches payment.invoice_id (invoice consistency)",
+        "creating -> when payment_dispute_id is set: validate payment_dispute.status='lost' + payment_dispute.payment_id matches chargeback.payment_id (escalation guard)",
+        "creating -> compute evidence_due_by = filed_at + per-network default window (from config chargeback.evidence.deadline_days_by_network — Visa 30d / Mastercard 45d / Amex 20d / Discover 30d) unless provider-communicated deadline overrides",
+        "creating -> compute rdr_eligible: network='visa' AND amount_cents <= config chargeback.rdr.auto_refund_threshold_cents AND tenant holds chargeback_rdr entitlement AND payment.amount_refunded_cents == 0",
+        "creating -> compute ce3_eligible: network='visa' AND reason_category='fraud' AND tenant holds chargeback_ce3 entitlement AND customer has >= 2 prior successful payments in last 120 days",
+        "creating -> compute fee_cents from config chargeback.fees.default_by_network (Visa 1500 / Mastercard 1500 / Amex 2500 / Discover 1500 / etc.) unless provider-communicated fee overrides",
+        "creating -> set status='pending_evidence'; NEVER set status directly at creation to anything else",
+        "creating -> UPDATE payments SET amount_disputed_cents = amount_disputed_cents + chargeback.amount_cents",
+        "creating -> dispatch CollectChargebackEvidenceJob (auto-collect evidence)",
+        "creating -> dispatch NotifyChargebackEvidenceOverdueJob at evidence_due_by - 7d / -3d / -1d cadence",
+        "creating -> dispatch NotifyChargebackFiledNotification (P0 admin)",
+        "creating -> fire ChargebackFiled (P0)",
+        "updating (status: pending_evidence -> evidence_submitted) -> require evidence_submitted_at set + at least one chargeback_evidence row exists for this chargeback; fire ChargebackEvidenceSubmitted (through SubmitChargebackEvidenceJob path)",
+        "updating (status: pending_evidence -> accepted_refund) -> RDR path; require rdr_eligible=true + refund_id set (populated by RdrHandler after RefundOrchestrator succeeds); require rdr_auto_refunded=true; UPDATE payments SET amount_disputed_cents = amount_disputed_cents - chargeback.amount_cents (reduce back — money returned via refund, not chargeback); fire ChargebackAcceptedRefund",
+        "updating (status: pending_evidence -> expired) -> require evidence_due_by < NOW() (deadline actually missed); require decision_at set + decision_reason='evidence_deadline_missed'; dispatch FinalizeChargebackJob; fire ChargebackExpired",
+        "updating (status: evidence_submitted -> under_bank_review) -> require provider-side confirmation via CheckChargebackStatusJob OR webhook; fire ChargebackUnderReview",
+        "updating (status: evidence_submitted -> pending_evidence) -> bank requested additional evidence (CE3.0 second pass); require additional_evidence_requested flag set on latest chargeback_evidence.provider_response; fire ChargebackEvidenceRequested with additional_evidence_requested=true",
+        "updating (status: under_bank_review -> won) -> require decision_at set; UPDATE payments SET amount_disputed_cents = amount_disputed_cents - chargeback.amount_cents (reduce back); fire ChargebackWon",
+        "updating (status: under_bank_review -> lost) -> require decision_at + decision_reason set; dispatch FinalizeChargebackJob (invokes the LOST finalization chain — two offsetting transactions + invoice state update + clawback fan-out + marketing negative-conversion); fire ChargebackLost",
+        "updating (status: pending_evidence -> lost via chargeback:mark-lost-manually admin CLI) -> require decision_at + decision_reason set (manual investigation notes required); dispatch FinalizeChargebackJob; fire ChargebackLost",
+        "updating (any state -> anything when current status IS terminal — won / lost / expired / accepted_refund) -> REFUSE (returns `CHARGEBACK_IMMUTABLE` — chargebacks are IMMUTABLE post-terminal). Corrections require ops investigation + optionally a manual reversal transaction in the transaction module.",
+        "updating (attempted state transition not in the state machine — e.g. pending_evidence -> won without going through evidence_submitted + under_bank_review) -> REFUSE (returns `CHARGEBACK_INVALID_STATE_TRANSITION`)",
+        "updating (mutation of network / reason_code / reason_category / amount_cents / currency / fee_cents / payment_id / invoice_id / payment_dispute_id / provider / provider_reference_id after status != 'pending_evidence') -> REFUSE (returns `CHARGEBACK_TERMS_LOCKED` — these fields lock once evidence submission starts)",
+        "updating (chargeback_number) -> REFUSE always (returns `CHARGEBACK_NUMBER_IMMUTABLE`)",
+        "updating (evidence_due_by) -> ALLOW only when status='pending_evidence' AND (new evidence_due_by > current evidence_due_by) — banks may extend deadlines but never shorten. REFUSE otherwise (returns `CHARGEBACK_EVIDENCE_DEADLINE_LOCKED`)",
+        "deleting -> refuse ALWAYS. Chargebacks are 7y-retained financial records; retention pipeline handles hard-delete via PurgeExpiredChargebackDataJob. Soft-delete permitted only via metadata (audit-trail preserved)."
+      ]
+    },
+    {
+      "model": "ChargebackEvidence",
+      "observer": "Academorix\\Finance\\Chargeback\\Observers\\ChargebackEvidenceObserver",
+      "handles": [
+        "creating -> populate ULID prefix `cev_`",
+        "creating -> refuse when parent chargeback.status NOT IN ('pending_evidence', 'evidence_submitted') — evidence can only be submitted before terminal states (returns `CHARGEBACK_EVIDENCE_PARENT_LOCKED`)",
+        "creating -> refuse when parent chargeback.evidence_due_by < NOW() (deadline passed; use `chargeback:mark-lost-manually` to acknowledge miss instead of submitting late evidence — returns `CHARGEBACK_EVIDENCE_DEADLINE_MISSED`)",
+        "creating -> refuse when tenant does NOT hold `chargeback_evidence_submission` entitlement (returns `CHARGEBACK_EVIDENCE_NOT_ENTITLED`)",
+        "creating -> auto-increment submission_attempt_number: max(current submission_attempt_number for this chargeback) + 1. First attempt = 1.",
+        "creating -> validate evidence shape against schemas/chargeback-evidence.schema.json (returns `CHARGEBACK_EVIDENCE_INVALID_SHAPE` when malformed)",
+        "creating -> refuse when evidence body contains any PAN pattern (13-19 digit strings matching card BIN prefixes) — PCI-DSS Req 3.4 (returns `CHARGEBACK_EVIDENCE_PCI_VIOLATION`). Only tokens + last-4 + BIN permitted.",
+        "creating -> validate submitted_by_user_id present + has chargebacks.submit-evidence permission (returns `CHARGEBACK_EVIDENCE_UNAUTHORIZED_SUBMITTER`)",
+        "creating -> validate composite unique (tenant_id, chargeback_id, submission_attempt_number); refuse duplicate row with `CHARGEBACK_EVIDENCE_DUPLICATE_ATTEMPT`",
+        "creating -> validate customer_signature_evidence.device_fingerprint_hash is a SHA-256 hex string (never raw fingerprint content — that leaks device identifiers)",
+        "creating -> when parent chargeback.ce3_eligible=true: validate the evidence includes ce3_bundle metadata (via Ce3EvidenceBuilder) — warn but don't refuse when missing (CE3 is opportunistic, not mandatory)",
+        "creating -> fire ChargebackEvidenceSubmitted",
+        "creating -> dispatch SubmitChargebackEvidenceJob (submits to provider async — the observer creates the row, the job sends to the bank)",
+        "updating (any field) -> REFUSE (returns `CHARGEBACK_EVIDENCE_IMMUTABLE` — evidence rows are immutable append-only audit; corrections require submitting a new attempt with submission_attempt_number + 1)",
+        "deleting -> refuse ALWAYS. Evidence rows are 7y-retained financial records; retention pipeline handles hard-delete via PurgeExpiredChargebackDataJob (cascade from parent chargeback)."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "id": "academorix://modules/transaction/events",
+  "$version": 1,
+  "title": "transaction — published events",
+  "namespace": "Academorix\\Finance\\Transaction\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. LedgerImbalanceDetected is the CRITICAL P0 event of the module — it should NEVER fire in a healthy system; if it does, the ledger is broken + new transactions halt until an ops-authored fix lands. TransactionReversed + TransactionAmendmentRequested are the two write-critical audit signals (regulator-facing). AccountBalanceThresholdCrossed is an ops signal (accounts_receivable > $X, cash < $Y).",
+  "events": [
+    {
+      "name": "TransactionCreated",
+      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionCreated",
+      "trigger": "TransactionObserver.creating committed a new transactions row (status='draft', before ledger entries attach). Fires exactly once per transaction. Precedes TransactionPosted by the balancing step in the same DB transaction.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — SOX 404)",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector (increments academorix.transaction.created_total)"
+      ],
+      "payload": {
+        "transaction_id": "ULID (trx_*)",
+        "tenant_id": "ULID (ten_*)",
+        "transaction_number": "string (TXN-YYYY-NNNNNNNN — sequential per tenant per year)",
+        "kind": "string (one of 12 TransactionKind values)",
+        "reference_type": "string (Invoice / Payment / Refund / Chargeback / CouponRedemption / adjustment_row)",
+        "reference_id": "ULID (polymorphic)",
+        "amount_cents": "integer (positive)",
+        "currency": "string (ISO 4217)",
+        "base_currency": "string (ISO 4217) | null",
+        "base_amount_cents": "integer | null",
+        "effective_date": "ISO 8601 date",
+        "created_by_user_id": "ULID (usr_*) | null",
+        "created_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TransactionPosted",
+      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionPosted",
+      "trigger": "Ledger entries balanced (SUM(debits) == SUM(credits) > 0) + transaction.status transitioned draft → posted + posted_at timestamp set. Terminal state — every posted transaction is IMMUTABLE.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — SOX 404; every posted transaction is regulator-visible)",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector (increments academorix.transaction.posted_total)",
+        "cache::InvalidateAccountBalanceCache (invalidates per-account balance keys for every account touched)",
+        "growth::analytics::TrackRevenueMovement (when kind IN ('invoice_payment', 'refund_issued'))"
+      ],
+      "payload": {
+        "transaction_id": "ULID (trx_*)",
+        "tenant_id": "ULID",
+        "transaction_number": "string",
+        "kind": "string",
+        "amount_cents": "integer",
+        "currency": "string",
+        "ledger_entry_count": "integer (>= 2)",
+        "accounts_touched": "string[] (unique list of ledger accounts touched by this transaction)",
+        "posted_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TransactionReversed",
+      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionReversed",
+      "trigger": "TransactionReverser committed a NEW transaction pointing at an existing one via source_transaction_id + reversal_reason. The reversal transaction is a first-class posted transaction with offsetting ledger entries (debit ↔ credit swapped). The ORIGINAL transaction remains posted + IMMUTABLE. This event fires on the REVERSAL transaction (not on the original — originals never change).",
+      "queue": "finance-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — regulator-critical audit trail for every ledger correction)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTransactionAmendmentAppliedNotification (finance role + admin — every reversal is regulator-visible)",
+        "monitoring::MetricsCollector (increments academorix.transaction.reversed_total)"
+      ],
+      "payload": {
+        "reversal_transaction_id": "ULID (trx_*) — the new offsetting transaction",
+        "source_transaction_id": "ULID (trx_*) — the original being reversed",
+        "tenant_id": "ULID",
+        "reversal_reason": "'refund' | 'chargeback' | 'error_correction' | 'accounting_adjustment'",
+        "amount_cents": "integer (positive; direction indicated by the ledger entries of the reversal)",
+        "currency": "string",
+        "reversed_by_user_id": "ULID",
+        "reversed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TransactionAmendmentRequested",
+      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionAmendmentRequested",
+      "trigger": "Admin invoked POST /transactions/{id}/reverse with reversal_reason='accounting_adjustment' — a manual override for correcting a ledger entry that was posted incorrectly. Distinct from the automated invoice-refund flow (which uses reversal_reason='refund'). Every fire is regulator-critical + must include a written note.",
+      "queue": "finance-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — REQUIRED for manual overrides per SOX 404)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTransactionAmendmentAppliedNotification (cannot-opt-out — pages finance + admin)",
+        "monitoring::MetricsCollector (increments academorix.transaction.amendment_requested_total; any non-zero rate is a signal to investigate)"
+      ],
+      "payload": {
+        "reversal_transaction_id": "ULID",
+        "source_transaction_id": "ULID",
+        "tenant_id": "ULID",
+        "amendment_note": "string (required — regulator-visible justification)",
+        "requested_by_user_id": "ULID",
+        "requested_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LedgerEntryRecorded",
+      "class": "Academorix\\Finance\\Transaction\\Events\\LedgerEntryRecorded",
+      "trigger": "TransactionLedgerEntryObserver.creating committed a ledger entry row. Fires once per entry — a typical invoice-paid transaction fires TWICE (one debit entry + one credit entry).",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "monitoring::MetricsCollector (increments academorix.ledger.entries_recorded_total; labels: account, side)",
+        "cache::InvalidateAccountBalanceCache (invalidates the specific account's balance cache)"
+      ],
+      "payload": {
+        "ledger_entry_id": "ULID (tld_*)",
+        "transaction_id": "ULID (trx_*)",
+        "tenant_id": "ULID",
+        "account": "string (one of 14 LedgerAccount values)",
+        "account_currency": "string (ISO 4217)",
+        "debit_cents": "integer (0 when this is a credit entry)",
+        "credit_cents": "integer (0 when this is a debit entry)",
+        "description": "string (<= 256 chars)",
+        "recorded_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LedgerImbalanceDetected",
+      "class": "Academorix\\Finance\\Transaction\\Events\\LedgerImbalanceDetected",
+      "trigger": "CRITICAL P0. SUM(debit_cents) != SUM(credit_cents) for a transaction OR the nightly LedgerReconciler found a global tenant-account imbalance. Should NEVER fire in a healthy system — if it does, the ledger is broken + new transactions HALT until an ops-authored fix lands. Every fire pages the on-call + escalates to finance leadership + writes a critical audit row.",
+      "queue": "finance-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — REGULATOR-CRITICAL)",
+        "notifications::DispatchLedgerImbalanceDetectedNotification (cannot-opt-out — pages on-call + finance leadership + platform ops)",
+        "monitoring::MetricsCollector (increments academorix.ledger.imbalances_detected_total; every increment triggers PagerDuty P0)",
+        "transaction::HaltNewTransactionsOnImbalance (sets tenant-level flag transaction.halt_new = true until resolved)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "scope": "'per_transaction' | 'per_account_daily' | 'global_tenant'",
+        "transaction_id": "ULID | null (set when scope='per_transaction')",
+        "account": "string | null (set when scope='per_account_daily')",
+        "sum_debits_cents": "integer",
+        "sum_credits_cents": "integer",
+        "imbalance_cents": "integer (sum_debits - sum_credits — signed)",
+        "currency": "string",
+        "detected_at": "ISO 8601",
+        "detected_by": "'observer' | 'reconciler_nightly' | 'reconciler_manual'"
+      }
+    },
+    {
+      "name": "AccountBalanceThresholdCrossed",
+      "class": "Academorix\\Finance\\Transaction\\Events\\AccountBalanceThresholdCrossed",
+      "trigger": "The AccountBalanceCalculator computed a per-account running balance that crossed a config-defined threshold. Example: accounts_receivable > $50k (collection risk); cash < $1k (liquidity risk); refunds_owed > $10k (needs disbursement). Not a P0 — signals ops to review.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchAccountBalanceAlertNotification (finance role + admin)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "account": "string (LedgerAccount value)",
+        "currency": "string",
+        "current_balance_cents": "integer (signed)",
+        "threshold_kind": "'high_watermark' | 'low_watermark'",
+        "threshold_cents": "integer",
+        "crossed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TenantOpeningBalanceRecorded",
+      "class": "Academorix\\Finance\\Transaction\\Events\\TenantOpeningBalanceRecorded",
+      "trigger": "RecordOpeningBalanceOnTenantProvisioned hook fired on tenancy::TenantProvisioned. Creates one transaction with kind='opening_balance' + ledger entries at zero for every enabled account (or non-zero when migrating from a legacy system with existing balances). Fires exactly once per tenant.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — the tenant's ledger origin story)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "transaction_id": "ULID (trx_*)",
+        "base_currency": "string (ISO 4217)",
+        "accounts_seeded": "string[] (list of chart-of-accounts entries with entries)",
+        "recorded_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TransactionCurrencyConverted",
+      "class": "Academorix\\Finance\\Transaction\\Events\\TransactionCurrencyConverted",
+      "trigger": "Fires ONLY on cross-currency transactions (transaction.currency ≠ tenant.base_currency). The ExchangeRateResolver captured a rate; base_amount_cents was computed atomically before the ledger balancing step. Downstream reports use base_amount_cents for aggregation across currencies.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — currency conversions are regulator-critical for FX audit trails)",
+        "monitoring::MetricsCollector (labels: provider, from_currency, to_currency)"
+      ],
+      "payload": {
+        "transaction_id": "ULID",
+        "tenant_id": "ULID",
+        "from_currency": "string (ISO 4217 — transaction.currency)",
+        "to_currency": "string (ISO 4217 — tenant.base_currency)",
+        "exchange_rate_to_base": "decimal (20,10)",
+        "from_amount_cents": "integer",
+        "to_amount_cents": "integer (base_amount_cents)",
+        "rate_provider": "'openexchangerates' | 'fixer_io' | 'manual' | 'ecb_daily'",
+        "rate_captured_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "LedgerReconciliationCompleted",
+      "class": "Academorix\\Finance\\Transaction\\Events\\LedgerReconciliationCompleted",
+      "trigger": "ReconcileLedgerBalancesJob completed its nightly sweep. Reports total transactions scanned + per-account balance snapshots + any imbalances detected (fires LedgerImbalanceDetected per imbalance BEFORE this event). Every fire is expected; every scan-completed-with-imbalances-found is a P0.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — regulators love to see the nightly reconciler completing on schedule)",
+        "monitoring::MetricsCollector (increments academorix.ledger.reconciliation_runs_total; labels: outcome='balanced' or 'imbalanced')"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "transactions_scanned": "integer",
+        "accounts_scanned": "integer",
+        "imbalances_detected": "integer (0 = healthy; > 0 = P0 signal)",
+        "reconciliation_duration_ms": "integer",
+        "completed_at": "ISO 8601"
+      }
+    }
+  ]
+}

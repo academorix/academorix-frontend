@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/activity/observers",
+  "$version": 1,
+  "title": "activity — Eloquent observers",
+  "description": "Two observers. `ActivityObserver` on the vendor-adapted `Activity` model — enforces tenant_id + application_id fill-in, truncates descriptions, dispatches ActivityRecorded post-persist, and refuses illegal deletes. `ActivityRetentionPolicyObserver` on the retention policy model — validates entitlement, retention_days range, log_name existence.",
+  "observers": [
+    {
+      "class": "Academorix\\Observability\\Activity\\Observers\\ActivityObserver",
+      "target": "Academorix\\Observability\\Activity\\Models\\Activity",
+      "hooks": [
+        {
+          "event": "creating",
+          "description": "Defense-in-depth. Refuse when tenant_id is null AND the row is not part of a platform-audience audit-stream write (in which case tenant_id being null is legal per the schema). Populate `application_id` from the request-scoped `TenantContext::activeApplicationId()` when the row is tenant-audience AND application_id was not explicitly set. Truncate `description` to 500 chars (defensive — vendor allows longer). Populate `batch_uuid` from the request-scoped ActivityBatcher if a batch is active."
+        },
+        {
+          "event": "created",
+          "description": "Fire ActivityRecorded (afterCommit) with the persisted row + resolved subject + resolved causer. If the batch counter reached the threshold (settings.activity.feed.batch_collapse_threshold, default 3), signal to ActivityBatchCompleted's downstream consumer to emit a collapsed feed item instead of individual items."
+        },
+        {
+          "event": "updating",
+          "description": "The vendor allows updates for status transitions (e.g. flipping a pending → confirmed marker). Refuse when `tenant_id` changes — cross-tenant reassignment is a schema violation. Refuse when `causer_type / causer_id / subject_type / subject_id / created_at` change — those are immutable historical facts."
+        },
+        {
+          "event": "deleting",
+          "description": "Refuse when the caller is not `PurgeExpiredActivitiesJob` (via a static per-request marker set by the job). This prevents accidental hard-deletes from admin CRUD paths — activity rows only leave the table via the retention pipeline. Throws ACTIVITY_DELETE_FORBIDDEN (403) otherwise."
+        }
+      ]
+    },
+    {
+      "class": "Academorix\\Observability\\Activity\\Observers\\ActivityRetentionPolicyObserver",
+      "target": "Academorix\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
+      "hooks": [
+        {
+          "event": "creating",
+          "description": "Refuse when the caller's tenant lacks the `activity_retention_extended` entitlement AND `retention_days > 90` — tenants without the entitlement can only reduce retention (which they wouldn't normally do). Refuse when retention_days is outside 30..730 (redundant with `valid_retention_days` rule; defense-in-depth). Refuse when log_name is set AND does not exist in data/log-names-catalog.json. Refuse when override_reason < 20 chars. Refuse when retention_days > 365 AND `expires_at IS NULL` — regulator holds SHOULD document a review-by date."
+        },
+        {
+          "event": "created",
+          "description": "Fire ActivityRetentionPolicyCreated (afterCommit). If retention_days > 365, ALSO fire the regulator-hold notification pipeline (see notifications.json)."
+        },
+        {
+          "event": "updating",
+          "description": "Refuse tenant_id changes. Refuse retention_days changes that would go outside 30..730. Refuse retention_days > 90 changes when the tenant lacks the entitlement (in case the entitlement was revoked between create + update)."
+        },
+        {
+          "event": "updated",
+          "description": "Fire ActivityRetentionPolicyUpdated (afterCommit) when a non-technical field changed. Compute `crossesRegulatorThreshold` — true when retention_days crossed the 365 boundary in either direction."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "ActivityObserver's `deleting` refusal is the LAST LINE OF DEFENCE against accidental activity deletion. The retention pipeline uses a static marker (`PurgeExpiredActivitiesJob::asPurgeCaller()`) that the observer checks — anything else throws.",
+    "ActivityObserver does NOT compose Auditable — activity IS the audit surface. Auditing activity rows would be recursive + double-write every mutation.",
+    "ActivityRetentionPolicyObserver DOES compose Auditable — retention decisions are compliance events. Every create / update / delete writes a row on the `audits` table via HasAudit."
+  ]
+}

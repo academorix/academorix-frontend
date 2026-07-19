@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/monitoring/listeners",
+  "$version": 1,
+  "title": "monitoring — subscribed events",
+  "listeners": [
+    {
+      "event": "tenancy::TenantSuspended",
+      "listener": "Academorix\\Observability\\Monitoring\\Listeners\\SuspendMonitoringOnTenantSuspended",
+      "queue": "monitoring",
+      "purpose": "Marks every monitoring_provider_config for the suspended tenant as is_active=false + disables every health_check (is_enabled=false + cancels pending RunHealthCheckJob). Does NOT soft-delete — restoration on tenant reactivation is one flip away. Fires MonitoringProviderDeactivated (reason='tenant_suspended') per config + HealthCheckDisabled (reason='tenant_suspended') per check."
+    },
+    {
+      "event": "tenancy::TenantResumed",
+      "listener": "Academorix\\Observability\\Monitoring\\Listeners\\ResumeMonitoringOnTenantResumed",
+      "queue": "monitoring",
+      "purpose": "Reverses SuspendMonitoringOnTenantSuspended. Only re-activates providers + checks that were disabled BY the suspension cascade (checks the audit trail for reason='tenant_suspended')."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Observability\\Monitoring\\Listeners\\PurgeMonitoringDataForErasedTenant",
+      "queue": "monitoring",
+      "purpose": "Cascade delete via FK CASCADE across all six monitoring tables. This listener writes the compliance audit trail entry + emits count metrics per entity family (health_checks / health_check_runs / monitoring_alerts / monitoring_alert_policies / monitoring_incidents / monitoring_provider_configs purged). No cross-provider deletion requests needed — the providers don't retain tenant-identifiable data (monitoring is system health, not user data)."
+    },
+    {
+      "event": "entitlements::EntitlementRevoked",
+      "listener": "Academorix\\Observability\\Monitoring\\Listeners\\CascadeEntitlementRevocation",
+      "queue": "monitoring",
+      "purpose": "Reacts to entitlement revocation on any of the 9 monitoring entitlements. Consequences depend on which entitlement was revoked: monitoring_capture revoked → disable every health_check + deactivate every provider_config for the tenant; monitoring_paging revoked → deactivate PagerDuty + Opsgenie provider_configs; monitoring_apm revoked → deactivate Datadog; monitoring_prometheus revoked → deactivate Prometheus; monitoring_custom_metrics revoked → soft-delete custom_script checks + custom_metric policies."
+    },
+    {
+      "event": "monitoring::MonitoringAlertFired",
+      "listener": "Academorix\\Observability\\Monitoring\\Listeners\\SelfEvaluatePolicyThreshold",
+      "queue": "monitoring",
+      "priority": 20,
+      "purpose": "Reacts to the module's own MonitoringAlertFired event for the meta-alert path: monitoring's own dispatch failure rate. When notification failure rate for the tenant exceeds 25% over 15min: fire an internal MonitoringHealthCheckPersistentlyFailingNotification-equivalent for the ops team of the monitoring module itself."
+    },
+    {
+      "event": "monitoring::MonitoringProviderCircuitBreakerOpened",
+      "listener": "Academorix\\Observability\\Monitoring\\Listeners\\FailoverToAlternateProvider",
+      "queue": "monitoring-critical",
+      "priority": 10,
+      "purpose": "P1 fail-over path. When PagerDuty's circuit opens: check whether the tenant has an active Opsgenie config; if yes: re-route pending P1 notifications to Opsgenie. When Opsgenie's circuit opens: mirror path via PagerDuty. Both open: page platform ops directly (bypasses tenant-side providers entirely)."
+    }
+  ]
+}

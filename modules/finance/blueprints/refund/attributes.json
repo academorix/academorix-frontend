@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/refund/attributes",
+  "$version": 1,
+  "title": "refund — PHP attribute contracts",
+  "description": "Two class-level attributes for listener discovery. `AsRefundListener` subscribes to refund lifecycle events (requested / approval_required / approved / rejected / processing / succeeded / failed / cancelled / provider_error / provider_reconciled). `AsRefundLineListener` subscribes to refund_line events (created). Discovery loader picks up each class at boot + wires the declared events. No property-level attributes: the two owned rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
+  "namespace": "Academorix\\Finance\\Refund\\Attributes",
+  "attributes": [
+    {
+      "name": "AsRefundListener",
+      "class": "Academorix\\Finance\\Refund\\Attributes\\AsRefundListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to refund lifecycle events (RefundRequested / RefundApprovalRequired / RefundApproved / RefundRejected / RefundProcessing / RefundSucceeded / RefundFailed / RefundCancelled / RefundNotifiedProvider / RefundProviderError / RefundProviderReconciled / RefundClawbackReferral / RefundClawbackCoupon).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names. Empty = subscribe to every Refund* event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (refunds or refunds-critical)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsRefundListener(events: ['RefundSucceeded'], queue: 'refunds-critical', priority: 30)]\nfinal class NotifyFinanceOfRevenueReversal\n{\n    public function __invoke(RefundSucceeded $event): void\n    {\n        // Dispatch to finance module for revenue-recognition adjustment.\n    }\n}"
+    },
+    {
+      "name": "AsRefundLineListener",
+      "class": "Academorix\\Finance\\Refund\\Attributes\\AsRefundLineListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to refund_line lifecycle events (RefundLineCreated). Refund lines are immutable at creation — no update / delete events fire.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": []
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsRefundLineListener(events: ['RefundLineCreated'], queue: 'refunds', priority: 60)]\nfinal class CaptureRefundLineForAnalytics\n{\n    public function __invoke(RefundLineCreated $event): void\n    {\n        // Fire analytics::track for RefundLineCreated event.\n    }\n}"
+    }
+  ]
+}

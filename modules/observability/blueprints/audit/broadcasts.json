@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/audit/broadcasts",
+  "$version": 1,
+  "title": "audit — realtime broadcast channels",
+  "description": "Two broadcast channels for live compliance-dashboard updates. Tenant-level retention-policy channel + audit-export channel. Audit rows themselves are NOT broadcast — they are potentially high-volume + PII-laden, and there is no operational need for live audit tail (compliance dashboards refresh on demand). Reverb driver is the default transport.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.audit.retention-policy",
+      "class": "Academorix\\Observability\\Audit\\Broadcasts\\TenantAuditRetentionPolicyChannel",
+      "description": "Retention-policy lifecycle updates. Powers the compliance-officer dashboard's retention-policy widget with live status transitions.",
+      "authorization": "sanctum::authed AND tenant_matches AND (compliance_officer OR owner role)",
+      "events": [
+        "AuditRetentionPolicyCreated",
+        "AuditRetentionPolicyUpdated",
+        "AuditRetentionExtensionExpired"
+      ],
+      "throttle": "10 events/minute per channel",
+      "notes": "override_reason is broadcast in full to the compliance-officer role. Payload is trimmed for owner role (reason omitted; only the fact-of-change + effective retention_years)."
+    },
+    {
+      "name": "tenant.{tenantId}.audit.exports",
+      "class": "Academorix\\Observability\\Audit\\Broadcasts\\TenantAuditExportsChannel",
+      "description": "Audit export lifecycle updates. Powers the compliance-officer dashboard's active-exports widget + a live progress indicator on running exports.",
+      "authorization": "sanctum::authed AND tenant_matches AND (compliance_officer OR owner role)",
+      "events": [
+        "AuditExportRequested",
+        "AuditExportProgress (internal — informational chunks during a long-running export)",
+        "AuditExportCompleted",
+        "AuditExportFailed"
+      ],
+      "throttle": "60 events/minute per channel",
+      "notes": "signed_url is NEVER broadcast on this channel (it's a bearer token). The channel emits only the export status; the URL is delivered via AuditExportReadyNotification (in-app + email), which is a targeted 1-to-1 delivery, not a broadcast."
+    }
+  ],
+  "explicitly_not_broadcast": [
+    {
+      "kind": "individual audit rows",
+      "reason": "Audit rows are potentially high-volume + PII-laden in old_values/new_values. Broadcasting them live would (a) explode channel bandwidth for high-mutation tenants + (b) risk PII leakage over the wire. Compliance dashboards refresh on demand + poll /api/v1/audits when a user is looking at the surface."
+    },
+    {
+      "kind": "purge events",
+      "reason": "Purge is nightly + not user-facing in real-time. The weekly digest notification is the right cadence."
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/monitoring/rules",
+  "$version": 1,
+  "title": "monitoring — validation rules",
+  "description": "Custom Laravel validation rules published by MonitoringServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by FormRequest data classes (for early request-time validation with clear error surfaces).",
+  "namespace": "Academorix\\Observability\\Monitoring\\Rules",
+  "rules": [
+    {
+      "name": "valid_check_type",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidCheckType",
+      "signature": "valid_check_type",
+      "description": "Value is one of the 10 supported check types: db_ping / redis_ping / queue_depth / memory_usage / cpu_usage / disk_usage / http_endpoint / dns_lookup / tls_expiry / custom_script. Backed by the HealthCheckType enum cast + data/check-type-catalog.json.",
+      "default_message": "The :attribute must be a valid health check type. See data/check-type-catalog.json."
+    },
+    {
+      "name": "valid_check_target_for_type",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidCheckTargetForType",
+      "signature": "valid_check_target_for_type",
+      "description": "target jsonb validates against the per-check-type shape in data/check-type-catalog.json. db_ping: { connection_name }. redis_ping: { connection_name }. queue_depth: { queue_name, threshold }. memory_usage: { threshold_percent }. cpu_usage: { threshold_percent }. disk_usage: { path, threshold_percent }. http_endpoint: { url, expected_status?, expected_body_contains?, follow_redirects? }. dns_lookup: { hostname, expected_ips? }. tls_expiry: { hostname, port, min_days_remaining }. custom_script: { script_id, timeout_ms }.",
+      "default_message": "The :attribute is not a valid target for check_type ':check_type'. Missing required fields: :missing_fields."
+    },
+    {
+      "name": "valid_interval_seconds",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidIntervalSeconds",
+      "signature": "valid_interval_seconds",
+      "description": "interval_seconds is an integer between 15 and 86400. 15s is the rate-limit floor; 86400s (1 day) is the practical ceiling.",
+      "default_message": "The :attribute must be between 15 and 86400 seconds."
+    },
+    {
+      "name": "valid_timeout_seconds",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidTimeoutSeconds",
+      "signature": "valid_timeout_seconds",
+      "description": "timeout_seconds is an integer between 1 and interval_seconds - 1. Timeouts must be strictly less than the interval to prevent overlapping runs.",
+      "default_message": "The :attribute must be between 1 and interval_seconds - 1."
+    },
+    {
+      "name": "valid_signal_type_source_combo",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidSignalTypeSourceCombo",
+      "signature": "valid_signal_type_source_combo",
+      "description": "signal_source references a real subject appropriate for the signal_type. For health_check_status: signal_source must be an existing health_check.slug. For error_rate / latency_p95 / latency_p99: signal_source is a metric-name pattern (e.g. 'http.requests.5xx.rate'). For queue_depth: signal_source is a queue-name. For worker_health: signal_source is a worker-tag. For custom_metric: signal_source is a registered custom metric name.",
+      "default_message": "signal_source ':source' is not valid for signal_type ':type'. Expected a :expected_kind."
+    },
+    {
+      "name": "valid_threshold_operator_value",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidThresholdOperatorValue",
+      "signature": "valid_threshold_operator_value",
+      "description": "threshold_operator IN {greater_than, less_than, equals, not_equals}. threshold_value is numeric + finite. threshold_unit is a string matching the signal_type's expected unit (percent for error_rate / cpu_usage / memory_usage; ms for latency_*; count for queue_depth; bytes for disk_usage).",
+      "default_message": "The :attribute has an invalid threshold operator/value/unit combination for signal_type ':signal_type'."
+    },
+    {
+      "name": "valid_severity",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidSeverity",
+      "signature": "valid_severity",
+      "description": "severity IN {p1, p2, p3, p4}. See data/severity-catalog.json for the SLA + routing per severity.",
+      "default_message": "The :attribute must be one of: p1, p2, p3, p4."
+    },
+    {
+      "name": "valid_provider_config_shape",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidProviderConfigShape",
+      "signature": "valid_provider_config_shape",
+      "description": "config jsonb validates against the per-provider JSON Schema in data/providers/<provider>-config.schema.json. Sentry: sentry_dsn. Datadog: api_key + app_key + site?. PagerDuty: routing_key. Opsgenie: api_key + team_id + region?. Prometheus: pushgateway_url + auth_bearer?. Custom Webhook: webhook_url + hmac_secret + signature_header?.",
+      "default_message": "The provider config does not match the schema for the ':provider' provider. Missing required fields: :missing_fields."
+    },
+    {
+      "name": "valid_notify_provider_configs",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidNotifyProviderConfigs",
+      "signature": "valid_notify_provider_configs",
+      "description": "notify_provider_configs is a non-empty array of MonitoringProviderConfig ULIDs. Every ID resolves to an active + same-tenant config. Every referenced config's enabled_severities includes the policy's severity.",
+      "default_message": "One or more of the notify_provider_configs IDs is invalid, inactive, cross-tenant, or does not accept the policy's severity."
+    },
+    {
+      "name": "valid_alert_state_transition",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidAlertStateTransition",
+      "signature": "valid_alert_state_transition",
+      "description": "Alert state transitions must follow: firing → acknowledged | resolved | suppressed | expired; acknowledged → resolved | expired; resolved → (terminal); suppressed → (terminal); expired → (terminal). Direct transitions like 'resolved → firing' are refused.",
+      "default_message": "Invalid alert state transition from :from to :to."
+    },
+    {
+      "name": "valid_incident_state_transition",
+      "class": "Academorix\\Observability\\Monitoring\\Rules\\ValidIncidentStateTransition",
+      "signature": "valid_incident_state_transition",
+      "description": "Incident state transitions must follow: open → acknowledged | resolved; acknowledged → investigating | mitigating | resolved; investigating → mitigating | resolved; mitigating → resolved; resolved → postmortem (P1 only); postmortem → (terminal). Direct backward transitions refused.",
+      "default_message": "Invalid incident state transition from :from to :to."
+    }
+  ]
+}

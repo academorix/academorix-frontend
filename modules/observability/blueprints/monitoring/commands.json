@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/monitoring/commands",
+  "$version": 1,
+  "title": "monitoring — Artisan commands",
+  "commands": [
+    {
+      "signature": "monitoring:list-health-checks {--tenant=} {--check-type=} {--enabled} {--unhealthy} {--limit=100}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\ListHealthChecksCommand",
+      "purpose": "Table view of health_checks. Filterable by tenant, check_type, is_enabled, last_run_status. --unhealthy filters last_run_status IN ('degraded', 'unhealthy', 'timeout', 'error'). Shows the denormalized last_run_at + last_run_status + consecutive_failure_count per row."
+    },
+    {
+      "signature": "monitoring:describe-health-check {check}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\DescribeHealthCheckCommand",
+      "purpose": "Verbose read of one health check: config + last 24 hours of runs + status timeline + attached alert policies (via signal_source lookup). Support tool for investigating a specific check's health."
+    },
+    {
+      "signature": "monitoring:run-health-check {check} {--wait}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\RunHealthCheckCommand",
+      "purpose": "Manual trigger of a specific health check. Dispatches RunHealthCheckJob immediately (bypasses the schedule). --wait blocks + prints the run outcome (used for ops one-off validation). Rate-limited by monitoring.rate_limit middleware to prevent test spam."
+    },
+    {
+      "signature": "monitoring:list-alerts {--tenant=} {--severity=} {--status=firing} {--policy=} {--from=} {--to=} {--limit=100}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\ListAlertsCommand",
+      "purpose": "Alert view. Default filter: --status=firing. Filterable by tenant, severity, policy_id, date range. Ops uses this for on-call triage."
+    },
+    {
+      "signature": "monitoring:acknowledge-alert {alert} {--note=}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\AcknowledgeAlertCommand",
+      "purpose": "Manually acknowledge an alert. Sets status='acknowledged' + acknowledged_by_user_id = current user + acknowledged_at = now(). --note is optional but recommended. Used by ops via CLI when the SDUI is unreachable."
+    },
+    {
+      "signature": "monitoring:resolve-alert {alert} --note={note}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\ResolveAlertCommand",
+      "purpose": "Manually resolve an alert. Sets status='resolved' + resolved_by='manual' + resolved_at + resolved_by_user_id. --note is required and written to the audit trail. Triggers the incident auto-resolve path if this was the last firing alert in the incident."
+    },
+    {
+      "signature": "monitoring:list-incidents {--tenant=} {--severity=} {--status=} {--unresolved} {--from=} {--to=} {--limit=50}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\ListIncidentsCommand",
+      "purpose": "Incident timeline view. --unresolved filters to open incidents (status IN 'open', 'acknowledged', 'investigating', 'mitigating'). Sorted by opened_at DESC."
+    },
+    {
+      "signature": "monitoring:acknowledge-incident {incident} {--note=}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\AcknowledgeIncidentCommand",
+      "purpose": "Manually acknowledge an incident (takes ownership + cancels escalation). Sets status='acknowledged'. --note optional."
+    },
+    {
+      "signature": "monitoring:resolve-incident {incident} --note={note} {--postmortem-url=}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\ResolveIncidentCommand",
+      "purpose": "Manually resolve an incident. Sets status='resolved' + resolved_at. --note required. --postmortem-url optional (auto-populates postmortem_url for P1 incidents). Triggers MonitoringPostmortemRequiredNotification when severity=p1 + no --postmortem-url was provided."
+    },
+    {
+      "signature": "monitoring:list-providers {--tenant=} {--provider=} {--active} {--test-mode} {--breaker-open}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\ListProvidersCommand",
+      "purpose": "Provider config view. --active filters is_active=true; --test-mode filters test_mode=true; --breaker-open filters circuit_breaker_state='open'. Shows enabled_severities per row + circuit-breaker state."
+    },
+    {
+      "signature": "monitoring:configure-provider {--tenant=} {--provider=} {--name=} {--config-file=} {--enabled-severities=*} {--test-mode} {--dry-run}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\ConfigureProviderCommand",
+      "purpose": "Scriptable provider config create/update. --config-file=path/to/config.json is validated against the per-provider JSON schema. --dry-run validates + shows diff without persisting. Encrypts the config at rest."
+    },
+    {
+      "signature": "monitoring:test-provider {provider_config}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\TestProviderCommand",
+      "purpose": "Send a synthetic P4 test alert via the provider's sandbox / test endpoint. Reports success/failure with provider response details. Rate-limited by monitoring.rate_limit middleware."
+    },
+    {
+      "signature": "monitoring:reset-circuit-breaker {provider_config} --note={note}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\ResetCircuitBreakerCommand",
+      "purpose": "Manually reset an OPEN circuit breaker. Sets circuit_breaker_state='closed' + circuit_breaker_open_until=NULL + consecutive_failure_count=0 + increments circuit_breaker_reset_count. --note is required (audit trail)."
+    },
+    {
+      "signature": "monitoring:audit-suppressions {--tenant=} {--from=} {--to=} {--policy=}",
+      "class": "Academorix\\Observability\\Monitoring\\Console\\Commands\\AuditSuppressionsCommand",
+      "purpose": "Compliance report. Counts monitoring_alerts rows with status='suppressed' grouped by (policy_id, suppression_reason). Used by DPO / ops audit — evidence that suppression rules are working correctly + not silencing legitimate alerts."
+    }
+  ]
+}

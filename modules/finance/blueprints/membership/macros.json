@@ -1,0 +1,31 @@
+{
+  "id": "academorix://modules/membership/macros",
+  "$version": 1,
+  "title": "membership — published macros",
+  "description": "No request-level macros — membership context is resolved via route bindings. One Blueprint macro shared with sibling finance modules for the snapshot column family.",
+  "macros": [],
+  "blueprint_macros": [
+    {
+      "name": "Blueprint::couponAndTaxSnapshots",
+      "signature": "Blueprint::couponAndTaxSnapshots(): void",
+      "adds": "Adds the shared column family for coupon + tax snapshots used across finance aggregates: `coupon_id` (uuid nullable + FK to coupons + RESTRICT), `coupon_snapshot` (jsonb nullable), `tax_calculation_id` (uuid nullable + FK to tax_calculations + RESTRICT), `tax_calculation_snapshot` (jsonb nullable). Used by memberships + (Wave 4.5+) invoices + one-off transactions.",
+      "columns": [
+        "coupon_id: uuid NULL FK coupons RESTRICT",
+        "coupon_snapshot: jsonb NULL",
+        "tax_calculation_id: uuid NULL FK tax_calculations RESTRICT",
+        "tax_calculation_snapshot: jsonb NULL"
+      ]
+    },
+    {
+      "name": "Blueprint::passLifecycleTimestamps",
+      "signature": "Blueprint::passLifecycleTimestamps(): void",
+      "adds": "Adds valid_from + valid_until + consumed_at + refunded_at columns + related indexes for the standard pass-lifecycle shape. Reserved for future pass-family expansions (session_credits, tournament_entries) that share the shape.",
+      "columns": [
+        "valid_from: timestamptz NOT NULL",
+        "valid_until: timestamptz NOT NULL",
+        "consumed_at: timestamptz NULL",
+        "refunded_at: timestamptz NULL"
+      ]
+    }
+  ]
+}

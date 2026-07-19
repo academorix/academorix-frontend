@@ -1,0 +1,62 @@
+{
+  "id": "academorix://modules/coupon/attributes",
+  "$version": 1,
+  "title": "coupon — PHP attribute contracts",
+  "description": "Two class-level attributes for listener discovery. `AsCouponListener` subscribes to coupon lifecycle events (created / activated / deactivated / expired / usage_cap_reached / issued); `AsCouponRedemptionListener` subscribes to redemption events (redeemed / refused / reversed / clawback_requested / clawback_completed). Discovery loader picks up each class at boot + wires the declared events. No property-level attributes: the two owned rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
+  "namespace": "Academorix\\Finance\\Coupon\\Attributes",
+  "attributes": [
+    {
+      "name": "AsCouponListener",
+      "class": "Academorix\\Finance\\Coupon\\Attributes\\AsCouponListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to coupon lifecycle events (CouponCreated / CouponUpdated / CouponActivated / CouponDeactivated / CouponExpired / CouponUsageCapReached / CouponIssuedByReferralProgram / CouponIssuedManually / CouponReportGenerated).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names. Empty = subscribe to every Coupon* event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (coupons or coupons-critical)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsCouponListener(events: ['CouponUsageCapReached'], queue: 'coupons-critical', priority: 30)]\nfinal class NotifyMarketingOnCapReached\n{\n    public function __invoke(CouponUsageCapReached $event): void\n    {\n        // Dispatch email to marketing team + suggest follow-up campaign.\n    }\n}"
+    },
+    {
+      "name": "AsCouponRedemptionListener",
+      "class": "Academorix\\Finance\\Coupon\\Attributes\\AsCouponRedemptionListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to redemption lifecycle events (CouponRedeemed / CouponRedemptionRefused / CouponRedemptionReversed / CouponClawbackRequested / CouponClawbackCompleted). CouponRedeemed + CouponClawbackCompleted are queue='coupons-critical' by default because they trigger downstream finance + marketing lane events.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": []
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Critical consumers (finance bridge, marketing fanout) should override to `coupons-critical`."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsCouponRedemptionListener(events: ['CouponRedeemed'], queue: 'marketing', priority: 60)]\nfinal class CaptureCouponRedeemedMarketingEvent\n{\n    public function __invoke(CouponRedeemed $event): void\n    {\n        // Only fire for referral / marketing_campaign coupons — issuance_source-based filter\n        if (!in_array($event->issuance_source, ['referral', 'marketing_campaign'], true)) return;\n        // Fan out to the marketing module's MarketingEventCapturer with the frozen discount_snapshot.\n    }\n}"
+    }
+  ]
+}

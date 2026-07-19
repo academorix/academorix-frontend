@@ -1,0 +1,116 @@
+{
+  "id": "academorix://modules/audit/data/retention-jurisdictions",
+  "$version": 1,
+  "title": "audit — jurisdiction-specific retention requirements",
+  "description": "Reference table of the minimum retention windows imposed by various regulatory regimes. Used by the SDUI retention-policy editor to suggest override_reason + retention_years combinations to compliance officers. NOT enforced — the tenant chooses its own retention; this is guidance.",
+  "jurisdictions": [
+    {
+      "region": "United States",
+      "regulation": "SOX §404 (Sarbanes-Oxley)",
+      "scope": "Publicly-traded companies + audit firms serving them",
+      "minimum_retention_years": 7,
+      "notes": "Financial-mutation records. Applies to Membership, TenantSubscription, Transaction, Chargeback, Refund, Pass. Suggested override_reason: 'SOX §404 compliance — financial mutation records'."
+    },
+    {
+      "region": "United States",
+      "regulation": "HIPAA §164.316(b)(2)(i)",
+      "scope": "Covered entities + business associates handling PHI",
+      "minimum_retention_years": 6,
+      "recommended_years": 7,
+      "notes": "6y minimum; 7y default aligns with SOX. Applies to planned Wave 7+ HealthNote + MedicalRecord aggregates. Suggested override_reason: 'HIPAA §164.316(b)(2)(i) — PHI-adjacent audit trail'."
+    },
+    {
+      "region": "United States",
+      "regulation": "IRS §6001 + Rev. Proc. 98-25",
+      "scope": "Businesses with taxable transactions",
+      "minimum_retention_years": 7,
+      "notes": "Applies to any financial-record-adjacent audit trail supporting a taxable transaction. Suggested override_reason: 'IRS records-retention rule for taxable transactions'."
+    },
+    {
+      "region": "United States",
+      "regulation": "CCPA §1798.185",
+      "scope": "Businesses collecting personal information of California residents",
+      "minimum_retention_years": 2,
+      "notes": "24-month minimum for consumer-request records (DSAR responses). Our 7y baseline exceeds. Suggested override_reason: 'CCPA §1798.185 consumer-request records'."
+    },
+    {
+      "region": "United States",
+      "regulation": "PCI-DSS Requirement 10.7",
+      "scope": "Any entity storing / processing / transmitting cardholder data",
+      "minimum_retention_years": 1,
+      "recommended_years": 7,
+      "notes": "1y minimum with 3 months immediately available (hot-tier). Our 90d hot + 7y baseline covers. Suggested override_reason: 'PCI-DSS Req 10.7 — audit trails for cardholder data'."
+    },
+    {
+      "region": "European Union",
+      "regulation": "GDPR Art. 5(1)(e) + Art. 30",
+      "scope": "Any controller / processor of EU-resident personal data",
+      "minimum_retention_years": null,
+      "recommended_years": 7,
+      "notes": "GDPR does NOT specify a minimum retention — it specifies 'no longer than necessary'. 7 years is our balance point between Art. 30 records-of-processing (evidence for regulator inspection) and Art. 5(1)(e) minimization. Suggested override_reason: 'GDPR Art. 30 records of processing — 7y regulatory audit window'."
+    },
+    {
+      "region": "European Union",
+      "regulation": "PSD2 (Payment Services Directive 2) Art. 34",
+      "scope": "Payment service providers",
+      "minimum_retention_years": 5,
+      "notes": "Applies when a tenant is registered as a PSP or processes payments under a PSP license. Suggested override_reason: 'PSD2 Art. 34 payment-transaction records'."
+    },
+    {
+      "region": "United Kingdom",
+      "regulation": "UK GDPR + Data Protection Act 2018",
+      "scope": "Any controller / processor of UK-resident personal data",
+      "minimum_retention_years": null,
+      "recommended_years": 7,
+      "notes": "Same shape as EU GDPR. Post-Brexit alignment retained. Suggested override_reason: 'UK GDPR + DPA 2018 records of processing'."
+    },
+    {
+      "region": "Canada",
+      "regulation": "PIPEDA + CASL",
+      "scope": "Any organization collecting Canadian personal information + engaging in commercial electronic messages",
+      "minimum_retention_years": 3,
+      "recommended_years": 7,
+      "notes": "PIPEDA is principle-based; CASL requires consent-audit-trail retention. 7y default covers both. Suggested override_reason: 'PIPEDA + CASL compliance — consent + processing audit'."
+    },
+    {
+      "region": "Australia",
+      "regulation": "Privacy Act 1988 (Cth) APP 11",
+      "scope": "Australian Privacy Principles organizations",
+      "minimum_retention_years": null,
+      "recommended_years": 7,
+      "notes": "Australian Privacy Principles Art. 11 requires reasonable-security-measures retention. 7y baseline covers. Suggested override_reason: 'Privacy Act 1988 APP 11 audit trail'."
+    },
+    {
+      "region": "Global (contractual)",
+      "regulation": "SOC 2 Type II CC7.1",
+      "scope": "Any organization pursuing SOC 2 attestation",
+      "minimum_retention_years": null,
+      "recommended_years": 7,
+      "notes": "SOC 2 auditors typically require 1-year audit window minimum; 7y aligned with SOX baseline. Suggested override_reason: 'SOC 2 Type II CC7.1 audit trail'."
+    },
+    {
+      "region": "Global (contractual)",
+      "regulation": "ISO 27001 A.12.4.1",
+      "scope": "Any organization pursuing ISO 27001 certification",
+      "minimum_retention_years": null,
+      "recommended_years": 7,
+      "notes": "ISO 27001 A.18.1.3 requires records-management-policy alignment with regulatory + contractual requirements. Suggested override_reason: 'ISO 27001 A.12.4.1 event logging retention'."
+    },
+    {
+      "region": "Extended (regulator hold)",
+      "regulation": "Ongoing regulator investigation",
+      "scope": "Specific investigations (SEC, FTC, DOJ, EU DPA)",
+      "minimum_retention_years": null,
+      "recommended_years": 10,
+      "notes": "Regulator-issued preservation orders extend retention beyond default. Suggested override_reason: 'Regulator preservation order — <regulator> case <case_id> ongoing'. override_ends_at = expected resolution date or NULL for indefinite."
+    },
+    {
+      "region": "Extended (litigation hold)",
+      "regulation": "Ongoing litigation",
+      "scope": "Litigation with a discovery duty",
+      "minimum_retention_years": null,
+      "recommended_years": 10,
+      "notes": "Legal counsel issues a litigation-hold notice. Suggested override_reason: 'Litigation hold — <matter_name> discovery ongoing'. override_ends_at = expected resolution date or NULL until counsel releases the hold."
+    }
+  ]
+}

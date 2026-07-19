@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/monitoring/analytics",
+  "$version": 1,
+  "title": "monitoring — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional"],
+  "note": "This module IS the monitoring lane (Lane 1 per growth-and-observability.md). Its ANALYTICS.json declares product-analytics events that the growth::analytics lane emits about THIS MODULE's admin surfaces (health check + alert policy + provider CRUD, alert + incident management). Monitoring-lane events themselves (health check runs, fired alerts) are NOT lane-4 events — they're lane-1 signals routed to the monitoring providers, not analytics. Consent tier for system-health signals is 'essential' (cannot be opted out).",
+  "events": [
+    {
+      "name": "Health Check Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "check_type", "interval_seconds_bucket"],
+      "description": "Admin configured a new health check. Powers onboarding funnel + check-mix insight."
+    },
+    {
+      "name": "Health Check Enabled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "check_type"]
+    },
+    {
+      "name": "Health Check Disabled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "check_type", "reason"]
+    },
+    {
+      "name": "Monitoring Alert Policy Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "signal_type", "severity", "window_seconds_bucket"]
+    },
+    {
+      "name": "Monitoring Alert Policy Suppressed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "signal_type", "severity", "suppression_reason"],
+      "description": "Audit-trail-relevant. Consent tier: essential."
+    },
+    {
+      "name": "Monitoring Alert Fired",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "severity", "signal_type"],
+      "description": "P1 fires every increment is a paging event. Consent tier: essential (system-health signal)."
+    },
+    {
+      "name": "Monitoring Alert Acknowledged",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "severity", "time_to_ack_seconds_bucket"],
+      "description": "Signal for on-call responsiveness."
+    },
+    {
+      "name": "Monitoring Alert Resolved",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "severity", "resolved_by", "time_to_resolve_seconds_bucket"]
+    },
+    {
+      "name": "Monitoring Incident Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "severity", "affected_services_count_bucket"]
+    },
+    {
+      "name": "Monitoring Incident Acknowledged",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "severity", "time_to_ack_seconds_bucket"]
+    },
+    {
+      "name": "Monitoring Incident Escalated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "severity"],
+      "description": "P1 signal — the primary on-call missed the SLA."
+    },
+    {
+      "name": "Monitoring Incident Resolved",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "severity", "resolved_by", "time_to_resolve_seconds_bucket", "alert_count_bucket"]
+    },
+    {
+      "name": "Monitoring Provider Configured",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "test_mode", "enabled_severities_count"]
+    },
+    {
+      "name": "Monitoring Provider Deactivated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "reason"]
+    },
+    {
+      "name": "Monitoring Provider Test Sent",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "outcome", "latency_ms_bucket"]
+    },
+    {
+      "name": "Monitoring Provider Circuit Breaker Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "consecutive_failure_count"],
+      "description": "P1 event — every fire indicates monitoring dispatch degradation. Consent tier: essential."
+    },
+    {
+      "name": "Monitoring Provider Circuit Breaker Reset",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "was_auto_close"]
+    },
+    {
+      "name": "Monitoring Dashboard Viewed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id"],
+      "description": "Signal for engagement with the monitoring dashboard."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw tenant_id in provider properties — always the hashed tenant_id_bucket via PII hashing. Prevents cross-tenant correlation.",
+    "Analytics NEVER carry raw ULIDs on alerts/incidents — only their severity + signal_type + bucketed metadata.",
+    "The 'essential' consent tier for alert/incident lifecycle events is deliberate — system-health + incident-response signals cannot be opted out.",
+    "This file is DISTINCT from the monitoring-lane substrate itself. Monitoring events (health check runs, fired alerts, opened incidents) are Lane 1 primary signals that route through the MonitoringProviderManager fan-out. This analytics.json is the growth::analytics feed about the admin experience of managing the monitoring surface — a different lane, different consent, different retention."
+  ]
+}

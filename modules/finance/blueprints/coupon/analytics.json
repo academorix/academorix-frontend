@@ -1,0 +1,105 @@
+{
+  "id": "academorix://modules/coupon/analytics",
+  "$version": 1,
+  "title": "coupon — product analytics",
+  "lane": "analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Coupon Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "discount_type", "applicability", "issuance_source", "campaign_name", "has_usage_cap", "has_expiry"],
+      "description": "Admin created a coupon. Powers issuance-mix insight (referral vs manual vs campaign) + discount-type distribution."
+    },
+    {
+      "name": "Coupon Activated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id"]
+    },
+    {
+      "name": "Coupon Deactivated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "reason", "usage_count_at_deactivation_bucket"]
+    },
+    {
+      "name": "Coupon Expired",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "usage_count_at_expiry_bucket", "usage_cap_at_expiry"]
+    },
+    {
+      "name": "Coupon Usage Cap Reached",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "usage_cap", "issuance_source", "days_since_created_bucket"]
+    },
+    {
+      "name": "Coupon Redeemed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "discount_type", "applicability", "issuance_source", "campaign_name", "recipient_role", "source_amount_bucket", "discount_amount_bucket", "applied_to_type"],
+      "description": "The core conversion event. source_amount_bucket + discount_amount_bucket are pre-computed bins (0-999 / 1000-2999 / 3000-9999 / 10000+). Never raw amounts."
+    },
+    {
+      "name": "Coupon Redemption Refused",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "refusal_reason", "code_type_bucket"],
+      "description": "Every refusal fires. Powers the fraud pattern surface + rate-limit tuning."
+    },
+    {
+      "name": "Coupon Issued By Referral",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "referral_program_id", "recipient_role", "discount_type"]
+    },
+    {
+      "name": "Coupon Issued Manually",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "issuance_source", "campaign_name", "is_bulk_issue"]
+    },
+    {
+      "name": "Coupon Bulk Issued",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "campaign_name", "count_bucket", "discount_type"],
+      "description": "Fires on POST /coupons/bulk-issue completion. count_bucket: 1-9 / 10-99 / 100-999 / 1000+."
+    },
+    {
+      "name": "Coupon Clawback Requested",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "coupon_id", "clawback_reason"],
+      "description": "P1 event — every fire is a financial reversal. Consent tier: essential."
+    },
+    {
+      "name": "Coupon Clawback Completed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "coupon_id", "clawback_reason", "reversed_amount_bucket"]
+    },
+    {
+      "name": "Coupon Redemption Reversed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "coupon_id", "reason", "days_from_redeemed_bucket"]
+    },
+    {
+      "name": "Coupon Report Generated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "report_id", "period_days", "coupon_count_bucket", "redemption_count_bucket"]
+    }
+  ],
+  "notes": [
+    "Discount amounts NEVER surface as raw properties — always the bucket (0-999 / 1000-2999 / 3000-9999 / 10000+). Prevents competitor cross-inference.",
+    "The 'essential' consent tier for clawback events is deliberate — financial-reversal integrity signals cannot be opted out.",
+    "Consent tier 'functional' on core redemption events aligns with GDPR/CCPA functional-consent — a user who revokes analytics consent stops appearing in the analytics rollup but redemptions still commit + count against caps.",
+    "Marketing events (ad-network conversion attribution) are NOT here — they live on the marketing lane at /modules/finance/blueprints/coupon/marketing.json with the `advertising` consent tier."
+  ]
+}

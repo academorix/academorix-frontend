@@ -1,0 +1,182 @@
+{
+  "id": "refund.proration-preview",
+  "title": "Prorated refund preview",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Live proration preview for prorated refunds. Given a payment (which must be for a membership) + a cancellation date, renders the computed refund_amount + a breakdown (unused_period_start/end, unused_days, unused_pass_credit, base_refund_amount, used_pass_penalty). Read-only — computed via compute_proration helper. Makes the arithmetic visible so customers understand exactly why they're getting the amount they're getting, reducing support tickets around 'why is my refund less than I expected'.",
+  "props": {
+    "paymentId": { "type": "string", "required": true, "description": "The payment being refunded (must be a membership payment)." },
+    "cancellationDate": { "type": "string", "format": "date-time", "required": true, "description": "The cancellation timestamp — determines the unused_period_start." }
+  },
+  "dataSources": [
+    {
+      "name": "proration",
+      "kind": "http.get",
+      "url": "/api/v1/payments/{paymentId}/proration",
+      "query": { "cancellation_date": "{cancellationDate}" },
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Card",
+      "props": { "className": "p-4 bg-muted/20 border" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h3", "className": "text-lg font-medium mb-3", "children": "Prorated refund calculation" }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-2 text-sm" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-muted", "children": "Billing interval" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono" },
+                  "bindings": { "children": { "$ref": "proration.billing_interval" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-muted", "children": "Total period" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono" },
+                  "bindings": {
+                    "children": { "$expr": "proration.total_period_days + ' days'" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-muted", "children": "Days used" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono" },
+                  "bindings": {
+                    "children": { "$expr": "(proration.total_period_days - proration.unused_days) + ' days'" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-muted", "children": "Days remaining (unused)" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono font-medium" },
+                  "bindings": {
+                    "children": { "$expr": "proration.unused_days + ' days'" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Separator",
+              "props": { "className": "my-2" }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-muted", "children": "Base refund" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "'+' + formatCurrency(proration.base_refund_cents, proration.currency)"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "bindings": {
+                "hidden": { "$expr": "!proration.used_pass_penalty_cents" }
+              },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-muted" },
+                  "bindings": {
+                    "children": { "$expr": "'Used passes (' + proration.used_pass_count + ')'" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono text-danger" },
+                  "bindings": {
+                    "children": { "$expr": "'-' + formatCurrency(proration.used_pass_penalty_cents, proration.currency)" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "bindings": {
+                "hidden": { "$expr": "!proration.unused_pass_credit_cents" }
+              },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-muted" },
+                  "bindings": {
+                    "children": { "$expr": "'Unused passes (' + proration.unused_pass_count + ')'" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono text-success" },
+                  "bindings": {
+                    "children": { "$expr": "'+' + formatCurrency(proration.unused_pass_credit_cents, proration.currency)" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Separator",
+              "props": { "className": "my-2" }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between font-medium" },
+              "children": [
+                { "kind": "Text", "props": { "children": "Final refund amount" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono text-lg" },
+                  "bindings": {
+                    "children": { "$expr": "formatCurrency(proration.refund_amount_cents, proration.currency)" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted mt-3" },
+          "children": "This calculation is frozen at refund creation. Pass valuation follows your tenant's per-plan configuration."
+        }
+      ]
+    }
+  ]
+}

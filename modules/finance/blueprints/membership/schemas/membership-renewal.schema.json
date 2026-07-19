@@ -1,0 +1,225 @@
+{
+  "id": "academorix://modules/membership/schemas/membership-renewal",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MembershipRenewal",
+  "description": "Per-period audit row. APPEND-ONLY — no soft-delete, no update to core fields once the terminal status is set. One row per billing attempt; a single billing cycle can span up to 4 attempts (attempt_number 1..4) before terminating in either succeeded or failed_permanent. Belongs to Tenant (CASCADE) + Membership (RESTRICT). Optional refs: invoice_id (Invoice, RESTRICT), coupon_id (Coupon, RESTRICT — the coupon used on THIS renewal, which may differ from the membership's frozen coupon_snapshot). NEVER carries application_id / organization_id / region_id / scope_node_id.",
+  "type": "object",
+  "x-module": "membership",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "membership_renewals",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mbn_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Membership\\Models\\MembershipRenewal",
+    "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipRenewalInterface",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToMembership",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "Searchable"
+    ],
+    "casts": {
+      "period_starts_at": "datetime",
+      "period_ends_at": "datetime",
+      "amount_cents": "integer",
+      "coupon_snapshot": "array",
+      "discount_amount_cents": "integer",
+      "tax_amount_cents": "integer",
+      "total_amount_cents": "integer",
+      "attempt_number": "integer",
+      "status": "RenewalStatus",
+      "attempted_at": "datetime",
+      "succeeded_at": "datetime",
+      "failed_at": "datetime",
+      "next_attempt_at": "datetime"
+    },
+    "observers": [
+      "MembershipRenewalObserver"
+    ],
+    "notes": [
+      "No SoftDeletes — renewals are append-only audit records. Retention is 7 years financial.",
+      "No HasActivityLog — every event is on the Membership side; renewal is internal accounting."
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" }
+      },
+      "membership_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "memberships",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "RESTRICT — memberships cannot be hard-deleted while renewal audit rows reference them. Financial retention outlives the membership."
+      },
+      "period_starts_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "The membership period this renewal covers — starts at membership.next_renewal_at when the renewal was created."
+      },
+      "period_ends_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "period_starts_at + billing_interval * billing_interval_count."
+      },
+      "invoice_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "invoices",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The Invoice created for this renewal cycle. Null until first attempt fires ChargeMembershipPaymentIntentJob."
+      },
+      "amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Pre-tax pre-coupon. Recomputed from the CURRENT plan.price_cents at renewal time (NOT from the membership's frozen snapshot — plans can change mid-contract and renewals reflect the current price). If plan price differs from membership's frozen price_snapshot_cents, admin's intent decides which to bill (default = renew at frozen price for lifetime plan-price parity)."
+      },
+      "currency": { "type": "string", "length": 3, "nullable": false },
+      "coupon_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "coupons",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The coupon applied to THIS renewal cycle. May differ from the membership's frozen coupon_snapshot — coupons may be renewable or non-renewable per tenant config."
+      },
+      "coupon_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "SNAPSHOT of the coupon at THIS renewal cycle. IMMUTABLE post-create."
+      },
+      "discount_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0
+      },
+      "tax_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Recomputed from CURRENT tax rates (not from membership's frozen tax_calculation_snapshot). New VAT rates apply to renewals."
+      },
+      "total_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "amount_cents - discount_amount_cents + tax_amount_cents. The final charged amount."
+      },
+      "attempt_number": {
+        "type": "integer",
+        "nullable": false,
+        "description": "1 = first attempt at next_renewal_at. 2 = retry at day+3. 3 = retry at day+7. 4 = retry at day+14. attempt_number > 4 is invalid — reaching 4 without success triggers lapsed transition."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / attempting / succeeded / failed_transient / failed_permanent / cancelled."
+      },
+      "attempted_at": { "type": "timestamptz", "nullable": true },
+      "succeeded_at": { "type": "timestamptz", "nullable": true },
+      "failed_at": { "type": "timestamptz", "nullable": true },
+      "failure_reason": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Gateway error class + short message. Never store PAN or auth codes."
+      },
+      "next_attempt_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Scheduled time for the next attempt in the retry ladder. Null for terminal statuses."
+      },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "membership_id", "period_starts_at"], "name": "membership_renewals_by_period_idx" },
+      { "columns": ["tenant_id", "status", "next_attempt_at"], "name": "membership_renewals_retry_ladder_idx", "predicate": "status = 'failed_transient' AND next_attempt_at IS NOT NULL" },
+      { "columns": ["tenant_id", "membership_id", "attempt_number"], "name": "membership_renewals_attempt_idx" },
+      { "columns": ["tenant_id", "invoice_id"], "name": "membership_renewals_invoice_idx", "predicate": "invoice_id IS NOT NULL" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "membership_id",
+    "period_starts_at",
+    "period_ends_at",
+    "amount_cents",
+    "currency",
+    "discount_amount_cents",
+    "tax_amount_cents",
+    "total_amount_cents",
+    "attempt_number",
+    "status",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mbn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "membership_id": { "type": "string", "pattern": "^mbr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "period_starts_at": { "type": "string", "format": "date-time" },
+    "period_ends_at": { "type": "string", "format": "date-time" },
+    "invoice_id": { "type": ["string", "null"], "pattern": "^inv_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "amount_cents": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "coupon_id": { "type": ["string", "null"], "pattern": "^cpn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "coupon_snapshot": { "type": ["object", "null"] },
+    "discount_amount_cents": { "type": "integer", "minimum": 0 },
+    "tax_amount_cents": { "type": "integer", "minimum": 0 },
+    "total_amount_cents": { "type": "integer", "minimum": 0 },
+    "attempt_number": { "type": "integer", "minimum": 1, "maximum": 4 },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "attempting", "succeeded", "failed_transient", "failed_permanent", "cancelled"]
+    },
+    "attempted_at": { "type": ["string", "null"], "format": "date-time" },
+    "succeeded_at": { "type": ["string", "null"], "format": "date-time" },
+    "failed_at": { "type": ["string", "null"], "format": "date-time" },
+    "failure_reason": { "type": ["string", "null"], "maxLength": 256 },
+    "next_attempt_at": { "type": ["string", "null"], "format": "date-time" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "APPEND-ONLY — no soft-delete; retention is 7 years financial",
+    "tenant_id + membership_id + period_starts_at + period_ends_at + amount_cents + currency + coupon_snapshot + attempt_number are IMMUTABLE post-create",
+    "status transitions: pending → attempting → {succeeded, failed_transient, failed_permanent, cancelled}",
+    "attempt_number progression: 1 → 2 (at day+3) → 3 (at day+7) → 4 (at day+14) → terminal fail (lapses membership)",
+    "next_attempt_at is null for terminal statuses (succeeded, failed_permanent, cancelled)",
+    "failure_reason NEVER contains PAN or auth codes — PCI-DSS scope excludes this table"
+  ]
+}

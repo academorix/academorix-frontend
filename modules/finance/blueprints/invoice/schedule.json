@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/invoice/schedule",
+  "$version": 1,
+  "title": "invoice — scheduled tasks",
+  "entries": [
+    {
+      "name": "invoice-mark-overdue",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Invoice\\Jobs\\MarkOverdueInvoicesJob",
+      "cron": "0 1 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 01:00 UTC: find invoices where due_date < now() AND status IN ('open', 'partially_paid') and transition to 'past_due'. Kicks off the dunning ladder via InvoicePastDue event."
+    },
+    {
+      "name": "invoice-dispatch-dunning",
+      "command": "invoice:dispatch-dunning-batch",
+      "cron": "0 9 * * *",
+      "timezone": "tenant.timezone",
+      "purpose": "Daily at 09:00 tenant-local: sweep past_due invoices + dispatch the appropriate dunning stage (day_3 / day_7 / day_14 / day_30 / day_60). Timezone is per-tenant so dunning emails arrive at business hours. Enterprise-only-cadence variations apply per tenant settings."
+    },
+    {
+      "name": "invoice-dispatch-due-soon",
+      "command": "invoice:dispatch-due-soon-reminders",
+      "cron": "0 10 * * *",
+      "timezone": "tenant.timezone",
+      "purpose": "Daily at 10:00 tenant-local: send InvoiceDueSoonNotification for invoices where due_date IN (today + 3 days, today + 1 day) AND status IN ('open', 'partially_paid'). Suppressed for customers with auto-pay enabled."
+    },
+    {
+      "name": "invoice-reconcile-payments",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Invoice\\Jobs\\ReconcileInvoicePaymentsJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03:00 UTC: recompute invoices.amount_paid_cents from the transactions ledger. Detects drift + emits P1 metric on findings. Enterprise deployments run this more frequently via override in settings."
+    },
+    {
+      "name": "invoice-escalate-to-collections",
+      "command": "invoice:escalate-to-collections-batch",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 04:00 UTC: sweep past-due invoices where days_past_due >= config('invoice.collection.send_to_collections_after_days', 60) AND tenant holds invoice_collections_integration entitlement. Dispatches EscalateDunningToCollectionsJob per eligible invoice."
+    },
+    {
+      "name": "invoice-purge-expired",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Invoice\\Jobs\\PurgeExpiredInvoiceDataJob",
+      "cron": "0 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05:00 UTC: apply the per-entity retention windows. Invoices > 7y (10 for Enterprise) migrate to compliance archive; PDFs migrate S3 hot → Glacier. Credit notes NEVER auto-purged."
+    },
+    {
+      "name": "invoice-monthly-revenue-report",
+      "command": "invoice:report --type=revenue --auto-dispatch --format=csv",
+      "cron": "0 6 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly 06:00 UTC on the 1st: compute per-tenant revenue report for the previous calendar month. Delivered via notification (InvoiceMonthlyRevenueReportReadyNotification — declared but not in the standard notifications.json day-1 set) to finance-role subscribers."
+    },
+    {
+      "name": "invoice-quarterly-write-off-digest",
+      "command": "invoice:report --type=written-off --auto-dispatch --format=csv",
+      "cron": "0 7 1 1,4,7,10 *",
+      "timezone": "UTC",
+      "purpose": "Quarterly on the 1st (Jan/Apr/Jul/Oct): compute the written-off invoice digest for the previous quarter. Feeds InvoiceWrittenOffNotification (quarterly digest to admin+finance)."
+    },
+    {
+      "name": "invoice-reset-monthly-quota",
+      "command": "invoice:reset-monthly-quota",
+      "cron": "0 0 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly 00:00 UTC on the 1st: reset invoice_slot_per_month consumed counters for every tenant. Delegates to the entitlements module's monthly-slot-reset infrastructure."
+    },
+    {
+      "name": "invoice-detect-stale-drafts",
+      "command": "invoice:detect-stale-drafts",
+      "cron": "0 8 * * 1",
+      "timezone": "UTC",
+      "purpose": "Weekly Monday 08:00 UTC: find invoices in status='draft' AND created_at < now() - interval '90 days'. Emits academorix.invoice.stale_drafts gauge. Ops decides whether to void + archive or preserve."
+    }
+  ]
+}

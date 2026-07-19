@@ -1,0 +1,77 @@
+{
+  "id": "academorix://modules/activity/data-classes",
+  "$version": 1,
+  "title": "activity — field-level data classification",
+  "description": "Every column on Activity + ActivityRetentionPolicy classified by sensitivity tier. Drives DSAR export scope, right-to-erasure behaviour, encryption-at-rest policy. Field paths: `Activity.field` / `ActivityRetentionPolicy.field`.",
+  "reference": "foundation::data-classes.json.tiers",
+  "tiers": {
+    "public": "Non-identifying, safe to expose in logs / URLs.",
+    "internal": "Platform-internal state. Never surfaced to end users outside admin. Not personally identifiable.",
+    "confidential": "PII / user-activity data — exportable on DSAR, erasable on request. Encrypted in transit + AES-256 at rest.",
+    "audit_log": "Immutable audit-tier data. Anonymised, not deleted, on erasure requests. Applies to retention policy fields only — Activity rows themselves are HARD-DELETED on erasure.",
+    "restricted": "Not present on this model — no credential-adjacent secrets stored here."
+  },
+  "classes": {
+    "public": [
+      "Activity.id",
+      "Activity.log_name",
+      "Activity.event",
+      "Activity.batch_uuid",
+      "Activity.tenant_id",
+      "Activity.application_id",
+      "Activity.created_at",
+      "Activity.updated_at",
+      "ActivityRetentionPolicy.id",
+      "ActivityRetentionPolicy.tenant_id",
+      "ActivityRetentionPolicy.log_name",
+      "ActivityRetentionPolicy.retention_days",
+      "ActivityRetentionPolicy.expires_at",
+      "ActivityRetentionPolicy.created_at",
+      "ActivityRetentionPolicy.updated_at"
+    ],
+    "internal": [
+      "Activity.subject_type",
+      "Activity.causer_type",
+      "ActivityRetentionPolicy.deleted_at"
+    ],
+    "confidential": [
+      "Activity.subject_id (points at a User or an entity that carries PII — e.g. Athlete)",
+      "Activity.causer_id (points at a User — actor identity is PII)",
+      "Activity.description (may contain user-visible name references — the developer authors these; the consumer contract enforces user-visible narrative not raw payloads)",
+      "Activity.properties (structured context — facility names, booking references, previous values; developer-authored, but may carry indirect PII via referenced entity names)",
+      "ActivityRetentionPolicy.override_reason (free-text may include tenant admin's name or PII references; retained on audit stream)",
+      "ActivityRetentionPolicy.created_by",
+      "ActivityRetentionPolicy.updated_by",
+      "ActivityRetentionPolicy.deleted_by"
+    ],
+    "audit_log": [
+      "ActivityRetentionPolicy.override_reason (retained indefinitely on the audit stream via HasAudit — anonymised on subject erasure but never deleted)",
+      "ActivityRetentionPolicy rows themselves (the audit rows written by owen-it/laravel-auditing on retention policy mutations — retained 7 years per audit module)"
+    ],
+    "restricted": [],
+    "regulated_minor": [
+      "Activity.description AND Activity.properties WHERE subject_type = 'athlete' AND subject is under 13 (inherits regulated_minor from the athlete). The consumer contract prohibits capturing this data in the first place — LogsActivity should not be composed on Athlete for progress fields; use audit instead."
+    ],
+    "regulated_health": [
+      "Activity.description AND Activity.properties WHERE subject_type is a healthcare-adjacent aggregate (medical-records module, future). Prohibited by the consumer contract — those aggregates use audit."
+    ]
+  },
+  "dsar": {
+    "exportableTiers": ["public", "internal", "confidential"],
+    "exportExclusions": [
+      "Activity rows where subject is a DIFFERENT tenant's User (the caller's DSAR reveals only activities on THIS caller's identity — activities on their booking that another tenant's assistant caused are only visible if the caller is the causer)"
+    ],
+    "erasureBehaviour": {
+      "confidential": "purge — Activity rows are hard-deleted on identity erasure. Unlike audit (which anonymises), activity is user-facing narrative; preserving after erasure would leak the erased identity's actions on other users' feeds.",
+      "audit_log": "anonymise-in-place — ActivityRetentionPolicy audit rows preserve the override_reason (retention promise) but subject_id references get replaced with 'erased-<hash>'. Rows themselves never deleted.",
+      "regulated_minor": "PROHIBITED at capture time — the consumer contract prevents LogsActivity on minor-adjacent aggregates. Any row that slipped through is treated as `confidential` erasure (hard-delete)."
+    }
+  },
+  "notes": [
+    "Activity is a CROSS-CUTTING aggregate — it doesn't own the underlying subject or causer PII. It owns the NARRATIVE about them (who did what to whom). The confidential tier reflects that: knowing 'Alice cancelled Bob's booking on Tuesday' is itself sensitive because it reveals interpersonal + operational context.",
+    "The `description` column is the tightest classification decision in this file. It's developer-authored narrative — the consumer contract says 'user-readable, no raw payloads', but the developer's actual authored string may include user names via `{$this->causer->display_name}` interpolation. Confidential tier is correct.",
+    "The `properties` column is developer-authored structured context. The consumer contract says 'log ONLY minimum fields'; violations leak PII. Reviewed by the standards-steward auditor agent for `properties` shapes containing raw payloads (email addresses, phone numbers, address fields).",
+    "Downstream consumer modules with regulated resources (medical, financial) MUST NOT compose LogsActivity. Enforced by code review + the standards-steward auditor. Any violation would create a regulated-tier activity row and require the retention pipeline to be aware of it — activity is not equipped for that.",
+    "ActivityRetentionPolicy is small-surface + admin-only. Its confidential tier is minimal (a few user-attribution FKs + the override_reason free-text)."
+  ]
+}

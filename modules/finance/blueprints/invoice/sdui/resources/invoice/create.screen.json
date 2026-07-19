@@ -1,0 +1,181 @@
+{
+  "id": "invoice.resources.invoice.create",
+  "title": "Create invoice",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/invoices/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "invoice", "entity": "invoice", "action": "create" },
+  "requiresPermission": "invoice.invoices.create",
+  "requiresEntitlement": "invoice_capture",
+  "dataSources": [
+    {
+      "name": "invoice_slot",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/invoice_slot_per_month",
+      "unwrap": "data"
+    },
+    {
+      "name": "multi_currency",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/invoice_multi_currency",
+      "unwrap": "data"
+    }
+  ],
+  "state": {
+    "customer_type": { "type": "string", "default": "user::User" },
+    "customer_id": { "type": "string", "default": null },
+    "membership_id": { "type": "string", "default": null },
+    "currency": { "type": "string", "defaultFrom": "tenant.default_currency" },
+    "payment_terms": { "type": "string", "default": "net_30" },
+    "payment_terms_custom_days": { "type": "integer", "default": null },
+    "invoice_series": { "type": "string", "default": "INV" },
+    "notes": { "type": "string", "default": null },
+    "internal_notes": { "type": "string", "default": null }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Create invoice" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Create a draft invoice. You can add line items and finalize on the next screen." } }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "warning" },
+          "visibleWhen": "invoice_slot.value_used >= invoice_slot.value_cap && invoice_slot.value_cap != null",
+          "children": [
+            { "kind": "Text", "props": { "children": "You've reached your monthly invoice quota. Upgrade to create more this month." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "title": "Customer" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Customer type", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "user::User", "label": "User" },
+                { "id": "sports::Athlete", "label": "Athlete (via guardian)" },
+                { "id": "organization::Organization", "label": "Organization" }
+              ],
+              "bindings": { "selectedKey": { "$state": "customer_type" } },
+              "actions": { "onSelectionChange": { "kind": "state.set", "field": "customer_type", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "CustomerPicker",
+              "props": { "label": "Customer", "placeholder": "Search by name, email, or ID..." },
+              "bindings": {
+                "customerType": { "$state": "customer_type" },
+                "value": { "$state": "customer_id" }
+              },
+              "actions": { "onChange": { "kind": "state.set", "field": "customer_id", "valueExpr": "$value" } }
+            },
+            {
+              "kind": "MembershipPicker",
+              "props": { "label": "Link to membership (optional)", "helpText": "When set, this invoice is treated as a membership charge. Fires the marketing signal on payment." },
+              "visibleWhen": "state.customer_id != null",
+              "bindings": {
+                "customerId": { "$state": "customer_id" },
+                "value": { "$state": "membership_id" }
+              },
+              "actions": { "onChange": { "kind": "state.set", "field": "membership_id", "valueExpr": "$value" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "title": "Invoice settings" },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": { "label": "Series", "helpText": "Invoice number prefix. 'INV' for the default series." },
+              "bindings": { "value": { "$state": "invoice_series" } },
+              "disabled": "multi_currency.value_enabled == false",
+              "requiresEntitlement": "invoice_custom_series",
+              "actions": { "onChange": { "kind": "state.set", "field": "invoice_series", "valueExpr": "$value" } }
+            },
+            {
+              "kind": "Widget",
+              "widget": "invoice.currency-picker",
+              "props": { "label": "Currency" },
+              "bindings": { "selectedKey": { "$state": "currency" } },
+              "actions": { "onSelectionChange": { "kind": "state.set", "field": "currency", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Payment terms", "menuTrigger": "focus" },
+              "props_items_source": "invoice.payment-terms-catalog",
+              "bindings": { "selectedKey": { "$state": "payment_terms" } },
+              "actions": { "onSelectionChange": { "kind": "state.set", "field": "payment_terms", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "NumberField",
+              "props": { "label": "Custom due days", "min": 1, "max": 365 },
+              "visibleWhen": "state.payment_terms == 'custom'",
+              "bindings": { "value": { "$state": "payment_terms_custom_days" } },
+              "actions": { "onChange": { "kind": "state.set", "field": "payment_terms_custom_days", "valueExpr": "$value" } }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Customer notes (visible on PDF)", "rows": 3 },
+              "bindings": { "value": { "$state": "notes" } },
+              "actions": { "onChange": { "kind": "state.set", "field": "notes", "valueExpr": "$value" } }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Internal notes (admin-only)", "rows": 2 },
+              "bindings": { "value": { "$state": "internal_notes" } },
+              "actions": { "onChange": { "kind": "state.set", "field": "internal_notes", "valueExpr": "$value" } }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/invoices" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Create draft" },
+              "disabled": "state.customer_id == null || state.currency == null",
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/invoices",
+                  "body": {
+                    "customer_type": "$state.customer_type",
+                    "customer_id": "$state.customer_id",
+                    "membership_id": "$state.membership_id",
+                    "currency": "$state.currency",
+                    "payment_terms": "$state.payment_terms",
+                    "payment_terms_custom_days": "$state.payment_terms_custom_days",
+                    "invoice_series": "$state.invoice_series",
+                    "notes": "$state.notes",
+                    "internal_notes": "$state.internal_notes"
+                  },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/invoices/' + $response.data.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

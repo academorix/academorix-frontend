@@ -1,0 +1,101 @@
+{
+  "id": "transaction.account-picker",
+  "title": "Chart-of-accounts picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Multi-select for chart-of-accounts entries. Filtered per-tenant to the enabled account list (from tenant settings — transaction.accounts.enabled). Groups options by regulator_category (asset / liability / revenue / expense). Used by admin flows that need to pick one or more accounts (e.g. account-balance list filter, manual adjustment reversal target selector).",
+  "props": {
+    "value": {
+      "type": "array",
+      "default": [],
+      "description": "Currently selected account slugs."
+    },
+    "multiple": {
+      "type": "boolean",
+      "default": true,
+      "description": "false = single-select ComboBox; true = MultiSelect."
+    },
+    "onSelectionChange": {
+      "type": "action",
+      "description": "Fired when selection changes."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "enabled_accounts",
+      "kind": "http.get",
+      "url": "/api/v1/ledger/accounts?fields=account,display_name,regulator_category",
+      "unwrap": "data",
+      "cache": "5min"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "bindings": {
+        "isMultiple": { "$ref": "props.multiple" },
+        "value": { "$ref": "props.value" }
+      },
+      "props": {
+        "label": "Accounts",
+        "placeholder": "Select account(s)",
+        "menuTrigger": "focus",
+        "className": "w-full"
+      },
+      "children": [
+        {
+          "kind": "GroupedListBox",
+          "bindings": {
+            "groups": { "$groupBy": "$ref('enabled_accounts')", "field": "regulator_category" }
+          },
+          "props": {
+            "groupOrder": ["asset", "liability", "revenue", "expense", "equity"]
+          },
+          "children": [
+            {
+              "kind": "ListBox.Section",
+              "bindings": {
+                "title": { "$expr": "$ref('$group.name').charAt(0).toUpperCase() + $ref('$group.name').slice(1)" }
+              },
+              "children": [
+                {
+                  "kind": "MapItems",
+                  "bindings": { "items": { "$ref": "$group.items" } },
+                  "children": [
+                    {
+                      "kind": "ListBox.Item",
+                      "bindings": {
+                        "key": { "$ref": "$item.account" },
+                        "id": { "$ref": "$item.account" },
+                        "textValue": { "$ref": "$item.display_name" }
+                      },
+                      "children": [
+                        {
+                          "kind": "View",
+                          "props": { "className": "flex items-center justify-between w-full" },
+                          "children": [
+                            { "kind": "Text", "bindings": { "children": { "$ref": "$item.display_name" } } },
+                            { "kind": "Text", "props": { "className": "text-xs text-muted font-mono" }, "bindings": { "children": { "$ref": "$item.account" } } }
+                          ]
+                        },
+                        { "kind": "ListBox.ItemIndicator" }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": {
+    "onSelectionChange": {
+      "kind": "callAction",
+      "actionExpr": "props.onSelectionChange",
+      "argsExpr": "$selectedKeys"
+    }
+  }
+}

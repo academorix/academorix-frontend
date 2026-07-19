@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/coupon/observers",
+  "$version": 1,
+  "title": "coupon — Eloquent observers",
+  "description": "Two observers enforce this module's write-time invariants. CouponObserver validates code format + discount config + entitlement + validity window at creation; refuses discount_type / discount_amount mutations post-redemption. CouponRedemptionObserver is the load-bearing observer — every redemption row is created INSIDE a transaction with a SELECT ... FOR UPDATE row lock on the parent Coupon; it validates active window + usage_cap + per_customer_limit + applicability + minimum-order-amount under the row lock and atomically increments coupon.usage_count.",
+  "observers": [
+    {
+      "model": "Coupon",
+      "observer": "Academorix\\Finance\\Coupon\\Observers\\CouponObserver",
+      "handles": [
+        "creating -> populate ULID prefix `cpn_`",
+        "creating -> refuse when tenant does NOT hold `coupon_capture` entitlement (returns `COUPON_CAPTURE_NOT_ENTITLED`)",
+        "creating -> consume 1 unit of `coupon_slot` entitlement; refuse with `COUPON_SLOT_QUOTA_EXCEEDED` when cap reached (Small=10, Medium=100, Enterprise=unlimited)",
+        "creating -> normalize code: uppercase; validate against valid_code rule (uppercase alphanumeric + dash + underscore, 4..64 chars); refuse with `COUPON_INVALID_CODE_FORMAT`",
+        "creating -> refuse duplicate ACTIVE code via partial unique index (tenant_id, code) WHERE deleted_at IS NULL AND valid_from <= NOW() AND (valid_until IS NULL OR valid_until >= NOW()); returns `COUPON_DUPLICATE_ACTIVE_CODE`",
+        "creating -> validate discount_type / discount_amount / discount_currency combo via valid_discount_type_amount_combo (percent: 0..1; fixed_amount: positive int + required currency; free_period: 1..365 days; first_month_free / bogo / free_shipping: no discount_amount)",
+        "creating -> refuse advanced discount_type when tenant does NOT hold `coupon_advanced_discount_types` (returns `COUPON_ADVANCED_DISCOUNT_NOT_ENTITLED`)",
+        "creating -> validate applicability + applicable_plan_ids consistency: `specific_membership_plans` requires non-empty applicable_plan_ids array; `minimum_order_value` requires minimum_order_amount + minimum_order_currency; `any` / `membership_only` refuse applicable_plan_ids",
+        "creating -> validate valid_from < valid_until (when valid_until is set); refuse with `COUPON_INVALID_EFFECTIVE_RANGE`",
+        "creating -> validate is_stackable requires `coupon_stackable` entitlement; refuse with `COUPON_STACKING_NOT_ENTITLED`",
+        "creating -> validate usage_cap null OR positive integer",
+        "creating -> validate per_customer_limit >= 1 (default 1)",
+        "creating -> default is_active=true, usage_count=0; fire CouponCreated + fire CouponIssuedManually (or CouponIssuedByReferralProgram when issuance_source='referral' — the observer dispatches on issuance_source)",
+        "updating (name, description, valid_until, usage_cap, per_customer_limit) -> allow at any time; fire CouponUpdated",
+        "updating (discount_type, discount_amount, discount_currency, applicability, applicable_plan_ids, minimum_order_amount) -> REFUSE when coupon has any CouponRedemption row (returns `COUPON_TERMS_LOCKED` — terms are frozen once even one redemption commits)",
+        "updating (is_active false -> true) -> refuse when valid_until < NOW() (cannot reactivate an expired coupon); fire CouponActivated",
+        "updating (is_active true -> false) -> allow at any time; fire CouponDeactivated with reason='manual' unless the caller set the reason attribute",
+        "updating (usage_count increment) -> refuse when new usage_count > usage_cap (should never happen — CouponRedeemer's row lock + observer both guard); if new usage_count == usage_cap: flip is_active=false + fire CouponUsageCapReached + CouponDeactivated with reason='usage_cap_reached'",
+        "updating (code) -> REFUSE — codes are immutable (returns `COUPON_CODE_IMMUTABLE`); admins deactivate + create a fresh code instead",
+        "deleting -> refuse when coupon has any non-reversed CouponRedemption; must reverse all redemptions first (retention pipeline handles hard-delete)",
+        "post-commit expiry check -> if valid_until is set + past AND is_active=true: fire CouponExpired + flip is_active=false + fire CouponDeactivated with reason='expired_via_job' (idempotent — checks audit log for prior fire)"
+      ]
+    },
+    {
+      "model": "CouponRedemption",
+      "observer": "Academorix\\Finance\\Coupon\\Observers\\CouponRedemptionObserver",
+      "handles": [
+        "creating -> populate ULID prefix `crd_`",
+        "creating -> MUST run inside an enclosing transaction opened by CouponRedeemer::redeem() (invariant: the caller acquired a SELECT ... FOR UPDATE row lock on the parent Coupon). Refuses when no active transaction is present (returns `COUPON_REDEMPTION_REQUIRES_TRANSACTION` — should never surface; defensive)",
+        "creating -> verify parent Coupon.tenant_id equals redemption.tenant_id (cross-tenant guard)",
+        "creating -> verify parent Coupon.is_active = true; refuse with `COUPON_INACTIVE`",
+        "creating -> verify Coupon.valid_from <= NOW(); refuse with `COUPON_NOT_YET_VALID`",
+        "creating -> verify Coupon.valid_until IS NULL OR Coupon.valid_until >= NOW(); refuse with `COUPON_EXPIRED`",
+        "creating -> verify Coupon.usage_count < Coupon.usage_cap (when cap is set); refuse with `COUPON_USAGE_CAP_REACHED`",
+        "creating -> count existing NON-REVERSED redemptions for (tenant_id, coupon_id, customer_type, customer_id); verify count < Coupon.per_customer_limit; refuse with `COUPON_CUSTOMER_LIMIT_REACHED`",
+        "creating -> verify applicability: `any` always passes; `membership_only` requires applied_to_type='membership'; `specific_membership_plans` requires the target Membership.plan_id IN Coupon.applicable_plan_ids; `minimum_order_value` requires source_amount_cents >= Coupon.minimum_order_amount AND source_currency == Coupon.minimum_order_currency; refuse with `COUPON_APPLICABILITY_MISMATCH` or `COUPON_MINIMUM_ORDER_NOT_MET`",
+        "creating -> verify source_currency matches discount_currency (when discount_type IN ('fixed_amount', 'free_period')); refuse with `COUPON_CURRENCY_MISMATCH`",
+        "creating -> verify composite unique (tenant_id, coupon_id, customer_type, customer_id, applied_to_type, applied_to_id); refuse with `COUPON_ALREADY_REDEEMED_ON_TARGET` (partial unique index refuses at DB level as second line of defense)",
+        "creating -> verify is_stackable OR no other non-reversed redemption exists for (tenant_id, applied_to_type, applied_to_id); refuse with `COUPON_STACKING_REFUSED` when the target already has a coupon applied and one of the two is not stackable",
+        "creating -> compute discount_amount_cents from Coupon.discount_type + Coupon.discount_amount + source_amount_cents (percent: floor(source * amount); fixed_amount: min(source, amount); free_period: 0 discount but extends the period downstream; first_month_free: source_amount_cents; bogo: source_amount_cents / 2; free_shipping: shipping_component of source)",
+        "creating -> compute final_amount_cents = source_amount_cents - discount_amount_cents (clamped to >= 0)",
+        "creating -> freeze discount_snapshot JSONB with the current Coupon.discount_type + discount_amount + discount_currency + applicability + applicable_plan_ids",
+        "creating -> increment Coupon.usage_count atomically (inside the row-locked transaction)",
+        "creating -> fire CouponRedeemed with the frozen snapshot after commit",
+        "updating (reversed_at set from NULL to a timestamp) -> allow only via ProcessCouponClawbackJob OR the reverse endpoint. Decrement Coupon.usage_count atomically. Fire CouponClawbackCompleted (when triggered by refund/chargeback cascade) OR CouponRedemptionReversed (when triggered by admin manual reverse). Set clawback_reason. Idempotent — refuses when reversed_at already set",
+        "updating (any field other than reversed_at + clawback_reason + reversed_by_user_id) -> REFUSE (returns `COUPON_REDEMPTION_IMMUTABLE`) — redemption rows are audit-critical + immutable except for the reversal path",
+        "deleting -> REFUSE — redemption rows are 7y-retained (financial audit); retention pipeline handles hard-delete"
+      ]
+    }
+  ]
+}

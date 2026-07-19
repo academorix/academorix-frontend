@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/invoice/traits",
+  "$version": 1,
+  "title": "invoice — trait composition",
+  "description": "Three owned traits. `BelongsToInvoice` is the FK trait for downstream models (InvoiceLine, CreditNote). `HasInvoiceLines` / `HasCreditNotes` are inverse-side conveniences on the Invoice model, exposing scoped query helpers (->activeLines(), ->issuedCreditNotes(), etc.). Order matters when composed with BelongsToTenant — tenant MUST come first so the scope chain observes the tenant context.",
+  "owned": [
+    {
+      "trait": "Academorix\\Finance\\Invoice\\Concerns\\BelongsToInvoice",
+      "description": "Mixed into any domain model that carries an `invoice_id` FK. Adds the `invoice()` belongsTo relation. Used by InvoiceLine + CreditNote. Provides a `resolveInInvoice(?Invoice)` scope for cross-cutting queries. Refuses to save a row whose invoice_id points at an invoice in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling).",
+      "public": true,
+      "usedBy": [
+        "invoice::InvoiceLine (required invoice_id — every line anchored to exactly one invoice)",
+        "invoice::CreditNote (required original_invoice_id — via the `original_invoice()` relation; the trait's FK column is configurable)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToInvoice` in the trait list so the tenant scope resolves first.",
+        "For CreditNote, the FK column is `original_invoice_id` (not `invoice_id`) — override via `protected string $invoiceForeignKey = 'original_invoice_id';`."
+      ]
+    },
+    {
+      "trait": "Academorix\\Finance\\Invoice\\Concerns\\HasInvoiceLines",
+      "description": "Composed onto the Invoice model itself. Adds `->lines()` (hasMany over InvoiceLine ordered by line_number), `->linesInDrafts()` (only when parent.status='draft'), `->nextLineNumber()` (returns MAX(line_number)+1), `->recomputeTotals()` (recalculates subtotal_cents / discount_amount_cents / tax_amount_cents / total_cents from SUM of lines).",
+      "public": true,
+      "usedBy": ["invoice::Invoice"]
+    },
+    {
+      "trait": "Academorix\\Finance\\Invoice\\Concerns\\HasCreditNotes",
+      "description": "Composed onto the Invoice model itself. Adds `->creditNotes()` (hasMany over CreditNote via original_invoice_id), `->issuedCreditNotes()` (scope filter status='issued'), `->appliedCreditNotes()` (status='applied'), `->totalCreditedAmount()` (SUM of amount_cents across all non-void credit notes), `->remainingCreditableAmount()` (total_cents - total_credited).",
+      "public": true,
+      "usedBy": ["invoice::Invoice"]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "Invoice + InvoiceLine (soft-delete permitted for draft/void invoices only per observer). CreditNote does NOT use SoftDeletes — every credit note row is an immutable financial record."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Invoice + CreditNote (searchable by invoice_number / credit_note_number / customer name via billing_address). InvoiceLine is not searchable (accessed via relation from Invoice)." }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to invoices / invoice_lines / credit_notes is compliance-relevant (SOX §404 + GAAP + IFRS + VAT Directive — financial retention 7 years, 10 for Enterprise)." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Invoice + CreditNote — admin actions feed the staff-visible activity feed. NOT InvoiceLine — high-volume; already covered by the audit trail." }
+    ]
+  },
+  "composition": {
+    "invoice": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasInvoiceLines",
+        "HasCreditNotes",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters: BelongsToTenant precedes every scope-observing trait. HasInvoiceLines + HasCreditNotes are inverse-side conveniences. SoftDeletes permitted for draft/void only via observer refusal."
+    },
+    "invoice_line": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToInvoice",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "SoftDeletes for draft-invoice line removal (before finalize). NO HasActivityLog — high-volume; already covered by audit trail. NO Searchable — lines are accessed via relation from Invoice."
+    },
+    "credit_note": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToInvoice",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable"
+      ],
+      "notes": "NO SoftDeletes — credit notes are immutable financial records; retained indefinitely (hard-deleted only via TenantErased FK CASCADE, and even then archived first). Auditable + HasActivityLog because every void/apply is an ops decision worth surfacing in the activity feed."
+    }
+  }
+}

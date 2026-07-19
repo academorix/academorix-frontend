@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/tax/data/providers/taxjar-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TaxJar provider config",
+  "description": "Configuration shape for a TaxJar integration. Validated by TaxProviderConfigObserver on create + update.",
+  "type": "object",
+  "required": ["api_token"],
+  "additionalProperties": false,
+  "properties": {
+    "api_token": {
+      "type": "string",
+      "minLength": 32,
+      "description": "TaxJar API token. Generated in the TaxJar dashboard under Account > API. Encrypted at rest."
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["production", "sandbox"],
+      "default": "production",
+      "description": "TaxJar environment. 'sandbox' routes to api.sandbox.taxjar.com (test data, no billing)."
+    },
+    "nexus_addresses": {
+      "type": "array",
+      "description": "US nexus declarations. Each address enables sales tax calculation for its state under Wayfair economic-nexus rules.",
+      "items": {
+        "type": "object",
+        "required": ["country", "state"],
+        "properties": {
+          "country": { "type": "string", "pattern": "^[A-Z]{2}$" },
+          "state": { "type": "string", "maxLength": 6 },
+          "zip": { "type": "string", "maxLength": 10 },
+          "city": { "type": "string", "maxLength": 128 },
+          "street": { "type": "string", "maxLength": 256 },
+          "nexus_type": {
+            "type": "string",
+            "enum": ["physical", "economic", "marketplace"]
+          }
+        }
+      },
+      "default": []
+    },
+    "customer_id_prefix": {
+      "type": ["string", "null"],
+      "maxLength": 32,
+      "description": "Optional prefix for the TaxJar customer_id field. Useful for multi-tenant Academorix accounts sharing a single TaxJar account.",
+      "default": null
+    },
+    "product_tax_code_default": {
+      "type": ["string", "null"],
+      "description": "Default TaxJar product_tax_code applied when the calculation doesn't specify one. e.g. 20010 for digital goods.",
+      "default": null
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 30,
+      "default": 10,
+      "description": "Per-request HTTP timeout. Shorter than marketing because tax blocks invoice line creation."
+    }
+  }
+}

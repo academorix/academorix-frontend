@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/coupon/retention",
+  "$version": 1,
+  "title": "coupon — retention windows",
+  "description": "Coupon data is financial-audit-adjacent. Every redemption is a compliance-relevant financial event — a discount that reduced the revenue recognised on an invoice line. Default retention 7 years (SOX + SOC 2 CC6.3 + national tax law baselines: US, EU, UK, CA). Enterprise tier extends to 10y via `coupon_extended_retention`. TenantErased cascades FK CASCADE hard-delete of every owned row EXCEPT invoice-linked redemptions — those migrate to a compliance archive for legal-obligation retention.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) — storage limitation (retention windows justified by tax + fraud audit)",
+    "gdpr Art. 17 — right to erasure (with financial-retention carve-out)",
+    "gdpr Art. 6(1)(b) — lawful basis: contract (coupon = contractual discount offer)",
+    "can-spam Act — promotional coupon emails carry unsubscribe path",
+    "us tax law — 7-year financial-record retention (discount ledger for revenue-recognition audit)",
+    "sox 404 — internal controls over financial reporting (discount trail retained)",
+    "soc2 CC6.3 — audit trail retention",
+    "iso 27001 Annex A.12.3 — audit log retention",
+    "ccpa 1798.100 — right to know + right to delete (with retention carve-out)"
+  ],
+  "retention": [
+    {
+      "entity": "Coupon",
+      "hot": { "days": "while active + 1 year" },
+      "cold": { "days": "2555 (7 years) post-expiry; 3650 (10 years) with `coupon_extended_retention` (Enterprise)" },
+      "purge": {
+        "trigger": "> 7 (or 10) years past valid_until (when set) OR past deactivated_at + zero non-reversed redemption references",
+        "action": "hard delete via PurgeExpiredCouponsJob",
+        "notes": "Every redemption traces back to a coupon. Coupon cannot be hard-deleted while any non-reversed redemption retains a reference — retention aligns with the longest-lived downstream (redemptions)."
+      }
+    },
+    {
+      "entity": "CouponRedemption",
+      "hot": { "days": 365, "description": "Active + first year for dispute resolution" },
+      "cold": { "days": "2555 (7 years); 3650 (10 years) with `coupon_extended_retention`" },
+      "purge": {
+        "trigger": "> 7 (or 10) years past redeemed_at",
+        "action": "hard delete OR migrate to compliance_archive.coupon_redemptions (invoice-linked redemptions)",
+        "notes": "Redemptions linked to invoices that survive tenant deletion migrate to compliance_archive rather than delete — the invoice financial record requires the discount ledger to persist. Standalone redemptions (targeting membership/transaction without a persistent invoice) may be hard-deleted at the retention boundary."
+      }
+    },
+    {
+      "entity": "CouponRedemption.discount_snapshot",
+      "hot": { "days": "co-terminous with CouponRedemption" },
+      "purge": {
+        "trigger": "co-terminous with CouponRedemption hard-delete",
+        "action": "cascaded (JSONB column on the redemption row)",
+        "notes": "The snapshot is IMMUTABLE — no in-flight edits ever. Under GDPR right-to-erasure, no PII lives in the snapshot (it holds discount config only — currency, amount, applicability, plan_ids)."
+      }
+    }
+  ],
+  "special_paths": [
+    {
+      "trigger": "TenantErased",
+      "action": "FK CASCADE hard-deletes every coupons / coupon_redemptions row.",
+      "carve_out": "Invoice-linked redemptions (applied_to_type='invoice' AND the parent invoice still exists after tenant erasure) migrate to compliance_archive.coupon_redemptions prior to cascade. Audit trail rows survive per audit module design (outlives-source)."
+    },
+    {
+      "trigger": "UserErased (as redemption customer)",
+      "action": "RedactCouponRedemptionsOnUserErasure hook: schedule a 90-day-post-erasure redaction of customer_id + customer_type on redemptions. Row survives for the 7-year audit trail; the customer identity is redacted.",
+      "carve_out": "Retention windows on the redemption row unchanged — financial retention overrides erasure per legal-obligation carve-out."
+    },
+    {
+      "trigger": "CouponDeactivated",
+      "action": "Retention windows do NOT reset — deactivation is a business-lifecycle event, not a retention-lifecycle event. The 7 (or 10) year window continues to run from valid_until (or deactivated_at when valid_until is null)."
+    },
+    {
+      "trigger": "CouponRedemptionReversed / CouponClawbackCompleted",
+      "action": "reversed_at is set; the row remains in place. Retention window continues to run from redeemed_at (the original event) — reversal does not reset the clock."
+    }
+  ],
+  "cross_reference": [
+    "audit::retention.json — audit rows outlive their source rows regardless (financial audit + tax audit trail).",
+    "activity::retention.json — activity rows follow their own tier-based retention.",
+    "finance::invoice retention (Wave 4) — invoice-linked redemptions align with invoice retention windows.",
+    "growth::referrals retention — referral-issued coupons align with referrals retention (7y default / 10y Enterprise)."
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/audit/macros",
+  "$version": 1,
+  "title": "audit — published macros",
+  "description": "The audit module publishes ZERO framework macros. Every consumer touches the audit surface via injected services (AuditRepository, AuditRetentionPolicyRepository, AuditQuery) or via the vendor `owen-it/laravel-auditing` package's Auditable trait on their own models. There is no request-level state that needs to be surfaced as a Request macro.",
+  "namespace_note": "No macros published.",
+  "macros": [],
+  "rationale": [
+    "Audit is a STORAGE + READ SURFACE. The consumer contract is: (a) add the vendor Auditable trait to your Eloquent models — the vendor observer handles capture; (b) query the surface via GET /api/v1/audits or via the injected AuditRepository from your compliance-facing screens. There is no request-scoped state that would benefit from a macro.",
+    "Contrast with `growth::attribution` which publishes Request::currentAttribution + Request::attributionSnapshot macros — attribution IS request-scoped state that many callers need. Audit is not.",
+    "The primary AuditQuery fluent surface is a bound service (AuditRepository), not a facade. Consumers `useInject(AuditQuery::class)` and chain .byUser(...).byAuditable(...).since(...).get(). No macro needed."
+  ]
+}

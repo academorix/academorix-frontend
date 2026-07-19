@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/audit/permissions",
+  "$version": 1,
+  "title": "audit — permissions",
+  "description": "Read-heavy permission surface. Audit rows are READ-only via the API (only the vendor observer creates them; only the purge job deletes them). Retention policies have CRUD gated by compliance-officer role + Enterprise entitlement. Every audit permission is compliance-officer-scoped — regular admins do NOT read audit trails by default.",
+  "seeder": "Academorix\\Observability\\Audit\\Database\\Seeders\\AuditPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "audit.audits.viewAny",
+      "guard": "sanctum",
+      "description": "List audit rows in tenant. Compliance-officer scoped.",
+      "seededOn": ["compliance_officer", "owner"]
+    },
+    {
+      "name": "audit.audits.view",
+      "guard": "sanctum",
+      "description": "View a single audit row (redacted diff by default). Compliance-officer scoped.",
+      "seededOn": ["compliance_officer", "owner"]
+    },
+    {
+      "name": "audit.audits.reveal_raw_diff",
+      "guard": "sanctum",
+      "description": "Reveal raw old_values + new_values on an audit row. Reserved for regulator investigations. Writes a chain-of-custody row (meta-audit) on every reveal.",
+      "seededOn": ["compliance_officer", "owner"]
+    },
+    {
+      "name": "audit.audits.export",
+      "guard": "sanctum",
+      "description": "Request an audit export (DSAR, regulator, legal-hold). Requires audit_export entitlement (Medium+).",
+      "seededOn": ["compliance_officer", "owner"]
+    },
+    {
+      "name": "audit.retention-policies.viewAny",
+      "guard": "sanctum",
+      "description": "List AuditRetentionPolicy rows.",
+      "seededOn": ["compliance_officer", "owner"]
+    },
+    {
+      "name": "audit.retention-policies.view",
+      "guard": "sanctum",
+      "description": "View a single retention policy.",
+      "seededOn": ["compliance_officer", "owner"]
+    },
+    {
+      "name": "audit.retention-policies.create",
+      "guard": "sanctum",
+      "description": "Create a retention policy override (Enterprise, audit_retention_extended entitlement).",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "audit.retention-policies.update",
+      "guard": "sanctum",
+      "description": "Update a retention policy (retention_years, override_ends_at, override_reason).",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "audit.retention-policies.delete",
+      "guard": "sanctum",
+      "description": "Soft-delete a retention policy. Resets retention_years to config default.",
+      "seededOn": ["owner"]
+    },
+    {
+      "name": "audit.audits.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant audit read for support + regulator investigation. Compliance-officer + on-call scoped on the platform_admin guard.",
+      "seededOn": ["compliance", "support", "on_call"]
+    },
+    {
+      "name": "audit.audits.export",
+      "guard": "platform_admin",
+      "description": "Cross-tenant regulator-shaped export from the platform plane. Enterprise-tenant regulator-issued investigations.",
+      "seededOn": ["compliance", "on_call"]
+    },
+    {
+      "name": "audit.audits.reveal_raw_diff",
+      "guard": "platform_admin",
+      "description": "Platform-level reveal for cross-tenant investigations. Chain-of-custody row on every reveal.",
+      "seededOn": ["compliance"]
+    }
+  ]
+}

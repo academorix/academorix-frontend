@@ -1,0 +1,58 @@
+{
+  "id": "payment.3ds-badge",
+  "title": "3D Secure result badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Small badge showing 3DS2 authentication result. Colour-coded: authenticated = green shield, rejected = red, not_supported = amber, bypassed = amber shield, not_attempted = neutral, null (non-card payments) = hidden entirely.",
+  "props": {
+    "result": {
+      "type": ["string", "null"],
+      "required": false
+    },
+    "version": {
+      "type": ["string", "null"],
+      "required": false
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Tooltip",
+      "bindings": {
+        "hidden": { "$expr": "!props.result" }
+      },
+      "props": {
+        "content": {
+          "$expr": "'3DS ' + (props.version || 'unknown') + ': ' + (props.result || '')"
+        }
+      },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "variant": {
+              "$expr": "props.result === 'authenticated' ? 'success' : (props.result === 'rejected' ? 'danger' : (props.result === 'not_supported' ? 'warning' : (props.result === 'bypassed' ? 'warning' : 'neutral')))"
+            },
+            "size": { "$ref": "props.size" }
+          },
+          "props": {
+            "leadingIcon": {
+              "$expr": "props.result === 'authenticated' ? 'shield-check' : (props.result === 'rejected' ? 'shield-exclamation' : (props.result === 'bypassed' ? 'shield-check' : 'shield-slash'))"
+            }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "props.result === 'authenticated' ? '3DS ✓' : (props.result === 'rejected' ? '3DS ✗' : (props.result === 'not_supported' ? '3DS N/S' : (props.result === 'bypassed' ? '3DS ~' : (props.result === 'not_attempted' ? '3DS —' : props.result))))"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

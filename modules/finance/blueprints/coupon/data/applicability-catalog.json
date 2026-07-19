@@ -1,0 +1,68 @@
+{
+  "$version": 1,
+  "title": "Coupon applicability catalogue",
+  "description": "Every valid applicability + its required companion fields + the target types it accepts. The valid_applicability_consistency rule reads this catalogue. CouponRedemptionObserver uses it to gate applicability at redemption time.",
+  "applicabilities": [
+    {
+      "applicability": "any",
+      "display_name": "Any",
+      "description": "Applies to any invoice/membership/transaction line. No restrictions beyond usage_cap + per_customer_limit + valid window.",
+      "requires": {},
+      "refuses": ["applicable_plan_ids", "minimum_order_amount", "minimum_order_currency"],
+      "allowed_target_types": ["membership", "invoice", "transaction"],
+      "typical_use_case": "Site-wide promotions (SUMMER25) — anyone can redeem on any purchase."
+    },
+    {
+      "applicability": "membership_only",
+      "display_name": "Membership only",
+      "description": "Applies only when applied_to_type='membership'. Refuses invoice + transaction targets. Useful for subscription-specific promotions.",
+      "requires": {},
+      "refuses": ["applicable_plan_ids", "minimum_order_amount", "minimum_order_currency"],
+      "allowed_target_types": ["membership"],
+      "typical_use_case": "Membership retention: 'first_month_free' or 'free_period' applied only to subscription renewals, never to one-off purchases."
+    },
+    {
+      "applicability": "specific_membership_plans",
+      "display_name": "Specific membership plans",
+      "description": "Applies only when applied_to_type='membership' AND the target membership's plan_id is in the coupon's applicable_plan_ids array. Requires non-empty applicable_plan_ids. Refuses membership targets on non-listed plans.",
+      "requires": {
+        "applicable_plan_ids": {
+          "type": "array",
+          "min_items": 1,
+          "description": "Array of MembershipPlan IDs. FK-validated at coupon-create time — refuses non-existent plans."
+        }
+      },
+      "refuses": ["minimum_order_amount", "minimum_order_currency"],
+      "allowed_target_types": ["membership"],
+      "typical_use_case": "Plan-specific promotions: 'Premium tier upgrade 25% off' targeting only the Premium plan ID.",
+      "notes": "bogo discount_type requires this applicability (applicable_plan_ids must be non-empty)."
+    },
+    {
+      "applicability": "minimum_order_value",
+      "display_name": "Minimum order value",
+      "description": "Applies to any invoice/transaction with source_amount_cents >= minimum_order_amount in the matching currency. Requires both minimum_order_amount + minimum_order_currency.",
+      "requires": {
+        "minimum_order_amount": {
+          "type": "integer",
+          "min": 1,
+          "description": "Threshold in cents."
+        },
+        "minimum_order_currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217. Must match the target's source_currency at redemption time — currency mismatch refuses."
+        }
+      },
+      "refuses": ["applicable_plan_ids"],
+      "allowed_target_types": ["invoice", "transaction"],
+      "typical_use_case": "'$10 off orders over $50' — SUMMER10 with minimum_order_amount=5000, minimum_order_currency='USD'.",
+      "notes": "Compared against source_amount_cents BEFORE discount — the customer's cart value, not the post-discount amount."
+    }
+  ],
+  "notes": [
+    "applicability + applicable_plan_ids + minimum_order_amount + minimum_order_currency internal consistency is enforced by the valid_applicability_consistency rule at request-validation + observer time.",
+    "bogo discount_type FORCES applicability='specific_membership_plans' — the observer refuses bogo with any other applicability.",
+    "first_month_free discount_type FORCES applicability IN ('membership_only', 'specific_membership_plans') — invoices + transactions have no 'first month' concept.",
+    "free_period discount_type FORCES applicability IN ('membership_only', 'specific_membership_plans') — same reason."
+  ]
+}

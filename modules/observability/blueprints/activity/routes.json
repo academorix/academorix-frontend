@@ -1,0 +1,183 @@
+{
+  "id": "academorix://modules/activity/routes",
+  "$version": 1,
+  "title": "activity — HTTP routes",
+  "description": "Two route groups. Tenant serves read endpoints for the feed + CRUD for retention policies. Platform-admin serves read-only cross-tenant search for Academorix support. Writes to `Activity` do NOT go through HTTP — every activity is captured via the vendor `LogsActivity` trait on domain models.",
+  "prefixes": {
+    "v1": "/api/v1",
+    "platform": "/api/v1/platform"
+  },
+  "groups": [
+    {
+      "id": "tenant-authenticated",
+      "host": "tenant",
+      "middleware": [
+        "api",
+        "resolve.tenant",
+        "auth:sanctum",
+        "tenant.user",
+        "activity.enforce_scope"
+      ],
+      "description": "Tenant activity feed reads + retention policy CRUD. `activity.enforce_scope` middleware filters list results to entities the caller can access (RBAC-scoped).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/activities",
+          "name": "tenant.activities.index",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@index",
+          "policy": "ActivityPolicy@viewAny",
+          "returns": "PaginatedResource<ActivityData>",
+          "description": "Tenant-wide feed. Default filter: entities the caller can access. Filters: filter[log_name], filter[causer_id], filter[subject_type], filter[event], filter[from], filter[to], filter[batched_only]. Sorted DESC by created_at by default; per_page capped at 100 (config.activity.feed.max_page_size).",
+          "queryParams": [
+            { "name": "filter[log_name]", "type": "string", "description": "One of the registered log_names — 'default', 'bookings', 'auth', etc." },
+            { "name": "filter[causer_id]", "type": "string", "description": "Requires grants.audit_any or self." },
+            { "name": "filter[subject_type]", "type": "string" },
+            { "name": "filter[event]", "type": "string" },
+            { "name": "filter[from]", "type": "string", "format": "date-time" },
+            { "name": "filter[to]", "type": "string", "format": "date-time" },
+            { "name": "filter[batched_only]", "type": "boolean" },
+            { "name": "sort", "type": "string", "example": "-created_at" },
+            { "name": "per_page", "type": "integer", "default": 25, "max": 100 }
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/activities/{activity}",
+          "name": "tenant.activities.show",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@show",
+          "policy": "ActivityPolicy@view",
+          "returns": "ActivityData",
+          "includes": ["subject", "causer", "batchSiblings"],
+          "description": "Single activity detail. `batchSiblings` returns other activities sharing this row's `batch_uuid` — useful for expanding a collapsed feed item."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/activities/mine",
+          "name": "tenant.activities.mine",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@mine",
+          "policy": "ActivityPolicy@viewOwn",
+          "returns": "PaginatedResource<ActivityData>",
+          "description": "The caller's own activity as causer. Powers the 'My activity' panel on the tenant dashboard."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/activities/by-entity/{subject_type}/{subject_id}",
+          "name": "tenant.activities.by-entity",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@byEntity",
+          "policy": "ActivityPolicy@viewByEntity",
+          "returns": "PaginatedResource<ActivityData>",
+          "description": "The activity stream for one entity. Requires the caller to be able to view the entity itself (checked via the resource's policy — a booking's activity is visible to anyone with `bookings.view` on it)."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/activities/by-user/{user}",
+          "name": "tenant.activities.by-user",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@byUser",
+          "policy": "ActivityPolicy@viewByUser",
+          "returns": "PaginatedResource<ActivityData>",
+          "description": "One actor's activity. Callers see only themselves unless they hold `activity.audit_any` (admin-level compliance surface)."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/activities/feed",
+          "name": "tenant.activities.feed",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@feed",
+          "policy": "ActivityPolicy@subscribeFeed",
+          "returns": "{ channels: string[], entitled: boolean, poll_interval_ms: integer|null }",
+          "description": "WebSocket subscription info. Returns the channel names the caller should subscribe to (their `user.{id}.activity` channel + `tenant.{id}.activity` if entitled for tenant-wide feed). When the tenant lacks `activity_broadcast`, returns entitled=false + poll_interval_ms=15000 (the frontend falls back to polling)."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/activities/export",
+          "name": "tenant.activities.export",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\ActivityController@export",
+          "policy": "ActivityPolicy@export",
+          "accepts": "ActivityExportRequestData",
+          "returns": "{ export_id: string, status: 'queued', expires_at: datetime }",
+          "description": "Asynchronous CSV export. Body: `from`, `to`, `log_names?`, `subject_type?`, `causer_id?`. Gated by `activity_export` entitlement (Medium+). Returns a signed download URL when complete via /api/v1/exports/{id}."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/activity-retention-policies",
+          "name": "tenant.activity-retention-policies.index",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@index",
+          "policy": "ActivityRetentionPolicyPolicy@viewAny",
+          "returns": "PaginatedResource<ActivityRetentionPolicyData>",
+          "description": "List retention policies for the tenant. Any active policy plus the effective default (from config) is surfaced."
+        },
+        {
+          "method": "POST",
+          "path": "/api/v1/activity-retention-policies",
+          "name": "tenant.activity-retention-policies.store",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@store",
+          "policy": "ActivityRetentionPolicyPolicy@create",
+          "accepts": "CreateActivityRetentionPolicyData",
+          "returns": "ActivityRetentionPolicyData",
+          "description": "Body: `log_name?, retention_days, override_reason, expires_at?`. Gated by `activity_retention_extended` entitlement — without it, requests with retention_days > 90 return 402."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/activity-retention-policies/{policy}",
+          "name": "tenant.activity-retention-policies.show",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@show",
+          "policy": "ActivityRetentionPolicyPolicy@view",
+          "returns": "ActivityRetentionPolicyData"
+        },
+        {
+          "method": "PATCH",
+          "path": "/api/v1/activity-retention-policies/{policy}",
+          "name": "tenant.activity-retention-policies.update",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@update",
+          "policy": "ActivityRetentionPolicyPolicy@update",
+          "accepts": "UpdateActivityRetentionPolicyData",
+          "returns": "ActivityRetentionPolicyData",
+          "description": "Body: `retention_days?, override_reason?, expires_at?`. Cannot change `tenant_id` or `log_name` post-create."
+        },
+        {
+          "method": "DELETE",
+          "path": "/api/v1/activity-retention-policies/{policy}",
+          "name": "tenant.activity-retention-policies.destroy",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Tenant\\RetentionPolicyController@destroy",
+          "policy": "ActivityRetentionPolicyPolicy@delete",
+          "returns": "204 No Content",
+          "description": "Soft-delete. Reverts the (tenant, log_name) pair back to the config default. Deleting a policy DOES trigger an immediate purge sweep if the default is more restrictive than the deleted policy."
+        }
+      ]
+    },
+    {
+      "id": "platform-admin",
+      "host": "platform-admin",
+      "middleware": ["api", "auth:sanctum", "platform.user", "api.version"],
+      "description": "Cross-tenant read for Academorix support tooling.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/activities",
+          "name": "platform.activities.index",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Platform\\ActivityController@index",
+          "policy": "ActivityPolicy@viewAnyPlatform",
+          "returns": "PaginatedResource<ActivityData>",
+          "queryParams": [
+            { "name": "filter[tenant_id]", "type": "string" },
+            { "name": "filter[application_id]", "type": "string" },
+            { "name": "filter[log_name]", "type": "string" },
+            { "name": "filter[causer_id]", "type": "string" },
+            { "name": "filter[subject_type]", "type": "string" },
+            { "name": "filter[from]", "type": "string", "format": "date-time" },
+            { "name": "filter[to]", "type": "string", "format": "date-time" }
+          ],
+          "description": "Cross-tenant activity search for support tickets + audit-adjacent visibility. Every read is captured in the platform-admin audit context."
+        },
+        {
+          "method": "GET",
+          "path": "/api/v1/platform/activities/{activity}",
+          "name": "platform.activities.show",
+          "action": "Academorix\\Observability\\Activity\\Controllers\\Platform\\ActivityController@show",
+          "policy": "ActivityPolicy@viewPlatform",
+          "returns": "ActivityData",
+          "includes": ["subject", "causer", "tenant", "application", "batchSiblings"]
+        }
+      ]
+    }
+  ]
+}

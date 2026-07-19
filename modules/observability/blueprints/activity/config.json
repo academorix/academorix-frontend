@@ -1,0 +1,179 @@
+{
+  "id": "academorix://modules/activity/config",
+  "$version": 1,
+  "title": "activity — developer configuration",
+  "description": "Developer / operator configuration. Mirrors `config/activity.php`. Static per deploy; changing requires redeploy + `config:cache`. Distinct from settings.json (tenant-editable at runtime).",
+  "configFile": "config/activity.php",
+  "envPrefix": "ACTIVITY_",
+  "sections": {
+    "storage": {
+      "description": "Storage layer configuration — table names + connection.",
+      "keys": [
+        {
+          "path": "activity.storage.table_name",
+          "type": "string",
+          "default": "activity_log",
+          "env": "ACTIVITY_TABLE_NAME",
+          "description": "Vendor's default table name. Override only when a consumer app has a legacy activity table."
+        },
+        {
+          "path": "activity.storage.connection",
+          "type": "string|null",
+          "default": null,
+          "env": "ACTIVITY_DB_CONNECTION",
+          "description": "Database connection for activity_log. NULL = default connection. Tenants at high volume may pin activity to a dedicated read-replica."
+        }
+      ]
+    },
+    "retention": {
+      "description": "Retention windows + ceilings.",
+      "keys": [
+        {
+          "path": "activity.retention.default_days",
+          "type": "integer",
+          "default": 90,
+          "env": "ACTIVITY_RETENTION_DEFAULT_DAYS",
+          "description": "Default retention window. Applies to every (tenant, log_name) pair without a per-tenant policy override."
+        },
+        {
+          "path": "activity.retention.max_days",
+          "type": "integer",
+          "default": 730,
+          "env": "ACTIVITY_RETENTION_MAX_DAYS",
+          "description": "Hard ceiling on any policy override. 730 = 2 years — the regulator-hold maximum. Enterprise tenants with regulator holds may set this via policy, but never exceed."
+        },
+        {
+          "path": "activity.retention.hot_days",
+          "type": "integer",
+          "default": 30,
+          "env": "ACTIVITY_RETENTION_HOT_DAYS",
+          "description": "How many days rows stay on the hot Postgres table. Beyond this window, tenants with extended retention have their rows moved to cold storage by ArchiveActivitiesToColdStorageJob. Tenants at the default 90d never leave the hot table."
+        }
+      ]
+    },
+    "backfill": {
+      "description": "One-shot BackfillActivityTenantIdFromJsonbJob tuning.",
+      "keys": [
+        {
+          "path": "activity.backfill.batch_size",
+          "type": "integer",
+          "default": 10000,
+          "env": "ACTIVITY_BACKFILL_BATCH_SIZE",
+          "description": "Rows per iteration. 10000 chosen to balance progress rate with lock hold time — a larger batch on Postgres will lock the table for the duration."
+        },
+        {
+          "path": "activity.backfill.source_jsonb_path",
+          "type": "string",
+          "default": "properties.tenant_id",
+          "env": "ACTIVITY_BACKFILL_SOURCE_JSONB_PATH",
+          "description": "JSONB path to read tenant_id from on legacy rows. Should not change — the vendor's convention has been stable."
+        }
+      ]
+    },
+    "broadcast": {
+      "description": "Reverb broadcast configuration.",
+      "keys": [
+        {
+          "path": "activity.broadcast.channels",
+          "type": "array<string>",
+          "default": ["tenant.{tenantId}.activity", "user.{userId}.activity"],
+          "description": "Channel name templates. `{tenantId}` and `{userId}` are placeholders replaced at broadcast time."
+        },
+        {
+          "path": "activity.broadcast.disabled_log_names",
+          "type": "array<string>",
+          "default": [],
+          "description": "Log names whose activities skip broadcast even for entitled tenants. Configured for high-noise log_names during incidents."
+        },
+        {
+          "path": "activity.broadcast.batch_collapse_threshold",
+          "type": "integer",
+          "default": 3,
+          "description": "Number of same-batch activities before the broadcast switches to the collapsed 'X made N changes' representation. Below this, each activity broadcasts individually."
+        }
+      ]
+    },
+    "feed": {
+      "description": "Feed read + pagination tuning.",
+      "keys": [
+        {
+          "path": "activity.feed.max_page_size",
+          "type": "integer",
+          "default": 100,
+          "description": "Hard cap on per_page for list endpoints."
+        },
+        {
+          "path": "activity.feed.default_page_size",
+          "type": "integer",
+          "default": 25,
+          "description": "Default per_page when unspecified."
+        },
+        {
+          "path": "activity.feed.poll_interval_ms",
+          "type": "integer",
+          "default": 15000,
+          "description": "For tenants without activity_broadcast, the polling interval the /activities/feed endpoint returns in the response."
+        }
+      ]
+    },
+    "cold": {
+      "description": "Cold storage (S3) configuration for ArchiveActivitiesToColdStorageJob.",
+      "keys": [
+        {
+          "path": "activity.cold.driver",
+          "type": "string",
+          "default": "s3",
+          "env": "ACTIVITY_COLD_DRIVER",
+          "description": "Filesystem driver for cold storage. Any Laravel filesystem disk."
+        },
+        {
+          "path": "activity.cold.bucket_pattern",
+          "type": "string",
+          "default": "academorix-activity-cold/{tenant_id}/{year}/{month}",
+          "env": "ACTIVITY_COLD_BUCKET_PATTERN",
+          "description": "Object key pattern. `{tenant_id}` / `{year}` / `{month}` interpolated at archive time. Enables per-tenant + per-time-window Glacier lifecycle policies."
+        },
+        {
+          "path": "activity.cold.format",
+          "type": "string",
+          "default": "parquet",
+          "description": "Serialisation format. Parquet is chosen for columnar compression; JSON also supported for compatibility with legacy pipelines."
+        }
+      ]
+    },
+    "batch": {
+      "description": "ActivityBatcher tuning.",
+      "keys": [
+        {
+          "path": "activity.batch.enabled",
+          "type": "boolean",
+          "default": true,
+          "description": "Master switch for request-scoped batching. Off = no batch_uuid populated; every activity surfaces individually. Ops kill-switch."
+        },
+        {
+          "path": "activity.batch.reconcile_older_than_hours",
+          "type": "integer",
+          "default": 24,
+          "description": "How old an orphan batch must be before ReconcileActivityBatchesJob closes it. 24h ensures legitimately long-running requests (bulk imports) don't get swept."
+        }
+      ]
+    },
+    "reason": {
+      "description": "override_reason quality gate for retention policies.",
+      "keys": [
+        {
+          "path": "activity.reason.min_length",
+          "type": "integer",
+          "default": 20,
+          "description": "Minimum length for retention policy override_reason. Consistent with grants module's reason-length rule."
+        },
+        {
+          "path": "activity.reason.placeholder_patterns",
+          "type": "array<string>",
+          "default": ["test", "temp", "todo", "because", "reason", "n/a", "-", "xx"],
+          "description": "Case-insensitive placeholder patterns refused by the ValidGrantReason-style check."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,173 @@
+{
+  "id": "academorix://modules/tax/settings",
+  "$version": 1,
+  "title": "tax — settings",
+  "description": "Tenant-facing tax configuration + per-user preferences. The tax_provider_configs table is NOT settings — those are per-provider credentials owned by the tax module itself. This file declares tenant-level defaults (default address preference, notification routing) + per-user preferences (annual report subscription).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "tax",
+      "class": "Academorix\\Finance\\Tax\\Settings\\TaxSettings",
+      "label": "Tax computation",
+      "description": "Tenant-wide defaults for tax rate resolution + address preference + notification routing.",
+      "icon": "calculator",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 42,
+      "permission": "tax.providers.viewAny",
+      "requiresEntitlement": "tax_capture",
+      "sections": [
+        {
+          "label": "Address preference",
+          "description": "Which customer address to use for jurisdiction resolution.",
+          "icon": "map-pin",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "prefer_shipping_over_billing",
+              "controlType": "toggle",
+              "label": "Prefer shipping address over billing",
+              "defaultValue": true,
+              "helpText": "For tenants selling physical goods, use the shipping address for jurisdiction resolution. For digital-only tenants, use billing.",
+              "sortOrder": 1
+            },
+            {
+              "name": "fall_back_to_tenant_region",
+              "controlType": "toggle",
+              "label": "Fall back to tenant region when address missing",
+              "defaultValue": true,
+              "helpText": "When the customer has no address on file, use the tenant's default_region for jurisdiction resolution. Disable to REFUSE calculations for address-less customers (fail-safe).",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Rate resolution defaults",
+          "description": "Behaviour when no rate matches (rare — indicates seed data gap).",
+          "icon": "adjustments-horizontal",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "block_when_no_rate",
+              "controlType": "toggle",
+              "label": "Block calculation when no rate matches",
+              "defaultValue": true,
+              "helpText": "Recommended. Default 0% tax when no rate matches is a compliance risk — the tenant should explicitly opt in by disabling this.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Notifications routing",
+          "description": "Where tax pipeline alerts are delivered.",
+          "icon": "bell-alert",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "circuit_breaker_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on circuit-breaker opens",
+              "defaultValue": [],
+              "helpText": "Every user listed receives TaxProviderCircuitBreakerOpenedNotification. Tenant owners are always notified regardless.",
+              "sortOrder": 1
+            },
+            {
+              "name": "drift_detection_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on calculation drift detection",
+              "defaultValue": [],
+              "sortOrder": 2
+            },
+            {
+              "name": "exemption_expiry_notify_admins",
+              "controlType": "toggle",
+              "label": "Notify tenant admins on exemption expiry",
+              "defaultValue": true,
+              "helpText": "In addition to notifying the customer (always).",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "description": "How long tax records are retained.",
+          "icon": "archive-box",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "extended_retention_enabled",
+              "controlType": "toggle",
+              "label": "10-year calculation retention",
+              "defaultValue": false,
+              "helpText": "Enterprise-only. Extends tax_calculations retention from 7 years to 10 years for stricter regulator regimes.",
+              "requiresEntitlement": "tax_extended_retention",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tax_user",
+      "class": "Academorix\\Finance\\Tax\\Settings\\TaxUserSettings",
+      "label": "My tax preferences",
+      "description": "Per-user preferences for tax reports + alerts.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 42,
+      "sections": [
+        {
+          "label": "Annual report subscription",
+          "icon": "document-chart-bar",
+          "sortOrder": 1,
+          "requiresEntitlement": "tax_annual_report",
+          "fields": [
+            {
+              "name": "receive_annual_report",
+              "controlType": "toggle",
+              "label": "Send me the annual tax report",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "annual_report_format",
+              "controlType": "select",
+              "label": "Preferred format",
+              "defaultValue": "pdf",
+              "options": {
+                "pdf": "PDF",
+                "csv": "CSV",
+                "json": "JSON"
+              },
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Alert subscriptions",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "receive_circuit_breaker_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on tax provider circuit-breaker events",
+              "defaultValue": true,
+              "helpText": "This preference only takes effect if the tenant admin listed you in circuit_breaker_notify_users. Owners always receive.",
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_drift_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on calculation drift detection",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

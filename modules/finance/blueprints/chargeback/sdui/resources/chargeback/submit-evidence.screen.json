@@ -1,0 +1,201 @@
+{
+  "id": "chargeback.resources.chargeback.submit-evidence",
+  "title": "Submit chargeback evidence",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/chargebacks/{chargeback}/submit-evidence",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "chargeback", "entity": "chargeback-evidence", "action": "create" },
+  "requiresPermission": "chargebacks.submit-evidence",
+  "requiresEntitlement": "chargeback_evidence_submission",
+  "dataSources": [
+    {
+      "name": "chargeback",
+      "kind": "http.get",
+      "url": "/api/v1/chargebacks/{route.chargeback}",
+      "unwrap": "data"
+    },
+    {
+      "name": "evidence_draft",
+      "kind": "http.get",
+      "url": "/api/v1/chargebacks/{route.chargeback}/evidence-draft",
+      "unwrap": "data",
+      "description": "Auto-collected evidence bundle from CollectChargebackEvidenceJob (cached at cbk:evidence-draft:{chargeback_id})."
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "children": "Submit evidence"
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted mt-1" },
+              "bindings": {
+                "children": {
+                  "$expr": "'For chargeback ' + chargeback.chargeback_number + ' (' + chargeback.reason_description + ')'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium", "children": "Evidence pre-populated" } },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm" },
+              "bindings": {
+                "children": {
+                  "$expr": "'We auto-collected ' + (evidence_draft ? evidence_draft.completeness_percent : 0) + '% of the required evidence from your invoices, receipts, service records, and communication logs. Review each section below + edit as needed before submitting.'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Widget",
+          "widget": "chargeback.evidence-completeness-indicator",
+          "bindings": {
+            "percent": { "$expr": "evidence_draft ? evidence_draft.completeness_percent : 0" }
+          }
+        },
+        {
+          "kind": "Form",
+          "props": { "id": "submit-evidence-form" },
+          "actions": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/chargebacks/{route.chargeback}/evidence",
+              "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id" },
+              "onError": { "kind": "toast", "variant": "danger", "messageFromError": true }
+            }
+          },
+          "children": [
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Invoice evidence" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted mb-2", "children": "The parent invoice PDF + line-item detail." }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Receipt evidence" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted mb-2", "children": "The receipt from the original payment." }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Service documentation" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted mb-2", "children": "Records that the service was actually delivered — attendance logs, coach signatures, class rosters." }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Refund policy" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted mb-2", "children": "Your refund policy at the time of purchase (frozen snapshot)." }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Communication log" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted mb-2", "children": "Every communication with the customer around the disputed purchase — support tickets, messages, call recordings." }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Customer signature evidence" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted mb-2", "children": "Terms-of-service acceptance signature + SCA compliance proof (IP + device fingerprint hash)." }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "Shipping docs (optional)" },
+              "bindings": { "hidden": { "$expr": "!(evidence_draft && evidence_draft.shipping_docs)" } },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted mb-2", "children": "Tracking number + delivery confirmation (physical goods only)." }
+                }
+              ]
+            },
+            {
+              "kind": "Fieldset",
+              "props": { "legend": "CE3.0 evidence bundle" },
+              "bindings": { "hidden": { "$expr": "!chargeback.ce3_eligible" } },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-xs text-muted mb-2", "children": "Compelling Evidence 3.0 — two prior legitimate purchases with matching IP + device fingerprint. Dramatically improves win rate for eligible Visa fraud disputes." }
+                }
+              ]
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Additional context (optional)", "name": "uncategorized_text", "placeholder": "Anything else the bank should know about this dispute..." }
+            },
+            {
+              "kind": "Alert",
+              "props": { "variant": "warning" },
+              "children": [
+                { "kind": "Text", "props": { "className": "font-medium", "children": "PCI-DSS reminder" } },
+                { "kind": "Text", "props": { "className": "text-sm", "children": "Never include card numbers, CVVs, or magnetic stripe data. Only tokens, last-4 digits, and BINs are permitted. Evidence containing PAN patterns will be refused." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-3 mt-4" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "type": "submit", "children": "Submit evidence" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

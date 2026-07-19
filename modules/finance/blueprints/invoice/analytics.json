@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/invoice/analytics",
+  "$version": 1,
+  "title": "invoice — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "note": "This module IS the financial-record ledger. Its ANALYTICS.json declares product-analytics events that the growth::analytics lane emits about THIS MODULE's admin surfaces (invoice CRUD, credit-note issuance, report views, dunning intervention). Finance-lane events themselves (invoice.paid, membership.purchased) are LOAD-BEARING signals that go through the marketing lane (via #[AsDomainEventMapper]) — those are Lane 5, not Lane 4. This file is the growth::analytics feed about ADMIN USAGE of the invoicing UI.",
+  "events": [
+    {
+      "name": "Invoice Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "series", "currency", "payment_terms", "line_count_bucket", "created_by_role", "is_membership_linked"],
+      "description": "Admin manually created an invoice. Powers admin-workflow funnel + membership-linkage rate insight."
+    },
+    {
+      "name": "Invoice Finalized",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "days_from_creation_bucket", "line_count_bucket", "total_bucket", "currency", "finalized_by_role"],
+      "description": "Draft → open transition. days_from_creation_bucket signals workflow speed."
+    },
+    {
+      "name": "Invoice Paid",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "days_from_finalize_to_paid_bucket", "was_past_due", "was_partially_paid_first", "payment_method_bucket", "total_bucket", "currency", "is_membership_linked"],
+      "description": "Load-bearing revenue event. Consent tier: essential (financial signal). Feeds ROAS + revenue-recognition funnels."
+    },
+    {
+      "name": "Invoice Voided",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "previous_status", "days_from_creation_bucket", "void_reason_category"],
+      "description": "void_reason_category is bucketed: 'error', 'customer_cancelled', 'duplicate', 'other' (to bound cardinality — free-form void_reason not exported)."
+    },
+    {
+      "name": "Invoice Past Due",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "days_past_due_bucket", "total_bucket", "currency"]
+    },
+    {
+      "name": "Invoice Uncollectible",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "days_past_due_bucket", "total_bucket", "currency"],
+      "description": "P1 signal — every fire is a bad-debt loss. Consent tier: essential (financial-audit signal)."
+    },
+    {
+      "name": "Invoice Sent To Collections",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "collections_agency_slug", "days_past_due_bucket", "total_bucket"]
+    },
+    {
+      "name": "Invoice Written Off",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "days_from_past_due_to_write_off_bucket", "total_bucket", "currency"]
+    },
+    {
+      "name": "Credit Note Issued",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "reason", "amount_bucket", "currency", "issued_by_role"],
+      "description": "Financial-record signal. Feeds refund-rate + adjustment-rate insight."
+    },
+    {
+      "name": "Credit Note Applied",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "applied_to_type", "days_from_issue_to_apply_bucket"]
+    },
+    {
+      "name": "Invoice PDF Downloaded",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "actor_role", "days_from_creation_bucket"],
+      "description": "Feeds insight on which invoices customers actually retrieve + how long after issue."
+    },
+    {
+      "name": "Invoice Aging Report Viewed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "as_of_relative_bucket", "actor_role"]
+    },
+    {
+      "name": "Invoice Revenue Report Viewed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "range_days_bucket", "group_by", "row_count_bucket", "actor_role"]
+    },
+    {
+      "name": "Invoice Tax Collected Report Viewed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "range_days_bucket", "jurisdiction_count_bucket"]
+    },
+    {
+      "name": "Invoice Mark Paid (Manual Reconciliation)",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "payment_method", "total_bucket", "currency", "days_from_finalize_bucket"],
+      "description": "Signal for off-platform payments (check/wire/cash). Every fire is admin intervention."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw total_cents / amount_cents — always the bucket (0-999 / 1000-9999 / 10000-99999 / 100000-999999 / 1000000+). Prevents cross-tenant revenue inference from aggregated data.",
+    "Analytics NEVER carry customer PII (billing_address, customer_tax_id). Customer identifiers are hashed if included (rare — customer_id is INTERNAL classification per data-classes.json).",
+    "The 'essential' consent tier for Invoice Paid + Invoice Uncollectible + Credit Note Issued + Invoice Sent To Collections + Invoice Written Off is deliberate — system-health + financial-audit signals cannot be opted out.",
+    "This file is DISTINCT from the marketing-lane declarations. The load-bearing InvoicePaid signal is captured server-side via CaptureMembershipPurchasedMarketingEvent (marketing lane, #[AsDomainEventMapper] path). This analytics.json is the growth::analytics feed about the ADMIN EXPERIENCE of managing the invoice surface — a different lane, different consent, different retention."
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "$version": 1,
+  "title": "Tax exemption type catalogue",
+  "description": "The 9 exemption types the module supports. Each entry documents the typical use case + certificate format + verification workflow + typical validity period. Consumers of the TaxExemptionType enum read this catalogue to build UX for the exemption submission flow.",
+  "exemption_types": [
+    {
+      "exemption_type": "reseller",
+      "display_name": "Reseller exemption",
+      "description": "Business buying goods for resale. Certificate proves the customer is registered to resell + will collect tax at the point of resale. Common in US B2B commerce.",
+      "typical_certificate_format": "State-issued resale certificate (US) / EU VAT number (EU) / GST registration (CA/AU)",
+      "typical_validity_years": 5,
+      "verification_registry_available": true,
+      "typical_issuing_jurisdictions": ["US-*", "GB", "DE", "FR", "CA", "AU"]
+    },
+    {
+      "exemption_type": "non_profit",
+      "display_name": "Non-profit exemption",
+      "description": "Charitable organization exempt from sales tax on purchases used for the charitable purpose. Requires 501(c)(3) status (US) or equivalent.",
+      "typical_certificate_format": "IRS 501(c)(3) determination letter (US) / Charity Commission registration (GB) / etc.",
+      "typical_validity_years": 3,
+      "verification_registry_available": true,
+      "typical_issuing_jurisdictions": ["US", "GB", "CA", "AU", "DE"]
+    },
+    {
+      "exemption_type": "diplomatic",
+      "display_name": "Diplomatic exemption",
+      "description": "Diplomatic missions + international organizations exempt from tax under bilateral / multilateral treaties (Vienna Convention).",
+      "typical_certificate_format": "Diplomatic ID card / State Department diplomatic tax exemption letter",
+      "typical_validity_years": 5,
+      "verification_registry_available": false,
+      "typical_issuing_jurisdictions": ["ANY (via diplomatic treaty)"]
+    },
+    {
+      "exemption_type": "rural",
+      "display_name": "Rural / agricultural exemption",
+      "description": "Farms / agricultural operations exempt from tax on inputs used for agricultural production. Common in US (state-specific).",
+      "typical_certificate_format": "State-issued agricultural exemption certificate",
+      "typical_validity_years": 2,
+      "verification_registry_available": false,
+      "typical_issuing_jurisdictions": ["US-*", "CA", "AU", "IN"]
+    },
+    {
+      "exemption_type": "religious",
+      "display_name": "Religious exemption",
+      "description": "Religious institution exempt from tax on purchases used for religious activities. Distinct from non_profit (broader carve-out in some jurisdictions).",
+      "typical_certificate_format": "State-issued religious exemption certificate",
+      "typical_validity_years": 5,
+      "verification_registry_available": false,
+      "typical_issuing_jurisdictions": ["US-*", "GB", "CA"]
+    },
+    {
+      "exemption_type": "educational",
+      "display_name": "Educational exemption",
+      "description": "Schools / universities exempt from tax on purchases for educational use. Partial exemption in many jurisdictions.",
+      "typical_certificate_format": "Institution-issued exemption certificate + accreditation documentation",
+      "typical_validity_years": 3,
+      "verification_registry_available": true,
+      "typical_issuing_jurisdictions": ["US", "GB", "DE", "FR", "CA", "AU"]
+    },
+    {
+      "exemption_type": "government",
+      "display_name": "Government exemption",
+      "description": "Federal / state / local government agencies exempt from tax. Applies at every level of government purchasing.",
+      "typical_certificate_format": "Government purchase order OR government tax exemption certificate",
+      "typical_validity_years": 5,
+      "verification_registry_available": false,
+      "typical_issuing_jurisdictions": ["ANY"]
+    },
+    {
+      "exemption_type": "medical",
+      "display_name": "Medical exemption",
+      "description": "Medical facilities exempt from tax on medical supplies + services. Applies in many US states + EU jurisdictions.",
+      "typical_certificate_format": "State-issued medical exemption certificate + healthcare licence",
+      "typical_validity_years": 3,
+      "verification_registry_available": true,
+      "typical_issuing_jurisdictions": ["US-*", "GB", "DE", "FR", "CA"]
+    },
+    {
+      "exemption_type": "disability",
+      "display_name": "Disability accommodation exemption",
+      "description": "Disabled individuals or organizations serving them exempt from tax on accessibility equipment + services.",
+      "typical_certificate_format": "Physician-signed disability documentation + accommodation-purpose statement",
+      "typical_validity_years": 2,
+      "verification_registry_available": false,
+      "typical_issuing_jurisdictions": ["US-*", "GB", "CA", "AU"]
+    }
+  ],
+  "notes": [
+    "The exemption_type enum is the authoritative list. Adding a new type = updating this catalogue + updating the TaxExemptionType enum + adding a #[AsExemptionVerifier] class for jurisdictions with a public registry.",
+    "verification_registry_available=true = the module ships an #[AsExemptionVerifier] class for at least one (country, exemption_type) pair. Consumers of VerifyTaxExemptionJob use this catalogue to know whether to expect automatic verification or manual review."
+  ]
+}

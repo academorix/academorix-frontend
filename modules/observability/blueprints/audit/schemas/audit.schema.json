@@ -1,0 +1,242 @@
+{
+  "id": "academorix://modules/audit/schemas/audit",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Audit",
+  "description": "Vendor-adapted `owen-it/laravel-auditing` row. Immutable after write. Primary key stays vendor's bigint auto-increment (no ULID conversion in Wave 6; `aud_` prefix reserved for Wave 7+). Extended with `tenant_id UUID NOT NULL` (backfilled from `new_values.tenant_id` for existing rows), `application_id UUID NULLABLE` (NULL = platform-plane audit), and six composite indexes.",
+  "type": "object",
+  "x-module": "audit",
+  "x-eloquent": {
+    "table": "audits",
+    "primaryKey": "id",
+    "keyType": "int",
+    "incrementing": true,
+    "keyPrefixReserved": "aud_ (Wave 7+ redesign; PK stays bigint in Wave 6)",
+    "model": "Academorix\\Observability\\Audit\\Models\\Audit",
+    "interface": "Academorix\\Observability\\Audit\\Contracts\\Data\\AuditInterface",
+    "implements": [
+      "Academorix\\Observability\\Audit\\Contracts\\Data\\AuditInterface",
+      "OwenIt\\Auditing\\Contracts\\Audit"
+    ],
+    "extends": "OwenIt\\Auditing\\Models\\Audit",
+    "traits": [
+      "HasFactory",
+      "BelongsToTenant",
+      "IsRetentionAware",
+      "Filterable"
+    ],
+    "casts": {
+      "event": "AuditEventType",
+      "old_values": "AuditFieldDiff",
+      "new_values": "AuditFieldDiff",
+      "tags": "string"
+    },
+    "appends": ["is_immutable", "auditable_short_type", "diff_summary"],
+    "observers": ["AuditObserver"],
+    "hidden": ["ip_address", "user_agent"],
+    "guarded": [],
+    "notes": "Extends the vendor `OwenIt\\Auditing\\Models\\Audit` class + adds our BelongsToTenant trait (global scope + auto-fill). Vendor observer AuditableObserver fires on the AUDITED model's save/delete/restore/custom events and writes rows via this model."
+  },
+  "x-database": {
+    "engine": "postgres",
+    "adapts_vendor_migration": true,
+    "vendor_migration": "vendor/owen-it/laravel-auditing/database/migrations/audits.php.stub",
+    "our_extension_migration": "modules/observability/audit/database/migrations/2026_XX_XX_add_tenant_id_and_application_id_to_audits.php",
+    "columns": {
+      "id": {
+        "type": "bigint",
+        "primary": true,
+        "auto_increment": true,
+        "description": "Vendor default. NO ULID conversion in Wave 6."
+      },
+      "user_type": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Polymorphic actor class. Vendor default. NULL for system-fired mutations."
+      },
+      "user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic actor ID. Vendor default. Accepts bigint or ULID depending on actor's key type."
+      },
+      "event": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "One of vendor defaults (created/updated/deleted/restored) OR a registered custom transition (auth.login, transaction.approved, etc.). See data/audited-events-catalog.json."
+      },
+      "auditable_type": {
+        "type": "string",
+        "length": 255,
+        "nullable": false,
+        "description": "Polymorphic subject class. Vendor default."
+      },
+      "auditable_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic subject ID."
+      },
+      "old_values": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Pre-mutation field values. Encrypted at rest via Postgres TDE. RESTRICTED per data-classes.json. Hidden on tenant wire unless caller has audit.audits.reveal_raw_diff permission (writes chain-of-custody meta-audit on reveal)."
+      },
+      "new_values": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Post-mutation field values. Same treatment as old_values."
+      },
+      "url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Request URL when captured. Vendor default. Hidden on tenant wire by default."
+      },
+      "ip_address": {
+        "type": "inet",
+        "nullable": true,
+        "description": "Request IP. CONFIDENTIAL. Hidden on tenant wire unless caller has reveal_raw_diff permission."
+      },
+      "user_agent": {
+        "type": "string",
+        "length": 1023,
+        "nullable": true,
+        "description": "Request User-Agent. Vendor default."
+      },
+      "tags": {
+        "type": "string",
+        "length": 255,
+        "nullable": true,
+        "description": "Comma-separated tags. Vendor default. Consumers use for arbitrary categorization."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "description": "OUR EXTENSION. ULID (ten_). NOT NULL. Populated by SnapshotApplicationIdOnAuditCreatingHook + AuditObserver::creating from the vendor row's inferred tenant context. Backfilled for pre-existing rows via `audit:backfill-tenant-id`.",
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "no action (see PurgeAuditDataForErasedTenantHook — migrate-to-archive on TenantErased)" }
+      },
+      "application_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "description": "OUR EXTENSION. ULID (app_). NULLABLE (NULL = platform-plane audit). Populated by SnapshotApplicationIdOnAuditCreatingHook from the resolved application in the request context.",
+        "foreign": { "table": "applications", "column": "id", "onDelete": "set null" }
+      },
+      "created_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Vendor default. When the vendor observer wrote the row."
+      }
+    },
+    "no_updated_at_note": "Vendor's `audits` table has NO updated_at column — audit rows are immutable after write, so 'updated_at' would never legitimately change. AuditObserver::updating throws NOTIFICATIONS_AUDIT_ROW_IMMUTABLE.",
+    "indexes": [
+      {
+        "columns": ["tenant_id", "created_at"],
+        "order": "created_at DESC",
+        "unique": false,
+        "name": "audits_tenant_created_idx",
+        "description": "OUR EXTENSION. Primary tenant-dashboard read path."
+      },
+      {
+        "columns": ["application_id", "tenant_id", "created_at"],
+        "order": "created_at DESC",
+        "unique": false,
+        "name": "audits_app_tenant_created_idx",
+        "description": "OUR EXTENSION. Cross-tenant platform-admin queries scoped to one application."
+      },
+      {
+        "columns": ["auditable_type", "auditable_id", "created_at"],
+        "order": "created_at DESC",
+        "unique": false,
+        "name": "audits_auditable_created_idx",
+        "description": "OUR EXTENSION. Per-entity audit trail (GET /api/v1/audits/by-entity/{type}/{id})."
+      },
+      {
+        "columns": ["user_type", "user_id", "created_at"],
+        "order": "created_at DESC",
+        "unique": false,
+        "name": "audits_user_created_idx",
+        "description": "OUR EXTENSION. Per-actor audit trail (GET /api/v1/audits/by-user/{user})."
+      },
+      {
+        "columns": ["event", "tenant_id", "created_at"],
+        "order": "created_at DESC",
+        "unique": false,
+        "name": "audits_event_tenant_created_idx",
+        "description": "OUR EXTENSION. Filter by event type (auth.login rollups, transaction.approved rollups)."
+      },
+      {
+        "columns": ["tenant_id", "auditable_type", "created_at"],
+        "order": "created_at DESC",
+        "unique": false,
+        "name": "audits_tenant_auditable_created_idx",
+        "description": "OUR EXTENSION. 'All Membership audits for tenant X in the last 30 days' — common compliance-dashboard read path."
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "event",
+    "auditable_type",
+    "auditable_id",
+    "tenant_id",
+    "created_at"
+  ],
+  "properties": {
+    "id": { "type": "integer", "minimum": 1 },
+    "user_type": { "type": ["string", "null"] },
+    "user_id": { "type": ["string", "null"] },
+    "event": { "type": "string", "maxLength": 32 },
+    "auditable_type": { "type": "string", "maxLength": 255 },
+    "auditable_id": { "type": "string", "maxLength": 64 },
+    "old_values": { "type": ["object", "null"] },
+    "new_values": { "type": ["object", "null"] },
+    "url": { "type": ["string", "null"], "maxLength": 512 },
+    "ip_address": { "type": ["string", "null"] },
+    "user_agent": { "type": ["string", "null"], "maxLength": 1023 },
+    "tags": { "type": ["string", "null"], "maxLength": 255 },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "application_id": {
+      "type": ["string", "null"],
+      "pattern": "^app_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "is_immutable": {
+      "type": "boolean",
+      "description": "Computed. Always true — audit rows are immutable after write."
+    },
+    "auditable_short_type": {
+      "type": "string",
+      "description": "Computed. class_basename(auditable_type). E.g. 'Membership' rather than 'Academorix\\Finance\\Models\\Membership'."
+    },
+    "diff_summary": {
+      "type": "object",
+      "description": "Computed. { changed_fields: string[], change_count: int }. Redacts values; safe for tenant wire even without reveal_raw_diff."
+    }
+  },
+  "additionalProperties": false,
+  "x-wire": {
+    "envelope": "spatie-data",
+    "wrap": "data",
+    "mapper": "SnakeCaseMapper",
+    "hidden": ["ip_address", "user_agent", "url"],
+    "computed": ["is_immutable", "auditable_short_type", "diff_summary"],
+    "notes": [
+      "old_values + new_values are REDACTED by default. ?include=raw_diff reveals them for callers with audit.audits.reveal_raw_diff permission + writes a chain-of-custody meta-audit row on every reveal.",
+      "ip_address + user_agent + url are HIDDEN on tenant wire. Revealed only under reveal_raw_diff permission (compliance-officer role) — helpful for forensic reconstruction.",
+      "Audit is READ-ONLY over HTTP. No PATCH/DELETE/POST routes on /audits — enforced by AuditPolicy at the policy layer AND audit.enforce_read_only middleware at the request-parsing layer."
+    ]
+  },
+  "x-immutability": {
+    "layers": [
+      "AuditObserver::updating throws NOTIFICATIONS_AUDIT_ROW_IMMUTABLE (config.audit.immutability.forbid_update = true).",
+      "AuditObserver::deleting throws NOTIFICATIONS_AUDIT_ROW_DELETE_FORBIDDEN unless caller is PurgeExpiredAuditsJob (config.audit.immutability.forbid_delete_outside_purge = true).",
+      "audit.enforce_read_only middleware refuses non-GET on /audits* routes (config.audit.immutability.enforce_read_only_middleware = true).",
+      "Postgres DB triggers refuse UPDATE + DELETE outside a session tagged with the purge service actor (deployment-time enforcement — see database/migrations/audit_immutability_triggers.php)."
+    ]
+  }
+}

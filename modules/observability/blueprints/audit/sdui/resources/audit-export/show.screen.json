@@ -1,0 +1,178 @@
+{
+  "id": "audit.resources.audit-export.show",
+  "title": "Audit export detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/exports/:export_id",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit-export", "action": "show" },
+  "requiresPermission": "audit.audits.export",
+  "dataSources": [
+    {
+      "name": "export",
+      "kind": "http.get",
+      "url": "/api/v1/audits/exports/{route.export_id}",
+      "unwrap": "data",
+      "poll": {
+        "intervalMs": 5000,
+        "whileExpr": "export.status === 'pending' || export.status === 'running'"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "leadingIcon": "arrow-left", "children": "Back" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/audit/exports" } }
+            },
+            {
+              "kind": "Widget",
+              "widget": "audit.audit-export-status-chip",
+              "props": {
+                "status": { "$ref": "export.status" },
+                "size": "md",
+                "showLabel": true
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold"
+              },
+              "bindings": { "children": { "$expr": "'Audit export — ' + export.export_kind" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-lg font-semibold", "children": "Details" }
+            },
+            {
+              "kind": "DescriptionList",
+              "children": [
+                {
+                  "kind": "DescriptionList.Item",
+                  "props": { "label": "Kind" },
+                  "children": [
+                    { "kind": "Text", "bindings": { "children": { "$ref": "export.export_kind" } } }
+                  ]
+                },
+                {
+                  "kind": "DescriptionList.Item",
+                  "props": { "label": "Requested at" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "bindings": { "children": { "$expr": "formatDateTime(export.created_at)" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "DescriptionList.Item",
+                  "props": { "label": "Row count" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-mono" },
+                      "bindings": { "children": { "$expr": "formatNumber(export.row_count)" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "DescriptionList.Item",
+                  "props": { "label": "Manifest SHA-256" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-mono text-xs" },
+                      "bindings": { "children": { "$ref": "export.manifest_sha256" } }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "showWhen": { "$expr": "export.status === 'completed'" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-lg font-semibold", "children": "Download" }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted mb-2" },
+              "bindings": {
+                "children": {
+                  "$expr": "'Signed URL expires ' + formatRelative(export.signed_url_expires_at) + '. Verify the manifest SHA-256 above matches the downloaded file for chain-of-custody proof.'"
+                }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "arrow-down-tray",
+                "children": "Download payload"
+              },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate.external",
+                  "urlExpr": "export.signed_url"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "showWhen": { "$expr": "export.status === 'pending' || export.status === 'running'" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "className": "text-sm text-muted",
+                "children": "Export is in progress. This page auto-refreshes every 5 seconds. You'll also receive an in-app + email notification when it completes."
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "showWhen": { "$expr": "export.status === 'failed'" },
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h2",
+                "className": "text-lg font-semibold text-danger",
+                "children": "Export failed"
+              }
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm" },
+              "bindings": { "children": { "$ref": "export.error_message" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "id": "refund.resources.refund-report.refund-volume",
+  "title": "Refund volume report",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/reports/refund-volume",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "refund", "entity": "refund-report", "action": "refund-volume" },
+  "requiresPermission": "refunds.view-report",
+  "requiresEntitlement": "refund_capture",
+  "dataSources": [
+    {
+      "name": "report",
+      "kind": "http.get",
+      "url": "/api/v1/reports/refund-volume",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Refund volume" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refund trends, reason distribution, and provider performance." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Period", "menuTrigger": "focus", "className": "min-w-40" },
+                  "props_items": [
+                    { "id": "7d", "label": "Last 7 days" },
+                    { "id": "30d", "label": "Last 30 days" },
+                    { "id": "90d", "label": "Last 90 days" },
+                    { "id": "ytd", "label": "Year to date" },
+                    { "id": "custom", "label": "Custom range..." }
+                  ],
+                  "actions": {
+                    "onSelectionChange": { "kind": "filter.set", "field": "period", "valueExpr": "$selectedKey" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.get",
+                      "url": "/api/v1/reports/refund-volume?format=csv",
+                      "downloadAs": "refund-volume.csv"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total initiated" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": { "children": { "$ref": "report.total_initiated" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total succeeded" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": { "children": { "$ref": "report.total_succeeded" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total refunded amount" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "hasPermission('refunds.view-financials') ? formatCurrency(report.total_refunded_cents, report.currency) : '••••'"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Median approval-to-success" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold mt-1" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "report.median_approval_to_success_hours + 'h'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-2", "children": "Reason distribution" } },
+                {
+                  "kind": "DonutChart",
+                  "bindings": {
+                    "data": {
+                      "$expr": "Object.entries(report.reason_distribution).map(([reason, count]) => ({ label: reason.split('_').map(w => w[0].toUpperCase() + w.slice(1)).join(' '), value: count }))"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-2", "children": "Provider distribution" } },
+                {
+                  "kind": "DonutChart",
+                  "bindings": {
+                    "data": {
+                      "$expr": "Object.entries(report.provider_distribution).map(([provider, count]) => ({ label: provider, value: count }))"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-2", "children": "Daily refund trend" } },
+            {
+              "kind": "LineChart",
+              "bindings": {
+                "data": { "$ref": "report.daily_series" },
+                "series": [
+                  { "key": "initiated", "label": "Initiated", "color": "accent" },
+                  { "key": "succeeded", "label": "Succeeded", "color": "success" },
+                  { "key": "failed", "label": "Failed", "color": "danger" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h3", "className": "font-medium mb-2", "children": "Top refunded invoices" } },
+            {
+              "kind": "Table",
+              "bindings": {
+                "items": { "$ref": "report.top_refunded_invoices" }
+              },
+              "columns": [
+                { "key": "invoice_id", "label": "Invoice", "renderer": "monospace" },
+                { "key": "refund_count", "label": "Refunds" },
+                { "key": "total_refunded_cents", "label": "Total refunded", "renderer": "currency", "params": { "currency": "row.currency" }, "hidden_when": "!hasPermission('refunds.view-financials')" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

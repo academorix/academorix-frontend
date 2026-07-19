@@ -1,0 +1,202 @@
+{
+  "id": "academorix://modules/refund/config",
+  "$version": 1,
+  "title": "refund — developer configuration",
+  "configFile": "config/refund.php",
+  "envPrefix": "REFUND_",
+  "sections": {
+    "approval": {
+      "keys": [
+        {
+          "path": "refund.approval.threshold_amount_cents",
+          "type": "int",
+          "env": "REFUND_APPROVAL_THRESHOLD_AMOUNT_CENTS",
+          "default": 10000,
+          "description": "Refunds above this cents amount require approval. Default 10000 = $100. Tenant may override per-tenant via settings. Every refund reason in the always-approve set (fraud_confirmed / admin_correction / etc.) is approved regardless of this threshold — this only affects customer-requested refunds."
+        },
+        {
+          "path": "refund.approval.threshold_days_since_payment",
+          "type": "int",
+          "env": "REFUND_APPROVAL_THRESHOLD_DAYS",
+          "default": 30,
+          "description": "Refunds initiated more than N days after the parent payment.processed_at require approval. Default 30. Stale refunds are higher-risk (potential accounting corrections / customer dispute) — require an approver even for small amounts."
+        },
+        {
+          "path": "refund.approval.always_require",
+          "type": "bool",
+          "env": "REFUND_APPROVAL_ALWAYS_REQUIRE",
+          "default": false,
+          "description": "When true, every refund requires approval regardless of amount / staleness / reason. Set by high-risk tenants (regulated industries) that want a human-in-the-loop for every reversal. Interacts with the `refund_approval_workflow` entitlement — this flag can only be true when the entitlement is on."
+        },
+        {
+          "path": "refund.approval.notify_approvers_channels",
+          "type": "array<string>",
+          "default": ["mail", "in_app"],
+          "description": "Notification channels to use when dispatching RefundApprovalRequiredNotification. Default email + in-app. High-touch tenants may add 'sms' or 'push' for critical time-sensitive refunds."
+        },
+        {
+          "path": "refund.approval.approval_sla_hours",
+          "type": "int",
+          "default": 24,
+          "description": "Hours after which an unapproved refund fires a P2 signal (academorix.refund.approvals_stale_total). Actionable for ops — consumer-protection-law SLAs often require refund resolution within 14-30 days from request; this signal flags approaching SLA breaches."
+        }
+      ]
+    },
+    "providers": {
+      "keys": [
+        {
+          "path": "refund.providers.stripe.polling_interval_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "How often CheckRefundProviderStatusJob polls Stripe for an individual refund in processing state. Default hourly. Stripe card refunds take 5-10 business days to fully process; hourly polling balances timeliness vs API rate limits."
+        },
+        {
+          "path": "refund.providers.paddle.polling_interval_seconds",
+          "type": "int",
+          "default": 14400,
+          "description": "Paddle polling cadence. Default 4h — Paddle is generally faster than Stripe for card refunds but slower for other rails."
+        },
+        {
+          "path": "refund.providers.adyen.polling_interval_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "Adyen polling cadence. Default hourly."
+        },
+        {
+          "path": "refund.providers.square.polling_interval_seconds",
+          "type": "int",
+          "default": 14400,
+          "description": "Square polling cadence. Default 4h."
+        },
+        {
+          "path": "refund.providers.paypal.polling_interval_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "PayPal polling cadence. Default hourly. PayPal refunds are typically instant for wallet-to-wallet, delayed for wallet-to-bank."
+        },
+        {
+          "path": "refund.providers.custom_webhook.polling_interval_seconds",
+          "type": "int",
+          "default": null,
+          "description": "CustomWebhook polling cadence. Null = do not poll (rely entirely on webhook callback). Tenant may override per-instance in provider config."
+        },
+        {
+          "path": "refund.providers.max_polling_attempts",
+          "type": "int",
+          "default": 240,
+          "description": "How many times CheckRefundProviderStatusJob polls before giving up + transitioning to provider_error requiring manual investigation. Default 240 (at hourly cadence = 10 days — matches the max Stripe card refund window)."
+        }
+      ]
+    },
+    "notifications": {
+      "keys": [
+        {
+          "path": "refund.notifications.customer_cadence",
+          "type": "string",
+          "default": "state_transitions",
+          "description": "Customer notification cadence: 'state_transitions' (every state change) OR 'terminal_only' (only succeeded / failed / rejected). Default state_transitions provides high visibility during the 5-10 day card refund window."
+        },
+        {
+          "path": "refund.notifications.admin_cadence",
+          "type": "string",
+          "default": "critical_only",
+          "description": "Admin notification cadence: 'all' (every state change) OR 'critical_only' (approval_required + failed + provider_error + succeeded). Default critical_only — admins care about actionable events not routine state transitions."
+        },
+        {
+          "path": "refund.notifications.notify_admins_on_status",
+          "type": "array<string>",
+          "default": ["approval_required", "failed", "provider_error", "succeeded"],
+          "description": "State transitions that fire admin notifications. Tenant may add 'processing' when they want live visibility into every provider dispatch."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "refund.retention.window_years",
+          "type": "int",
+          "default": 7,
+          "description": "Default retention window in years for refunds + refund_lines post-processed_at. Enterprise `refund_extended_retention` uses 10y."
+        },
+        {
+          "path": "refund.retention.extended_window_years",
+          "type": "int",
+          "default": 10,
+          "description": "Extended retention window when Enterprise entitlement is on."
+        },
+        {
+          "path": "refund.retention.purge_frequency_cron",
+          "type": "string",
+          "default": "0 5 * * 0",
+          "description": "Cron for PurgeExpiredRefundDataJob. Default weekly Sunday 05:00 UTC."
+        }
+      ]
+    },
+    "reason": {
+      "keys": [
+        {
+          "path": "refund.reason.customer_allowed",
+          "type": "array<string>",
+          "default": ["customer_requested", "product_not_received", "product_unacceptable", "subscription_cancelled"],
+          "description": "Reasons a customer can specify via POST /refunds/mine. Admin-only reasons (fraud_confirmed, admin_correction, regulator_required, accounting_correction, chargeback_prevention) refused from customer path."
+        },
+        {
+          "path": "refund.reason.always_require_approval",
+          "type": "array<string>",
+          "default": ["fraud_confirmed", "admin_correction", "chargeback_prevention", "regulator_required", "accounting_correction"],
+          "description": "Reasons that ALWAYS require approval regardless of amount / staleness. Distinct from the customer-allowed set (customer-allowed reasons may or may not require approval based on threshold; always-require reasons force approval)."
+        },
+        {
+          "path": "refund.reason.auto_approve",
+          "type": "array<string>",
+          "default": ["duplicate_charge"],
+          "description": "Reasons that ALWAYS auto-approve (system-initiated path — no human approver needed). Currently just duplicate_charge, which is fired automatically by finance ops when the invoice module detects a duplicate capture."
+        }
+      ]
+    },
+    "proration": {
+      "keys": [
+        {
+          "path": "refund.proration.formula_by_interval",
+          "type": "object",
+          "default": {
+            "daily": "unused_days / total_period_days * amount_cents",
+            "weekly": "unused_days / (total_period_days = 7) * amount_cents",
+            "monthly": "unused_days / (total_period_days = 30 or actual month days) * amount_cents",
+            "annual": "unused_days / 365 * amount_cents",
+            "one_time": "not_applicable (prorated refunds require a recurring billing interval)"
+          },
+          "description": "Proration formula per billing_interval. Refund amount = (unused_days / total_period_days) × payment.amount_cents, adjusted by unused_pass_credit_cents (added to refund) + used_pass_penalty_cents (subtracted from refund per per-tenant pass_valuation config). Formula catalog details in data/proration-formula-catalog.json."
+        },
+        {
+          "path": "refund.proration.pass_valuation_cents",
+          "type": "int",
+          "default": 500,
+          "description": "Default per-pass valuation for pass-credit accounting during prorated refunds. Tenant may override per-plan. Used to compute unused_pass_credit_cents = unused_pass_count × pass_valuation_cents."
+        },
+        {
+          "path": "refund.proration.month_day_count",
+          "type": "int",
+          "default": 30,
+          "description": "How many days a monthly billing interval counts as for proration purposes. Default 30 (accountant-friendly). Alternatives: 'actual' (uses actual month days: 28/29/30/31); requires code change. Default 30 avoids DST + month-length nondeterminism."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "refund.reconciliation.cron",
+          "type": "string",
+          "default": "0 3 * * *",
+          "description": "Cron for ReconcileRefundsJob. Default nightly 03:00 UTC."
+        },
+        {
+          "path": "refund.reconciliation.stale_provider_error_threshold_hours",
+          "type": "int",
+          "default": 24,
+          "description": "Refunds stuck in provider_error > this many hours fire a P2 signal. Default 24. Actionable for ops."
+        }
+      ]
+    }
+  }
+}

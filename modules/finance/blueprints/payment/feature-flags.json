@@ -1,0 +1,106 @@
+{
+  "id": "academorix://modules/payment/feature-flags",
+  "$version": 1,
+  "title": "payment — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "payment.captures",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the capture path. Off = new PaymentIntent creation refused. Emergency-only (used during DB migrations or provider-wide incidents)."
+    },
+    {
+      "key": "payment.webhooks",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for inbound webhook processing. Off = incoming webhooks return 202 without dispatching to handlers. Used when a provider fires runaway webhooks (rare)."
+    },
+    {
+      "key": "payment.reconciliation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = nightly ReconcilePaymentIntentsJob skips. Only flip off for maintenance windows."
+    },
+    {
+      "key": "payment.expiry_sweep",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ExpireStalePaymentIntentsJob skips. Used when a mass-expiry would cause downstream cancellation floods."
+    },
+    {
+      "key": "payment.dispute_evidence_collection",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CollectDisputeEvidenceJob skips. Dispute rows still created but evidence not auto-collected. Ops manually collects."
+    },
+    {
+      "key": "payment.reminders",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PaymentMethodExpiringNotification + PaymentDisputeEvidenceDueNotification + PaymentReconcileDriftNotification all no-op. Used when notifications module is degraded."
+    },
+    {
+      "key": "payment.stripe",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch. Off = Stripe captures skip (returns 503 payment_circuit_breaker_open). Used when Stripe is announced-degraded."
+    },
+    {
+      "key": "payment.paddle",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "payment.adyen",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "payment.square",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "payment.paypal",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "payment.custom_webhook",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "payment.encrypt_provider_reference",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PaymentMethod.provider_reference_id + PaymentIntent.provider_reference_id stored in plaintext. NEVER flip off in production (compliance violation — leaked tokens enable fraudulent charges)."
+    },
+    {
+      "key": "payment.encrypt_client_secret",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PaymentIntent.client_secret stored in plaintext. NEVER flip off in production (compliance violation)."
+    },
+    {
+      "key": "payment.encrypt_provider_metadata",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = Payment.provider_metadata stored in plaintext. NEVER flip off in production."
+    },
+    {
+      "key": "payment.fraud_review",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = FraudChecker returns 'low' risk for every payment. Emergency-only if provider's fraud service is malfunctioning + blocking legitimate captures."
+    },
+    {
+      "key": "payment.3ds2",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ThreeDsGate always allows without challenge. NEVER flip off in production — PSD2 compliance violation in EU regions."
+    }
+  ]
+}

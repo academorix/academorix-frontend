@@ -1,0 +1,156 @@
+{
+  "id": "audit.resources.audit-export.list",
+  "title": "Audit exports",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/exports",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit-export", "action": "list" },
+  "requiresPermission": "audit.audits.export",
+  "dataSources": [
+    {
+      "name": "exports",
+      "kind": "http.get",
+      "url": "/api/v1/audits/exports",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[status]", "filter[export_kind]", "sort", "page", "per_page"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Audit exports"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Async DSAR + regulator + legal-hold exports. Rate-limited to 20/day. Signed URL expires 24h after export completes."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Request export"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/audit/exports/create" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No export requests yet",
+              "description": "Request an export to download tenant-scoped audit rows as jsonl.gz. Useful for DSAR fulfillment, regulator handoff, or legal-hold preservation.",
+              "icon": "arrow-down-tray"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "exports" },
+            "isLoading": { "$ref": "exports.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "kind",
+              "header": "Kind",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-sm" },
+                "bindings": { "children": { "$ref": "row.export_kind" } }
+              }
+            },
+            {
+              "id": "status",
+              "header": "Status",
+              "cell": {
+                "kind": "Widget",
+                "widget": "audit.audit-export-status-chip",
+                "props": {
+                  "status": { "$ref": "row.status" },
+                  "size": "sm"
+                }
+              }
+            },
+            {
+              "id": "row_count",
+              "header": "Rows",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-sm text-right" },
+                "bindings": { "children": { "$expr": "formatNumber(row.row_count)" } }
+              }
+            },
+            {
+              "id": "requested",
+              "header": "Requested",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatRelative(row.created_at)" } }
+              }
+            },
+            {
+              "id": "signed_url_expires_at",
+              "header": "URL expires",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.status === 'completed' ? formatRelative(row.signed_url_expires_at) : '—'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "isIconOnly": true,
+                  "leadingIcon": "chevron-right",
+                  "ariaLabel": "View export detail"
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/audit/exports/' + row.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

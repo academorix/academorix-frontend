@@ -1,0 +1,232 @@
+{
+  "id": "academorix://modules/invoice/config",
+  "$version": 1,
+  "title": "invoice — developer configuration",
+  "configFile": "config/invoice.php",
+  "envPrefix": "INVOICE_",
+  "sections": {
+    "numbering": {
+      "keys": [
+        {
+          "path": "invoice.numbering.default_series",
+          "type": "string",
+          "default": "INV",
+          "description": "Default invoice_series prefix when the tenant does not override + does not hold invoice_custom_series entitlement. Small tenants are locked to 'INV'."
+        },
+        {
+          "path": "invoice.numbering.per_year_reset",
+          "type": "bool",
+          "default": true,
+          "description": "true = counter resets to 1 on Jan 1st of each year (2026-000001 → 2027-000001). false = monotonically increasing (rare — some jurisdictions prefer this)."
+        },
+        {
+          "path": "invoice.numbering.format_template",
+          "type": "string",
+          "default": "{series?}-{year}-{seq:06}",
+          "description": "String template. Placeholders: {series?} (empty when series='INV' AND per-year-reset AND small tier — for cleaner default), {year} (4 digits), {seq:06} (6-digit zero-padded). Override for tenants that need a specific format for regulatory reasons."
+        },
+        {
+          "path": "invoice.numbering.credit_note_prefix",
+          "type": "string",
+          "default": "CN",
+          "description": "Fixed prefix for credit note numbers. Format: CN-{YYYY}-{seq:06}."
+        }
+      ]
+    },
+    "pdf": {
+      "keys": [
+        {
+          "path": "invoice.pdf.template",
+          "type": "string",
+          "default": "academorix-default",
+          "description": "Template name. Options: 'academorix-default' (Small tier), 'tenant-branded' (Medium+ with invoice_tenant_branded_pdf), 'minimal' (compact single-page), 'vat-eu' (VAT-jurisdiction-compliant layout for EU tenants)."
+        },
+        {
+          "path": "invoice.pdf.driver",
+          "type": "string",
+          "default": "dompdf",
+          "description": "PDF driver. 'dompdf' (default; HTML+CSS; ~200-500ms) or 'wkhtmltopdf' (better CSS support; slower). Enterprise-only tenants may switch."
+        },
+        {
+          "path": "invoice.pdf.paper_size",
+          "type": "string",
+          "default": "A4",
+          "description": "Paper size. A4 (default; ISO 216) or LETTER (US 8.5x11)."
+        },
+        {
+          "path": "invoice.pdf.storage_disk",
+          "type": "string",
+          "env": "INVOICE_PDF_DISK",
+          "default": "s3-invoices",
+          "description": "Laravel filesystem disk for PDF storage. Should have SSE-KMS encryption + lifecycle rule for Glacier migration after 7 years."
+        },
+        {
+          "path": "invoice.pdf.signed_url_ttl_hours",
+          "type": "int",
+          "default": 168,
+          "description": "TTL for signed S3 URLs. 168 hours = 7 days. Regenerated on each viewer request via a dedicated signing service."
+        }
+      ]
+    },
+    "delivery": {
+      "keys": [
+        {
+          "path": "invoice.delivery.auto_send_on_finalize",
+          "type": "bool",
+          "default": true,
+          "description": "true = SendInvoiceEmailJob is dispatched automatically when the invoice transitions to 'open'. false = admin must manually invoke POST /invoices/{invoice}/send."
+        },
+        {
+          "path": "invoice.delivery.email_channel",
+          "type": "string",
+          "default": "mail",
+          "description": "Delivery channel for invoice notifications. Delegates to the notifications module."
+        },
+        {
+          "path": "invoice.delivery.email_bcc",
+          "type": "array",
+          "default": [],
+          "description": "BCC list applied to every invoice email. Typically empty; tenants may configure their finance-team email here via settings."
+        },
+        {
+          "path": "invoice.delivery.tracking_pixel_enabled",
+          "type": "bool",
+          "default": true,
+          "description": "true = the invoice email includes a tracking pixel that fires InvoiceViewed on open. false = disable (some tenants prefer for privacy)."
+        }
+      ]
+    },
+    "dunning": {
+      "keys": [
+        {
+          "path": "invoice.dunning.cadence",
+          "type": "array",
+          "default": [3, 7, 14, 30, 60],
+          "description": "Days past due at which dunning reminders fire. Default: day+3 / day+7 / day+14 / day+30 / day+60. Enterprise tenants with invoice_dunning_advanced may override via settings."
+        },
+        {
+          "path": "invoice.dunning.uncollectible_after_days",
+          "type": "int",
+          "default": 90,
+          "description": "Minimum days past due before an invoice can be marked uncollectible."
+        },
+        {
+          "path": "invoice.dunning.severity_escalation",
+          "type": "array",
+          "default": ["friendly", "reminder", "firm", "final", "collections"],
+          "description": "Copy severity tone per cadence stage. friendly → reminder → firm → final → collections."
+        },
+        {
+          "path": "invoice.dunning.pause_on_customer_action",
+          "type": "bool",
+          "default": true,
+          "description": "true = pause the dunning schedule when the customer responds to an invoice (opens payment link, contacts support). false = keep dunning firing regardless."
+        }
+      ]
+    },
+    "collection": {
+      "keys": [
+        {
+          "path": "invoice.collection.send_to_collections_after_days",
+          "type": "int",
+          "default": 60,
+          "description": "Days past due at which EscalateDunningToCollectionsJob fires. Enterprise-only (requires invoice_collections_integration)."
+        },
+        {
+          "path": "invoice.collection.write_off_after_days",
+          "type": "int",
+          "default": 180,
+          "description": "Days past due at which an invoice may be marked written_off. Typically 6 months after past-due."
+        },
+        {
+          "path": "invoice.collection.default_agency",
+          "type": "string",
+          "default": null,
+          "description": "Default third-party collections agency slug. Configured per-tenant via settings; this is the platform-level default."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "invoice.retention.invoice_years",
+          "type": "int",
+          "default": 7,
+          "description": "invoices retention. 10 years for Enterprise tenants with invoice_extended_retention entitlement."
+        },
+        {
+          "path": "invoice.retention.credit_note_years",
+          "type": "int",
+          "default": 7,
+          "description": "credit_notes retention. Same tier-driven extension as invoices."
+        },
+        {
+          "path": "invoice.retention.line_years",
+          "type": "int",
+          "default": 7,
+          "description": "invoice_lines retention. Cascaded via FK RESTRICT — cannot be shorter than parent invoice."
+        },
+        {
+          "path": "invoice.retention.pdf_hot_years",
+          "type": "int",
+          "default": 7,
+          "description": "PDFs remain in S3 hot storage this long. After, migrate to S3 Glacier (Enterprise: 10 years hot)."
+        }
+      ]
+    },
+    "tax": {
+      "keys": [
+        {
+          "path": "invoice.tax.require_frozen_before_finalize",
+          "type": "bool",
+          "default": true,
+          "description": "true = InvoiceObserver refuses finalize when any line lacks tax_calculation_id. false = allow finalization without tax (rare — some jurisdictions permit late-tax addition)."
+        },
+        {
+          "path": "invoice.tax.auto_calculate_async",
+          "type": "bool",
+          "default": true,
+          "description": "true = dispatch CalculateInvoiceTaxJob when a line is created without tax_calculation_id. false = require the caller to supply tax_calculation_id (rare)."
+        },
+        {
+          "path": "invoice.tax.rounding_mode",
+          "type": "string",
+          "default": "banker",
+          "description": "Rounding mode for tax + line total computations. 'banker' (banker's rounding — half-to-even; avoids bias) or 'half_up' (traditional; used in some jurisdictions)."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "invoice.reconciliation.sweep_recent_hours",
+          "type": "int",
+          "default": 48,
+          "description": "ReconcileInvoicePaymentsJob only reconciles invoices updated in the last N hours. Full-history reconciliation is expensive; a 48-hour rolling window catches recent drift."
+        },
+        {
+          "path": "invoice.reconciliation.expected_drift",
+          "type": "int",
+          "default": 0,
+          "description": "Baseline for reconciliation alerts. Any finding above this is a P1 signal (transaction module drift)."
+        }
+      ]
+    },
+    "currency": {
+      "keys": [
+        {
+          "path": "invoice.currency.default",
+          "type": "string",
+          "default": "USD",
+          "description": "Platform-wide default currency. Overridden by tenant.default_currency (from the tenancy module's settings)."
+        },
+        {
+          "path": "invoice.currency.allow_multi_currency",
+          "type": "bool",
+          "default": false,
+          "description": "Platform-wide flag; the tenant-level invoice_multi_currency entitlement is the authoritative gate."
+        }
+      ]
+    }
+  }
+}

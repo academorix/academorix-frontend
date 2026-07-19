@@ -1,0 +1,108 @@
+{
+  "id": "tax.resources.tax-jurisdiction.list",
+  "title": "Tax jurisdictions",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/jurisdictions",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-jurisdiction", "action": "list" },
+  "requiresPermission": "tax.jurisdictions.viewAny",
+  "requiresEntitlement": "tax_capture",
+  "dataSources": [
+    {
+      "name": "jurisdictions",
+      "kind": "http.get",
+      "url": "/api/v1/tax/jurisdictions",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax jurisdictions" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Country/state/city rule catalog. 195 platform-reference countries + tenant-custom jurisdictions." } }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add custom jurisdiction" },
+              "requiresPermission": "tax.jurisdictions.create",
+              "requiresEntitlement": "tax_jurisdiction_custom",
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/tax/jurisdictions/new" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "SearchField",
+              "props": { "label": "Country", "placeholder": "Search country name or code..." },
+              "actions": {
+                "onChange": { "kind": "filter.set", "field": "country_code", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Tax type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "vat", "label": "VAT" },
+                { "id": "gst", "label": "GST" },
+                { "id": "sales_tax", "label": "Sales tax" },
+                { "id": "consumption_tax", "label": "Consumption tax" },
+                { "id": "digital_services_tax", "label": "Digital services tax" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "tax_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Custom only", "helpText": "Show tenant-scoped custom jurisdictions only." },
+              "actions": {
+                "onChange": { "kind": "filter.set", "field": "custom_only", "valueExpr": "$value" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "jurisdictions" },
+            "isLoading": { "$ref": "jurisdictions.isLoading" }
+          },
+          "props": {
+            "columns": [
+              { "field": "country_code", "label": "Country", "sortable": true, "width": 100 },
+              { "field": "state_code", "label": "State/Subdivision", "width": 140 },
+              { "field": "city", "label": "City", "width": 140 },
+              { "field": "name", "label": "Name", "sortable": true, "width": 260 },
+              { "field": "tax_type", "label": "Type", "sortable": true, "width": 120 },
+              { "field": "nexus_type", "label": "Nexus", "width": 120 },
+              { "field": "tenant_id", "label": "Source", "width": 120, "formatter": "custom-or-platform" }
+            ],
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/tax/jurisdictions/' + row.id"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

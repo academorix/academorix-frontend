@@ -1,0 +1,136 @@
+{
+  "id": "academorix://modules/payment/analytics",
+  "$version": 1,
+  "title": "payment — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "note": "This file declares product-analytics events that the growth::analytics lane emits about THIS MODULE's admin + customer surfaces (payment method attach, capture, dispute management). Payment-lane events themselves (PaymentCaptured / PaymentDisputeLost / etc.) are the module's OWN events fanning out to Wave 5 growth::marketing via #[AsDomainEventMapper] — those are Lane 5, not Lane 4.",
+  "events": [
+    {
+      "name": "Payment Method Attached",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "method_type", "brand_bucket", "is_default"],
+      "description": "Customer saved a payment method. brand_bucket is one of: card_major (visa/mc/amex) / card_other / bank / wallet / other."
+    },
+    {
+      "name": "Payment Method Removed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "method_type", "deactivated_reason", "days_active_bucket"]
+    },
+    {
+      "name": "Payment Intent Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "capture_method", "confirmation_method", "amount_cents_bucket", "currency"],
+      "description": "amount_cents_bucket = 0 / 1-999 / 1000-9999 / 10000-99999 / 100000+ (prevents cross-tenant revenue inference)."
+    },
+    {
+      "name": "Payment Intent Confirmed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "outcome", "3ds_result"],
+      "description": "outcome: succeeded / requires_action / failed / processing."
+    },
+    {
+      "name": "Payment Captured",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "method_type", "brand_bucket", "amount_cents_bucket", "currency", "3ds_result"],
+      "description": "PRIMARY success signal. Consent tier: essential (financial-audit + business-critical)."
+    },
+    {
+      "name": "Payment Failed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "error_type", "error_code_bucket"],
+      "description": "error_type: authentication_error / card_error / api_error / idempotency_error / rate_limit_error / validation_error. error_code_bucket is pre-computed (card_declined / insufficient_funds / expired_card / auth_required / provider_down / other)."
+    },
+    {
+      "name": "Payment 3DS Challenge Triggered",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "reason"],
+      "description": "reason: psd2_threshold / high_risk / forced_by_tenant / issuer_required."
+    },
+    {
+      "name": "Payment 3DS Challenge Completed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "outcome", "duration_ms_bucket"],
+      "description": "outcome: authenticated / rejected / not_supported / bypassed / abandoned."
+    },
+    {
+      "name": "Payment Manual Capture Triggered",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "amount_cents_bucket", "partial"],
+      "description": "partial: true = amount_cents < intent.amount_cents (partial capture)."
+    },
+    {
+      "name": "Payment Provider Configured",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider"]
+    },
+    {
+      "name": "Payment Provider Test Sent",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "outcome"]
+    },
+    {
+      "name": "Payment Provider Circuit Breaker Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider"],
+      "description": "P1 event. Consent tier: essential (system-health signal)."
+    },
+    {
+      "name": "Payment Dispute Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "reason", "amount_cents_bucket"],
+      "description": "P1 for high-value (>$500). Consent tier: essential (financial-audit signal)."
+    },
+    {
+      "name": "Payment Dispute Evidence Submitted",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "days_from_open_bucket"]
+    },
+    {
+      "name": "Payment Dispute Accepted",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "amount_cents_bucket"],
+      "description": "Merchant chose to refund without fighting. Consent tier: essential (financial signal)."
+    },
+    {
+      "name": "Payment Dispute Won",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "amount_cents_bucket"]
+    },
+    {
+      "name": "Payment Dispute Lost",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "amount_cents_bucket", "escalated_to_chargeback"]
+    },
+    {
+      "name": "Payment Reconcile Drift Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "drift_count_bucket"],
+      "description": "Nightly reconciliation found intent state drift. Signal of lost webhook or async delay."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw amount_cents — always the bucket (0 / 1-999 / 1000-9999 / 10000-99999 / 100000+). Prevents cross-tenant revenue inference from aggregated data.",
+    "Analytics NEVER carry customer identifiers (email, phone, name, IP address, device fingerprint). Only tenant_id + provider + bucket properties.",
+    "The 'essential' consent tier for Payment Captured + Payment Failed + Payment 3DS Challenge + Payment Dispute Opened + Payment Dispute Accepted + Payment Dispute Won + Payment Dispute Lost + Payment Provider Circuit Breaker Opened + Payment Reconcile Drift Detected is deliberate — payment operations are core business signals + system-health signals; consent tier cannot be opted out.",
+    "This file is DISTINCT from the payment-lane events themselves. Payment-lane events (PaymentCaptured domain event → CaptureMembershipPurchasedMarketingEvent via #[AsDomainEventMapper]) flow through the growth::marketing module's substrate as marketing_events rows. That's Lane 5. This analytics.json is Lane 4 — the growth::analytics feed about the admin + customer experience of the payment surface."
+  ]
+}

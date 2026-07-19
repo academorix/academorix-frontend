@@ -1,0 +1,121 @@
+{
+  "id": "payment.resources.payment-method.list",
+  "title": "Payment methods",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-methods",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-method", "action": "list" },
+  "requiresPermission": "payment.methods.viewAny",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "methods",
+      "kind": "http.get",
+      "url": "/api/v1/payment-methods/mine",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payment methods" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Your saved cards + bank accounts for future payments." } }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "md", "children": "Add method" },
+              "actions": {
+                "onPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/payment-methods/new'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-4" },
+          "bindings": { "hidden": { "$expr": "methods.length === 0" } },
+          "children": [
+            {
+              "kind": "ForEach",
+              "bindings": { "items": { "$ref": "methods" } },
+              "children": [
+                {
+                  "kind": "Card",
+                  "children": [
+                    {
+                      "kind": "CardContent",
+                      "props": { "className": "flex items-center justify-between gap-4" },
+                      "children": [
+                        {
+                          "kind": "View",
+                          "props": { "className": "flex items-center gap-3" },
+                          "children": [
+                            { "kind": "Widget", "widget": "payment.method-brand-badge", "bindings": { "props.brand": { "$ref": "item.brand" }, "props.last4": { "$ref": "item.last4" } } },
+                            {
+                              "kind": "View",
+                              "children": [
+                                { "kind": "Text", "props": { "className": "text-sm font-medium" }, "bindings": { "children": { "$expr": "item.brand + ' •••• ' + item.last4" } } },
+                                { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "'Expires ' + item.exp_month + '/' + item.exp_year" } } }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "kind": "View",
+                          "props": { "className": "flex items-center gap-2" },
+                          "children": [
+                            {
+                              "kind": "Chip",
+                              "props": { "variant": "success", "size": "sm", "children": "Default" },
+                              "bindings": { "hidden": { "$expr": "!item.is_default" } }
+                            },
+                            {
+                              "kind": "Button",
+                              "props": { "variant": "ghost", "size": "sm", "children": "Remove" },
+                              "actions": {
+                                "onPress": {
+                                  "kind": "navigate",
+                                  "toExpr": "'/tenant/payment-methods/' + item.id + '/remove'"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "text-center py-12" },
+          "bindings": { "hidden": { "$expr": "methods.length > 0" } },
+          "children": [
+            { "kind": "Icon", "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" } },
+            { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No saved methods" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Save a payment method to speed up future payments." } }
+          ]
+        }
+      ]
+    }
+  ]
+}

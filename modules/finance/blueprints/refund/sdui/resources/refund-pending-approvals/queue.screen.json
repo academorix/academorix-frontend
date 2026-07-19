@@ -1,0 +1,173 @@
+{
+  "id": "refund.resources.refund-pending-approvals.queue",
+  "title": "Pending refund approvals",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/refunds/pending-approvals",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "refund", "entity": "refund-pending-approvals", "action": "queue" },
+  "requiresPermission": "refunds.approve",
+  "requiresEntitlement": "refund_capture",
+  "dataSources": [
+    {
+      "name": "pending_refunds",
+      "kind": "http.get",
+      "url": "/api/v1/refunds/pending-approvals",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "broadcasts": [
+    { "channel": "tenant.{tenantId}.refunds.pending-approvals", "onEvent": ["*"], "action": "refresh" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Pending refund approvals" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refunds awaiting your review. Sorted oldest-first to surface SLA-approaching approvals." } }
+              ]
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Filter", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "all", "label": "All pending" },
+                { "id": "24h+", "label": "Older than 24h" },
+                { "id": "12h+", "label": "Older than 12h" },
+                { "id": "not_mine", "label": "Not initiated by me" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "older_than", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "bindings": {
+            "items": { "$ref": "pending_refunds" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "check-circle", "className": "size-12 mx-auto text-success" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "All caught up" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "No refunds are pending approval." } }
+            ]
+          },
+          "columns": [
+            {
+              "key": "hours_pending",
+              "label": "Pending",
+              "renderer": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "variant": {
+                    "$expr": "row.hours_pending < 12 ? 'success' : (row.hours_pending < 24 ? 'warning' : 'danger')"
+                  },
+                  "children": {
+                    "$expr": "row.hours_pending < 1 ? '< 1h' : Math.floor(row.hours_pending) + 'h'"
+                  }
+                }
+              }
+            },
+            { "key": "refund_number", "label": "Refund #", "renderer": "monospace" },
+            {
+              "key": "amount_cents",
+              "label": "Amount",
+              "renderer": {
+                "kind": "Text",
+                "bindings": {
+                  "children": {
+                    "$expr": "hasPermission('refunds.view-financials') ? formatCurrency(row.amount_cents, row.currency) : '••••'"
+                  }
+                }
+              }
+            },
+            {
+              "key": "reason",
+              "label": "Reason",
+              "renderer": {
+                "kind": "Text",
+                "bindings": {
+                  "children": {
+                    "$expr": "row.reason.split('_').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')"
+                  }
+                }
+              }
+            },
+            { "key": "initiated_by_user_id", "label": "Initiated by", "renderer": "user-avatar-name" },
+            {
+              "key": "days_since_payment",
+              "label": "Days since payment",
+              "renderer": {
+                "kind": "Text",
+                "bindings": {
+                  "children": { "$expr": "row.days_since_payment + ' days'" }
+                }
+              }
+            },
+            {
+              "key": "actions",
+              "label": "Actions",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "outline", "size": "sm", "children": "View" },
+                    "actions": {
+                      "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + row.id" }
+                    }
+                  },
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "primary", "size": "sm", "leadingIcon": "check", "children": "Approve" },
+                    "actions": {
+                      "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + row.id + '/approve'" }
+                    },
+                    "bindings": {
+                      "hidden": { "$expr": "row.initiated_by_user_id === auth.user.id" }
+                    }
+                  },
+                  {
+                    "kind": "Button",
+                    "props": { "variant": "danger", "size": "sm", "leadingIcon": "x-mark", "children": "Reject" },
+                    "actions": {
+                      "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + row.id + '/reject'" }
+                    },
+                    "bindings": {
+                      "hidden": { "$expr": "row.initiated_by_user_id === auth.user.id" }
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "neutral" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.initiated_by_user_id !== auth.user.id" },
+                      "children": "Your request"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

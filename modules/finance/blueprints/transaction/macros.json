@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/transaction/macros",
+  "$version": 1,
+  "title": "transaction — published macros",
+  "description": "The transaction module publishes ZERO framework macros. Every consumer touches the transaction surface via injected services (TransactionRecorder, TransactionReverser, AccountBalanceCalculator) or the domain-event listener path (invoice.paid → RecordInvoicePaidTransactionJob). No middleware attaches per-request state that consumers would surface as a Request macro.",
+  "namespace_note": "No macros published.",
+  "macros": [],
+  "rationale": [
+    "Transaction is a RECORDING module — it observes domain events + writes ledger entries. There is no request-level state that needs to be surfaced as a Request macro (contrast with facility::activeFacility which caches a per-request model).",
+    "The tenant's transaction_halt_new flag IS request-scoped (via tenant-context binding) — but consumers access it through TransactionRepository::assertLedgerNotHalted() (a bound service method), not via a Request macro.",
+    "The active tenant's base_currency IS request-scoped (via tenant-context binding) — but consumers access it through Tenant::current()->base_currency (a model accessor), not via a Request macro. This is the same pattern as region::activeRegion + tax::activeJurisdiction.",
+    "Adding a transaction-specific macro (e.g. Request::activeLedgerHaltFlag) would signal a design smell — the halt flag is a tenant property, not a request property."
+  ]
+}

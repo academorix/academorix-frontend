@@ -1,0 +1,35 @@
+{
+  "id": "chargeback.network-badge",
+  "title": "Card network badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Card network badge (Visa / Mastercard / Amex / Discover / JCB / UnionPay / Diners / Other). Uses network-catalog.json for display metadata. Rendered as a small chip with network logo (from a shared logos asset). Never renders colour-only — always includes the network name text.",
+  "props": {
+    "network": { "type": "string", "required": true, "enum": ["visa", "mastercard", "amex", "discover", "jcb", "unionpay", "diners", "other"] },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showLogo": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "props": { "variant": "neutral" },
+      "bindings": {
+        "size": { "$ref": "props.size" },
+        "leadingIcon": {
+          "$expr": "props.showLogo ? ('network-logo-' + props.network) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "({ visa: 'Visa', mastercard: 'Mastercard', amex: 'American Express', discover: 'Discover', jcb: 'JCB', unionpay: 'UnionPay', diners: 'Diners Club', other: 'Other' })[props.network]"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

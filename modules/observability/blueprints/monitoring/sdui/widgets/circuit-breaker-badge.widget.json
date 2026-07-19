@@ -1,0 +1,37 @@
+{
+  "id": "monitoring.circuit-breaker-badge",
+  "title": "Circuit-breaker badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Dedicated badge showing circuit-breaker state + open-until timestamp + consecutive_failure_count for a provider_config. States: closed (hidden unless failures > 0), half-open (warning), open (danger). When open, includes the countdown + a hoverable tooltip with the last_error_message.",
+  "props": {
+    "provider_config": { "type": "object", "required": true },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Badge",
+      "bindings": {
+        "hidden": {
+          "$expr": "!props.provider_config.circuit_breaker_open_until && (props.provider_config.consecutive_failure_count || 0) === 0"
+        },
+        "variant": {
+          "$expr": "props.provider_config.circuit_breaker_open_until ? 'danger' : 'warning'"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": { "leadingIcon": "shield-exclamation" },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.provider_config.circuit_breaker_open_until ? ('Circuit OPEN until ' + props.provider_config.circuit_breaker_open_until) : ('Fail count: ' + (props.provider_config.consecutive_failure_count || 0))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

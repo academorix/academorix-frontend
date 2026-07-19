@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/chargeback/subprocessors",
+  "$version": 1,
+  "title": "chargeback — subprocessors",
+  "description": "The Chargeback module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream payment module engages the actual payment providers (Stripe / Paddle / Adyen / Square / PayPal / CustomWebhook) that ORIGINATE the chargeback webhook + receive the evidence submission; downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) that receive negative-value + fraud signal events; downstream notifications module engages email/SMS subprocessors. All are declared in their respective modules' subprocessors.json.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "payment",
+      "reference": "payment::subprocessors.json (Wave 4)",
+      "used_for": "Receiving chargeback webhooks (Stripe 'charge.dispute.created', Paddle 'transaction.chargeback', Adyen 'NOTIFICATION_OF_CHARGEBACK') + dispatching evidence submissions. RefundProviderExecutor's sibling — this module's EvidenceSubmitter delegates to payment::PaymentProviderManager which handles the provider-side HTTP call + webhook signature verification."
+    },
+    {
+      "module": "refund",
+      "reference": "refund::subprocessors.json (Wave 4)",
+      "used_for": "RDR path creates a Refund via refund::RefundOrchestrator. The refund module handles the provider-side refund dispatch through its own subprocessor chain (payment providers)."
+    },
+    {
+      "module": "marketing",
+      "reference": "marketing::subprocessors.json (Wave 5)",
+      "used_for": "Forwarding Chargeback Filed (negative-value + fraud signal) events to ad networks (Meta CAPI, Google Ads Enhanced Conversions, TikTok Events API, Microsoft UET, Snapchat CAPI) for ROAS adjustment + fraud model retraining. Fraud model retraining is MORE aggressive for chargebacks than for refunds."
+    },
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Delivering ChargebackFiledNotification + ChargebackEvidenceOverdueNotification + ChargebackWonNotification + ChargebackLostNotification + ChargebackRateThresholdExceededNotification + ChargebackEvidenceReminderNotification + ChargebackAcceptedRefundNotification via email / SMS / in-app / push."
+    },
+    {
+      "module": "invoice",
+      "reference": "invoice::subprocessors.json (Wave 4)",
+      "used_for": "CreditNoteIssuer creates the reversal credit note document on chargeback lost (tax reversal). Invoice module engages document rendering + storage subprocessors (S3 for PDF hosting)."
+    },
+    {
+      "module": "attendance",
+      "reference": "attendance::subprocessors.json (Wave 4+)",
+      "used_for": "Evidence auto-collection reads attendance records from attendance module (service_documentation evidence field). No third-party subprocessor per-se; the attendance module engages its own storage subprocessor for signature captures + attendance photos when applicable."
+    },
+    {
+      "module": "support",
+      "reference": "support::subprocessors.json (Wave 4+)",
+      "used_for": "Evidence auto-collection reads support tickets + call recordings from support module (communication_log evidence field). Support module engages call recording storage subprocessor (S3 for audio recordings)."
+    },
+    {
+      "module": "compliance",
+      "reference": "compliance::subprocessors.json",
+      "used_for": "Retention pipeline (PurgeExpiredChargebackDataJob) migrates records to compliance_archive S3 buckets before hard-delete. Compliance module engages the archive-storage subprocessor."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately with an empty subprocessors array. The GDPR Art. 30 record of processing activities requires per-module subprocessor lists; an empty list is the correct declaration for a module that engages none directly.",
+    "The Wave 4 tenant-facing 'subprocessor disclosure' page reads THIS FILE'S downstream_subprocessors_referenced list to compose the full disclosure — every downstream that this module transitively engages is surfaced to the tenant admin.",
+    "Payment provider subprocessors (Stripe / Paddle / Adyen / Square / PayPal) are the HIGH-RISK category — they receive PCI-adjacent data (payment token, chargeback amount, evidence bundle). Chargeback does not directly engage them; the payment module handles the provider-side HTTP contracts + credential management + evidence submission dispatch.",
+    "Ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) receive hashed PII + click IDs + chargeback amounts + reason categories on ChargebackLost. The fraud_signal boolean informs the ad network to weight the event more heavily for fraud model retraining. Tenants opt into which providers via marketing module's provider configuration.",
+    "Chargebacks are HIGH-STAKES for card network compliance — the entire subprocessor chain (payment providers + ad networks + evidence storage) must maintain integrity to preserve merchant-account standing."
+  ]
+}

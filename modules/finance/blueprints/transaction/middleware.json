@@ -1,0 +1,27 @@
+{
+  "id": "academorix://modules/transaction/middleware",
+  "$version": 1,
+  "title": "transaction — HTTP middleware",
+  "middleware": [],
+  "description": "This module publishes NO tenant-plane middleware. The transaction surface is service-only for writes (recording happens via TransactionRecorder called by invoice/payment/refund/chargeback modules) + read-only for HTTP. Access control is fully expressed via entitlement middleware + permission-based authorization on individual routes. There is no per-request transaction context to hydrate — the tenant context (which is what transactions belong to) is resolved by tenant.resolve middleware upstream.",
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    {
+      "middleware": "entitlements::entitlement.enforce",
+      "note": "Applied per-route with the specific entitlement key (transaction_capture for base surface, transaction_advanced_reporting for /ledger/report + /ledger/export, transaction_ledger_reconciliation_api for /ledger/reconciliation, transaction_multi_currency is enforced at the observer level rather than as a route middleware because cross-currency records are triggered by non-HTTP-facing service calls)."
+    },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json. Route-level `permission` metadata resolves through this middleware. Reversal specifically requires the admin role (finance role does NOT hold transaction.reverse)."
+    },
+    {
+      "middleware": "audit::authorize_audit",
+      "note": "Every write route through this module (only /reverse) writes a critical audit row after the response envelope closes. Provided by the audit module; consumed via metadata on the /reverse route."
+    }
+  ]
+}

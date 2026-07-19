@@ -1,0 +1,256 @@
+{
+  "id": "academorix://modules/monitoring/config",
+  "$version": 1,
+  "title": "monitoring — developer configuration",
+  "configFile": "config/monitoring.php",
+  "envPrefix": "MONITORING_",
+  "sections": {
+    "health_checks": {
+      "keys": [
+        {
+          "path": "monitoring.health_checks.enabled",
+          "type": "bool",
+          "env": "MONITORING_HEALTH_CHECKS_ENABLED",
+          "default": true,
+          "description": "Master toggle for the health check evaluator. Off = RunHealthCheckJob no-ops. Emergency-only."
+        },
+        {
+          "path": "monitoring.health_checks.default_interval_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "Default interval baked into new health_checks when the caller doesn't specify."
+        },
+        {
+          "path": "monitoring.health_checks.default_timeout_seconds",
+          "type": "int",
+          "default": 30,
+          "description": "Default timeout for new health_checks. Must be < interval_seconds."
+        },
+        {
+          "path": "monitoring.health_checks.min_interval_seconds",
+          "type": "int",
+          "default": 15,
+          "description": "Hard floor. Intervals below this are refused by HealthCheckObserver (rate-limit / DDoS prevention against tenant's own infrastructure)."
+        },
+        {
+          "path": "monitoring.health_checks.response_body_max_bytes",
+          "type": "int",
+          "default": 8192,
+          "description": "Max size of stored response_body jsonb (bytes, post-serialization). HealthCheckRunObserver truncates before persist."
+        },
+        {
+          "path": "monitoring.health_checks.pii_redaction_enabled",
+          "type": "bool",
+          "default": true,
+          "description": "true = HealthCheckRunObserver scans response_body for PII regex patterns (email, phone, SSN, credit card) + redacts with '[REDACTED]'. NEVER flip off in production."
+        }
+      ]
+    },
+    "alert_policies": {
+      "keys": [
+        {
+          "path": "monitoring.alert_policies.evaluation_interval_seconds",
+          "type": "int",
+          "default": 30,
+          "description": "How often EvaluateAlertPoliciesJob sweeps. 30s default balances responsiveness with load."
+        },
+        {
+          "path": "monitoring.alert_policies.min_window_seconds",
+          "type": "int",
+          "default": 60,
+          "description": "Minimum threshold window. Below 60s the evaluator has too few data points to compute averages/percentiles reliably."
+        },
+        {
+          "path": "monitoring.alert_policies.default_consecutive_breaches_required",
+          "type": "int",
+          "default": 2,
+          "description": "Default consecutive_breaches_required for new policies. 2 filters transient spikes; 1 fires on every single breach."
+        }
+      ]
+    },
+    "incidents": {
+      "keys": [
+        {
+          "path": "monitoring.incidents.grouping_window_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "GroupAlertsIntoIncidentJob attaches an alert to an existing incident when the incident opened within this window AND shares severity AND signal_source overlap. 5-min default."
+        },
+        {
+          "path": "monitoring.incidents.escalation_sla_seconds",
+          "type": "array",
+          "default": {
+            "p1": 300,
+            "p2": 900,
+            "p3": 3600,
+            "p4": null
+          },
+          "description": "Time-to-acknowledge SLA per severity. Unack past this window fires EscalateIncidentJob. P4 never escalates (dashboard-only)."
+        },
+        {
+          "path": "monitoring.incidents.auto_resolve_sweep_hour_utc",
+          "type": "int",
+          "default": 3,
+          "description": "AutoResolveIncidentJob runs daily at this UTC hour."
+        }
+      ]
+    },
+    "providers": {
+      "keys": [
+        {
+          "path": "monitoring.providers.sentry.envelope_endpoint_pattern",
+          "type": "string",
+          "default": "https://{key}@{host}/api/{project_id}/envelope/",
+          "description": "Sentry envelope endpoint pattern. Extracted from the DSN by SentryProvider driver."
+        },
+        {
+          "path": "monitoring.providers.datadog.events_endpoint",
+          "type": "string",
+          "default": "https://api.datadoghq.com/api/v1/events",
+          "description": "Datadog events API endpoint. Site override for datadoghq.eu / datadoghq.gov via config.site."
+        },
+        {
+          "path": "monitoring.providers.pagerduty.events_endpoint",
+          "type": "string",
+          "default": "https://events.pagerduty.com/v2/enqueue",
+          "description": "PagerDuty Events API v2 endpoint."
+        },
+        {
+          "path": "monitoring.providers.opsgenie.alerts_endpoint",
+          "type": "string",
+          "default": "https://api.opsgenie.com/v2/alerts",
+          "description": "Opsgenie alerts API. EU tenants override to api.eu.opsgenie.com via config.region."
+        },
+        {
+          "path": "monitoring.providers.prometheus.pushgateway_default_scheme",
+          "type": "string",
+          "default": "https",
+          "description": "Default scheme for Prometheus pushgateway URLs. HTTP allowed for local dev only."
+        }
+      ]
+    },
+    "dispatch": {
+      "keys": [
+        {
+          "path": "monitoring.dispatch.timeout_seconds",
+          "type": "int",
+          "env": "MONITORING_DISPATCH_TIMEOUT",
+          "default": 15,
+          "description": "Per-provider HTTP timeout. Overridable per provider via provider_config.timeout_seconds."
+        },
+        {
+          "path": "monitoring.dispatch.connect_timeout_seconds",
+          "type": "int",
+          "default": 5,
+          "description": "Guzzle connect timeout."
+        }
+      ]
+    },
+    "retry": {
+      "keys": [
+        {
+          "path": "monitoring.retry.default_max_attempts",
+          "type": "int",
+          "default": 6
+        },
+        {
+          "path": "monitoring.retry.default_backoff_seconds",
+          "type": "array",
+          "default": [60, 300, 1800, 7200, 43200, 86400]
+        },
+        {
+          "path": "monitoring.retry.sweep_interval_seconds",
+          "type": "int",
+          "default": 300,
+          "description": "How often RetryFailedNotificationsJob sweeps."
+        }
+      ]
+    },
+    "circuit_breaker": {
+      "keys": [
+        {
+          "path": "monitoring.circuit_breaker.default_failure_threshold",
+          "type": "int",
+          "default": 5
+        },
+        {
+          "path": "monitoring.circuit_breaker.default_open_duration_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "Default 1h open duration. After this, HalfOpenCircuitBreakerJob probes."
+        },
+        {
+          "path": "monitoring.circuit_breaker.default_half_open_test_events",
+          "type": "int",
+          "default": 1
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "monitoring.retention.health_check_run_days_hot",
+          "type": "int",
+          "default": 7,
+          "description": "7-day hot retention default. Enterprise: 30 via monitoring_extended_retention entitlement."
+        },
+        {
+          "path": "monitoring.retention.health_check_run_days_cold",
+          "type": "int",
+          "default": 30,
+          "description": "30-day cold retention default. Enterprise: 90."
+        },
+        {
+          "path": "monitoring.retention.alert_days_hot",
+          "type": "int",
+          "default": 30
+        },
+        {
+          "path": "monitoring.retention.alert_days_cold",
+          "type": "int",
+          "default": 90,
+          "description": "90-day cold retention default. Enterprise: 365."
+        },
+        {
+          "path": "monitoring.retention.incident_days_hot",
+          "type": "int",
+          "default": 90
+        },
+        {
+          "path": "monitoring.retention.incident_days_cold",
+          "type": "int",
+          "default": 365,
+          "description": "1-year cold retention default. Enterprise with monitoring_extended_retention: indefinite for P1."
+        },
+        {
+          "path": "monitoring.retention.provider_config_grace_days",
+          "type": "int",
+          "default": 90,
+          "description": "Soft-deleted provider_configs retained this many days before hard-purge."
+        }
+      ]
+    },
+    "suppression": {
+      "keys": [
+        {
+          "path": "monitoring.suppression.after_hours_start",
+          "type": "string",
+          "default": "18:00",
+          "description": "Tenant-local time when after-hours suppression begins (HH:MM 24h). Only applies when policy.suppression_config.after_hours_suppress=true."
+        },
+        {
+          "path": "monitoring.suppression.after_hours_end",
+          "type": "string",
+          "default": "09:00",
+          "description": "Tenant-local time when after-hours suppression ends."
+        },
+        {
+          "path": "monitoring.suppression.weekend_days",
+          "type": "array",
+          "default": ["saturday", "sunday"],
+          "description": "Days considered 'weekend' for weekend_suppress. Tenant-configurable per suppression_config."
+        }
+      ]
+    }
+  }
+}

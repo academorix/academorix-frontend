@@ -1,0 +1,59 @@
+{
+  "id": "invoice.widgets.payment-terms-badge",
+  "title": "Payment terms badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "namespace": "invoice",
+  "widget": "payment-terms-badge",
+  "description": "Badge showing payment_terms + due date + relative status. Renders traffic-light colors: green for 'due in future', yellow for 'due today' + 'due in 3 days', red for 'overdue'. Used in the invoice list DataGrid + the invoice view header + the customer 'my invoices' surface.",
+  "props": {
+    "invoice": {
+      "type": "object",
+      "description": "Full invoice object with payment_terms + due_date + status + payment_terms_custom_days.",
+      "required": true
+    },
+    "size": {
+      "type": "string",
+      "default": "sm",
+      "enum": ["sm", "md"]
+    },
+    "showDate": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "logic": {
+    "displayTerms": {
+      "expr": "invoice.payment_terms == 'due_on_receipt' ? 'Due on receipt' : (invoice.payment_terms == 'custom' ? 'Net ' + invoice.payment_terms_custom_days : (invoice.payment_terms.replace('_', ' ').toUpperCase()))"
+    },
+    "daysUntilDue": {
+      "expr": "Math.floor((new Date(invoice.due_date) - new Date()) / (1000 * 60 * 60 * 24))"
+    },
+    "colorVariant": {
+      "expr": "invoice.status IN ['paid', 'void'] ? 'neutral' : (daysUntilDue < 0 ? 'danger' : (daysUntilDue <= 3 ? 'warning' : 'success'))"
+    },
+    "relativeLabel": {
+      "expr": "invoice.status IN ['paid', 'void', 'refunded', 'written_off'] ? '' : (daysUntilDue < 0 ? ('Overdue by ' + Math.abs(daysUntilDue) + 'd') : (daysUntilDue == 0 ? 'Due today' : (daysUntilDue == 1 ? 'Due tomorrow' : 'Due in ' + daysUntilDue + 'd')))"
+    }
+  },
+  "renderShape": {
+    "type": "flex-row",
+    "gap": "sm",
+    "children": [
+      {
+        "type": "Badge",
+        "variant": "{colorVariant}",
+        "content": "{displayTerms}"
+      },
+      {
+        "type": "Text",
+        "variant": "muted",
+        "content": "{relativeLabel}",
+        "visibleWhen": "relativeLabel != ''"
+      }
+    ]
+  },
+  "accessibility": {
+    "ariaLabel": "Payment terms: {displayTerms}, {relativeLabel}"
+  }
+}

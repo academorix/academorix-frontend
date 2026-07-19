@@ -1,0 +1,129 @@
+{
+  "id": "invoice.resources.credit-note.list",
+  "title": "Credit notes",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/credit-notes",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "invoice", "entity": "credit-note", "action": "list" },
+  "requiresPermission": "invoice.credit-notes.viewAny",
+  "requiresEntitlement": "credit_note_issuance",
+  "dataSources": [
+    {
+      "name": "credit_notes",
+      "kind": "http.get",
+      "url": "/api/v1/credit-notes",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Credit notes" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reversal invoices for refunds, adjustments, and write-offs. Every credit note references a paid invoice." } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Reason", "menuTrigger": "focus", "className": "min-w-56" },
+              "props_items": [
+                { "id": "refund", "label": "Refund" },
+                { "id": "adjustment", "label": "Adjustment" },
+                { "id": "write_off", "label": "Write-off" },
+                { "id": "duplicate", "label": "Duplicate" },
+                { "id": "customer_dispute_resolved", "label": "Customer dispute resolved" },
+                { "id": "accounting_correction", "label": "Accounting correction" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "reason", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "draft", "label": "Draft" },
+                { "id": "issued", "label": "Issued" },
+                { "id": "applied", "label": "Applied" },
+                { "id": "voided", "label": "Voided" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "DateRangePicker",
+              "props": { "label": "Issue date", "className": "min-w-64" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.setMany",
+                  "fields": { "from": "$value.start", "to": "$value.end" }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "credit_notes" },
+            "isLoading": { "$ref": "credit_notes.isLoading" }
+          },
+          "props": {
+            "className": "w-full",
+            "columns": [
+              { "field": "credit_note_number", "label": "Number", "sortable": true, "width": 180 },
+              { "field": "original_invoice_number", "label": "Original invoice", "sortable": false, "width": 180 },
+              { "field": "reason", "label": "Reason", "sortable": true, "width": 200 },
+              { "field": "amount_cents", "label": "Amount", "sortable": true, "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "currencyField": "currency", "align": "right" } },
+              { "field": "status", "label": "Status", "sortable": true, "width": 100 },
+              { "field": "applied_to_type", "label": "Applied to", "sortable": false, "width": 140 },
+              { "field": "issue_date", "label": "Issued", "sortable": true, "defaultSort": "desc", "width": 120, "formatter": "date" }
+            ],
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/credit-notes/' + row.id"
+            },
+            "rowActions": [
+              {
+                "action": "apply",
+                "label": "Apply",
+                "icon": "check",
+                "visibleWhen": "row.status == 'issued'",
+                "requiresPermission": "invoice.credit-notes.apply",
+                "onPress": { "kind": "modal.open", "modal": "invoice.credit-note-apply-dialog", "bindings": { "credit_note_id": "row.id" } }
+              }
+            ]
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "arrow-uturn-left", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No credit notes yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Credit notes are issued when you refund or adjust a paid invoice. They preserve the immutability of the original invoice." } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

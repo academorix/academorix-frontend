@@ -1,0 +1,251 @@
+{
+  "id": "coupon.resources.coupon.list",
+  "title": "Coupons",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coupons",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coupon", "entity": "coupon", "action": "list" },
+  "requiresPermission": "coupons.viewAny",
+  "requiresEntitlement": "coupon_capture",
+  "dataSources": [
+    {
+      "name": "coupons",
+      "kind": "http.get",
+      "url": "/api/v1/coupons",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/coupon_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coupons" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Discount codes for campaigns, partners, and referral rewards." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": { "size": "sm", "label": "Coupon slots" },
+                  "bindings": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "leadingIcon": "queue-list", "children": "Bulk issue" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/coupons/bulk-issue" } },
+                  "bindings": { "hidden": { "$expr": "!hasFeature('coupon.bulk_issue')" } },
+                  "requiresPermission": "coupons.bulk-issue",
+                  "requiresEntitlement": "coupon_bulk_issue"
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "New coupon" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/coupons/new" } },
+                  "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
+                  "requiresPermission": "coupons.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "active", "label": "Active" },
+                { "id": "inactive", "label": "Inactive" },
+                { "id": "expired", "label": "Expired" },
+                { "id": "cap_reached", "label": "Cap reached" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Discount type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "percent", "label": "Percent discount" },
+                { "id": "fixed_amount", "label": "Fixed amount" },
+                { "id": "free_period", "label": "Free period" },
+                { "id": "first_month_free", "label": "First month free" },
+                { "id": "bogo", "label": "Buy one, get one" },
+                { "id": "free_shipping", "label": "Free shipping" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "discount_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Applicability", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "any", "label": "Any" },
+                { "id": "membership_only", "label": "Membership only" },
+                { "id": "specific_membership_plans", "label": "Specific plans" },
+                { "id": "minimum_order_value", "label": "Minimum order value" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "applicability", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Source", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "manual", "label": "Manual" },
+                { "id": "referral", "label": "Referral" },
+                { "id": "marketing_campaign", "label": "Campaign" },
+                { "id": "import", "label": "Import" },
+                { "id": "api", "label": "API" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "issuance_source", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+          "bindings": {
+            "items": { "$ref": "coupons" },
+            "isLoading": { "$ref": "coupons.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "col-span-full text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "ticket", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No coupons yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Launch your first campaign to reward loyal customers or attract new ones." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 hover:shadow-md transition-shadow cursor-pointer" },
+            "actions": {
+              "onPress": { "kind": "navigate", "toExpr": "'/tenant/coupons/' + row.id" }
+            },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-2 mb-2" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-mono text-sm font-medium" },
+                        "bindings": { "children": { "$ref": "row.code" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted mt-0.5" },
+                        "bindings": { "children": { "$ref": "row.name" } }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "coupon.coupon-status-badge",
+                    "bindings": {
+                      "isActive": { "$ref": "row.is_active" },
+                      "validFrom": { "$ref": "row.valid_from" },
+                      "validUntil": { "$ref": "row.valid_until" },
+                      "usageCount": { "$ref": "row.usage_count" },
+                      "usageCap": { "$ref": "row.usage_cap" }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2 mt-2" },
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "coupon.discount-type-chip",
+                    "bindings": {
+                      "discountType": { "$ref": "row.discount_type" },
+                      "discountAmount": { "$ref": "row.discount_amount" },
+                      "discountCurrency": { "$ref": "row.discount_currency" }
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "neutral" },
+                    "bindings": {
+                      "hidden": { "$expr": "row.issuance_source === 'manual'" },
+                      "children": {
+                        "$expr": "({ referral: 'Referral', marketing_campaign: 'Campaign', import: 'Imported', api: 'API' })[row.issuance_source]"
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3 text-xs text-muted mt-3" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.usage_cap ? (row.usage_count + ' / ' + row.usage_cap + ' used') : (row.usage_count + ' uses')"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "ml-auto" },
+                    "bindings": {
+                      "hidden": { "$expr": "!row.valid_until" },
+                      "children": {
+                        "$expr": "'Expires ' + formatDate(row.valid_until, 'relative')"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

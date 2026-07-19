@@ -1,0 +1,92 @@
+{
+  "$version": 1,
+  "title": "Tax rate type catalogue",
+  "description": "The 9 tax rate types the module supports. Each entry documents the typical jurisdictions using the type + expected percentage range + applies_to semantics. Consumers of the TaxRateType enum read this catalogue to build UX for the rate-picker widget.",
+  "rate_types": [
+    {
+      "rate_type": "vat",
+      "display_name": "Value Added Tax (VAT)",
+      "description": "Consumption tax added at each stage of the supply chain. Predominant in the EU + UK + Canada (GST/HST) + Australia (GST) + many Asian jurisdictions.",
+      "typical_range_percentage": [0.05, 0.27],
+      "typical_jurisdictions": ["GB", "DE", "FR", "IT", "ES", "NL", "SE", "NO", "PL", "IE"],
+      "applies_to_defaults": ["all"],
+      "typical_provider_support": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"]
+    },
+    {
+      "rate_type": "gst",
+      "display_name": "Goods and Services Tax (GST)",
+      "description": "Federal-level consumption tax in Canada / Australia / India / Singapore / New Zealand. In Canada, provincial GST can combine with federal GST to form HST.",
+      "typical_range_percentage": [0.05, 0.18],
+      "typical_jurisdictions": ["CA", "AU", "IN", "SG", "NZ", "MY"],
+      "applies_to_defaults": ["all"],
+      "typical_provider_support": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"]
+    },
+    {
+      "rate_type": "sales_tax",
+      "display_name": "Sales Tax",
+      "description": "US-specific consumption tax collected by state + local jurisdictions. Requires nexus tracking per US Wayfair. Rates vary by state (0-10%) + city + zip.",
+      "typical_range_percentage": [0.0, 0.10],
+      "typical_jurisdictions": ["US"],
+      "applies_to_defaults": ["services", "goods", "physical"],
+      "typical_provider_support": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"]
+    },
+    {
+      "rate_type": "consumption_tax",
+      "display_name": "Consumption Tax",
+      "description": "General-purpose consumption tax label used in Japan (10%) + Taiwan (5%) + others. Similar in effect to VAT.",
+      "typical_range_percentage": [0.05, 0.15],
+      "typical_jurisdictions": ["JP", "TW", "KR"],
+      "applies_to_defaults": ["all"],
+      "typical_provider_support": ["avalara", "stripe_tax", "native_calculator", "custom_webhook"]
+    },
+    {
+      "rate_type": "digital_services_tax",
+      "display_name": "Digital Services Tax (DST)",
+      "description": "Specific tax on digital services (SaaS, digital ads, marketplace fees). Distinct from VAT — imposed on gross revenue of digital services rather than transaction value. Applies in France (3%), UK (2%), Italy (3%), and others.",
+      "typical_range_percentage": [0.02, 0.075],
+      "typical_jurisdictions": ["FR", "GB", "IT", "TR", "IN"],
+      "applies_to_defaults": ["digital"],
+      "typical_provider_support": ["avalara", "stripe_tax", "custom_webhook"]
+    },
+    {
+      "rate_type": "withholding_tax",
+      "display_name": "Withholding Tax",
+      "description": "Tax withheld at source (typically on cross-border payments to service providers). Applies in many jurisdictions on payments to foreign entities. Not commonly automated — usually calculated per-payout in transaction module.",
+      "typical_range_percentage": [0.05, 0.30],
+      "typical_jurisdictions": ["ANY"],
+      "applies_to_defaults": ["services"],
+      "typical_provider_support": ["avalara", "custom_webhook"]
+    },
+    {
+      "rate_type": "stamp_duty",
+      "display_name": "Stamp Duty",
+      "description": "Tax on specific legal documents (contracts, transfers). Rare in SaaS contexts — mostly applies to physical goods contracts + real-estate. Included for completeness.",
+      "typical_range_percentage": [0.001, 0.05],
+      "typical_jurisdictions": ["GB", "IN", "AU", "SG"],
+      "applies_to_defaults": ["services"],
+      "typical_provider_support": ["custom_webhook"]
+    },
+    {
+      "rate_type": "customs",
+      "display_name": "Customs / Import Duty",
+      "description": "Duty imposed on imported goods. Applies to physical shipments crossing borders. Rate varies by HS Code + origin + destination. Not commonly automated in SaaS — included for tenants selling physical merchandise.",
+      "typical_range_percentage": [0.0, 0.35],
+      "typical_jurisdictions": ["ANY (destination country)"],
+      "applies_to_defaults": ["physical"],
+      "typical_provider_support": ["avalara", "custom_webhook"]
+    },
+    {
+      "rate_type": "other",
+      "display_name": "Other tax",
+      "description": "Fallback for tax types not fitting the above categories. Tenants who select 'other' must set a descriptive name.",
+      "typical_range_percentage": [0.0, 1.0],
+      "typical_jurisdictions": ["ANY"],
+      "applies_to_defaults": ["all"],
+      "typical_provider_support": ["native_calculator", "custom_webhook"]
+    }
+  ],
+  "notes": [
+    "The rate_type enum is the authoritative list. Adding a new type = updating this catalogue + updating the TaxRateType enum.",
+    "typical_provider_support is a HINT for tenant admins when picking a provider. The observer's valid_provider_config rule enforces the actual per-provider capability at write time."
+  ]
+}

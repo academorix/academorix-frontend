@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/transaction/entitlements",
+  "$version": 1,
+  "title": "transaction — declared entitlements",
+  "description": "Five entitlement keys. `transaction_capture` is the master boolean gate (all tiers implicitly — every tenant has a ledger; but the flag ensures dormant/lapsed tenants can't record new movements). `transaction_multi_currency` unlocks cross-currency transactions (Medium+). `transaction_advanced_reporting` unlocks the monthly General Ledger report + custom GL exports (Medium+). `transaction_ledger_reconciliation_api` unlocks programmatic reconciliation via the ledger:reconcile API (Enterprise). `transaction_extended_retention` unlocks 10-year retention (Enterprise — some finance regimes require > 7 years).",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "transaction_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = TransactionRecorder no-ops (invoice.paid / refund.issued / chargeback.filed listeners record NOTHING). All tiers get this on by default — the flag exists so ops can flip it off during a critical incident (e.g. a P0 ledger imbalance) to halt new writes until the imbalance is resolved.",
+      "enforcedBy": [
+        "entitlement.enforce:transaction_capture middleware on /api/v1/transactions/* + /api/v1/ledger/* routes",
+        "TransactionObserver.creating refuses when the gate is closed (returns TRANSACTION_FEATURE_NOT_ENTITLED)",
+        "HaltNewTransactionsOnImbalance sets the tenant-level halt flag when LedgerImbalanceDetected fires — the observer additionally checks this flag independently of the master entitlement"
+      ]
+    },
+    {
+      "key": "transaction_multi_currency",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables recording transactions in a currency other than the tenant's base currency. When set: TransactionObserver.creating accepts currency != tenant.base_currency + requires exchange_rate_to_base + base_amount_cents; ExchangeRateResolver is called; TransactionCurrencyConverted fires. When unset: TransactionObserver.creating refuses cross-currency transactions with `TRANSACTION_MULTI_CURRENCY_NOT_ENTITLED`. Small tenants operate single-currency only.",
+      "enforcedBy": [
+        "TransactionObserver.creating checks the gate before running the cross-currency snapshot step",
+        "SDUI currency picker limits selection to tenant.base_currency when gate is closed"
+      ]
+    },
+    {
+      "key": "transaction_advanced_reporting",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the monthly General Ledger report + custom GL exports (accountant-shaped CSV + JSONL). Small tenants see only the raw transaction ledger; Medium+ get the roll-up GL. Also enables the GenerateGeneralLedgerReportJob monthly schedule for the tenant.",
+      "enforcedBy": [
+        "entitlement.enforce:transaction_advanced_reporting middleware on /api/v1/ledger/report + /api/v1/ledger/export",
+        "GenerateGeneralLedgerReportJob checks the gate + no-ops for tenants without it",
+        "SDUI report dashboard hidden when features array does not include 'transaction.advanced_reporting'"
+      ]
+    },
+    {
+      "key": "transaction_ledger_reconciliation_api",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables programmatic reconciliation via GET /api/v1/ledger/reconciliation + on-demand invocation of ReconcileLedgerBalancesJob. Enterprise finance teams typically integrate this with external audit tooling. The nightly scheduled reconciliation runs for EVERY tenant regardless of this gate — this gate specifically controls whether the tenant can INVOKE reconciliation on demand + read the reconciliation-run audit trail programmatically.",
+      "enforcedBy": [
+        "entitlement.enforce:transaction_ledger_reconciliation_api middleware on GET /api/v1/ledger/reconciliation",
+        "SDUI reconciliation report hidden when gate is closed"
+      ]
+    },
+    {
+      "key": "transaction_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends transaction + ledger_entry retention from 7 years (default) to 10 years. For finance regimes that require > 7-year audit trails (some jurisdictions + industry-specific requirements). transactions + transaction_ledger_entries only — the intermediate audit rows remain per audit-module retention (7 years always).",
+      "enforcedBy": [
+        "PurgeExpiredTransactionDataJob checks this gate + applies 10-year retention when set"
+      ]
+    }
+  ]
+}

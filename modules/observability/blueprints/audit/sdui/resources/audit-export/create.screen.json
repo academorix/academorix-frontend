@@ -1,0 +1,119 @@
+{
+  "id": "audit.resources.audit-export.create",
+  "title": "Request audit export",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/exports/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit-export", "action": "create" },
+  "requiresPermission": "audit.audits.export",
+  "requiresEntitlement": "audit_export",
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "leadingIcon": "arrow-left", "children": "Back" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/audit/exports" } }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Request audit export"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/audits/export",
+              "onSuccess": { "kind": "navigate", "to": "/tenant/audit/exports" }
+            }
+          },
+          "fields": [
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Export kind",
+                "name": "export_kind",
+                "required": true,
+                "defaultValue": "dsar",
+                "helpText": "DSAR = Data Subject Access Request. Regulator = Article 30 record of processing. Legal Hold = litigation preservation."
+              },
+              "options": [
+                { "key": "dsar", "label": "DSAR (Data Subject Access Request)" },
+                { "key": "regulator", "label": "Regulator (Article 30 record of processing)" },
+                { "key": "legal_hold", "label": "Legal Hold (litigation preservation)" }
+              ]
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Format",
+                "name": "format",
+                "required": true,
+                "defaultValue": "jsonl"
+              },
+              "options": [
+                { "key": "jsonl", "label": "JSON Lines (jsonl.gz — recommended)" },
+                { "key": "csv", "label": "CSV (csv.gz)" }
+              ]
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Auditable type filter",
+                "name": "filters.auditable_type",
+                "placeholder": "e.g. Membership (leave blank for all types)",
+                "helpText": "Optional. Restrict export to a single auditable class."
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Auditable ID filter",
+                "name": "filters.auditable_id",
+                "placeholder": "e.g. mem_01H... (leave blank for all)"
+              }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "User ID filter",
+                "name": "filters.user_id",
+                "placeholder": "usr_01H... (leave blank for all actors)"
+              }
+            },
+            {
+              "kind": "DateRangeField",
+              "props": {
+                "label": "Date range",
+                "nameFrom": "filters.since",
+                "nameTo": "filters.until",
+                "helpText": "Restrict to rows with created_at in this window."
+              }
+            }
+          ],
+          "submitButton": {
+            "variant": "primary",
+            "children": "Request export"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/refund/entitlements",
+  "$version": 1,
+  "title": "refund — declared entitlements",
+  "description": "Eight entitlement keys. `refund_capture` is the boolean master gate — on for every tier by default (refund is table-stakes for any commerce workflow). `refund_customer_self_service` (Small+) permits customer-initiated refunds via POST /refunds. `refund_partial` (Medium+) unlocks partial refund_type + refund_lines. `refund_prorated` (Medium+) unlocks prorated refunds for cancelled memberships. `refund_multi_currency` (Medium+) permits cross-currency refunds. `refund_approval_workflow` (Small+, default on) enables the require-approval flow. `refund_extended_retention` (Enterprise) extends 7y to 10y. `refund_bulk_processing` (Enterprise) unlocks bulk-refund CLI + admin bulk-issue UI.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "refund_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is inert: no refunds may be created, existing pending refunds refuse dispatch, all endpoints return 402. Every tier defaults on — off is an emergency ops-flip only.",
+      "enforcedBy": [
+        "refund.enforce_capture_entitlement middleware on every /api/v1/refunds/* route",
+        "RefundObserver refuses create when the gate is closed",
+        "RefundOrchestrator refuses when the gate is closed (surfaces as REFUND_CAPTURE_NOT_ENTITLED on the caller — chargeback module dispatches this way)",
+        "SDUI surfaces hidden when features array does not include 'refund.core'"
+      ]
+    },
+    {
+      "key": "refund_customer_self_service",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Enables POST /api/v1/refunds/mine — customer-initiated refund requests. When off, only admin can initiate refunds via POST /api/v1/refunds. Tenants with high-touch support flows may prefer to disable customer self-service.",
+      "enforcedBy": [
+        "POST /refunds/mine route carries entitlement.enforce:refund_customer_self_service middleware",
+        "CustomerRefundController@store refuses when the gate is closed"
+      ]
+    },
+    {
+      "key": "refund_partial",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Unlocks refund_type='partial' + the refund_lines editor. Small tier limited to refund_type='full' (all-or-nothing refunds).",
+      "enforcedBy": [
+        "RefundObserver.creating refuses when refund_type='partial' AND entitlement is off (returns REFUND_PARTIAL_NOT_ENTITLED)",
+        "SDUI refund_lines editor hidden when entitlement is off"
+      ]
+    },
+    {
+      "key": "refund_prorated",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Unlocks refund_type='prorated' for cancelled memberships. Medium+ tier. Requires the target to be a Membership (validates via parent invoice.applied_to_type='membership'). Small tier tenants cancelling memberships receive no proration — the full period is either refunded (via refund_type=full) or kept.",
+      "enforcedBy": [
+        "RefundObserver.creating refuses when refund_type='prorated' AND entitlement is off",
+        "SDUI prorated-refund UI hidden when entitlement is off"
+      ]
+    },
+    {
+      "key": "refund_multi_currency",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Permits cross-currency refunds when refund.currency != parent payment.currency. Medium+ tier. Uses tenant's configured FX-rate source + freezes the exchange_rate on the refund row for audit. Small tier tenants must refund in the payment's original currency.",
+      "enforcedBy": [
+        "RefundObserver.creating refuses when refund.currency != payment.currency AND entitlement is off",
+        "SDUI currency picker on refund create hidden when entitlement is off (locked to payment.currency)"
+      ]
+    },
+    {
+      "key": "refund_approval_workflow",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master gate on the approval flow. Default ON for every tier. Off = every refund auto-approves regardless of amount / staleness / reason. Emergency-off only (small tenants who explicitly disable the workflow accept the SOX §404 audit risk). When on, thresholds are tenant-configurable via `refund.approval.*` config keys.",
+      "enforcedBy": [
+        "RefundApprovalManager.compute refuses to trigger requires_approval when the entitlement is off (all refunds auto-approve)",
+        "SDUI pending-approvals queue hidden when entitlement is off"
+      ]
+    },
+    {
+      "key": "refund_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends retention 7y → 10y for financial audit alignment (some regulated tenants require 10y for tax audit trails on refund records + reversal accounting).",
+      "enforcedBy": [
+        "PurgeExpiredRefundDataJob reads the entitlement to select the retention window (7y default; 10y when on)",
+        "ArchiveRefundFinancialRecordsOnTenantErasure applies the 10y window when the tenant held the entitlement at erasure time"
+      ]
+    },
+    {
+      "key": "refund_bulk_processing",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Unlocks bulk-refund CLI + admin bulk-issue UI for scenarios like class cancellation refunding 50+ athletes at once. Small + Medium tiers process refunds one at a time.",
+      "enforcedBy": [
+        "refund:request CLI --bulk flag refuses when entitlement is off",
+        "SDUI bulk-issue UI hidden when entitlement is off"
+      ]
+    }
+  ]
+}

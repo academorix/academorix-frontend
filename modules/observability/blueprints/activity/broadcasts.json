@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/activity/broadcasts",
+  "$version": 1,
+  "title": "activity — broadcast channels",
+  "description": "Two broadcast channels this module owns. Registered by `ActivityServiceProvider::registerBroadcastChannels()`. Tenant-scoped channel for admin dashboards + shared feed views; user-scoped channel for the caller's own 'My activity' panel. Broadcast is entitled — Free-tier tenants fall back to polling.",
+  "driver": "reverb",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.activity",
+      "kind": "private",
+      "description": "Every ActivityRecorded event fires here. Consumed by the tenant dashboard's activity feed widget + admin activity list screen. Filtered on the frontend by log_name / subject_type. Rate-limited server-side: bursts of same-batch activities coalesce to one broadcast per batch (see events.json ActivityBatchCompleted → EmitBatchCollapsedFeedItem consumer).",
+      "authorize": "User belongs to the tenant AND has `activity.viewAny`",
+      "authCallback": "fn (User $user, string $tenantId) => $user->tenant_id === $tenantId && $user->can('activity.viewAny')",
+      "events": [
+        "ActivityRecorded",
+        "ActivityBatchCompleted"
+      ],
+      "entitlement": "activity_broadcast",
+      "fallbackWhenNotEntitled": "polling at 15s intervals (via /api/v1/activities?filter[from]=<last_poll>)"
+    },
+    {
+      "name": "user.{userId}.activity",
+      "kind": "private",
+      "description": "Per-user channel — every activity where this User is the causer OR the subject broadcasts here. Consumed by the caller's 'My activity' sidebar + the mobile-app notification badge. Two behaviours: (a) activities the user CAUSED get an optimistic pending state; the broadcast confirms persistence. (b) activities where the user is the SUBJECT (someone did something to their booking) get a highlighted 'new' badge.",
+      "authorize": "auth_user.id === userId",
+      "authCallback": "fn (User $user, string $userId) => $user->id === $userId",
+      "events": [
+        "ActivityRecorded"
+      ],
+      "filter": "Only broadcasts when the User (userId) matches activity.causer_id OR activity.subject_id (and subject_type = 'user'). Filtered server-side by the broadcast publisher.",
+      "entitlement": "activity_broadcast"
+    }
+  ],
+  "notes": [
+    "Both channels emit `ActivityRecorded`. Downstream consumers filter based on payload — the tenant-wide channel is used by the admin dashboard's shared feed; the per-user channel is the caller's 'My activity' panel. Emitting on BOTH is intentional — a user causing a booking sees it on `tenant.{id}.activity` (admin view) AND `user.{id}.activity` (their own view).",
+    "Rate limiting via ActivityBatchCompleted: a burst of 20 same-batch activities in 3 seconds coalesces to one ActivityBatchCompleted broadcast instead of 20 individual ActivityRecorded broadcasts. Frontend renders the batch as 'Alice made 20 changes to Court 3 booking' with an expand-to-view-all affordance.",
+    "For tenants without `activity_broadcast`: the tenant.{id}.activity channel is not subscribed to — the frontend polls `/api/v1/activities?filter[from]=<last_poll_ts>` every 15 seconds. Same shape on the wire; different transport.",
+    "The `user.{id}.activity` channel is available regardless of entitlement — the per-user feed is a baseline feature. Cross-tenant activity feed streaming (tenant.{id}.activity) is the entitled surface."
+  ]
+}

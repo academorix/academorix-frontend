@@ -1,0 +1,136 @@
+{
+  "id": "tax.resources.tax-jurisdiction.create",
+  "title": "Add custom jurisdiction",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/jurisdictions/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-jurisdiction", "action": "create" },
+  "requiresPermission": "tax.jurisdictions.create",
+  "requiresEntitlement": "tax_jurisdiction_custom",
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Add custom jurisdiction" } },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Enterprise-only",
+            "description": "Custom jurisdictions supplement the platform reference set (195 countries + US states). Useful for niche zones (free-trade zones, special economic zones, regional tourism taxes)."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Country", "menuTrigger": "input", "required": true },
+              "props_items_source": "tax.jurisdiction-country-catalog",
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "country_code", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": { "label": "State/Subdivision (ISO 3166-2)", "placeholder": "US-CA" },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "state_code", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": { "label": "City (optional)" },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "city", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": {
+                "label": "Postal code pattern (regex)",
+                "placeholder": "^902\\d{2}$",
+                "helpText": "PCRE regex for zip-based jurisdictions. Example: ^902\\d{2}$ matches Los Angeles county zips."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "postal_code_pattern", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": { "label": "Name", "required": true },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Tax type", "menuTrigger": "focus", "required": true },
+              "props_items": [
+                { "id": "vat", "label": "VAT" },
+                { "id": "gst", "label": "GST" },
+                { "id": "sales_tax", "label": "Sales tax" },
+                { "id": "consumption_tax", "label": "Consumption tax" },
+                { "id": "digital_services_tax", "label": "Digital services tax" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "tax_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": {
+                "label": "Registration number (your VAT/GST/EIN)",
+                "helpText": "Confidential — competitor intel. Support role sees redacted view."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "registration_number", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Nexus type (US Wayfair)", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "physical", "label": "Physical" },
+                { "id": "economic", "label": "Economic" },
+                { "id": "marketplace", "label": "Marketplace" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "nexus_type", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "primary", "size": "lg", "children": "Create jurisdiction" },
+          "actions": {
+            "onPress": {
+              "kind": "http.post",
+              "url": "/api/v1/tax/jurisdictions",
+              "body": {
+                "country_code": "{{form.country_code}}",
+                "state_code": "{{form.state_code}}",
+                "city": "{{form.city}}",
+                "postal_code_pattern": "{{form.postal_code_pattern}}",
+                "name": "{{form.name}}",
+                "tax_type": "{{form.tax_type}}",
+                "registration_number": "{{form.registration_number}}",
+                "nexus_type": "{{form.nexus_type}}"
+              },
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/tax/jurisdictions/' + response.data.id"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

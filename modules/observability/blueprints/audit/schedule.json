@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/audit/schedule",
+  "$version": 1,
+  "title": "audit — scheduled tasks",
+  "description": "Four scheduled entries: per-tenant retention purge nightly, retention-override expiry sweep nightly, hot-to-cold archive migration weekly, monthly regulator compliance report.",
+  "entries": [
+    {
+      "name": "purge-expired-audits",
+      "command": "audit:purge --all",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03:00 UTC per tenant. Runs PurgeExpiredAuditsJob: reads active AuditRetentionPolicy (fallback config default 7y), computes cutoff, hard-deletes rows past cutoff (batched to control lock duration), writes meta-audit summary row. Fires AuditPurgeExecuted per tenant. Accumulates into weekly digest notification (Sunday)."
+    },
+    {
+      "name": "expire-retention-overrides",
+      "command": "audit:expire-retention-overrides",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 04:00 UTC. Scans AuditRetentionPolicy rows where override_ends_at <= now(). Soft-deletes them + fires AuditRetentionExtensionExpired. Also fires AuditRetentionExtensionExpiringSoonNotification for policies expiring within 30 days (config.audit.retention.expiring_soon_warning_days)."
+    },
+    {
+      "name": "export-audits-to-archive",
+      "command": "audit:export-to-archive",
+      "cron": "0 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05:00 UTC. Enterprise tenants only (implicit via advanced tier). Writes audit rows past 90d hot-window to jsonl.gz in AUDIT_ARCHIVE_S3_BUCKET. Prunes hot table after HEAD-verified upload."
+    },
+    {
+      "name": "generate-monthly-compliance-report",
+      "command": "audit:generate-compliance-report",
+      "cron": "0 6 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly on the 1st of each month at 06:00 UTC. Per Enterprise tenant with audit_regulator_export entitlement. Produces regulator-shaped export (jsonl + signed manifest). Uploads to archive bucket with S3 object-lock (compliance mode). Fires AuditExportReadyNotification to compliance officers."
+    }
+  ]
+}

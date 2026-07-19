@@ -1,0 +1,108 @@
+{
+  "id": "tax.resources.tax-provider.edit",
+  "title": "Edit tax provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/providers/:providerId/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-provider", "action": "edit" },
+  "requiresPermission": "tax.providers.update",
+  "requiresEntitlement": "tax_capture",
+  "dataSources": [
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "url": "/api/v1/tax/providers/{{routeParams.providerId}}",
+      "unwrap": "data"
+    },
+    {
+      "name": "capabilities",
+      "kind": "http.get",
+      "url": "/api/v1/tax/providers/capabilities",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + provider.provider" } } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted font-mono" }, "bindings": { "children": { "$ref": "provider.id" } } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Credentials" } },
+            { "kind": "Text", "props": { "className": "text-xs text-muted mb-3", "children": "Credentials are encrypted at rest. Editing rotates the encryption at rest." } },
+            {
+              "kind": "DynamicForm",
+              "bindings": {
+                "schema": { "$expr": "capabilities[provider.provider].config_schema" },
+                "initialValues": { "$ref": "provider.config_redacted" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Danger zone" } },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2 flex-wrap" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "warning", "leadingIcon": "arrow-path", "children": "Reset circuit-breaker" },
+                  "requiresPermission": "tax.providers.reset-circuit-breaker",
+                  "bindings": { "disabled": { "$expr": "!provider.circuit_breaker_open_until" } },
+                  "actions": {
+                    "onPress": {
+                      "kind": "prompt",
+                      "title": "Reset circuit-breaker?",
+                      "description": "The breaker will transition from OPEN to CLOSED. New calculations will resume immediately.",
+                      "fields": [{ "name": "note", "label": "Reason for reset", "required": true }],
+                      "onConfirm": {
+                        "kind": "http.post",
+                        "url": "/api/v1/tax/providers/{{provider.id}}/reset-circuit-breaker",
+                        "body": { "note": "{{prompt.note}}" },
+                        "invalidateQueries": ["providers"]
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "danger", "leadingIcon": "trash", "children": "Deactivate provider" },
+                  "requiresPermission": "tax.providers.delete",
+                  "actions": {
+                    "onPress": {
+                      "kind": "confirm",
+                      "title": "Deactivate this provider?",
+                      "message": "The config is soft-deleted with a 90-day grace period. In-flight calculations continue but no new ones will use this provider.",
+                      "onConfirm": {
+                        "kind": "http.delete",
+                        "url": "/api/v1/tax/providers/{{provider.id}}",
+                        "onSuccess": { "kind": "navigate", "to": "/tenant/tax/providers" }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

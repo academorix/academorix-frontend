@@ -1,0 +1,477 @@
+{
+  "id": "academorix://modules/membership/events",
+  "$version": 1,
+  "title": "membership — published events",
+  "namespace": "Academorix\\Finance\\Membership\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit`. Lifecycle events (created / activated / renewed / cancelled / lapsed / refunded / chargeback) route on transactional queues; renewal failures + lapsed are notifications-critical (dunning is contract-critical). Membership events are DISTINCT from TenantSubscription events — the two modules never share event names to avoid downstream ambiguity. Renewal events use their own class hierarchy so a listener saying `@AsMembershipListener(events: ['MembershipRenewed'])` cannot mis-fire on TenantSubscription lifecycle.",
+  "events": [
+    {
+      "name": "MembershipCreated",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipCreated",
+      "trigger": "MembershipCreator committed. Snapshots price / coupon / tax at signing. Fires alongside the atomic Invoice.create in the same DB transaction — if the invoice-create fails, this event never fires because the transaction rolls back.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipCreatedNotification (to primary guardian + admin)",
+        "membership::CreateInvoiceOnMembershipCreated (atomic — same transaction)",
+        "membership::SnapshotTaxCalculationOnMembershipCreated (freezes tax_calculation_snapshot)",
+        "membership::SnapshotCouponRedemptionOnMembershipCreated (freezes coupon_snapshot + increments coupon usage counter)"
+      ],
+      "payload": {
+        "membership_id": "ULID (mbr_*)",
+        "tenant_id": "ULID",
+        "region_id": "ULID",
+        "branch_id": "ULID",
+        "athlete_id": "ULID",
+        "membership_plan_id": "ULID (mbp_*)",
+        "primary_guardian_id": "ULID (agu_*) | null",
+        "price_snapshot_cents": "integer",
+        "currency": "string (ISO 4217)",
+        "billing_interval": "string",
+        "coupon_id": "ULID (cpn_*) | null",
+        "coupon_discount_cents": "integer",
+        "tax_calculation_id": "ULID (txc_*) | null",
+        "tax_amount_cents": "integer",
+        "total_amount_cents": "integer",
+        "created_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "MembershipActivated",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipActivated",
+      "trigger": "Status transitioned pending → active after invoice.paid webhook (or manual mark-paid). Sets current_period_starts_at + current_period_ends_at + next_renewal_at from plan.billing_interval. IssuePassesForPeriodJob dispatches after commit to generate the period's passes.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipActivatedNotification (to primary guardian + admin — celebratory)",
+        "membership::GeneratePassesOnMembershipActivated (dispatches IssuePassesForPeriodJob)",
+        "growth::analytics::TrackMembershipActivation"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "current_period_starts_at": "ISO 8601",
+        "current_period_ends_at": "ISO 8601",
+        "next_renewal_at": "ISO 8601 | null",
+        "activated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MembershipPaused",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPaused",
+      "trigger": "Admin paused an active membership (e.g. athlete on medical leave). Freezes renewal + freezes pass consumption. Different from cancel — resumable.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipPausedNotification (to primary guardian + admin)"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "paused_at": "ISO 8601",
+        "paused_by_user_id": "ULID",
+        "state_reason": "string"
+      }
+    },
+    {
+      "name": "MembershipResumed",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipResumed",
+      "trigger": "Admin resumed a paused membership. next_renewal_at recomputed from resume date + remaining period.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipResumedNotification"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "resumed_at": "ISO 8601",
+        "resumed_by_user_id": "ULID",
+        "new_next_renewal_at": "ISO 8601 | null"
+      }
+    },
+    {
+      "name": "MembershipCancelled",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipCancelled",
+      "trigger": "Terminal. Fires when status transitions to cancelled — either at cancellation_effective_at for soft cancel OR immediately for hard cancel. Hard cancel additionally fires CalculateProratedRefundOnHardCancel to trigger the refund module.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipCancelledNotification (transactional_required — includes refund info)",
+        "membership::CalculateProratedRefundOnHardCancel (for hard cancel + prorated policy)",
+        "membership::ExpirePassesOnMembershipCancelled",
+        "growth::analytics::TrackMembershipChurn",
+        "growth::marketing::ScheduleWinBackCampaign (deferred 30 days; requires marketing consent)"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "cancelled_at": "ISO 8601",
+        "cancellation_effective_at": "ISO 8601",
+        "cancellation_kind": "'soft_period_end' | 'hard_immediate'",
+        "cancellation_reason": "string | null",
+        "cancelled_by_user_id": "ULID",
+        "refund_scheduled": "boolean",
+        "refund_amount_cents": "integer | null"
+      }
+    },
+    {
+      "name": "MembershipLapsed",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipLapsed",
+      "trigger": "Terminal. Fires when consecutive_failed_renewal_count >= 3 (after final retry ladder attempt). Distinct from cancelled — no customer intent, involuntary termination for payment failure. Remaining passes expire immediately.",
+      "queue": "finance-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — SOX 404)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipLapsedNotification (transactional_required — customer + admin)",
+        "membership::ExpirePassesOnMembershipLapsed",
+        "growth::analytics::TrackInvoluntaryChurn"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "lapsed_at": "ISO 8601",
+        "consecutive_failed_renewal_count": "integer",
+        "last_renewal_id": "ULID (mbn_*)",
+        "last_failure_reason": "string"
+      }
+    },
+    {
+      "name": "MembershipExpired",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipExpired",
+      "trigger": "Terminal. ExpireMembershipJob detected an active membership past expires_at (soft cancel that reached period end). Distinct from lapsed — expected terminal path.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipExpiredNotification"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "expired_at": "ISO 8601",
+        "prior_status": "string"
+      }
+    },
+    {
+      "name": "MembershipRenewed",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipRenewed",
+      "trigger": "MembershipRenewal succeeded. Membership.next_renewal_at extended by billing_interval; passes issued for the new period; consecutive_failed_renewal_count reset. Lifetime value increment.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipRenewalSucceededNotification (transactional)",
+        "membership::ExtendPeriodOnRenewalSucceeded (dispatches IssuePassesForPeriodJob for new period)",
+        "growth::analytics::TrackMembershipRenewal"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "renewal_id": "ULID (mbn_*)",
+        "tenant_id": "ULID",
+        "renewed_at": "ISO 8601",
+        "period_starts_at": "ISO 8601",
+        "period_ends_at": "ISO 8601",
+        "amount_charged_cents": "integer",
+        "new_next_renewal_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MembershipRenewalFailed",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipRenewalFailed",
+      "trigger": "MembershipRenewal.status = failed_transient. Payment failed but retryable. Increments membership.consecutive_failed_renewal_count. TriggerRetryLadderOnRenewalFailed schedules the next attempt at day+3/+7/+14 per attempt_number.",
+      "queue": "finance-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipRenewalFailedNotification (transactional_required — dunning email)",
+        "membership::TriggerRetryLadderOnRenewalFailed (schedules RetryFailedRenewalJob)"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "renewal_id": "ULID (mbn_*)",
+        "tenant_id": "ULID",
+        "attempt_number": "integer",
+        "failure_reason": "string",
+        "consecutive_failed_renewal_count": "integer",
+        "next_attempt_at": "ISO 8601 | null"
+      }
+    },
+    {
+      "name": "MembershipRenewalRecovered",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipRenewalRecovered",
+      "trigger": "MembershipRenewal.status = succeeded AFTER a prior attempt failed. Distinct from MembershipRenewed (first-attempt success) — this is the retry-ladder recovery path. Growth analytics track dunning-effectiveness with this signal.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRenewalRecoveredNotification",
+        "growth::analytics::TrackDunningRecovery"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "renewal_id": "ULID (mbn_*)",
+        "tenant_id": "ULID",
+        "recovered_on_attempt": "integer",
+        "recovered_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MembershipRefunded",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipRefunded",
+      "trigger": "Refund module completed a refund tied to this membership. Fires from the refund module downstream; membership records refund_id + refund_amount_cents in metadata.",
+      "queue": "finance-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — SOX 404)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipRefundedNotification"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "refund_id": "ULID | null (Wave 4.5+)",
+        "refund_amount_cents": "integer",
+        "refund_reason": "string",
+        "refunded_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MembershipChargedBack",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipChargedBack",
+      "trigger": "P1. Chargeback module fired a dispute affecting a payment on this membership. Membership status stays active — dispute lifecycle is chargeback module's concern. Admin notified via cannot-opt-out channel.",
+      "queue": "finance-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — SOX 404)",
+        "notifications::DispatchMembershipChargedBackNotification (admin-only, cannot-opt-out)"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "chargeback_id": "ULID | null (Wave 4.5+)",
+        "amount_cents": "integer",
+        "reason_code": "string",
+        "filed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MembershipPlanUpgraded",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanUpgraded",
+      "trigger": "Admin (or customer via self-serve) migrated the membership to a higher-price plan. Prorated adjustment via invoice module. Passes for current period recomputed per new plan.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipPlanChangedNotification"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "from_plan_id": "ULID",
+        "to_plan_id": "ULID",
+        "proration_amount_cents": "integer",
+        "changed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MembershipPlanDowngraded",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanDowngraded",
+      "trigger": "Admin (or customer via self-serve) migrated the membership to a lower-price plan. Downgrade deferred to period end by default (soft-transition). Passes for next period reflect new plan.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipPlanChangedNotification"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "from_plan_id": "ULID",
+        "to_plan_id": "ULID",
+        "effective_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MembershipTrialStarted",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipTrialStarted",
+      "trigger": "Medium+. Membership created with plan.trial_days > 0. First period is free; billing starts at trial end. NotifyTrialEndingJob fires 3 days before trial end.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchMembershipTrialStartedNotification",
+        "growth::analytics::TrackTrialStart"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "trial_starts_at": "ISO 8601",
+        "trial_ends_at": "ISO 8601",
+        "trial_days": "integer"
+      }
+    },
+    {
+      "name": "MembershipTrialEnded",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipTrialEnded",
+      "trigger": "Trial period ended. Fires alongside the first real renewal attempt. Distinct from MembershipTrialConverted (which fires only on trial-to-paid conversion success).",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "trial_ended_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "MembershipTrialConverted",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipTrialConverted",
+      "trigger": "Trial ended AND the first paid renewal succeeded. High-signal for growth analytics + funnel measurement.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchTrialConvertedNotification (celebratory)",
+        "growth::analytics::TrackTrialConversion"
+      ],
+      "payload": {
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "converted_at": "ISO 8601",
+        "first_paid_renewal_id": "ULID (mbn_*)"
+      }
+    },
+    {
+      "name": "MembershipPlanCreated",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanCreated",
+      "trigger": "New plan added to the catalog. Consumes 1 unit of membership_plan_slot.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "plan_id": "ULID (mbp_*)",
+        "tenant_id": "ULID",
+        "branch_id": "ULID",
+        "name": "string",
+        "price_cents": "integer",
+        "currency": "string",
+        "billing_interval": "string",
+        "created_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "MembershipPlanArchived",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanArchived",
+      "trigger": "Plan archived (is_active=false). Refused when active memberships reference the plan — enforced by PreventPlanArchiveWithActiveMemberships hook. Releases 1 unit of membership_plan_slot.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "plan_id": "ULID",
+        "tenant_id": "ULID",
+        "archived_at": "ISO 8601",
+        "archived_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "MembershipPlanCapacityReached",
+      "class": "Academorix\\Finance\\Membership\\Events\\MembershipPlanCapacityReached",
+      "trigger": "plan.current_active_members reached plan.max_active_members. Admin notified so they can raise capacity or communicate a waitlist.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchPlanCapacityReachedNotification (admin — informational)"
+      ],
+      "payload": {
+        "plan_id": "ULID",
+        "tenant_id": "ULID",
+        "max_active_members": "integer",
+        "current_active_members": "integer",
+        "reached_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PassIssued",
+      "class": "Academorix\\Finance\\Membership\\Events\\PassIssued",
+      "trigger": "One pass issued for a membership period. Fires N times when a period grants N passes.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "cache::InvalidatePassCache"
+      ],
+      "payload": {
+        "pass_id": "ULID (pss_*)",
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "pass_type": "string",
+        "valid_from": "ISO 8601",
+        "valid_until": "ISO 8601"
+      }
+    },
+    {
+      "name": "PassConsumed",
+      "class": "Academorix\\Finance\\Membership\\Events\\PassConsumed",
+      "trigger": "Session check-in consumed a pass. Refused if pass already consumed OR outside valid window.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidatePassCache"
+      ],
+      "payload": {
+        "pass_id": "ULID",
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "consumed_at": "ISO 8601",
+        "consumed_by_session_id": "ULID (ses_*) | null"
+      }
+    },
+    {
+      "name": "PassExpired",
+      "class": "Academorix\\Finance\\Membership\\Events\\PassExpired",
+      "trigger": "ExpireStalePassesJob nightly sweep found an unconsumed pass past valid_until. Distinct from PassRefunded (admin-initiated return).",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "cache::InvalidatePassCache"
+      ],
+      "payload": {
+        "pass_id": "ULID",
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "expired_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "PassRefunded",
+      "class": "Academorix\\Finance\\Membership\\Events\\PassRefunded",
+      "trigger": "Admin returned a pass (e.g. session cancelled). Pass returns to available; membership pass count restored.",
+      "queue": "finance",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchPassRefundedNotification",
+        "cache::InvalidatePassCache"
+      ],
+      "payload": {
+        "pass_id": "ULID",
+        "membership_id": "ULID",
+        "tenant_id": "ULID",
+        "refunded_at": "ISO 8601",
+        "refund_reason": "string",
+        "refunded_by_user_id": "ULID"
+      }
+    }
+  ]
+}

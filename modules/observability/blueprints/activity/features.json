@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/activity/features",
+  "$version": 1,
+  "title": "activity — feature keys",
+  "description": "Business features this module publishes for tenant-facing UX. Resolved by the tenant client from GET /api/auth/me → data.features. Distinct from entitlements (quota + gate) — features control whether the UI SHOWS a capability.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features (string[])"
+  },
+  "features": [
+    {
+      "key": "activity.feed",
+      "displayName": "Activity feed",
+      "description": "Enables the 'Recent activity' dashboard widget + the /activities screen. Available on every plan — activity capture is a baseline feature.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "small", "medium", "enterprise"]
+    },
+    {
+      "key": "activity.live_feed",
+      "displayName": "Live activity feed",
+      "description": "Real-time WebSocket streaming of activity to the dashboard. Available from Small plan up — free-tier tenants fall back to 15s polling on the same endpoint.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "activity.digest_email",
+      "displayName": "Activity digest email",
+      "description": "Surfaces the 'Daily / weekly summary of activity' toggle in /settings/notifications. Users can opt in per-cadence. Medium plan+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "activity.retention_control",
+      "displayName": "Custom activity retention",
+      "description": "Surfaces the ActivityRetentionPolicy CRUD UI. Without this feature, retention is fixed at the config default (90d). Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "activity.export",
+      "displayName": "Export activity data",
+      "description": "Surfaces the 'Export CSV' button on the activity feed screen. Downloads asynchronously. Medium plan+.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "activity.batch_collapse",
+      "displayName": "Collapsed feed items",
+      "description": "Enables the 'Alice made 3 changes to Booking X' collapsed rendering when multiple same-batch activities fire in one request. Off = every activity surfaces individually. Available on every plan; controlled by feature flag for incident-response toggling.",
+      "defaultEnabled": true,
+      "planTiers": ["free", "small", "medium", "enterprise"]
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "$version": 1,
+  "name": "activity",
+  "alias": "activity",
+  "namespace": "Academorix\\Observability\\Activity",
+  "description": "The activity lane. Wraps vendor `spatie/laravel-activitylog` for tenant-user-facing 'What happened recently?' feeds. Human-readable log lines that answer 'what did I / my team / this branch do this week?'. Distinct from `audit` (Wave 6 sibling — audit is regulator-facing compliance grade). Same domain events NEVER both — a mutation fires audit OR activity, never both. Medium loss tolerance (sample OK on backpressure), 90d default retention (extends to 1y with `activity_extended_retention` Enterprise). Adapts vendor `activity_log` table by adding `tenant_id` NOT NULL + `application_id` NULLABLE + composite indexes + backfill from `properties.tenant_id` jsonb. Ships two aggregates: `Activity` (the adapted vendor table wrapped with BelongsToTenant + polymorphic subject/causer) and `ActivityRetentionPolicy` (per-tenant retention override). Each module adds `LogsActivity` trait to models WHERE user-facing activity capture is wanted (NOT everywhere — audit captures everything; activity captures deliberate user-visible events like 'Alice booked court 3 for tomorrow'). Consumer contract: opt-in via `LogsActivity` trait + `activity_log` config on the model.",
+  "keywords": [
+    "activity",
+    "activity-log",
+    "activity-feed",
+    "spatie-activitylog",
+    "vendor-adaptation",
+    "human-readable",
+    "user-facing",
+    "recent-activity",
+    "medium-loss-tolerance",
+    "90d-retention",
+    "tenant-user-audience",
+    "gdpr-art-15",
+    "ccpa-1798.100"
+  ],
+  "priority": 21,
+  "providers": ["Academorix\\Observability\\Activity\\Providers\\ActivityServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application", "user"],
+  "extendedBy": [],
+  "contributes": {
+    "traits": ["LogsActivity", "BelongsToActivity"],
+    "attributes": ["AsActivityFormatter", "AsActivitySubscriber"],
+    "blueprints": [],
+    "middleware": ["activity.enforce_scope"],
+    "events": [
+      "ActivityRecorded",
+      "ActivityRetentionPolicyCreated",
+      "ActivityRetentionPolicyUpdated",
+      "ActivityBatchStarted",
+      "ActivityBatchCompleted",
+      "ActivityPurgeExecuted",
+      "ActivityFeedSubscribed"
+    ],
+    "policies": ["ActivityPolicy", "ActivityRetentionPolicyPolicy"],
+    "hooks": ["ActivityBatchFinalizerHook"],
+    "commands": [
+      "activity:list",
+      "activity:show",
+      "activity:count",
+      "activity:backfill-tenant-id",
+      "activity:purge",
+      "activity:extend-retention",
+      "activity:export"
+    ],
+    "jobs": [
+      "BackfillActivityTenantIdFromJsonbJob",
+      "PurgeExpiredActivitiesJob",
+      "ArchiveActivitiesToColdStorageJob",
+      "ReconcileActivityBatchesJob"
+    ],
+    "notifications": ["ActivityDigestEmailNotification", "ActivityPurgeCompletedNotification"],
+    "broadcasts": ["tenant.{tenantId}.activity", "user.{userId}.activity"],
+    "observers": ["ActivityObserver", "ActivityRetentionPolicyObserver"],
+    "rules": [
+      "valid_retention_days",
+      "valid_log_name",
+      "valid_causer_type",
+      "valid_subject_type",
+      "valid_batch_uuid"
+    ],
+    "casts": [],
+    "views": [],
+    "lang": ["activity"],
+    "config": ["activity"],
+    "macros": [],
+    "bindings": [
+      "ActivityRepository",
+      "ActivityRetentionPolicyRepository",
+      "ActivityFormatter",
+      "ActivityQuery",
+      "ActivityBroadcastPublisher",
+      "ActivityBatcher"
+    ],
+    "resources": ["activity", "activity-retention-policy"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing activity feed reads + retention-policy CRUD. End users read their own activity + entities they can access; admins configure retention.",
+      "routes": [
+        "GET /api/v1/activities",
+        "GET /api/v1/activities/{activity}",
+        "GET /api/v1/activities/mine",
+        "GET /api/v1/activities/by-entity/{subject_type}/{subject_id}",
+        "GET /api/v1/activities/by-user/{user}",
+        "GET /api/v1/activities/feed",
+        "GET /api/v1/activities/export",
+        "GET /api/v1/activity-retention-policies",
+        "POST /api/v1/activity-retention-policies",
+        "GET /api/v1/activity-retention-policies/{policy}",
+        "PATCH /api/v1/activity-retention-policies/{policy}",
+        "DELETE /api/v1/activity-retention-policies/{policy}"
+      ]
+    },
+    "platform-admin": {
+      "description": "Platform-admin cross-tenant activity read for Academorix support. Read-only — writes still go through the tenant `LogsActivity` trait.",
+      "routes": ["GET /api/v1/platform/activities", "GET /api/v1/platform/activities/{activity}"]
+    }
+  }
+}

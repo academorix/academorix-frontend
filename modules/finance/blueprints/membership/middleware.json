@@ -1,0 +1,27 @@
+{
+  "id": "academorix://modules/membership/middleware",
+  "$version": 1,
+  "title": "membership — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "membership.enforce_guardian_consent",
+      "class": "Academorix\\Finance\\Membership\\Http\\Middleware\\EnforceGuardianConsent",
+      "priority": 46,
+      "description": "For POST /api/v1/memberships. When the target athlete is a minor (age < 18): refuses when body.primary_guardian_id is missing OR the referenced AthleteGuardian.status != 'active' OR the guardian's user has not verified their identity (per user module's is_verified check). Adult-athlete memberships (self) bypass. Returns 422 MEMBERSHIP_GUARDIAN_REQUIRED with the required guardian_id + verification-step deep-link in the error payload.",
+      "auto_applied": false,
+      "auto_applied_to": ["POST /api/v1/memberships"]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::resolve.application" },
+    { "middleware": "user::resolve_active_tenant" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "user::enforce_tenant_membership" },
+    { "middleware": "access::authorize" },
+    { "middleware": "entitlements::enforce_entitlement" }
+  ]
+}

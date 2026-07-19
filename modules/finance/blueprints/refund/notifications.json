@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/refund/notifications",
+  "$version": 1,
+  "title": "refund — notification classes + categories",
+  "namespace": "Academorix\\Finance\\Refund\\Notifications",
+  "notifications": [
+    "RefundRequestedNotification",
+    "RefundApprovalRequiredNotification",
+    "RefundApprovedNotification",
+    "RefundProcessedNotification",
+    "RefundSucceededNotification",
+    "RefundFailedNotification",
+    "RefundRejectedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "refund.requested",
+      "display_name": "Refund request confirmation",
+      "description": "Customer-facing. Sent to the customer when they submit a refund request via POST /refunds. Confirms receipt + summarises the requested amount + reason + next steps (approval pending / auto-approved). Transactional — cannot-opt-out per US CAN-SPAM 4(a)(3)(a) (required for the refund-flow disclosure).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "refund.approval_required",
+      "display_name": "Refund approval required",
+      "description": "Admin-facing. Sent to every user holding `refunds.approve` permission when a refund triggers requires_approval=true (amount / staleness threshold OR always-approve reason). Signed magic link deep-links to approve/reject UI. Segregation of duties — initiator's user_id is filtered out of the recipient list.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "refund.approved",
+      "display_name": "Refund approved",
+      "description": "Customer-facing. Sent to the customer when refund transitions to `approved` (either auto-approved OR approver clicked approve). Confirms the refund is queued for provider dispatch. Estimated delivery is 5-10 days for card refunds, faster for other rails.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "refund.processed",
+      "display_name": "Refund processing",
+      "description": "Customer + admin. Sent when refund transitions to `processing` (provider dispatched, awaiting async confirmation). Communicates the estimated_delivery_at window when provider-communicated. Explains the 5-10 day card refund delay to prevent support escalations.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "refund.succeeded",
+      "display_name": "Refund complete",
+      "description": "Customer-facing. Sent when refund transitions to `succeeded` (provider confirmed terminal success). For card refunds, this notification is 'money should have landed by now' since we can't detect exact card-refund delivery. Admin variant carries the credit_note_id + transaction_id for ledger audit.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "refund.failed",
+      "display_name": "Refund could not be processed",
+      "description": "Customer + admin. Sent when refund transitions to `failed` (provider rejected non-recoverably). Includes support-contact CTA + a next-step alternative (bank transfer / check via manual finance path). Admin variant carries the provider_error_code for triage.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "refund.rejected",
+      "display_name": "Refund request declined",
+      "description": "Customer-facing. Sent when approver clicks reject. Includes the rejection_reason (256 char admin-provided) + support-contact CTA. Customer's original payment remains unchanged; no money moves.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

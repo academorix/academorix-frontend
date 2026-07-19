@@ -1,0 +1,100 @@
+{
+  "id": "monitoring.resources.health-check.list",
+  "title": "Health checks",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/health-checks",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "health-check", "action": "list" },
+  "requiresPermission": "monitoring.health_checks.viewAny",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    {
+      "name": "checks",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/health-checks",
+      "unwrap": "data"
+    },
+    {
+      "name": "slot",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/monitoring_health_check_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Health checks" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Server-side probes of tenant infrastructure." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": { "size": "sm", "label": "Health check slots" },
+                  "bindings": {
+                    "cap": { "$ref": "slot.value_cap" },
+                    "used": { "$ref": "slot.value_used" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "Add health check" },
+                  "requiresPermission": "monitoring.health_checks.create",
+                  "bindings": { "disabled": { "$ref": "slot.is_exceeded" } },
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/monitoring/health-checks/new" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "checks" },
+            "isLoading": { "$ref": "checks.isLoading" }
+          },
+          "props": {
+            "columns": [
+              { "field": "name", "header": "Name", "sortable": true },
+              { "field": "check_type", "header": "Type" },
+              {
+                "field": "last_run_status",
+                "header": "Status",
+                "cellRenderer": {
+                  "kind": "Widget",
+                  "widget": "monitoring.status-badge",
+                  "bindings": { "status": { "$ref": "row.last_run_status" } }
+                }
+              },
+              { "field": "interval_seconds", "header": "Interval", "cellRenderer": { "kind": "Text", "props": { "children": "{{row.interval_seconds}}s" } } },
+              { "field": "last_run_at", "header": "Last run", "sortable": true },
+              { "field": "consecutive_failure_count", "header": "Failures" }
+            ]
+          },
+          "actions": {
+            "onRowPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/health-checks/' + row.id" }
+          }
+        }
+      ]
+    }
+  ]
+}

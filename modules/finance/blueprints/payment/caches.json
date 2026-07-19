@@ -1,0 +1,140 @@
+{
+  "id": "academorix://modules/payment/caches",
+  "$version": 1,
+  "title": "payment — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["payment", "payment.providers", "payment.methods", "payment.intents", "payment.disputes"],
+  "keys": [
+    {
+      "pattern": "pay:providers:{tenant_id}",
+      "description": "Active payment provider config list for a tenant. Read on every PaymentIntent create to determine which provider to route the invoice to.",
+      "ttlSeconds": 300,
+      "tags": ["payment", "payment.providers", "tenant"],
+      "invalidatedBy": [
+        "PaymentProviderConfigured",
+        "PaymentProviderDeactivated"
+      ]
+    },
+    {
+      "pattern": "pay:provider-default:{tenant_id}",
+      "description": "Tenant's default provider slug. Read on every PaymentIntent create when the caller doesn't specify a provider explicitly.",
+      "ttlSeconds": 3600,
+      "tags": ["payment", "payment.providers", "tenant"],
+      "invalidatedBy": [
+        "PaymentProviderConfigured (when new config marked default)",
+        "PaymentProviderDeactivated (when default was deactivated — recompute)"
+      ]
+    },
+    {
+      "pattern": "pay:circuit-breaker:{tenant_id}:{provider}",
+      "description": "Circuit-breaker state per (tenant, provider). Read by the pre-dispatch gate on every intent create. Short TTL because state changes frequently.",
+      "ttlSeconds": 30,
+      "tags": ["payment", "payment.providers"],
+      "invalidatedBy": [
+        "PaymentProviderCircuitBreakerOpened",
+        "PaymentProviderCircuitBreakerClosed (in reference from operations feedback loop)"
+      ]
+    },
+    {
+      "pattern": "pay:methods:{customer_type}:{customer_id}",
+      "description": "Customer's active payment methods. Read on every 'select payment method' UI render. Hot path — every payment intent create hits this cache.",
+      "ttlSeconds": 300,
+      "tags": ["payment", "payment.methods", "tenant", "customer"],
+      "invalidatedBy": [
+        "PaymentMethodAttached",
+        "PaymentMethodDetached",
+        "PaymentMethodExpired",
+        "PaymentMethodVerified"
+      ]
+    },
+    {
+      "pattern": "pay:method-default:{customer_type}:{customer_id}",
+      "description": "Customer's default payment method. Read on every PaymentIntent create when the caller doesn't specify a method_id.",
+      "ttlSeconds": 300,
+      "tags": ["payment", "payment.methods", "tenant", "customer"],
+      "invalidatedBy": [
+        "PaymentMethodAttached (when new method marked default)",
+        "PaymentMethodDetached (when default was detached — recompute)"
+      ]
+    },
+    {
+      "pattern": "pay:intent:{payment_intent_id}",
+      "description": "Fully-hydrated payment intent snapshot. Read by the customer's SDK during confirmation. Short TTL because intent state changes frequently.",
+      "ttlSeconds": 30,
+      "tags": ["payment", "payment.intents", "tenant"],
+      "invalidatedBy": [
+        "Every PaymentIntent* status transition event"
+      ]
+    },
+    {
+      "pattern": "pay:3ds-thresholds:{tenant_id}",
+      "description": "Tenant's 3DS2 threshold configuration (from settings.three_ds.required_over_amount_cents + tenant overrides + high_risk_regions). Read by ThreeDsGate on every intent create.",
+      "ttlSeconds": 3600,
+      "tags": ["payment", "tenant"],
+      "invalidatedBy": [
+        "Settings change on payment.three_ds.*",
+        "TenantSettingsChanged event"
+      ]
+    },
+    {
+      "pattern": "pay:disputes:count:{tenant_id}:unresolved",
+      "description": "Unresolved dispute count per tenant. Feeds the SDUI dispute-count badge.",
+      "ttlSeconds": 60,
+      "tags": ["payment", "payment.disputes", "tenant"],
+      "invalidatedBy": [
+        "PaymentDisputeOpened",
+        "PaymentDisputeClosed"
+      ]
+    },
+    {
+      "pattern": "pay:disputes:evidence-due-soon:{tenant_id}",
+      "description": "Disputes with evidence_due_by within the next 7 days. Read by the SDUI evidence-due-soon widget + the ops daily digest.",
+      "ttlSeconds": 300,
+      "tags": ["payment", "payment.disputes", "tenant"],
+      "invalidatedBy": [
+        "PaymentDisputeOpened",
+        "PaymentDisputeEvidenceSubmitted",
+        "PaymentDisputeClosed"
+      ]
+    },
+    {
+      "pattern": "pay:provider-capabilities",
+      "description": "Provider capability matrix — read once at boot into an in-memory registry. This cache is a warm-boot accelerator.",
+      "ttlSeconds": 86400,
+      "tags": ["payment"],
+      "invalidatedBy": [
+        "Boot-time discovery re-run",
+        "Manual: payment:invalidate-capabilities"
+      ]
+    },
+    {
+      "pattern": "pay:provider-schemas:{provider}",
+      "description": "Parsed data/providers/<provider>-config.schema.json JSON Schema object. Read by PaymentProviderConfigObserver on every config create/update.",
+      "ttlSeconds": 86400,
+      "tags": ["payment"],
+      "invalidatedBy": [
+        "Boot-time reload",
+        "Manual"
+      ]
+    },
+    {
+      "pattern": "pay:webhook-secret:{tenant_id}:{provider}",
+      "description": "Decrypted webhook signing secret for a provider config. Read on every inbound webhook signature verification. Short TTL because credentials are rotation-sensitive.",
+      "ttlSeconds": 60,
+      "tags": ["payment", "payment.providers"],
+      "invalidatedBy": [
+        "PaymentProviderConfigured (config change → rotate)",
+        "compliance::EncryptionKeyRotated"
+      ]
+    },
+    {
+      "pattern": "pay:reconcile-last-run:{tenant_id}:{provider}",
+      "description": "Timestamp of the last successful ReconcilePaymentIntentsJob run per (tenant, provider). Read by the health probe + read by the next reconcile run for lookback windowing.",
+      "ttlSeconds": 86400,
+      "tags": ["payment", "payment.providers"],
+      "invalidatedBy": [
+        "PaymentReconcileCompleted (writes)"
+      ]
+    }
+  ]
+}

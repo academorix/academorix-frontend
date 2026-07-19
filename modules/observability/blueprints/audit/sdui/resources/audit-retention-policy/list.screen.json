@@ -1,0 +1,185 @@
+{
+  "id": "audit.resources.audit-retention-policy.list",
+  "title": "Audit retention policy",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/retention-policies",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit-retention-policy", "action": "list" },
+  "requiresPermission": "audit.retention-policies.viewAny",
+  "dataSources": [
+    {
+      "name": "policy",
+      "kind": "http.get",
+      "url": "/api/v1/audit-retention-policies",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Audit retention policy"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Default retention is 7 years. Enterprise tenants may extend up to 10 years with a compliance-justified override."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "plus",
+                "children": "Create override"
+              },
+              "requiresPermission": "audit.retention-policies.create",
+              "showWhen": { "$expr": "!policy || policy.deleted_at !== null" },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/audit/retention-policies/create" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-4" },
+          "showWhen": { "$expr": "policy && policy.deleted_at === null" },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "audit.audit-retention-status",
+              "props": {
+                "effective_retention_years": { "$ref": "policy.effective_retention_years" },
+                "days_until_expiry": { "$ref": "policy.days_until_expiry" },
+                "size": "lg"
+              }
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "DescriptionList",
+                  "children": [
+                    {
+                      "kind": "DescriptionList.Item",
+                      "props": { "label": "Retention years" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "bindings": { "children": { "$ref": "policy.retention_years" } }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "DescriptionList.Item",
+                      "props": { "label": "Override reason" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "props": { "className": "whitespace-pre-wrap text-sm" },
+                          "bindings": { "children": { "$ref": "policy.override_reason" } }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "DescriptionList.Item",
+                      "props": { "label": "Override starts at" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "bindings": { "children": { "$expr": "formatDateTime(policy.override_starts_at)" } }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "DescriptionList.Item",
+                      "props": { "label": "Override ends at" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "bindings": {
+                            "children": {
+                              "$expr": "policy.override_ends_at ? formatDateTime(policy.override_ends_at) : 'Indefinite'"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "secondary", "leadingIcon": "pencil-square", "children": "Edit" },
+                  "requiresPermission": "audit.retention-policies.update",
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/audit/retention-policies/' + policy.id + '/edit'"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "danger",
+                    "leadingIcon": "trash",
+                    "children": "Remove override",
+                    "confirm": {
+                      "title": "Remove retention override",
+                      "message": "Retention will fall back to 7 years default. Existing audit rows past the new cutoff will be purged on the next nightly run. Continue?"
+                    }
+                  },
+                  "requiresPermission": "audit.retention-policies.delete",
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.delete",
+                      "urlExpr": "'/api/v1/audit-retention-policies/' + policy.id",
+                      "onSuccess": { "kind": "data.refresh", "source": "policy" }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "EmptyState",
+          "props": {
+            "title": "No retention override in effect",
+            "description": "This tenant is on the default 7-year retention. Compliance officers may create an override to extend up to 10 years — required for SOX §404, HIPAA §164.316(b)(2)(i), or regulator preservation orders.",
+            "icon": "clock"
+          },
+          "showWhen": { "$expr": "!policy || policy.deleted_at !== null" }
+        }
+      ]
+    }
+  ]
+}

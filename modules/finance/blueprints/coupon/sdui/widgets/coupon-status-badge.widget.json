@@ -1,0 +1,73 @@
+{
+  "id": "coupon.coupon-status-badge",
+  "title": "Coupon status badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Composite badge showing the coupon's overall state — combines is_active + valid window + usage cap into a single at-a-glance signal. Colour + text label. Never colour-alone. Priority order: 'Expired' (past valid_until) > 'Not yet valid' (before valid_from) > 'Inactive' (is_active=false and not yet expired) > 'Cap reached' (usage_count >= usage_cap) > 'Active'.",
+  "props": {
+    "isActive": { "type": "boolean", "required": true },
+    "validFrom": { "type": "string", "format": "date-time", "required": true },
+    "validUntil": { "type": ["string", "null"], "format": "date-time" },
+    "usageCount": { "type": "integer", "required": true, "minimum": 0 },
+    "usageCap": { "type": ["integer", "null"], "description": "NULL = unlimited." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showUsage": { "type": "boolean", "default": true, "description": "When true + user has coupons.view-financials, appends 'X / Y used' after the status label." }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "inline-flex items-center gap-1" },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "variant": {
+              "$expr": "(props.validUntil && new Date(props.validUntil) < now()) ? 'danger' : (new Date(props.validFrom) > now() ? 'warning' : (!props.isActive ? 'neutral' : (props.usageCap != null && props.usageCount >= props.usageCap ? 'warning' : 'success')))"
+            },
+            "size": { "$ref": "props.size" }
+          },
+          "props": {
+            "leadingIcon": {
+              "$expr": "(props.validUntil && new Date(props.validUntil) < now()) ? 'clock' : (new Date(props.validFrom) > now() ? 'clock' : (!props.isActive ? 'pause-circle' : (props.usageCap != null && props.usageCount >= props.usageCap ? 'exclamation-triangle' : 'check-circle')))"
+            }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "(props.validUntil && new Date(props.validUntil) < now()) ? 'Expired' : (new Date(props.validFrom) > now() ? 'Not yet valid' : (!props.isActive ? 'Inactive' : (props.usageCap != null && props.usageCount >= props.usageCap ? 'Cap reached' : 'Active')))"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted ml-1" },
+          "bindings": {
+            "hidden": {
+              "$expr": "!props.showUsage || props.usageCap == null || !hasPermission('coupons.view-financials')"
+            },
+            "children": {
+              "$expr": "props.usageCount + ' / ' + props.usageCap + ' used'"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted ml-1" },
+          "bindings": {
+            "hidden": {
+              "$expr": "!props.showUsage || props.usageCap != null || !hasPermission('coupons.view-financials')"
+            },
+            "children": {
+              "$expr": "props.usageCount + ' uses'"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

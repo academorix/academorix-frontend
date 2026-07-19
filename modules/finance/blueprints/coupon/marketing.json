@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/coupon/marketing",
+  "$version": 1,
+  "title": "coupon — marketing events (ad-network conversions)",
+  "lane": "marketing",
+  "consentTiers": ["essential", "functional", "advertising"],
+  "description": "Marketing-lane events fired by the coupon module — specifically when a redemption's parent coupon carries an attribution-relevant `issuance_source` (`referral` or `marketing_campaign`). Manual + import + api coupons do NOT fire marketing events (no attribution surface). The marketing module forwards these to configured ad networks (Meta CAPI, Google Ads Enhanced Conversions, TikTok Events API, Microsoft UET, Snapchat CAPI) using the frozen discount_snapshot + linked attribution snapshot from referrals::Referral (when issuance_source='referral'). Consent tier is `advertising` — a user who revokes advertising consent has their conversions suppressed at dispatch.",
+  "events": [
+    {
+      "name": "Referral Coupon Redeemed",
+      "kind": "conversion",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "redemption_id",
+        "customer_type",
+        "customer_id",
+        "referral_program_id (from coupons.issuance_context)",
+        "referral_id (from coupons.issuance_context)",
+        "referral_reward_id (from coupons.issuance_context)",
+        "click_id (from linked referrals::Referral.attribution_snapshot)",
+        "click_id_provider",
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "discount_type",
+        "discount_amount_cents",
+        "source_amount_cents (revenue value — this is the purchase amount)",
+        "final_amount_cents",
+        "currency",
+        "device_type"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase" },
+        { "provider": "google_ads_ec", "event_name": "purchase" },
+        { "provider": "tiktok_events_api", "event_name": "CompletePayment" },
+        { "provider": "microsoft_uet", "event_name": "purchase" },
+        { "provider": "snapchat_capi", "event_name": "PURCHASE" }
+      ],
+      "description": "Fires on CouponRedeemed when the parent coupon.issuance_source='referral'. Attributes the redemption to the ad-network that seeded the underlying referrer. Distinct from Referral Vested Attributed (which fires on the referrals side at reward vesting time) — this fires on the coupon side at redemption time, with the actual purchase amount as the conversion value."
+    },
+    {
+      "name": "Campaign Coupon Redeemed",
+      "kind": "conversion",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "redemption_id",
+        "customer_type",
+        "customer_id",
+        "campaign_name (from coupons.issuance_context)",
+        "campaign_id (from coupons.issuance_context)",
+        "discount_type",
+        "discount_amount_cents",
+        "source_amount_cents",
+        "final_amount_cents",
+        "currency"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase" },
+        { "provider": "google_ads_ec", "event_name": "purchase" }
+      ],
+      "description": "Fires on CouponRedeemed when coupon.issuance_source='marketing_campaign'. Tagged with the campaign_name for per-campaign ROAS attribution. Powers 'this campaign generated $X in gross revenue' reporting in the marketing rollup."
+    },
+    {
+      "name": "Referral Coupon Redemption Reversed",
+      "kind": "reversal",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "redemption_id",
+        "original_redemption_event_id",
+        "clawback_reason",
+        "reversed_amount_cents",
+        "reversed_at"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase", "reversal": true },
+        { "provider": "google_ads_ec", "event_name": "purchase", "reversal": true },
+        { "provider": "tiktok_events_api", "event_name": "CompletePayment", "reversal": true }
+      ],
+      "description": "Fires on CouponClawbackCompleted / CouponRedemptionReversed when the underlying redemption had fired 'Referral Coupon Redeemed'. Reverses the ad-network purchase conversion — protects downstream ROAS + fraud-model training data."
+    },
+    {
+      "name": "Campaign Coupon Redemption Reversed",
+      "kind": "reversal",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "coupon_id",
+        "redemption_id",
+        "original_redemption_event_id",
+        "campaign_name",
+        "clawback_reason",
+        "reversed_amount_cents",
+        "reversed_at"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase", "reversal": true },
+        { "provider": "google_ads_ec", "event_name": "purchase", "reversal": true }
+      ]
+    }
+  ],
+  "delivery_semantics": {
+    "loss_tolerance": "zero",
+    "retry_policy": "exponential backoff (10s / 60s / 5m / 30m / 3h / 24h) up to 6 attempts; then dead-letter queue for manual replay",
+    "circuit_breaker": "per-provider circuit breaker in the marketing module; if one provider is down, the others still receive events",
+    "ledger": "growth::marketing owns the two-table ledger: marketing_events (canonical) + marketing_deliveries (per-provider-per-attempt log)"
+  },
+  "pii_hashing": {
+    "email": "SHA-256 hex lowercased-trimmed",
+    "phone": "SHA-256 hex E.164-normalised",
+    "click_id": "raw (ad-network needs original click ID)",
+    "user_id": "sent as external_id (unhashed) — matches ad-network's advanced-matching contract"
+  },
+  "discount_snapshot_shape_version": 1,
+  "notes": [
+    "This is the MARKETING lane per growth-and-observability.md — different consent tier (`advertising`, subset of marketing) than the analytics lane (`functional`) even for the same underlying Coupon Redeemed event.",
+    "Ad networks require SHA-256 hashing of PII per their contracts — the growth::marketing module handles hashing, this module just declares which properties are PII.",
+    "Reversal events are critical — without them, ROAS calculations inflate and the ad network keeps bidding on false conversions.",
+    "issuance_source-based filtering means only referral + campaign coupons fire marketing events. Manual + import + api coupons are not attribution-surfaces — the tenant doesn't attribute those to any acquisition path.",
+    "discount_snapshot_shape_version is bumped when the frozen snapshot shape changes — downstream marketing forwarders branch on this to handle evolution."
+  ]
+}

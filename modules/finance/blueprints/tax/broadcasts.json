@@ -1,0 +1,51 @@
+{
+  "id": "academorix://modules/tax/broadcasts",
+  "$version": 1,
+  "title": "tax — realtime broadcast channels",
+  "description": "Three broadcast channel families for live UI updates. Tenant-level channel for tax activity streams (rate updates, calculation completions); exemption-scoped channel for the verification queue live updates; provider-scoped channel for provider health widget + circuit-breaker state indicator. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.tax",
+      "class": "Academorix\\Finance\\Tax\\Broadcasts\\TenantTaxChannel",
+      "description": "Tenant-wide tax activity stream. Sink for the tax dashboard showing rate lifecycle + calculation activity.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
+      "events": [
+        "TaxRateCreated",
+        "TaxRateUpdated",
+        "TaxRateExpired",
+        "TaxJurisdictionCreated",
+        "TaxJurisdictionUpdated",
+        "TaxCalculationCompleted",
+        "TaxCalculationFailed"
+      ],
+      "throttle": "200 events/minute per channel",
+      "notes": "Payload is trimmed to non-confidential fields (see data-classes.json). Raw tax amounts (source_amount_cents / tax_amount_cents) broadcast to finance role + admin + owner, redacted for support role."
+    },
+    {
+      "name": "tenant.{tenantId}.tax.exemptions",
+      "class": "Academorix\\Finance\\Tax\\Broadcasts\\TenantTaxExemptionsChannel",
+      "description": "Exemption verification queue live updates.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner OR compliance)",
+      "events": [
+        "TaxExemptionCreated",
+        "TaxExemptionVerified",
+        "TaxExemptionRejected",
+        "TaxExemptionExpired"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "certificate_number + certificate_document_url NEVER broadcast (restricted per data-classes.json). Only the fact-of-change is broadcast; the SDUI re-fetches to get updated (redacted) exemption view."
+    },
+    {
+      "name": "tenant.{tenantId}.tax.providers",
+      "class": "Academorix\\Finance\\Tax\\Broadcasts\\TenantTaxProvidersChannel",
+      "description": "Provider-scoped health + config activity. Powers the per-provider status chip + circuit-breaker state indicator in the tax dashboard.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
+      "events": [
+        "TaxProviderConfigured",
+        "TaxProviderCircuitBreakerOpened"
+      ],
+      "throttle": "20 events/minute per channel",
+      "notes": "Provider config field NEVER broadcast (encrypted at rest; the channel does not decrypt). Every TaxProviderCircuitBreakerOpened fires a companion push notification via the notifications module (cannot-opt-out — tax pipeline degradation is a P1 finance signal)."
+    }
+  ]
+}

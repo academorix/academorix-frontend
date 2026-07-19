@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/payment/data/providers/square-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Square provider config",
+  "description": "Configuration shape for a Square Payments + Cards + Disputes + Cash App Pay integration. All credentials encrypted at rest.",
+  "type": "object",
+  "required": ["access_token", "application_id", "location_id", "webhook_signature_key"],
+  "additionalProperties": false,
+  "properties": {
+    "access_token": {
+      "type": "string",
+      "pattern": "^(EAAAE|EAAAF)[A-Za-z0-9_-]{40,}$",
+      "description": "Square OAuth access token. Format: EAAAE... (production) or EAAAF... (sandbox). Encrypted at rest."
+    },
+    "application_id": {
+      "type": "string",
+      "pattern": "^(sq0idp|sq0idb)-[A-Za-z0-9_-]{16,}$",
+      "description": "Square application ID. Format: sq0idp-... (production) or sq0idb-... (sandbox). Sent to the customer's client-side SDK."
+    },
+    "location_id": {
+      "type": "string",
+      "pattern": "^[A-Z0-9]{6,32}$",
+      "description": "Square location identifier. All payments are location-scoped in Square."
+    },
+    "webhook_signature_key": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Square webhook signature key. Used to verify Square-Signature header on inbound webhooks."
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["production", "sandbox"],
+      "default": "production",
+      "description": "Square environment. production = connect.squareup.com; sandbox = connect.squareupsandbox.com."
+    },
+    "cash_app_pay_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to enable Cash App Pay as a payment method. US-only. Requires additional Square + Cash App agreement."
+    },
+    "gift_cards_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to enable Square Gift Cards. When true, gift card payments show as method_type='wallet' with brand='square_gift_card'."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "academorix://modules/audit/attributes",
+  "$version": 1,
+  "title": "audit — PHP attribute contracts",
+  "description": "This module ships ZERO owned PHP attributes. Capture is exclusively via the vendor `owen-it/laravel-auditing` package's `Auditable` trait — there is no `AsAuditEventCapturer`, no `AsAuditProviderDriver`, no `AsAuditableTransition` attribute. Modules opt in to auditing by composing the vendor trait on their Eloquent models. Custom audit events register via the vendor's `Auditable::registerAuditableTransition` seam at boot — NOT via a PHP attribute discovery pass.",
+  "namespace": "Academorix\\Observability\\Audit\\Attributes",
+  "attributes": [],
+  "note": "Contrast with the growth::analytics + growth::marketing modules, which DO ship attribute-driven capturer discovery (#[AsAnalyticsEventCapturer], #[AsMarketingProviderDriver]). Those modules translate DOMAIN events into their own fan-out signals via a compilation pass. Audit does NOT — the vendor observer captures every model mutation directly, without an intermediate mapping layer.",
+  "vendor_extension_seam": {
+    "kind": "Method call on vendor class",
+    "surface": "OwenIt\\Auditing\\Auditable::registerAuditableTransition(string $transitionName, callable $transitionResolver)",
+    "when": "Boot time, once per registered custom event",
+    "consumers_that_will_register_customs": [
+      "auth::UserLoggedInAuditableTransition (Wave 6) — captures 'auth.login' events as auditable transitions on the User model",
+      "auth::UserLoggedOutAuditableTransition (Wave 6) — captures 'auth.logout' events",
+      "finance::TransactionApprovedAuditableTransition (Wave 6+) — captures 'transaction.approved' events on Transaction rows without a direct field mutation (transitions from pending to approved state via a state machine, not a column update)",
+      "compliance::ConsentGrantedAuditableTransition (Wave 6+) — captures 'consent.granted' events on ConsentRecord rows"
+    ],
+    "discovery_pattern": "Consumer modules add their AuditableTransition registrations in their module's ServiceProvider::boot() method. This module's AuditServiceProvider does not scan for them (unlike growth::analytics which does a compilation pass) — the vendor seam handles registration on its own.",
+    "audited_events_catalog": "The union of vendor default events + registered custom transitions lives in data/audited-events-catalog.json (regenerated at boot). AuditObserver::creating validates the `event` column against this closed set."
+  }
+}

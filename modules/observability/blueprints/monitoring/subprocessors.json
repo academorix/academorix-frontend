@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/monitoring/subprocessors",
+  "$version": 1,
+  "title": "monitoring — subprocessors",
+  "description": "The Monitoring module engages SIX third-party subprocessors — one per provider driver. Every subprocessor receives system-health signals + alert metadata via HTTPS. NO customer PII flows through monitoring providers — the signals contain tenant_id + severity + timestamp + affected service + error messages. GDPR Art. 28 DPA references + Art. 30 records of processing activities. Every tenant that activates a provider effectively adds that subprocessor to their processing register; the tenant admin acknowledges the DPA reference before configuring.",
+  "subprocessors": [
+    {
+      "slug": "sentry",
+      "vendor_name": "Functional Software, Inc. (Sentry)",
+      "vendor_url": "https://sentry.io/security/",
+      "purpose": "Server-side error tracking + release health monitoring. Receives error events + performance signals from tenant infrastructure.",
+      "data_categories": ["error_message", "stack_trace", "release_id", "user_context_hash", "tenant_id_hash", "environment_tag", "custom_context_tags"],
+      "data_hashing": "user_context + tenant_id hashed before dispatch. No raw customer PII.",
+      "endpoint": "region-dependent (sentry.io / de.sentry.io / eu.sentry.io)",
+      "sub_processing_locations": ["USA", "Germany", "EU"],
+      "dpa_url": "https://sentry.io/legal/dpa/",
+      "certifications": ["SOC 2 Type 2", "ISO 27001", "PrivacyShield"],
+      "activation_gate": "tenant admin acknowledges the DPA before saving the provider config"
+    },
+    {
+      "slug": "datadog",
+      "vendor_name": "Datadog, Inc.",
+      "vendor_url": "https://www.datadoghq.com/legal/security/",
+      "purpose": "APM + logs + metrics + events observability platform. Receives monitoring alerts + incident timelines correlated with APM traces + log lines.",
+      "data_categories": ["event_title", "event_text", "priority", "alert_type", "tags (tenant_hash, severity, service, environment)", "aggregation_key"],
+      "data_hashing": "tenant_id hashed before dispatch; no raw customer PII",
+      "endpoint": "api.datadoghq.com (US), api.datadoghq.eu (EU), api.ddog-gov.com (US-GOV)",
+      "sub_processing_locations": ["USA", "EU", "US-GOV cloud"],
+      "dpa_url": "https://www.datadoghq.com/legal/data-processing-addendum/",
+      "certifications": ["SOC 2 Type 2", "ISO 27001", "ISO 27017", "ISO 27018", "HIPAA", "FedRAMP Moderate"],
+      "activation_gate": "tenant admin acknowledges DPA + selects the deployment region"
+    },
+    {
+      "slug": "pagerduty",
+      "vendor_name": "PagerDuty, Inc.",
+      "vendor_url": "https://www.pagerduty.com/legal/security-privacy-and-compliance/",
+      "purpose": "Digital operations platform. Receives P1 + P2 alerts + routes them to the tenant's on-call rotation via SMS, phone, push, and email.",
+      "data_categories": ["incident_summary", "severity", "source", "component", "group", "class", "custom_details (tenant_hash, affected_services, alert_id_hash)", "dedup_key"],
+      "data_hashing": "tenant_id + alert_id + subject identifiers hashed before dispatch",
+      "endpoint": "events.pagerduty.com (Events API v2)",
+      "sub_processing_locations": ["USA", "EU"],
+      "dpa_url": "https://www.pagerduty.com/legal/data-processing-agreement/",
+      "certifications": ["SOC 2 Type 2", "ISO 27001", "GDPR-ready DPA"],
+      "activation_gate": "tenant admin acknowledges DPA"
+    },
+    {
+      "slug": "opsgenie",
+      "vendor_name": "Atlassian Corporation (Opsgenie)",
+      "vendor_url": "https://www.atlassian.com/legal/privacy-policy",
+      "purpose": "On-call management + alerting platform (Atlassian). Alternative + fallback to PagerDuty.",
+      "data_categories": ["message", "alias (dedup)", "description", "responders (team_id)", "priority", "tags", "details"],
+      "data_hashing": "tenant_id + alert_id hashed before dispatch",
+      "endpoint": "api.opsgenie.com (US) / api.eu.opsgenie.com (EU)",
+      "sub_processing_locations": ["USA", "EU"],
+      "dpa_url": "https://www.atlassian.com/legal/data-processing-addendum",
+      "certifications": ["SOC 2 Type 2", "ISO 27001", "ISO 27017", "ISO 27018"],
+      "activation_gate": "tenant admin acknowledges DPA + selects region"
+    },
+    {
+      "slug": "prometheus",
+      "vendor_name": "Tenant-hosted (Prometheus + AlertManager)",
+      "vendor_url": "N/A (tenant-owned infrastructure)",
+      "purpose": "Tenant-hosted Prometheus + AlertManager. Academorix pushes metrics to the tenant's Pushgateway + optionally acts as an AlertManager webhook receiver (accepts POST from tenant Prometheus + re-emits as internal alerts).",
+      "data_categories": ["prometheus text-format metrics (tenant_hash + severity + service labels)", "alert-manager webhook payloads"],
+      "data_hashing": "tenant_id hashed in metric labels",
+      "endpoint": "tenant-configured pushgateway URL",
+      "sub_processing_locations": ["tenant-hosted"],
+      "dpa_url": "N/A — the tenant is responsible for their own infrastructure",
+      "certifications": ["depends on tenant"],
+      "activation_gate": "tenant admin confirms pushgateway URL + acknowledges own DPA responsibility"
+    },
+    {
+      "slug": "custom_webhook",
+      "vendor_name": "caller-configured",
+      "vendor_url": "N/A (tenant-owned endpoint)",
+      "purpose": "Generic HMAC-signed JSON webhook. Escape hatch for tenants using Grafana / Grafana Cloud / New Relic / Slack directly / etc. Data ultimately delivered to a caller-configured URL.",
+      "data_categories": ["full alert / incident / health check JSON (tenant_hash + severity + affected services + timestamps)"],
+      "data_hashing": "tenant_id hashed; no raw customer PII",
+      "endpoint": "caller-configured",
+      "sub_processing_locations": ["caller-hosted"],
+      "dpa_url": "N/A — the tenant is responsible for their downstream endpoint's DPA",
+      "certifications": ["depends on caller"],
+      "activation_gate": "tenant admin confirms URL + acknowledges own DPA responsibility"
+    }
+  ],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching MonitoringAlertFiredNotification / MonitoringIncidentOpenedNotification / MonitoringIncidentEscalatedNotification / MonitoringPostmortemRequiredNotification / MonitoringHealthCheckPersistentlyFailingNotification / MonitoringProviderCircuitBreakerOpenedNotification / MonitoringWeeklyDigestNotification via mail / SMS / push / Slack channels."
+    },
+    {
+      "module": "compliance/encryption",
+      "reference": "compliance::encryption owns the encryption service used for at-rest encryption of monitoring_provider_configs.config."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately with 6 active subprocessors. Every tenant that configures a monitoring provider effectively activates that subprocessor for their tenant.",
+    "The tenant-facing subprocessor list (compliance/subprocessors surface) reads from this file + shows only the active subset per tenant.",
+    "Adding a new provider driver = adding a new entry here + updating the tenant-facing subprocessor list + updating compliance.json Art. 28 evidence.",
+    "Unlike marketing subprocessors (which receive hashed customer PII for ad targeting), monitoring subprocessors receive ONLY system-health signals — tenant_id is the only correlation surface + it's hashed."
+  ]
+}

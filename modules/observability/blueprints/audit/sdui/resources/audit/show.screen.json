@@ -1,0 +1,167 @@
+{
+  "id": "audit.resources.audit.show",
+  "title": "Audit row detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/audits/:audit_id",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit", "action": "show" },
+  "requiresPermission": "audit.audits.view",
+  "dataSources": [
+    {
+      "name": "audit",
+      "kind": "http.get",
+      "url": "/api/v1/audits/{route.audit_id}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "ghost",
+                "leadingIcon": "arrow-left",
+                "children": "Back"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/audit/audits" }
+              }
+            },
+            {
+              "kind": "Widget",
+              "widget": "audit.audit-event-chip",
+              "props": {
+                "event": { "$ref": "audit.event" },
+                "size": "md",
+                "showIcon": true,
+                "showLabel": true
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold"
+              },
+              "bindings": { "children": { "$ref": "audit.event" } }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h2", "className": "text-lg font-semibold", "children": "Subject" }
+            },
+            {
+              "kind": "DescriptionList",
+              "children": [
+                {
+                  "kind": "DescriptionList.Item",
+                  "props": { "label": "Auditable type" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-mono text-sm" },
+                      "bindings": { "children": { "$ref": "audit.auditable_type" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "DescriptionList.Item",
+                  "props": { "label": "Auditable ID" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-mono text-sm" },
+                      "bindings": { "children": { "$ref": "audit.auditable_id" } }
+                    }
+                  ]
+                },
+                {
+                  "kind": "DescriptionList.Item",
+                  "props": { "label": "Actor" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "font-mono text-sm" },
+                      "bindings": {
+                        "children": {
+                          "$expr": "audit.user_id ? (audit.user_type ? audit.user_type + ' / ' + audit.user_id : audit.user_id) : 'system'"
+                        }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "DescriptionList.Item",
+                  "props": { "label": "Occurred at" },
+                  "children": [
+                    {
+                      "kind": "Text",
+                      "props": { "className": "text-sm" },
+                      "bindings": { "children": { "$expr": "formatDateTime(audit.created_at)" } }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h2", "className": "text-lg font-semibold", "children": "Field diff" }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "secondary",
+                    "leadingIcon": "eye",
+                    "children": "Reveal raw diff",
+                    "confirm": {
+                      "title": "Reveal raw diff",
+                      "message": "Revealing raw old_values + new_values writes a chain-of-custody audit row referencing you as the revealer. Continue?"
+                    }
+                  },
+                  "requiresPermission": "audit.audits.reveal_raw_diff",
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/audit/audits/' + audit.id + '?include=raw_diff'"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Widget",
+              "widget": "audit.audit-diff-summary",
+              "props": {
+                "diff_summary": { "$ref": "audit.diff_summary" },
+                "size": "lg"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

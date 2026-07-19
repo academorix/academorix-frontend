@@ -1,0 +1,99 @@
+{
+  "id": "academorix://modules/invoice/entitlements",
+  "$version": 1,
+  "title": "invoice — declared entitlements",
+  "description": "Nine entitlement keys. `invoice_capture` is the boolean master gate. `invoice_slot_per_month` caps invoice creation per rolling calendar month. `invoice_custom_series` (Medium+) unlocks tenant-configurable series (INV / SO / RECEIPT). `invoice_multi_currency` (Medium+) allows invoices in currencies other than tenant.default_currency. `invoice_tenant_branded_pdf` (Medium+) applies the tenant's branding to the invoice PDF. `invoice_dunning_advanced` (Enterprise) unlocks custom dunning cadences + collection agency integration. `invoice_collections_integration` (Enterprise) enables third-party collections API dispatch. `invoice_extended_retention` (Enterprise) extends retention from 7 → 10 years. `credit_note_issuance` (Small+) enables credit note creation for refunds/adjustments.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "pool" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "invoice_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is invisible: no invoice CRUD, no credit-note issuance, no reports. All tiers get this on (invoicing is a foundational feature) — differentiation lives in the finer-grained gates below.",
+      "enforcedBy": [
+        "entitlement.enforce:invoice_capture middleware on every /api/v1/invoices/* route + /api/v1/credit-notes/* route + /api/v1/reports/* route",
+        "InvoiceObserver refuses creating when the gate is closed",
+        "SDUI invoice surfaces hidden when features array does not include 'invoice.core'"
+      ]
+    },
+    {
+      "key": "invoice_slot_per_month",
+      "kind": "slot",
+      "unit": "invoices_per_month",
+      "defaultsByPlan": { "small": 100, "medium": 1000, "enterprise": null },
+      "description": "How many invoices a tenant may create per rolling calendar month. Small: 100, Medium: 1000, Enterprise: unlimited. Resets on the 1st of each calendar month via a scheduled reset job in the entitlements module. Consumed on invoice.creating; excess creations return 402.",
+      "enforcedBy": [
+        "InvoiceObserver.creating consumes 1 unit via EntitlementGate::consume('invoice_slot_per_month'); refuses with INVOICE_QUOTA_EXCEEDED when cap reached"
+      ]
+    },
+    {
+      "key": "invoice_custom_series",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables tenant-configurable invoice_series values (INV / SO / RECEIPT / custom 3-8 char slug). Small tenants get 'INV' only. Medium+ can set the series per invoice AND configure the default via settings.",
+      "enforcedBy": [
+        "InvoiceObserver.creating refuses when invoice_series != 'INV' AND gate is closed",
+        "SDUI series field disabled when gate is closed"
+      ]
+    },
+    {
+      "key": "invoice_multi_currency",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables invoices in currencies other than tenant.default_currency. Small tenants must invoice in their default currency; Medium+ can invoice in any ISO 4217 currency (currency frozen at issuance).",
+      "enforcedBy": [
+        "InvoiceObserver.creating refuses when currency != tenant.default_currency AND gate is closed"
+      ]
+    },
+    {
+      "key": "invoice_tenant_branded_pdf",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the tenant's branding (logo, colors, footer) on invoice PDFs via the branding module. Small tenants get the default Academorix-branded PDF template.",
+      "enforcedBy": [
+        "InvoicePDFRenderer checks the gate + selects template accordingly",
+        "SDUI branding preview disabled when gate is closed"
+      ]
+    },
+    {
+      "key": "invoice_dunning_advanced",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables custom dunning cadence configuration (override the default day+3/7/14/30/60 schedule) + collection-agency integration. Small + Medium get the default cadence only.",
+      "enforcedBy": [
+        "DunningScheduler reads config only when the gate is open; otherwise applies the defaults",
+        "SDUI dunning-config screen hidden when gate is closed"
+      ]
+    },
+    {
+      "key": "invoice_collections_integration",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables third-party collections API dispatch (via the collections integration in the notifications module). Small + Medium tenants can mark invoices sent-to-collections manually but do not get automated agency handoff.",
+      "enforcedBy": [
+        "EscalateDunningToCollectionsJob refuses when the gate is closed",
+        "SDUI 'send to collections' button hidden when gate is closed"
+      ]
+    },
+    {
+      "key": "invoice_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends invoices + credit_notes + invoice_lines retention from 7 years (default) to 10 years. For finance regimes that require longer ad-spend audit trails (some US states, UK VAT with adjustments).",
+      "enforcedBy": [
+        "PurgeExpiredInvoiceDataJob checks the gate + applies 10-year retention when set"
+      ]
+    },
+    {
+      "key": "credit_note_issuance",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate for the credit note surface. All tiers get this — credit notes are foundational (regulators require them for VAT invoicing). Off = the /credit-notes routes 404 + CreditNoteObserver refuses creates.",
+      "enforcedBy": [
+        "entitlement.enforce:credit_note_issuance middleware on every /api/v1/credit-notes/* route",
+        "CreditNoteObserver.creating refuses when gate is closed"
+      ]
+    }
+  ]
+}

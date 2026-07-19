@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/monitoring/macros",
+  "$version": 1,
+  "title": "monitoring — published macros",
+  "description": "The monitoring module publishes ZERO framework macros. Every consumer touches the monitoring surface via injected services (MonitoringProviderManager, HealthCheckExecutor, AlertPolicyEvaluator) or the #[AsMonitoringListener] / #[AsMonitoringProvider] / #[AsHealthCheckStrategy] discovery paths.",
+  "namespace_note": "No macros published.",
+  "macros": [],
+  "rationale": [
+    "Monitoring is a SERVER-SIDE OBSERVER. The consumer contract is: configure health checks → evaluator fires alerts → grouping opens incidents → providers get notified. There is no request-level state that needs to be surfaced as a Request macro (contrast with facility::activeFacility which caches a per-request model).",
+    "Adding a monitoring-specific macro (e.g. Request::currentIncident) would signal a design smell — monitoring events are ephemeral fire-then-notify artifacts, not persistent per-request state.",
+    "If a downstream module needs an ergonomic accessor (e.g. 'is any alert firing for my tenant?'), the answer is a repository method + a helper (see helpers.json), not a Request macro. The tenant scope is already established via BelongsToTenant."
+  ]
+}

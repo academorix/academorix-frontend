@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/refund/feature-flags",
+  "$version": 1,
+  "title": "refund — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "refund.provider_dispatch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for InitiateProviderRefundJob. Off = every provider dispatch call refuses with 503 REFUND_DISPATCH_MAINTENANCE. Refunds remain in status='approved' until the flag flips back on. Emergency-only (used during payment-module maintenance windows). Approve/reject/cancel paths still work; only provider dispatch pauses."
+    },
+    {
+      "key": "refund.approval_workflow",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the requires_approval computation returns false for every refund. Every refund auto-approves. Emergency-only when the approval workflow is misbehaving (e.g. approver notifications broken). Small tenants with `refund_approval_workflow` entitlement off already have this behaviour without the kill switch."
+    },
+    {
+      "key": "refund.clawback_cascade",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = RefundSucceeded does NOT fire RefundClawbackReferral / RefundClawbackCoupon downstream. Referral rewards + coupon redemptions do NOT reverse. Emergency-only if the cascade is misbehaving — admin manual reversal via referrals + coupon module CLIs then required."
+    },
+    {
+      "key": "refund.marketing_lane",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = RefundSucceeded does NOT fire marketing::RefundIssued. Ad-network ROAS adjustment pauses (retains inflated ROAS values). Used when marketing module is unstable."
+    },
+    {
+      "key": "refund.reconciler_jobs",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileRefundsJob + CheckRefundProviderStatusJob + PurgeExpiredRefundDataJob skip. Only flip off for maintenance windows."
+    },
+    {
+      "key": "refund.customer_self_service",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /refunds/mine returns 503 REFUND_CUSTOMER_SELF_SERVICE_MAINTENANCE. Admin path still works. Used during customer-facing UI outages when we want to redirect requests via support."
+    },
+    {
+      "key": "refund.finalization_chain",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = FinalizeRefundJob skips the credit note + transaction + clawback + marketing steps. Refund still transitions to succeeded but WITHOUT downstream side effects. EMERGENCY-ONLY — leaves accounting in an inconsistent state until manual reconciliation. Never flip off without a follow-up refund:generate-credit-note run."
+    },
+    {
+      "key": "refund.report_delivery",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the refund-volume report endpoint returns 503. Used when the report generation is under load or the underlying query is unhealthy."
+    }
+  ]
+}

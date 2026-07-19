@@ -1,0 +1,99 @@
+{
+  "id": "tax.resources.tax-exemption.reject",
+  "title": "Reject exemption",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/exemptions/:exemptionId/reject",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-exemption", "action": "reject" },
+  "requiresPermission": "tax.exemptions.reject",
+  "requiresEntitlement": "tax_exemption_management",
+  "dataSources": [
+    {
+      "name": "exemption",
+      "kind": "http.get",
+      "url": "/api/v1/tax/exemptions/{{routeParams.exemptionId}}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Reject exemption" } },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "Rejection is permanent",
+            "description": "Once rejected, the exemption transitions to verification_status='rejected'. Rejection cannot be undone — the customer must submit a new exemption if they wish to re-apply."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Exemption type", "field": "exemption.exemption_type" },
+                  { "label": "Customer", "expr": "exemption.customer_type + ' (' + exemption.customer_id + ')'" },
+                  { "label": "Certificate number", "field": "exemption.certificate_number" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-3" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Rejection reason", "menuTrigger": "focus", "required": true },
+              "props_items": [
+                { "id": "invalid_certificate", "label": "Invalid certificate" },
+                { "id": "expired_at_creation", "label": "Certificate expired at submission" },
+                { "id": "jurisdiction_mismatch", "label": "Jurisdiction mismatch" },
+                { "id": "fraudulent", "label": "Fraudulent" },
+                { "id": "other", "label": "Other" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "reason", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "label": "Rejection note",
+                "placeholder": "Explain the rejection reason to the customer. Written to audit trail + notification.",
+                "required": true,
+                "rows": 4
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "note", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "size": "lg", "leadingIcon": "x-mark", "children": "Reject exemption" },
+              "bindings": { "disabled": { "$expr": "!form.reason || !form.note || form.note.length < 10" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/tax/exemptions/{{exemption.id}}/reject",
+                  "body": { "reason": "{{form.reason}}", "note": "{{form.note}}" },
+                  "onSuccess": { "kind": "navigate", "to": "/tenant/tax/exemptions" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

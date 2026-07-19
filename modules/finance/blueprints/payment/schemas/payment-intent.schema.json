@@ -1,0 +1,267 @@
+{
+  "id": "academorix://modules/payment/schemas/payment-intent",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PaymentIntent",
+  "description": "In-flight payment intent objects — mirrors provider intent lifecycle from initialization → confirmation → success/failure/cancelled. 3DS2 step-up flows live here. `client_secret` + `provider_reference_id` encrypted at rest. Carries `tenant_id` only. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "payment",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "payment_intents",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pit_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Payment\\Models\\PaymentIntent",
+    "interface": "Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentIntentInterface",
+    "implements": ["Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentIntentInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToInvoice",
+      "BelongsToPaymentMethod",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "provider": "PaymentProvider",
+      "provider_reference_id": "encrypted:string",
+      "amount_cents": "integer",
+      "status": "PaymentIntentStatus",
+      "capture_method": "PaymentIntentCaptureMethod",
+      "confirmation_method": "PaymentIntentConfirmationMethod",
+      "next_action_type": "PaymentIntentNextActionType",
+      "next_action_data": "array",
+      "client_secret": "encrypted:string",
+      "last_error_type": "PaymentIntentLastErrorType",
+      "succeeded_at": "datetime",
+      "cancelled_at": "datetime",
+      "provider_metadata": "encrypted:array"
+    },
+    "observers": ["PaymentIntentObserver"],
+    "appends": ["is_terminal", "requires_customer_action", "is_expired"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pit_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "invoice_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "invoices", "column": "id", "onDelete": "restrict" },
+        "description": "Parent invoice. RESTRICT — invoices with active intents cannot be voided until intents terminate."
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: stripe / paddle / adyen / square / paypal / custom_webhook."
+      },
+      "provider_reference_id": {
+        "type": "string",
+        "length": 256,
+        "nullable": false,
+        "description": "ENCRYPTED AT REST. Provider-native intent: pi_... (Stripe), txn_... (Paddle), session-id (Adyen), payment-id (Square), order_... (PayPal). Immutable after create."
+      },
+      "amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "The amount to capture (in cents). Frozen at intent create."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217 3-letter code. Frozen at intent create."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'initialized'",
+        "description": "Enum: initialized / requires_action / requires_payment_method / requires_confirmation / requires_capture / processing / succeeded / cancelled / failed. State machine one-way — enforced by observer."
+      },
+      "capture_method": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'automatic'",
+        "description": "Enum: automatic (capture on authorization — default) / manual (capture later via POST /payments/{payment}/capture — requires payment_manual_capture entitlement, Medium+)."
+      },
+      "confirmation_method": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'automatic'",
+        "description": "Enum: automatic (provider auto-confirms after method attach) / manual (customer explicitly confirms via SDK). manual is required for 3DS2 flows."
+      },
+      "next_action_type": {
+        "type": "string",
+        "length": 48,
+        "nullable": true,
+        "description": "Enum: redirect_to_url / use_stripe_sdk / three_d_secure_redirect / verify_with_micro_deposits / oxxo_display_details. Set when status='requires_action'. Instructs the customer's SDK how to complete the step-up flow."
+      },
+      "next_action_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Redirect URL for step-up flows. Set for redirect_to_url + three_d_secure_redirect."
+      },
+      "next_action_data": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Provider-specific step-up payload. Stripe's `next_action.use_stripe_sdk.stripe_js`; Adyen's `action.paymentData`; PayPal's approvalUrl. NEVER contains PAN — just SDK invocation params."
+      },
+      "payment_method_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "payment_methods", "column": "id", "onDelete": "restrict" },
+        "description": "The saved method the customer attached (nullable — one-time methods, first-time cards). Attached during requires_payment_method → requires_confirmation transition. RESTRICT — historical intents preserve the method reference."
+      },
+      "client_secret": {
+        "type": "string",
+        "length": 512,
+        "nullable": false,
+        "description": "ENCRYPTED AT REST. Provider client-side confirmation secret (Stripe pi_..._secret_...; Adyen paymentData; PayPal orderID). Passed to the customer's provider SDK. Encryption key ≠ provider_reference_id encryption key — defense-in-depth."
+      },
+      "last_error_code": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Provider error code on the most recent failure. Stripe: 'card_declined', 'authentication_required', etc."
+      },
+      "last_error_message": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Human-readable error message. Truncated to 512 chars."
+      },
+      "last_error_type": {
+        "type": "string",
+        "length": 48,
+        "nullable": true,
+        "description": "Enum: authentication_error / card_error / api_error / idempotency_error / rate_limit_error / validation_error. Nullable when no error occurred."
+      },
+      "succeeded_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When status transitioned to 'succeeded'. Once set, IMMUTABLE."
+      },
+      "cancelled_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When status transitioned to 'cancelled'. Once set, IMMUTABLE."
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Customer-facing reason: 'requested_by_customer', 'duplicate', 'fraudulent', 'abandoned', 'expired'."
+      },
+      "provider_metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "ENCRYPTED AT REST. Full provider intent response for debugging. Redacted from support-tool views."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "invoice_id"], "name": "payment_intents_tenant_invoice_idx" },
+      { "columns": ["tenant_id", "status"], "name": "payment_intents_status_idx", "description": "For reconciliation queries + stale-intent detection." },
+      { "columns": ["provider_reference_id"], "name": "payment_intents_provider_reference_idx", "description": "For webhook dispatch lookup — the webhook body carries provider_reference_id; we join on it. Note: encrypted column requires a matching hash column for exact-match index in production; here we assume the query goes through the SearchableEncrypted trait." },
+      { "columns": ["status", "created_at"], "name": "payment_intents_stale_idx", "predicate": "status IN ('initialized', 'requires_action', 'requires_payment_method', 'requires_confirmation', 'processing')", "description": "For ExpireStalePaymentIntentsJob nightly sweep." },
+      { "columns": ["tenant_id", "created_at"], "name": "payment_intents_recent_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "invoice_id",
+    "provider",
+    "provider_reference_id",
+    "amount_cents",
+    "currency",
+    "status",
+    "capture_method",
+    "confirmation_method",
+    "client_secret",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pit_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "invoice_id": { "type": "string", "pattern": "^ivc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": {
+      "type": "string",
+      "enum": ["stripe", "paddle", "adyen", "square", "paypal", "custom_webhook"]
+    },
+    "provider_reference_id": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "amount_cents": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "status": {
+      "type": "string",
+      "enum": ["initialized", "requires_action", "requires_payment_method", "requires_confirmation", "requires_capture", "processing", "succeeded", "cancelled", "failed"]
+    },
+    "capture_method": { "type": "string", "enum": ["automatic", "manual"] },
+    "confirmation_method": { "type": "string", "enum": ["automatic", "manual"] },
+    "next_action_type": {
+      "type": ["string", "null"],
+      "enum": [null, "redirect_to_url", "use_stripe_sdk", "three_d_secure_redirect", "verify_with_micro_deposits", "oxxo_display_details"]
+    },
+    "next_action_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "next_action_data": { "type": ["object", "null"] },
+    "payment_method_id": { "type": ["string", "null"], "pattern": "^pmt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "client_secret": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "last_error_code": { "type": ["string", "null"], "maxLength": 128 },
+    "last_error_message": { "type": ["string", "null"], "maxLength": 512 },
+    "last_error_type": {
+      "type": ["string", "null"],
+      "enum": [null, "authentication_error", "card_error", "api_error", "idempotency_error", "rate_limit_error", "validation_error"]
+    },
+    "succeeded_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancellation_reason": { "type": ["string", "null"], "maxLength": 128 },
+    "provider_metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "state transitions are one-way per state machine: initialized → {requires_action, requires_payment_method, requires_confirmation, processing}; requires_action → {requires_confirmation, requires_capture, processing, cancelled, failed}; requires_payment_method → requires_confirmation; requires_confirmation → {requires_action, requires_capture, processing, cancelled, failed}; requires_capture → {succeeded, cancelled}; processing → {succeeded, failed, cancelled}; succeeded/cancelled/failed are TERMINAL",
+    "status='succeeded' requires succeeded_at IS NOT NULL",
+    "status='cancelled' requires cancelled_at IS NOT NULL",
+    "status='succeeded' → a Payment row exists referencing this intent (atomic — same DB transaction)",
+    "status='requires_action' requires next_action_type IS NOT NULL",
+    "next_action_url required when next_action_type IN ('redirect_to_url', 'three_d_secure_redirect')",
+    "client_secret encrypted at rest with a key distinct from provider_reference_id's key",
+    "provider_reference_id + provider immutable after create",
+    "amount_cents + currency + capture_method + confirmation_method immutable after create",
+    "hard-deletion FORBIDDEN — intents retain 90 days (transient state; success → creates payment; failure → audit only)",
+    "TenantErased cascade via FK CASCADE",
+    "provider_metadata + next_action_data encrypted at rest"
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/audit/data/audited-events-catalog",
+  "$version": 1,
+  "title": "audit — closed set of audited event names",
+  "description": "The closed set of `event` column values accepted by AuditObserver::creating. Union of vendor default events + registered custom transitions. Regenerated at boot from `AuditedEventsCatalog::build()`. AuditObserver validates the event column against this set + refuses unknown values with NOTIFICATIONS_AUDIT_UNKNOWN_EVENT_TYPE.",
+  "vendor_defaults": [
+    {
+      "name": "created",
+      "description": "Model row inserted. Vendor default.",
+      "vendor_recognized": true,
+      "typical_auditable_types": "any"
+    },
+    {
+      "name": "updated",
+      "description": "Model row modified. Vendor default.",
+      "vendor_recognized": true,
+      "typical_auditable_types": "any"
+    },
+    {
+      "name": "deleted",
+      "description": "Model row deleted (hard delete OR soft-delete via SoftDeletes trait). Vendor default.",
+      "vendor_recognized": true,
+      "typical_auditable_types": "any"
+    },
+    {
+      "name": "restored",
+      "description": "Soft-deleted model row restored. Vendor default. Only fires for models composing SoftDeletes.",
+      "vendor_recognized": true,
+      "typical_auditable_types": "any with SoftDeletes"
+    }
+  ],
+  "custom_transitions_planned_wave_6": [
+    {
+      "name": "auth.login",
+      "description": "User authenticated. Registered by auth::UserLoggedInAuditableTransition. Auditable_type = User::class.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\User\\Models\\User", "Academorix\\User\\Models\\PlatformUser"]
+    },
+    {
+      "name": "auth.logout",
+      "description": "User logged out (explicit; session-expiry doesn't emit this).",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\User\\Models\\User", "Academorix\\User\\Models\\PlatformUser"]
+    },
+    {
+      "name": "auth.mfa_challenge_passed",
+      "description": "User completed an MFA challenge.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\User\\Models\\User"]
+    },
+    {
+      "name": "auth.mfa_challenge_failed",
+      "description": "User FAILED an MFA challenge. Compliance signal for anomaly detection.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\User\\Models\\User"]
+    },
+    {
+      "name": "auth.password_changed",
+      "description": "User's password_hash rotated.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\User\\Models\\User"]
+    },
+    {
+      "name": "auth.impersonation_started",
+      "description": "Platform-admin initiated impersonation session for a User. old_values has actor context, new_values has impersonation target.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\User\\Models\\User"]
+    },
+    {
+      "name": "auth.impersonation_ended",
+      "description": "Impersonation session ended.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\User\\Models\\User"]
+    },
+    {
+      "name": "consent.granted",
+      "description": "Subject granted consent to a specific category. Registered by compliance::ConsentGrantedAuditableTransition.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\Compliance\\Models\\ConsentRecord"]
+    },
+    {
+      "name": "consent.revoked",
+      "description": "Subject revoked consent to a category.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\Compliance\\Models\\ConsentRecord"]
+    },
+    {
+      "name": "transaction.approved",
+      "description": "Financial transaction approved (state machine transition, not a column update). Registered by finance::TransactionApprovedAuditableTransition.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\Finance\\Models\\Transaction"]
+    },
+    {
+      "name": "transaction.refunded",
+      "description": "Refund issued against a transaction.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\Finance\\Models\\Transaction", "Academorix\\Finance\\Models\\Refund"]
+    },
+    {
+      "name": "read.phi_record",
+      "description": "PHI-adjacent record accessed. HIPAA §164.312(b) requires audit for reads (not just writes). Registered by planned Wave 7+ health module.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["planned Wave 7+ HealthNote, MedicalRecord"]
+    },
+    {
+      "name": "read.cardholder_data",
+      "description": "Cardholder-data record accessed. PCI-DSS Requirement 10.1.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\Finance\\Models\\Transaction (when card fields are read)"]
+    },
+    {
+      "name": "audit.purged",
+      "description": "Meta-audit — PurgeExpiredAuditsJob completed a per-tenant purge. new_values contains { cutoff_at, row_count, duration_ms }.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\Observability\\Audit\\Models\\Audit"]
+    },
+    {
+      "name": "audit.raw_diff_revealed",
+      "description": "Chain-of-custody meta-audit — a compliance officer revealed old_values + new_values on a specific audit row via ?include=raw_diff. new_values contains { audit_id, revealer_user_id, reason }.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\Observability\\Audit\\Models\\Audit"]
+    },
+    {
+      "name": "audit.exported",
+      "description": "Meta-audit — an audit export completed. new_values contains { export_id, kind, row_count, requester }.",
+      "vendor_recognized": false,
+      "typical_auditable_types": ["Academorix\\Observability\\Audit\\Models\\AuditExport"]
+    }
+  ],
+  "registration_seam": "Vendor `OwenIt\\Auditing\\Auditable::registerAuditableTransition($name, $resolver)`. Consumer modules call this in their ServiceProvider::boot() to register additional events. AuditedEventsCatalog::build() reads from the vendor's internal registry at boot to compose this catalog."
+}

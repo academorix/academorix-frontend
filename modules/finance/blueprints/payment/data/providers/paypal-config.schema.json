@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/payment/data/providers/paypal-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PayPal provider config",
+  "description": "Configuration shape for a PayPal Checkout + Braintree + Venmo integration. All credentials encrypted at rest.",
+  "type": "object",
+  "required": ["client_id", "client_secret", "webhook_id"],
+  "additionalProperties": false,
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "pattern": "^A[A-Za-z0-9_-]{60,}$",
+      "description": "PayPal REST API client ID. Sent to the customer's client-side SDK. Format: A...(80 chars)."
+    },
+    "client_secret": {
+      "type": "string",
+      "pattern": "^E[A-Za-z0-9_-]{60,}$",
+      "description": "PayPal REST API client secret. Used server-side for OAuth2 token exchange. Encrypted at rest."
+    },
+    "webhook_id": {
+      "type": "string",
+      "pattern": "^[0-9A-Z]{16,}$",
+      "description": "PayPal webhook ID (assigned by PayPal at webhook setup). Used to verify inbound webhooks via PayPal's certificate-based verification."
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["production", "sandbox"],
+      "default": "production",
+      "description": "PayPal environment. production = api-m.paypal.com; sandbox = api-m.sandbox.paypal.com."
+    },
+    "braintree_merchant_id": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9]{16}$",
+      "description": "Optional Braintree merchant ID (for tenants using Braintree gateway via PayPal). Required for card acquiring via Braintree."
+    },
+    "braintree_public_key": {
+      "type": ["string", "null"],
+      "description": "Braintree public key. Sent to the customer's client-side Braintree SDK."
+    },
+    "braintree_private_key": {
+      "type": ["string", "null"],
+      "description": "Braintree private key. Used server-side. Encrypted at rest."
+    },
+    "venmo_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to enable Venmo as a payment method. US-consumer-only. Requires Braintree + additional Venmo agreement."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 20,
+      "description": "PayPal + Braintree tend to be slower than other providers. Default 20s (vs 15s standard)."
+    }
+  }
+}

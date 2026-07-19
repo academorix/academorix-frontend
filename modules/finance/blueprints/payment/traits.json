@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/payment/traits",
+  "$version": 1,
+  "title": "payment — trait composition",
+  "description": "Five owned traits. `BelongsToPayment`, `BelongsToPaymentMethod`, `BelongsToPaymentIntent` are the FK traits for downstream models (PaymentDispute, PaymentIntent, PaymentMethod cross-references). `HasPaymentDisputes` + `HasPaymentMethods` are inverse-side conveniences on the Payment + Customer models. Order matters when composed with BelongsToTenant — tenant MUST come first so the scope chain observes the tenant context.",
+  "owned": [
+    {
+      "trait": "Academorix\\Finance\\Payment\\Concerns\\BelongsToPayment",
+      "description": "Mixed into any domain model that carries a `payment_id` FK. Adds the `payment()` belongsTo relation. Used by PaymentDispute — no downstream module currently attaches to payments via a payment_id FK held on this side (refund + chargeback are separate modules with their own FKs pointing at Payment).",
+      "public": true,
+      "usedBy": [
+        "payment::PaymentDispute (required payment_id — every dispute anchored to exactly one payment)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToPayment` in the trait list so the tenant scope resolves first.",
+        "Refuses to save a row whose payment_id points at a payment in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling)."
+      ]
+    },
+    {
+      "trait": "Academorix\\Finance\\Payment\\Concerns\\BelongsToPaymentMethod",
+      "description": "Mixed into any domain model that carries a `payment_method_id` FK. Adds the `paymentMethod()` belongsTo relation. Used by Payment + PaymentIntent — the FK is nullable in both (some flows don't involve a saved method).",
+      "public": true,
+      "usedBy": [
+        "payment::Payment (nullable payment_method_id)",
+        "payment::PaymentIntent (nullable payment_method_id — attached during requires_payment_method → requires_confirmation transition)"
+      ]
+    },
+    {
+      "trait": "Academorix\\Finance\\Payment\\Concerns\\BelongsToPaymentIntent",
+      "description": "Mixed into any domain model that carries a `payment_intent_id` FK. Adds the `paymentIntent()` belongsTo relation. Used by Payment — the intent is the parent for every payment.",
+      "public": true,
+      "usedBy": [
+        "payment::Payment (required payment_intent_id — every payment born from a succeeded intent)"
+      ]
+    },
+    {
+      "trait": "Academorix\\Finance\\Payment\\Concerns\\HasPaymentDisputes",
+      "description": "Composed onto the Payment model. Adds `->disputes()` (hasMany over PaymentDispute), `->openDisputes()` (scope filter status NOT IN terminal), `->hasOpenDispute()` boolean helper, `->totalDisputedAmount()` sums amount_cents of open disputes.",
+      "public": true,
+      "usedBy": ["payment::Payment"]
+    },
+    {
+      "trait": "Academorix\\Finance\\Payment\\Concerns\\HasPaymentMethods",
+      "description": "Composed onto customer models (User, Athlete). Adds `->paymentMethods()` (morphMany over PaymentMethod via customer_type + customer_id), `->activePaymentMethods()` (scope filter is_active=true), `->defaultPaymentMethod()` (single is_default=true active method), `->cardPaymentMethods()` (scope filter method_type='card'). NOT installed by default — customer models opt-in via `use HasPaymentMethods` in their own class.",
+      "public": true,
+      "usedBy": [
+        "user::User (opt-in — needs the composer to declare it)",
+        "sports::Athlete (opt-in — parent-managed methods)"
+      ],
+      "composition_notes": [
+        "This trait is meant to be composed onto MODELS OWNED BY OTHER MODULES (User, Athlete). The consumer includes `use HasPaymentMethods` — no automatic installation."
+      ]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "PaymentMethod, PaymentIntent, PaymentDispute. NOT Payment (immutable financial record — hard-purged by retention pipeline only)."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Payment (searchable by payment_number, provider_reference_id, invoice number cross-reference). NOT the other three (accessed via relations)." }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to payments / payment_methods / payment_intents / payment_disputes is compliance-relevant (financial retention 7 years; 10y Enterprise)." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Payment + PaymentMethod + PaymentIntent + PaymentDispute — every admin action feeds the staff-visible activity feed." }
+    ],
+    "invoice": [
+      { "trait": "Academorix\\Finance\\Invoice\\Concerns\\BelongsToInvoice", "reason": "Payment + PaymentIntent both reference invoice_id." }
+    ]
+  },
+  "composition": {
+    "payment": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToInvoice",
+        "BelongsToPaymentIntent",
+        "BelongsToPaymentMethod",
+        "HasPaymentDisputes",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable"
+      ],
+      "notes": "Order matters: BelongsToTenant precedes every scope-observing trait. NO SoftDeletes — payments are immutable financial records; hard-purged by retention pipeline only. HasPaymentDisputes is inverse-side convenience."
+    },
+    "payment_method": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "SoftDeletes for the deactivate path (soft-delete + 90-day grace before hard-purge). Auditable is critical — provider_reference_id changes are compliance-relevant. NOT BelongsToPaymentIntent + NOT BelongsToPayment — methods are the PARENT of intents + payments (inverse relations)."
+    },
+    "payment_intent": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToInvoice",
+        "BelongsToPaymentMethod",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "SoftDeletes for state-terminal intents in the 90-day retention window. Auditable + HasActivityLog because every state transition is worth surfacing."
+    },
+    "payment_dispute": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToPayment",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "SoftDeletes for retention-window handling (7y baseline; 10y Enterprise). Auditable + HasActivityLog because every dispute is compliance-sensitive."
+    }
+  }
+}

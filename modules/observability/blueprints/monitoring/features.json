@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/monitoring/features",
+  "$version": 1,
+  "title": "monitoring — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "monitoring.core",
+      "displayName": "System monitoring",
+      "description": "Server-side health checks + threshold-triggered alerts + incident management. All tiers.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "monitoring.paging",
+      "displayName": "On-call paging (PagerDuty + Opsgenie)",
+      "description": "PagerDuty + Opsgenie provider drivers. Enables true on-call paging with escalation rotations. Medium + Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "monitoring.apm",
+      "displayName": "APM integration (Datadog)",
+      "description": "Datadog provider driver. Sends monitoring events to Datadog for correlation with APM traces + logs + metrics. Medium + Enterprise.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "monitoring.prometheus",
+      "displayName": "Prometheus integration",
+      "description": "Prometheus provider driver — pushgateway (outbound metrics) + AlertManager webhook receiver (inbound alerts from tenant's own Prometheus). Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "monitoring.custom_metrics",
+      "displayName": "Custom metrics + scripts",
+      "description": "custom_script health check type + custom_metric signal type. Enables tenant-provided monitoring scripts + arbitrary metric names. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "monitoring.extended_retention",
+      "displayName": "Extended monitoring retention",
+      "description": "Extends health_check_runs from 7d/30d to 30d/90d. Extends monitoring_alerts from 30d/90d to 90d/1y. Extends monitoring_incidents to indefinite for P1 (postmortem archive). Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "monitoring.postmortem",
+      "displayName": "Postmortem workflow",
+      "description": "P1-incident-triggered postmortem doc scaffolding + MonitoringPostmortemRequiredNotification. All tiers get a basic postmortem status column; Enterprise gets the doc scaffolding + assignment + due-date tracking.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "monitoring.weekly_digest",
+      "displayName": "Weekly SLO digest",
+      "description": "Opt-in weekly summary of tenant SLO health: alert counts by severity, incident counts, MTTR, top 5 firing policies, top 5 unhealthy checks. Every Monday 09:00 tenant-local. All tiers.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "monitoring.slack_alerts",
+      "displayName": "Slack alert channel",
+      "description": "Route monitoring alert + incident notifications to a tenant Slack channel via the CustomWebhook provider. Medium + Enterprise via monitoring_custom_webhook alias.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    }
+  ]
+}

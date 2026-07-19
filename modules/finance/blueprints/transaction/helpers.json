@@ -1,0 +1,55 @@
+{
+  "id": "academorix://modules/transaction/helpers",
+  "$version": 1,
+  "title": "transaction — helper functions",
+  "description": "Ergonomic helpers for recording transactions + querying account balances + resolving exchange rates. All helpers are thin wrappers around bound services — never business logic. Callers who need to record transactions typically use TransactionRecorder directly (via DI); helpers here are for imperative flows (support tools, tests, ad-hoc scripts).",
+  "namespace": "Academorix\\Finance\\Transaction\\Support",
+  "helpers": [
+    {
+      "signature": "record_transaction(TransactionKind $kind, string $referenceType, string $referenceId, int $amountCents, string $currency, array $ledgerEntries, array $metadata = []): ?Transaction",
+      "purpose": "Imperative recording path. Wraps TransactionRecorder::record with the current tenant context. Returns the posted Transaction OR null when refused (halted ledger, missing entitlement, cross-currency issue). Reserved for support tooling — production flows are triggered by domain-event listeners (invoice.paid, refund.issued, etc.).",
+      "delegates_to": "TransactionRecorder::record()"
+    },
+    {
+      "signature": "account_balance(string $account, string $currency = null): int",
+      "purpose": "Returns the current running balance (in cents) for the given account under the active tenant. When $currency is null, uses tenant.base_currency (converting via base_amount_cents on the ledger entries). Read-through cache — 60s TTL. Used by SDUI balance widgets + support tooling.",
+      "delegates_to": "AccountBalanceCalculator::balance()"
+    },
+    {
+      "signature": "resolve_exchange_rate(string $fromCurrency, string $toCurrency, ?DateTimeInterface $asOf = null): array",
+      "purpose": "Returns { rate: decimal, provider: string, captured_at: ISO 8601 } for the given currency pair as-of $asOf (defaults to now()). Used by TransactionObserver during cross-currency snapshotting. Cache TTL 1h. Reserved for internal use — regulators expect the rate at commit time, not the rate at read time.",
+      "delegates_to": "ExchangeRateResolver::resolve()"
+    },
+    {
+      "signature": "next_transaction_number(string $tenantId, ?int $year = null): string",
+      "purpose": "Generates the next transaction_number for a tenant in a given year (defaults to current calendar year). Format 'TXN-YYYY-NNNNNNNN'. Uses a Postgres advisory lock keyed on (tenant_id, year) to guarantee monotonicity under concurrent writes. Reserved for internal use — TransactionObserver.creating calls this atomically inside the DB transaction.",
+      "delegates_to": "TransactionNumberGenerator::next()"
+    },
+    {
+      "signature": "reverse_transaction(Transaction $source, TransactionReversalReason $reason, string $note, ?User $actor = null): Transaction",
+      "purpose": "Creates a NEW offsetting transaction pointing at $source with reversal_reason=$reason + amendment_note=$note. Returns the reversal transaction. Refuses when $source is not posted OR is already reversed OR is in a different tenant. Wraps TransactionReverser::reverse() with input validation. Reserved for support tooling — production reversals go through the /reverse HTTP endpoint or the RecordRefundIssuedTransactionJob path.",
+      "delegates_to": "TransactionReverser::reverse()"
+    },
+    {
+      "signature": "is_ledger_balanced_for(Transaction $transaction): bool",
+      "purpose": "Returns true if SUM(debit_cents) == SUM(credit_cents) > 0 across every ledger entry for $transaction. Used by TransactionObserver::finalize() as the load-bearing invariant check + by the nightly LedgerReconciler for per-transaction verification. Read-only — never mutates.",
+      "delegates_to": "LedgerReconciler::isBalanced()"
+    },
+    {
+      "signature": "ledger_entries_for(Transaction $transaction): Collection<TransactionLedgerEntry>",
+      "purpose": "Returns the ledger entries for $transaction, ordered by (account ASC, side ASC — debit before credit). Used by the transaction show endpoint + support tooling.",
+      "delegates_to": "TransactionLedgerEntryRepository::forTransaction()"
+    },
+    {
+      "signature": "assert_tenant_ledger_not_halted(): void",
+      "purpose": "Throws TransactionLedgerHaltedException when the active tenant has transaction_halt_new=true. Called by TransactionRecorder BEFORE building the transaction data class. Reserved for internal use.",
+      "delegates_to": "TransactionRepository::assertLedgerNotHalted()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories, TransactionRecorder, or AccountBalanceCalculator.",
+    "The record_transaction helper is intentionally NOT the primary recording path. Production code fires domain events (invoice.paid, refund.issued, etc.) that trigger the recorder listeners. The helper exists for support scripts + one-off backfills + tests.",
+    "resolve_exchange_rate is internal — it exists as a helper for testing + debugging. Direct callers should inject ExchangeRateResolver."
+  ]
+}

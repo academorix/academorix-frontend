@@ -1,0 +1,181 @@
+{
+  "id": "academorix://modules/payment/jobs",
+  "$version": 1,
+  "title": "payment — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\ConfirmPaymentIntentJob",
+      "queue": "payment",
+      "purpose": "Customer-initiated confirmation. Fired when the customer's client-side SDK reports back with a confirmation. Transitions the intent from requires_confirmation → {requires_action, requires_capture, processing, succeeded, failed}. Idempotent — the same confirmation twice is a no-op.",
+      "steps": [
+        "Load payment_intents row + verify status = 'requires_confirmation' (idempotency)",
+        "Load MarketingProviderManager instance for the intent's provider",
+        "Dispatch provider.confirmIntent($intent) — provider inspects the attached method + returns next state",
+        "On next=succeeded: transition status → 'succeeded' + create Payment row (atomic in same DB txn) + fire PaymentIntentSucceeded + PaymentCaptured",
+        "On next=requires_action: transition status → 'requires_action' + populate next_action_type + next_action_url + fire PaymentIntentRequiresAction",
+        "On next=requires_capture: transition status → 'requires_capture' (manual capture flow) + fire event",
+        "On next=processing: transition status → 'processing' + fire PaymentIntentProcessing; a subsequent webhook will resolve to succeeded/failed",
+        "On next=failed: transition status → 'failed' + populate last_error_code/type/message + fire PaymentIntentFailed"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "payment_intent_id",
+      "tries": 3,
+      "backoff": [10, 60, 300]
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\CapturePaymentIntentJob",
+      "queue": "payment",
+      "purpose": "Post-authorization capture for manual-capture flows. Fired when admin invokes POST /payments/{payment}/capture on a requires_capture intent. Transitions the intent from requires_capture → succeeded (or cancelled on failure). Only fires for capture_method='manual' intents.",
+      "steps": [
+        "Load payment_intents row + verify status = 'requires_capture'",
+        "Verify tenant holds `payment_manual_capture` entitlement (defense-in-depth against the observer)",
+        "Load provider instance",
+        "Dispatch provider.captureIntent($intent) — provider captures the previously-authorized funds",
+        "On success: transition status → 'succeeded' + create Payment row + fire PaymentIntentSucceeded + PaymentCaptured (+ optionally PaymentPartiallyCaptured when captured amount < intent amount)",
+        "On failure: fire PaymentCaptureFailed (intent stays in requires_capture until retry-limit exhausted or manually cancelled)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "payment_intent_id",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\ReconcilePaymentIntentsJob",
+      "queue": "payment",
+      "purpose": "Nightly reconciliation. Per active provider: fetches provider intent list (last 24h + all in-flight) + diffs against our payment_intents rows + reconciles drift. Detects lost webhooks + async completions we missed.",
+      "steps": [
+        "Load active payment provider configs (per tenant, per provider)",
+        "For each (tenant, provider): dispatch provider.listIntents(from: now() - 24h) via the driver",
+        "Diff provider's intent list against our payment_intents rows keyed on provider_reference_id",
+        "For each drift: if our row status != provider status → transition our row to match provider (fire the appropriate transition event); if provider has an intent we don't → create the intent row (unusual — indicates a lost create webhook)",
+        "Count drifts + reconciled + emit PaymentReconcileCompleted event with counters",
+        "If drift_count > 0: fire PaymentReconcileDriftNotification to admin"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "payment-reconcile",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\ExpireStalePaymentIntentsJob",
+      "queue": "payment",
+      "purpose": "Nightly sweep. Marks intents in non-terminal status for > 24h as 'cancelled' with cancellation_reason='expired'. Signals abandoned checkouts. Prevents in-flight intents from accumulating indefinitely.",
+      "steps": [
+        "SELECT id FROM payment_intents WHERE status IN ('initialized', 'requires_action', 'requires_payment_method', 'requires_confirmation', 'processing') AND created_at < now() - interval '24 hours' AND deleted_at IS NULL LIMIT 5000",
+        "For each: dispatch provider.cancelIntent($intent) — best-effort provider-side cleanup",
+        "Regardless of provider response: transition status → 'cancelled' with cancellation_reason='expired' + set cancelled_at + fire PaymentIntentCancelled + PaymentIntentExpired"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "payment-expire-stale",
+      "tries": 1
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\NotifyDisputeEvidenceDueJob",
+      "queue": "payment",
+      "purpose": "Fires 3 days before evidence_due_by. Admin gets notified so they don't miss the submission window.",
+      "steps": [
+        "Load PaymentDispute; refuse when evidence_submitted_at IS NOT NULL (already submitted) OR status IS terminal",
+        "Dispatch PaymentDisputeEvidenceDueNotification to admin + tenant owner"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "payment_dispute_id",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\CollectDisputeEvidenceJob",
+      "queue": "payment",
+      "purpose": "Fired on PaymentDisputeOpened. Auto-collects supporting evidence from other modules: invoice + membership + service documentation + refund policy + notification (communication) log + customer signature (if collected).",
+      "steps": [
+        "Load PaymentDispute + parent Payment + Invoice + Invoice.membership (if set)",
+        "Collect invoice PDF URL + membership details + refund_policy snapshot from settings",
+        "Collect communication_log from notifications module (last 90 days of comms with the customer on this membership/invoice)",
+        "Collect customer_signature from user profile (if collected during signup)",
+        "Assemble into evidence jsonb + encrypt at rest",
+        "Save to PaymentDispute.evidence (update via observer — evidence field allows updates until evidence_submitted_at is set)",
+        "Emit metric academorix.payment.dispute.evidence_collected"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "payment_dispute_id",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\SubmitDisputeEvidenceJob",
+      "queue": "payment",
+      "purpose": "Fired when admin submits collected evidence via POST /disputes/{dispute}/submit-evidence. Dispatches to the provider's evidence-submit API + transitions status → 'under_review'.",
+      "steps": [
+        "Load PaymentDispute + verify status = 'needs_response' (idempotency)",
+        "Load provider instance",
+        "Dispatch provider.submitDisputeEvidence($dispute, $dispute->evidence) — provider validates + acknowledges",
+        "On success: set evidence_submitted_at + transition status → 'under_review' + fire PaymentDisputeEvidenceSubmitted",
+        "On failure: log + surface error to admin (do NOT transition status; allow resubmit)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "payment_dispute_id",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\EscalateDisputeToChargebackJob",
+      "queue": "payment-critical",
+      "purpose": "Fires when a dispute transitions to status='lost'. Creates a Chargeback row via the chargeback module + sets dispute.chargeback_id. This is the bridge from payment_dispute lifecycle to the chargeback module's regulator-facing lifecycle.",
+      "steps": [
+        "Load PaymentDispute + verify status = 'lost' AND chargeback_id IS NULL (idempotency)",
+        "Dispatch chargeback::CreateChargebackFromDisputeAction($dispute) — chargeback module returns new Chargeback row",
+        "Update PaymentDispute.chargeback_id = new_chargeback_id",
+        "Fire PaymentDisputeEscalatedToChargeback"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "uniqueVia": "payment_dispute_id",
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\SyncPaymentMethodExpiryJob",
+      "queue": "payment",
+      "purpose": "Weekly sweep. Flags cards with exp_month + exp_year in the next 30 days. Fires PaymentMethodExpiringNotification (customer notification 30 + 7 days before) + PaymentMethodExpired (when actually expired).",
+      "steps": [
+        "Compute the 30-day + 7-day + expired windows against exp_month + exp_year",
+        "For each expiring-in-30-days: fire PaymentMethodExpiringNotification (30d out; deduplicated per method)",
+        "For each expiring-in-7-days: fire PaymentMethodExpiringNotification (7d out)",
+        "For each already-expired: update is_active=false + deactivated_reason='card_expired' + fire PaymentMethodExpired"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "uniqueVia": "payment-sync-expiry",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Payment\\Jobs\\PurgeExpiredPaymentDataJob",
+      "queue": "payment",
+      "purpose": "Weekly sweep. Applies the per-entity retention windows. TenantErased cascade is handled by FK CASCADE separately.",
+      "steps": [
+        "DELETE FROM payment_intents WHERE created_at < now() - interval '90 days' AND status IN ('cancelled', 'failed') LIMIT 5000",
+        "For tenants without `payment_extended_retention`: DELETE FROM payments WHERE created_at < now() - interval '7 years' LIMIT 5000",
+        "For tenants with `payment_extended_retention`: DELETE FROM payments WHERE created_at < now() - interval '10 years' LIMIT 5000",
+        "For tenants without `payment_extended_retention`: DELETE FROM payment_disputes WHERE created_at < now() - interval '7 years' AND status IN ('warning_closed', 'charge_refunded', 'won', 'lost') LIMIT 1000",
+        "For tenants with `payment_extended_retention`: DELETE FROM payment_disputes WHERE created_at < now() - interval '10 years' AND status IN (terminal) LIMIT 1000",
+        "DELETE FROM payment_methods WHERE deleted_at IS NOT NULL AND deleted_at < now() - interval '90 days' LIMIT 1000 (soft-deleted methods hard-purged after grace)",
+        "For each hard-delete: emit financial-record-archive event for compliance module (Art. 17 §3 — record archived, not deleted)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 604800,
+      "uniqueVia": "payment-purge-expired",
+      "tries": 1
+    }
+  ]
+}

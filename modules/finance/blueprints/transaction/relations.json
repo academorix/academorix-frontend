@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/transaction/relations",
+  "$version": 1,
+  "title": "transaction — model relationships",
+  "description": "Two owned entities. Transaction is the aggregate root; TransactionLedgerEntry attaches to it via the required transaction_id FK. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / branch_id / scope_node_id on either owned row. Transactions can reference-back to a source_transaction_id (RESTRICT — reversals point at the original + the original may never be hard-deleted while a reversal exists).",
+  "internal": [
+    {
+      "from": "Transaction",
+      "kind": "hasMany",
+      "to": "TransactionLedgerEntry",
+      "foreignKey": "transaction_id",
+      "description": "Every transaction has AT LEAST TWO ledger entries (the double-entry invariant). Cascade on hard-delete (via FK CASCADE) — ledger entries follow their parent transaction to compliance-storage."
+    },
+    {
+      "from": "TransactionLedgerEntry",
+      "kind": "belongsTo",
+      "to": "Transaction",
+      "foreignKey": "transaction_id",
+      "onDelete": "cascade",
+      "description": "CASCADE — ledger entries have no independent existence. Every entry is a line item on a transaction."
+    },
+    {
+      "from": "Transaction",
+      "kind": "belongsTo",
+      "to": "Transaction",
+      "foreignKey": "source_transaction_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Self-referential FK. When set, this transaction is a REVERSAL pointing at the original. RESTRICT — the original cannot be hard-deleted while any reversal references it. The retention pipeline archives + purges reversal transactions FIRST, then the originals."
+    },
+    {
+      "from": "Transaction",
+      "kind": "hasMany",
+      "to": "Transaction",
+      "foreignKey": "source_transaction_id",
+      "as": "reversals",
+      "description": "Inverse of the self-referential FK. A transaction may have multiple reversals over its lifetime (e.g. one for the refund, another for an accounting_adjustment years later). Ordered by created_at ASC."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Transaction",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every transaction is tenant-scoped per tenancy-columns.md §3. FK CASCADE runs AFTER ArchiveTransactionsToComplianceOnTenantErased has completed successfully."
+    },
+    {
+      "from": "TransactionLedgerEntry",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised tenant_id — cascades through transaction.tenant_id but explicit for query-plan + FK integrity + cross-tenant defense-in-depth."
+    },
+    {
+      "from": "Transaction",
+      "kind": "morphTo",
+      "to": "reference",
+      "foreignKey": "reference_id",
+      "morphType": "reference_type",
+      "nullable": true,
+      "description": "Polymorphic reference to the originating business entity: Invoice / Payment / Refund / Chargeback / CouponRedemption / TaxRemittance / TenantProvisioning (for opening balances) / null (for arbitrary manual adjustments). Every reference_type has its own tenant scoping; TransactionObserver validates reference.tenant_id == transaction.tenant_id on write (returns TRANSACTION_ORPHAN_REFERENCE otherwise)."
+    },
+    {
+      "from": "Transaction",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "created_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The actor who invoked the recording flow. RESTRICT for audit-integrity — user hard-delete cannot orphan financial records. Nullable because system-recorded transactions (RecordInvoicePaidTransactionJob fired by invoice.paid) have no human actor."
+    },
+    {
+      "from": "TransactionLedgerEntry",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "created_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Same as Transaction.created_by_user_id."
+    }
+  ],
+  "inbound": {
+    "description": "Transaction is CONSUMED by downstream financial modules (invoice, payment, refund, chargeback, coupon, tax) — they hold FK references BACK to transactions. These are inbound relations from the transaction module's perspective.",
+    "examples": [
+      {
+        "from_module": "invoice",
+        "from_model": "Invoice",
+        "kind": "hasMany",
+        "to": "Transaction",
+        "via": "reference_type='Invoice' + reference_id=invoice.id",
+        "description": "Every invoice may spawn multiple transactions over its lifetime (the payment transaction, refund transactions, write-off transaction, coupon-credit transaction, tax-remittance transaction). Query via WHERE reference_type='Invoice' AND reference_id=invoice.id."
+      },
+      {
+        "from_module": "refund",
+        "from_model": "Refund",
+        "kind": "hasMany",
+        "to": "Transaction",
+        "via": "reference_type='Refund' + reference_id=refund.id",
+        "description": "Every refund spawns TWO transactions: the refund_issued transaction (money leaves cash) + the adjustment transaction (revenue reversal). Both carry source_transaction_id pointing at the original invoice-payment transaction."
+      },
+      {
+        "from_module": "chargeback",
+        "from_model": "Chargeback",
+        "kind": "hasMany",
+        "to": "Transaction",
+        "via": "reference_type='Chargeback' + reference_id=chargeback.id",
+        "description": "Every chargeback spawns a chargeback_debit transaction."
+      },
+      {
+        "from_module": "payment",
+        "from_model": "Payment",
+        "kind": "hasMany",
+        "to": "Transaction",
+        "via": "reference_type='Payment' + reference_id=payment.id",
+        "description": "Every payment capture with a gateway_fee_cents > 0 spawns a fee_charge transaction (separate from the invoice-payment transaction)."
+      }
+    ],
+    "note": "Downstream modules never own the transactions they reference — they hold view-only FK references. The transaction module OWNS the write path for transactions; downstream modules trigger writes via events (invoice.paid → RecordInvoicePaidTransactionJob → new transaction row)."
+  },
+  "morphs": [
+    {
+      "field": "reference",
+      "onModels": ["Transaction"],
+      "morphType": "reference_type",
+      "morphId": "reference_id",
+      "supportedTypes": [
+        "invoice::Invoice",
+        "payment::Payment",
+        "refund::Refund",
+        "chargeback::Chargeback",
+        "coupon::CouponRedemption",
+        "tax::TaxRemittance",
+        "tenancy::TenantProvisioning"
+      ],
+      "description": "Polymorphic reference to the source business entity. Each supported type is tenant-scoped in its own module. The observer validates cross-model tenant integrity on write. reference_type + reference_id are BOTH nullable — some transactions (manual accounting adjustments) have no source entity."
+    }
+  ],
+  "notes": [
+    "None of the two owned rows carry `application_id` — cascades through tenant_id → tenants.application_id per tenancy-columns.md §2. Only the 8 named rows carry application_id directly; transactions + transaction_ledger_entries are not among them.",
+    "None of the two owned rows carry `region_id`, `organization_id`, `branch_id`, or `scope_node_id`. Transactions are a tenant-level financial-record concern — regions/orgs/branches/scope substrate do NOT apply.",
+    "The self-referential source_transaction_id FK is what makes reversals traceable — regulators can walk the chain from any reversal transaction back to the original + see the full audit story.",
+    "The morph on Transaction.reference is deliberately loose — the schema allows any (reference_type, reference_id) pair. New reference types land without a schema change.",
+    "TransactionLedgerEntry has NO inverse relation on Transaction (i.e. no belongsToOne modeled as an inverse) — that's intentional. Ledger entries are line items, never dominant.",
+    "The compliance archive is NOT modeled as a relation — it's an external side effect handled by ArchiveTransactionsToComplianceOnTenantErased. The archive lives beyond the operational DB's lifetime + is retrievable via the compliance/archive module's own API.",
+    "user::User is referenced via created_by_user_id but the User model itself does NOT hold a hasMany to Transaction — that would create a massive cross-table scan on user profile pages. Query via WHERE created_by_user_id = user.id when needed."
+  ]
+}

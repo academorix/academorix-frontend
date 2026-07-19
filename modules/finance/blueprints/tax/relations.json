@@ -1,0 +1,133 @@
+{
+  "id": "academorix://modules/tax/relations",
+  "$version": 1,
+  "title": "tax — model relationships",
+  "description": "Four owned entities. TaxJurisdiction is the reference-data root; TaxRate + TaxExemption reference it. TaxCalculation is standalone (references invoice_lines from Wave 4 finance::invoice). Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / scope_node_id on any owned row.",
+  "internal": [
+    {
+      "from": "TaxJurisdiction",
+      "kind": "hasMany",
+      "to": "TaxRate",
+      "foreignKey": "tax_jurisdiction_id",
+      "description": "Per-jurisdiction rate rows. RESTRICT on jurisdiction hard-delete (a jurisdiction with rates cannot be deleted; must archive rates first)."
+    },
+    {
+      "from": "TaxRate",
+      "kind": "belongsTo",
+      "to": "TaxJurisdiction",
+      "foreignKey": "tax_jurisdiction_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — rates anchor to their jurisdiction. A jurisdiction with rates cannot be deleted."
+    },
+    {
+      "from": "TaxJurisdiction",
+      "kind": "hasMany",
+      "to": "TaxExemption",
+      "foreignKey": "issuing_jurisdiction_id",
+      "description": "Exemptions issued by this jurisdiction. RESTRICT on jurisdiction hard-delete."
+    },
+    {
+      "from": "TaxExemption",
+      "kind": "belongsTo",
+      "to": "TaxJurisdiction",
+      "foreignKey": "issuing_jurisdiction_id",
+      "onDelete": "restrict",
+      "description": "The jurisdiction that ISSUED the certificate. Distinct from the tax jurisdictions the exemption applies TO (which is inferred from customer address at calculation time)."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "TaxRate",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every tax rate is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "TaxJurisdiction",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "nullable": true,
+      "description": "tenant_id nullable — null = platform-wide reference data (ISO country + state jurisdictions). Cascade only fires for tenant-scoped custom jurisdictions."
+    },
+    {
+      "from": "TaxExemption",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "TaxExemption",
+      "kind": "morphTo",
+      "to": "customer",
+      "foreignKey": "customer_id",
+      "morphType": "customer_type",
+      "description": "Polymorphic customer: User, Athlete, Organization. Each type has its own tenant scoping; the observer validates cross-model tenant integrity."
+    },
+    {
+      "from": "TaxExemption",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "verified_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The actor who verified the exemption. RESTRICT for audit-integrity — user hard-delete cannot orphan verification records."
+    },
+    {
+      "from": "TaxCalculation",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Cascade fires AFTER MigrateCalculationsToArchiveOnTenantErased priority-20 hook migrates rows to tax_calculations_archive. Defensive fallback only."
+    },
+    {
+      "from": "TaxCalculation",
+      "kind": "belongsTo",
+      "to": "invoice::InvoiceLine",
+      "foreignKey": "invoice_line_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The invoice line that was taxed. RESTRICT — an invoice line with a tax calculation cannot be hard-deleted; the invoice module's retention pipeline handles this via credit-memo flow. Nullable for real-time preview calculations (POST /calculate) which do NOT persist an invoice-line link."
+    }
+  ],
+  "inbound": {
+    "description": "Tax has one primary inbound consumer: the invoice module (Wave 4 peer). Every invoice_line references tax_calculation_id (nullable — populated after CalculateTaxForInvoiceLineJob succeeds). Failed calculations leave tax_calculation_id NULL, which blocks the invoice line from proceeding to payment.",
+    "examples": [
+      {
+        "module": "invoice::InvoiceLine",
+        "field": "tax_calculation_id",
+        "relation": "belongsTo TaxCalculation",
+        "nullable": true,
+        "description": "Set after successful tax computation. NULL = pending / failed / blocked."
+      }
+    ],
+    "note": "coupon + membership + transaction modules do NOT hold direct FKs on tax rows. They interact with tax through invoice_lines (which is the singular tax-computation touchpoint)."
+  },
+  "morphs": [
+    {
+      "field": "customer",
+      "onModels": ["TaxExemption"],
+      "morphType": "customer_type",
+      "morphId": "customer_id",
+      "supportedTypes": [
+        "user::User",
+        "sports::Athlete",
+        "organization::Organization"
+      ],
+      "description": "Polymorphic customer of the exemption certificate. Each supported type is tenant-scoped. The observer validates cross-model tenant integrity."
+    }
+  ],
+  "notes": [
+    "None of the four owned rows carry `application_id` — cascades through tenant_id → tenants.application_id per tenancy-columns.md §2. Only the 8 named rows carry application_id directly; tax_* is not among them.",
+    "None of the four owned rows carry `region_id`, `organization_id`, or `scope_node_id`. Tax is a domain-plane concern — region cascades through the tenant hierarchy (a tenant's default_region resolves via belongs-to chain, not a shortcut FK on tax rows).",
+    "TaxJurisdiction.tenant_id is NULLABLE — this is the only tax row that supports null tenant_id (platform-wide reference data). Every other row is strictly tenant-scoped.",
+    "TaxCalculation.invoice_line_id is NULLABLE — real-time preview calculations (POST /api/v1/tax/calculate) are recorded when metadata.persist_preview=true (rare) but usually just return the result without persisting.",
+    "The morph on TaxExemption.customer is deliberately loose — the module's discovery layer knows about specific types, but the base schema allows any (customer_type, customer_id) pair. This lets new subject types land without a schema change.",
+    "There is NO inverse hasMany from TaxCalculation to TaxRate — the rate is captured via tax_rate_snapshot jsonb, not via FK. Reason: rates change over time; the calculation-freeze pattern requires the SNAPSHOT to survive rate mutation (which would break FK integrity)."
+  ]
+}

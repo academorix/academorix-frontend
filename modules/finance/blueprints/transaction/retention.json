@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/transaction/retention",
+  "$version": 1,
+  "title": "transaction — retention windows",
+  "description": "Transactions + ledger entries are the module's financial-record backbone — 7-year retention default (10 for Enterprise via transaction_extended_retention). No soft-delete on either table — both are append-only. Hard-purge ONLY via PurgeExpiredTransactionDataJob after archiving to compliance-storage. TenantErased triggers archive-to-compliance BEFORE cascade-delete — regulator + tax authority audit trail survives tenant deletion.",
+  "compliance_regimes_referenced": [
+    "sox 404 — 7-year financial-record retention",
+    "gaap — audit-trail retention for reported financial statements",
+    "ifrs — same",
+    "irs / hmrc / eu tax authorities — 7-year statute of limitations for tax audits (some jurisdictions 10 years)",
+    "sarbanes-oxley section 802 — 7-year retention for audit workpapers",
+    "pci-dss 10.7 — 1-year hot + 6-year archive for audit trails",
+    "aml (anti-money-laundering) — 7-year record retention for regulator audits",
+    "gdpr Art. 17 §3 — carve-out: legal obligation to retain financial records supersedes erasure right"
+  ],
+  "retention": [
+    {
+      "entity": "Transaction",
+      "hot": { "days": 365, "description": "Active + first year for reporting, support queries, dispute investigation" },
+      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention. Enterprise tenants with transaction_extended_retention entitlement: 3650 (10 years)." },
+      "purge": {
+        "trigger": "> 7 years past effective_date (10 years for Enterprise)",
+        "action": "archive to compliance-storage THEN hard delete via PurgeExpiredTransactionDataJob",
+        "notes": "No soft-delete — the model does NOT use the SoftDeletes trait. Every purge is preceded by an atomic export to compliance-storage keyed by (tenant_id, transaction_number, year). The archive lives at least the tenant's lifetime; a regulator audit can retrieve it years after the tenant erased the source row."
+      }
+    },
+    {
+      "entity": "TransactionLedgerEntry",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years)", "description": "Same retention as parent transaction. Cascade via FK. Enterprise: 10 years." },
+      "purge": {
+        "trigger": "parent transaction hard-deleted (via FK CASCADE)",
+        "action": "hard delete (part of the parent transaction's archive-then-delete flow)",
+        "notes": "Ledger entries are exported into the parent transaction's compliance archive as embedded rows. When the parent is purged, the entries cascade — but their content survives inside the archive JSONL export."
+      }
+    }
+  ],
+  "special_cases": [
+    {
+      "case": "TenantErased cascade (GDPR Art. 17)",
+      "action": "ArchiveTransactionsToComplianceOnTenantErased hook fires BEFORE the FK CASCADE — every transaction + its ledger entries + the base_currency-normalized global tenant balance snapshot is exported to compliance-storage keyed by (tenant_id, effective_date). AFTER export verified, the standard FK CASCADE deletes the rows.",
+      "notes": "This is GDPR Art. 17 §3 (financial-record retention carve-out) in practice. The tenant's own data is deleted from the transactional store, but the compliance archive lives on for regulator + tax authority audit. Audit trail rows written during the tenant's lifetime survive per audit module's outlives-source design."
+    },
+    {
+      "case": "Reversal via new offsetting transaction",
+      "action": "Both the original AND the reversal transaction retain per their own effective_date — the original is NOT purged early just because it was reversed. Reversal is an accounting mechanism, not a retention mechanism.",
+      "notes": "Regulators need to see BOTH the original and the reversal for the audit story to make sense. A refund audit walks the trail: invoice → invoice_payment transaction → refund → refund_issued transaction (reversal) → adjustment transaction (revenue reversal)."
+    },
+    {
+      "case": "Ledger imbalance detected + never resolved",
+      "action": "An unresolved LedgerImbalanceDetected does NOT change retention — the affected transactions are still 7-year retained. New transactions are halted (via tenant.transaction_halt_new flag) but existing transactions remain visible + purge on their normal schedule.",
+      "notes": "This is deliberate — regulators need to see the imbalanced state exactly as it happened, not a curated after-the-fact reconstruction."
+    },
+    {
+      "case": "Currency conversion snapshots",
+      "action": "The exchange_rate_to_base + base_amount_cents fields retain co-terminously with the parent transaction. The rate captured at commit is IMMUTABLE — historical reports use the frozen rate, not the current market rate.",
+      "notes": "This is what makes historical multi-currency GL reports stable + reproducible. A 2024 EUR transaction with a locked EUR→USD rate at commit-time reports the same USD equivalent forever."
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention.",
+    "The compliance/data-subject-rights module orchestrates TenantErased across all modules including this one — the module registers ArchiveTransactionsToComplianceOnTenantErased as a compliance callback that MUST complete before any FK CASCADE.",
+    "The compliance/archive module owns the storage backend (S3 with Object Lock + Glacier tiering for cold archive access) — this module just ships JSONL exports keyed by (tenant_id, transaction_number, year)."
+  ]
+}

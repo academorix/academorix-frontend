@@ -1,0 +1,246 @@
+{
+  "id": "academorix://modules/payment/schemas/payment-dispute",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PaymentDispute",
+  "description": "Per-payment dispute lifecycle. Tenant-visible pre-chargeback lifecycle with evidence submission window. May escalate to Chargeback via the chargeback module. Carries `tenant_id` only. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "payment",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "payment_disputes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pdi_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Payment\\Models\\PaymentDispute",
+    "interface": "Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentDisputeInterface",
+    "implements": ["Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentDisputeInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToPayment",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "provider": "PaymentProvider",
+      "provider_reference_id": "encrypted:string",
+      "reason": "PaymentDisputeReason",
+      "status": "PaymentDisputeStatus",
+      "amount_cents": "integer",
+      "evidence_due_by": "datetime",
+      "evidence_submitted_at": "datetime",
+      "evidence": "encrypted:array",
+      "opened_at": "datetime",
+      "closed_at": "datetime",
+      "outcome": "PaymentDisputeOutcome"
+    },
+    "observers": ["PaymentDisputeObserver"],
+    "appends": ["days_until_evidence_due", "is_closed", "is_won", "evidence_submitted", "escalated_to_chargeback"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pdi_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "payment_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "payments", "column": "id", "onDelete": "restrict" },
+        "description": "The disputed payment. RESTRICT — payments with open disputes cannot be hard-deleted."
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum matching the payment's provider. Immutable after create."
+      },
+      "provider_reference_id": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "ENCRYPTED AT REST. Provider dispute identifier: dp_... (Stripe), dispute_id (Adyen), etc. Immutable after create."
+      },
+      "reason": {
+        "type": "string",
+        "length": 48,
+        "nullable": false,
+        "description": "Enum: fraudulent / duplicate / product_not_received / product_unacceptable / subscription_canceled / credit_not_processed / general / customer_initiated / unrecognized. Frozen at open. Regulator + provider reporting."
+      },
+      "status": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'needs_response'",
+        "description": "Enum: warning_needs_response / warning_under_review / warning_closed / needs_response / under_review / charge_refunded / won / lost. Warning states = provider early-warning (funds not yet withdrawn). Full states = funds provisionally withdrawn."
+      },
+      "amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "The disputed amount (in cents). May equal or be less than payment.amount_cents (partial disputes allowed)."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217 3-letter code. Frozen at open."
+      },
+      "evidence_due_by": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Provider-communicated deadline for evidence submission. Nullable for warning states + terminal states. NotifyDisputeEvidenceDueJob fires 3 days before."
+      },
+      "evidence_submitted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When we called the provider's evidence-submit API. Set once; IMMUTABLE thereafter (a resubmit creates a new dispute in some providers)."
+      },
+      "evidence": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "ENCRYPTED AT REST. Shape: { customer_signature?, receipt?, service_documentation?, product_description?, refund_policy?, communication_log?, uncategorized_text? }. Populated by CollectDisputeEvidenceJob at dispute open. Fields correspond to Stripe's evidence-file shape (widely adopted)."
+      },
+      "opened_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the dispute was opened by the provider (from webhook). Set once; IMMUTABLE."
+      },
+      "closed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the dispute reached a terminal status. Set once; IMMUTABLE."
+      },
+      "outcome": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: won / lost / accepted / warning_closed_without_dispute. NULL until status transitions to terminal. Set once; IMMUTABLE."
+      },
+      "outcome_reason": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Provider-communicated outcome reason. Truncated to 256 chars."
+      },
+      "refund_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "refunds", "column": "id", "onDelete": "restrict" },
+        "description": "If ops chose to refund rather than fight (POST /accept), the refund reference. NULL when the dispute was fought or lost without refund."
+      },
+      "chargeback_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "chargebacks", "column": "id", "onDelete": "restrict" },
+        "description": "If the dispute escalated (status='lost' → EscalateDisputeToChargebackJob creates Chargeback row via chargeback module), the chargeback reference. NULL for won/accepted/warning_closed."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "status", "evidence_due_by"], "name": "payment_disputes_evidence_due_idx", "description": "For NotifyDisputeEvidenceDueJob 3-day-lookahead sweep." },
+      { "columns": ["tenant_id", "payment_id"], "name": "payment_disputes_payment_idx" },
+      { "columns": ["tenant_id", "opened_at"], "name": "payment_disputes_opened_idx", "description": "For recent-disputes queries + monthly reporting." },
+      { "columns": ["tenant_id", "status"], "name": "payment_disputes_status_idx" },
+      { "columns": ["provider_reference_id"], "name": "payment_disputes_provider_reference_idx", "description": "For webhook dispatch lookup." }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "payment_id",
+    "provider",
+    "provider_reference_id",
+    "reason",
+    "status",
+    "amount_cents",
+    "currency",
+    "opened_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pdi_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "payment_id": { "type": "string", "pattern": "^pay_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": {
+      "type": "string",
+      "enum": ["stripe", "paddle", "adyen", "square", "paypal", "custom_webhook"]
+    },
+    "provider_reference_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "reason": {
+      "type": "string",
+      "enum": ["fraudulent", "duplicate", "product_not_received", "product_unacceptable", "subscription_canceled", "credit_not_processed", "general", "customer_initiated", "unrecognized"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["warning_needs_response", "warning_under_review", "warning_closed", "needs_response", "under_review", "charge_refunded", "won", "lost"]
+    },
+    "amount_cents": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "evidence_due_by": { "type": ["string", "null"], "format": "date-time" },
+    "evidence_submitted_at": { "type": ["string", "null"], "format": "date-time" },
+    "evidence": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "customer_signature": { "type": ["string", "null"] },
+        "receipt": { "type": ["string", "null"] },
+        "service_documentation": { "type": ["string", "null"] },
+        "product_description": { "type": ["string", "null"] },
+        "refund_policy": { "type": ["string", "null"] },
+        "communication_log": { "type": ["string", "null"] },
+        "uncategorized_text": { "type": ["string", "null"] }
+      }
+    },
+    "opened_at": { "type": "string", "format": "date-time" },
+    "closed_at": { "type": ["string", "null"], "format": "date-time" },
+    "outcome": {
+      "type": ["string", "null"],
+      "enum": [null, "won", "lost", "accepted", "warning_closed_without_dispute"]
+    },
+    "outcome_reason": { "type": ["string", "null"], "maxLength": 256 },
+    "refund_id": { "type": ["string", "null"], "pattern": "^rfd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "chargeback_id": { "type": ["string", "null"], "pattern": "^cbk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "state transitions: warning_needs_response → {warning_under_review, warning_closed, needs_response}; warning_under_review → {warning_closed, needs_response}; warning_closed is TERMINAL; needs_response → {under_review, charge_refunded}; under_review → {won, lost}; charge_refunded / won / lost are TERMINAL",
+    "amount_cents <= payment.amount_cents when payment.currency = dispute.currency (partial disputes allowed; full-amount is common)",
+    "opened_at immutable after set",
+    "closed_at set when status transitions to a terminal state; immutable after set",
+    "outcome required when status IN ('won', 'lost', 'charge_refunded', 'warning_closed'); NULL otherwise",
+    "evidence_submitted_at set at most once — provider re-submission behaviour varies; module treats submit as one-shot",
+    "refund_id set only when outcome='accepted' (status='charge_refunded' via POST /accept path)",
+    "chargeback_id set only when outcome='lost' AND EscalateDisputeToChargebackJob completed",
+    "reason immutable after create — regulator + provider reporting depends on frozen value",
+    "provider + provider_reference_id immutable after create",
+    "evidence + provider_reference_id encrypted at rest",
+    "hard-deletion FORBIDDEN — disputes retain 7 years (regulator audit; 10y Enterprise)",
+    "TenantErased cascade via FK CASCADE (subject to financial-record archival exception)"
+  ]
+}

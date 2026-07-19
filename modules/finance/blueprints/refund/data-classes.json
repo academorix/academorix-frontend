@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/refund/data-classes",
+  "$version": 1,
+  "title": "refund — field classification",
+  "description": "Refund data is a mix of operational identifiers (refund_id, refund_number), financial records (amount_cents, currency, provider_fee_reversal_cents — 7y financial retention), workflow-state metadata (status, approved_by, rejected_by), and marketing-adjacent metadata (issuance context tagging linked marketing conversion event). No health / medical / minor-specific data on any row.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Refund.id",
+      "Refund.tenant_id",
+      "Refund.refund_number (customer-facing — printed on refund confirmations, credit notes)",
+      "Refund.status (derived from state machine — safe to expose)",
+      "Refund.refund_type",
+      "Refund.reason (customer-visible for customer-driven reasons)",
+      "Refund.reason_note (customer-facing part; admin-only reasons like fraud_confirmed / accounting_correction render with a generic 'admin correction' label to non-privileged readers)",
+      "Refund.refunded_to",
+      "Refund.processed_at",
+      "Refund.initiated_at",
+      "Refund.provider (public — helps customer support explain 'refund went via Stripe, contact them for details' scenarios)",
+      "RefundLine.id",
+      "RefundLine.status (derived from parent)",
+      "RefundLine.reason_note (customer-facing)"
+    ],
+    "internal": [
+      "Refund.payment_id",
+      "Refund.invoice_id",
+      "Refund.credit_note_id",
+      "Refund.transaction_id",
+      "Refund.requires_approval",
+      "Refund.approved_by_user_id",
+      "Refund.approved_at",
+      "Refund.rejected_by_user_id",
+      "Refund.rejected_at",
+      "Refund.rejection_reason",
+      "Refund.provider_reference_id",
+      "Refund.initiated_by_user_id",
+      "Refund.failed_at",
+      "Refund.failure_reason",
+      "Refund.provider_metadata",
+      "Refund.created_by",
+      "Refund.updated_by",
+      "Refund.deleted_by",
+      "Refund.created_at",
+      "Refund.updated_at",
+      "Refund.deleted_at",
+      "RefundLine.tenant_id",
+      "RefundLine.refund_id",
+      "RefundLine.invoice_line_id",
+      "RefundLine.created_at",
+      "RefundLine.updated_at"
+    ],
+    "confidential": [
+      "Refund.amount_cents (customer-facing when viewing own refund; confidential across-tenant + across-customer)",
+      "Refund.currency",
+      "Refund.provider_fee_reversal_cents (financial-competitive — reveals per-provider fee reversal terms)",
+      "Refund.exchange_rate (when multi-currency)",
+      "RefundLine.amount_cents",
+      "RefundLine.currency"
+    ],
+    "restricted": [
+      "Refund.reason_note (admin-only portion — when reason IN ('fraud_confirmed', 'admin_correction', 'accounting_correction'), the reason_note may contain internal investigation notes not appropriate for customer view)",
+      "Refund.metadata.bank_transfer_details (when refunded_to='bank_transfer' — encrypted at rest via TokenEncryptor from payment module; only decrypt for finance role during dispatch)",
+      "Refund.metadata.check_details (when refunded_to='check' — mailing address + tracking number)",
+      "Refund.metadata.approval_notes (admin-authored approval / rejection reasoning — admin-only)"
+    ],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [
+      "Refund.amount_cents + currency + provider_fee_reversal_cents (financial-audit alignment — 7 year retention)",
+      "Refund.credit_note_id (links to financial reversal document — 7y retention)",
+      "Refund.transaction_id (links to double-entry ledger movement — 7y retention)",
+      "Refund.status (state machine record — every transition audit-logged 7y)",
+      "Refund.approved_by_user_id + approved_at + rejected_by_user_id + rejected_at (segregation-of-duties audit — SOX §404)",
+      "Refund.provider_reference_id + provider_metadata (regulator + audit reconstruction — 7y)",
+      "RefundLine.proration_config (period-refund audit trail — 7y)"
+    ],
+    "audit_log": [
+      "Refund.status (every state transition recorded)",
+      "Refund.amount_cents (frozen post-succeeded)",
+      "Refund.approved_by_user_id + approved_at (approval audit)",
+      "Refund.rejected_by_user_id + rejected_at + rejection_reason (rejection audit)",
+      "Refund.processed_at (finalization audit)",
+      "Refund.failed_at + failure_reason (failure audit)",
+      "Refund.credit_note_id + transaction_id (finalization chain audit)",
+      "RefundLine.amount_cents + proration_config (line-level financial audit)"
+    ]
+  },
+  "notes": [
+    "Refund.refund_number is deliberately public — the whole point is customer-facing display (printed on receipts + credit notes). The confidential fields are the *amounts* of the refund (amount_cents / currency / provider_fee_reversal_cents) — competitors gaining access to a tenant's refund ledger would learn per-provider fee reversal terms + refund-worthy revenue patterns.",
+    "Refund.reason_note is DOUBLE-CLASSIFIED — the customer-facing portion is `public` (customer sees why their refund succeeded/failed), the admin-only portion is `restricted` (internal investigation notes). Egress rendering routes through ReasonNoteRedactor which selects the customer-visible portion based on reader permissions.",
+    "No PII on the Refund row directly. Payment linkage flows through payment_id — the customer_id is on the parent payment, redacted via the payment module's PII gate.",
+    "regulated_financial fields align with 7-year retention. Extended to 10y with Enterprise `refund_extended_retention`.",
+    "No PCI-DSS scope: NO card data / PAN / CVV on any owned row. Refund uses payment_id -> payment.provider_reference_id (which is itself a token, never PAN).",
+    "provider_metadata is CONFIDENTIAL because it may reveal provider-side internals + business relationships. Only finance/admin/owner + support reads it (via refunds.view-financials permission)."
+  ]
+}

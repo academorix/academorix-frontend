@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/monitoring/schedule",
+  "$version": 1,
+  "title": "monitoring — scheduled tasks",
+  "entries": [
+    {
+      "name": "monitoring-evaluate-alert-policies",
+      "command": "queue:dispatch --job=Academorix\\Observability\\Monitoring\\Jobs\\EvaluateAlertPoliciesJob",
+      "cron": "*/1 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every minute: scan monitoring_alert_policies + evaluate thresholds against the trailing window of health_check_runs / metrics. The 30-second sub-minute cadence is handled INSIDE the job via a self-reschedule; the schedule entry ensures the job runs at all even if the internal reschedule is lost."
+    },
+    {
+      "name": "monitoring-retry-failed-notifications",
+      "command": "queue:dispatch --job=Academorix\\Observability\\Monitoring\\Jobs\\RetryFailedNotificationsJob",
+      "cron": "*/5 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 5 min: pick up failed provider notifications (transient failures) + enqueue fresh NotifyProvidersJob with attempt_number+1."
+    },
+    {
+      "name": "monitoring-auto-resolve-incidents",
+      "command": "queue:dispatch --job=Academorix\\Observability\\Monitoring\\Jobs\\AutoResolveIncidentJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 03:00 UTC: sweep incidents whose attached alerts are all terminal + auto-transition incident.status = 'resolved'."
+    },
+    {
+      "name": "monitoring-purge-health-check-runs",
+      "command": "queue:dispatch --job=Academorix\\Observability\\Monitoring\\Jobs\\PurgeExpiredHealthCheckRunsJob",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 04:00 UTC: apply the health_check_runs retention window (7d hot / 30d cold default; 30d hot / 90d cold for Enterprise)."
+    },
+    {
+      "name": "monitoring-purge-resolved-incidents",
+      "command": "queue:dispatch --job=Academorix\\Observability\\Monitoring\\Jobs\\PurgeResolvedIncidentsJob",
+      "cron": "0 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05:00 UTC: apply monitoring_alerts + monitoring_incidents retention (30d/90d default; 90d/1y Enterprise; P1 incidents indefinite for Enterprise with monitoring_extended_retention)."
+    },
+    {
+      "name": "monitoring-detect-notification-failure-rate",
+      "command": "monitoring:detect-notification-failure-rate",
+      "cron": "*/15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 15 min: compute per-provider notification failure rate over the last 15-min window. If > 10% of dispatches failed AND > 10 total attempts occurred: emit metric spike + potentially open the circuit breaker if consecutive failures on a specific provider exceed the threshold. Debounce: at most 1 breaker-open per (tenant, provider) per hour."
+    },
+    {
+      "name": "monitoring-weekly-digest",
+      "command": "monitoring:send-weekly-digest",
+      "cron": "0 9 * * 1",
+      "timezone": "tenant-local",
+      "purpose": "Every Monday 09:00 tenant-local: compute per-tenant SLO health digest (alert counts by severity, incident counts, MTTR, top 5 firing policies, top 5 unhealthy checks) + dispatch MonitoringWeeklyDigestNotification to opted-in users."
+    },
+    {
+      "name": "monitoring-refresh-health-check-scheduler",
+      "command": "monitoring:refresh-health-check-scheduler",
+      "cron": "*/10 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 10 min: safety net for the per-check self-reschedule path. Sweeps active health_checks where the last scheduled run was > interval_seconds * 2 ago + re-schedules a RunHealthCheckJob. Handles cases where the primary reschedule was lost (crashed worker, queue restart)."
+    }
+  ]
+}

@@ -1,0 +1,405 @@
+{
+  "id": "academorix://modules/membership/schemas/membership",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Membership",
+  "description": "The customer's paid subscription contract with the academy. NEVER confused with subscription::TenantSubscription (which is the ACADEMY's Academorix SaaS bill — a different table entirely). Belongs to Tenant (CASCADE) + Region (RESTRICT) + Branch (RESTRICT) + Athlete (RESTRICT) + MembershipPlan (RESTRICT). Optional refs: primary_guardian_id (AthleteGuardian, RESTRICT), coupon_id (Coupon, RESTRICT), tax_calculation_id (TaxCalculation, RESTRICT). NEVER carries application_id (cascades through tenant), organization_id (cascades through branch), or scope_node_id (memberships are not a config consumer). Carries frozen snapshots (price + coupon + tax) at signing — plan price changes + coupon revisions + mid-contract VAT changes never retroactively affect an existing membership.",
+  "type": "object",
+  "x-module": "membership",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "memberships",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mbr_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Membership\\Models\\Membership",
+    "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipInterface",
+    "implements": [
+      "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipInterface"
+    ],
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToRegion",
+      "BelongsToBranch",
+      "BelongsToAthlete",
+      "BelongsToMembershipPlan",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "status": "MembershipStatus",
+      "state_reason": "string",
+      "billing_interval": "BillingInterval",
+      "price_snapshot_cents": "integer",
+      "coupon_snapshot": "array",
+      "tax_calculation_snapshot": "array",
+      "current_period_starts_at": "datetime",
+      "current_period_ends_at": "datetime",
+      "next_renewal_at": "datetime",
+      "cancelled_at": "datetime",
+      "cancellation_effective_at": "datetime",
+      "expires_at": "datetime",
+      "consecutive_failed_renewal_count": "integer",
+      "lifetime_value_cents": "integer",
+      "metadata": "array"
+    },
+    "observers": [
+      "MembershipObserver"
+    ],
+    "appends": [
+      "is_currently_active",
+      "requires_renewal_soon",
+      "remaining_passes_count",
+      "days_until_renewal",
+      "cancellation_kind"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 30,
+        "primary": true,
+        "description": "Prefixed ULID: `mbr_<26>`. DISTINCT from tenant_subscriptions prefix — see hierarchy.md §1b for the vocabulary lock."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        },
+        "description": "The academy that owns this membership (the recipient of the money, NOT the payer to Academorix)."
+      },
+      "region_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "regions",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Commercial + regulatory zone. Drives currency + tax calculation. Per hierarchy §14 belongs-to matrix. IMMUTABLE post-create."
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "branches",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The physical venue. IMMUTABLE post-create."
+      },
+      "athlete_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "athletes",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The athlete the membership entitles. RESTRICT — athletes cannot be archived while active memberships reference them. IMMUTABLE post-create."
+      },
+      "membership_plan_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "membership_plans",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The plan SKU. IMMUTABLE post-create (upgrades/downgrades create a new membership row + terminate the old)."
+      },
+      "primary_guardian_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "athlete_guardians",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The AthleteGuardian responsible for payment (usually a parent). Required when the athlete is a minor + `enforce_guardian_consent` middleware fires. Set null when the guardian relationship terminates; membership continues; admin notified to reassign."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / active / paused / cancelled / lapsed / refunded / expired."
+      },
+      "state_reason": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Free-text reason for the current state transition — e.g. 'signup', 'renewal_failed', 'admin_cancel', 'chargeback_lost', 'family_move'."
+      },
+      "price_snapshot_cents": {
+        "type": "integer",
+        "nullable": false,
+        "description": "SNAPSHOT of MembershipPlan.price_cents at signing. IMMUTABLE — plan price changes never retroactively re-price existing memberships."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217. Frozen at signing from plan.currency."
+      },
+      "billing_interval": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: monthly / quarterly / annual / lifetime. Frozen at signing from plan.billing_interval."
+      },
+      "coupon_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "coupons",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The coupon redeemed at signing. RESTRICT — coupons cannot be hard-deleted while memberships reference their redemption."
+      },
+      "coupon_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "SNAPSHOT of the coupon at redemption time — {code, discount_kind, percentage_off, amount_off_cents, redeemed_at, discount_amount_cents_applied}. IMMUTABLE. Coupon revisions or expiry never affect a membership that already redeemed it."
+      },
+      "tax_calculation_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "tax_calculations",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "The tax calculation at signing. Nullable for tax-exempt jurisdictions."
+      },
+      "tax_calculation_snapshot": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "SNAPSHOT of the tax breakdown at signing — {jurisdiction, rate_bps, taxable_base_cents, tax_amount_cents, breakdown[]}. IMMUTABLE. Mid-contract VAT changes never retroactively re-tax existing memberships. LOAD-BEARING for tax audit."
+      },
+      "current_period_starts_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Start of the currently-billed period. Null until first activation."
+      },
+      "current_period_ends_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "End of the currently-billed period. Null for lifetime memberships. Advanced by ExtendPeriodOnRenewalSucceeded hook."
+      },
+      "next_renewal_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the next MembershipRenewal fires. Null for lifetime memberships OR cancelled memberships (which stop auto-renewing)."
+      },
+      "cancelled_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the cancellation intent was recorded. May precede the effective termination (soft cancel by-period-end)."
+      },
+      "cancellation_reason": {
+        "type": "string",
+        "length": 256,
+        "nullable": true,
+        "description": "Required when cancelled_at is set. Free-text customer or admin reason."
+      },
+      "cancellation_effective_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the cancellation takes effect. Equals cancelled_at for hard cancel; equals current_period_ends_at for soft cancel."
+      },
+      "expires_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "The membership's terminal timestamp — for cancelled/lapsed/expired/refunded rows. Null for active/paused. Used by ExpireMembershipJob."
+      },
+      "consecutive_failed_renewal_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Runs from 0. Increments on each failed MembershipRenewal attempt; resets to 0 on a successful renewal. When >= 3, LapseMembershipJob transitions the membership to lapsed."
+      },
+      "lifetime_value_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Monotonic running total of paid amounts across all successful renewals. Increment-only — refunds tracked separately in the refund module; this value does not decrement on refund."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Growth flags + optional refund_id / chargeback_id metadata + admin notes."
+      },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "athlete_id", "membership_plan_id"],
+        "unique": true,
+        "name": "memberships_unique_active",
+        "predicate": "status IN ('pending', 'active', 'paused') AND deleted_at IS NULL",
+        "description": "One active/pending/paused membership per (tenant, athlete, plan). An athlete can hold two memberships on DIFFERENT plans at the same branch, but never two on the same plan."
+      },
+      {
+        "columns": ["tenant_id", "branch_id", "status"],
+        "name": "memberships_branch_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "athlete_id", "status"],
+        "name": "memberships_athlete_status_idx"
+      },
+      {
+        "columns": ["tenant_id", "primary_guardian_id"],
+        "name": "memberships_guardian_idx",
+        "predicate": "primary_guardian_id IS NOT NULL"
+      },
+      {
+        "columns": ["tenant_id", "next_renewal_at"],
+        "name": "memberships_next_renewal_idx",
+        "predicate": "status = 'active' AND next_renewal_at IS NOT NULL AND deleted_at IS NULL",
+        "description": "Feeds ProcessMembershipRenewalJob's hourly sweep."
+      },
+      {
+        "columns": ["tenant_id", "expires_at"],
+        "name": "memberships_expires_idx",
+        "predicate": "status IN ('active', 'paused') AND expires_at IS NOT NULL AND deleted_at IS NULL",
+        "description": "Feeds ExpireMembershipJob's nightly sweep."
+      },
+      {
+        "columns": ["tenant_id", "consecutive_failed_renewal_count"],
+        "name": "memberships_dunning_idx",
+        "predicate": "consecutive_failed_renewal_count > 0 AND status = 'active' AND deleted_at IS NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "region_id",
+    "branch_id",
+    "athlete_id",
+    "membership_plan_id",
+    "status",
+    "price_snapshot_cents",
+    "currency",
+    "billing_interval",
+    "consecutive_failed_renewal_count",
+    "lifetime_value_cents",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mbr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "region_id": { "type": "string", "pattern": "^reg_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "athlete_id": { "type": "string", "pattern": "^ath_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "membership_plan_id": { "type": "string", "pattern": "^mbp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "primary_guardian_id": {
+      "type": ["string", "null"],
+      "pattern": "^agu_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "active", "paused", "cancelled", "lapsed", "refunded", "expired"]
+    },
+    "state_reason": { "type": ["string", "null"], "maxLength": 128 },
+    "price_snapshot_cents": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "billing_interval": {
+      "type": "string",
+      "enum": ["monthly", "quarterly", "annual", "lifetime"]
+    },
+    "coupon_id": {
+      "type": ["string", "null"],
+      "pattern": "^cpn_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "coupon_snapshot": {
+      "type": ["object", "null"],
+      "properties": {
+        "code": { "type": "string" },
+        "discount_kind": { "type": "string", "enum": ["percentage", "amount", "trial_extension"] },
+        "percentage_off_bps": { "type": ["integer", "null"], "minimum": 0, "maximum": 10000 },
+        "amount_off_cents": { "type": ["integer", "null"], "minimum": 0 },
+        "discount_amount_cents_applied": { "type": "integer", "minimum": 0 },
+        "redeemed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "tax_calculation_id": {
+      "type": ["string", "null"],
+      "pattern": "^txc_[0-9A-HJKMNP-TV-Z]{26}$"
+    },
+    "tax_calculation_snapshot": {
+      "type": ["object", "null"],
+      "properties": {
+        "jurisdiction": { "type": "string" },
+        "rate_bps": { "type": "integer", "minimum": 0, "maximum": 10000 },
+        "taxable_base_cents": { "type": "integer", "minimum": 0 },
+        "tax_amount_cents": { "type": "integer", "minimum": 0 },
+        "breakdown": { "type": "array" }
+      }
+    },
+    "current_period_starts_at": { "type": ["string", "null"], "format": "date-time" },
+    "current_period_ends_at": { "type": ["string", "null"], "format": "date-time" },
+    "next_renewal_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancelled_at": { "type": ["string", "null"], "format": "date-time" },
+    "cancellation_reason": { "type": ["string", "null"], "maxLength": 256 },
+    "cancellation_effective_at": { "type": ["string", "null"], "format": "date-time" },
+    "expires_at": { "type": ["string", "null"], "format": "date-time" },
+    "consecutive_failed_renewal_count": { "type": "integer", "minimum": 0 },
+    "lifetime_value_cents": { "type": "integer", "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One active/pending/paused membership per (tenant_id, athlete_id, membership_plan_id) via partial unique index",
+    "tenant_id + region_id + branch_id + athlete_id + membership_plan_id are IMMUTABLE post-create",
+    "price_snapshot_cents + currency + billing_interval are IMMUTABLE post-create (SNAPSHOT semantics — plan price changes never retroactively re-price)",
+    "coupon_id + coupon_snapshot are IMMUTABLE post-create (coupon revisions never re-apply)",
+    "tax_calculation_id + tax_calculation_snapshot are IMMUTABLE post-create (VAT changes never retroactively re-tax — LOAD-BEARING for tax audit)",
+    "Atomic invoice creation: Membership.creating creates an invoice::Invoice in the same DB transaction; rollback on either side aborts both — enforced by CreateInvoiceOnMembershipCreated hook + atomic_membership_invoice_creation rule",
+    "status transitions: pending → active (on invoice.paid) OR cancelled (customer bailed pre-payment); active ⇄ paused; active/paused → cancelled (soft or hard); active/paused → lapsed (via retry ladder); active → expired (post-cancellation-effective-at); refunded is a terminal cross-cut from any state — set by refund module",
+    "Hard cancel with prorated refund requires `membership_hard_cancel_prorated_refund` entitlement (Enterprise) AND plan.refund_policy IN ('prorated', 'full_within_grace')",
+    "Trial memberships (plan.trial_days > 0) require `membership_trial_periods` entitlement (Medium+)",
+    "Cross-currency memberships (currency != plan.currency at time of migration) require `membership_multi_currency` entitlement (Medium+)",
+    "consecutive_failed_renewal_count monotonically increments on MembershipRenewalFailed; resets to 0 on MembershipRenewed",
+    "lifetime_value_cents is monotonically increasing — refunds do NOT decrement it (refunds tracked separately)"
+  ]
+}

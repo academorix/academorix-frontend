@@ -1,0 +1,92 @@
+{
+  "id": "chargeback.reason-code-picker",
+  "title": "Reason code picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "ComboBox for selecting or displaying a reason code. Filters by declared network (Visa reason codes only for Visa chargebacks, etc.). Tooltip on each option shows full description + category + dispute_time_limit. Loads from `data/reason-code-catalog.json`. Read-only in most surfaces (chargebacks are bank-initiated; reason_code is frozen at creation). Used primarily on report filters + admin educational surfaces.",
+  "props": {
+    "network": { "type": "string", "required": false, "enum": ["visa", "mastercard", "amex", "discover", "jcb", "unionpay", "diners", "other"], "description": "When specified, filters the picker to reason codes valid for this network." },
+    "selectedCode": { "type": "string", "required": false, "description": "Currently selected reason code." },
+    "readonly": { "type": "boolean", "default": true, "description": "Default read-only — chargeback reason_code is frozen at creation. Only report filters use readonly=false." },
+    "label": { "type": "string", "default": "Reason code" }
+  },
+  "dataSources": [
+    {
+      "name": "catalog",
+      "kind": "cache.get",
+      "key": "cbk:reason-catalog",
+      "unwrap": "reasons"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "menuTrigger": "focus"
+      },
+      "bindings": {
+        "label": { "$ref": "props.label" },
+        "isReadOnly": { "$ref": "props.readonly" },
+        "selectedKey": { "$ref": "props.selectedCode" }
+      },
+      "children": [
+        {
+          "kind": "ComboBox.InputGroup",
+          "children": [
+            { "kind": "Input", "props": { "placeholder": "Search reason codes..." } },
+            { "kind": "ComboBox.Trigger" }
+          ]
+        },
+        {
+          "kind": "ComboBox.Popover",
+          "children": [
+            {
+              "kind": "ListBox",
+              "bindings": {
+                "items": {
+                  "$expr": "props.network ? catalog.filter(c => c.network === props.network) : catalog"
+                }
+              },
+              "children": [
+                {
+                  "kind": "ListBox.Item",
+                  "bindings": {
+                    "key": { "$ref": "row.reason_code" },
+                    "id": { "$ref": "row.reason_code" },
+                    "textValue": { "$expr": "row.reason_code + ' — ' + row.display_name" }
+                  },
+                  "props": {
+                    "tooltip": {
+                      "kind": "expr",
+                      "value": "row.description + ' (Category: ' + row.reason_category + '; Dispute time limit: ' + row.dispute_time_limit_days + ' days)'"
+                    }
+                  },
+                  "children": [
+                    {
+                      "kind": "View",
+                      "props": { "className": "flex flex-col gap-0.5" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "props": { "className": "font-mono text-sm" },
+                          "bindings": { "children": { "$ref": "row.reason_code" } }
+                        },
+                        {
+                          "kind": "Text",
+                          "props": { "className": "text-xs text-muted" },
+                          "bindings": { "children": { "$ref": "row.display_name" } }
+                        }
+                      ]
+                    },
+                    { "kind": "ListBox.ItemIndicator" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

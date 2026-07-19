@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/audit/rules",
+  "$version": 1,
+  "title": "audit — validation rules",
+  "description": "Custom Laravel validation rules published by AuditServiceProvider::boot(). All rules used by the AuditRetentionPolicyObserver chain (authoritative refusal on write) AND by FormRequest data classes (early request-time validation with clean error surfaces). Audit rows themselves are validated exclusively at the observer level — there is no HTTP entry point to attach FormRequest validators to.",
+  "namespace": "Academorix\\Observability\\Audit\\Rules",
+  "rules": [
+    {
+      "name": "valid_retention_years",
+      "class": "Academorix\\Observability\\Audit\\Rules\\ValidRetentionYears",
+      "signature": "valid_retention_years",
+      "description": "Value is an integer in [1..config.audit.retention.max_years]. Default max is 10. Cap is configurable but never exceeds a hard-coded 25-year ceiling (the audit-log absolute retention limit before the platform requires a separate storage strategy).",
+      "default_message": "The :attribute must be an integer between 1 and :max (inclusive)."
+    },
+    {
+      "name": "valid_override_dates",
+      "class": "Academorix\\Observability\\Audit\\Rules\\ValidOverrideDates",
+      "signature": "valid_override_dates",
+      "description": "override_starts_at is a valid ISO 8601 timestamp AND (override_ends_at IS NULL OR override_ends_at > override_starts_at). starts_at defaults to now() when omitted. ends_at NULL = indefinite.",
+      "default_message": "The :attribute must have starts_at < ends_at (or ends_at = null for indefinite)."
+    },
+    {
+      "name": "valid_event_type",
+      "class": "Academorix\\Observability\\Audit\\Rules\\ValidEventType",
+      "signature": "valid_event_type",
+      "description": "Value is one of the vendor-recognized types ('created', 'updated', 'deleted', 'restored') OR one of the module's registered custom_events (loaded from data/audited-events-catalog.json at boot). Custom events registered via vendor's `Auditable::registerAuditableTransition` seam appear in the catalog automatically at first invocation.",
+      "default_message": "The :attribute must be a valid audit event type. See data/audited-events-catalog.json for the full list."
+    },
+    {
+      "name": "valid_auditable_type_exists",
+      "class": "Academorix\\Observability\\Audit\\Rules\\ValidAuditableTypeExists",
+      "signature": "valid_auditable_type_exists",
+      "description": "Value is a class name that resolves at boot (via class_exists check) AND that class composes the vendor `Auditable` trait. Used when filtering audits by auditable_type — refuses filter values that would return empty because the type isn't a valid audited model.",
+      "default_message": "The :attribute must be a fully-qualified class name of an audited model."
+    },
+    {
+      "name": "valid_override_reason_shape",
+      "class": "Academorix\\Observability\\Audit\\Rules\\ValidOverrideReasonShape",
+      "signature": "valid_override_reason_shape",
+      "description": "Value is a non-empty string, 10-500 chars. Reason must be descriptive enough to justify the retention extension to a compliance auditor reading the trail two years later. Very short reasons ('yes') fail; long structured reasons ('regulator SEC 2026-Q3 investigation, expected duration 18 months, contact compliance@tenant.example') pass.",
+      "default_message": "The :attribute must be a descriptive string, 10-500 characters. Vague reasons like 'yes' fail the shape check."
+    }
+  ]
+}

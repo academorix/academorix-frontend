@@ -1,0 +1,162 @@
+{
+  "id": "academorix://modules/activity/traits",
+  "$version": 1,
+  "title": "activity — model traits",
+  "description": "Trait contract this module owns (`LogsActivity`, `BelongsToActivity`) and consumes from foundation / tenancy / vendor. `LogsActivity` is the primary extension point — every domain aggregate that wants user-facing activity capture composes it and configures `getActivitylogOptions()`.",
+  "owned": [
+    {
+      "trait": "LogsActivity",
+      "class": "Academorix\\Observability\\Activity\\Concerns\\LogsActivity",
+      "schemaRef": "academorix://modules/activity/schemas/activity",
+      "description": "Composed on domain models that want user-facing activity capture. Wraps `Spatie\\Activitylog\\Traits\\LogsActivity` — the vendor trait provides the machinery; this trait adds three Academorix-flavoured guarantees. (1) The activity's `tenant_id` matches the model's `tenant_id` on every write (safety cross-check pre-persist). (2) The activity's `application_id` is auto-filled from request context. (3) The composing model's `getActivitylogOptions()` must set a `log_name` in the module's registered catalog OR the trait throws at model boot — this catches typos in log_name references at deploy time instead of run time.",
+      "public": true,
+      "adds": {
+        "columns": [],
+        "compositeIndexes": [],
+        "scopes": { "global": [] },
+        "eventHooks": [
+          "activityLogAttributes booted() hook wires tenant_id + application_id",
+          "boot-time log_name validation against the registered catalog"
+        ],
+        "relations": [
+          {
+            "name": "activities",
+            "type": "MorphMany",
+            "target": "Academorix\\Observability\\Activity\\Models\\Activity",
+            "morphType": "subject_type",
+            "morphId": "subject_id",
+            "description": "All activities targeting this row as subject. Ordered by created_at DESC. Consumed by /api/v1/activities/by-entity/{type}/{id}."
+          },
+          {
+            "name": "recentActivities",
+            "type": "MorphMany",
+            "target": "Academorix\\Observability\\Activity\\Models\\Activity",
+            "morphType": "subject_type",
+            "morphId": "subject_id",
+            "scopes": ["recent"],
+            "description": "Activities in the last 30 days. Powers the sidebar 'What's new on this thing' widget."
+          }
+        ],
+        "methods": [
+          {
+            "name": "getActivitylogOptions",
+            "signature": "getActivitylogOptions(): LogOptions",
+            "description": "Vendor contract method. Composing model MUST override to return a `LogOptions` with `useLogName()` + `logOnly()` + `setDescriptionForEvent()` configured. Base default is unsafe (logs everything as 'default' log_name) — the trait's boot() refuses the default at first use."
+          },
+          {
+            "name": "activityFor",
+            "signature": "activityFor(?string $logName = null, ?int $limit = 25): Collection<Activity>",
+            "description": "Convenience — read activities on this subject, optionally filtered by log_name. Wraps the `activities` relation."
+          },
+          {
+            "name": "hasActivity",
+            "signature": "hasActivity(string $event): bool",
+            "description": "Quick check — did this model receive an activity with the given event key? Powers 'this booking was cancelled' badges without a full activity fetch."
+          }
+        ]
+      },
+      "appliedBy": [
+        "sports::Booking",
+        "sports::Athlete",
+        "teams::Team",
+        "platform::Branch",
+        "identity::User (auth events only)",
+        "billing::Invoice (state transitions only)"
+      ],
+      "notAppliedBy": [
+        "audit-adjacent aggregates — Role, Permission, Grant use HasAudit instead. LogsActivity is for user-facing feeds; audit is for regulator evidence.",
+        "PII-heavy aggregates — Profile, MedicalRecord, Payment method use HasAudit + field-level encryption. Activity descriptions are user-visible narrative and MUST NOT surface PII.",
+        "System-plane aggregates — Tenant, Application, PlatformUser — those live in the audit stream exclusively."
+      ]
+    },
+    {
+      "trait": "BelongsToActivity",
+      "class": "Academorix\\Observability\\Activity\\Concerns\\BelongsToActivity",
+      "description": "Composed on rows created BY an activity (e.g. a notification triggered by an activity, a follow-up task). Adds a nullable `activity_id` FK + BelongsTo relation for provenance / traceability. Optional — most modules don't need it.",
+      "public": true,
+      "adds": {
+        "columns": [
+          {
+            "name": "activity_id",
+            "type": "bigint",
+            "nullable": true,
+            "indexed": true,
+            "foreign": {
+              "table": "activity_log",
+              "column": "id",
+              "onUpdate": "cascade",
+              "onDelete": "set null"
+            }
+          }
+        ],
+        "compositeIndexes": [],
+        "scopes": { "global": [] },
+        "eventHooks": [],
+        "relations": [
+          {
+            "name": "originActivity",
+            "type": "BelongsTo",
+            "target": "Academorix\\Observability\\Activity\\Models\\Activity"
+          }
+        ]
+      },
+      "appliedBy": [
+        "notifications::UserNotification rows created in response to an activity (e.g. 'notify me when this booking is cancelled')"
+      ]
+    }
+  ],
+  "consumed": [
+    {
+      "trait": "HasFactory",
+      "class": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory",
+      "source": "framework"
+    },
+    {
+      "trait": "HasUlids",
+      "class": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids",
+      "source": "framework",
+      "note": "Applied to ActivityRetentionPolicy (native table). NOT applied to Activity (vendor bigint id in Wave 6)."
+    },
+    {
+      "trait": "BelongsToTenant",
+      "class": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+      "source": "tenancy",
+      "description": "Applies the tenant global scope + auto-fills tenant_id on save. Registered FIRST in the composition chain."
+    },
+    {
+      "trait": "HasUserstamps",
+      "class": "Academorix\\Foundation\\Concerns\\HasUserstamps",
+      "source": "foundation",
+      "description": "created_by / updated_by / deleted_by on ActivityRetentionPolicy. NOT applied to Activity — the vendor table doesn't have those columns, and adding them would leak into every activity row unnecessarily (the `causer` already carries actor identity)."
+    },
+    {
+      "trait": "Auditable",
+      "class": "OwenIt\\Auditing\\Auditable",
+      "source": "vendor:owen-it/laravel-auditing",
+      "description": "Emits audit rows on ActivityRetentionPolicy CRUD. Composes on the retention policy model because policy changes are AUDIT events (retention decisions are compliance-worthy). NOT applied to Activity itself — activity IS the tenant's audit surface; auditing it would be recursive."
+    },
+    {
+      "trait": "Filterable",
+      "class": "Academorix\\Foundation\\Concerns\\Filterable",
+      "source": "foundation",
+      "description": "Query-string filter support for the list endpoints — filter[log_name], filter[causer_id], filter[subject_type], filter[event], filter[from], filter[to]."
+    },
+    {
+      "trait": "Searchable",
+      "class": "Academorix\\Foundation\\Concerns\\Searchable",
+      "source": "foundation",
+      "description": "Full-text search over `description` for admin dashboards. Applied to Activity only."
+    },
+    {
+      "trait": "SoftDeletes",
+      "class": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+      "source": "framework",
+      "description": "Applied to ActivityRetentionPolicy only. Activity does NOT soft-delete — the retention pipeline hard-deletes rows on the schedule."
+    }
+  ],
+  "compositionExample": {
+    "language": "php",
+    "note": "Consumer example — Booking model composes LogsActivity.",
+    "code": "use Academorix\\Observability\\Activity\\Concerns\\LogsActivity;\nuse Spatie\\Activitylog\\LogOptions;\n\nfinal class Booking extends Model\n{\n    use BelongsToTenant;   // ← must be first (tenancy hook)\n    use LogsActivity;\n\n    protected function getActivitylogOptions(): LogOptions\n    {\n        return LogOptions::defaults()\n            ->logOnly(['facility_id', 'starts_at', 'ends_at', 'status'])\n            ->logOnlyDirty()\n            ->useLogName('bookings')\n            ->setDescriptionForEvent(fn (string $event) => match ($event) {\n                'created' => sprintf(\n                    '%s booked %s for %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                    $this->starts_at->format('D M j'),\n                ),\n                'updated' => sprintf(\n                    '%s updated their booking on %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                ),\n                'deleted' => sprintf(\n                    '%s cancelled their booking on %s',\n                    $this->causer?->display_name ?? 'Someone',\n                    $this->facility->name,\n                ),\n                default => 'Booking changed',\n            });\n    }\n}"
+  }
+}

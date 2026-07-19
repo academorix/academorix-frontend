@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/tax/notifications",
+  "$version": 1,
+  "title": "tax — notification classes + categories",
+  "namespace": "Academorix\\Finance\\Tax\\Notifications",
+  "notifications": [
+    "TaxExemptionVerifiedNotification",
+    "TaxExemptionRejectedNotification",
+    "TaxExemptionExpiringNotification",
+    "TaxProviderCircuitBreakerOpenedNotification",
+    "TaxCalculationDriftDetectedNotification"
+  ],
+  "categories": [
+    {
+      "slug": "tax.exemption_verified",
+      "display_name": "Tax exemption verified",
+      "description": "The exemption certificate has been reviewed and marked verified. Includes exemption type, issuing jurisdiction, valid_from + valid_until, and verification method (manual/automatic).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer + tenant_admin"
+    },
+    {
+      "slug": "tax.exemption_rejected",
+      "display_name": "Tax exemption rejected",
+      "description": "The exemption certificate has been reviewed and rejected. Includes reason (invalid_certificate / expired_at_creation / jurisdiction_mismatch / fraudulent / other), reviewer notes, and remediation steps.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer + tenant_admin"
+    },
+    {
+      "slug": "tax.exemption_expiring",
+      "display_name": "Tax exemption expiring soon",
+      "description": "The exemption certificate expires in 60/30/7 days (three-stage cadence). Includes exemption type, valid_until date, and re-application steps. Customer should renew before the certificate expires to avoid being charged tax on future purchases.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer + tenant_admin"
+    },
+    {
+      "slug": "tax.provider_circuit_breaker_opened",
+      "display_name": "Tax provider unreachable",
+      "description": "A tax provider (TaxJar / Avalara / Stripe Tax) has been marked unreachable after N consecutive failures. New tax calculations are BLOCKED for the affected jurisdictions — invoice lines will queue up until the breaker resets. Includes provider name, last error, open-until timestamp, and reset instructions.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role + platform_ops"
+    },
+    {
+      "slug": "tax.calculation_drift_detected",
+      "display_name": "Tax calculation drift detected",
+      "description": "REGULATOR-CRITICAL. The weekly reconciliation spot-check found that historical tax calculations diverge from current-day provider re-computation. May indicate a rate change the provider missed, or a provider algorithm change. Includes provider, sample size, drift percentage, and remediation steps (typically: contact provider support + review tax filings).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role + compliance_role"
+    }
+  ]
+}

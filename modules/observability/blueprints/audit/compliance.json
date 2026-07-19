@@ -1,0 +1,148 @@
+{
+  "id": "academorix://modules/audit/compliance",
+  "$version": 1,
+  "title": "audit — compliance evidence",
+  "description": "Primary control points for GDPR (Art. 5, 17, 30), SOX §404, HIPAA §164.312(b), PCI-DSS Requirement 10, ISO 27001 A.12.4, SOC 2 CC7.1, and CCPA §1798.185. Audit is the AUTHORITATIVE compliance evidence surface — regulators, DPOs, and forensic investigators consume this module.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(f)",
+          "principle": "integrity + confidentiality",
+          "evidence": "Every mutating operation writes an immutable audit row with field-level diff. The vendor observer captures create/update/delete/restored automatically. Row is immutable after write (AuditObserver::updating throws NOTIFICATIONS_AUDIT_ROW_IMMUTABLE). Delete is refused except via PurgeExpiredAuditsJob service account (AuditObserver::deleting). Route-level middleware audit.enforce_read_only refuses non-GET methods."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "7-year default retention balances 'no longer than necessary' against regulator/audit requirements. Enterprise tenants may extend to 10 years via AuditRetentionPolicy with an audit_retention_extended entitlement + a compliance-officer-signed override_reason. PurgeExpiredAuditsJob runs nightly per-tenant honoring the active policy."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "compliance::UserErased cascade invokes AuditRedactionListener (owned here, subscribed via listeners.json) — REDACTS old_values/new_values fields matching the erased subject's PII to a SHA-256 hash. Fact-of-mutation record (event, auditable_type, auditable_id, created_at) IS PRESERVED — regulators may need proof of the erasure years later. Full-row deletion is NEVER performed on subject erasure (that would violate Art. 30 records-of-processing requirement)."
+        },
+        {
+          "article": "Art. 30",
+          "principle": "records of processing activities",
+          "evidence": "Every audit row IS a record of a processing activity. The `audits` table with 7y retention is the platform's primary Art. 30 evidence. Per-controller record-of-processing exports available via /api/v1/audits/export?kind=regulator (Enterprise + audit_regulator_export entitlement)."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "old_values + new_values encrypted at rest via Postgres TDE. audit_retention_policies.override_reason (contains legal / compliance context) also encrypted. Every retention-policy CRUD writes an audit row (via the vendor Auditable trait on the policy itself — self-auditing). PurgeExpiredAuditsJob writes a summary meta-audit ('audit.purged') so the trail records itself being purged."
+        },
+        {
+          "article": "Art. 33",
+          "principle": "notification of a data breach",
+          "evidence": "Audit reveals actor + time + affected records for breach investigation. AuditQuery.byUser + byEntity + bySince/until supports the 72h breach-notification window."
+        }
+      ]
+    },
+    "sox": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "§404",
+          "principle": "management assessment of internal controls",
+          "evidence": "Financial mutation records retained 7 years by default (SOX baseline). Every finance-module mutation (Membership, TenantSubscription, Pass, Transaction) writes a compliance-grade audit row. Retention extension to 10 years available via AuditRetentionPolicy for enterprises operating in SOX-regulated markets."
+        },
+        {
+          "section": "§302",
+          "principle": "corporate responsibility for financial reports",
+          "evidence": "CFO / compliance-officer role has audit.audits.viewAny + audit.audits.reveal_raw_diff permissions. Chain-of-custody row written on every raw-diff reveal (meta-audit)."
+        }
+      ]
+    },
+    "hipaa": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "§164.312(b)",
+          "principle": "audit controls",
+          "evidence": "Every mutation of PHI-adjacent records (Athlete, AthleteGuardian, Consent, HealthNote — planned Wave 7) writes a compliance-grade audit row. Access-only events register as custom audit events ('read.phi_record'). Retention typically extended to 10 years via AuditRetentionPolicy for HIPAA-covered entities."
+        },
+        {
+          "section": "§164.316(b)(2)(i)",
+          "principle": "record retention",
+          "evidence": "6-year minimum retention — our 7-year default exceeds. HIPAA-covered tenants may need to raise to 10y via audit_retention_extended entitlement (regulator requirement varies by state)."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Requirement 10.1",
+          "principle": "audit trails for all access to cardholder data",
+          "evidence": "Every mutation of finance-module cardholder-data-adjacent records writes an audit row. Read events register as custom audit events ('read.cardholder_data'). The vendor Auditable trait supports registerAuditableTransition to add non-mutation events like reads."
+        },
+        {
+          "requirement": "Requirement 10.5.1",
+          "principle": "audit trails secured to prevent unauthorized modification",
+          "evidence": "Three-layer immutability: (a) DB triggers refuse UPDATE + DELETE on `audits` outside a session tagged with the purge service actor; (b) AuditObserver::updating throws NOTIFICATIONS_AUDIT_ROW_IMMUTABLE; (c) audit.enforce_read_only middleware refuses non-GET methods."
+        },
+        {
+          "requirement": "Requirement 10.7",
+          "principle": "retention",
+          "evidence": "1-year minimum, 3 months hot — our 7y default + 90d hot exceeds. Enterprise 10y available via AuditRetentionPolicy."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "clause": "A.12.4.1",
+          "principle": "event logging",
+          "evidence": "The `audits` table IS the event log. Vendor `AuditableObserver` fires on every mutation. Our AuditObserver enforces required columns + immutability + non-null tenant_id."
+        },
+        {
+          "clause": "A.12.4.2",
+          "principle": "protection of log information",
+          "evidence": "old_values + new_values encrypted at rest. Route-level read-only middleware. Immutability enforced by observer + DB triggers. Chain-of-custody meta-audits on every raw-diff reveal."
+        },
+        {
+          "clause": "A.12.4.3",
+          "principle": "administrator and operator logs",
+          "evidence": "user_type + user_id polymorphic actor on every audit row. Platform-admin actions carry PlatformUser::class as user_type. Service-account actions carry ServiceAccount::class."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC7.1",
+          "principle": "logs for anomaly detection",
+          "evidence": "AuditQuery surface supports the anomaly-detection queries (unusual actor volume, unusual mutation rate per tenant, off-hours access). Monitoring metrics (academorix.audit.records_total, records_by_event, records_by_actor) feed the Grafana anomaly dashboard."
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "incident response evidence",
+          "evidence": "AuditQuery.byUser + byEntity + bySince/until provides the fact-finding surface for incident responders. Cross-tenant queries via platform-admin surface for support/on-call."
+        },
+        {
+          "criterion": "CC8.1",
+          "principle": "change management",
+          "evidence": "Every config change on AuditRetentionPolicy writes an audit row (via HasAuditable on the policy). Retention_years changes + override_ends_at changes + override_reason changes tracked."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "§1798.185",
+          "principle": "records of consumer requests + responses",
+          "evidence": "Every DSAR request writes an audit row. CCPA response actions (delete, correction, opt-out) generate audit rows via their handling modules. 24-month minimum retention — our 7y default exceeds."
+        },
+        {
+          "section": "§1798.105",
+          "principle": "right to delete",
+          "evidence": "AuditRedactionListener redacts PII in old_values + new_values on UserErased cascade. Fact-of-mutation record preserved (see GDPR Art. 17 above)."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/monitoring/feature-flags",
+  "$version": 1,
+  "title": "monitoring — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "monitoring.health_checks",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the health check evaluator. Off = RunHealthCheckJob no-ops. Emergency-only (used during DB migrations of health_check_runs)."
+    },
+    {
+      "key": "monitoring.alert_evaluation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for EvaluateAlertPoliciesJob. Off = no new alerts fire. Used only during widespread outages to prevent alert storms."
+    },
+    {
+      "key": "monitoring.notifications",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for NotifyProvidersJob. Off = alerts fire + persist but never reach providers. Used only in test/staging envs OR during widespread provider outages."
+    },
+    {
+      "key": "monitoring.circuit_breaker",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CircuitBreakerGate always allows. Every failure counts against the threshold but the breaker never opens. Used to force-through notifications during a provider recovery test."
+    },
+    {
+      "key": "monitoring.retry_sweeper",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = RetryFailedNotificationsJob does not enqueue new attempts. Failed notifications stay failed until manual replay. Used during queue-worker debugging."
+    },
+    {
+      "key": "monitoring.escalation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = EscalateIncidentJob does not run. Unacknowledged incidents stay open past SLA without escalating. Used during on-call rotation gaps."
+    },
+    {
+      "key": "monitoring.pii_redaction",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = HealthCheckRunObserver skips PII regex redaction of response_body. NEVER flip off in production (compliance violation)."
+    },
+    {
+      "key": "monitoring.encrypt_provider_config",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = monitoring_provider_configs.config stored in plaintext. NEVER flip off in production (compliance violation — credentials in plaintext)."
+    },
+    {
+      "key": "monitoring.sentry",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch. Off = Sentry notifications skip. Used when Sentry is announced-degraded."
+    },
+    {
+      "key": "monitoring.datadog",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch."
+    },
+    {
+      "key": "monitoring.pagerduty",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch. Off = failover to Opsgenie for pending P1 notifications."
+    },
+    {
+      "key": "monitoring.opsgenie",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch. Off = failover to PagerDuty for pending P1 notifications."
+    },
+    {
+      "key": "monitoring.prometheus",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "monitoring.custom_webhook",
+      "kind": "kill-switch",
+      "default": "on"
+    },
+    {
+      "key": "monitoring.reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = AutoResolveIncidentJob skips. Only flip off for maintenance windows."
+    },
+    {
+      "key": "monitoring.retention",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeExpiredHealthCheckRunsJob + PurgeResolvedIncidentsJob skip. Only flip off for DB migrations."
+    }
+  ]
+}

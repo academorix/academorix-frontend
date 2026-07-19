@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/audit/retention",
+  "$version": 1,
+  "title": "audit — retention windows",
+  "description": "7 years default; 10 years max with audit_retention_extended entitlement. TenantErased MIGRATES to a compliance archive (never cascade-deletes — regulators may need proof of erasure years later). Exports themselves cold-archive after 90 days. Purge cadence: nightly per-tenant, honoring the active AuditRetentionPolicy.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) — storage limitation (7y default balances 'no longer than necessary' against regulator/audit requirements)",
+    "gdpr Art. 30 — records of processing must be maintained; audit is the record",
+    "sox §404 — financial-mutation records retained 7 years",
+    "hipaa §164.316(b)(2)(i) — 6 years minimum; we round up to 7",
+    "pci-dss Requirement 10.7 — audit trails retained minimum 1 year, immediately available past 3 months (our hot-tier 90d exceeds this)",
+    "iso 27001 A.12.4.1 — event logging retention policy",
+    "soc 2 CC7.1 — retain logs long enough for audit trail",
+    "ccpa §1798.185 — records of consumer requests (audit rows), 24 months minimum"
+  ],
+  "retention": [
+    {
+      "entity": "Audit",
+      "hot": {
+        "days": 90,
+        "description": "First 90 days in the primary Postgres `audits` table. Sub-100ms hot-read latency."
+      },
+      "cold": {
+        "days_after_hot": "until retention window expires",
+        "description": "Beyond 90d, ExportAuditsToArchiveJob writes tenant-scoped audit rows to a jsonl.gz file in the S3 archive bucket (`AUDIT_ARCHIVE_S3_BUCKET`) and prunes them from the hot table (Enterprise only — Small + Medium keep everything hot until final purge)."
+      },
+      "purge": {
+        "trigger": "created_at + retention_years < now() (per active AuditRetentionPolicy or config.audit.retention.default_years=7)",
+        "action": "hard delete from hot table + delete from cold archive + write meta-audit summary row",
+        "job": "PurgeExpiredAuditsJob"
+      },
+      "override": {
+        "entitlement": "audit_retention_extended",
+        "max_retention_years": 10,
+        "description": "Enterprise tenants create an AuditRetentionPolicy row with retention_years up to 10 + an override_reason. Extension bumps the cutoff computation."
+      },
+      "compliance_baseline_years": 7
+    },
+    {
+      "entity": "AuditRetentionPolicy",
+      "hot": {
+        "days": "while active",
+        "description": "Retained while active OR while deleted_at within a 1-year grace (so the compliance officer can audit the policy history)."
+      },
+      "purge": {
+        "trigger": "deleted_at > 365 days",
+        "action": "hard delete + write summary audit row via HasAuditable on the policy itself",
+        "job": "PurgeExpiredAuditsJob"
+      }
+    },
+    {
+      "entity": "AuditExport (async export request records)",
+      "hot": {
+        "days": 90,
+        "description": "Export metadata rows (request timestamp, requester, row count, signed URL, S3 key) retained 90 days for compliance audit ('who exported what and when')."
+      },
+      "cold": {
+        "days_after_hot": "purge",
+        "description": "The signed S3 URL expires at 24h (config.audit.export.signed_url_ttl_hours). The metadata row lives 90d past that for the compliance audit."
+      },
+      "purge": {
+        "trigger": "created_at > 90 days AND signed_url has expired",
+        "action": "hard delete + delete S3 object",
+        "job": "PurgeExpiredAuditsJob"
+      }
+    },
+    {
+      "entity": "TenantErased cascade",
+      "action": "MIGRATE audit rows to a compliance archive (S3 bucket named for the erasure event + tenant ID). Do NOT cascade-delete — regulators may need proof of erasure years later. The retention window still applies to the migrated payload; PurgeExpiredAuditsJob purges the archive at the same cutoff.",
+      "note": "This is deliberately DIFFERENT from analytics/marketing/activity's hard-delete cascade. Audit is regulator evidence; erasure of a subject does not remove the record of the erasure itself + the mutations that led up to it."
+    }
+  ],
+  "scheduled_jobs": {
+    "PurgeExpiredAuditsJob": {
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly per-tenant purge. Honors active AuditRetentionPolicy retention_years (default 7). Writes summary meta-audit ('audit.purged { tenant_id, cutoff_at, row_count }') so the trail records itself being purged."
+    },
+    "ExpireRetentionOverridesJob": {
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly — checks every AuditRetentionPolicy where override_ends_at <= now() AND retention_years > default_years. Resets retention_years to default_years + fires AuditRetentionExtensionExpired. Sends AuditRetentionExtensionExpiringSoonNotification 30 days ahead of expiry."
+    },
+    "ExportAuditsToArchiveJob": {
+      "cron": "0 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05:00 UTC. Enterprise tenants — writes 90d+ audit rows to jsonl.gz in S3 archive bucket. Prunes hot table after successful upload verification."
+    }
+  }
+}

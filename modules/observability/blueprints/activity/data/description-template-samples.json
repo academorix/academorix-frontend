@@ -1,0 +1,185 @@
+{
+  "id": "academorix://modules/activity/data/description-template-samples",
+  "$version": 1,
+  "title": "activity — description-template samples",
+  "description": "Twenty-plus example description patterns showing the authoring style consumers should follow when writing `setDescriptionForEvent()` in their models. Descriptions are human-readable narrative — second- or third-person, past-tense, entity names inline. NEVER raw payloads, NEVER stack traces, NEVER unformatted IDs.",
+  "guidelines": [
+    "Third-person past-tense — 'Alice booked Court 3', not 'Alice books Court 3' or 'You book Court 3'.",
+    "Entity names inline — 'Court 3' not 'Facility #47'; 'Riverside U-12 team' not 'Team #tm_...'.",
+    "Actor first when there's a human causer, else lead with the subject.",
+    "Timestamps only when they add information beyond `created_at` — 'for tomorrow' is useful; 'at 10:04 AM' is noise.",
+    "Never leak raw IDs — the ULID stays out of the description text (it lives in `properties`).",
+    "Never include the tenant name — the tenant is implicit from BelongsToTenant scope; feeds are always tenant-scoped.",
+    "Keep it under 200 chars where possible — the 500-char DB ceiling is a defensive cap, not a target."
+  ],
+  "samples": [
+    {
+      "log_name": "bookings",
+      "event": "created",
+      "template": "%s booked %s for %s",
+      "example": "Alice Rivera booked Court 3 for tomorrow at 10:00 AM",
+      "properties_used": ["causer.display_name", "subject.facility.name", "subject.starts_at (formatted)"]
+    },
+    {
+      "log_name": "bookings",
+      "event": "confirmed",
+      "template": "%s confirmed their booking on %s",
+      "example": "Alice Rivera confirmed their booking on Court 3",
+      "properties_used": ["causer.display_name", "subject.facility.name"]
+    },
+    {
+      "log_name": "bookings",
+      "event": "rescheduled",
+      "template": "%s rescheduled the %s booking from %s to %s",
+      "example": "Alice Rivera rescheduled the Court 3 booking from tomorrow 10:00 AM to Friday 2:00 PM",
+      "properties_used": ["causer.display_name", "subject.facility.name", "properties.previous_starts_at", "subject.starts_at"]
+    },
+    {
+      "log_name": "bookings",
+      "event": "cancelled",
+      "template": "%s cancelled their booking on %s (%s)",
+      "example": "Alice Rivera cancelled their booking on Court 3 (weather)",
+      "properties_used": ["causer.display_name", "subject.facility.name", "properties.cancel_reason"]
+    },
+    {
+      "log_name": "athletes",
+      "event": "enrolled",
+      "template": "%s enrolled %s in %s",
+      "example": "Sofia Chen enrolled Marcus Chen in Junior Swim Team (Fall 2026 season)",
+      "properties_used": ["causer.display_name (guardian)", "subject.display_name (athlete)", "properties.team_name + properties.season_name"]
+    },
+    {
+      "log_name": "athletes",
+      "event": "transferred",
+      "template": "%s transferred from %s to %s",
+      "example": "Marcus Chen transferred from Junior Swim Team to Intermediate Swim Team",
+      "properties_used": ["subject.display_name", "properties.from_team_name", "properties.to_team_name"]
+    },
+    {
+      "log_name": "athletes",
+      "event": "deactivated",
+      "template": "%s deactivated %s's roster spot",
+      "example": "Coach Marek deactivated Marcus Chen's roster spot",
+      "properties_used": ["causer.display_name", "subject.display_name"]
+    },
+    {
+      "log_name": "teams",
+      "event": "member_added",
+      "template": "%s added %s to %s",
+      "example": "Coach Marek added Sofia Chen to Junior Swim Team",
+      "properties_used": ["causer.display_name", "properties.added_member_name", "subject.name (team)"]
+    },
+    {
+      "log_name": "teams",
+      "event": "coach_assigned",
+      "template": "%s assigned %s as head coach of %s",
+      "example": "Director Elena assigned Coach Marek as head coach of Junior Swim Team",
+      "properties_used": ["causer.display_name", "properties.assigned_coach_name", "subject.name"]
+    },
+    {
+      "log_name": "teams",
+      "event": "session_scheduled",
+      "template": "%s scheduled a %s session for %s on %s",
+      "example": "Coach Marek scheduled a training session for Junior Swim Team on Wednesday 4:00 PM",
+      "properties_used": ["causer.display_name", "properties.session_kind", "subject.name", "properties.session_starts_at"]
+    },
+    {
+      "log_name": "branch-management",
+      "event": "created",
+      "template": "%s opened a new branch: %s",
+      "example": "Director Elena opened a new branch: Riverside East",
+      "properties_used": ["causer.display_name", "subject.name"]
+    },
+    {
+      "log_name": "branch-management",
+      "event": "facility_added",
+      "template": "%s added %s to %s",
+      "example": "Manager Jamie added Court 4 to Riverside East",
+      "properties_used": ["causer.display_name", "properties.facility_name", "subject.name (branch)"]
+    },
+    {
+      "log_name": "branch-management",
+      "event": "staff_assigned",
+      "template": "%s assigned %s as %s at %s",
+      "example": "Director Elena assigned Jamie Kaur as manager at Riverside East",
+      "properties_used": ["causer.display_name", "properties.assigned_staff_name", "properties.role_label", "subject.name (branch)"]
+    },
+    {
+      "log_name": "auth",
+      "event": "logged_in",
+      "template": "%s logged in from %s",
+      "example": "Alice Rivera logged in from Chrome on iPhone",
+      "properties_used": ["subject.display_name (self-as-both)", "properties.device_summary"]
+    },
+    {
+      "log_name": "auth",
+      "event": "mfa_enrolled",
+      "template": "%s enrolled a new MFA device: %s",
+      "example": "Alice Rivera enrolled a new MFA device: iPhone Authenticator",
+      "properties_used": ["subject.display_name", "properties.mfa_device_label"]
+    },
+    {
+      "log_name": "auth",
+      "event": "logged_out",
+      "template": "%s signed out",
+      "example": "Alice Rivera signed out",
+      "properties_used": ["subject.display_name"]
+    },
+    {
+      "log_name": "billing",
+      "event": "invoice_sent",
+      "template": "%s sent invoice %s to %s",
+      "example": "Manager Jamie sent invoice INV-2026-0142 to Sofia Chen",
+      "properties_used": ["causer.display_name", "subject.invoice_number", "properties.recipient_name"]
+    },
+    {
+      "log_name": "billing",
+      "event": "invoice_paid",
+      "template": "%s paid invoice %s",
+      "example": "Sofia Chen paid invoice INV-2026-0142",
+      "properties_used": ["causer.display_name", "subject.invoice_number"]
+    },
+    {
+      "log_name": "billing",
+      "event": "invoice_overdue",
+      "template": "Invoice %s is overdue (was due %s)",
+      "example": "Invoice INV-2026-0142 is overdue (was due 3 days ago)",
+      "properties_used": ["subject.invoice_number", "properties.due_at_relative"]
+    },
+    {
+      "log_name": "attendance",
+      "event": "marked_present",
+      "template": "%s marked %s present at %s",
+      "example": "Coach Marek marked Marcus Chen present at Wednesday training",
+      "properties_used": ["causer.display_name", "properties.athlete_name", "properties.session_summary"]
+    },
+    {
+      "log_name": "attendance",
+      "event": "marked_absent",
+      "template": "%s marked %s absent from %s",
+      "example": "Coach Marek marked Marcus Chen absent from Wednesday training",
+      "properties_used": ["causer.display_name", "properties.athlete_name", "properties.session_summary"]
+    },
+    {
+      "log_name": "communications",
+      "event": "announcement_published",
+      "template": "%s published an announcement to %s: %s",
+      "example": "Director Elena published an announcement to Junior Swim Team: Summer camp registration open",
+      "properties_used": ["causer.display_name", "properties.recipient_group_name", "properties.subject_line"]
+    },
+    {
+      "log_name": "communications",
+      "event": "message_broadcast",
+      "template": "%s sent a message to %d recipients in %s",
+      "example": "Coach Marek sent a message to 12 recipients in Junior Swim Team",
+      "properties_used": ["causer.display_name", "properties.recipient_count", "properties.recipient_group_name"]
+    },
+    {
+      "log_name": "system",
+      "event": "provisioning_complete",
+      "template": "Entitlement provisioning completed: %d slot updates, %d license updates",
+      "example": "Entitlement provisioning completed: 3 slot updates, 1 license update",
+      "properties_used": ["properties.slot_updates_count", "properties.license_updates_count"]
+    }
+  ]
+}

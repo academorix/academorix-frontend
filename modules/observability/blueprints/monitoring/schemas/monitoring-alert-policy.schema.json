@@ -1,0 +1,179 @@
+{
+  "id": "academorix://modules/monitoring/schemas/monitoring-alert-policy",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MonitoringAlertPolicy",
+  "description": "Per-tenant threshold configuration. Belongs to Tenant. Carries `tenant_id` only. NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "monitoring",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "monitoring_alert_policies",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "map_",
+    "incrementing": false,
+    "model": "Academorix\\Observability\\Monitoring\\Models\\MonitoringAlertPolicy",
+    "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface",
+    "implements": ["Academorix\\Observability\\Monitoring\\Contracts\\Data\\MonitoringAlertPolicyInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMonitoringAlerts",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "signal_type": "MonitoringSignalType",
+      "severity": "MonitoringSeverity",
+      "threshold_operator": "MonitoringThresholdOperator",
+      "threshold_value": "float",
+      "window_seconds": "integer",
+      "consecutive_breaches_required": "integer",
+      "is_enabled": "boolean",
+      "notify_provider_configs": "array",
+      "suppression_config": "array",
+      "metadata": "array"
+    },
+    "observers": ["MonitoringAlertPolicyObserver"],
+    "appends": ["is_silenced", "is_currently_suppressed"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Human-readable name (e.g. '5xx rate high', 'DB latency degraded')."
+      },
+      "signal_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: health_check_status / error_rate / latency_p95 / latency_p99 / queue_depth / worker_health / custom_metric."
+      },
+      "signal_source": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Depends on signal_type. See data/signal-type-catalog.json."
+      },
+      "severity": {
+        "type": "string",
+        "length": 8,
+        "nullable": false,
+        "description": "Enum: p1 / p2 / p3 / p4."
+      },
+      "threshold_operator": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: greater_than / less_than / equals / not_equals."
+      },
+      "threshold_value": { "type": "numeric", "nullable": false },
+      "threshold_unit": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Unit of the threshold value. E.g. 'percent', 'ms', 'count', 'bytes'."
+      },
+      "window_seconds": {
+        "type": "integer",
+        "nullable": false,
+        "default": 300,
+        "description": "Trailing window over which the signal is aggregated."
+      },
+      "consecutive_breaches_required": {
+        "type": "integer",
+        "nullable": false,
+        "default": 2,
+        "description": "How many consecutive eval-tick breaches before firing. Filters transient spikes."
+      },
+      "is_enabled": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true
+      },
+      "notify_provider_configs": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'[]'::jsonb",
+        "description": "jsonb array of MonitoringProviderConfig ULIDs. Fan-out targets for fired alerts."
+      },
+      "suppression_config": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Shape: { after_hours_suppress: bool, weekend_suppress: bool, silenced_until: ISO 8601 | null }."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "is_enabled"], "name": "monitoring_alert_policies_enabled_idx" },
+      { "columns": ["tenant_id", "signal_type", "signal_source"], "name": "monitoring_alert_policies_signal_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "name", "signal_type", "signal_source", "severity", "threshold_operator", "threshold_value", "threshold_unit", "window_seconds", "consecutive_breaches_required", "is_enabled", "notify_provider_configs", "suppression_config", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^map_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "signal_type": {
+      "type": "string",
+      "enum": ["health_check_status", "error_rate", "latency_p95", "latency_p99", "queue_depth", "worker_health", "custom_metric"]
+    },
+    "signal_source": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "severity": { "type": "string", "enum": ["p1", "p2", "p3", "p4"] },
+    "threshold_operator": { "type": "string", "enum": ["greater_than", "less_than", "equals", "not_equals"] },
+    "threshold_value": { "type": "number" },
+    "threshold_unit": { "type": "string", "enum": ["percent", "ms", "count", "bytes"] },
+    "window_seconds": { "type": "integer", "minimum": 60, "maximum": 86400 },
+    "consecutive_breaches_required": { "type": "integer", "minimum": 1, "maximum": 100 },
+    "is_enabled": { "type": "boolean" },
+    "notify_provider_configs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^mpr_[0-9A-HJKMNP-TV-Z]{26}$" }
+    },
+    "suppression_config": {
+      "type": "object",
+      "properties": {
+        "after_hours_suppress": { "type": "boolean", "default": false },
+        "weekend_suppress": { "type": "boolean", "default": false },
+        "silenced_until": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "signal_source resolves to a real subject for signal_type",
+    "threshold_unit compatible with signal_type per data/signal-type-catalog.json",
+    "consecutive_breaches_required >= 1",
+    "window_seconds >= 60",
+    "notify_provider_configs is a non-empty subset of active MonitoringProviderConfig ULIDs in the same tenant",
+    "notify_provider_configs entries all have severity in their enabled_severities",
+    "severity is immutable while firing alerts exist against this policy"
+  ]
+}

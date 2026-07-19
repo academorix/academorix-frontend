@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/transaction/attributes",
+  "$version": 1,
+  "title": "transaction — PHP attribute contracts",
+  "description": "Three class-level attributes. `#[AsTransactionListener]` subscribes a service to transaction-lane events (transaction lifecycle + ledger imbalance + reconciliation). `#[AsLedgerAccount]` marks a class as a chart-of-accounts registrant — enables data-driven per-tenant enable/disable of accounts. `#[AsTransactionKind]` marks a class as a transaction-kind handler — defines the canonical debit/credit pair for a given kind.",
+  "namespace": "Academorix\\Finance\\Transaction\\Attributes",
+  "attributes": [
+    {
+      "name": "AsTransactionListener",
+      "class": "Academorix\\Finance\\Transaction\\Attributes\\AsTransactionListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to transaction-lane events (TransactionCreated / Posted / Reversed / AmendmentRequested, LedgerEntryRecorded, LedgerImbalanceDetected, AccountBalanceThresholdCrossed, TenantOpeningBalanceRecorded, TransactionCurrencyConverted, LedgerReconciliationCompleted). Discovery loader picks up each class at boot + wires the declared events. Consumers of LedgerImbalanceDetected should override queue to `finance-critical` since imbalances are P0 signals.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`TransactionPosted`, `LedgerImbalanceDetected`, `TransactionReversed`, …). Empty = subscribe to every `Academorix\\Finance\\Transaction\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see events.json). LedgerImbalanceDetected + TransactionAmendmentRequested consumers should specify 'finance-critical'."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. The HaltNewTransactionsOnImbalance listener runs at priority 10 so it sets the halt flag before any downstream listener processes the imbalance signal."
+        }
+      ],
+      "example": "#[AsTransactionListener(events: ['LedgerImbalanceDetected'], queue: 'finance-critical', priority: 10)]\nfinal class HaltNewTransactionsOnImbalance\n{\n    public function __invoke(LedgerImbalanceDetected $event): void\n    {\n        // Set tenant.transaction_halt_new = true. Every subsequent\n        // TransactionRecorder::record() call refuses until an ops-authored fix lands.\n    }\n}"
+    },
+    {
+      "name": "AsLedgerAccount",
+      "class": "Academorix\\Finance\\Transaction\\Attributes\\AsLedgerAccount",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as a chart-of-accounts registrant. The ChartOfAccountsRegistry discovers these at boot + registers the account in the module's account catalog. Every #[AsLedgerAccount] class MUST implement the ILedgerAccount contract (slug(), display_name(), regulator_category(), default_currency()).",
+      "params": [
+        {
+          "name": "slug",
+          "type": "string",
+          "description": "Account slug matching the LedgerAccount enum (revenue / accounts_receivable / cash / refunds_owed / refunds_expense / tax_payable / gateway_fees / bank_deposits / write_offs / coupons_expense / chargebacks_expense / accounts_payable / prepayments / deferred_revenue). One class per slug."
+        },
+        {
+          "name": "regulator_category",
+          "type": "string",
+          "description": "Enum: asset / liability / equity / revenue / expense. Regulator-visible classification for GL exports. Every GL report groups accounts by regulator_category. Example: cash + accounts_receivable + bank_deposits + prepayments = asset; accounts_payable + refunds_owed + tax_payable + deferred_revenue = liability; revenue = revenue; refunds_expense + gateway_fees + coupons_expense + chargebacks_expense + write_offs = expense."
+        },
+        {
+          "name": "default_currency",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional default currency for the account. When null, the tenant's base_currency applies. Multi-currency ledgers may pin certain accounts to specific currencies (e.g. tax_payable pinned to the tenant's jurisdiction currency)."
+        },
+        {
+          "name": "enabled_by_default",
+          "type": "bool",
+          "default": true,
+          "description": "true = the account is enabled for every newly-provisioned tenant. false = the account is opt-in (rare — reserved for specialty accounts that only apply to certain tenant types)."
+        }
+      ],
+      "example": "#[AsLedgerAccount(slug: 'cash', regulator_category: 'asset', enabled_by_default: true)]\nfinal class CashAccount implements ILedgerAccount\n{\n    public function display_name(): string { return 'Cash'; }\n}"
+    },
+    {
+      "name": "AsTransactionKind",
+      "class": "Academorix\\Finance\\Transaction\\Attributes\\AsTransactionKind",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as a transaction-kind handler. Defines the canonical debit/credit pair for a given TransactionKind — the TransactionRecorder consults these classes when building ledger entries. Every #[AsTransactionKind] class MUST implement the ITransactionKindHandler contract (buildLedgerEntries(TransactionData): TransactionLedgerEntryData[]).",
+      "params": [
+        {
+          "name": "kind",
+          "type": "string",
+          "description": "TransactionKind enum value (invoice_payment / refund_issued / chargeback_debit / coupon_credit / tax_remittance / fee_charge / adjustment / write_off / bank_deposit / bank_withdrawal / currency_conversion / opening_balance). One class per kind."
+        },
+        {
+          "name": "canonical_entries",
+          "type": "array",
+          "description": "Documented expected [debit_account, credit_account] pairs for this kind. Read at boot into data/sample-double-entry-patterns.json. Example: invoice_payment → [{debit: 'cash', credit: 'accounts_receivable'}]. refund_issued → [{debit: 'refunds_owed', credit: 'cash'}, {debit: 'refunds_expense', credit: 'revenue'}] (two ledger transaction pairs — recorded as two separate Transaction rows sharing source_transaction_id)."
+        }
+      ],
+      "example": "#[AsTransactionKind(kind: 'invoice_payment', canonical_entries: [['debit' => 'cash', 'credit' => 'accounts_receivable']])]\nfinal class InvoicePaymentKind implements ITransactionKindHandler\n{\n    public function buildLedgerEntries(TransactionData $data): array\n    {\n        return [\n            new LedgerEntryData(account: 'cash', debit_cents: $data->amount_cents, credit_cents: 0),\n            new LedgerEntryData(account: 'accounts_receivable', debit_cents: 0, credit_cents: $data->amount_cents),\n        ];\n    }\n}"
+    }
+  ]
+}

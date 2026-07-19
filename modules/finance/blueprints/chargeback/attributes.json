@@ -1,0 +1,61 @@
+{
+  "id": "academorix://modules/chargeback/attributes",
+  "$version": 1,
+  "title": "chargeback — PHP attribute contracts",
+  "description": "Two class-level attributes for listener discovery. `AsChargebackListener` subscribes to chargeback lifecycle events (filed / evidence_requested / evidence_submitted / under_review / won / lost / expired / accepted_refund / evidence_overdue / rate_threshold_exceeded / webhook_received / reconciled). `AsChargebackEvidenceListener` subscribes to chargeback_evidence events (submitted). Discovery loader picks up each class at boot + wires the declared events. No property-level attributes: the two owned rows use ordinary Eloquent + spatie/laravel-data class attributes shipped by foundation.",
+  "namespace": "Academorix\\Finance\\Chargeback\\Attributes",
+  "attributes": [
+    {
+      "name": "AsChargebackListener",
+      "class": "Academorix\\Finance\\Chargeback\\Attributes\\AsChargebackListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to chargeback lifecycle events (ChargebackFiled / ChargebackEvidenceRequested / ChargebackEvidenceSubmitted / ChargebackUnderReview / ChargebackWon / ChargebackLost / ChargebackExpired / ChargebackAcceptedRefund / ChargebackEvidenceOverdue / ChargebackClawbackReferral / ChargebackClawbackCoupon / ChargebackNetworkFeeRecorded / ChargebackTransactionRecorded / ChargebackWebhookReceived / ChargebackReconciled / ChargebackRateThresholdExceeded).",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names. Empty = subscribe to every Chargeback* event."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (chargebacks or chargebacks-critical)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsChargebackListener(events: ['ChargebackLost'], queue: 'chargebacks-critical', priority: 30)]\nfinal class NotifyFinanceOfChargebackLoss\n{\n    public function __invoke(ChargebackLost $event): void\n    {\n        // Dispatch to finance module for revenue-recognition adjustment.\n    }\n}"
+    },
+    {
+      "name": "AsChargebackEvidenceListener",
+      "class": "Academorix\\Finance\\Chargeback\\Attributes\\AsChargebackEvidenceListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to chargeback_evidence lifecycle events (ChargebackEvidenceSubmitted). Evidence rows are immutable at creation — no update / delete events fire.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": []
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100
+        }
+      ],
+      "example": "#[AsChargebackEvidenceListener(events: ['ChargebackEvidenceSubmitted'], queue: 'chargebacks', priority: 60)]\nfinal class CaptureEvidenceForAnalytics\n{\n    public function __invoke(ChargebackEvidenceSubmitted $event): void\n    {\n        // Fire analytics::track for ChargebackEvidenceSubmitted event.\n    }\n}"
+    }
+  ]
+}

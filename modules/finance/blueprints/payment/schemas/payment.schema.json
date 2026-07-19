@@ -1,0 +1,370 @@
+{
+  "id": "academorix://modules/payment/schemas/payment",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Payment",
+  "description": "The successful capture record. One row per successful money-in event. Carries `tenant_id` only — cascades application/region/organization through the tenant. IMMUTABLE after create — financial records are never mutated, only credit-noted (invoice side) or refunded (refund module side). NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, or `scope_node_id`. NEVER carries card PAN, CVV, magnetic stripe, or PIN (PCI-DSS Level 1).",
+  "type": "object",
+  "x-module": "payment",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "payments",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pay_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Payment\\Models\\Payment",
+    "interface": "Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentInterface",
+    "implements": ["Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToInvoice",
+      "BelongsToPaymentIntent",
+      "BelongsToPaymentMethod",
+      "HasPaymentDisputes",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable"
+    ],
+    "casts": {
+      "provider": "PaymentProvider",
+      "amount_cents": "integer",
+      "amount_refunded_cents": "integer",
+      "amount_disputed_cents": "integer",
+      "fee_cents": "integer",
+      "net_cents": "integer",
+      "captured_at": "datetime",
+      "capture_method": "PaymentIntentCaptureMethod",
+      "payment_method_type": "PaymentMethodType",
+      "payment_method_exp_month": "integer",
+      "payment_method_exp_year": "integer",
+      "ip_address": "string",
+      "risk_score": "integer",
+      "risk_level": "PaymentIntentRiskLevel",
+      "three_ds_result": "PaymentIntentThreeDsResult",
+      "billing_details_snapshot": "array",
+      "provider_metadata": "encrypted:array"
+    },
+    "observers": ["PaymentObserver"],
+    "appends": ["is_fully_refunded", "is_partially_refunded", "has_open_dispute", "captured_this_month"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pay_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "payment_number": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Sequential per tenant. Format: 'PAY-YYYY-NNNNNNNN'. Generated via PostgreSQL advisory lock — required for accounting compliance."
+      },
+      "invoice_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "invoices", "column": "id", "onDelete": "restrict" },
+        "description": "Parent invoice. RESTRICT — invoices carrying payments cannot be hard-deleted until retention expires."
+      },
+      "payment_intent_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "payment_intents", "column": "id", "onDelete": "restrict" },
+        "description": "The succeeded intent that produced this payment. RESTRICT — every Payment row is anchored to its originating intent."
+      },
+      "payment_method_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "payment_methods", "column": "id", "onDelete": "restrict" },
+        "description": "Nullable — some flows (one-time bank transfer, cash-app, invoice-by-mail) create a Payment without a saved PaymentMethod. RESTRICT when set — historical Payments preserve the method reference."
+      },
+      "transaction_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "transactions", "column": "id", "onDelete": "restrict" },
+        "description": "The recording double-entry transaction. NULL between Payment insert + TransactionRecorder completion (same DB transaction — the window is microseconds). RESTRICT — transactions bookkept for a payment cannot be hard-deleted until retention expires."
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: stripe / paddle / adyen / square / paypal / custom_webhook."
+      },
+      "provider_reference_id": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "The provider's own charge/transaction identifier. Stripe: ch_..., Paddle: txn_..., Adyen: pspReference. Used for reconciliation + refund dispatch."
+      },
+      "amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Total amount captured (including tax). In cents (or smallest denomination — JPY has no fractional unit)."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217 3-letter currency code. Frozen at capture time."
+      },
+      "amount_refunded_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Running total of refunded amount. Managed by the refund module — payment module receives events + updates this counter. Must satisfy amount_refunded_cents <= amount_cents."
+      },
+      "amount_disputed_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Running total of disputed amount. Managed by the payment_disputes lifecycle. Can be higher than amount_cents in edge cases (partial disputes + escalation)."
+      },
+      "fee_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "default": 0,
+        "description": "Provider fees debited from us (e.g. Stripe's 2.9% + 30¢). Zero when the provider doesn't debit fees at capture time."
+      },
+      "net_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Computed at insert: amount_cents - fee_cents. Denormalised for query-plan efficiency in aggregation reports."
+      },
+      "captured_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the provider marked the payment as captured. May differ from created_at when the provider reports async."
+      },
+      "capture_method": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'automatic'",
+        "description": "Enum: automatic / manual. automatic = captured at authorization (default). manual = authorization hold captured later (requires payment_manual_capture entitlement, Medium+)."
+      },
+      "payment_method_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: card / bank_debit / bank_transfer / wallet / installment / crypto / cash / check. Card is the most common."
+      },
+      "payment_method_brand": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: visa / mastercard / amex / discover / jcb / unionpay / sepa / ach / apple_pay / google_pay / paypal / venmo / cash_app / other. Nullable for non-card methods (bank_transfer, cash)."
+      },
+      "payment_method_last4": {
+        "type": "string",
+        "length": 4,
+        "nullable": true,
+        "description": "Last 4 digits of the card or bank account. NEVER the full PAN (PCI-DSS). Nullable when the method type doesn't have a natural last4 (cash, some wallets)."
+      },
+      "payment_method_exp_month": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Card expiry month, 1-12. Nullable for non-card methods."
+      },
+      "payment_method_exp_year": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Card expiry year, 4-digit. Nullable for non-card methods."
+      },
+      "ip_address": {
+        "type": "inet",
+        "nullable": true,
+        "description": "Customer's IP at payment time. Nullable for offline captures (mail-in check, cash-at-counter). Used for fraud correlation + regulatory reporting."
+      },
+      "device_fingerprint_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "SHA-256 of the customer's device fingerprint (from Stripe.js / Adyen.js / provider SDK). NEVER raw — the raw fingerprint is PII."
+      },
+      "risk_score": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Provider risk score, 0-100. Nullable — some providers do not report scores. Higher = riskier."
+      },
+      "risk_level": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: low / normal / elevated / highest. Nullable when the provider doesn't report. Fraud module reads for review queues."
+      },
+      "three_ds_result": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: not_attempted / authenticated / rejected / not_supported / bypassed. Nullable for non-card methods."
+      },
+      "three_ds_version": {
+        "type": "string",
+        "length": 8,
+        "nullable": true,
+        "description": "3DS version used: '1.0.2', '2.1.0', '2.2.0'. Nullable when 3DS not attempted."
+      },
+      "receipt_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": true,
+        "description": "Provider-hosted receipt URL. Nullable for providers that don't offer hosted receipts (Adyen)."
+      },
+      "billing_details_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "default": "'{}'::jsonb",
+        "description": "Frozen at Payment.create. Shape: { name, email, phone, billing_address: { line1, line2?, city, region, postal_code, country_code } }. This is the shipping/billing address at the moment of payment — never mutated after capture (would corrupt the audit trail)."
+      },
+      "provider_metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "ENCRYPTED AT REST. Full provider response payload for debugging. May contain provider-specific fields (Stripe outcomes, Adyen additionalData). Redacted from support-tool views unless caller holds platform.payment.pii.view."
+      },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "payment_number"],
+        "unique": true,
+        "name": "payments_tenant_number_unique",
+        "description": "Sequential numbering per tenant — accounting compliance."
+      },
+      { "columns": ["tenant_id", "invoice_id", "captured_at"], "name": "payments_invoice_captured_idx", "description": "For per-invoice payment lookup + aging reports (DESC)." },
+      { "columns": ["tenant_id", "provider", "captured_at"], "name": "payments_provider_captured_idx", "description": "For per-provider aggregation + reconciliation." },
+      { "columns": ["provider_reference_id"], "name": "payments_provider_reference_idx", "description": "For webhook dispatch lookup — the webhook body carries provider_reference_id; we join on it." },
+      { "columns": ["tenant_id", "captured_at"], "name": "payments_tenant_captured_idx", "description": "Recent payments query." },
+      { "columns": ["payment_intent_id"], "unique": true, "name": "payments_intent_unique", "description": "One Payment per succeeded PaymentIntent (defense-in-depth — PaymentObserver already enforces)." }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "payment_number",
+    "invoice_id",
+    "payment_intent_id",
+    "provider",
+    "provider_reference_id",
+    "amount_cents",
+    "currency",
+    "amount_refunded_cents",
+    "amount_disputed_cents",
+    "fee_cents",
+    "net_cents",
+    "captured_at",
+    "capture_method",
+    "payment_method_type",
+    "billing_details_snapshot",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pay_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "payment_number": { "type": "string", "pattern": "^PAY-\\d{4}-\\d{8}$" },
+    "invoice_id": { "type": "string", "pattern": "^ivc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "payment_intent_id": { "type": "string", "pattern": "^pit_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "payment_method_id": { "type": ["string", "null"], "pattern": "^pmt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "transaction_id": { "type": ["string", "null"], "pattern": "^trx_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider": {
+      "type": "string",
+      "enum": ["stripe", "paddle", "adyen", "square", "paypal", "custom_webhook"]
+    },
+    "provider_reference_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "amount_cents": { "type": "integer" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "amount_refunded_cents": { "type": "integer", "minimum": 0 },
+    "amount_disputed_cents": { "type": "integer", "minimum": 0 },
+    "fee_cents": { "type": "integer", "minimum": 0 },
+    "net_cents": { "type": "integer" },
+    "captured_at": { "type": "string", "format": "date-time" },
+    "capture_method": { "type": "string", "enum": ["automatic", "manual"] },
+    "payment_method_type": {
+      "type": "string",
+      "enum": ["card", "bank_debit", "bank_transfer", "wallet", "installment", "crypto", "cash", "check"]
+    },
+    "payment_method_brand": {
+      "type": ["string", "null"],
+      "enum": [null, "visa", "mastercard", "amex", "discover", "jcb", "unionpay", "sepa", "ach", "apple_pay", "google_pay", "paypal", "venmo", "cash_app", "other"]
+    },
+    "payment_method_last4": { "type": ["string", "null"], "pattern": "^\\d{4}$" },
+    "payment_method_exp_month": { "type": ["integer", "null"], "minimum": 1, "maximum": 12 },
+    "payment_method_exp_year": { "type": ["integer", "null"], "minimum": 2000, "maximum": 2100 },
+    "ip_address": { "type": ["string", "null"] },
+    "device_fingerprint_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+    "risk_score": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 },
+    "risk_level": {
+      "type": ["string", "null"],
+      "enum": [null, "low", "normal", "elevated", "highest"]
+    },
+    "three_ds_result": {
+      "type": ["string", "null"],
+      "enum": [null, "not_attempted", "authenticated", "rejected", "not_supported", "bypassed"]
+    },
+    "three_ds_version": {
+      "type": ["string", "null"],
+      "enum": [null, "1.0.2", "2.1.0", "2.2.0"]
+    },
+    "receipt_url": { "type": ["string", "null"], "format": "uri", "maxLength": 512 },
+    "billing_details_snapshot": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "email": { "type": ["string", "null"], "format": "email" },
+        "phone": { "type": ["string", "null"] },
+        "billing_address": {
+          "type": ["object", "null"],
+          "additionalProperties": true,
+          "properties": {
+            "line1": { "type": ["string", "null"] },
+            "line2": { "type": ["string", "null"] },
+            "city": { "type": ["string", "null"] },
+            "region": { "type": ["string", "null"] },
+            "postal_code": { "type": ["string", "null"] },
+            "country_code": { "type": ["string", "null"], "pattern": "^[A-Z]{2}$" }
+          }
+        }
+      }
+    },
+    "provider_metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "IMMUTABLE after create — every field except amount_refunded_cents + amount_disputed_cents + updated_at is frozen. Those two accumulate via refund/dispute events only.",
+    "amount_refunded_cents <= amount_cents — cannot refund more than we captured",
+    "net_cents = amount_cents - fee_cents — computed at insert; never mutated",
+    "payment_intent_id references a PaymentIntent with status='succeeded' — enforced by PaymentObserver.creating",
+    "one Payment per PaymentIntent — unique index on payment_intent_id",
+    "payment_number is unique per tenant + sequential",
+    "billing_details_snapshot is frozen at Payment.create — cannot be mutated after",
+    "state transitions are NOT applicable — Payment has no status field. Refunds live on payment_refunds (refund module); disputes live on payment_disputes.",
+    "hard-deletion is FORBIDDEN — payments retain per financial retention (7y baseline; 10y Enterprise)",
+    "device_fingerprint_hash SHA-256 pattern enforced — raw fingerprints prohibited (PII)",
+    "payment_method_last4 exactly 4 digits — never the full PAN (PCI-DSS Level 1)",
+    "provider_metadata encrypted at rest",
+    "TenantErased cascade is via FK CASCADE, subject to financial-record archival exception (Art. 17 §3)"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/coupon/commands",
+  "$version": 1,
+  "title": "coupon — Artisan commands",
+  "commands": [
+    {
+      "signature": "coupon:list {--tenant=} {--is-active} {--discount-type=} {--issuance-source=} {--include-deleted}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\ListCouponsCommand",
+      "purpose": "Cross-tenant or tenant-scoped coupon view. --is-active filters to active codes. --include-deleted shows soft-deleted rows; default hides them."
+    },
+    {
+      "signature": "coupon:describe {coupon}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\DescribeCouponCommand",
+      "purpose": "Verbose read of one coupon: base fields + discount config + applicability + usage counter + issuance context + redemption summary + audit trail summary. Confidential financial fields print only when the caller has coupons.view-financials permission (checked via CLI --actor flag when running as a specific user)."
+    },
+    {
+      "signature": "coupon:create {tenant} {code} {--name=} {--description=} {--discount-type=percent} {--discount-amount=} {--discount-currency=} {--applicability=any} {--applicable-plan-ids=} {--minimum-order-amount=} {--minimum-order-currency=} {--usage-cap=} {--per-customer-limit=1} {--valid-from=} {--valid-until=} {--stackable} {--issuance-source=manual} {--dry-run}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\CreateCouponCommand",
+      "purpose": "Scriptable coupon creation (test harness + tenant onboarding). --dry-run validates input against every observer rule without persisting. Consumes 1 unit of `coupon_slot` entitlement."
+    },
+    {
+      "signature": "coupon:deactivate {coupon} {--reason=}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\DeactivateCouponCommand",
+      "purpose": "Sets is_active=false. Fires CouponDeactivated with reason. Existing redemptions preserved. Does NOT release the `coupon_slot` entitlement unit — that only releases on delete OR nightly expiry sweep after valid_until passes."
+    },
+    {
+      "signature": "coupon:extend-expiry {coupon} {--valid-until=} {--days=}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\ExtendCouponExpiryCommand",
+      "purpose": "Push valid_until forward. --valid-until sets an absolute new timestamp; --days adds N days to the current valid_until (or NOW() if not set). Refuses when coupon is deactivated OR when the new value is not strictly greater than current valid_until."
+    },
+    {
+      "signature": "coupon:bulk-issue {tenant} {--count=} {--code-template=CAMPAIGN_{RAND8}} {--campaign-name=} {--discount-type=percent} {--discount-amount=} {--discount-currency=} {--applicability=any} {--usage-cap=1} {--per-customer-limit=1} {--valid-from=} {--valid-until=} {--dry-run}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\BulkIssueCouponCommand",
+      "purpose": "Medium+ tier. Batch-create N unique campaign codes for a named marketing campaign. Requires `coupon_bulk_issue` entitlement. Consumes count units of `coupon_slot` — refuses when count > remaining slots. --code-template supports substitutions: {RAND8} (8-char Crockford), {RAND4}, {SEQ} (1..N zero-padded), {CAMPAIGN} (kebab of campaign_name), literal characters."
+    },
+    {
+      "signature": "coupon:list-redemptions {--tenant=} {--coupon=} {--customer=} {--applied-to=} {--reversed} {--from=} {--to=}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\ListRedemptionsCommand",
+      "purpose": "Cross-tenant or tenant-scoped redemption ledger. Filter by coupon, customer, target, reversal state, date range. Confidential financial fields print only when the caller has coupons.view-financials permission."
+    },
+    {
+      "signature": "coupon:reverse-redemption {redemption} {--reason=} {--notes=}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\ReverseRedemptionCommand",
+      "purpose": "Admin manual reversal (correction path — distinct from refund-cascade clawback). Sets reversed_at + decrements coupon.usage_count. Fires CouponRedemptionReversed. Audit-critical (records --reason)."
+    },
+    {
+      "signature": "coupon:report {tenant} {--period-start=} {--period-end=} {--format=csv}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\ReportCouponsCommand",
+      "purpose": "Ad-hoc CLI equivalent of GET /coupons/report. --period-start/--period-end default to last 7 days. --format=csv|json|table. Writes to stdout (redirect to a file) OR to S3 when --to-s3 is set. Dispatches GenerateCouponUsageReportJob synchronously when --format=csv AND period > 30 days (large exports)."
+    },
+    {
+      "signature": "coupon:audit-clawbacks {--tenant=} {--from=} {--to=} {--reason=}",
+      "class": "Academorix\\Finance\\Coupon\\Console\\Commands\\AuditClawbacksCommand",
+      "purpose": "Cross-tenant or tenant-scoped clawback audit trail. Every reversed redemption over the period with clawback_reason + reversed_at + reversed_by_user_id + linked invoice/transaction. Compliance-facing — retained 7 years."
+    }
+  ]
+}

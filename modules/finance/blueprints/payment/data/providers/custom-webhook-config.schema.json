@@ -1,0 +1,99 @@
+{
+  "id": "academorix://modules/payment/data/providers/custom-webhook-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Custom Webhook provider config",
+  "description": "Configuration shape for the generic HMAC-signed webhook provider. Enterprise-only. Escape hatch for tenants running their own payment gateway (Braintree direct, dLocal, PayFast, etc.). Requires PCI-DSS Level 1 attestation from the tenant admin before activation.",
+  "type": "object",
+  "required": ["endpoint_url", "hmac_secret", "supported_currencies", "pci_dss_attested"],
+  "additionalProperties": false,
+  "properties": {
+    "endpoint_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "HTTPS endpoint for outbound payment intents. HTTP is refused (TLS required)."
+    },
+    "hmac_secret": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Shared secret for HMAC-SHA256 signing of outbound intent payloads AND for verifying inbound webhook signatures. 32 chars minimum. Encrypted at rest."
+    },
+    "signature_header": {
+      "type": "string",
+      "default": "X-Payment-Signature",
+      "description": "HTTP header carrying the HMAC signature (outbound + inbound)."
+    },
+    "timestamp_header": {
+      "type": "string",
+      "default": "X-Payment-Timestamp",
+      "description": "HTTP header carrying the signature timestamp (Unix seconds)."
+    },
+    "signature_tolerance_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 3600,
+      "default": 300,
+      "description": "Signature timestamp tolerance window. Prevents replay attacks."
+    },
+    "supported_method_types": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": ["card", "bank_debit", "bank_transfer", "wallet", "installment", "crypto", "cash", "check"]
+      },
+      "description": "Payment method types this caller's endpoint accepts. Non-empty."
+    },
+    "supported_currencies": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^[A-Z]{3}$" },
+      "description": "ISO 4217 currency codes this caller's endpoint accepts. Non-empty."
+    },
+    "supports_3ds2": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the caller's endpoint handles 3DS2 challenge flow. When true, the caller MUST return next_action_type='three_d_secure_redirect' or 'redirect_to_url' in their intent-create response."
+    },
+    "supports_manual_capture": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the caller's endpoint supports authorization holds + delayed capture. When true, capture_method='manual' intents are permitted."
+    },
+    "supports_saved_methods": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the caller's endpoint supports tokenized saved methods (SetupIntent-equivalent). When false, every PaymentIntent must include the full payment details in the create call."
+    },
+    "custom_headers": {
+      "type": ["object", "null"],
+      "description": "Optional additional headers on every outbound dispatch. Useful for auth (Bearer token, API key). Values encrypted at rest.",
+      "patternProperties": {
+        "^X-[A-Za-z0-9-]+$": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "pci_dss_attested": {
+      "type": "boolean",
+      "const": true,
+      "description": "MUST be true. Tenant admin attests that the endpoint is PCI-DSS Level 1 compliant. Refused with PAYMENT_PROVIDER_CONFIG_INVALID if false. Every activation writes an audit row with the attesting user ID + timestamp."
+    },
+    "attesting_user_id": {
+      "type": "string",
+      "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$",
+      "description": "The user ID of the admin who attested to PCI-DSS compliance. Populated by the observer at create time from auth.user."
+    },
+    "attested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the PCI-DSS attestation was signed. Populated by the observer at create time."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

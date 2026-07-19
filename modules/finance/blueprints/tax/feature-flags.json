@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/tax/feature-flags",
+  "$version": 1,
+  "title": "tax — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "tax.calculations",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the calculation path. Off = TaxCalculator no-ops (returns 503 to consumers). Emergency-only — invoice lines will block."
+    },
+    {
+      "key": "tax.rate_sync",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = SyncTaxRatesFromProviderJob does not run. Rates stay at their currently-persisted values. Used during provider outages / migration windows."
+    },
+    {
+      "key": "tax.exemption_verification",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = VerifyTaxExemptionJob does not run. Exemptions stay in pending status until manual verification. Used when the public registry cross-check endpoints are degraded."
+    },
+    {
+      "key": "tax.circuit_breaker",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CircuitBreakerGate always allows. Every failure counts but the breaker never opens. Used to force-through calculations during provider recovery test."
+    },
+    {
+      "key": "tax.reconciliation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileProviderCalculationsJob skips. TaxCalculationDriftDetected will not fire. Used during provider migrations when drift is expected."
+    },
+    {
+      "key": "tax.expiry_warnings",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = NotifyExemptionExpiringJob does not fire. The 60/30/7-day warning cadence stops. Used during compliance module maintenance."
+    },
+    {
+      "key": "tax.taxjar",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch. Off = TaxJar calculations skip (fail-fast with TAX_CALCULATION_PROVIDER_FAILED). Used when TaxJar is announced-degraded."
+    },
+    {
+      "key": "tax.avalara",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch."
+    },
+    {
+      "key": "tax.stripe_tax",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch."
+    },
+    {
+      "key": "tax.native_calculator",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch. Off = the built-in NativeCalculator returns TAX_CALCULATION_PROVIDER_FAILED. Only flip off during native-calculator code path migrations."
+    },
+    {
+      "key": "tax.custom_webhook",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Per-provider kill switch."
+    },
+    {
+      "key": "tax.encrypt_certificate_url",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = tax_exemptions.certificate_document_url stored in plaintext. NEVER flip off in production (compliance violation — certificate URLs are RESTRICTED per data-classes.json)."
+    },
+    {
+      "key": "tax.encrypt_provider_config",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = tax_provider_configs.config stored in plaintext. NEVER flip off in production (compliance violation — credentials in plaintext)."
+    }
+  ]
+}

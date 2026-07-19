@@ -1,0 +1,129 @@
+{
+  "id": "monitoring.resources.monitoring-dashboard.dashboard",
+  "title": "Monitoring dashboard",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "monitoring-dashboard", "action": "view" },
+  "requiresPermission": "monitoring.dashboard.view",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    { "name": "dashboard", "kind": "http.get", "url": "/api/v1/monitoring/dashboard", "unwrap": "data", "refetchInterval": 60000 }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Monitoring dashboard" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "System health at a glance." } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Healthy" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold text-success" }, "bindings": { "children": { "$ref": "dashboard.health_checks_summary.healthy_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Degraded" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold text-warning" }, "bindings": { "children": { "$ref": "dashboard.health_checks_summary.degraded_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Unhealthy" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold text-danger" }, "bindings": { "children": { "$ref": "dashboard.health_checks_summary.unhealthy_count" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Open incidents" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold" }, "bindings": { "children": { "$ref": "dashboard.open_incidents_count" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Active alerts by severity" } },
+            {
+              "kind": "BarChart",
+              "bindings": {
+                "data": {
+                  "$expr": "[{severity: 'p1', count: dashboard.active_alerts_by_severity.p1}, {severity: 'p2', count: dashboard.active_alerts_by_severity.p2}, {severity: 'p3', count: dashboard.active_alerts_by_severity.p3}, {severity: 'p4', count: dashboard.active_alerts_by_severity.p4}]"
+                },
+                "xField": "severity",
+                "yField": "count"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Top failing checks" } },
+                {
+                  "kind": "DataGrid",
+                  "bindings": { "items": { "$ref": "dashboard.top_failing_checks" } },
+                  "props": {
+                    "columns": [
+                      { "field": "name", "header": "Name" },
+                      { "field": "consecutive_failure_count", "header": "Consecutive failures" }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Provider health" } },
+                {
+                  "kind": "Grid",
+                  "props": { "className": "grid grid-cols-1 gap-2" },
+                  "bindings": { "items": { "$ref": "dashboard.provider_health" } },
+                  "itemRenderer": {
+                    "kind": "View",
+                    "props": { "className": "flex items-center justify-between p-2 border-b" },
+                    "children": [
+                      { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.provider" } } },
+                      { "kind": "Widget", "widget": "monitoring.provider-status-chip", "bindings": { "provider_config": { "$ref": "row" } } }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

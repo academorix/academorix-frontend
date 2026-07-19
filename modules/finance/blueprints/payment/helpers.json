@@ -1,0 +1,76 @@
+{
+  "id": "academorix://modules/payment/helpers",
+  "$version": 1,
+  "title": "payment — helper functions",
+  "description": "Ergonomic helpers for creating payment intents, tokenizing methods, and reading provider capabilities. All helpers are thin wrappers around bound services — never business logic. Callers who need the wire-shape of intents use the PaymentIntentOrchestrator + PaymentIntentData path; helpers here are for imperative flows (support tools, tests, ad-hoc scripts).",
+  "namespace": "Academorix\\Finance\\Payment\\Support",
+  "helpers": [
+    {
+      "signature": "create_payment_intent(Invoice $invoice, ?string $providerSlug = null, ?PaymentMethod $method = null, string $captureMethod = 'automatic'): PaymentIntent",
+      "purpose": "Imperative wrapper for PaymentIntentOrchestrator::createIntent. Uses the tenant's default provider when $providerSlug is null + the customer's default method when $method is null. Returns the created PaymentIntent (with client_secret populated for customer-side SDK confirmation).",
+      "delegates_to": "PaymentIntentOrchestrator::createIntent()"
+    },
+    {
+      "signature": "resolve_provider(PaymentProvider $slug, PaymentProviderConfig $config): IPaymentProvider",
+      "purpose": "Returns the driver instance for a provider config row. Delegates to PaymentProviderManager::forConfig() which reads $config->provider + $config->config and calls the appropriate createXxxDriver factory. Reserved for advanced consumers — typical flows go through PaymentIntentOrchestrator.",
+      "delegates_to": "PaymentProviderManager::forConfig()"
+    },
+    {
+      "signature": "eligible_providers_for(Tenant $tenant, string $currency, ?string $countryCode = null): Collection<PaymentProviderConfig>",
+      "purpose": "Returns the active provider_configs for (tenant, currency, country_code) — filters by is_active=true + supports the currency + supports the region (per provider capability matrix). Used by PaymentIntentOrchestrator to pick a provider when the caller doesn't specify.",
+      "delegates_to": "PaymentProviderConfigRepository::activeForTenant()"
+    },
+    {
+      "signature": "requires_3ds2(int $amountCents, string $currency, ?string $cardBrand = null, ?string $issuingCountry = null): bool",
+      "purpose": "Wrapper over ThreeDsGate::requires. Reads tenant 3DS2 threshold + PSD2 regime + force_3ds2 entitlement + high-risk region config. Returns true when the transaction requires 3DS2 challenge. Used by PaymentIntentOrchestrator to set next_action_type at intent create.",
+      "delegates_to": "ThreeDsGate::requires()"
+    },
+    {
+      "signature": "hash_device_fingerprint(string $rawFingerprint): string",
+      "purpose": "Hashes a raw device fingerprint (from Stripe.js / Adyen.js / provider SDK) with SHA-256. Returns 64-character lowercase hex. NEVER store the raw fingerprint — it's PII.",
+      "delegates_to": "PiiHasher::sha256()"
+    },
+    {
+      "signature": "hash_card_fingerprint(string $providerFingerprint): string",
+      "purpose": "Hashes a provider's card fingerprint (returned by Stripe as fingerprint, by Adyen as fingerprint, etc.) with SHA-256. Used by PaymentMethodObserver to deduplicate saved methods per customer.",
+      "delegates_to": "PiiHasher::sha256()"
+    },
+    {
+      "signature": "encrypt_provider_reference(string $providerReference): string",
+      "purpose": "Encrypts a provider reference (pm_..., pi_..., etc.) at rest via TokenEncryptor (AES-256-GCM). Returns encrypted ciphertext with key_version prefix.",
+      "delegates_to": "TokenEncryptor::encryptToken()"
+    },
+    {
+      "signature": "decrypt_provider_reference(string $encrypted): string",
+      "purpose": "Decrypts a provider reference. Reads key_version prefix to select the correct decryption key (supports rotation). Used by the driver factory only — never in general application code.",
+      "delegates_to": "TokenEncryptor::decryptToken()"
+    },
+    {
+      "signature": "verify_webhook_signature(PaymentProvider $slug, Request $request, string $webhookSecret): bool",
+      "purpose": "Verifies HMAC-SHA256 (or provider-specific scheme) signature over the webhook body + timestamp. Delegates to per-provider verifiers. Used by the payment.webhook_verify middleware. Returns true only when signature verifies + timestamp within tolerance window.",
+      "delegates_to": "PaymentWebhookVerifier::verify()"
+    },
+    {
+      "signature": "compute_payment_fee(int $amountCents, string $currency, PaymentProvider $provider, string $methodType): int",
+      "purpose": "Computes the provider fee for a given payment. Reads per-provider fee schedule from data/provider-capability-matrix.json (fees_by_method_type). Used at Payment.create time to populate fee_cents. Returns fee in cents.",
+      "delegates_to": "PaymentFeeCalculator::compute()"
+    },
+    {
+      "signature": "is_card_expired(int $expMonth, int $expYear): bool",
+      "purpose": "Returns true when the card is expired (exp_year < current_year, OR exp_year == current_year AND exp_month < current_month). Used by PaymentMethod.is_expired accessor + SyncPaymentMethodExpiryJob.",
+      "delegates_to": "CardExpiryChecker::isExpired()"
+    },
+    {
+      "signature": "collect_dispute_evidence(PaymentDispute $dispute): array",
+      "purpose": "Auto-collects supporting evidence for a dispute from other modules. Returns an evidence array shaped as { customer_signature?, receipt?, service_documentation?, product_description?, refund_policy?, communication_log?, uncategorized_text? }. Used by CollectDisputeEvidenceJob.",
+      "delegates_to": "DisputeEvidenceCollector::collect()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services. Keeps the boundary clean.",
+    "The create_payment_intent helper is intentionally the primary imperative capture path. For most use cases (auto-triggered by invoice finalization), the CreatePaymentIntentOnInvoiceFinalized hook path is preferred over calling this directly.",
+    "The encrypt_provider_reference / decrypt_provider_reference helpers are intentionally NOT called from general application code — the observer chain handles encryption/decryption automatically via the Eloquent 'encrypted:string' cast. Direct calls are reserved for driver factories reading credentials at runtime + support tools.",
+    "The is_card_expired helper reads the current UTC date/time — timezone-sensitive comparisons should not use this helper (there is no 'card expired in EST' — expiry is absolute)."
+  ]
+}

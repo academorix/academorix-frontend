@@ -1,0 +1,97 @@
+{
+  "$version": 1,
+  "title": "Coupon code format templates",
+  "description": "Every valid code template + substitution rules + entropy characteristics + typical use case. CodeGenerator::generate() reads this catalogue to resolve the code template used by POST /coupons/bulk-issue + admin manual create.",
+  "substitutions": {
+    "{RAND8}": {
+      "description": "8-character random Crockford Base32 (24-Z excluding I/L/O/U). ~40 bits entropy.",
+      "regex": "^[A-Z0-9]{8}$",
+      "entropy_bits": 40,
+      "collision_rate_per_tenant": "~1 in 1T"
+    },
+    "{RAND4}": {
+      "description": "4-character random Crockford Base32. ~20 bits entropy — use for short-cycle campaign codes only.",
+      "regex": "^[A-Z0-9]{4}$",
+      "entropy_bits": 20,
+      "collision_rate_per_tenant": "~1 in 1M — retry loop handles collisions"
+    },
+    "{RAND16}": {
+      "description": "16-character random Crockford Base32. ~80 bits entropy — use for high-value opaque codes.",
+      "regex": "^[A-Z0-9]{16}$",
+      "entropy_bits": 80,
+      "collision_rate_per_tenant": "~1 in 10^24 — effectively unique"
+    },
+    "{SEQ}": {
+      "description": "Sequential integer, zero-padded to fit count width (SEQ=001 for count<=999, SEQ=0001 for count<=9999, etc.).",
+      "regex": "^[0-9]+$",
+      "entropy_bits": null,
+      "collision_rate_per_tenant": "0 — sequential is guaranteed unique within a bulk-issue call"
+    },
+    "{CAMPAIGN}": {
+      "description": "Kebab-cased uppercase version of campaign_name (SUMMER-2026 -> SUMMER2026). Refuses when campaign_name is unset.",
+      "regex": "^[A-Z0-9-]+$",
+      "entropy_bits": null,
+      "collision_rate_per_tenant": "N/A — deterministic"
+    },
+    "{TENANT_SLUG}": {
+      "description": "Uppercase kebab-cased tenant slug. Rarely useful — most coupons don't reveal the tenant identity in the code.",
+      "regex": "^[A-Z0-9-]+$",
+      "entropy_bits": null,
+      "collision_rate_per_tenant": "N/A"
+    }
+  },
+  "templates": [
+    {
+      "template": "{RAND8}",
+      "name": "Random 8-char",
+      "example": "A3B7K9M2",
+      "typical_use_case": "Opaque single-use codes distributed via email or SMS. High entropy — hard to guess.",
+      "recommended_usage_cap": "1 (single-use per code)",
+      "recommended_per_customer_limit": 1
+    },
+    {
+      "template": "{CAMPAIGN}",
+      "name": "Campaign-only",
+      "example": "SUMMER2026",
+      "typical_use_case": "Public campaign code — shared broadly. Requires high usage_cap OR unlimited. NOT recommended for high-value discounts (easy to enumerate/share).",
+      "recommended_usage_cap": "high or null (unlimited)",
+      "recommended_per_customer_limit": 1
+    },
+    {
+      "template": "{CAMPAIGN}_{RAND8}",
+      "name": "Campaign + random",
+      "example": "SUMMER2026_A3B7K9M2",
+      "typical_use_case": "Per-recipient unique codes for a named campaign. Combines campaign attribution with per-recipient uniqueness — the marketing lane can group by campaign_name while the code enforces single-use.",
+      "recommended_usage_cap": "1",
+      "recommended_per_customer_limit": 1
+    },
+    {
+      "template": "{CAMPAIGN}_{SEQ}",
+      "name": "Campaign + sequence",
+      "example": "SUMMER2026_001",
+      "typical_use_case": "Sequential campaign codes for controlled distribution (physical mailings, printed vouchers). Predictable — do NOT use for online-only campaigns where enumeration is a concern.",
+      "recommended_usage_cap": "1",
+      "recommended_per_customer_limit": 1
+    },
+    {
+      "template": "REF_{RAND8}",
+      "name": "Referral coupon",
+      "example": "REF_A3B7K9M2",
+      "typical_use_case": "Reserved for referrals-issued coupons (IssueCouponOnReferralRewardVested hook). The 'REF_' prefix identifies the coupon as referral-derived at a glance; issuance_source='referral' on the row is the authoritative discriminator."
+    },
+    {
+      "template": "{RAND16}",
+      "name": "Random 16-char (high value)",
+      "example": "A3B7K9M2X8Y5N4Q7",
+      "typical_use_case": "High-value single-use codes (e.g. $500 credit for a corporate partner). Effectively-unique + resistant to enumeration.",
+      "recommended_usage_cap": "1",
+      "recommended_per_customer_limit": 1
+    }
+  ],
+  "notes": [
+    "Crockford Base32 alphabet is used because it excludes visually-ambiguous characters (I / L / O / U). Codes are readable + typeable + look-alike-resistant.",
+    "The collision_retry_max config (default 5) governs how many times CodeGenerator retries on a unique-index collision. With {RAND8} entropy on per-tenant scope, retries are rare.",
+    "For high-value codes ({RAND16}) the retry is effectively never triggered — collision probability approaches 0.",
+    "Sequential codes ({SEQ}) do NOT retry because they are guaranteed unique within a bulk-issue transaction. Sequential collisions across bulk-issue calls are impossible because the sequence resets per call."
+  ]
+}

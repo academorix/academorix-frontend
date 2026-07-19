@@ -1,0 +1,345 @@
+{
+  "$version": 1,
+  "title": "Chargeback reason code catalogue",
+  "description": "Every supported reason code across every network + its canonical category + human-readable description + dispute time limits. The valid_reason_code rule reads this catalogue. RefundObserver + ChargebackObserver both use it to freeze reason_category + reason_description at chargeback creation.",
+  "reasons": [
+    {
+      "network": "visa",
+      "reason_code": "10.1",
+      "reason_category": "fraud",
+      "display_name": "Visa 10.1 — EMV Liability Shift Counterfeit Fraud",
+      "description": "Card-present transaction where a counterfeit chip card was used without EMV. Merchant liable per EMV liability shift.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "10.2",
+      "reason_category": "fraud",
+      "display_name": "Visa 10.2 — EMV Liability Shift Non-Counterfeit Fraud",
+      "description": "Card-present transaction with a lost/stolen chip card where EMV was not used. Merchant liable per EMV liability shift.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "10.3",
+      "reason_category": "fraud",
+      "display_name": "Visa 10.3 — Other Fraud – Card-Present Environment",
+      "description": "Card-present fraud that doesn't fit other codes. Rare.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "10.4",
+      "reason_category": "fraud",
+      "display_name": "Visa 10.4 — Other Fraud – Card-Absent Environment",
+      "description": "Cardholder claims a card-absent transaction was not authorized by them. Most common online-fraud chargeback reason. CE3.0-eligible when merchant has prior legitimate purchase history from same customer.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "10.5",
+      "reason_category": "fraud",
+      "display_name": "Visa 10.5 — Visa Fraud Monitoring Program (VFMP)",
+      "description": "Fraud identified via Visa's fraud monitoring program. Merchant enrolled in VFMP.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "11.1",
+      "reason_category": "authorization",
+      "display_name": "Visa 11.1 — Card Recovery Bulletin",
+      "description": "Transaction processed despite the card being flagged for recovery.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "11.2",
+      "reason_category": "authorization",
+      "display_name": "Visa 11.2 — Declined Authorization",
+      "description": "Transaction was declined by the issuer but processed anyway. Merchant liable.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "11.3",
+      "reason_category": "authorization",
+      "display_name": "Visa 11.3 — No Authorization",
+      "description": "Transaction processed without obtaining authorization.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "12.1",
+      "reason_category": "processing_errors",
+      "display_name": "Visa 12.1 — Late Presentment",
+      "description": "Transaction presented outside the authorized time window (typically 30 days for card-present, 180 days for card-absent).",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "12.2",
+      "reason_category": "processing_errors",
+      "display_name": "Visa 12.2 — Incorrect Transaction Code",
+      "description": "Wrong transaction type processed.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "12.3",
+      "reason_category": "processing_errors",
+      "display_name": "Visa 12.3 — Incorrect Currency",
+      "description": "Transaction processed in wrong currency.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "12.4",
+      "reason_category": "processing_errors",
+      "display_name": "Visa 12.4 — Incorrect Account Number",
+      "description": "Transaction posted to wrong account number.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "12.5",
+      "reason_category": "processing_errors",
+      "display_name": "Visa 12.5 — Incorrect Amount",
+      "description": "Transaction amount does not match the authorized amount.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "12.6.1",
+      "reason_category": "processing_errors",
+      "display_name": "Visa 12.6.1 — Duplicate Processing",
+      "description": "Same transaction posted multiple times.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "12.6.2",
+      "reason_category": "processing_errors",
+      "display_name": "Visa 12.6.2 — Paid by Other Means",
+      "description": "Cardholder paid for the same goods/services by another method.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "12.7",
+      "reason_category": "processing_errors",
+      "display_name": "Visa 12.7 — Invalid Data",
+      "description": "Transaction data was invalid or missing required fields.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.1",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.1 — Merchandise/Services Not Received",
+      "description": "Cardholder claims they didn't receive the goods/services. Common for physical goods; can apply to services when service didn't occur.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.2",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.2 — Cancelled Recurring Transaction",
+      "description": "Cardholder claims they cancelled a recurring transaction but was charged anyway. Common for subscription disputes.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.3",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.3 — Not as Described or Defective Merchandise/Services",
+      "description": "Cardholder claims the goods/services differed materially from what was advertised.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.4",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.4 — Counterfeit Merchandise",
+      "description": "Cardholder claims the goods received were counterfeit.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.5",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.5 — Misrepresentation",
+      "description": "Cardholder claims the transaction was misrepresented to them.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.6",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.6 — Credit Not Processed",
+      "description": "Merchant issued a credit that was not processed by the cardholder's bank.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.7",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.7 — Cancelled Merchandise/Services",
+      "description": "Cardholder cancelled the goods/services but merchant did not refund.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.8",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.8 — Original Credit Transaction Not Accepted",
+      "description": "Original credit transaction refused by the cardholder's bank.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "visa",
+      "reason_code": "13.9",
+      "reason_category": "consumer_disputes",
+      "display_name": "Visa 13.9 — Non-Receipt of Cash or Load Transaction Value",
+      "description": "ATM / prepaid card load didn't complete but was charged.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "mastercard",
+      "reason_code": "4837",
+      "reason_category": "fraud",
+      "display_name": "Mastercard 4837 — No Cardholder Authorization",
+      "description": "Cardholder claims the transaction was not authorized. Most common online-fraud chargeback reason for Mastercard.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "mastercard",
+      "reason_code": "4870",
+      "reason_category": "fraud",
+      "display_name": "Mastercard 4870 — Chip Liability Shift",
+      "description": "Card-present chip transaction where merchant didn't use EMV. Similar to Visa 10.1.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "mastercard",
+      "reason_code": "4863",
+      "reason_category": "fraud",
+      "display_name": "Mastercard 4863 — Cardholder Does Not Recognize (Potential Fraud)",
+      "description": "Cardholder doesn't recognize the transaction; potentially unauthorized use.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "mastercard",
+      "reason_code": "4834",
+      "reason_category": "processing_errors",
+      "display_name": "Mastercard 4834 — Duplicate Processing",
+      "description": "Same transaction posted multiple times. Similar to Visa 12.6.1.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "mastercard",
+      "reason_code": "4841",
+      "reason_category": "consumer_disputes",
+      "display_name": "Mastercard 4841 — Cancelled Recurring Transaction",
+      "description": "Cardholder cancelled recurring; charged anyway.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "mastercard",
+      "reason_code": "4842",
+      "reason_category": "processing_errors",
+      "display_name": "Mastercard 4842 — Late Presentment",
+      "description": "Transaction presented outside the authorized time window.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "mastercard",
+      "reason_code": "4853",
+      "reason_category": "consumer_disputes",
+      "display_name": "Mastercard 4853 — Cardholder Dispute of Goods or Services",
+      "description": "Broad consumer dispute — goods/services not received, defective, not as described, cancelled.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "mastercard",
+      "reason_code": "4855",
+      "reason_category": "consumer_disputes",
+      "display_name": "Mastercard 4855 — Goods or Services Not Provided",
+      "description": "Cardholder claims goods/services were not provided.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "amex",
+      "reason_code": "F14",
+      "reason_category": "fraud",
+      "display_name": "Amex F14 — Missing Signature",
+      "description": "Card-present transaction without required signature.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "amex",
+      "reason_code": "F24",
+      "reason_category": "fraud",
+      "display_name": "Amex F24 — No Cardmember Authorization",
+      "description": "Cardholder claims the transaction was not authorized. Most common online-fraud Amex chargeback.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "amex",
+      "reason_code": "F29",
+      "reason_category": "fraud",
+      "display_name": "Amex F29 — Card Not Present",
+      "description": "Card-absent transaction dispute where cardholder claims non-authorization.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "amex",
+      "reason_code": "P01",
+      "reason_category": "processing_errors",
+      "display_name": "Amex P01 — Unassigned Card Number",
+      "description": "Transaction processed against an unassigned card number.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "amex",
+      "reason_code": "P05",
+      "reason_category": "processing_errors",
+      "display_name": "Amex P05 — Incorrect Charge Amount",
+      "description": "Transaction amount does not match the authorized amount.",
+      "dispute_time_limit_days": 120
+    },
+    {
+      "network": "discover",
+      "reason_code": "4842",
+      "reason_category": "processing_errors",
+      "display_name": "Discover 4842 — Late Presentment",
+      "description": "Transaction presented outside the authorized time window."
+    },
+    {
+      "network": "discover",
+      "reason_code": "4855",
+      "reason_category": "consumer_disputes",
+      "display_name": "Discover 4855 — Goods or Services Not Provided",
+      "description": "Cardholder claims goods/services were not provided."
+    },
+    {
+      "network": "jcb",
+      "reason_code": "JCB.30",
+      "reason_category": "fraud",
+      "display_name": "JCB 30 — No Cardholder Authorization",
+      "description": "Similar to Visa 10.4 / Mastercard 4837."
+    },
+    {
+      "network": "unionpay",
+      "reason_code": "UPI.CS1",
+      "reason_category": "fraud",
+      "display_name": "UnionPay CS1 — No Cardholder Authorization",
+      "description": "Similar to Visa 10.4 / Mastercard 4837."
+    }
+  ],
+  "notes": [
+    "dispute_time_limit_days is the CARDHOLDER's time window to file the dispute (from transaction date). Distinct from evidence_deadline_days (merchant's window to respond). Both are informational — the provider webhook communicates the actual evidence_due_by.",
+    "reason_category is the CANONICAL grouping (fraud / authorization / processing_errors / consumer_disputes / card_recovery). Reason_code + network are the source of truth; reason_category is derived + frozen.",
+    "The catalogue is not exhaustive — some obscure reason codes may fall under 'other' at chargeback creation. Reviewers may extend when new codes appear frequently.",
+    "Reason codes evolve — networks update them periodically. This catalogue is versioned via $version + should be reviewed annually against network dispute-guide publications."
+  ]
+}

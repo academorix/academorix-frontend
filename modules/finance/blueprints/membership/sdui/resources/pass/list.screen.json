@@ -1,0 +1,138 @@
+{
+  "id": "membership.resources.pass.list",
+  "title": "Passes",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/passes",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "membership", "entity": "pass", "action": "list" },
+  "requiresPermission": "passes.viewAny",
+  "dataSources": [
+    { "name": "passes", "kind": "http.get", "url": "/api/v1/passes", "unwrap": "data", "queryFromFilters": true }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Passes" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Per-session admission credits. Consumed at session check-in." } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "available", "label": "Available" },
+                { "id": "consumed", "label": "Consumed" },
+                { "id": "expired", "label": "Expired" },
+                { "id": "refunded", "label": "Refunded" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Type", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "standard", "label": "Standard" },
+                { "id": "trial", "label": "Trial" },
+                { "id": "bonus", "label": "Bonus" },
+                { "id": "carryover", "label": "Carryover" },
+                { "id": "event", "label": "Event" },
+                { "id": "promotional", "label": "Promotional" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "pass_type", "valueExpr": "$selectedKey" } }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Passes table" },
+          "bindings": { "rows": { "$ref": "passes" }, "isLoading": { "$ref": "passes.isLoading" } },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "ticket", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No passes" } }
+            ]
+          },
+          "columns": [
+            {
+              "key": "membership",
+              "label": "Membership",
+              "renderer": {
+                "kind": "Link",
+                "propsExpr": "{ hrefExpr: '/tenant/memberships/' + row.membership_id }",
+                "children": [{ "kind": "Text", "bindings": { "children": { "$ref": "row.membership.athlete_display_name" } } }]
+              }
+            },
+            {
+              "key": "pass_type",
+              "label": "Type",
+              "renderer": {
+                "kind": "Chip",
+                "propsExpr": "{ size: 'sm', variant: row.pass_type === 'promotional' ? 'info' : row.pass_type === 'bonus' ? 'success' : row.pass_type === 'trial' ? 'warning' : 'neutral' }",
+                "children": [{ "kind": "Text", "propsExpr": "{ children: row.pass_type }" }]
+              }
+            },
+            {
+              "key": "valid",
+              "label": "Valid",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "tabular-nums text-sm" },
+                "bindings": { "childrenExpr": "$formatDate(row.valid_from, 'D MMM') + ' → ' + $formatDate(row.valid_until, 'D MMM YYYY')" }
+              }
+            },
+            {
+              "key": "consumed_at",
+              "label": "Consumed",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": {
+                  "childrenExpr": "row.consumed_at ? $formatDate(row.consumed_at, 'D MMM HH:mm') : (row.refunded_at ? 'Refunded ' + $formatDate(row.refunded_at, 'D MMM') : '—')"
+                }
+              }
+            },
+            {
+              "key": "session",
+              "label": "Session",
+              "renderer": {
+                "kind": "Link",
+                "propsExpr": "{ hrefExpr: '/tenant/sessions/' + row.consumed_by_session_id }",
+                "bindings": { "hidden": { "$expr": "!row.consumed_by_session_id" } },
+                "children": [{ "kind": "Text", "props": { "className": "text-sm" }, "bindings": { "children": { "$ref": "row.consumed_by_session.name" } } }]
+              }
+            },
+            {
+              "key": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Chip",
+                "propsExpr": "{ size: 'sm', variant: row.consumed_at && !row.refunded_at ? 'success' : row.refunded_at ? 'info' : (!row.consumed_at && $now() < row.valid_until) ? 'success' : 'neutral' }",
+                "children": [{ "kind": "Text", "propsExpr": "{ children: row.consumed_at && !row.refunded_at ? 'Consumed' : row.refunded_at ? 'Refunded' : (!row.consumed_at && $now() < row.valid_until) ? 'Available' : 'Expired' }" }]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

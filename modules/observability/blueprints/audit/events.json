@@ -1,0 +1,119 @@
+{
+  "id": "academorix://modules/audit/events",
+  "$version": 1,
+  "title": "audit — published events",
+  "description": "6 published events covering the audit-row insert lifecycle (AuditRecorded), retention-policy CRUD, retention-override expiry, purge execution, and export request. All events dispatched afterCommit so a rolled-back transaction does not leak signals to listeners. AuditRecorded is DELIBERATELY narrow — it carries only the audit_id + minimal metadata so downstream listeners must re-read the audit row if they need diff details (prevents leaking PII into event queues).",
+  "namespace": "Academorix\\Observability\\Audit\\Events",
+  "dispatchMode": "afterCommit",
+  "events": [
+    {
+      "name": "AuditRecorded",
+      "class": "Academorix\\Observability\\Audit\\Events\\AuditRecorded",
+      "trigger": "AuditObserver.created — vendor `AuditableObserver` wrote an `audits` row, AuditObserver validated it, event fires afterCommit. Subscribed for downstream compliance signals ONLY; NEVER used to mutate audit data. Payload is intentionally narrow — no old_values/new_values, no field-level diff details — so consumers who need those details must query the audit row via AuditRepository. This prevents PII from leaking into the event queue's serialized payloads.",
+      "queue": "audit",
+      "consumers": [
+        "compliance::PublishComplianceMetricsListener — increments `academorix.compliance.audit.records_total` counter",
+        "monitoring::EmitAuditFireRateListener — feeds an ops signal for detecting unusual audit-fire spikes (potential data-mutation storm)",
+        "activity::CorrelateAuditToActivityListener (planned Wave 6) — some domain mutations correlate an audit row to an activity_log row; the listener adds `related_audit_id` on the corresponding activity row"
+      ],
+      "payload": {
+        "audit_id": "bigint (vendor default PK)",
+        "tenant_id": "ULID (ten_)",
+        "application_id": "ULID (app_) | null",
+        "event": "string (created / updated / deleted / restored / custom event)",
+        "auditable_type": "string (FQCN)",
+        "auditable_id": "string (subject PK)",
+        "user_type": "string (FQCN) | null",
+        "user_id": "bigint | ULID | null",
+        "created_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "AuditRetentionPolicyCreated",
+      "class": "Academorix\\Observability\\Audit\\Events\\AuditRetentionPolicyCreated",
+      "trigger": "AuditRetentionPolicyObserver.created — a new tenant-scoped retention override was persisted.",
+      "queue": "audit",
+      "consumers": [
+        "audit::DispatchRetentionPolicyExtendedNotificationListener — fires AuditRetentionPolicyExtendedNotification to the tenant's compliance officer",
+        "audit::InvalidateRetentionCacheListener — invalidates the per-tenant retention cache so PurgeExpiredAuditsJob picks up the new cutoff on its next run"
+      ],
+      "payload": {
+        "audit_retention_policy_id": "ULID (arp_)",
+        "tenant_id": "ULID",
+        "retention_years": "int",
+        "override_reason": "string",
+        "override_starts_at": "ISO 8601",
+        "override_ends_at": "ISO 8601 | null"
+      }
+    },
+    {
+      "name": "AuditRetentionPolicyUpdated",
+      "class": "Academorix\\Observability\\Audit\\Events\\AuditRetentionPolicyUpdated",
+      "trigger": "AuditRetentionPolicyObserver.updated — an existing retention override was mutated (retention_years, override_ends_at, or override_reason). Rate-limited to a 1/min per-tenant cap to prevent noisy churn.",
+      "queue": "audit",
+      "consumers": [
+        "audit::InvalidateRetentionCacheListener — same as above; the cache eviction is unconditional on Created OR Updated"
+      ],
+      "payload": {
+        "audit_retention_policy_id": "ULID",
+        "tenant_id": "ULID",
+        "changes": "array<string> (list of changed columns)"
+      }
+    },
+    {
+      "name": "AuditRetentionExtensionExpired",
+      "class": "Academorix\\Observability\\Audit\\Events\\AuditRetentionExtensionExpired",
+      "trigger": "ExpireRetentionOverridesJob detected override_ends_at <= now() on an active policy. Retention_years is RESET to config.audit.retention.default_years (7) and the policy is soft-deleted (deleted_at = override_ends_at).",
+      "queue": "audit",
+      "consumers": [
+        "audit::DispatchExtensionExpiredNotificationListener — informs the compliance officer that the extension window closed and the tenant is back on the default 7y retention",
+        "audit::InvalidateRetentionCacheListener"
+      ],
+      "payload": {
+        "audit_retention_policy_id": "ULID",
+        "tenant_id": "ULID",
+        "prior_retention_years": "int",
+        "new_retention_years": "int (= default_years)",
+        "override_reason": "string"
+      }
+    },
+    {
+      "name": "AuditPurgeExecuted",
+      "class": "Academorix\\Observability\\Audit\\Events\\AuditPurgeExecuted",
+      "trigger": "PurgeExpiredAuditsJob completed a per-tenant purge cycle. Fires ONCE per tenant per nightly run, regardless of row count (fires even when row_count=0 so ops can see the job ran).",
+      "queue": "audit",
+      "consumers": [
+        "monitoring::EmitPurgeMetricsListener — increments `academorix.audit.purge.total` + `academorix.audit.rows_purged.total` counters",
+        "audit::WritePurgeMetaAuditListener — writes a summary audit row via the vendor Auditable trait so the trail records itself being purged (config.audit.compliance.write_purge_meta_audit=true by default)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "cutoff_at": "ISO 8601 (the created_at cutoff used)",
+        "row_count": "int",
+        "hot_row_count": "int (rows deleted from primary table)",
+        "cold_row_count": "int (rows deleted from S3 archive)",
+        "duration_ms": "int",
+        "dry_run": "bool (true when --dry-run flag on the console command)"
+      }
+    },
+    {
+      "name": "AuditExportRequested",
+      "class": "Academorix\\Observability\\Audit\\Events\\AuditExportRequested",
+      "trigger": "POST /api/v1/audits/export OR /api/v1/platform/audits/export accepted (returns 202 + audit_export_id). Fires immediately + kicks off the async export job.",
+      "queue": "audit",
+      "consumers": [
+        "audit::DispatchAuditExportJobListener — dispatches the async job that writes the jsonl.gz file to S3 + generates the signed URL",
+        "compliance::LogRegulatorExportRequestListener (Wave 6) — writes a compliance-audit row referencing the export (required by CCPA §1798.185 for regulator-initiated requests)"
+      ],
+      "payload": {
+        "audit_export_id": "ULID (aex_) — planned but not yet allocated; short-term uses the primary key",
+        "tenant_id": "ULID",
+        "requested_by_user_id": "ULID | null (null for platform-admin exports)",
+        "requested_by_platform_admin_id": "bigint | null (non-null for platform-admin exports)",
+        "export_kind": "'dsar' | 'regulator' | 'legal_hold'",
+        "filters": "jsonb (auditable_type, auditable_id, user_id, since, until — the query filters)",
+        "estimated_row_count": "int"
+      }
+    }
+  ]
+}

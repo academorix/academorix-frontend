@@ -1,0 +1,171 @@
+{
+  "id": "academorix://modules/tax/schemas/tax-rate",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TaxRate",
+  "description": "Per-jurisdiction rate row with effective-range time bounds. Carries `tenant_id` + `tax_jurisdiction_id`. Supports fiscal-year rate changes via effective_from/effective_to splits. NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "tax",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "tax_rates",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "txr_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Tax\\Models\\TaxRate",
+    "interface": "Academorix\\Finance\\Tax\\Contracts\\Data\\TaxRateInterface",
+    "implements": ["Academorix\\Finance\\Tax\\Contracts\\Data\\TaxRateInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToTaxJurisdiction",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "rate_type": "TaxRateType",
+      "percentage": "decimal:4",
+      "is_inclusive": "boolean",
+      "applies_to": "TaxRateAppliesTo",
+      "effective_from": "date",
+      "effective_to": "date",
+      "source": "TaxRateSource",
+      "metadata": "array"
+    },
+    "observers": ["TaxRateObserver"],
+    "appends": ["is_active", "is_expired"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `txr_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "tax_jurisdiction_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tax_jurisdictions", "column": "id", "onDelete": "restrict" }
+      },
+      "rate_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: vat / gst / sales_tax / consumption_tax / digital_services_tax / withholding_tax / stamp_duty / customs / other."
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Human-readable label (e.g. 'UK VAT Standard', 'California Sales Tax', 'Ontario HST')."
+      },
+      "percentage": {
+        "type": "decimal",
+        "precision": 5,
+        "scale": 4,
+        "nullable": false,
+        "description": "0.0000 to 1.0000. 0.2000 = 20%."
+      },
+      "is_inclusive": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "true = price INCLUDES tax; false = tax ADDED to price."
+      },
+      "applies_to": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'all'",
+        "description": "Enum: services / goods / digital / physical / all."
+      },
+      "effective_from": {
+        "type": "date",
+        "nullable": false,
+        "description": "Inclusive date the rate takes effect."
+      },
+      "effective_to": {
+        "type": "date",
+        "nullable": true,
+        "description": "Exclusive date the rate stops applying. Null = still active."
+      },
+      "source": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'manual'",
+        "description": "Enum: manual / provider_synced / import / migration."
+      },
+      "provider_reference_id": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "External reference — the tax_rate_id from TaxJar / Avalara / Stripe Tax. Nullable for manual rates."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "tax_jurisdiction_id", "rate_type", "effective_from"],
+        "unique": true,
+        "name": "tax_rates_tenant_jurisdiction_type_effective_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "tax_jurisdiction_id", "rate_type", "applies_to", "effective_from", "effective_to"],
+        "name": "tax_rates_resolution_idx",
+        "description": "Primary lookup index for TaxRateResolver."
+      },
+      {
+        "columns": ["tenant_id", "provider_reference_id"],
+        "name": "tax_rates_provider_ref_idx",
+        "predicate": "provider_reference_id IS NOT NULL"
+      }
+    ]
+  },
+  "required": ["id", "tenant_id", "tax_jurisdiction_id", "rate_type", "name", "percentage", "is_inclusive", "applies_to", "effective_from", "source", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^txr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tax_jurisdiction_id": { "type": "string", "pattern": "^txj_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "rate_type": { "type": "string", "enum": ["vat", "gst", "sales_tax", "consumption_tax", "digital_services_tax", "withholding_tax", "stamp_duty", "customs", "other"] },
+    "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "percentage": { "type": "number", "minimum": 0, "maximum": 1 },
+    "is_inclusive": { "type": "boolean" },
+    "applies_to": { "type": "string", "enum": ["services", "goods", "digital", "physical", "all"] },
+    "effective_from": { "type": "string", "format": "date" },
+    "effective_to": { "type": ["string", "null"], "format": "date" },
+    "source": { "type": "string", "enum": ["manual", "provider_synced", "import", "migration"] },
+    "provider_reference_id": { "type": ["string", "null"], "maxLength": 128 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "percentage in [0.0000, 1.0000]",
+    "effective_from < effective_to when both set",
+    "unique (tenant_id, tax_jurisdiction_id, rate_type, effective_from) WHERE deleted_at IS NULL",
+    "no overlapping (tenant_id, tax_jurisdiction_id, rate_type, applies_to, effective_range) partial WHERE deleted_at IS NULL",
+    "rate percentages are IMMUTABLE once referenced by any tax_calculations.tax_rate_snapshot (calculation-freeze pattern)"
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "$version": 1,
+  "title": "Transaction kind catalogue",
+  "description": "The 12 transaction kinds the module supports. Each kind documents its trigger (which domain event fires it), typical amount semantics, canonical debit/credit ledger entry pair, and whether it participates in reversal chains. The TransactionRecorder consults this catalogue when building ledger entries; the SDUI kind-picker widget reads it to render tenant-facing options.",
+  "kinds": [
+    {
+      "kind": "invoice_payment",
+      "display_name": "Invoice payment",
+      "description": "Money moved IN from a paid invoice. Fires when invoice.paid domain event fires. The primary revenue-recording path.",
+      "trigger": "invoice::InvoicePaid",
+      "reference_types": ["Invoice"],
+      "expected_ledger_entries": [
+        { "account": "cash", "side": "debit", "description": "Money into the tenant's cash account" },
+        { "account": "accounts_receivable", "side": "credit", "description": "Receivable cleared" }
+      ],
+      "participates_in_reversal": true,
+      "typical_reversal_kinds": ["refund_issued", "chargeback_debit", "write_off"]
+    },
+    {
+      "kind": "refund_issued",
+      "display_name": "Refund issued",
+      "description": "Money moved OUT via a refund. Fires when refund.issued domain event fires. ALWAYS paired with an adjustment transaction for revenue reversal (two transactions per refund).",
+      "trigger": "refund::RefundIssued",
+      "reference_types": ["Refund"],
+      "expected_ledger_entries": [
+        { "account": "refunds_owed", "side": "debit", "description": "Refund liability recorded" },
+        { "account": "cash", "side": "credit", "description": "Money out of cash" }
+      ],
+      "participates_in_reversal": true,
+      "reversal_reason_default": "refund",
+      "pairs_with_kind": "adjustment",
+      "pair_note": "The paired adjustment transaction records [debit: refunds_expense, credit: revenue] — the revenue is un-recognized alongside the refund."
+    },
+    {
+      "kind": "chargeback_debit",
+      "display_name": "Chargeback debit",
+      "description": "Money moved OUT via a chargeback. Fires when chargeback.filed domain event fires. Distinct from refund_issued — chargebacks are INVOLUNTARY (bank-initiated).",
+      "trigger": "chargeback::ChargebackFiled",
+      "reference_types": ["Chargeback"],
+      "expected_ledger_entries": [
+        { "account": "chargebacks_expense", "side": "debit", "description": "Chargeback recognized as expense" },
+        { "account": "cash", "side": "credit", "description": "Money removed from cash by the bank" }
+      ],
+      "participates_in_reversal": true,
+      "reversal_reason_default": "chargeback"
+    },
+    {
+      "kind": "coupon_credit",
+      "display_name": "Coupon credit",
+      "description": "Discount recognized when a coupon is redeemed. Reduces revenue + recognizes a marketing/coupons expense.",
+      "trigger": "coupon::CouponRedeemed",
+      "reference_types": ["CouponRedemption"],
+      "expected_ledger_entries": [
+        { "account": "coupons_expense", "side": "debit", "description": "Coupon discount recognized as marketing expense" },
+        { "account": "revenue", "side": "credit", "description": "Revenue reduction (offsetting the invoice-payment credit that will follow)" }
+      ],
+      "participates_in_reversal": false,
+      "note": "Coupon credits do NOT participate in reversal chains — a coupon can't be un-redeemed. If a coupon-redemption is voided, the associated invoice is refunded (fires refund_issued + adjustment transactions)."
+    },
+    {
+      "kind": "tax_remittance",
+      "display_name": "Tax remittance",
+      "description": "Tenant filed + paid tax to a regulator. Clears the tax_payable liability.",
+      "trigger": "tax::TaxRemitted",
+      "reference_types": ["TaxRemittance"],
+      "expected_ledger_entries": [
+        { "account": "tax_payable", "side": "debit", "description": "Tax liability cleared" },
+        { "account": "cash", "side": "credit", "description": "Money out of cash to the tax authority" }
+      ],
+      "participates_in_reversal": false,
+      "note": "Tax remittances are terminal — once paid to the regulator, they don't reverse. Errors in tax remittance handled via accounting_adjustment reversal manually authored by finance."
+    },
+    {
+      "kind": "fee_charge",
+      "display_name": "Gateway fee charge",
+      "description": "Payment gateway fee (Stripe / Paddle) charged. Recorded as a separate transaction from the associated invoice_payment for clean fee-tracking.",
+      "trigger": "payment::PaymentCaptured (when gateway_fee_cents > 0)",
+      "reference_types": ["Payment"],
+      "expected_ledger_entries": [
+        { "account": "gateway_fees", "side": "debit", "description": "Fee recognized as expense" },
+        { "account": "cash", "side": "credit", "description": "Money removed from cash by the gateway" }
+      ],
+      "participates_in_reversal": false,
+      "note": "Fee refunds (rare — some gateways reverse fees when a payment is fully refunded) recorded as accounting_adjustment reversals of the original fee_charge."
+    },
+    {
+      "kind": "adjustment",
+      "display_name": "Adjustment",
+      "description": "Manual accounting adjustment or paired reversal companion. Used for revenue reversal alongside refund_issued transactions + for manual admin ledger corrections.",
+      "trigger": "internal — TransactionRecorder::recordAdjustment() OR POST /transactions/{id}/reverse with reversal_reason='accounting_adjustment'",
+      "reference_types": ["Refund", "Chargeback", null],
+      "expected_ledger_entries": [],
+      "expected_ledger_entries_note": "Variable — the entries depend on the specific adjustment. For refund pairing: [debit: refunds_expense, credit: revenue]. For manual corrections: caller-specified.",
+      "participates_in_reversal": true,
+      "reversal_reason_default": "accounting_adjustment"
+    },
+    {
+      "kind": "write_off",
+      "display_name": "Write-off",
+      "description": "Uncollectible invoice written off. Removes the receivable + recognizes a loss.",
+      "trigger": "invoice::InvoiceWrittenOff",
+      "reference_types": ["Invoice"],
+      "expected_ledger_entries": [
+        { "account": "write_offs", "side": "debit", "description": "Loss recognized" },
+        { "account": "accounts_receivable", "side": "credit", "description": "Receivable removed" }
+      ],
+      "participates_in_reversal": true,
+      "reversal_reason_default": "error_correction",
+      "note": "Distinct from refund_issued — a refund reverses a PAID transaction; a write-off recognizes a NEVER-PAID invoice as loss."
+    },
+    {
+      "kind": "bank_deposit",
+      "display_name": "Bank deposit",
+      "description": "Cash moved from operational cash into a bank deposit account. External banking flow — the transaction records the movement; the actual bank integration happens outside this module.",
+      "trigger": "internal — TransactionRecorder::recordBankDeposit()",
+      "reference_types": [null],
+      "expected_ledger_entries": [
+        { "account": "bank_deposits", "side": "debit", "description": "Cash moved to bank" },
+        { "account": "cash", "side": "credit", "description": "Cash removed from operational cash" }
+      ],
+      "participates_in_reversal": true,
+      "reversal_reason_default": "error_correction"
+    },
+    {
+      "kind": "bank_withdrawal",
+      "display_name": "Bank withdrawal",
+      "description": "Cash moved from bank deposit back to operational cash. External banking flow.",
+      "trigger": "internal — TransactionRecorder::recordBankWithdrawal()",
+      "reference_types": [null],
+      "expected_ledger_entries": [
+        { "account": "cash", "side": "debit", "description": "Cash back to operational cash" },
+        { "account": "bank_deposits", "side": "credit", "description": "Cash removed from bank" }
+      ],
+      "participates_in_reversal": true,
+      "reversal_reason_default": "error_correction"
+    },
+    {
+      "kind": "currency_conversion",
+      "display_name": "Currency conversion",
+      "description": "Explicit FX conversion — moving cash from one currency to another. Rare — most cross-currency handled implicitly via the transaction.currency + exchange_rate_to_base fields.",
+      "trigger": "internal — TransactionRecorder::recordCurrencyConversion()",
+      "reference_types": [null],
+      "expected_ledger_entries": [
+        { "account": "cash", "side": "debit", "description": "Cash in target currency", "note": "account_currency = target" },
+        { "account": "cash", "side": "credit", "description": "Cash out of source currency", "note": "account_currency = source" }
+      ],
+      "participates_in_reversal": true,
+      "reversal_reason_default": "error_correction",
+      "note": "This is the ONE case where a transaction may have ledger entries in different currencies — two cash entries in different account_currency values. TransactionObserver.finalize() balances by base_currency-normalized amounts."
+    },
+    {
+      "kind": "opening_balance",
+      "display_name": "Opening balance",
+      "description": "One-shot per-tenant transaction created at tenant provisioning. Establishes the ledger's start-of-history entry with all-zero balances (or non-zero when migrating from a legacy system).",
+      "trigger": "tenancy::TenantProvisioned + hooks.RecordOpeningBalanceOnTenantProvisioned",
+      "reference_types": ["TenantProvisioning"],
+      "expected_ledger_entries": [],
+      "expected_ledger_entries_note": "Variable — for a fresh tenant, one zero entry per enabled account (net effect: zero). For legacy-migration tenants, non-zero starting balances derived from the legacy system.",
+      "participates_in_reversal": false,
+      "note": "Fires EXACTLY ONCE per tenant. Refuses to fire again — the observer refuses opening_balance kind when the tenant already has one."
+    }
+  ],
+  "notes": [
+    "The kind enum is the authoritative list. Adding a new kind = updating this catalogue + updating the TransactionKind enum + updating the ChartOfAccountsRegistry if new accounts are needed + updating data/sample-double-entry-patterns.json.",
+    "The expected_ledger_entries per kind are the CANONICAL pattern. TransactionRecorder methods build these by default; the observer validates every entry matches an expected pattern for the kind (defense-in-depth against a caller passing wrong accounts).",
+    "participates_in_reversal=true means transactions of this kind can be reversed via TransactionReverser. participates_in_reversal=false means they're terminal — either they never reverse (opening_balance, coupon_credit, tax_remittance) or reversal is handled indirectly (fee_charge reversals happen via the invoice-refund flow)."
+  ]
+}

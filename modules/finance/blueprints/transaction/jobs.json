@@ -1,0 +1,121 @@
+{
+  "id": "academorix://modules/transaction/jobs",
+  "$version": 1,
+  "title": "transaction — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\RecordInvoicePaidTransactionJob",
+      "queue": "finance",
+      "purpose": "Listener-driven. Fired by an invoice module listener when Invoice.paid fires. Delegates to TransactionRecorder::recordInvoicePayment() which builds a transaction (kind='invoice_payment') + [debit: cash, credit: accounts_receivable] ledger entries in the same DB transaction as the invoice update. If the transaction commit fails, the invoice-paid state must roll back too — the invoice listener owns the atomicity.",
+      "steps": [
+        "Load Invoice by invoice_id; refuse when invoice.status != 'paid' (idempotency)",
+        "Compute exchange_rate_to_base via ExchangeRateResolver when invoice.currency != tenant.base_currency; capture base_amount_cents atomically",
+        "Open DB transaction",
+        "TransactionRecorder::recordInvoicePayment(invoice, exchange_rate_snapshot) → creates transactions row (kind='invoice_payment', reference_type='Invoice', reference_id=invoice.id, amount_cents=invoice.total_amount_cents)",
+        "Insert two ledger entries: [account='cash', debit_cents=invoice.total_amount_cents, credit_cents=0] + [account='accounts_receivable', debit_cents=0, credit_cents=invoice.total_amount_cents]",
+        "TransactionObserver validates SUM(debits) == SUM(credits) → set transaction.posted_at + status='posted'",
+        "Commit; fires TransactionPosted + LedgerEntryRecorded (×2) via afterCommit dispatchers"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "invoice_id",
+      "tries": 5,
+      "backoff": [30, 120, 600, 3600, 14400]
+    },
+    {
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\RecordRefundIssuedTransactionJob",
+      "queue": "finance",
+      "purpose": "Listener-driven. Fired by a refund module listener when refund.issued fires. Records TWO transactions: (1) kind='refund_issued' with [debit: refunds_owed, credit: cash] — the money leaves; (2) kind='adjustment' with [debit: refunds_expense, credit: revenue] (reversed) — the revenue is un-recognized. Both transactions share source_transaction_id pointing at the original invoice-payment transaction.",
+      "steps": [
+        "Load Refund by refund_id; refuse when refund.status != 'issued'",
+        "Load the source_transaction_id from refund.source_invoice_payment_transaction_id (the original invoice_payment transaction being reversed)",
+        "Compute exchange_rate_to_base when cross-currency",
+        "Open DB transaction",
+        "TransactionRecorder::recordRefund(refund, source_transaction, exchange_rate_snapshot) → creates transaction A (kind='refund_issued', reversal_reason='refund') + ledger entries [debit: refunds_owed, credit: cash]",
+        "TransactionRecorder::recordRevenueReversal(refund, source_transaction) → creates transaction B (kind='adjustment', reversal_reason='refund') + ledger entries [debit: refunds_expense, credit: revenue]",
+        "TransactionObserver validates BOTH transactions balance individually",
+        "Commit; fires TransactionPosted (×2) + LedgerEntryRecorded (×4) + TransactionReversed (×2 — one for each newly-created reversal)"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "refund_id",
+      "tries": 5,
+      "backoff": [30, 120, 600, 3600, 14400]
+    },
+    {
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\RecordChargebackTransactionJob",
+      "queue": "finance-critical",
+      "purpose": "Listener-driven. Fired by a chargeback module listener when chargeback.filed fires. Records a transaction (kind='chargeback_debit') + [debit: chargebacks_expense, credit: cash] ledger entries — the money leaves the tenant's cash account into the bank's chargeback bucket. Distinct from refund_issued because chargebacks are involuntary + carry regulator-tracked reason codes.",
+      "steps": [
+        "Load Chargeback by chargeback_id; refuse when chargeback.status != 'filed'",
+        "Load source_transaction_id from chargeback.disputed_transaction_id",
+        "Compute exchange_rate_to_base when cross-currency",
+        "Open DB transaction",
+        "TransactionRecorder::recordChargeback(chargeback, source_transaction, exchange_rate_snapshot) → creates transaction (kind='chargeback_debit', reversal_reason='chargeback') + ledger entries [debit: chargebacks_expense, credit: cash]",
+        "TransactionObserver validates balance",
+        "Commit; fires TransactionPosted + LedgerEntryRecorded (×2) + TransactionReversed"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "chargeback_id",
+      "tries": 5,
+      "backoff": [30, 120, 600, 3600, 14400]
+    },
+    {
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\ReconcileLedgerBalancesJob",
+      "queue": "finance",
+      "purpose": "Nightly. The load-bearing integrity check. For every tenant, computes SUM(debit_cents) - SUM(credit_cents) globally per account per day + per transaction. Any non-zero delta fires LedgerImbalanceDetected (P0). Also computes running account balances + fires AccountBalanceThresholdCrossed when thresholds cross.",
+      "steps": [
+        "For each active tenant: SELECT tenant_id, account, DATE(created_at) AS day, SUM(debit_cents), SUM(credit_cents) FROM transaction_ledger_entries GROUP BY tenant_id, account, day",
+        "For each row: if SUM(debits) != SUM(credits) AND the imbalance is not attributable to a straddling day boundary transaction: fire LedgerImbalanceDetected(scope='per_account_daily')",
+        "For each posted transaction created in the last 24h: verify SUM(debits) == SUM(credits) at the transaction level (defense-in-depth against a race that bypassed the observer); fire LedgerImbalanceDetected(scope='per_transaction') on failure",
+        "Compute per-account running balances (via AccountBalanceCalculator) + check against config thresholds; fire AccountBalanceThresholdCrossed per crossing",
+        "Compute base_currency-normalized global tenant balance sums; fire LedgerImbalanceDetected(scope='global_tenant') when non-zero",
+        "Fire LedgerReconciliationCompleted with per-tenant stats"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "ledger-reconcile-nightly",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\GenerateGeneralLedgerReportJob",
+      "queue": "finance",
+      "purpose": "Monthly. Generates a per-tenant General Ledger (GL) report for the closed month: per-account opening balance + all posted transactions + closing balance + total debits + total credits. Report format = accountant-shaped CSV + JSONL. Delivered via MonthlyLedgerReportNotification to the finance-role user list configured in tenant settings.",
+      "steps": [
+        "For each tenant with the transaction_advanced_reporting entitlement: compute date range (previous calendar month)",
+        "For each account in the chart-of-accounts: opening_balance = balance at start-of-month; movements = every posted transaction touching this account in the month; closing_balance = balance at end-of-month",
+        "Render two artifacts: (1) CSV — accountant-shaped headers (date, transaction_number, description, account, debit, credit, balance); (2) JSONL — one row per ledger entry with full transaction context for programmatic consumption",
+        "Upload artifacts to tenant-scoped compliance storage (retention: 7y)",
+        "Fire MonthlyLedgerReportNotification with signed download URLs + summary stats"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "gl-report-monthly",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Transaction\\Jobs\\PurgeExpiredTransactionDataJob",
+      "queue": "finance",
+      "purpose": "Weekly sweep. Applies the per-entity retention windows: transactions > 7 years past effective_date → archive to compliance-storage then hard-delete; transaction_ledger_entries cascade via FK. Enterprise tenants with transaction_extended_retention: 10-year retention. NEVER hard-purges without first archiving — a copy always lives in compliance-storage per SOX 404 + regulator record-retention.",
+      "steps": [
+        "SELECT id FROM transactions WHERE effective_date < now() - interval '7 years' AND tenant_id NOT IN (SELECT tenant_id FROM entitlement_licenses WHERE feature_key = 'transaction_extended_retention' AND is_active = true) LIMIT 5000",
+        "For each: EXPORT the transaction + its ledger entries as JSONL to compliance-storage archive (keyed by tenant_id + transaction_number + year)",
+        "After archive verified: DELETE FROM transaction_ledger_entries WHERE transaction_id IN (...) (cascade)",
+        "DELETE FROM transactions WHERE id IN (...)",
+        "For Enterprise tenants: same query but with 10-year threshold",
+        "Emit academorix.transaction.purged_total metric"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "transaction-purge-expired",
+      "tries": 1
+    }
+  ]
+}

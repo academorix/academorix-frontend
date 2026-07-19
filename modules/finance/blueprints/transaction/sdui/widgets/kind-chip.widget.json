@@ -1,0 +1,42 @@
+{
+  "id": "transaction.kind-chip",
+  "title": "Transaction kind chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for the 12 transaction kinds. Revenue-recognition kinds (invoice_payment / coupon_credit) render green (success). Revenue-reduction kinds (refund_issued / chargeback_debit / write_off / adjustment) render red (danger). Neutral movements (tax_remittance / fee_charge / bank_deposit / bank_withdrawal / currency_conversion / opening_balance) render neutral grey.",
+  "props": {
+    "kind": {
+      "type": "string",
+      "required": true,
+      "description": "One of 12 TransactionKind values."
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "['invoice_payment', 'coupon_credit'].includes(props.kind) ? 'success' : (['refund_issued', 'chargeback_debit', 'write_off', 'adjustment'].includes(props.kind) ? 'danger' : 'default')"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.kind === 'invoice_payment' ? 'arrow-down-tray' : (props.kind === 'refund_issued' ? 'arrow-up-tray' : (props.kind === 'chargeback_debit' ? 'exclamation-triangle' : (props.kind === 'coupon_credit' ? 'ticket' : (props.kind === 'tax_remittance' ? 'building-library' : (props.kind === 'fee_charge' ? 'credit-card' : (props.kind === 'adjustment' ? 'adjustments-horizontal' : (props.kind === 'write_off' ? 'x-circle' : (props.kind === 'bank_deposit' ? 'banknotes' : (props.kind === 'bank_withdrawal' ? 'banknotes' : (props.kind === 'currency_conversion' ? 'arrows-right-left' : 'flag'))))))))))"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.kind === 'invoice_payment' ? 'Payment' : (props.kind === 'refund_issued' ? 'Refund' : (props.kind === 'chargeback_debit' ? 'Chargeback' : (props.kind === 'coupon_credit' ? 'Coupon' : (props.kind === 'tax_remittance' ? 'Tax remittance' : (props.kind === 'fee_charge' ? 'Fee' : (props.kind === 'adjustment' ? 'Adjustment' : (props.kind === 'write_off' ? 'Write-off' : (props.kind === 'bank_deposit' ? 'Bank deposit' : (props.kind === 'bank_withdrawal' ? 'Bank withdrawal' : (props.kind === 'currency_conversion' ? 'FX conversion' : 'Opening balance'))))))))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

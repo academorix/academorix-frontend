@@ -1,0 +1,91 @@
+{
+  "id": "tax.resources.tax-rate.sync",
+  "title": "Sync tax rates",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/rates/sync",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-rate", "action": "sync" },
+  "requiresPermission": "tax.rates.sync",
+  "requiresEntitlement": "tax_capture",
+  "dataSources": [
+    {
+      "name": "providers",
+      "kind": "http.get",
+      "url": "/api/v1/tax/providers?is_active=true",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Sync tax rates" } },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Provider sync",
+            "description": "Pulls the latest rate catalog from your configured provider. New rates get effective_from=today. Changed rates split into old (effective_to=today) + new rows. Historical rates are NEVER mutated."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus", "required": true },
+              "bindings": { "items": { "$ref": "providers" } },
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Dry run", "helpText": "Preview what would change without persisting." },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "dry_run", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "arrow-down-tray", "children": "Start sync" },
+              "bindings": { "disabled": { "$expr": "!form.provider" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/tax/rates/sync",
+                  "body": { "provider": "{{form.provider}}", "dry_run": "{{form.dry_run}}" },
+                  "onResult": { "kind": "state.set", "field": "sync_result" }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "bindings": { "hidden": { "$expr": "!state.sync_result" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Sync result" } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Rates added", "field": "state.sync_result.added_count" },
+                  { "label": "Rates changed", "field": "state.sync_result.changed_count" },
+                  { "label": "Rates unchanged", "field": "state.sync_result.unchanged_count" },
+                  { "label": "Errors", "field": "state.sync_result.error_count" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

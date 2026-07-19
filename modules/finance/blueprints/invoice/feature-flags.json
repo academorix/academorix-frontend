@@ -1,0 +1,99 @@
+{
+  "id": "academorix://modules/invoice/feature-flags",
+  "$version": 1,
+  "title": "invoice — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "invoice.creates",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for invoice creation. Off = InvoiceObserver.creating no-ops (returns 503). Emergency-only during DB migrations of the invoices table."
+    },
+    {
+      "key": "invoice.finalizes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the finalize path. Off = FinalizeInvoiceJob no-ops (invoices pile up in status='draft'). Emergency-only if PDF generation or email delivery is degraded."
+    },
+    {
+      "key": "invoice.pdf_generation",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GenerateInvoicePDFJob no-ops. Invoices finalize but no PDFs are produced. Used during DomPDF library upgrades."
+    },
+    {
+      "key": "invoice.email_delivery",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = SendInvoiceEmailJob no-ops. Invoices finalize + PDFs generate but no customer emails go out. Used when notifications module is degraded to avoid backing up its queue."
+    },
+    {
+      "key": "invoice.dunning",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = DispatchDunningRemindersJob no-ops. Past-due invoices remain past-due but no reminder emails fire. Used during dunning-copy A/B tests or when a large email-list bug is being resolved."
+    },
+    {
+      "key": "invoice.due_soon_reminders",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = InvoiceDueSoonNotification no-ops. Used when the notifications module is throttling."
+    },
+    {
+      "key": "invoice.mark_overdue",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MarkOverdueInvoicesJob no-ops. Invoices remain 'open' past due_date. Emergency-only — a stuck 'open' invoice past due date is a data-integrity issue."
+    },
+    {
+      "key": "invoice.escalate_to_collections",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = EscalateDunningToCollectionsJob no-ops. No auto handoff to collections agencies. Used when the third-party agency is having issues or during compliance-review of the handoff process."
+    },
+    {
+      "key": "invoice.reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileInvoicePaymentsJob no-ops. Drift with the transactions module goes undetected. Emergency-only — reconciliation is the main integrity check for the finance module."
+    },
+    {
+      "key": "invoice.credit_notes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CreditNoteObserver refuses creates + GenerateCreditNoteJob no-ops. Refund module's IssueCreditNoteOnRefundIssued cascade breaks — refunds will queue up but not produce credit notes. Emergency-only."
+    },
+    {
+      "key": "invoice.marketing_signal",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = FireMarketingCaptureOnInvoicePaid cascade breaks. Paid membership invoices no longer fire marketing::CaptureMembershipPurchasedMarketingEvent. Used when marketing module is degraded."
+    },
+    {
+      "key": "invoice.membership_atomic_create",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CreateInvoiceOnMembershipCreated cascade breaks. New memberships create WITHOUT their invoice — the atomic contract is broken. NEVER flip off in production (compliance violation — memberships must have invoices per finance policy). Test envs only."
+    },
+    {
+      "key": "invoice.tenant_branded_pdf",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = every PDF uses the 'academorix-default' template regardless of entitlement. Used when tenant branding pipeline is degraded to avoid producing malformed PDFs."
+    },
+    {
+      "key": "invoice.pdf_encryption",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = S3 uploads without SSE-KMS. NEVER flip off in production (compliance violation — PDFs contain PII)."
+    },
+    {
+      "key": "invoice.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeExpiredInvoiceDataJob no-ops. Data accumulates past retention window. Used during compliance review or archive-migration debugging."
+    }
+  ]
+}

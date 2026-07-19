@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/monitoring/data/providers/opsgenie-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Opsgenie provider config",
+  "description": "Configuration shape for an Opsgenie alerts integration. Requires monitoring_paging entitlement (Medium+).",
+  "type": "object",
+  "required": ["api_key", "team_id"],
+  "additionalProperties": false,
+  "properties": {
+    "api_key": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Opsgenie API integration key. Encrypted at rest. Sent as 'GenieKey <api_key>' in the Authorization header."
+    },
+    "team_id": {
+      "type": "string",
+      "description": "Opsgenie team ID (UUID) to route alerts to. Every dispatch adds this to the responders array."
+    },
+    "region": {
+      "type": "string",
+      "enum": ["us", "eu"],
+      "default": "us",
+      "description": "Opsgenie deployment region. us = api.opsgenie.com; eu = api.eu.opsgenie.com."
+    },
+    "priority_map": {
+      "type": "object",
+      "description": "Optional per-severity priority mapping. Defaults: p1→P1, p2→P2, p3→P3, p4→P5 (P4 in Opsgenie is 'urgent' — we skip it for P4).",
+      "additionalProperties": false,
+      "properties": {
+        "p1": { "type": "string", "enum": ["P1", "P2", "P3", "P4", "P5"], "default": "P1" },
+        "p2": { "type": "string", "enum": ["P1", "P2", "P3", "P4", "P5"], "default": "P2" },
+        "p3": { "type": "string", "enum": ["P1", "P2", "P3", "P4", "P5"], "default": "P3" },
+        "p4": { "type": "string", "enum": ["P1", "P2", "P3", "P4", "P5"], "default": "P5" }
+      }
+    },
+    "default_tags": {
+      "type": ["array", "null"],
+      "items": { "type": "string" },
+      "description": "Optional default tags applied to every dispatched alert. Example: ['production', 'monitoring']."
+    },
+    "auto_close_on_signal_clear": {
+      "type": "boolean",
+      "default": true,
+      "description": "true = when the monitoring alert resolves, dispatch an Opsgenie 'close' request with the same alias. false = leave Opsgenie alerts to manual close."
+    },
+    "alias_prefix": {
+      "type": ["string", "null"],
+      "description": "Optional prefix for the alert alias (Opsgenie's dedup key). Alerts on the same policy dedupe via alias = prefix + policy_id."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

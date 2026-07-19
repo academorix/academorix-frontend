@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/chargeback/broadcasts",
+  "$version": 1,
+  "title": "chargeback — realtime broadcast channels",
+  "description": "Three broadcast channel families. Tenant-level for admin dashboards (chargeback lifecycle stream); pending-evidence for defenders' dashboards; rate-alerts for merchant-account risk visibility. Reverb (Laravel Reverb) is the default transport; the notifications module handles fanout. NO customer-level broadcast channel exists — chargebacks are admin-only surface (card network rules prohibit surfacing chargeback state to customers on most networks).",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.chargebacks",
+      "class": "Academorix\\Finance\\Chargeback\\Broadcasts\\TenantChargebacksChannel",
+      "description": "Tenant-wide chargeback lifecycle stream. Sink for admin dashboards. Broadcasts every chargeback lifecycle event (filed / evidence_requested / evidence_submitted / under_review / won / lost / expired / accepted_refund / provider_error / provider_reconciled) at tenant level.",
+      "authorization": "sanctum::authed AND tenant_matches AND has_permission('chargebacks.viewAny')",
+      "events": [
+        "ChargebackFiled",
+        "ChargebackEvidenceRequested",
+        "ChargebackEvidenceSubmitted",
+        "ChargebackUnderReview",
+        "ChargebackWon",
+        "ChargebackLost",
+        "ChargebackExpired",
+        "ChargebackAcceptedRefund",
+        "ChargebackEvidenceOverdue",
+        "ChargebackClawbackReferral",
+        "ChargebackClawbackCoupon",
+        "ChargebackNetworkFeeRecorded",
+        "ChargebackTransactionRecorded",
+        "ChargebackWebhookReceived",
+        "ChargebackReconciled"
+      ],
+      "throttle": "120 events/minute per channel",
+      "notes": "Payload trimmed to non-confidential fields (see data-classes.json). Confidential fields (amount_cents, currency, fee_cents, provider_metadata) are omitted for readers without chargebacks.view-financials — the frontend re-fetches the full detail via HTTP when a user with financial permission drills in."
+    },
+    {
+      "name": "tenant.{tenantId}.chargebacks.pending-evidence",
+      "class": "Academorix\\Finance\\Chargeback\\Broadcasts\\TenantChargebacksPendingEvidenceChannel",
+      "description": "Evidence-defenders' queue stream. Powers the real-time pending-evidence dashboard. Fires when a chargeback enters pending_evidence + when it leaves (evidence_submitted / accepted_refund / expired / manually marked lost). Enables live queue updates without polling — actionable for defenders monitoring approaching deadlines.",
+      "authorization": "sanctum::authed AND tenant_matches AND has_permission('chargebacks.submit-evidence')",
+      "events": [
+        "ChargebackFiled",
+        "ChargebackEvidenceSubmitted",
+        "ChargebackAcceptedRefund",
+        "ChargebackExpired",
+        "ChargebackEvidenceOverdue"
+      ],
+      "throttle": "60 events/minute per channel",
+      "notes": "Higher-signal-to-noise than the tenant.{id}.chargebacks channel because it only carries evidence-defense-relevant events. Defenders subscribe to this channel + not the full stream."
+    },
+    {
+      "name": "tenant.{tenantId}.chargebacks.rate-alerts",
+      "class": "Academorix\\Finance\\Chargeback\\Broadcasts\\TenantChargebacksRateAlertsChannel",
+      "description": "Merchant-account risk stream. Powers the real-time rate-threshold-alerts dashboard. Fires when ChargebackRateThresholdExceeded fires (rate crossed VDMP/MDMP threshold) OR when rate clears back below threshold. High-signal — every fire is actionable.",
+      "authorization": "sanctum::authed AND tenant_matches AND has_permission('chargebacks.view-report')",
+      "events": [
+        "ChargebackRateThresholdExceeded"
+      ],
+      "throttle": "12 events/minute per channel",
+      "notes": "Very low volume — MonitorChargebackRateJob is nightly, so at most one alert per tenant per network per night. Payload includes current_rate_percent + threshold_percent + days_over_threshold + prevention recommendations."
+    }
+  ]
+}

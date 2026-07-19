@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/tax/middleware",
+  "$version": 1,
+  "title": "tax — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "tax.audit_calculations",
+      "class": "Academorix\\Finance\\Tax\\Http\\Middleware\\AuditTaxCalculations",
+      "priority": 42,
+      "description": "Attaches a request-correlation-id to any TaxCalculationRequested event fired during the request. Ensures every calculation write emits an audit event tagged with the originating request (compliance CC7.2 traceability). Runs on tenant-plane routes that write calculations (POST /calculate + downstream invoice-line create paths).",
+      "auto_applied": false,
+      "auto_applied_to": [
+        "/api/v1/tax/calculate",
+        "/api/v1/tax/rates/sync"
+      ]
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    {
+      "middleware": "entitlements::entitlement.enforce",
+      "note": "Applied per-route with the specific entitlement key (tax_capture for base surface, tax_jurisdiction_custom for custom-jurisdiction create, tax_annual_report for /reports/annual, tax_advanced_providers on advanced provider routes, tax_multi_currency on cross-currency calculations, tax_exemption_management on exemption CRUD routes)."
+    },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json. Route-level `permission` metadata resolves through this middleware."
+    },
+    {
+      "middleware": "audit::audit-context",
+      "note": "Runs on every write route to enrich the audit trail with the caller's user_id + user_agent + ip. Marketing + tax + observability all consume this."
+    }
+  ]
+}

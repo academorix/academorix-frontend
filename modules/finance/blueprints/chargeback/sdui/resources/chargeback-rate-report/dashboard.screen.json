@@ -1,0 +1,254 @@
+{
+  "id": "chargeback.resources.chargeback-rate-report.dashboard",
+  "title": "Chargeback rate report",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/reports/chargeback-rate",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "chargeback", "entity": "chargeback-rate-report", "action": "view" },
+  "requiresPermission": "chargebacks.view-report",
+  "requiresEntitlement": "chargeback_management",
+  "dataSources": [
+    {
+      "name": "report",
+      "kind": "http.get",
+      "url": "/api/v1/reports/chargeback-rate",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "broadcasts": [
+    { "channel": "tenant.{tenantId}.chargebacks.rate-alerts", "onEvent": ["ChargebackRateThresholdExceeded"], "action": "refresh" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Chargeback rate" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Rolling 60-day rate per network with VDMP/MDMP threshold monitoring." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Period", "menuTrigger": "focus", "className": "min-w-40" },
+                  "props_items": [
+                    { "id": "30", "label": "Last 30 days" },
+                    { "id": "60", "label": "Last 60 days (default)" },
+                    { "id": "90", "label": "Last 90 days" },
+                    { "id": "180", "label": "Last 6 months" }
+                  ],
+                  "actions": {
+                    "onSelectionChange": { "kind": "filter.set", "field": "period_days", "valueExpr": "$selectedKey" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "actions": {
+                    "onPress": { "kind": "http.get", "url": "/api/v1/reports/chargeback-rate?format=csv", "responseType": "download" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "danger" },
+          "bindings": {
+            "hidden": { "$expr": "!report.any_threshold_exceeded" }
+          },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium", "children": "Merchant-account risk: threshold exceeded" } },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm" },
+              "bindings": {
+                "children": {
+                  "$expr": "'Your rolling 60-day chargeback rate on ' + (report.exceeded_networks || []).join(', ') + ' is above the VDMP/MDMP threshold. Sustained breach risks merchant-account termination. Recommended actions: (1) review fraud prevention rules, (2) update refund policy, (3) enable RDR for eligible tenants.'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Total chargebacks" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$ref": "report.total_chargebacks" } }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Total lost" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "hasPermission('chargebacks.view-financials') ? formatCurrency(report.total_lost_cents, report.currency) : '••••'"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Network fees" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "hasPermission('chargebacks.view-financials') ? formatCurrency(report.total_fees_cents, report.currency) : '••••'"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-4" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-xs text-muted uppercase", "children": "Win rate" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": { "$expr": "(report.win_rate_percent || 0) + '%'" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium mb-4", "children": "Rate by network" } },
+            {
+              "kind": "Grid",
+              "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" },
+              "bindings": {
+                "items": { "$ref": "report.rate_by_network_array" }
+              },
+              "itemRenderer": {
+                "kind": "View",
+                "props": { "className": "flex flex-col gap-2 p-3 border rounded" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex items-center justify-between" },
+                    "children": [
+                      {
+                        "kind": "Widget",
+                        "widget": "chargeback.network-badge",
+                        "bindings": { "network": { "$ref": "row.network" } }
+                      },
+                      {
+                        "kind": "Chip",
+                        "props": { "size": "sm" },
+                        "bindings": {
+                          "variant": {
+                            "$expr": "row.threshold_status === 'exceeded' ? 'danger' : (row.threshold_status === 'approaching' ? 'warning' : 'success')"
+                          },
+                          "children": {
+                            "$expr": "row.threshold_status === 'exceeded' ? 'Above threshold' : (row.threshold_status === 'approaching' ? 'Approaching' : 'Below threshold')"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-2xl font-semibold" },
+                    "bindings": { "children": { "$expr": "(row.rate_percent * 100).toFixed(2) + '%'" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-xs text-muted" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.chargebacks_count + ' chargebacks / ' + row.transactions_count + ' transactions (VDMP threshold: ' + (row.threshold_percent * 100).toFixed(2) + '%)'"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                { "kind": "Text", "props": { "className": "font-medium mb-4", "children": "Reason category distribution" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "children": "Donut chart placeholder — reason_category_distribution."
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                { "kind": "Text", "props": { "className": "font-medium mb-4", "children": "Provider distribution" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "children": "Donut chart placeholder — provider_distribution."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium mb-4", "children": "Top reason codes" } },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted" },
+              "children": "Top 10 reason codes with counts + amounts."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

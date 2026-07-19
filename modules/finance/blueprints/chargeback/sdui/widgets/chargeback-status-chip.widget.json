@@ -1,0 +1,41 @@
+{
+  "id": "chargeback.chargeback-status-chip",
+  "title": "Chargeback status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Composite chip showing the chargeback's overall state — combines status + optional RDR-eligible indicator + optional CE3-eligible indicator into a single at-a-glance signal. Colour + icon + text label. Never colour-alone. Priority order: 'Lost' > 'Expired' > 'Won' > 'Accepted refund' > 'Under bank review' > 'Evidence submitted' > 'Pending evidence'.",
+  "props": {
+    "status": { "type": "string", "required": true, "enum": ["pending_evidence", "evidence_submitted", "under_bank_review", "won", "lost", "expired", "accepted_refund"] },
+    "rdrEligible": { "type": "boolean", "default": false, "description": "When status='pending_evidence' + rdrEligible=true, show an 'RDR available' variant." },
+    "ce3Eligible": { "type": "boolean", "default": false, "description": "When status IN ('pending_evidence', 'evidence_submitted') + ce3Eligible=true, show a 'CE3.0 available' variant." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "({ pending_evidence: 'warning', evidence_submitted: 'accent', under_bank_review: 'accent', won: 'success', lost: 'danger', expired: 'danger', accepted_refund: 'neutral' })[props.status]"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? ({ pending_evidence: 'clock', evidence_submitted: 'document-check', under_bank_review: 'building-library', won: 'check-circle', lost: 'x-circle', expired: 'exclamation-triangle', accepted_refund: 'arrow-uturn-left' })[props.status] : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "({ pending_evidence: 'Pending evidence', evidence_submitted: 'Evidence submitted', under_bank_review: 'Under bank review', won: 'Won', lost: 'Lost', expired: 'Expired', accepted_refund: 'Accepted refund' })[props.status]"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

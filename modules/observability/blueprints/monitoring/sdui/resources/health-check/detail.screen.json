@@ -1,0 +1,99 @@
+{
+  "id": "monitoring.resources.health-check.detail",
+  "title": "Health check detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/health-checks/{check}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "health-check", "action": "view" },
+  "requiresPermission": "monitoring.health_checks.view",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    {
+      "name": "check",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/health-checks/{check}",
+      "unwrap": "data"
+    },
+    {
+      "name": "runs",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/health-checks/{check}/runs?filter[from]=-24h&limit=100",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$ref": "check.name" } } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$ref": "check.check_type" } } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "monitoring.status-badge",
+                  "bindings": { "status": { "$ref": "check.last_run_status" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "secondary", "leadingIcon": "play", "children": "Run now" },
+                  "requiresPermission": "monitoring.health_checks.run",
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "url": "/api/v1/monitoring/health-checks/{check}/run",
+                      "onSuccess": { "kind": "toast", "message": "Health check run enqueued" }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Recent runs (24h)" } },
+            {
+              "kind": "LineChart",
+              "bindings": {
+                "data": { "$ref": "runs" },
+                "xField": "run_at",
+                "yField": "latency_ms",
+                "colorField": "status"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": { "items": { "$ref": "runs" } },
+          "props": {
+            "columns": [
+              { "field": "run_at", "header": "Run at" },
+              { "field": "status", "header": "Status", "cellRenderer": { "kind": "Widget", "widget": "monitoring.status-badge", "bindings": { "status": { "$ref": "row.status" } } } },
+              { "field": "latency_ms", "header": "Latency (ms)" },
+              { "field": "error_details.error_message", "header": "Error" }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

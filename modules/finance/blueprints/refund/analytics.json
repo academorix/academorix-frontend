@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/refund/analytics",
+  "$version": 1,
+  "title": "refund — product analytics",
+  "lane": "analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "Refund Requested",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "refund_type", "reason", "refunded_to", "requires_approval", "days_since_payment_bucket", "amount_bucket", "initiator_role"],
+      "description": "Every refund request. Essential consent — financial-integrity signals cannot be opted out. days_since_payment_bucket: 0-7 / 8-30 / 31-90 / 91+; amount_bucket: 0-999 / 1000-4999 / 5000-19999 / 20000+."
+    },
+    {
+      "name": "Refund Approval Required",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "trigger", "amount_bucket", "reason"],
+      "description": "Fires when a refund enters awaiting_approval state. trigger IN ('amount_threshold', 'staleness_threshold', 'both', 'always_approve_reason')."
+    },
+    {
+      "name": "Refund Approved",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "auto_approved", "approver_role", "hours_to_approval_bucket", "amount_bucket", "reason"],
+      "description": "hours_to_approval_bucket: 0-1 / 1-4 / 4-24 / 24-72 / 72+. Powers approval-SLA compliance monitoring."
+    },
+    {
+      "name": "Refund Rejected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "approver_role", "hours_to_rejection_bucket", "amount_bucket", "reason"]
+    },
+    {
+      "name": "Refund Cancelled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "refund_id", "cancel_initiator_role", "state_at_cancellation"],
+      "description": "state_at_cancellation IN ('awaiting_approval', 'approved') — cancel is only allowed pre-dispatch."
+    },
+    {
+      "name": "Refund Processing",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "provider", "amount_bucket"],
+      "description": "Fires on transition to processing. Provider dispatched; async wait begins."
+    },
+    {
+      "name": "Refund Succeeded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "provider", "reason", "refund_type", "hours_to_success_bucket", "amount_bucket", "refunded_to"],
+      "description": "P1 event — every fire is a financial reversal. Essential consent. hours_to_success_bucket: 0-1 / 1-24 / 24-72 / 72-168 (1 week) / 168+ (weeks). For card refunds via Stripe/Adyen, typical is 120-240h (5-10 days)."
+    },
+    {
+      "name": "Refund Failed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "provider", "failure_reason_category", "amount_bucket"],
+      "description": "failure_reason_category IN ('already_refunded', 'source_invalid', 'insufficient_funds', 'provider_account_closed', 'authentication_failed', 'other'). Powers provider-quality dashboards."
+    },
+    {
+      "name": "Refund Provider Error",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "provider", "error_category", "retry_count"],
+      "description": "P1 event — non-terminal error requiring reconciliation. error_category IN ('network_timeout', 'rate_limit', 'transient_5xx', 'authentication', 'unknown'). Powers provider-reliability dashboards."
+    },
+    {
+      "name": "Refund Force Failed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "force_failer_role", "hours_stuck_bucket"],
+      "description": "Admin force-fail path. hours_stuck_bucket: 24-72 / 72-168 / 168-720 (30d) / 720+."
+    },
+    {
+      "name": "Refund Clawback Referral",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "referral_reward_id", "reward_type", "reward_amount_bucket"],
+      "description": "P1 event — every fire is a downstream reward reversal impacting referrer credits."
+    },
+    {
+      "name": "Refund Clawback Coupon",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_id", "coupon_id", "coupon_redemption_id"],
+      "description": "P1 event — every fire is a downstream coupon usage-count decrement."
+    },
+    {
+      "name": "Refund Reconciled",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "refund_id", "provider", "drift_detected"],
+      "description": "drift_detected=true fires a P2 signal. Powers reconciliation-loop-quality dashboards."
+    },
+    {
+      "name": "Refund Report Generated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "report_id", "period_days", "refund_count_bucket", "total_refunded_cents_bucket"]
+    }
+  ],
+  "notes": [
+    "Amount buckets are pre-computed bins (0-999 / 1000-4999 / 5000-19999 / 20000+). Never raw amounts — prevents competitor cross-inference of refund-worthy tenant revenue.",
+    "Every RefundSucceeded / RefundFailed / RefundProviderError / RefundClawbackReferral / RefundClawbackCoupon is `essential` consent tier — financial-integrity signals cannot be opted out. State cancel + reconcile events are `functional` consent (opt-outable).",
+    "Provider-quality dashboards read failure_reason_category + error_category for per-provider reliability trending.",
+    "Marketing events (ad-network conversion attribution) are NOT here — they live on the marketing lane at /modules/finance/blueprints/refund/marketing.json with the `advertising` consent tier. RefundSucceeded fires BOTH the analytics event (essential) + the marketing event (advertising)."
+  ]
+}

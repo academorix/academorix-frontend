@@ -1,0 +1,91 @@
+{
+  "id": "invoice.widgets.invoice-status-chip",
+  "title": "Invoice status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "namespace": "invoice",
+  "widget": "invoice-status-chip",
+  "description": "Colour-coded chip for invoice status. Maps each of the 10 invoice status values to a HeroUI Chip variant with an appropriate icon. Used in the invoice list DataGrid + the invoice-view header + the customer 'my invoices' surface.",
+  "props": {
+    "status": {
+      "type": "string",
+      "description": "The invoice.status enum value.",
+      "required": true
+    },
+    "size": {
+      "type": "string",
+      "default": "sm",
+      "enum": ["sm", "md", "lg"]
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "mapping": [
+    {
+      "status": "draft",
+      "chip_variant": "secondary",
+      "icon": "document",
+      "label": "Draft"
+    },
+    {
+      "status": "open",
+      "chip_variant": "primary",
+      "icon": "envelope-open",
+      "label": "Open"
+    },
+    {
+      "status": "paid",
+      "chip_variant": "success",
+      "icon": "check-circle",
+      "label": "Paid"
+    },
+    {
+      "status": "partially_paid",
+      "chip_variant": "info",
+      "icon": "arrow-path",
+      "label": "Partially paid"
+    },
+    {
+      "status": "pastdue",
+      "chip_variant": "warning",
+      "icon": "clock",
+      "label": "Past due"
+    },
+    {
+      "status": "void",
+      "chip_variant": "neutral",
+      "icon": "x-circle",
+      "label": "Voided"
+    },
+    {
+      "status": "uncollectible",
+      "chip_variant": "danger",
+      "icon": "exclamation-triangle",
+      "label": "Uncollectible"
+    },
+    {
+      "status": "refunded",
+      "chip_variant": "info",
+      "icon": "arrow-uturn-left",
+      "label": "Refunded"
+    },
+    {
+      "status": "disputed",
+      "chip_variant": "danger",
+      "icon": "hand-raised",
+      "label": "Disputed"
+    },
+    {
+      "status": "written_off",
+      "chip_variant": "neutral",
+      "icon": "archive-box",
+      "label": "Written off"
+    }
+  ],
+  "accessibility": {
+    "ariaLabel": "Invoice status: {label}",
+    "role": "status"
+  }
+}

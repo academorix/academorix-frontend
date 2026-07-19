@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/tax/data/providers/custom-webhook-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Custom Webhook provider config",
+  "description": "Configuration shape for the generic HMAC-signed JSON webhook provider. Escape hatch for tenants running their own tax engine.",
+  "type": "object",
+  "required": ["webhook_url", "hmac_secret"],
+  "additionalProperties": false,
+  "properties": {
+    "webhook_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "HTTPS endpoint. HTTP refused (TLS required)."
+    },
+    "hmac_secret": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Shared secret for HMAC-SHA256 signing. 32 chars minimum. Encrypted at rest."
+    },
+    "signature_header": {
+      "type": "string",
+      "default": "X-Tax-Signature",
+      "description": "HTTP header carrying the HMAC signature."
+    },
+    "timestamp_header": {
+      "type": "string",
+      "default": "X-Tax-Timestamp",
+      "description": "HTTP header carrying the signature timestamp (Unix seconds)."
+    },
+    "signature_tolerance_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 900,
+      "default": 300,
+      "description": "Signature timestamp tolerance window. Prevents replay attacks."
+    },
+    "expected_response_shape": {
+      "type": "object",
+      "description": "JSONata expression map for parsing the response into TaxCalculationResult. Keys: 'tax_amount_cents' (required), 'provider_transaction_id' (optional), 'rate_used' (optional), 'exemption_id' (optional).",
+      "properties": {
+        "tax_amount_cents": { "type": "string" },
+        "provider_transaction_id": { "type": "string" },
+        "rate_used": { "type": "string" },
+        "exemption_id": { "type": "string" }
+      },
+      "required": ["tax_amount_cents"]
+    },
+    "custom_headers": {
+      "type": ["object", "null"],
+      "description": "Optional additional headers on every dispatch. Useful for auth (Bearer token, API key). Values encrypted at rest.",
+      "patternProperties": {
+        "^X-[A-Za-z0-9-]+$": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 3,
+      "maximum": 30,
+      "default": 10
+    }
+  }
+}

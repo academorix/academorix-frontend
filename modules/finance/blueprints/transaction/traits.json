@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/transaction/traits",
+  "$version": 1,
+  "title": "transaction — trait composition",
+  "description": "Two owned traits. `BelongsToTransaction` is the FK trait for downstream models (TransactionLedgerEntry). `HasLedgerEntries` is the inverse-side convenience on the Transaction model, exposing scoped query helpers (->balancedEntries(), ->debitEntries(), ->creditEntries(), ->entriesForAccount()). Order matters when composed with BelongsToTenant — tenant MUST come first so the scope chain observes the tenant context.",
+  "owned": [
+    {
+      "trait": "Academorix\\Finance\\Transaction\\Concerns\\BelongsToTransaction",
+      "description": "Mixed into any downstream model that carries a `transaction_id` FK. Adds the `transaction()` belongsTo relation. Only used by TransactionLedgerEntry currently — no downstream module currently attaches to transactions directly. Provides a `resolveInTransaction(?Transaction)` scope for cross-cutting queries.",
+      "public": true,
+      "usedBy": [
+        "transaction::TransactionLedgerEntry (required transaction_id — every ledger entry anchored to exactly one transaction)"
+      ],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToTransaction` in the trait list so the tenant scope resolves first.",
+        "Refuses to save a row whose transaction_id points at a transaction in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling; returns LEDGER_ENTRY_CROSS_TENANT).",
+        "Refuses to save a row whose parent transaction.status != 'draft' (ledger entries attach ONLY during transaction creation; returns LEDGER_ENTRY_PARENT_TRANSACTION_POSTED)."
+      ]
+    },
+    {
+      "trait": "Academorix\\Finance\\Transaction\\Concerns\\HasLedgerEntries",
+      "description": "Composed onto the Transaction model itself. Adds `->ledgerEntries()` (hasMany over TransactionLedgerEntry), `->balancedEntries()` (returns entries with a computed running balance), `->debitEntries()` (scope filter debit_cents > 0), `->creditEntries()` (scope filter credit_cents > 0), `->entriesForAccount($account)` (filter by account), `->sumDebits()` + `->sumCredits()` (used by the observer's balance check). Also adds `->isBalanced()` boolean helper.",
+      "public": true,
+      "usedBy": ["transaction::Transaction"]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "reason": "Transaction only. TransactionLedgerEntry does NOT carry metadata — the description field is auto-generated + bounded to 256 chars." },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "Transaction (searchable by transaction_number). NOT TransactionLedgerEntry (accessed via relations from Transaction only)." }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to transactions + transaction_ledger_entries is compliance-critical (SOX 404 + AML + regulator record retention). 7-year audit retention." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "Transaction only (Wave 4.5 will roll up ledger movements onto the tenant admin activity feed). NOT TransactionLedgerEntry — line items are too high-volume for the activity feed + already covered by the transaction-level entry." }
+    ]
+  },
+  "composition": {
+    "transaction": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasLedgerEntries",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable"
+      ],
+      "notes": "Order matters: BelongsToTenant precedes every scope-observing trait. HasLedgerEntries is an inverse-side convenience. NO SoftDeletes — transactions are append-only (immutable after post); hard-purged by PurgeExpiredTransactionDataJob only after archive-to-compliance-storage. NO HasMetadata::mutable — the metadata field is IMMUTABLE after create per the observer's updating refusal (all updates refused)."
+    },
+    "transaction_ledger_entry": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToTransaction",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable"
+      ],
+      "notes": "NO SoftDeletes — ledger entries are append-only. NO HasActivityLog — high-volume + already covered by the transaction-level entry. NO HasMetadata — the description field is auto-generated. NO Searchable — accessed via parent transaction only. Auditable is critical — every entry is a regulator-visible row."
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "id": "academorix://modules/membership/traits",
+  "$version": 1,
+  "title": "membership — trait composition",
+  "description": "Four owned traits — BelongsToMembership for downstream models with membership_id FK, BelongsToMembershipPlan for pricing catalog references, HasMemberships on Athlete for the reverse-relation accessor, HasPasses on Membership for the pass accessor.",
+  "owned": [
+    {
+      "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembership",
+      "description": "Mixed into downstream models that carry a `membership_id` FK. Adds `membership()` belongsTo + query scope + cross-tenant guard.",
+      "public": true,
+      "usedBy": [
+        "membership::MembershipRenewal (owned)",
+        "membership::Pass (owned)",
+        "invoice::Invoice (Wave 4.5+)",
+        "transaction::Transaction (Wave 4.5+)",
+        "refund::Refund (Wave 4.5+)",
+        "chargeback::Chargeback (Wave 4.5+)"
+      ]
+    },
+    {
+      "trait": "Academorix\\Finance\\Membership\\Concerns\\BelongsToMembershipPlan",
+      "description": "Mixed into models with `membership_plan_id`. Adds `plan()` belongsTo.",
+      "public": true,
+      "usedBy": [
+        "membership::Membership (owned)"
+      ]
+    },
+    {
+      "trait": "Academorix\\Finance\\Membership\\Concerns\\HasMemberships",
+      "description": "Composed onto Athlete + User models. Adds `memberships()` (hasMany), `activeMemberships()` (status IN pending/active/paused), `membershipHistory()` (all including terminal), `currentPlans()` (distinct plans from active memberships).",
+      "public": true,
+      "usedBy": ["athlete::Athlete", "user::User (for reverse lookup via primary_guardian)"]
+    },
+    {
+      "trait": "Academorix\\Finance\\Membership\\Concerns\\HasPasses",
+      "description": "Composed onto the Membership model. Adds `passes()` (hasMany), `availablePasses()` (unconsumed + within valid window), `consumedPasses()`, `expiredPasses()`, `passesForPeriod(from, until)`.",
+      "public": true,
+      "usedBy": ["membership::Membership"]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      { "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes" }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasPrefixedUlid" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasSlug" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable" }
+    ],
+    "tenants": [{ "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant" }],
+    "region": [{ "trait": "Academorix\\Region\\Concerns\\BelongsToRegion" }],
+    "branch": [{ "trait": "Academorix\\Branch\\Concerns\\BelongsToBranch" }],
+    "athlete": [{ "trait": "Academorix\\Sports\\Athlete\\Concerns\\BelongsToAthlete" }],
+    "audit": [{ "trait": "Academorix\\Audit\\Concerns\\Auditable" }],
+    "activity": [{ "trait": "Academorix\\Activity\\Concerns\\HasActivityLog" }]
+  },
+  "composition": {
+    "membership": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToRegion",
+        "BelongsToBranch",
+        "BelongsToAthlete",
+        "BelongsToMembershipPlan",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ],
+      "notes": "Order matters. BelongsToTenant precedes all scope-observing traits. Then Region → Branch → Athlete → Plan (money-flow hierarchy: tenant owns the row; region owns the currency; branch owns the venue; athlete is subject; plan is the SKU)."
+    },
+    "membershipPlan": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "HasSlug",
+        "BelongsToTenant",
+        "BelongsToBranch",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ]
+    },
+    "membershipRenewal": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToMembership",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable",
+        "Searchable"
+      ],
+      "notes": "No SoftDeletes — renewals are append-only audit records."
+    },
+    "pass": {
+      "traits": [
+        "HasFactory",
+        "HasPrefixedUlid",
+        "BelongsToTenant",
+        "BelongsToMembership",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ]
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "id": "coupon.discount-type-chip",
+  "title": "Discount type chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for coupons.discount_type. Shows the type + a compact rendering of the amount when applicable. Never colour-alone — carries text label + icon. Advanced discount types (free_period / first_month_free / bogo) render in accent variant when tenant has the entitlement, muted otherwise (renders as a preview of what an upgrade would unlock).",
+  "props": {
+    "discountType": {
+      "type": "string",
+      "enum": ["percent", "fixed_amount", "free_period", "first_month_free", "bogo", "free_shipping"],
+      "required": true
+    },
+    "discountAmount": {
+      "type": ["number", "null"],
+      "description": "Amount interpretation depends on discountType. Optional."
+    },
+    "discountCurrency": {
+      "type": ["string", "null"],
+      "description": "ISO 4217. Required for discountType='fixed_amount'."
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showAmount": { "type": "boolean", "default": true, "description": "When false, renders only the type name without the amount." }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.discountType === 'percent' ? 'success' : (props.discountType === 'fixed_amount' ? 'info' : (props.discountType === 'free_shipping' ? 'neutral' : (hasEntitlement('coupon_advanced_discount_types') ? 'accent' : 'muted')))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "({ percent: 'percent-badge', fixed_amount: 'currency-dollar', free_period: 'calendar', first_month_free: 'gift', bogo: 'squares-plus', free_shipping: 'truck' })[props.discountType]"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.showAmount === false ? ({ percent: 'Percent', fixed_amount: 'Fixed', free_period: 'Free period', first_month_free: 'First month free', bogo: 'BOGO', free_shipping: 'Free shipping' })[props.discountType] : (props.discountType === 'percent' && props.discountAmount != null ? Math.round(props.discountAmount * 100) + '% off' : (props.discountType === 'fixed_amount' && props.discountAmount != null ? formatMoney(props.discountAmount, props.discountCurrency || 'USD') + ' off' : (props.discountType === 'free_period' && props.discountAmount != null ? props.discountAmount + ' days free' : ({ first_month_free: 'First month free', bogo: 'Buy 1, get 1', free_shipping: 'Free shipping' })[props.discountType])))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "id": "payment.method-brand-badge",
+  "title": "Payment method brand badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Small badge showing card brand icon + last4 (e.g. `Visa •••• 4242`), wallet name (Apple Pay / Google Pay / PayPal / Venmo / Cash App), or bank account summary (ACH •••• 6789).",
+  "props": {
+    "brand": {
+      "type": "string",
+      "required": false
+    },
+    "last4": {
+      "type": "string",
+      "required": false
+    },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-2" },
+      "children": [
+        {
+          "kind": "Icon",
+          "bindings": {
+            "name": {
+              "$expr": "props.brand === 'visa' ? 'brand-visa' : (props.brand === 'mastercard' ? 'brand-mastercard' : (props.brand === 'amex' ? 'brand-amex' : (props.brand === 'discover' ? 'brand-discover' : (props.brand === 'jcb' ? 'brand-jcb' : (props.brand === 'unionpay' ? 'brand-unionpay' : (props.brand === 'apple_pay' ? 'brand-apple-pay' : (props.brand === 'google_pay' ? 'brand-google-pay' : (props.brand === 'paypal' ? 'brand-paypal' : (props.brand === 'venmo' ? 'brand-venmo' : (props.brand === 'cash_app' ? 'brand-cash-app' : (props.brand === 'sepa' ? 'brand-sepa' : (props.brand === 'ach' ? 'building-library' : 'credit-card')))))))))))))"
+            },
+            "className": {
+              "$expr": "props.size === 'lg' ? 'size-8' : (props.size === 'sm' ? 'size-4' : 'size-6')"
+            }
+          }
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "font-mono text-sm" },
+          "bindings": {
+            "children": {
+              "$expr": "(props.brand === 'apple_pay' ? 'Apple Pay' : (props.brand === 'google_pay' ? 'Google Pay' : (props.brand === 'paypal' ? 'PayPal' : (props.brand === 'venmo' ? 'Venmo' : (props.brand === 'cash_app' ? 'Cash App' : (props.brand ? props.brand.charAt(0).toUpperCase() + props.brand.slice(1) : 'Unknown')))))) + (props.last4 ? ' •••• ' + props.last4 : '')"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

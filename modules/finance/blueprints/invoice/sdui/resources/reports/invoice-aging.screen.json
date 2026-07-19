@@ -1,0 +1,115 @@
+{
+  "id": "invoice.resources.reports.invoice-aging",
+  "title": "Invoice aging",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/reports/invoice-aging",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "invoice", "entity": "reports", "action": "aging" },
+  "requiresPermission": "invoice.reports.aging.view",
+  "requiresEntitlement": "invoice_capture",
+  "dataSources": [
+    {
+      "name": "aging",
+      "kind": "http.get",
+      "url": "/api/v1/reports/invoice-aging",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "state": {
+    "as_of": { "type": "date", "defaultFromToday": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Invoice aging" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Outstanding balances bucketed by days past due. Feeds AR management + collections prioritisation." } }
+              ]
+            },
+            {
+              "kind": "DatePicker",
+              "props": { "label": "As of" },
+              "bindings": { "value": { "$state": "as_of" } },
+              "actions": { "onChange": { "kind": "state.set", "field": "as_of", "valueExpr": "$value" } }
+            }
+          ]
+        },
+        {
+          "kind": "Widget",
+          "widget": "invoice.aging-timeline",
+          "props": { "compact": false, "showLegend": true, "className": "w-full" },
+          "bindings": { "aging": { "$ref": "aging" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-5 gap-4" },
+          "children": [
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "aging.current_cents" } },
+              "props": { "label": "Current (not past due)", "formatter": "currency", "variant": "success" }
+            },
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "aging.past_due_1_30_cents" } },
+              "props": { "label": "1-30 days", "formatter": "currency", "variant": "warning" }
+            },
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "aging.past_due_31_60_cents" } },
+              "props": { "label": "31-60 days", "formatter": "currency", "variant": "warning" }
+            },
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "aging.past_due_61_90_cents" } },
+              "props": { "label": "61-90 days", "formatter": "currency", "variant": "danger" }
+            },
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "aging.past_due_91_plus_cents" } },
+              "props": { "label": "91+ days", "formatter": "currency", "variant": "danger" }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "title": "Customers with past-due balance" },
+          "children": [
+            {
+              "kind": "DataGrid",
+              "bindings": { "items": { "$ref": "aging.customers" } },
+              "props": {
+                "className": "w-full",
+                "columns": [
+                  { "field": "customer_display", "label": "Customer", "width": 260 },
+                  { "field": "current_cents", "label": "Current", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "past_due_1_30_cents", "label": "1-30d", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "past_due_31_60_cents", "label": "31-60d", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "past_due_61_90_cents", "label": "61-90d", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "past_due_91_plus_cents", "label": "91+d", "width": 120, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "total_owed_cents", "label": "Total", "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "align": "right", "emphasized": true } }
+                ],
+                "onRowPress": {
+                  "kind": "navigate",
+                  "toExpr": "'/tenant/invoices?customer_id=' + row.customer_id"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

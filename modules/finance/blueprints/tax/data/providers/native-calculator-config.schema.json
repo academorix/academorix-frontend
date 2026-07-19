@@ -1,0 +1,33 @@
+{
+  "id": "academorix://modules/tax/data/providers/native-calculator-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Native Calculator provider config",
+  "description": "Configuration shape for the built-in NativeCalculator. Minimal config — NativeCalculator reads tax_rates directly + applies exemptions via ExemptionValidator. No external HTTP.",
+  "type": "object",
+  "required": [],
+  "additionalProperties": false,
+  "properties": {
+    "compound_taxes": {
+      "type": "boolean",
+      "default": false,
+      "description": "true = apply tax on top of tax (e.g. Canadian PST computed on price+GST rather than price alone). Most jurisdictions do NOT compound; enable only when your jurisdiction's rules require it."
+    },
+    "rounding_mode": {
+      "type": "string",
+      "enum": ["half_up", "half_down", "half_even", "up", "down"],
+      "default": "half_up",
+      "description": "Rounding mode for the computed tax_amount_cents. 'half_up' is most common (0.5 rounds up). 'half_even' (banker's rounding) is used by some EU regimes."
+    },
+    "apply_exemptions_before_rate": {
+      "type": "boolean",
+      "default": true,
+      "description": "true = apply the exemption discount to the source_amount BEFORE computing the tax (standard). false = compute the tax first + apply the exemption to the tax amount (rare — some reseller certificates work this way)."
+    },
+    "fallback_to_zero": {
+      "type": "boolean",
+      "default": false,
+      "description": "DEFAULT FALSE = when no rate matches, REFUSE the calculation with TAX_CALCULATION_JURISDICTION_UNRESOLVABLE (fail-safe against under-charging). true = default to 0% tax (compliance risk — only enable when the tenant has verified no rate should apply)."
+    }
+  }
+}

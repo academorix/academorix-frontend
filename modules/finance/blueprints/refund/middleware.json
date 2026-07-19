@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/refund/middleware",
+  "$version": 1,
+  "title": "refund — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "refund.enforce_customer_scope",
+      "class": "Academorix\\Finance\\Refund\\Http\\Middleware\\EnforceCustomerScope",
+      "priority": 60,
+      "description": "Applied to all /api/v1/refunds/mine and /api/v1/refunds/{refund} customer routes. Ensures a customer can only request refunds against payments where they were the customer (payment.customer_type + payment.customer_id match auth()->id() OR auth()->athlete_id via the parent tenant_member relation). Blocks: (1) POST /refunds with a payment_id where the customer is not the actor, (2) GET /refunds/{refund} for refunds where refund.initiated_by_user_id != auth()->id() AND refund.customer_id != auth()->id(). On refusal returns 403 `REFUND_CUSTOMER_SCOPE_VIOLATION`.",
+      "auto_applied": false,
+      "auto_applied_to": [
+        "POST /api/v1/refunds",
+        "GET /api/v1/refunds/mine",
+        "GET /api/v1/refunds/{refund}",
+        "POST /api/v1/refunds/{refund}/cancel"
+      ]
+    },
+    {
+      "alias": "refund.enforce_capture_entitlement",
+      "class": "Academorix\\Finance\\Refund\\Http\\Middleware\\EnforceCaptureEntitlement",
+      "priority": 40,
+      "description": "Thin wrapper over entitlement.enforce that specifically checks the `refund_capture` entitlement. On refusal returns 402 `REFUND_CAPTURE_NOT_ENTITLED` with an upgrade CTA in the response envelope's .errors[0].meta.upgrade_url. Auto-applied via the `entitlement.enforce:refund_capture` middleware chain on every /api/v1/refunds/* route.",
+      "auto_applied": false,
+      "auto_applied_to": []
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "entitlements::entitlement.enforce" },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json."
+    },
+    {
+      "middleware": "throttle:refunds-customer",
+      "note": "Rate-limit bucket for /refunds/mine customer path. Default: 30 requests/min per authenticated user. Prevents refund-request abuse from a compromised session."
+    },
+    {
+      "middleware": "throttle:refunds-admin",
+      "note": "Rate-limit bucket for admin refund routes. Default: 120 requests/min per authenticated admin. Generous — admin workflows may bulk-process."
+    },
+    {
+      "middleware": "throttle:refunds-platform",
+      "note": "Rate-limit bucket for platform-plane cross-tenant support routes. Default: 60 requests/min per platform_admin."
+    }
+  ]
+}

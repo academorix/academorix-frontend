@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/tax/entitlements",
+  "$version": 1,
+  "title": "tax — declared entitlements",
+  "description": "Eight entitlement keys. `tax_capture` is the boolean master gate. `tax_provider_slot` caps provider configs per tenant. `tax_advanced_providers` unlocks Avalara + Stripe Tax on Medium+. `tax_jurisdiction_custom` unlocks per-tenant custom jurisdictions on Enterprise. `tax_exemption_management` (Small+) enables the certificate workflow. `tax_multi_currency` (Medium+) enables multiple source_currency values. `tax_annual_report` (Small+) enables the annual summary export. `tax_extended_retention` (Enterprise) extends calculation retention from 7y to 10y.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "tax_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is invisible: no rate CRUD, no provider CRUD, no calculation. All tiers get this on — Small tenants get a reduced provider set (NativeCalculator only) via tax_advanced_providers = 0.",
+      "enforcedBy": [
+        "entitlement.enforce:tax_capture middleware on every /api/v1/tax/* route",
+        "TaxCalculationObserver refuses calculation when the gate is closed",
+        "SDUI tax surfaces hidden when features array does not include 'tax.core'"
+      ]
+    },
+    {
+      "key": "tax_provider_slot",
+      "kind": "slot",
+      "unit": "provider_configs",
+      "defaultsByPlan": { "small": 1, "medium": 3, "enterprise": null },
+      "description": "How many tax provider configs a tenant can have. Small: 1 (NativeCalculator only). Medium: 3. Enterprise: unlimited. Consumed on provider config create; released on soft-delete.",
+      "enforcedBy": [
+        "TaxProviderConfigObserver.creating consumes 1 unit via EntitlementGate::consume('tax_provider_slot')",
+        "TaxProviderConfigObserver.deleted (soft-delete) releases 1 unit"
+      ]
+    },
+    {
+      "key": "tax_advanced_providers",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables TaxJar + Avalara + Stripe Tax + Custom Webhook providers. Small tenants get NativeCalculator only. Medium + Enterprise get the full 5 providers.",
+      "enforcedBy": [
+        "TaxProviderConfigObserver.creating refuses when provider IN ('taxjar', 'avalara', 'stripe_tax', 'custom_webhook') AND gate is closed",
+        "SDUI provider picker filters the provider list per this gate"
+      ]
+    },
+    {
+      "key": "tax_jurisdiction_custom",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables tenant-scoped custom jurisdictions beyond the platform reference set. Useful for niche subnational tax zones (e.g. free-trade zones, special economic zones, regional tourism taxes) not in the standard ISO 3166-2 catalog.",
+      "enforcedBy": [
+        "TaxJurisdictionObserver.creating refuses when tenant_id IS NOT NULL AND gate is closed",
+        "SDUI custom-jurisdiction create screen hidden when gate is closed"
+      ]
+    },
+    {
+      "key": "tax_exemption_management",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Enables the exemption certificate workflow. All tiers get this — tenants of any size may serve reseller / non-profit / educational customers.",
+      "enforcedBy": [
+        "TaxExemptionObserver.creating refuses when gate is closed (fires MARKETING_FEATURE_NOT_ENTITLED-style 402)",
+        "SDUI exemption CRUD screens hidden when gate is closed"
+      ]
+    },
+    {
+      "key": "tax_multi_currency",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables tax_calculations with source_currency values other than the tenant's default_region.currency. Small tenants are locked to a single currency (their region's default). Medium+ can compute tax on cross-currency transactions (customer paying in EUR against a USD-billed subscription, etc.).",
+      "enforcedBy": [
+        "TaxCalculationObserver.creating refuses when source_currency != tenant.default_region.currency AND gate is closed"
+      ]
+    },
+    {
+      "key": "tax_annual_report",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Enables the end-of-year annual tax summary export. All tiers get this — every tenant needs their tax summary for filing.",
+      "enforcedBy": [
+        "entitlement.enforce:tax_annual_report middleware on GET /api/v1/tax/reports/annual",
+        "SDUI annual-report screen hidden when gate is closed"
+      ]
+    },
+    {
+      "key": "tax_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends tax_calculations retention from 7 years (default) to 10 years. For finance regimes that require longer audit trails (some German + Italian + certain US state jurisdictions).",
+      "enforcedBy": [
+        "PurgeExpiredCalculationsJob checks this gate + applies 10-year retention when set"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/activity/compliance",
+  "$version": 1,
+  "title": "activity — regulatory compliance",
+  "description": "Compliance controls this module produces evidence for. Activity is the user-facing feed lane — its compliance surface is user-oriented (right of access, right to erasure, right to know) rather than regulator-oriented (that's audit's job). GDPR Art. 15 is satisfied by the /activities/mine endpoint; Art. 17 cascades on Identity erasure; CCPA §1798.100 right to know is satisfied by the feed itself.",
+  "aggregatedBy": "compliance",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "regulation": "Regulation (EU) 2016/679",
+      "controls": [
+        {
+          "article": "Art. 5(1)(a)",
+          "principle": "lawfulness-transparency",
+          "evidence": "Activity capture is transparent — every logged event is visible to the user via /activities/mine + the tenant feed. The consent-gate for activity_digest_email means marketing-consent-only users can browse the feed but do not receive email digests."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data-minimisation",
+          "evidence": "Activity stores only what the domain model's `logOnly()` declares — the developer picks the minimum set of fields. Descriptions are human-readable narrative; raw payloads MUST NOT be logged. Enforced by code review (never enforced structurally — the vendor allows arbitrary properties). Retention is short (90d default; up to 730d only for regulator holds)."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage-limitation",
+          "evidence": "retention.json — 90d default; 365d extended tier; 730d ceiling. PurgeExpiredActivitiesJob runs nightly; ArchiveActivitiesToColdStorageJob rotates rows out of hot storage at 90d. ActivityPurgeCompletedNotification tells tenant admins what was purged (transparency requirement)."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right-of-access",
+          "evidence": "The /api/v1/activities/mine endpoint returns every activity where the caller is causer OR subject. Fulfils the tenant-user's right to see their own personal-data footprint on the platform without a DPO ticket. Also feeds the standard DSAR export via `activity:export --user=<subject_id>`."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right-to-erasure",
+          "evidence": "PurgeActivitiesForErasedIdentity listener on user::IdentityErased hard-deletes every activity row where the erased identity is causer OR subject. Unlike audit (which anonymises), activity purges outright — activity rows are user-facing narrative and preserving them would leak the erased identity's actions on other users' feeds."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data-protection-by-design",
+          "evidence": "Two-lane split. Activity (this module) is user-facing feed; sensitive personal data belongs in the audit lane which encrypts fields at rest. Consumer contract in readme.md §8 documents 'NEVER `LogsActivity` on PII-heavy aggregates' — enforced by code review + the standards-steward auditor agent."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security-of-processing",
+          "evidence": "Encrypted at rest via Postgres TDE. Every read logged via monitoring metrics. Access-scoped via activity.enforce_scope middleware — the caller sees only activities on entities they hold viewing permissions for."
+        },
+        {
+          "article": "Art. 33",
+          "principle": "breach-notification-72h",
+          "evidence": "ACTIVITY_CROSS_TENANT_READ error (defense-in-depth against tenant-isolation breach attempts) fires the security-incident notification pipeline. Should be zero-occurrence at steady state."
+        }
+      ]
+    },
+    "ccpa_cpra": {
+      "applicable": true,
+      "regulation": "Cal. Civ. Code §1798.100",
+      "controls": [
+        {
+          "article": "§1798.100",
+          "principle": "right-to-know",
+          "evidence": "The /activities/mine feed is the tenant-user's real-time answer to 'what data does the platform hold about me + what has been done with my data'. Satisfies the right to know without a formal DSAR request."
+        },
+        {
+          "article": "§1798.105",
+          "principle": "right-to-delete",
+          "evidence": "Same as GDPR Art. 17. PurgeActivitiesForErasedIdentity listener handles cascade."
+        },
+        {
+          "article": "§1798.110",
+          "principle": "right-to-know-specific-info",
+          "evidence": "The activity feed carries `properties` context — the exact facility, exact team, exact booking details of every event. Satisfies specific-information disclosure."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "regulation": "AICPA Trust Services Criteria 2017",
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "access-provisioning-and-modification",
+          "evidence": "Retention policy CRUD is captured via HasAudit on ActivityRetentionPolicy — every override is regulator-relevant evidence. override_reason column is REQUIRED, min 20 chars, retained indefinitely on the audit stream."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "transmission-integrity",
+          "evidence": "Feed read + retention-policy write endpoints require TLS 1.2+ (Sanctum PATs). Every mutation on the retention policy is signed by the auth_user PAT and captured on audit."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system-monitoring",
+          "evidence": "health.json + metrics.json cover the module's operational surface — write latency, purge volume, orphan-batch count, backfill progress. Alerts fire on staleness (backfill still running past 48h) + orphan-batch spikes (indicates request crashes upstream)."
+        }
+      ]
+    },
+    "iso27001": {
+      "applicable": true,
+      "regulation": "ISO/IEC 27001:2022",
+      "controls": [
+        {
+          "clause": "A.5.15",
+          "principle": "access-control",
+          "evidence": "activity.enforce_scope middleware enforces subject-permission-narrowed reads — a caller sees activity only on entities they hold viewing permissions for. Delegates to the entity's own policy via ActivityPolicy@viewByEntity."
+        },
+        {
+          "clause": "A.8.10",
+          "principle": "information-deletion",
+          "evidence": "PurgeExpiredActivitiesJob nightly; ArchiveActivitiesToColdStorageJob weekly. Cold-storage rotation ensures rows past hot-retention are still retrievable (for extended-tier tenants) until the ultimate retention_days limit."
+        },
+        {
+          "clause": "A.5.34",
+          "principle": "privacy-and-protection-of-pii",
+          "evidence": "Consumer contract prohibits LogsActivity on PII-heavy aggregates. Descriptions are user-readable narrative — no raw payload dumps. `logOnly()` guidance in the trait documentation directs authors to whitelist minimum fields."
+        }
+      ]
+    },
+    "hipaa": {
+      "applicable": false,
+      "regulation": "45 CFR Parts 160, 162, 164",
+      "note": "Activity capture on HIPAA-adjacent aggregates (athlete medical clearances, athlete injuries) is FORBIDDEN by the consumer contract — those aggregates use audit instead. The activity module itself does not touch HIPAA data by design."
+    },
+    "coppa": {
+      "applicable": true,
+      "regulation": "16 CFR Part 312",
+      "controls": [
+        {
+          "article": "§312.10",
+          "principle": "data-retention-and-deletion",
+          "evidence": "Activity rows attributed to minor subjects (Athletes under 13) inherit the tighter minor-retention policy from the compliance module. The retention_policy defaults to 90d and cannot be extended without documenting the guardian-consent basis in the override_reason."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "regulation": "W3C Recommendation 5 October 2023",
+      "controls": [
+        {
+          "article": "SC 1.3.1",
+          "control": "info-and-relationships",
+          "evidence": "The feed uses semantic HTML (list + list items) with ARIA landmarks. Every activity row exposes causer + subject + timestamp as separate accessible fields — screen readers announce them in a scannable order."
+        },
+        {
+          "article": "SC 2.4.4",
+          "control": "link-purpose-in-context",
+          "evidence": "Digest email links carry entity names in the CTA — 'View Court 3's activity' is unambiguous out of context."
+        }
+      ]
+    }
+  }
+}

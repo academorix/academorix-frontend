@@ -1,0 +1,94 @@
+{
+  "id": "academorix://modules/activity/entitlements",
+  "$version": 1,
+  "title": "activity — entitlements",
+  "description": "Five entitlement keys. Values seeded per Tenant by the entitlements module (from Subscription plan + BusinessType.default_config.entitlements). Enforcement lives in the observer / policy layers — a 402 response indicates the tenant needs to upgrade; distinct from 403 (permission-based refusal).",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me → data.quota_summary + GET /api/v1/entitlements",
+    "seededFrom": "BusinessType.default_config.entitlements[activity.*]"
+  },
+  "kinds": [
+    { "kind": "boolean", "description": "Enable / disable the feature." }
+  ],
+  "entitlements": [
+    {
+      "key": "activity_capture",
+      "kind": "boolean",
+      "description": "Master gate. Available on every plan. When false (should never happen at steady state — this is the baseline), the LogsActivity trait no-ops on domain models. Included here so ops can freeze activity capture tenant-wide during an incident (e.g. a runaway write path).",
+      "defaultsByPlan": {
+        "free": 1,
+        "small": 1,
+        "medium": 1,
+        "enterprise": 1
+      },
+      "consumedOn": "N/A (boolean gate)",
+      "refusedResponse": {
+        "http": null,
+        "code": "N/A",
+        "note": "When off, activity capture silently no-ops — the trait's boot() detects and skips. No error surface."
+      }
+    },
+    {
+      "key": "activity_retention_extended",
+      "kind": "boolean",
+      "description": "Extend retention past the 90-day default. When true, tenants may create ActivityRetentionPolicy rows with retention_days > 90 (up to 730 for regulator holds). Without this, every retention override is capped at 90 — the entitlement is the gate.",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 0,
+        "medium": 0,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": 402,
+        "code": "ACTIVITY_RETENTION_NOT_ENTITLED"
+      }
+    },
+    {
+      "key": "activity_broadcast",
+      "kind": "boolean",
+      "description": "Real-time WebSocket streaming to the tenant.{id}.activity + user.{id}.activity channels. Without this, the feed still exists — the frontend just polls /api/v1/activities every 15s instead of subscribing to reverb. Small plan+.",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 1,
+        "medium": 1,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": null,
+        "code": "N/A",
+        "note": "Not entitled = polling mode. The /activities/feed endpoint returns entitled=false + poll_interval_ms — the frontend adapts."
+      }
+    },
+    {
+      "key": "activity_digest_email",
+      "kind": "boolean",
+      "description": "Enables the opt-in daily / weekly digest email. Non-entitled tenants don't see the digest opt-in in /settings/notifications. Medium plan+.",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 0,
+        "medium": 1,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": 402,
+        "code": "ACTIVITY_DIGEST_NOT_ENTITLED"
+      }
+    },
+    {
+      "key": "activity_export",
+      "kind": "boolean",
+      "description": "Enables the /api/v1/activities/export endpoint + the 'Export CSV' button. Non-entitled tenants can still browse the feed via the paginated list endpoint. Medium plan+.",
+      "defaultsByPlan": {
+        "free": 0,
+        "small": 0,
+        "medium": 1,
+        "enterprise": 1
+      },
+      "refusedResponse": {
+        "http": 402,
+        "code": "ACTIVITY_EXPORT_NOT_ENTITLED"
+      }
+    }
+  ]
+}

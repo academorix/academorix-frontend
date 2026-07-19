@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/activity/attributes",
+  "$version": 1,
+  "title": "activity — PHP attribute contracts",
+  "description": "Two attributes. `#[AsActivityFormatter]` on a class marks it as a description formatter for a specific log_name (registered via ActivityFormatterRegistry at boot). `#[AsActivitySubscriber]` on a service class registers it as a subscriber to `ActivityRecorded` events for a specific log_name (used by downstream modules that need to react to their own activities — e.g. digest queue routers).",
+  "namespace": "Academorix\\Observability\\Activity\\Attributes",
+  "attributes": [
+    {
+      "name": "AsActivityFormatter",
+      "class": "Academorix\\Observability\\Activity\\Attributes\\AsActivityFormatter",
+      "targets": ["class"],
+      "description": "Class-level marker on ActivityFormatter subclasses. Boot-time discovery scans #[AsActivityFormatter]-annotated classes and seeds them into ActivityFormatterRegistry with their log_name key. Only used when a domain module needs custom rendering beyond the default template interpolation (e.g. rendering a booking activity with a facility-name chip that resolves to a link). If no formatter is registered for a log_name, the default formatter interpolates properties in as `{{property}}` placeholders.",
+      "params": [
+        {
+          "name": "log_name",
+          "type": "string",
+          "required": true,
+          "description": "Log name this formatter handles. Must match a name in data/log-names-catalog.json. Refused at boot otherwise."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": "100",
+          "description": "Higher priority formatters win when multiple are registered for the same log_name. Rarely needed — one formatter per log_name is the norm."
+        },
+        {
+          "name": "supports_events",
+          "type": "array<string>",
+          "default": "['*']",
+          "description": "Which vendor events this formatter handles. `['*']` = all events. Otherwise a list like `['created', 'confirmed']` restricts the formatter to those events."
+        }
+      ],
+      "example": "#[AsActivityFormatter(log_name: 'bookings', supports_events: ['created', 'updated', 'cancelled'])]\nfinal class BookingActivityFormatter implements ActivityFormatterInterface\n{\n    public function format(Activity $activity): FormattedActivity\n    {\n        // Render 'Alice booked Court 3 for tomorrow' with a facility-name chip\n        return new FormattedActivity(\n            description: $activity->description,\n            chips: [\n                ['label' => $activity->properties['facility_name'], 'kind' => 'facility', 'href' => \"/facilities/{$activity->properties['facility_id']}\"],\n            ],\n        );\n    }\n}"
+    },
+    {
+      "name": "AsActivitySubscriber",
+      "class": "Academorix\\Observability\\Activity\\Attributes\\AsActivitySubscriber",
+      "targets": ["class"],
+      "description": "Marks a service class as an ActivityRecorded subscriber. Boot-time discovery registers the class with Laravel's event dispatcher, filtered by log_name. Alternative to manual EventServiceProvider wiring — keeps activity-adjacent listener registration self-contained. Used sparingly — downstream modules typically consume via broadcast (WebSocket) or digest email; explicit subscribers are for programmatic reactions like 'when a booking is cancelled, kick off a refund workflow'.",
+      "params": [
+        {
+          "name": "log_name",
+          "type": "string|null",
+          "default": "null",
+          "description": "Filter by log_name. NULL = every ActivityRecorded event fires the subscriber. Otherwise the subscriber only fires for activities matching this log_name."
+        },
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": "['*']",
+          "description": "Filter by vendor event key. `['*']` = all events."
+        },
+        {
+          "name": "queue",
+          "type": "string|null",
+          "default": "'activity-subscribers'",
+          "description": "Queue name for the subscriber. NULL = sync (rarely correct — activity handlers should almost always queue)."
+        }
+      ],
+      "example": "#[AsActivitySubscriber(log_name: 'bookings', events: ['cancelled'], queue: 'billing')]\nfinal class OnBookingCancelledStartRefund\n{\n    public function handle(ActivityRecorded $event): void\n    {\n        // Programmatic reaction to a booking-cancellation activity\n        RefundBookingJob::dispatch($event->activity->subject_id);\n    }\n}"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "id": "academorix://modules/coupon/middleware",
+  "$version": 1,
+  "title": "coupon — HTTP middleware",
+  "middleware": [
+    {
+      "alias": "coupon.rate_limit",
+      "class": "Academorix\\Finance\\Coupon\\Http\\Middleware\\CouponRateLimit",
+      "priority": 55,
+      "description": "Applied to POST /api/v1/coupons/{code}/preview + GET /api/v1/coupons/validate/{code} — prevents brute-force enumeration of tenant coupon codes by rate-limiting to 10 attempts per IP per hour + 60 attempts per authenticated user per hour. On refusal returns 429 `COUPON_RATE_LIMIT` with Retry-After header. Rate-limit buckets are IP-hash + user_id keyed; keys expire on the hour boundary.",
+      "auto_applied": false,
+      "auto_applied_to": [
+        "GET /api/v1/coupons/validate/{code}",
+        "POST /api/v1/coupons/{code}/preview"
+      ]
+    },
+    {
+      "alias": "coupon.enforce_capture_entitlement",
+      "class": "Academorix\\Finance\\Coupon\\Http\\Middleware\\EnforceCaptureEntitlement",
+      "priority": 40,
+      "description": "Thin wrapper over entitlement.enforce that specifically checks the `coupon_capture` entitlement. On refusal returns 402 `COUPON_CAPTURE_NOT_ENTITLED` with an upgrade CTA in the response envelope's .errors[0].meta.upgrade_url.",
+      "auto_applied": false,
+      "auto_applied_to": []
+    }
+  ],
+  "consumed": [
+    { "middleware": "foundation::request.id" },
+    { "middleware": "foundation::response.envelope" },
+    { "middleware": "foundation::versioning.resolve" },
+    { "middleware": "foundation::cors.strict" },
+    { "middleware": "application::application.resolve" },
+    { "middleware": "tenancy::tenant.resolve" },
+    { "middleware": "entitlements::entitlement.enforce" },
+    {
+      "middleware": "access::authorize",
+      "note": "The permission-based authorize middleware wraps the ability checks defined in policies.json + permissions.json."
+    },
+    {
+      "middleware": "consent::consent.gate",
+      "note": "compliance::consent's consent gate. Marketing-consent required for coupon.redeemed real-time push (opt-in stream)."
+    }
+  ]
+}

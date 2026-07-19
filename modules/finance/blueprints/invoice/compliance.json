@@ -1,0 +1,157 @@
+{
+  "id": "academorix://modules/invoice/compliance",
+  "$version": 1,
+  "title": "invoice — compliance evidence",
+  "description": "Invoice is the archetypal financial-record module. SOX §404 mandates 7-year retention (10 for Enterprise); GAAP + IFRS mandate sequential immutable numbering + immutable-after-finalize; PCI-DSS Requirement 3 forbids card data (payment tokens live in the payment module); EU VAT Directive 2006/112/EC mandates specific field ordering + customer_tax_id on VAT invoices; GDPR Art. 6(1)(b) contractual basis for retention; CAN-SPAM applies to dunning emails.",
+  "regimes": {
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "§404(a)",
+          "principle": "internal controls over financial reporting",
+          "evidence": "Every write to invoices / invoice_lines / credit_notes is audit-logged (Auditable trait, 7-year retention). State-machine transitions are enforced by the observer. Finalized invoices are IMMUTABLE — the only correction path is credit note issuance."
+        },
+        {
+          "section": "§404(b)",
+          "principle": "auditor attestation on ICFR",
+          "evidence": "Sequential invoice numbering (per-tenant per-year with Postgres advisory lock) guarantees no gaps + no duplicates — the primary auditor test. Every finalize dispatches a signed PDF that byte-encodes the frozen invoice state. Every reconciliation with the transactions module is logged."
+        }
+      ]
+    },
+    "gaap": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "revenue recognition",
+          "evidence": "Invoices are the customer-facing bill; revenue recognition timing lives on the transactions ledger (which references invoice_id). The InvoicePaid event feeds ASC 606 revenue recognition when triggered on subscription/membership invoices."
+        },
+        {
+          "principle": "matching principle",
+          "evidence": "Invoice.issue_date + due_date + paid_at are separate fields — the accounting period an invoice belongs to (issue_date) is independent of when payment arrives (paid_at). Reports (invoice:report --type=revenue) can group by any of these three."
+        },
+        {
+          "principle": "sequential numbering",
+          "evidence": "Invoice numbers are sequential per-tenant per-year with no gaps. Composite unique constraint (tenant_id, invoice_number) partial WHERE deleted_at IS NULL enforces the invariant."
+        }
+      ]
+    },
+    "ifrs": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "IAS 1 — presentation of financial statements",
+          "evidence": "Same as GAAP — sequential numbering, immutable-after-finalize, per-period grouping via issue_date."
+        },
+        {
+          "principle": "IFRS 15 — revenue from contracts with customers",
+          "evidence": "Same as ASC 606 (US GAAP equivalent). The load-bearing InvoicePaid signal fires when the customer's obligation is met (payment received) — this is the revenue-recognition trigger point."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "3.4",
+          "principle": "no PAN storage",
+          "evidence": "Invoices carry payment_method_id only (a reference to the payment module's tokenised payment method). NO PAN, CVV, expiry, or cardholder name on any invoice row. The mark-paid manual reconciliation endpoint accepts payment_method IN ('check', 'wire', 'cash', 'other') — no card details."
+        },
+        {
+          "requirement": "3.5",
+          "principle": "protect stored PAN",
+          "evidence": "N/A — no PAN stored. Payment tokens (Stripe payment_method_ids, Paddle payment_method_ids) live in the payment module + are references, not card data."
+        },
+        {
+          "requirement": "10.2",
+          "principle": "audit trail",
+          "evidence": "Every write to invoices / invoice_lines / credit_notes emits an audit row (Auditable trait). 7-year retention (10 for Enterprise). Every state transition is audit-captured with before/after snapshots."
+        }
+      ]
+    },
+    "vat_directive_2006_112_ec": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 226",
+          "principle": "mandatory invoice contents",
+          "evidence": "EU VAT invoices carry all Art. 226 mandatory fields: sequential invoice number (Art. 226(2)), issue date (Art. 226(1)), supplier VAT number (from tenant.tax_id in tenancy module), customer VAT number (from invoice.customer_tax_id when B2B), description of goods/services (per line.description), quantity + unit price + tax rate + tax amount per line, invoice total. The 'vat-eu' PDF template lays out these fields in the mandated order."
+        },
+        {
+          "article": "Art. 233",
+          "principle": "authenticity of origin + integrity of content",
+          "evidence": "PDFs uploaded to S3 with SSE-KMS + content-hash. The signed URL includes a hash of the PDF content — tampering fails signature validation. Enterprise tenants may enable qualified electronic signatures (EIDAS-compliant) via the compliance/e-signature module."
+        },
+        {
+          "article": "Art. 244",
+          "principle": "retention",
+          "evidence": "EU VAT invoices retained 10 years in most member states. Enterprise tenants with invoice_extended_retention entitlement get 10-year default; other tenants get 7 (Art. 244 minimum is 6 years in some states, extended in others)."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract necessity",
+          "evidence": "Invoicing is contractual necessity — the customer entered into a paid relationship with the tenant. No separate consent is required. Invoice retention supersedes consent revocation (per Art. 6(1)(b) legitimate basis for continued processing)."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure with legal-obligation carve-out",
+          "evidence": "TenantErased triggers ArchiveInvoiceFinancialRecordsOnTenantErasure BEFORE the cascade — invoices + credit notes are copied to the compliance archive (S3 Glacier + audit metadata) to satisfy the 7-10y retention legal obligation. UserErased (individual) triggers RedactCustomerFromInvoicesOnUserErased which nulls PII on invoices — the row survives, the personal fields are redacted."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Customers can request their full invoice history via the compliance/data-subject-rights surface. The export includes invoice PDFs + credit notes + payment references. Consumers may also directly access their own invoices via GET /api/v1/invoices/mine (auto-scoped)."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "billing_address is a snapshot jsonb (frozen at issuance) — the customer can update their live profile without retroactively mutating historical invoices. Support-role sees redacted customer PII by default on the platform surface; escalation requires platform.invoice.pii.view."
+        }
+      ]
+    },
+    "can_spam": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "Section 5",
+          "principle": "unsubscribe requirement",
+          "evidence": "Invoice emails carry the customer's tenant relationship AND the tenant's physical address (from tenant.branding). Dunning emails include a 'contact support' path in place of unsubscribe (compliance-safe — dunning is transactional, not marketing)."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical + physical access",
+          "evidence": "Invoice PDFs stored on S3 with SSE-KMS encryption. Access to view PDFs is via signed URLs with 7-day TTL (regenerated per viewer request). Platform-plane PII access requires platform.invoice.pii.view (escalation-only)."
+        },
+        {
+          "criterion": "CC6.3",
+          "principle": "audit trail retention",
+          "evidence": "Auditable trait retains 7 years (10 for Enterprise). Auditlog rows include before/after snapshots + actor user_id + timestamp + IP. Immutable — the audit log itself uses append-only writes."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "InvoiceUncollectible + InvoiceSentToCollections + InvoiceWrittenOff + academorix.invoice.reconcile.drift_detected_total are P1 signals. Every fire pages on-call. The reconciliation job runs nightly + reports drift between invoices and transactions."
+        }
+      ]
+    },
+    "fdcpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "Fair Debt Collection Practices Act (US) — dunning + collections language",
+          "evidence": "InvoicePastDueNotification copy tone is bounded by config('invoice.dunning.severity_escalation'). Friendly → reminder → firm → final → collections. No threatening language; every notification includes a support contact path + a clear statement of the debt. Collections handoff (Enterprise-only) requires the third-party agency to be an FDCPA-compliant licensed agency."
+        }
+      ]
+    }
+  }
+}

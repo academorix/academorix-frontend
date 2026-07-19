@@ -1,0 +1,90 @@
+{
+  "id": "academorix://modules/monitoring/attributes",
+  "$version": 1,
+  "title": "monitoring — PHP attribute contracts",
+  "description": "Three class-level attributes. `#[AsMonitoringListener]` subscribes a service to monitoring-lane events (alert lifecycle + incident lifecycle + circuit-breaker + provider lifecycle). `#[AsMonitoringProvider]` marks a class as a provider driver — the MonitoringProviderManager discovers these at boot and registers them via createXxxDriver factories. `#[AsHealthCheckStrategy]` marks a class as a health check executor strategy — the HealthCheckExecutor discovers these + dispatches per check_type.",
+  "namespace": "Academorix\\Observability\\Monitoring\\Attributes",
+  "attributes": [
+    {
+      "name": "AsMonitoringListener",
+      "class": "Academorix\\Observability\\Monitoring\\Attributes\\AsMonitoringListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to monitoring-lane events (MonitoringAlertFired / Acknowledged / Resolved / Suppressed, MonitoringIncidentOpened / Acknowledged / StatusUpdated / Resolved, MonitoringProviderCircuitBreakerOpened / Closed, MonitoringProviderConfigured / Deactivated, HealthCheck* variants). Discovery loader picks up each class at boot + wires the declared events. Consumers of MonitoringAlertFired for P1 should override queue to `monitoring-critical`.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`MonitoringAlertFired`, `MonitoringIncidentOpened`, `MonitoringProviderCircuitBreakerOpened`, …). Empty = subscribe to every `Academorix\\Observability\\Monitoring\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see events.json)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Failover listeners (FailoverToAlternateProvider) declare priority 10 so they run before default notification listeners."
+        }
+      ],
+      "example": "#[AsMonitoringListener(events: ['MonitoringProviderCircuitBreakerOpened'], queue: 'monitoring-critical', priority: 10)]\nfinal class FailoverToAlternateProvider\n{\n    public function __invoke(MonitoringProviderCircuitBreakerOpened $event): void\n    {\n        // Fail over PagerDuty ↔ Opsgenie for pending P1 notifications.\n    }\n}"
+    },
+    {
+      "name": "AsMonitoringProvider",
+      "class": "Academorix\\Observability\\Monitoring\\Attributes\\AsMonitoringProvider",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as a monitoring provider driver. The MonitoringProviderManager discovers these at boot and registers a createXxxDriver factory keyed on the slug. Every driver MUST implement the IMonitoringProvider contract (name(), supports(MonitoringSeverity), notify(...), transform(...)) + ship a JSON Schema under data/providers/<slug>-config.schema.json for config validation.",
+      "params": [
+        {
+          "name": "slug",
+          "type": "string",
+          "description": "Provider slug matching the MonitoringProvider enum (sentry, datadog, pagerduty, opsgenie, prometheus, custom_webhook). One driver class per slug."
+        },
+        {
+          "name": "supports_severities",
+          "type": "array<string>",
+          "description": "MonitoringSeverity values this provider can accept: subset of {p1, p2, p3, p4}. All 6 day-1 providers support all 4 severities; the routing decision is per-config (enabled_severities on the provider_config)."
+        },
+        {
+          "name": "is_paging",
+          "type": "bool",
+          "default": false,
+          "description": "true = the provider drives real-time paging (PagerDuty, Opsgenie). Used by MonitoringPagingCoordinator to route P1 alerts preferentially to paging providers."
+        },
+        {
+          "name": "is_apm",
+          "type": "bool",
+          "default": false,
+          "description": "true = the provider is an APM / observability platform (Sentry, Datadog). Used for correlation labels."
+        },
+        {
+          "name": "supports_test_mode",
+          "type": "bool",
+          "default": true,
+          "description": "true = the provider has a distinct sandbox / test endpoint. Every day-1 provider supports test mode."
+        }
+      ],
+      "example": "#[AsMonitoringProvider(slug: 'pagerduty', supports_severities: ['p1', 'p2', 'p3', 'p4'], is_paging: true, is_apm: false, supports_test_mode: true)]\nfinal class PagerDutyProvider implements IMonitoringProvider\n{\n    public function notify(MonitoringAlert|MonitoringIncident $subject, MonitoringProviderConfig $config): DeliveryResult { ... }\n}"
+    },
+    {
+      "name": "AsHealthCheckStrategy",
+      "class": "Academorix\\Observability\\Monitoring\\Attributes\\AsHealthCheckStrategy",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as a health check executor strategy. The HealthCheckExecutor discovers these at boot + dispatches per check_type. Every strategy MUST implement the IHealthCheckStrategy contract (checkType(), execute(HealthCheck): HealthCheckRunResult).",
+      "params": [
+        {
+          "name": "check_type",
+          "type": "string",
+          "description": "HealthCheckType value this strategy handles (db_ping / redis_ping / queue_depth / memory_usage / cpu_usage / disk_usage / http_endpoint / dns_lookup / tls_expiry / custom_script). One strategy class per check_type."
+        }
+      ],
+      "example": "#[AsHealthCheckStrategy(check_type: 'db_ping')]\nfinal class DbPingStrategy implements IHealthCheckStrategy\n{\n    public function execute(HealthCheck $check): HealthCheckRunResult\n    {\n        // Runs `SELECT 1` against check.target.connection_name.\n    }\n}"
+    }
+  ]
+}

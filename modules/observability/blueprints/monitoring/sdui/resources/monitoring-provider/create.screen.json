@@ -1,0 +1,107 @@
+{
+  "id": "monitoring.resources.monitoring-provider.create",
+  "title": "Add monitoring provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/providers/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "monitoring-provider", "action": "create" },
+  "requiresPermission": "monitoring.providers.create",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    { "name": "provider_capabilities", "kind": "http.get", "url": "/api/v1/monitoring/providers/capabilities", "unwrap": "data", "cache": { "ttlSeconds": 3600 } }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "MultiStepForm",
+      "props": { "className": "max-w-3xl mx-auto p-6" },
+      "children": [
+        {
+          "kind": "Step",
+          "props": { "title": "Provider", "description": "Pick where notifications go." },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "Provider" },
+              "bindings": { "options": { "$ref": "provider_capabilities" } },
+              "actions": { "onSelectionChange": { "kind": "form.set", "field": "provider", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "Input",
+              "props": { "label": "Display name", "placeholder": "Primary PagerDuty" },
+              "actions": { "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" } }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Credentials", "description": "Enter your provider credentials. Encrypted at rest." },
+          "children": [
+            {
+              "kind": "DynamicForm",
+              "bindings": { "schema": { "$expr": "provider_capabilities[form.provider].config_schema" } }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Severities", "description": "Which alert severities dispatch to this provider?" },
+          "children": [
+            {
+              "kind": "MultiSelect",
+              "props": {
+                "label": "Enabled severities",
+                "options": [
+                  { "value": "p1", "label": "P1 — Critical" },
+                  { "value": "p2", "label": "P2 — High" },
+                  { "value": "p3", "label": "P3 — Medium" },
+                  { "value": "p4", "label": "P4 — Info" }
+                ]
+              },
+              "actions": { "onSelectionChange": { "kind": "form.set", "field": "enabled_severities", "valueExpr": "$selectedKeys" } }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Test mode", "description": "Recommended for first-time setup." },
+          "children": [
+            {
+              "kind": "Switch",
+              "props": { "label": "Enable test mode", "description": "Test-mode dispatches to the provider's sandbox endpoint." },
+              "actions": { "onChange": { "kind": "form.set", "field": "test_mode", "valueExpr": "$value" } }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Confirm" },
+          "children": [
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "warning",
+                "title": "Data processing agreement",
+                "description": "Adding this provider means Academorix will forward monitoring signals to the provider. Please confirm you have accepted the provider's DPA."
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "children": "Create provider" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/monitoring/providers",
+                  "body": "{{form}}",
+                  "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/monitoring/providers/' + response.data.id + '/edit'" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "$version": 1,
+  "name": "tax",
+  "alias": "tax",
+  "namespace": "Academorix\\Finance\\Tax",
+  "description": "Tax rate + jurisdiction + exemption + calculation engine. Answers 'what tax is owed on this invoice line in this jurisdiction for this customer?'. Ships FOUR tables: `tax_rates` (per-jurisdiction rate rows with effective_from/effective_to time bounds — supports VAT changes at fiscal-year boundaries), `tax_jurisdictions` (country/state/city rule catalog — VAT / GST / Sales Tax / Consumption Tax / DIGITAL_SERVICES / ...), `tax_exemptions` (per-tenant exemption certificates — reseller / non-profit / diplomatic / rural / religious with certificate document + expiry + jurisdiction scope), `tax_calculations` (per-invoice-line tax computation record — immutable audit trail of which rate applied when, plus the provider that computed it if external). MultipleInstanceManager pattern via `TaxProviderManager` with 5 driver day-1: **TaxJar** (US-focused sales tax + international VAT), **Avalara AvaTax** (enterprise-grade global tax with per-SKU nexus), **Stripe Tax** (integrated with Stripe billing — automatic global tax on Stripe-processed transactions), **NativeCalculator** (built-in — reads tax_rates directly for simple jurisdictions; suitable for single-country tenants), **CustomWebhook** (generic HMAC-signed JSON escape hatch for tenant-run tax engines). Every invoice line runs through the provider for the customer's shipping/billing address — resolved via `TaxAddressResolver` from customer profile. Immutable calculation snapshot per invoice line — tax rate changes AFTER invoice issuance never retroactively re-tax historical invoices.",
+  "keywords": [
+    "tax",
+    "tax-rate",
+    "tax-jurisdiction",
+    "tax-exemption",
+    "tax-calculation",
+    "vat",
+    "gst",
+    "sales-tax",
+    "consumption-tax",
+    "digital-services-tax",
+    "withholding-tax",
+    "stamp-duty",
+    "customs",
+    "vat-moss",
+    "wayfair",
+    "nexus",
+    "economic-nexus",
+    "physical-nexus",
+    "marketplace-nexus",
+    "reseller-exemption",
+    "non-profit-exemption",
+    "diplomatic-exemption",
+    "religious-exemption",
+    "educational-exemption",
+    "taxjar",
+    "avalara",
+    "avatax",
+    "stripe-tax",
+    "native-calculator",
+    "custom-webhook",
+    "invoice-line",
+    "financial-audit",
+    "iso-3166",
+    "iso-4217",
+    "iso-3166-2",
+    "postal-code",
+    "certificate",
+    "certificate-verification",
+    "finance",
+    "wave-4"
+  ],
+  "priority": 60,
+  "providers": ["Academorix\\Finance\\Tax\\Providers\\TaxServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application", "region", "entitlements", "compliance"],
+  "extendedBy": [],
+  "planned_consumers": [
+    "coupon (Wave 4 — coupon redemption tax computation on discounted line items)",
+    "membership (Wave 4 — Finance Membership renewal charges resolve tax at issuance)",
+    "invoice (Wave 4 — every invoice line resolves tax via TaxCalculator + freezes a TaxCalculation snapshot)",
+    "transaction (Wave 4 — payment processing reads TaxCalculation snapshots for regulator reporting)"
+  ],
+  "contributes": {
+    "traits": ["BelongsToTaxJurisdiction", "HasTaxRates", "HasTaxCalculations"],
+    "attributes": ["AsTaxProvider", "AsExemptionVerifier"],
+    "blueprints": ["tax_rates", "tax_jurisdictions", "tax_exemptions", "tax_calculations"],
+    "middleware": ["tax.audit_calculations"],
+    "events": [
+      "TaxRateCreated",
+      "TaxRateUpdated",
+      "TaxRateExpired",
+      "TaxJurisdictionCreated",
+      "TaxJurisdictionUpdated",
+      "TaxExemptionCreated",
+      "TaxExemptionVerified",
+      "TaxExemptionRejected",
+      "TaxExemptionExpired",
+      "TaxCalculationRequested",
+      "TaxCalculationCompleted",
+      "TaxCalculationFailed",
+      "TaxProviderConfigured",
+      "TaxProviderCircuitBreakerOpened"
+    ],
+    "policies": [
+      "TaxRatePolicy",
+      "TaxJurisdictionPolicy",
+      "TaxExemptionPolicy",
+      "TaxCalculationPolicy"
+    ],
+    "hooks": [
+      "PurgeTaxDataForErasedTenant",
+      "CascadeExemptionExpiryOnJurisdictionDeactivated",
+      "MigrateCalculationsToArchiveOnTenantErased"
+    ],
+    "commands": [
+      "tax:list-rates",
+      "tax:sync-rates",
+      "tax:list-jurisdictions",
+      "tax:add-jurisdiction",
+      "tax:list-exemptions",
+      "tax:verify-exemption",
+      "tax:reject-exemption",
+      "tax:list-calculations",
+      "tax:describe-calculation",
+      "tax:configure-provider",
+      "tax:test-provider"
+    ],
+    "jobs": [
+      "SyncTaxRatesFromProviderJob",
+      "CalculateTaxForInvoiceLineJob",
+      "VerifyTaxExemptionJob",
+      "ExpireExemptionsJob",
+      "PurgeExpiredCalculationsJob",
+      "ReconcileProviderCalculationsJob",
+      "NotifyExemptionExpiringJob"
+    ],
+    "notifications": [
+      "TaxExemptionVerifiedNotification",
+      "TaxExemptionRejectedNotification",
+      "TaxExemptionExpiringNotification",
+      "TaxProviderCircuitBreakerOpenedNotification",
+      "TaxCalculationDriftDetectedNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.tax",
+      "tenant.{tenantId}.tax.exemptions",
+      "tenant.{tenantId}.tax.providers"
+    ],
+    "observers": [
+      "TaxRateObserver",
+      "TaxJurisdictionObserver",
+      "TaxExemptionObserver",
+      "TaxCalculationObserver"
+    ],
+    "rules": [
+      "valid_percentage",
+      "valid_country_code",
+      "valid_state_code",
+      "valid_postal_pattern",
+      "valid_iso_currency",
+      "valid_positive_amount",
+      "valid_effective_range",
+      "valid_provider_config",
+      "valid_exemption_certificate_url",
+      "valid_verification_status_transition"
+    ],
+    "casts": [
+      "TaxRateType",
+      "TaxRateAppliesTo",
+      "TaxRateSource",
+      "TaxJurisdictionType",
+      "TaxJurisdictionNexusType",
+      "TaxExemptionType",
+      "TaxExemptionVerificationStatus",
+      "TaxProvider"
+    ],
+    "views": [],
+    "lang": ["tax"],
+    "config": ["tax"],
+    "macros": [],
+    "bindings": [
+      "TaxRateRepository",
+      "TaxJurisdictionRepository",
+      "TaxExemptionRepository",
+      "TaxCalculationRepository",
+      "TaxProviderManager",
+      "TaxCalculator",
+      "TaxAddressResolver",
+      "TaxRateResolver",
+      "ExemptionValidator",
+      "TaxProviderRegistry",
+      "CertificateStorage"
+    ],
+    "resources": [
+      "tax-rate",
+      "tax-jurisdiction",
+      "tax-exemption",
+      "tax-calculation",
+      "tax-provider",
+      "tax-report"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "guzzlehttp/guzzle ^7.8 (HTTP client for provider dispatch — retry-safe, connection-pooled, request-signable)",
+      "league/iso3166 ^4.3 (ISO 3166-1 alpha-2 country code + ISO 3166-2 subdivision reference data)",
+      "league/flysystem-aws-s3-v3 ^3.0 (S3-signed URLs for exemption certificate document storage)"
+    ],
+    "rationale": "TaxJar / Avalara / Stripe Tax / Custom Webhook drivers dispatch through a shared Guzzle client with per-provider timeout + TLS validation. league/iso3166 backs the valid_country_code + valid_state_code validators (offline reference data — no HTTP required for validation). league/flysystem-aws-s3-v3 signs certificate_document_url values with time-limited access + tenant-scoped bucket prefixes so certificates never leak cross-tenant. Retry semantics for provider calls are OWNED BY THIS MODULE (via CalculateTaxForInvoiceLineJob idempotency + circuit-breaker) — Guzzle-level retry is disabled to preserve calculation-freeze semantics: a failed provider call must NEVER silently proceed to native fallback + risk under-charging tax."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing tax surface. Every route carries the `sanctum` guard + `X-Application-Id` header + `entitlement.enforce:tax_capture`. Owner + finance role author rates, jurisdictions + provider configs; admin + support role read the calculation ledger + exemption queue.",
+      "routes": [
+        "GET /api/v1/tax/rates",
+        "POST /api/v1/tax/rates",
+        "GET /api/v1/tax/rates/{rate}",
+        "PATCH /api/v1/tax/rates/{rate}",
+        "DELETE /api/v1/tax/rates/{rate}",
+        "POST /api/v1/tax/rates/sync",
+        "GET /api/v1/tax/jurisdictions",
+        "POST /api/v1/tax/jurisdictions",
+        "GET /api/v1/tax/jurisdictions/{jurisdiction}",
+        "PATCH /api/v1/tax/jurisdictions/{jurisdiction}",
+        "DELETE /api/v1/tax/jurisdictions/{jurisdiction}",
+        "GET /api/v1/tax/exemptions",
+        "POST /api/v1/tax/exemptions",
+        "GET /api/v1/tax/exemptions/{exemption}",
+        "POST /api/v1/tax/exemptions/{exemption}/verify",
+        "POST /api/v1/tax/exemptions/{exemption}/reject",
+        "GET /api/v1/tax/calculations",
+        "GET /api/v1/tax/calculations/{calculation}",
+        "POST /api/v1/tax/calculate",
+        "GET /api/v1/tax/providers",
+        "POST /api/v1/tax/providers",
+        "GET /api/v1/tax/providers/{provider}",
+        "PATCH /api/v1/tax/providers/{provider}",
+        "DELETE /api/v1/tax/providers/{provider}",
+        "POST /api/v1/tax/providers/{provider}/test",
+        "POST /api/v1/tax/providers/{provider}/reset-circuit-breaker",
+        "GET /api/v1/tax/reports/annual"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant support tooling. Ops + support review provider health, audit calculation drift, and inspect exemption queues cross-tenant.",
+      "routes": ["GET /api/v1/platform/tax/calculations", "GET /api/v1/platform/tax/rates"]
+    }
+  }
+}

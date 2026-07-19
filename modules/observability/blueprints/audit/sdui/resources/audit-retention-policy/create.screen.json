@@ -1,0 +1,111 @@
+{
+  "id": "audit.resources.audit-retention-policy.create",
+  "title": "Create audit retention override",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/retention-policies/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit-retention-policy", "action": "create" },
+  "requiresPermission": "audit.retention-policies.create",
+  "requiresEntitlement": "audit_retention_extended",
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "leadingIcon": "arrow-left", "children": "Back" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/audit/retention-policies" } }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Create audit retention override"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/audit-retention-policies",
+              "onSuccess": {
+                "kind": "navigate",
+                "to": "/tenant/audit/retention-policies"
+              }
+            }
+          },
+          "fields": [
+            {
+              "kind": "NumberSlider",
+              "props": {
+                "label": "Retention years",
+                "name": "retention_years",
+                "min": 1,
+                "max": 10,
+                "step": 1,
+                "defaultValue": 10,
+                "helpText": "Default is 7 years. Extension up to 10 is allowed for Enterprise tenants with a compliance-justified reason."
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "label": "Override reason",
+                "name": "override_reason",
+                "required": true,
+                "minLength": 10,
+                "maxLength": 500,
+                "placeholder": "e.g. SOX §404 compliance — financial mutation records retained beyond default 7y for extended audit window",
+                "helpText": "Describe the compliance justification for the retention extension. This appears on the compliance-officer trail forever — write for the auditor reading it two years from now."
+              }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Suggested reason preset",
+                "name": "_reason_preset",
+                "helpText": "Optionally load a template into the reason field above. Common regulatory scenarios pre-filled."
+              },
+              "options": [
+                { "key": "", "label": "— No preset —" },
+                { "key": "sox_404", "label": "SOX §404 — financial mutation records" },
+                { "key": "hipaa_164_316", "label": "HIPAA §164.316(b)(2)(i) — PHI audit trail" },
+                { "key": "irs_6001", "label": "IRS §6001 — taxable transaction records" },
+                { "key": "pci_dss_10_7", "label": "PCI-DSS Req 10.7 — cardholder-data audit trails" },
+                { "key": "gdpr_art_30", "label": "GDPR Art. 30 — records of processing" },
+                { "key": "regulator_hold", "label": "Regulator preservation order (ongoing investigation)" },
+                { "key": "litigation_hold", "label": "Litigation hold (discovery pending)" }
+              ]
+            },
+            {
+              "kind": "DateField",
+              "props": {
+                "label": "Override ends at",
+                "name": "override_ends_at",
+                "required": false,
+                "helpText": "Leave blank for indefinite override. Otherwise, specify when the extension expires (retention resets to 7y default at that time)."
+              }
+            }
+          ],
+          "submitButton": {
+            "variant": "primary",
+            "children": "Create override"
+          }
+        }
+      ]
+    }
+  ]
+}

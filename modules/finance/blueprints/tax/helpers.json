@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/tax/helpers",
+  "$version": 1,
+  "title": "tax — helper functions",
+  "description": "Ergonomic helpers for the tax pipeline. All helpers are thin wrappers around bound services — never business logic. Callers who need tax calculation results should always go through the TaxCalculator service (which handles gate checks, retries, circuit-breaker, and snapshot persistence); helpers here are for imperative flows and support tooling.",
+  "namespace": "Academorix\\Finance\\Tax\\Support",
+  "helpers": [
+    {
+      "signature": "resolve_tax_rate(TaxJurisdiction $jurisdiction, TaxRateType $rateType, TaxRateAppliesTo $appliesTo, ?CarbonImmutable $on = null): ?TaxRate",
+      "purpose": "Returns the applicable tax_rate for (jurisdiction, rate_type, applies_to, date). Reads from cache. Null when no rate exists for the tuple. Wraps TaxRateResolver::resolve() — most callers should use that directly.",
+      "delegates_to": "TaxRateResolver::resolve()"
+    },
+    {
+      "signature": "resolve_tax_jurisdiction(string $countryCode, ?string $stateCode = null, ?string $city = null, ?string $postalCode = null): ?TaxJurisdiction",
+      "purpose": "Returns the most-specific matching TaxJurisdiction. Prefers city > state > country. Applies postal_code_pattern regex when set. Reads from cache.",
+      "delegates_to": "TaxAddressResolver::resolve()"
+    },
+    {
+      "signature": "resolve_tax_jurisdiction_for_customer(Model $customer): ?TaxJurisdiction",
+      "purpose": "Convenience: reads the customer's profile address (shipping preferred over billing for physical goods; billing for digital-only tenants) + delegates to resolve_tax_jurisdiction. Returns null when no address is set on the customer.",
+      "delegates_to": "TaxAddressResolver::resolveForCustomer()"
+    },
+    {
+      "signature": "resolve_active_exemptions(Tenant $tenant, string $customerType, string $customerId, TaxJurisdiction $jurisdiction, ?CarbonImmutable $on = null): Collection<TaxExemption>",
+      "purpose": "Returns verified + non-expired exemptions for (tenant, customer, jurisdiction, on-date). Empty collection when none. Reads from cache.",
+      "delegates_to": "TaxExemptionRepository::activeFor()"
+    },
+    {
+      "signature": "calculate_tax_preview(int $sourceAmountCents, string $sourceCurrency, TaxJurisdiction $jurisdiction, ?Model $customer = null): TaxCalculationResult",
+      "purpose": "Real-time preview WITHOUT persisting a tax_calculations row. Used by pricing pages + cart previews + POST /api/v1/tax/calculate. Applies exemptions when customer is set. Fails the same way as TaxCalculator (no silent fallback).",
+      "delegates_to": "TaxCalculator::previewCalculate()"
+    },
+    {
+      "signature": "compute_effective_percentage(TaxRate $rate, Collection $exemptions): float",
+      "purpose": "Combines a base rate + applicable exemptions to produce the effective percentage. Reseller exemption typically = 100% off; non-profit varies; educational = partial. Reserved for support tooling + reports; production calculations always go through the provider driver.",
+      "delegates_to": "ExemptionValidator::applyToRate()"
+    },
+    {
+      "signature": "sign_certificate_url(TaxExemption $exemption, int $ttlSeconds = 900): string",
+      "purpose": "Returns a fresh S3 signed URL for the exemption's certificate_document_url. Default TTL 15 min. Used by SDUI view flow + support tooling. Every invocation writes an audit row (access to certificate documents is compliance-critical).",
+      "delegates_to": "CertificateStorage::sign()"
+    },
+    {
+      "signature": "format_percentage_as_bucket(float $percentage): string",
+      "purpose": "Bucketed percentage for analytics. Values: '0-5' | '5-10' | '10-20' | '20-30' | '30+'. Prevents cross-tenant tax posture inference from aggregated analytics data.",
+      "delegates_to": "TaxRateFormatter::bucket()"
+    },
+    {
+      "signature": "format_amount_as_bucket(int $amountCents): string",
+      "purpose": "Bucketed currency amount for analytics. Values: '0' | '1-999' | '1000-9999' | '10000-99999' | '100000+'. Same rationale.",
+      "delegates_to": "TaxAmountFormatter::bucket()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services. Keeps the boundary clean.",
+    "The calculate_tax_preview helper is DISTINCT from the primary calculation path. Preview never persists a tax_calculations row + never blocks an invoice line. The primary path is TaxCalculator::calculate(InvoiceLine) which the invoice module invokes."
+  ]
+}

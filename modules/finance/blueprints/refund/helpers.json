@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/refund/helpers",
+  "$version": 1,
+  "title": "refund — helper functions",
+  "description": "Ergonomic helpers for resolving refunds, computing refundable amounts, computing proration, and reading approval state. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Finance\\Refund\\Support",
+  "helpers": [
+    {
+      "signature": "resolve_refund(string $refundId, string $tenantId): ?Refund",
+      "purpose": "Cache-aware lookup for a refund within a tenant. Returns the Refund model or null when unknown / soft-deleted.",
+      "delegates_to": "RefundRepository::findById()"
+    },
+    {
+      "signature": "refundable_amount(Payment $payment): int",
+      "purpose": "Returns the remaining refundable amount for a payment: payment.amount_cents - SUM(amount_cents) across all NON-cancelled + NON-rejected + NON-failed refunds. Cached via rfd:refundable:{payment_id} (30s TTL).",
+      "delegates_to": "RefundRepository::computeRefundableAmount()"
+    },
+    {
+      "signature": "refund_requires_approval(Payment $payment, int $amountCents, string $reason): bool",
+      "purpose": "Pure computation of the requires_approval flag for a proposed refund. Reads config thresholds + reason categories. Used by preview + create paths to give the caller early feedback.",
+      "delegates_to": "RefundApprovalManager::computeRequiresApproval()"
+    },
+    {
+      "signature": "compute_proration(Membership $membership, string $cancellationDate): array{refund_amount_cents: int, unused_period_start: string, unused_period_end: string, total_period_days: int, unused_days: int, unused_pass_count: int, unused_pass_credit_cents: int}",
+      "purpose": "Given a membership + cancellation date, computes the prorated refund amount + freezes proration_config for the refund_line. Read-only. Called by preview + refund_line creation.",
+      "delegates_to": "ProrationCalculator::compute()"
+    },
+    {
+      "signature": "next_refund_number(string $tenantId, ?int $year = null): string",
+      "purpose": "Generate the next sequential refund number for a tenant + year. Uses the rfd:sequence:{tenant_id}:{year} counter. Returns a formatted string like 'REF-2026-00000042'.",
+      "delegates_to": "RefundNumberGenerator::next()"
+    },
+    {
+      "signature": "refund_approvers(string $tenantId, ?string $excludeUserId = null): array<string>",
+      "purpose": "Returns the list of user_ids holding refunds.approve permission for a tenant. --excludeUserId filters the initiator out (segregation of duties). Cached via rfd:approvers:{tenant_id} (10min TTL).",
+      "delegates_to": "RefundApprovalManager::resolveApprovers()"
+    },
+    {
+      "signature": "customer_can_request_refund(User $customer, Payment $payment): bool",
+      "purpose": "Returns true when the customer can request a refund on this payment: (1) tenant holds refund_customer_self_service entitlement, (2) customer is the payment's customer (matches payment.customer_type + customer_id), (3) refundable_amount > 0, (4) no active refund is already pending on this payment.",
+      "delegates_to": "RefundValidator::canCustomerRequest()"
+    },
+    {
+      "signature": "refund_line_sum(string $refundId): int",
+      "purpose": "Returns the SUM of amount_cents across all refund_lines for a given refund_id. Used by the sum-invariant observer check + the refund detail view.",
+      "delegates_to": "RefundLineRepository::sumAmountForRefund()"
+    },
+    {
+      "signature": "refund_can_be_cancelled(Refund $refund, User $actor): bool",
+      "purpose": "Returns true when actor can cancel the refund: (1) status IN ('awaiting_approval', 'approved'), (2) actor is initiator OR has refunds.cancel permission. Used by SDUI to enable/disable the cancel button.",
+      "delegates_to": "RefundPolicy::cancel()"
+    },
+    {
+      "signature": "is_admin_only_reason(string $reason): bool",
+      "purpose": "Returns true when the reason IS IN the admin-only set (fraud_confirmed / admin_correction / regulator_required / accounting_correction / chargeback_prevention). Customer path refuses these reasons at request time.",
+      "delegates_to": "RefundValidator::isAdminOnlyReason()"
+    },
+    {
+      "signature": "is_always_approve_reason(string $reason): bool",
+      "purpose": "Returns true when the reason IS IN the always-approve set (see is_admin_only_reason set + config refund.reason.always_require_approval).",
+      "delegates_to": "RefundApprovalManager::isAlwaysApproveReason()"
+    },
+    {
+      "signature": "provider_polling_interval(string $provider): int",
+      "purpose": "Returns the configured polling interval in seconds for a specific provider (from config refund.providers.<provider>.polling_interval_seconds). Used by scheduler to dispatch CheckRefundProviderStatusJob at the right cadence.",
+      "delegates_to": "config('refund.providers.'.$provider.'.polling_interval_seconds')"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services.",
+    "refundable_amount() is intentionally a `read` — the atomic write path is RefundObserver.creating which acquires row locks via SELECT ... FOR UPDATE on the parent payment.",
+    "compute_proration() is a pure read — it does NOT freeze the proration_config on any row. Freezing happens at refund_line creation time via ProrationCalculator::freeze()."
+  ]
+}

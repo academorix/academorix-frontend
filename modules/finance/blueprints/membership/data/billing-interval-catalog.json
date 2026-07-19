@@ -1,0 +1,67 @@
+{
+  "$version": 1,
+  "title": "Billing interval catalog",
+  "description": "Reference table for the billing_interval enum values. Feeds admin plan-creation UI + validation. Each entry documents cadence + typical use cases + interval_count multipliers. Populated by MembershipPlanObserver.creating validation + rendered in the plan builder dropdown.",
+  "intervals": [
+    {
+      "value": "monthly",
+      "display_name": "Monthly",
+      "description": "Bills once per month at the same day-of-month as signing. Most common for gyms + youth academies. Highest customer flexibility, lowest LTV.",
+      "days_in_period_approx": 30,
+      "typical_billing_interval_count": [1, 3, 6, 12],
+      "renewal_frequency_per_year": [12, 4, 2, 1],
+      "compatible_pass_grants": "1 to 40 per period",
+      "typical_use_cases": [
+        "Youth football / soccer: 8 passes/month",
+        "Adult fitness class: 4 passes/month",
+        "Unlimited access: null passes/month"
+      ]
+    },
+    {
+      "value": "quarterly",
+      "display_name": "Quarterly (every 3 months)",
+      "description": "Bills once every 3 months. Common for seasonal sports academies aligned with school terms.",
+      "days_in_period_approx": 90,
+      "typical_billing_interval_count": [1, 2, 4],
+      "renewal_frequency_per_year": [4, 2, 1],
+      "compatible_pass_grants": "20 to 100 per period",
+      "typical_use_cases": [
+        "Term-based coaching: 36 passes/quarter (2/week × 3 months)",
+        "Seasonal academy: 60 passes/quarter"
+      ]
+    },
+    {
+      "value": "annual",
+      "display_name": "Annual",
+      "description": "Bills once per year. Typical for premium tiers with discount vs monthly. Higher LTV but customers churn cyclically at renewal.",
+      "days_in_period_approx": 365,
+      "typical_billing_interval_count": [1, 2, 3],
+      "renewal_frequency_per_year": [1, 0.5, 0.333],
+      "compatible_pass_grants": "50 to 500 per period, OR null for unlimited",
+      "typical_use_cases": [
+        "Annual academy membership with unlimited access",
+        "Federation-required annual registration"
+      ]
+    },
+    {
+      "value": "lifetime",
+      "display_name": "Lifetime (one-time)",
+      "description": "One-time payment. No renewal. Membership stays active until manually cancelled by the customer or academy. Rare — used for founding-member offers, veterans' honorary memberships, and paid-once federation memberships.",
+      "days_in_period_approx": null,
+      "typical_billing_interval_count": [1],
+      "renewal_frequency_per_year": [0],
+      "compatible_pass_grants": "null (unlimited) — pass accounting is nonsensical without a period boundary",
+      "typical_use_cases": [
+        "Founding member offer at academy launch",
+        "Coach's honorary lifetime membership",
+        "Federation lifetime registration fee"
+      ]
+    }
+  ],
+  "cross_reference": [
+    "MembershipPlanObserver.creating validates billing_interval against this enum via valid_billing_interval rule",
+    "compatible_pass_grants informs the SDUI plan-creator's default passes_per_period suggestion per interval",
+    "lifetime intervals require special handling: MembershipPlan.effective_until must always be null, and Membership.next_renewal_at must always be null",
+    "billing_interval_count multiplies the base interval — 'quarterly' × 2 = 6 months per period"
+  ]
+}

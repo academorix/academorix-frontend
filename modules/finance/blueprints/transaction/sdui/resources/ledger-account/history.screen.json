@@ -1,0 +1,102 @@
+{
+  "id": "transaction.resources.ledger-account.history",
+  "title": "Account history",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/finance/ledger/accounts/:account/history",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "transaction", "entity": "ledger-account", "action": "history" },
+  "requiresPermission": "transaction.ledger.account_balance.view",
+  "requiresEntitlement": "transaction_capture",
+  "dataSources": [
+    {
+      "name": "history",
+      "kind": "http.get",
+      "url": "/api/v1/ledger/accounts/:account/history",
+      "unwrap": "data",
+      "queryFromFilters": true,
+      "queryDefaults": { "from": "$dateOffset(-90, 'day')", "to": "$now" }
+    },
+    {
+      "name": "account",
+      "kind": "http.get",
+      "url": "/api/v1/ledger/accounts/:account",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "$ref('account.display_name') + ' — history'" } } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Running balance history for this account." } }
+              ]
+            },
+            {
+              "kind": "DateRangePicker",
+              "props": { "label": "Date range", "className": "min-w-64" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.setMany",
+                  "fields": { "from": "$value.start", "to": "$value.end" }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4", "children": "Running balance" } },
+            {
+              "kind": "LineChart",
+              "bindings": {
+                "data": { "$ref": "history" }
+              },
+              "props": {
+                "xField": "recorded_at",
+                "yField": "running_balance_cents",
+                "className": "w-full h-80",
+                "formatter": { "y": "currency", "x": "date-short" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium mb-4", "children": "Entries" } },
+            {
+              "kind": "DataGrid",
+              "bindings": { "items": { "$ref": "history" } },
+              "props": {
+                "className": "w-full",
+                "columns": [
+                  { "field": "recorded_at", "label": "Recorded", "sortable": true, "defaultSort": "desc", "width": 180, "formatter": "datetime" },
+                  { "field": "transaction_number", "label": "Transaction", "width": 200, "renderer": { "kind": "Link", "toExpr": "'/tenant/finance/transactions/' + row.transaction_id", "className": "font-mono text-sm" } },
+                  { "field": "kind", "label": "Kind", "width": 160, "renderer": { "widget": "transaction.kind-chip" } },
+                  { "field": "debit_cents", "label": "Debit", "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono", "conditionalHidden": { "$expr": "row.debit_cents === 0" } } },
+                  { "field": "credit_cents", "label": "Credit", "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono", "conditionalHidden": { "$expr": "row.credit_cents === 0" } } },
+                  { "field": "running_balance_cents", "label": "Balance after", "width": 180, "renderer": { "kind": "Text", "formatter": "currency", "className": "text-right font-mono font-semibold" } },
+                  { "field": "description", "label": "Description" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

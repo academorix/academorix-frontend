@@ -1,0 +1,55 @@
+{
+  "id": "membership.widgets.membership-status-chip",
+  "title": "Membership status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "membership.membership-status-chip",
+  "description": "Status chip with color variant per state. Used in membership list rows, athlete detail pages, and dunning banners. Distinct chip vocabulary from TenantSubscription status (which lives in the subscription module's SDUI).",
+  "params": {
+    "status": {
+      "type": "string",
+      "required": true,
+      "enum": ["pending", "active", "paused", "cancelled", "lapsed", "refunded", "expired"]
+    },
+    "size": { "type": "string", "required": false, "default": "sm" },
+    "show_dunning_indicator": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "description": "When true and status='active', renders a subscript dot indicating consecutive_failed_renewal_count > 0."
+    },
+    "consecutive_failed_renewal_count": {
+      "type": "integer",
+      "required": false,
+      "default": 0
+    }
+  },
+  "nodes": [
+    {
+      "kind": "View",
+      "props": { "className": "inline-flex items-center gap-1" },
+      "children": [
+        {
+          "kind": "Chip",
+          "propsExpr": "{ size: $params.size, variant: $params.status === 'active' ? 'success' : $params.status === 'pending' ? 'warning' : $params.status === 'paused' ? 'neutral' : $params.status === 'refunded' ? 'info' : $params.status === 'lapsed' ? 'danger' : 'neutral', className: 'capitalize' }",
+          "children": [
+            {
+              "kind": "Text",
+              "propsExpr": "{ children: $params.status }"
+            }
+          ]
+        },
+        {
+          "kind": "Widget",
+          "widget": "core.dot-indicator",
+          "propsExpr": "{ variant: $params.consecutive_failed_renewal_count >= 3 ? 'danger' : $params.consecutive_failed_renewal_count >= 2 ? 'warning' : 'warning', 'aria-label': 'In dunning — ' + $params.consecutive_failed_renewal_count + ' failed renewal attempts' }",
+          "bindings": {
+            "hidden": {
+              "$expr": "!($params.show_dunning_indicator && $params.status === 'active' && $params.consecutive_failed_renewal_count > 0)"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

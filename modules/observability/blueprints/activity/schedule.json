@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/activity/schedule",
+  "$version": 1,
+  "title": "activity — scheduled tasks",
+  "description": "Cron entries registered by `ActivityServiceProvider::schedule()`. UTC throughout. `runOnOneServer` on every entry so multi-node worker pools do not duplicate work. `withoutOverlapping` where windows may exceed the interval.",
+  "entries": [
+    {
+      "signature": "activity:purge --tenant=* --log-name=*",
+      "kind": "command",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "description": "Daily 03:00 UTC. Dispatches PurgeExpiredActivitiesJob for every tenant / log_name — respects per-tenant retention policies. 03:00 chosen to run before the daily digest emails (04:00) so digest recipients don't see rows that will be purged the same day.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true,
+      "withoutOverlappingExpiresAfterMinutes": 60
+    },
+    {
+      "signature": "activity:archive-cold",
+      "kind": "job",
+      "class": "Academorix\\Observability\\Activity\\Jobs\\ArchiveActivitiesToColdStorageJob",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "description": "Weekly Sunday 04:00 UTC. For tenants with retention > 90d, moves rows in the 90d..retention_days window to cold storage (S3 Parquet). Sunday chosen to avoid weekday performance impact.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "activity:reconcile-batches",
+      "kind": "job",
+      "class": "Academorix\\Observability\\Activity\\Jobs\\ReconcileActivityBatchesJob",
+      "cron": "30 3 * * *",
+      "timezone": "UTC",
+      "description": "Daily 03:30 UTC. Closes orphan batches from crashed requests (ActivityBatchStarted with no matching ActivityBatchCompleted, age > 24h). Runs after the purge so orphan cleanup happens on the still-retained hot table.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "digest:activity --window=daily",
+      "kind": "command",
+      "cron": "0 8 * * *",
+      "timezone": "UTC",
+      "description": "Daily 08:00 UTC. Reads pending-digest sets accumulated during the last 24h and fires ActivityDigestEmailNotification per opted-in recipient. 08:00 UTC hits European working hours; per-user timezone shifts still center around morning.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "digest:activity --window=weekly",
+      "kind": "command",
+      "cron": "0 8 * * 1",
+      "timezone": "UTC",
+      "description": "Weekly Monday 08:00 UTC. Reads the 7-day pending-digest sets and fires the weekly variant of ActivityDigestEmailNotification. Recipients who opted for weekly-only receive one email per Monday.",
+      "runOnOneServer": true,
+      "withoutOverlapping": true
+    },
+    {
+      "signature": "activity:count --group-by=day",
+      "kind": "command",
+      "cron": "5 0 * * *",
+      "timezone": "UTC",
+      "description": "Daily 00:05 UTC. Emits activity volume metric per tenant per day into the monitoring stream — powers capacity planning. Runs at :05 to ensure the previous day's writes are all durable before counting.",
+      "runOnOneServer": true
+    }
+  ]
+}

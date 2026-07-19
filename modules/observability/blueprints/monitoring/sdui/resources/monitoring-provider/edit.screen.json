@@ -1,0 +1,91 @@
+{
+  "id": "monitoring.resources.monitoring-provider.edit",
+  "title": "Edit provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/providers/{provider}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "monitoring-provider", "action": "edit" },
+  "requiresPermission": "monitoring.providers.update",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    { "name": "provider", "kind": "http.get", "url": "/api/v1/monitoring/providers/{provider}", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-4" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between mb-2" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Edit provider" } },
+            { "kind": "Widget", "widget": "monitoring.circuit-breaker-badge", "bindings": { "provider_config": { "$ref": "provider" } } }
+          ]
+        },
+        {
+          "kind": "Input",
+          "props": { "label": "Name" },
+          "bindings": { "defaultValue": { "$ref": "provider.name" } },
+          "actions": { "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" } }
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info", "title": "Provider slug is immutable", "description": "To change provider type, delete this config + create a new one." }
+        },
+        {
+          "kind": "Switch",
+          "props": { "label": "Active" },
+          "bindings": { "defaultValue": { "$ref": "provider.is_active" } },
+          "actions": { "onChange": { "kind": "form.set", "field": "is_active", "valueExpr": "$value" } }
+        },
+        {
+          "kind": "MultiSelect",
+          "props": { "label": "Enabled severities", "options": ["p1", "p2", "p3", "p4"] },
+          "bindings": { "defaultValue": { "$ref": "provider.enabled_severities" } },
+          "actions": { "onSelectionChange": { "kind": "form.set", "field": "enabled_severities", "valueExpr": "$selectedKeys" } }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex gap-3 mt-4" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Save" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.patch",
+                  "url": "/api/v1/monitoring/providers/{provider}",
+                  "body": "{{form}}",
+                  "onSuccess": { "kind": "navigate", "to": "/tenant/monitoring/providers" }
+                }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "leadingIcon": "beaker", "children": "Test provider" },
+              "requiresPermission": "monitoring.providers.test",
+              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/providers/' + $routeParams.provider + '/test'" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "warning", "children": "Reset circuit breaker" },
+              "requiresPermission": "monitoring.providers.reset-circuit-breaker",
+              "bindings": { "hidden": { "$expr": "!provider.circuit_breaker_open_until" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/monitoring/providers/{provider}/reset-circuit-breaker",
+                  "body": { "note": "Manual reset via SDUI" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

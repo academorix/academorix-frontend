@@ -1,0 +1,133 @@
+{
+  "id": "payment.resources.payment-dispute.submit-evidence",
+  "title": "Submit dispute evidence",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-disputes/{dispute}/submit-evidence",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-dispute", "action": "submitEvidence" },
+  "requiresPermission": "payment.disputes.submit-evidence",
+  "requiresEntitlement": "payment_dispute_management",
+  "dataSources": [
+    {
+      "name": "dispute",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/payment-disputes/' + params.dispute",
+      "unwrap": "data"
+    },
+    {
+      "name": "payment",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/payments/' + dispute.payment_id",
+      "unwrap": "data",
+      "dependsOn": ["dispute"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Submit dispute evidence" } },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2 mt-1" },
+              "children": [
+                { "kind": "Widget", "widget": "payment.dispute-status-chip", "bindings": { "props.status": { "$ref": "dispute.status" }, "props.evidenceDueBy": { "$ref": "dispute.evidence_due_by" } } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$expr": "'Reason: ' + dispute.reason.replace('_', ' ')" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "Evidence deadline",
+            "description": "Submit your evidence before the deadline. Missing the deadline concedes the dispute."
+          },
+          "bindings": {
+            "hidden": { "$expr": "!dispute.evidence_due_by" }
+          }
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Auto-collected evidence" } }] },
+            {
+              "kind": "CardContent",
+              "props": { "className": "flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "TextArea",
+                  "props": { "label": "Service documentation", "rows": 4 },
+                  "bindings": { "defaultValue": { "$ref": "dispute.evidence.service_documentation" } },
+                  "actions": {
+                    "onChange": { "kind": "form.set", "field": "override_evidence.service_documentation", "valueExpr": "$value" }
+                  }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "label": "Product description", "rows": 3 },
+                  "bindings": { "defaultValue": { "$ref": "dispute.evidence.product_description" } },
+                  "actions": {
+                    "onChange": { "kind": "form.set", "field": "override_evidence.product_description", "valueExpr": "$value" }
+                  }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "label": "Refund policy", "rows": 3 },
+                  "bindings": { "defaultValue": { "$ref": "dispute.evidence.refund_policy" } },
+                  "actions": {
+                    "onChange": { "kind": "form.set", "field": "override_evidence.refund_policy", "valueExpr": "$value" }
+                  }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "label": "Additional context (uncategorized)", "rows": 4 },
+                  "bindings": { "defaultValue": { "$ref": "dispute.evidence.uncategorized_text" } },
+                  "actions": {
+                    "onChange": { "kind": "form.set", "field": "override_evidence.uncategorized_text", "valueExpr": "$value" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-disputes'" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Submit evidence" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/payment-disputes/' + params.dispute + '/submit-evidence'",
+                  "body": {
+                    "override_evidence": "{{form.override_evidence}}"
+                  },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/payment-disputes'"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

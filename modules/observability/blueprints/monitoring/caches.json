@@ -1,0 +1,127 @@
+{
+  "id": "academorix://modules/monitoring/caches",
+  "$version": 1,
+  "title": "monitoring — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["monitoring", "monitoring.health_checks", "monitoring.policies", "monitoring.providers", "monitoring.dashboard"],
+  "keys": [
+    {
+      "pattern": "mon:health-checks:{tenant_id}",
+      "description": "Active health checks list for a tenant. Read by the EvaluateAlertPoliciesJob to know which check_type/slug maps to which run stream.",
+      "ttlSeconds": 300,
+      "tags": ["monitoring", "monitoring.health_checks", "tenant"],
+      "invalidatedBy": [
+        "HealthCheckObserver.created",
+        "HealthCheckObserver.updated",
+        "HealthCheckObserver.deleted",
+        "HealthCheckCreated",
+        "HealthCheckDisabled"
+      ]
+    },
+    {
+      "pattern": "mon:health-check-runs:recent:{tenant_id}:{health_check_id}:{window_seconds}",
+      "description": "Recent HealthCheckRun rows for a specific (tenant, health_check, trailing window). Read by AlertPolicyEvaluator on every eval tick. Short TTL because the run stream is high-volume.",
+      "ttlSeconds": 30,
+      "tags": ["monitoring", "monitoring.health_checks", "tenant"],
+      "invalidatedBy": ["TTL only"]
+    },
+    {
+      "pattern": "mon:policies:{tenant_id}",
+      "description": "Active alert policies list for a tenant. Read by EvaluateAlertPoliciesJob every 30s.",
+      "ttlSeconds": 60,
+      "tags": ["monitoring", "monitoring.policies", "tenant"],
+      "invalidatedBy": [
+        "MonitoringAlertPolicyObserver.created",
+        "MonitoringAlertPolicyObserver.updated",
+        "MonitoringAlertPolicyObserver.deleted",
+        "MonitoringAlertPolicyCreated",
+        "MonitoringAlertPolicySuppressed"
+      ]
+    },
+    {
+      "pattern": "mon:providers:{tenant_id}",
+      "description": "Active provider configs for a tenant. Read by NotifyProvidersJob to determine fan-out targets.",
+      "ttlSeconds": 300,
+      "tags": ["monitoring", "monitoring.providers", "tenant"],
+      "invalidatedBy": [
+        "MonitoringProviderConfigObserver.created",
+        "MonitoringProviderConfigObserver.updated",
+        "MonitoringProviderConfigObserver.deleted",
+        "MonitoringProviderConfigured",
+        "MonitoringProviderDeactivated"
+      ]
+    },
+    {
+      "pattern": "mon:circuit-breaker:{tenant_id}:{provider}",
+      "description": "Circuit-breaker state per (tenant, provider). Read by CircuitBreakerGate on every pre-dispatch.",
+      "ttlSeconds": 30,
+      "tags": ["monitoring", "monitoring.providers"],
+      "invalidatedBy": [
+        "MonitoringProviderCircuitBreakerOpened",
+        "MonitoringProviderCircuitBreakerClosed"
+      ]
+    },
+    {
+      "pattern": "mon:rate-limit:{tenant_id}:{route}:{resource_id}:{minute}",
+      "description": "Rate-limit counter per (tenant, route, resource, minute) for the /run + /test endpoints. Fixed-window counter.",
+      "ttlSeconds": 120,
+      "tags": ["monitoring"],
+      "invalidatedBy": ["TTL only"]
+    },
+    {
+      "pattern": "mon:incident-grouping:{tenant_id}:{severity}",
+      "description": "Recent-incident lookup for the GroupAlertsIntoIncidentJob path. Stores { incident_id, opened_at, affected_services[] } for firing incidents within the 5-min grouping window.",
+      "ttlSeconds": 300,
+      "tags": ["monitoring", "tenant"],
+      "invalidatedBy": [
+        "MonitoringIncidentOpened",
+        "MonitoringIncidentResolved",
+        "TTL"
+      ]
+    },
+    {
+      "pattern": "mon:dashboard:{tenant_id}",
+      "description": "Materialised monitoring dashboard read-model. Fed by the GET /dashboard endpoint. TTL 60s balances freshness with load.",
+      "ttlSeconds": 60,
+      "tags": ["monitoring", "monitoring.dashboard", "tenant"],
+      "invalidatedBy": [
+        "MonitoringAlertFired",
+        "MonitoringAlertResolved",
+        "MonitoringIncidentOpened",
+        "MonitoringIncidentResolved",
+        "TTL"
+      ]
+    },
+    {
+      "pattern": "mon:evaluator-cache:{tenant_id}:{policy_id}:consecutive_breaches",
+      "description": "Consecutive-breach counter per policy. Incremented on each breach; reset on non-breach eval tick.",
+      "ttlSeconds": 3600,
+      "tags": ["monitoring", "monitoring.policies", "tenant"],
+      "invalidatedBy": [
+        "MonitoringAlertFired (resets after firing)",
+        "MonitoringAlertPolicyUpdated (config changed — reset)"
+      ]
+    },
+    {
+      "pattern": "mon:provider-schemas:{provider}",
+      "description": "Parsed data/providers/<provider>-config.schema.json JSON Schema object. Read by MonitoringProviderConfigObserver on every config create/update.",
+      "ttlSeconds": 86400,
+      "tags": ["monitoring"],
+      "invalidatedBy": ["boot-time reload", "manual"]
+    },
+    {
+      "pattern": "mon:check-type-catalog",
+      "description": "Parsed data/check-type-catalog.json. Read by HealthCheckObserver on every create/update for target-shape validation.",
+      "ttlSeconds": 86400,
+      "tags": ["monitoring"],
+      "invalidatedBy": ["boot-time reload", "manual"]
+    },
+    {
+      "pattern": "mon:signal-type-catalog",
+      "description": "Parsed data/signal-type-catalog.json. Read by MonitoringAlertPolicyObserver on every create/update for signal_type + threshold_unit validation.",
+      "ttlSeconds": 86400,
+      "tags": ["monitoring"],
+      "invalidatedBy": ["boot-time reload", "manual"]
+    }
+  ]
+}

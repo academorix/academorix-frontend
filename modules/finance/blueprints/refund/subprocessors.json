@@ -1,0 +1,40 @@
+{
+  "id": "academorix://modules/refund/subprocessors",
+  "$version": 1,
+  "title": "refund — subprocessors",
+  "description": "The Refund module itself engages ZERO third-party subprocessors — every state transition happens within the Academorix platform. Downstream payment module engages the actual payment providers (Stripe / Paddle / Adyen / Square / PayPal / CustomWebhook) that receive the refund dispatch; downstream marketing module engages ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) that receive negative-value conversion events; downstream notifications module engages email/SMS subprocessors. All are declared in their respective modules' subprocessors.json.",
+  "subprocessors": [],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "payment",
+      "reference": "payment::subprocessors.json (Wave 4)",
+      "used_for": "Forwarding refund dispatch to the payment provider (Stripe / Paddle / Adyen / Square / PayPal / CustomWebhook). RefundProviderExecutor delegates to payment::PaymentProviderManager which handles the provider-side HTTP call + webhook signature verification."
+    },
+    {
+      "module": "marketing",
+      "reference": "marketing::subprocessors.json (Wave 5)",
+      "used_for": "Forwarding Refund Issued (negative-value conversion) events to ad networks (Meta CAPI, Google Ads Enhanced Conversions, TikTok Events API, Microsoft UET, Snapchat CAPI) for ROAS adjustment + fraud model retraining."
+    },
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Delivering RefundRequestedNotification + RefundApprovalRequiredNotification + RefundApprovedNotification + RefundProcessedNotification + RefundSucceededNotification + RefundFailedNotification + RefundRejectedNotification via email / SMS / in-app / push."
+    },
+    {
+      "module": "invoice",
+      "reference": "invoice::subprocessors.json (Wave 4)",
+      "used_for": "CreditNoteIssuer creates the reversal credit note document. Invoice module engages document rendering + storage subprocessors (S3 for PDF hosting)."
+    },
+    {
+      "module": "compliance",
+      "reference": "compliance::subprocessors.json",
+      "used_for": "Retention pipeline (PurgeExpiredRefundDataJob) migrates records to compliance_archive S3 buckets before hard-delete. Compliance module engages the archive-storage subprocessor."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately with an empty subprocessors array. The GDPR Art. 30 record of processing activities requires per-module subprocessor lists; an empty list is the correct declaration for a module that engages none directly.",
+    "The Wave 4 tenant-facing 'subprocessor disclosure' page reads THIS FILE'S downstream_subprocessors_referenced list to compose the full disclosure — every downstream that this module transitively engages is surfaced to the tenant admin.",
+    "Payment provider subprocessors (Stripe / Paddle / Adyen / Square / PayPal) are the HIGH-RISK category — they receive PCI-adjacent data (payment token, refund amount, reason). Refund does not directly engage them; the payment module handles the provider-side HTTP contracts + credential management.",
+    "Ad-network subprocessors (Meta / Google / TikTok / Microsoft / Snapchat) receive PII (hashed) + click IDs + refund amounts on RefundSucceeded. Tenants opt into which providers via marketing module's provider configuration."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "monitoring.resources.health-check.runs",
+  "title": "Health check runs",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/health-checks/{check}/runs",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "health-check-run", "action": "list" },
+  "requiresPermission": "monitoring.health_check_runs.viewAny",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    {
+      "name": "check",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/health-checks/{check}",
+      "unwrap": "data"
+    },
+    {
+      "name": "runs",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/health-checks/{check}/runs",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "check.name + ' — runs history'" } } },
+        {
+          "kind": "FilterBar",
+          "props": {
+            "filters": [
+              { "field": "status", "label": "Status", "kind": "select", "options": ["healthy", "degraded", "unhealthy", "timeout", "error"] },
+              { "field": "from", "label": "From", "kind": "date" },
+              { "field": "to", "label": "To", "kind": "date" }
+            ]
+          }
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": { "items": { "$ref": "runs" }, "isLoading": { "$ref": "runs.isLoading" } },
+          "props": {
+            "columns": [
+              { "field": "run_at", "header": "Run at", "sortable": true },
+              { "field": "status", "header": "Status", "cellRenderer": { "kind": "Widget", "widget": "monitoring.status-badge", "bindings": { "status": { "$ref": "row.status" } } } },
+              { "field": "latency_ms", "header": "Latency (ms)", "sortable": true },
+              { "field": "error_details.error_code", "header": "Error code" },
+              { "field": "error_details.error_message", "header": "Error message" }
+            ]
+          }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Retention",
+            "description": "Runs are retained 7 days (hot) + 30 days (cold). Enterprise tenants: 30 days hot + 90 days cold."
+          }
+        }
+      ]
+    }
+  ]
+}

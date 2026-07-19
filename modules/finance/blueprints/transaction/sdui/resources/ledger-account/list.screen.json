@@ -1,0 +1,75 @@
+{
+  "id": "transaction.resources.ledger-account.list",
+  "title": "Ledger accounts",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/finance/ledger",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "transaction", "entity": "ledger-account", "action": "list" },
+  "requiresPermission": "transaction.ledger.account_balance.view",
+  "requiresEntitlement": "transaction_capture",
+  "dataSources": [
+    {
+      "name": "accounts",
+      "kind": "http.get",
+      "url": "/api/v1/ledger/accounts",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Ledger accounts" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Running balance per account in your base currency. Grouped by regulator category." } }
+          ]
+        },
+        {
+          "kind": "GroupedView",
+          "bindings": { "groups": { "$groupBy": "$ref('accounts')", "field": "regulator_category" } },
+          "props": {
+            "className": "flex flex-col gap-6",
+            "groupOrder": ["asset", "liability", "revenue", "expense", "equity"]
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center justify-between mb-4" },
+                  "children": [
+                    { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium capitalize" }, "bindings": { "children": { "$ref": "$group.name" } } },
+                    { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$expr": "$group.items.length + ' account' + ($group.items.length === 1 ? '' : 's')" } } }
+                  ]
+                },
+                {
+                  "kind": "DataGrid",
+                  "bindings": { "items": { "$ref": "$group.items" } },
+                  "props": {
+                    "className": "w-full",
+                    "columns": [
+                      { "field": "display_name", "label": "Account", "width": 240 },
+                      { "field": "account", "label": "Slug", "width": 200, "renderer": { "kind": "Text", "className": "font-mono text-xs text-muted" } },
+                      { "field": "current_balance_cents", "label": "Balance", "sortable": true, "width": 180, "renderer": { "widget": "transaction.balance-indicator" } },
+                      { "field": "typical_balance", "label": "Direction", "width": 100 },
+                      { "field": "threshold_state", "label": "Threshold", "width": 140, "renderer": { "kind": "Chip", "bindings": { "variant": { "$expr": "row.threshold_state === 'normal' ? 'default' : (row.threshold_state === 'above_high_watermark' ? 'warning' : 'danger')" }, "children": { "$expr": "row.threshold_state === 'normal' ? 'Normal' : row.threshold_state.replace('_', ' ')" } } } }
+                    ],
+                    "onRowPress": { "kind": "navigate", "toExpr": "'/tenant/finance/ledger/accounts/' + row.account" }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

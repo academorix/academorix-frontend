@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/monitoring/data/providers/prometheus-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Prometheus provider config",
+  "description": "Configuration shape for a Prometheus integration. Enterprise-only via monitoring_prometheus entitlement. Two modes: (1) OUTBOUND — push metrics to a tenant-hosted Pushgateway; (2) INBOUND — expose an AlertManager webhook endpoint that accepts POST from tenant's own Prometheus + re-emits as internal monitoring alerts. Both modes share this config.",
+  "type": "object",
+  "required": ["mode"],
+  "additionalProperties": false,
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["pushgateway", "alertmanager_receiver", "both"],
+      "description": "pushgateway: outbound — Academorix pushes metrics to tenant Pushgateway. alertmanager_receiver: inbound — Academorix hosts a webhook receiver that AlertManager POSTs to. both: enable both modes."
+    },
+    "pushgateway_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "pattern": "^https?://",
+      "description": "Required when mode IN (pushgateway, both). Full URL to the tenant's Pushgateway. HTTPS strongly recommended; HTTP allowed for local dev only."
+    },
+    "pushgateway_job_name": {
+      "type": "string",
+      "default": "academorix_monitoring",
+      "description": "Job name applied to pushed metrics. Grouped in Prometheus by this name."
+    },
+    "pushgateway_instance": {
+      "type": ["string", "null"],
+      "description": "Optional instance label. Defaults to '<tenant_short_id>' for tenant scoping in Prometheus queries."
+    },
+    "pushgateway_auth_bearer": {
+      "type": ["string", "null"],
+      "minLength": 20,
+      "description": "Optional Bearer token for authenticated Pushgateway. Encrypted at rest. Sent as 'Authorization: Bearer <token>'."
+    },
+    "alertmanager_receiver_secret": {
+      "type": ["string", "null"],
+      "minLength": 32,
+      "description": "Required when mode IN (alertmanager_receiver, both). Shared secret for HMAC verification of AlertManager webhook posts. Encrypted at rest. AlertManager MUST send X-Alertmanager-Signature: sha256(secret + payload)."
+    },
+    "receiver_severity_map": {
+      "type": ["object", "null"],
+      "description": "Optional mapping from AlertManager 'severity' label to monitoring severity. Default: critical→p1, warning→p2, info→p3, none→p4.",
+      "additionalProperties": false,
+      "properties": {
+        "critical": { "type": "string", "enum": ["p1", "p2", "p3", "p4"], "default": "p1" },
+        "warning": { "type": "string", "enum": ["p1", "p2", "p3", "p4"], "default": "p2" },
+        "info": { "type": "string", "enum": ["p1", "p2", "p3", "p4"], "default": "p3" },
+        "none": { "type": "string", "enum": ["p1", "p2", "p3", "p4"], "default": "p4" }
+      }
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

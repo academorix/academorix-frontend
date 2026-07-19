@@ -1,0 +1,79 @@
+{
+  "id": "academorix://modules/invoice/helpers",
+  "$version": 1,
+  "title": "invoice — helper functions",
+  "description": "Ergonomic helpers for creating invoices, computing aging, and rendering PDFs. All helpers are thin wrappers around bound services — never business logic. Callers who need transactional guarantees should invoke the bound services directly (via container-resolved injection).",
+  "namespace": "Academorix\\Finance\\Invoice\\Support",
+  "helpers": [
+    {
+      "signature": "create_draft_invoice(Tenant $tenant, Model $customer, ?Membership $membership = null, ?array $lines = [], string $currency = null, string $paymentTerms = 'net_30', string $series = 'INV'): Invoice",
+      "purpose": "Imperative invoice creation. Creates a draft invoice + freezes billing_address from customer.profile + adds any provided lines. Returns the created Invoice. Reserved for support tooling + tests — production code uses the CreateInvoiceOnMembershipCreated hook.",
+      "delegates_to": "InvoiceCreator::createDraft()"
+    },
+    {
+      "signature": "finalize_invoice(Invoice $invoice, bool $sendEmail = true): Invoice",
+      "purpose": "Synchronous finalize. Runs the FinalizeInvoiceJob steps inline (verifies tax calculations, computes totals, freezes state, transitions to open). Returns the finalized Invoice. Dispatches GenerateInvoicePDFJob + SendInvoiceEmailJob asynchronously unless sendEmail=false.",
+      "delegates_to": "InvoiceFinalizer::finalize()"
+    },
+    {
+      "signature": "generate_invoice_number(Tenant $tenant, string $series = 'INV', ?int $year = null): string",
+      "purpose": "Generate the next invoice number for a tenant + year (default current year). Uses Postgres advisory lock for gap-free sequential numbering. Returns the formatted string (2026-000001 or INV-2026-000001).",
+      "delegates_to": "InvoiceNumberGenerator::next()"
+    },
+    {
+      "signature": "generate_credit_note_number(Tenant $tenant, ?int $year = null): string",
+      "purpose": "Same pattern for credit note numbers. Returns 'CN-2026-000001'.",
+      "delegates_to": "CreditNoteNumberGenerator::next()"
+    },
+    {
+      "signature": "render_invoice_pdf(Invoice $invoice, ?string $template = null): string",
+      "purpose": "Render the invoice PDF as a binary string. Reserved for previewing (no S3 upload); production PDF generation goes through GenerateInvoicePDFJob which uploads to S3.",
+      "delegates_to": "InvoicePDFRenderer::render()"
+    },
+    {
+      "signature": "compute_invoice_aging(Tenant $tenant, ?Carbon $asOf = null, ?string $customerType = null, ?string $customerId = null): array",
+      "purpose": "Returns the aging summary as { current: cents, 1_30: cents, 31_60: cents, 61_90: cents, 91_plus: cents }. Optional customer scope. As-of defaults to today.",
+      "delegates_to": "InvoiceAgingReporter::compute()"
+    },
+    {
+      "signature": "compute_invoice_revenue(Tenant $tenant, Carbon $from, Carbon $to, string $groupBy = 'month'): array",
+      "purpose": "Returns revenue-report data: [{ period: '2026-01', invoiced_cents, collected_cents, ar_balance_cents }, ...]. groupBy IN ('day', 'week', 'month', 'item_type').",
+      "delegates_to": "InvoiceRevenueReporter::compute()"
+    },
+    {
+      "signature": "compute_tax_collected(Tenant $tenant, Carbon $from, Carbon $to, string $groupBy = 'jurisdiction'): array",
+      "purpose": "Returns tax-collected data: [{ jurisdiction: 'US-CA', tax_amount_cents, invoice_count }, ...]. Feeds VAT/GST/sales-tax return preparation.",
+      "delegates_to": "InvoiceTaxCollectedReporter::compute()"
+    },
+    {
+      "signature": "issue_credit_note(Invoice $originalInvoice, int $amountCents, string $reason, ?string $reasonNote = null, ?User $issuedBy = null): CreditNote",
+      "purpose": "Issue a credit note against a paid/partially-paid invoice. Runs the observer chain synchronously. Returns the created CreditNote (status='draft' initially; PDF generation is async).",
+      "delegates_to": "CreditNoteIssuer::issue()"
+    },
+    {
+      "signature": "apply_credit_note(CreditNote $creditNote, string $appliedToType, string $appliedToId): CreditNote",
+      "purpose": "Apply an issued credit note. appliedToType IN ('refund', 'next_invoice', 'customer_balance'). Transitions status issued → applied.",
+      "delegates_to": "CreditNoteIssuer::apply()"
+    },
+    {
+      "signature": "customer_scope_ids(User $user): array",
+      "purpose": "Returns the list of customer_id values a user may access via invoice.enforce_customer_scope. Includes user.id + any athlete_ids where user is guardian. Cached via mkt:customer-scope key.",
+      "delegates_to": "CustomerScopeResolver::forUser()"
+    },
+    {
+      "signature": "freeze_billing_address(Model $customer): array",
+      "purpose": "Extracts the billing_address snapshot from a customer model. For User: reads user.profile; for Athlete: reads athlete.guardian.profile; for Organization: reads organization.address. Returns the address as an array matching schemas/address-snapshot.embed.json.",
+      "delegates_to": "AddressSnapshotter::forCustomer()"
+    },
+    {
+      "signature": "days_past_due(Invoice $invoice, ?Carbon $asOf = null): int",
+      "purpose": "Returns days past due (0 if not past due). asOf defaults to today.",
+      "delegates_to": "InvoiceAgingCalculator::daysPastDue()"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services. Keeps the boundary clean.",
+    "The create_draft_invoice + finalize_invoice helpers are intentionally NOT the primary invoice-creation path. Production code registers listeners on membership::MembershipCreated + membership::MembershipRenewed; the helpers exist for support scripts + one-off backfills + tests."
+  ]
+}

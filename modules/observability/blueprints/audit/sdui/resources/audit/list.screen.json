@@ -1,0 +1,249 @@
+{
+  "id": "audit.resources.audit.list",
+  "title": "Audit trail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/audits",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit", "action": "list" },
+  "requiresPermission": "audit.audits.viewAny",
+  "dataSources": [
+    {
+      "name": "audits",
+      "kind": "http.get",
+      "url": "/api/v1/audits",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[user_id]",
+        "filter[auditable_type]",
+        "filter[auditable_id]",
+        "filter[event]",
+        "filter[since]",
+        "filter[until]",
+        "sort",
+        "page",
+        "per_page"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Audit trail"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Compliance-grade record of every mutation across every module. Immutable after write. Retained 7 years by default (10 with Enterprise retention extension)."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": {
+                "variant": "primary",
+                "leadingIcon": "arrow-down-tray",
+                "children": "Request export"
+              },
+              "actions": {
+                "onPress": { "kind": "navigate", "to": "/tenant/audit/exports/create" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-wrap gap-3" },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Auditable type",
+                "name": "filter[auditable_type]",
+                "placeholder": "e.g. Membership or Academorix\\Finance\\Models\\Membership"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "audits" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "Auditable ID",
+                "name": "filter[auditable_id]",
+                "placeholder": "e.g. mem_01H..."
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "audits" } }
+            },
+            {
+              "kind": "TextField",
+              "props": {
+                "label": "User ID",
+                "name": "filter[user_id]",
+                "placeholder": "usr_01H..."
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "audits" } }
+            },
+            {
+              "kind": "Select",
+              "props": { "label": "Event", "name": "filter[event]", "placeholder": "All" },
+              "options": [
+                { "key": "created", "label": "created" },
+                { "key": "updated", "label": "updated" },
+                { "key": "deleted", "label": "deleted" },
+                { "key": "restored", "label": "restored" },
+                { "key": "auth.login", "label": "auth.login" },
+                { "key": "auth.logout", "label": "auth.logout" },
+                { "key": "auth.mfa_challenge_failed", "label": "auth.mfa_challenge_failed" },
+                { "key": "consent.granted", "label": "consent.granted" },
+                { "key": "consent.revoked", "label": "consent.revoked" },
+                { "key": "transaction.approved", "label": "transaction.approved" },
+                { "key": "transaction.refunded", "label": "transaction.refunded" },
+                { "key": "audit.purged", "label": "audit.purged (meta)" },
+                { "key": "audit.raw_diff_revealed", "label": "audit.raw_diff_revealed (meta)" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "audits" } }
+            },
+            {
+              "kind": "DateRangeField",
+              "props": {
+                "label": "Occurred at",
+                "nameFrom": "filter[since]",
+                "nameTo": "filter[until]"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "audits" } }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No audit rows match",
+              "description": "Adjust the filters above. Every mutation across every module generates an audit row — if you see nothing, either no mutations happened in the window or your filters are too tight.",
+              "icon": "shield-check"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "audits" },
+            "isLoading": { "$ref": "audits.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "event",
+              "header": "Event",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex flex-col gap-0.5" },
+                "children": [
+                  {
+                    "kind": "Widget",
+                    "widget": "audit.audit-event-chip",
+                    "props": {
+                      "event": { "$ref": "row.event" },
+                      "size": "sm",
+                      "showIcon": true,
+                      "showLabel": true
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-xs text-muted" },
+                    "bindings": { "children": { "$ref": "row.auditable_short_type" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "subject",
+              "header": "Subject",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-xs" },
+                "bindings": { "children": { "$ref": "row.auditable_id" } }
+              }
+            },
+            {
+              "id": "actor",
+              "header": "Actor",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-xs" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "row.user_id ? (row.user_type ? row.user_type + ':' + row.user_id : row.user_id) : 'system'"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "diff",
+              "header": "Changes",
+              "cell": {
+                "kind": "Widget",
+                "widget": "audit.audit-diff-summary",
+                "props": {
+                  "diff_summary": { "$ref": "row.diff_summary" },
+                  "size": "sm"
+                }
+              }
+            },
+            {
+              "id": "when",
+              "header": "When",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatRelative(row.created_at)" } }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "isIconOnly": true,
+                  "leadingIcon": "chevron-right",
+                  "ariaLabel": "View audit row detail"
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/audit/audits/' + row.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

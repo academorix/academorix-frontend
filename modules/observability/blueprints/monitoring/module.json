@@ -1,0 +1,254 @@
+{
+  "$version": 1,
+  "name": "monitoring",
+  "alias": "monitoring",
+  "namespace": "Academorix\\Observability\\Monitoring",
+  "description": "The monitoring lane. Answers 'is my system healthy right now?' via server-side health checks + threshold-triggered alerts + provider fan-out. Ops audience — pages on-call when SLOs breach. High-volume, sampling-acceptable, 30-day hot retention. Six tables: `health_checks` (per-tenant health check config — uptime probe, DB probe, queue-depth probe, redis probe, memory probe, HTTP endpoint probe, custom probe), `health_check_runs` (per-execution result — latency + status + error blob), `monitoring_alerts` (fired alert record — signals a threshold breach), `monitoring_alert_policies` (per-tenant threshold config — 5xx rate > 5% over 5min = P1; DB p99 > 500ms over 3min = P2), `monitoring_incidents` (grouped alert timeline — multiple related alerts → one incident; auto-resolves when signals clear), `monitoring_provider_configs` (per-tenant per-provider connection). MultipleInstanceManager pattern via `MonitoringProviderManager` with 6 provider drivers day-1: Sentry (error tracking), Datadog (APM + logs + metrics), PagerDuty (paging + on-call rotation), Opsgenie (paging alternative), Prometheus (metrics scrape endpoint + AlertManager webhook), Custom Webhook (generic HMAC-signed JSON escape hatch for tenant-run Grafana / Grafana Cloud / New Relic / Slack directly / etc.). Retention: alerts + incidents 30d hot / 90d cold; health check runs 7d hot / 30d cold. Complements the frontend `@stackra/monitoring` package (browser-side error reporting) — this module owns SERVER-side monitoring + provider fan-out for alerts fired by BACKEND signals.",
+  "keywords": [
+    "monitoring",
+    "health-check",
+    "health-check-run",
+    "monitoring-alert",
+    "monitoring-alert-policy",
+    "monitoring-incident",
+    "monitoring-provider",
+    "observability",
+    "sentry",
+    "datadog",
+    "pagerduty",
+    "opsgenie",
+    "prometheus",
+    "custom-webhook",
+    "alertmanager",
+    "circuit-breaker",
+    "incident-response",
+    "on-call",
+    "paging",
+    "sla",
+    "slo",
+    "uptime",
+    "apm",
+    "error-tracking",
+    "wave-5"
+  ],
+  "priority": 19,
+  "providers": ["Academorix\\Observability\\Monitoring\\Providers\\MonitoringServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application"],
+  "extendedBy": [],
+  "planned_consumers": [
+    "audit (Wave 5 — monitoring reads audit-event volume to detect anomalies)",
+    "activity (Wave 5 — monitoring reads activity-event volume to detect anomalies)",
+    "notifications (Wave 5 — reads monitoring alert signals for dashboard warnings)"
+  ],
+  "contributes": {
+    "traits": [
+      "BelongsToHealthCheck",
+      "HasHealthCheckRuns",
+      "BelongsToMonitoringAlertPolicy",
+      "BelongsToMonitoringIncident",
+      "HasMonitoringAlerts"
+    ],
+    "attributes": ["AsMonitoringListener", "AsMonitoringProvider", "AsHealthCheckStrategy"],
+    "blueprints": [
+      "health_checks",
+      "health_check_runs",
+      "monitoring_alerts",
+      "monitoring_alert_policies",
+      "monitoring_incidents",
+      "monitoring_provider_configs"
+    ],
+    "middleware": ["monitoring.rate_limit"],
+    "events": [
+      "HealthCheckCreated",
+      "HealthCheckUpdated",
+      "HealthCheckEnabled",
+      "HealthCheckDisabled",
+      "HealthCheckRun",
+      "HealthCheckStatusChanged",
+      "MonitoringAlertPolicyCreated",
+      "MonitoringAlertPolicyUpdated",
+      "MonitoringAlertPolicySuppressed",
+      "MonitoringAlertFired",
+      "MonitoringAlertAcknowledged",
+      "MonitoringAlertResolved",
+      "MonitoringAlertSuppressed",
+      "MonitoringIncidentOpened",
+      "MonitoringIncidentAcknowledged",
+      "MonitoringIncidentStatusUpdated",
+      "MonitoringIncidentResolved",
+      "MonitoringProviderConfigured",
+      "MonitoringProviderDeactivated",
+      "MonitoringProviderCircuitBreakerOpened",
+      "MonitoringProviderCircuitBreakerClosed",
+      "MonitoringProviderTestSent"
+    ],
+    "policies": [
+      "HealthCheckPolicy",
+      "HealthCheckRunPolicy",
+      "MonitoringAlertPolicyPolicy",
+      "MonitoringAlertPolicy",
+      "MonitoringIncidentPolicy",
+      "MonitoringProviderConfigPolicy"
+    ],
+    "hooks": [
+      "PurgeMonitoringDataForErasedTenant",
+      "SuspendMonitoringProvidersOnTenantSuspended",
+      "ResumeMonitoringProvidersOnTenantResumed"
+    ],
+    "commands": [
+      "monitoring:list-health-checks",
+      "monitoring:describe-health-check",
+      "monitoring:run-health-check",
+      "monitoring:list-alerts",
+      "monitoring:acknowledge-alert",
+      "monitoring:resolve-alert",
+      "monitoring:list-incidents",
+      "monitoring:acknowledge-incident",
+      "monitoring:resolve-incident",
+      "monitoring:list-providers",
+      "monitoring:configure-provider",
+      "monitoring:test-provider",
+      "monitoring:reset-circuit-breaker",
+      "monitoring:audit-suppressions"
+    ],
+    "jobs": [
+      "RunHealthCheckJob",
+      "EvaluateAlertPoliciesJob",
+      "FireAlertJob",
+      "GroupAlertsIntoIncidentJob",
+      "EscalateIncidentJob",
+      "AutoResolveIncidentJob",
+      "NotifyProvidersJob",
+      "RetryFailedNotificationsJob",
+      "PurgeExpiredHealthCheckRunsJob",
+      "PurgeResolvedIncidentsJob"
+    ],
+    "notifications": [
+      "MonitoringAlertFiredNotification",
+      "MonitoringIncidentOpenedNotification",
+      "MonitoringIncidentEscalatedNotification",
+      "MonitoringHealthCheckPersistentlyFailingNotification",
+      "MonitoringProviderCircuitBreakerOpenedNotification",
+      "MonitoringPostmortemRequiredNotification",
+      "MonitoringWeeklyDigestNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.monitoring",
+      "tenant.{tenantId}.monitoring.alerts",
+      "tenant.{tenantId}.monitoring.incidents",
+      "tenant.{tenantId}.monitoring.providers"
+    ],
+    "observers": [
+      "HealthCheckObserver",
+      "HealthCheckRunObserver",
+      "MonitoringAlertPolicyObserver",
+      "MonitoringAlertObserver",
+      "MonitoringIncidentObserver",
+      "MonitoringProviderConfigObserver"
+    ],
+    "rules": [
+      "valid_check_type",
+      "valid_check_target_for_type",
+      "valid_interval_seconds",
+      "valid_timeout_seconds",
+      "valid_signal_type_source_combo",
+      "valid_threshold_operator_value",
+      "valid_severity",
+      "valid_provider_config_shape",
+      "valid_notify_provider_configs",
+      "valid_alert_state_transition",
+      "valid_incident_state_transition"
+    ],
+    "casts": [
+      "HealthCheckType",
+      "HealthCheckStatus",
+      "MonitoringSignalType",
+      "MonitoringSeverity",
+      "MonitoringAlertStatus",
+      "MonitoringIncidentStatus",
+      "MonitoringProvider",
+      "MonitoringThresholdOperator",
+      "MonitoringSuppressionConfig",
+      "CircuitBreakerConfig",
+      "RetryConfig"
+    ],
+    "views": [],
+    "lang": ["monitoring"],
+    "config": ["monitoring"],
+    "macros": [],
+    "bindings": [
+      "HealthCheckRepository",
+      "HealthCheckRunRepository",
+      "MonitoringAlertRepository",
+      "MonitoringAlertPolicyRepository",
+      "MonitoringIncidentRepository",
+      "MonitoringProviderConfigRepository",
+      "MonitoringProviderManager",
+      "HealthCheckExecutor",
+      "AlertPolicyEvaluator",
+      "IncidentGrouper",
+      "MonitoringPayloadTransformer",
+      "MonitoringPagingCoordinator",
+      "CircuitBreakerGate"
+    ],
+    "resources": [
+      "health-check",
+      "monitoring-alert",
+      "monitoring-alert-policy",
+      "monitoring-incident",
+      "monitoring-provider",
+      "monitoring-dashboard"
+    ]
+  },
+  "wraps": {
+    "packages": [
+      "guzzlehttp/guzzle ^7.8 (HTTP client for provider dispatch — retry-safe, connection-pooled, request-signable)"
+    ],
+    "rationale": "Every provider driver dispatches through a shared Guzzle client with per-provider timeout + retry-safe request encoding. The `MonitoringPayloadTransformer` builds the provider-native payload; the driver hands it to Guzzle which handles TLS + connection pooling + timeout. Retry semantics for provider notifications are OWNED BY THIS MODULE (via RetryFailedNotificationsJob + backoff schedule) — Guzzle-level retry is disabled to preserve idempotency + circuit-breaker semantics."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing monitoring surface. Every route carries the `sanctum` guard + `X-Application-Id` header + `entitlement.enforce:monitoring_capture`. Owner + tenant admin authored health checks + alert policies + provider configs; ops role + support role manage alerts + incidents. The two write endpoints that dispatch external side-effects (POST /health-checks/{h}/run, POST /providers/{p}/test) carry the `monitoring.rate_limit` middleware to prevent test spam.",
+      "routes": [
+        "GET /api/v1/monitoring/health-checks",
+        "POST /api/v1/monitoring/health-checks",
+        "GET /api/v1/monitoring/health-checks/{check}",
+        "PATCH /api/v1/monitoring/health-checks/{check}",
+        "DELETE /api/v1/monitoring/health-checks/{check}",
+        "POST /api/v1/monitoring/health-checks/{check}/run",
+        "GET /api/v1/monitoring/health-checks/{check}/runs",
+        "GET /api/v1/monitoring/alert-policies",
+        "POST /api/v1/monitoring/alert-policies",
+        "GET /api/v1/monitoring/alert-policies/{policy}",
+        "PATCH /api/v1/monitoring/alert-policies/{policy}",
+        "DELETE /api/v1/monitoring/alert-policies/{policy}",
+        "POST /api/v1/monitoring/alert-policies/{policy}/suppress",
+        "GET /api/v1/monitoring/alerts",
+        "GET /api/v1/monitoring/alerts/{alert}",
+        "POST /api/v1/monitoring/alerts/{alert}/acknowledge",
+        "POST /api/v1/monitoring/alerts/{alert}/resolve",
+        "GET /api/v1/monitoring/incidents",
+        "GET /api/v1/monitoring/incidents/{incident}",
+        "POST /api/v1/monitoring/incidents/{incident}/acknowledge",
+        "PATCH /api/v1/monitoring/incidents/{incident}",
+        "POST /api/v1/monitoring/incidents/{incident}/resolve",
+        "GET /api/v1/monitoring/providers",
+        "POST /api/v1/monitoring/providers",
+        "GET /api/v1/monitoring/providers/{provider}",
+        "PATCH /api/v1/monitoring/providers/{provider}",
+        "DELETE /api/v1/monitoring/providers/{provider}",
+        "POST /api/v1/monitoring/providers/{provider}/test",
+        "POST /api/v1/monitoring/providers/{provider}/reset-circuit-breaker",
+        "GET /api/v1/monitoring/dashboard"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant support tooling. Ops + support review P1 incidents + circuit-breaker health cross-tenant.",
+      "routes": [
+        "GET /api/v1/platform/monitoring/incidents",
+        "GET /api/v1/platform/monitoring/circuit-breakers"
+      ]
+    }
+  }
+}

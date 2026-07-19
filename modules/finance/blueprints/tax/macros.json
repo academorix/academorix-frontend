@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/tax/macros",
+  "$version": 1,
+  "title": "tax — published macros",
+  "description": "The tax module publishes ZERO framework macros. Every consumer touches the tax surface via injected services (TaxCalculator, TaxProviderManager) or the invoice-line listener path. Middleware attaches audit-log context (owned by audit module) — tax consumes it via injection.",
+  "namespace_note": "No macros published.",
+  "macros": [],
+  "rationale": [
+    "Tax is a CALCULATION ENGINE. The consumer contract is: create an invoice_line → the listener triggers CalculateTaxForInvoiceLineJob → the module persists a tax_calculations snapshot. There is no request-level state that needs to be surfaced as a Request macro (contrast with facility::activeFacility which caches a per-request model).",
+    "Adding a tax-specific macro (e.g. Request::activeTaxCalculation) would signal a design smell — tax calculations are per-line-item snapshot artefacts, not persistent per-request state.",
+    "The customer's resolved TaxJurisdiction IS potentially request-scoped (for a cart preview page), but it's owned by TaxAddressResolver and consumed via injection — not a macro."
+  ]
+}

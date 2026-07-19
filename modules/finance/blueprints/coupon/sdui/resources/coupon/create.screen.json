@@ -1,0 +1,317 @@
+{
+  "id": "coupon.resources.coupon.create",
+  "title": "Create coupon",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coupons/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coupon", "entity": "coupon", "action": "create" },
+  "requiresPermission": "coupons.create",
+  "requiresEntitlement": "coupon_capture",
+  "dataSources": [
+    {
+      "name": "discount_types",
+      "kind": "static",
+      "sourcePath": "modules/finance/blueprints/coupon/data/discount-type-catalog.json",
+      "unwrap": "types"
+    },
+    {
+      "name": "applicabilities",
+      "kind": "static",
+      "sourcePath": "modules/finance/blueprints/coupon/data/applicability-catalog.json",
+      "unwrap": "applicabilities"
+    },
+    {
+      "name": "plans",
+      "kind": "http.get",
+      "url": "/api/v1/membership-plans",
+      "unwrap": "data",
+      "conditional": "form.applicability === 'specific_membership_plans'"
+    },
+    {
+      "name": "entitlements",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "New coupon" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Configure a discount code for a campaign or partner offer." } }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": { "id": "coupon-create-form", "onSubmit": { "kind": "http.post", "url": "/api/v1/coupons", "onSuccessNavigate": "/tenant/coupons" } },
+          "children": [
+            {
+              "kind": "Stepper",
+              "props": { "steps": ["Basics", "Discount", "Applicability", "Caps + limits", "Validity", "Review"] },
+              "children": [
+                {
+                  "kind": "StepPanel",
+                  "props": { "step": 0, "title": "Basics" },
+                  "children": [
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "code",
+                        "label": "Code",
+                        "placeholder": "SUMMER25",
+                        "helpText": "Uppercase alphanumeric with dashes/underscores. 4-64 chars. Auto-uppercased.",
+                        "isRequired": true,
+                        "maxLength": 64
+                      }
+                    },
+                    {
+                      "kind": "TextField",
+                      "props": {
+                        "name": "name",
+                        "label": "Display name",
+                        "placeholder": "Summer 2026 sale",
+                        "helpText": "Internal admin display name.",
+                        "isRequired": true,
+                        "maxLength": 128
+                      }
+                    },
+                    {
+                      "kind": "TextArea",
+                      "props": {
+                        "name": "description",
+                        "label": "Description",
+                        "placeholder": "25% off any membership through Aug 31",
+                        "helpText": "Customer-visible marketing copy."
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "StepPanel",
+                  "props": { "step": 1, "title": "Discount" },
+                  "children": [
+                    {
+                      "kind": "ComboBox",
+                      "props": {
+                        "name": "discount_type",
+                        "label": "Discount type",
+                        "menuTrigger": "focus",
+                        "isRequired": true
+                      },
+                      "bindings": {
+                        "items": { "$ref": "discount_types" }
+                      },
+                      "itemRenderer": {
+                        "kind": "View",
+                        "children": [
+                          { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-xs text-muted" },
+                            "bindings": {
+                              "children": {
+                                "$expr": "item.medium_tier_allowed && !item.small_tier_allowed ? '(Medium+)' : ''"
+                              },
+                              "disabled": {
+                                "$expr": "!hasEntitlement('coupon_advanced_discount_types') && !item.small_tier_allowed"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "discount_amount",
+                        "label": "Amount",
+                        "minValue": 0
+                      },
+                      "bindings": {
+                        "hidden": { "$expr": "!form.discount_type || ['first_month_free', 'bogo', 'free_shipping'].includes(form.discount_type)" },
+                        "helpText": {
+                          "$expr": "form.discount_type === 'percent' ? 'Fraction 0..1 (0.25 = 25%)' : form.discount_type === 'fixed_amount' ? 'Amount in cents' : 'Days (1..365)'"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "ComboBox",
+                      "props": {
+                        "name": "discount_currency",
+                        "label": "Currency",
+                        "menuTrigger": "focus"
+                      },
+                      "bindings": {
+                        "hidden": { "$expr": "form.discount_type !== 'fixed_amount'" },
+                        "isRequired": { "$expr": "form.discount_type === 'fixed_amount'" }
+                      },
+                      "props_items": [
+                        { "id": "USD", "label": "USD" },
+                        { "id": "EUR", "label": "EUR" },
+                        { "id": "GBP", "label": "GBP" },
+                        { "id": "CAD", "label": "CAD" },
+                        { "id": "AUD", "label": "AUD" }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "StepPanel",
+                  "props": { "step": 2, "title": "Applicability" },
+                  "children": [
+                    {
+                      "kind": "ComboBox",
+                      "props": {
+                        "name": "applicability",
+                        "label": "Applies to",
+                        "menuTrigger": "focus",
+                        "isRequired": true
+                      },
+                      "bindings": {
+                        "items": { "$ref": "applicabilities" }
+                      },
+                      "itemRenderer": {
+                        "kind": "View",
+                        "children": [
+                          { "kind": "Text", "bindings": { "children": { "$ref": "item.display_name" } } },
+                          { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "item.description" } } }
+                        ]
+                      }
+                    },
+                    {
+                      "kind": "MultiSelect",
+                      "props": {
+                        "name": "applicable_plan_ids",
+                        "label": "Eligible plans",
+                        "menuTrigger": "focus"
+                      },
+                      "bindings": {
+                        "hidden": { "$expr": "form.applicability !== 'specific_membership_plans'" },
+                        "isRequired": { "$expr": "form.applicability === 'specific_membership_plans'" },
+                        "items": { "$ref": "plans" }
+                      }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "minimum_order_amount",
+                        "label": "Minimum order (cents)",
+                        "minValue": 1
+                      },
+                      "bindings": {
+                        "hidden": { "$expr": "form.applicability !== 'minimum_order_value'" },
+                        "isRequired": { "$expr": "form.applicability === 'minimum_order_value'" }
+                      }
+                    },
+                    {
+                      "kind": "ComboBox",
+                      "props": {
+                        "name": "minimum_order_currency",
+                        "label": "Minimum order currency",
+                        "menuTrigger": "focus"
+                      },
+                      "bindings": {
+                        "hidden": { "$expr": "form.applicability !== 'minimum_order_value'" },
+                        "isRequired": { "$expr": "form.applicability === 'minimum_order_value'" }
+                      },
+                      "props_items": [
+                        { "id": "USD", "label": "USD" },
+                        { "id": "EUR", "label": "EUR" },
+                        { "id": "GBP", "label": "GBP" }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "StepPanel",
+                  "props": { "step": 3, "title": "Caps + limits" },
+                  "children": [
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "usage_cap",
+                        "label": "Total usage cap",
+                        "helpText": "Max redemptions across all customers. Leave blank for unlimited.",
+                        "minValue": 1
+                      }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "name": "per_customer_limit",
+                        "label": "Per-customer limit",
+                        "helpText": "Max redemptions by a single customer. Default 1.",
+                        "minValue": 1,
+                        "defaultValue": 1,
+                        "isRequired": true
+                      }
+                    },
+                    {
+                      "kind": "Switch",
+                      "props": {
+                        "name": "is_stackable",
+                        "label": "Stackable with other coupons",
+                        "helpText": "Enterprise-only. Requires the coupon_stackable entitlement."
+                      },
+                      "bindings": {
+                        "disabled": { "$expr": "!hasEntitlement('coupon_stackable')" }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "StepPanel",
+                  "props": { "step": 4, "title": "Validity" },
+                  "children": [
+                    {
+                      "kind": "DatePicker",
+                      "props": {
+                        "name": "valid_from",
+                        "label": "Valid from",
+                        "isRequired": true,
+                        "defaultValue": "now"
+                      }
+                    },
+                    {
+                      "kind": "DatePicker",
+                      "props": {
+                        "name": "valid_until",
+                        "label": "Valid until",
+                        "helpText": "Leave blank for open-ended (subject to usage cap only)."
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "StepPanel",
+                  "props": { "step": 5, "title": "Review" },
+                  "children": [
+                    {
+                      "kind": "SummaryCard",
+                      "props": {
+                        "title": "Ready to create",
+                        "description": "Review your coupon configuration below. You can edit most fields after creating, but discount config becomes locked once the first redemption commits."
+                      }
+                    },
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "primary", "children": "Create coupon", "type": "submit" }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "id": "academorix://modules/audit/traits",
+  "$version": 1,
+  "title": "audit — trait composition",
+  "description": "This module ships ZERO owned traits. Capture is exclusively via the vendor `owen-it/laravel-auditing` package's `Auditable` trait — modules opt in to auditing by composing THAT trait on their Eloquent models. This module OWNS the storage adaptation + read surface + retention + export around the vendor's `audits` table; it does NOT introduce a parallel capture trait.",
+  "owned": [],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "AuditRetentionPolicy only. Audit rows are hard-purged at retention boundary; no soft-delete on the immutable ledger."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids", "consumed_by": "AuditRetentionPolicy (arp_)" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps", "consumed_by": "AuditRetentionPolicy" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata", "consumed_by": "AuditRetentionPolicy" },
+      {
+        "trait": "Academorix\\Foundation\\Concerns\\HasAuditable",
+        "consumed_by": "AuditRetentionPolicy — the policy itself is audited (SELF-audit). Every policy CRUD writes an audit row via the vendor Auditable trait on the policy model.",
+        "note": "Wraps `OwenIt\\Auditing\\Auditable` + adds our tenant_id column enforcement. Applied to policy rows but NOT to Audit rows themselves (audit rows don't audit themselves — that would recurse infinitely)."
+      },
+      { "trait": "Academorix\\Foundation\\Concerns\\IsRetentionAware", "consumed_by": "Audit + AuditRetentionPolicy + AuditExport" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable", "consumed_by": "Audit + AuditRetentionPolicy + AuditExport" }
+    ],
+    "tenancy": [
+      {
+        "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant",
+        "reason": "Every entity carries tenant_id. Applied via global scope + auto-fill on save. Order matters: BelongsToTenant MUST come first among tenancy-related traits — our Audit model wraps the vendor Audit model and composes BelongsToTenant to enforce tenant scoping on reads."
+      }
+    ],
+    "vendor": [
+      {
+        "trait": "OwenIt\\Auditing\\Auditable",
+        "package": "owen-it/laravel-auditing",
+        "consumed_by": "AuditRetentionPolicy (self-audit via HasAuditable) + every DOMAIN model across every module (each module composes this trait onto its Eloquent models — the audit CAPTURE contract). This module does NOT declare which models compose the trait; that's per-domain-module decision.",
+        "capture_note": "The trait's `AuditableObserver` fires on save/delete/restore/custom-transition. Wave-6 default events: created / updated / deleted / restored. Custom events register via Auditable::registerAuditableTransition at boot."
+      }
+    ]
+  },
+  "composition": {
+    "audit": {
+      "traits": [
+        "HasFactory",
+        "BelongsToTenant",
+        "IsRetentionAware",
+        "Filterable"
+      ],
+      "notes": "NO HasUlids — primary key stays vendor's bigint auto-increment. NO HasUserstamps — the vendor's user_type + user_id polymorphic actor is the equivalent. NO HasAuditable — audit rows do not audit themselves (recursion). NO SoftDeletes — hard-purge at retention boundary. NO HasMetadata — the vendor's tags + old_values/new_values already serve as metadata."
+    },
+    "audit_retention_policy": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "IsRetentionAware",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "Full trait composition — the policy itself IS audited (writes audit rows via HasAuditable wrapping the vendor Auditable trait). SoftDeletes preserves the historical policy trail for compliance."
+    },
+    "audit_export": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "HasAuditable",
+        "IsRetentionAware",
+        "Filterable"
+      ],
+      "notes": "AuditExport metadata (async export request) — audited (the request-for-export is itself a compliance-relevant event). No SoftDeletes — hard-purge at 90d retention."
+    }
+  }
+}

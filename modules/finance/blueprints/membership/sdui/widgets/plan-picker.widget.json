@@ -1,0 +1,94 @@
+{
+  "id": "membership.widgets.plan-picker",
+  "title": "Membership plan picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "membership.plan-picker",
+  "description": "ComboBox-based plan selector. Populated from GET /api/v1/membership-plans filtered by branch_id + is_active=true + within effective range + max_active_members not reached. Each option displays name + price + billing_interval + passes_per_period. Hidden plans (inactive / capacity-full / out of window) excluded automatically.",
+  "params": {
+    "branch_id": { "type": "string", "required": true },
+    "athlete_id": {
+      "type": "string",
+      "required": false,
+      "description": "When set, filters plans further to those whose age_group_id matches the athlete's current age group (or age_group_id is null)."
+    },
+    "selected_key": { "type": "string", "required": false },
+    "on_selection_change": { "type": "action", "required": false }
+  },
+  "dataSources": [
+    {
+      "name": "eligible_plans",
+      "kind": "http.get",
+      "url": "/api/v1/membership-plans",
+      "params": {
+        "filter[branch_id]": { "$ref": "$params.branch_id" },
+        "filter[is_active]": true,
+        "filter[eligible_for_athlete]": { "$ref": "$params.athlete_id" }
+      },
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "nodes": [
+    {
+      "kind": "ComboBox",
+      "props": {
+        "label": "Membership plan",
+        "menuTrigger": "focus",
+        "isRequired": true,
+        "className": "min-w-72"
+      },
+      "bindings": {
+        "items": { "$ref": "eligible_plans" },
+        "selectedKey": { "$ref": "$params.selected_key" }
+      },
+      "actions": {
+        "onSelectionChange": {
+          "kind": "invoke",
+          "handlerExpr": "$params.on_selection_change",
+          "argExpr": "{ selectedKey: $selectedKey }"
+        }
+      },
+      "renderItem": {
+        "kind": "View",
+        "props": { "className": "flex items-start justify-between gap-3 py-1" },
+        "children": [
+          {
+            "kind": "View",
+            "children": [
+              { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "item.name" } } },
+              {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": {
+                  "childrenExpr": "item.billing_interval + ' • ' + (item.passes_per_period ? item.passes_per_period + ' passes/period' : 'Unlimited access')"
+                }
+              }
+            ]
+          },
+          {
+            "kind": "View",
+            "props": { "className": "text-right" },
+            "children": [
+              {
+                "kind": "Text",
+                "props": { "className": "font-semibold tabular-nums" },
+                "bindings": {
+                  "childrenExpr": "$formatCurrency(item.price_cents, item.currency)"
+                }
+              },
+              {
+                "kind": "Text",
+                "props": { "className": "text-xs text-muted" },
+                "bindings": {
+                  "childrenExpr": "item.trial_days > 0 ? item.trial_days + '-day free trial' : ''",
+                  "hidden": { "$expr": "!item.trial_days" }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,181 @@
+{
+  "$version": 1,
+  "name": "coupon",
+  "alias": "coupon",
+  "namespace": "Academorix\\Finance\\Coupon",
+  "description": "Discount code + redemption tracker. Answers 'what discount applies to this invoice line, and how many times has this coupon been used?'. Ships TWO tables: `coupons` (the discount config — percent / fixed_amount / free_period / first_month_free / bogo with usage caps, expiry, applicability filters), `coupon_redemptions` (per-use pivot with atomic constraint check — this coupon x this customer x this invoice/membership tuple). Complements referrals — a referral CAN issue a coupon code for the referred to redeem, but coupons ALSO exist standalone (seasonal SUMMER25, corporate CORP_DISCOUNT, promotional Newsletter subscriber code). Redemption is atomic — the check 'is this coupon still valid AND has this customer not already redeemed AND has program cap not exceeded' happens in a single DB transaction with row lock on the coupon record. Every redemption fires a marketing event for ad-network attribution + a domain event that finance::invoice can subscribe to for line-item discount application. Fraud checks (device fingerprint match, email-variant match, velocity limits) delegated to `growth::referrals::FraudDetector` when the coupon was issued via referral; standalone coupons rely on usage_cap + per_customer_limit + coupon.rate_limit middleware.",
+  "keywords": [
+    "coupon",
+    "coupon-redemption",
+    "discount-code",
+    "promo-code",
+    "voucher",
+    "percent-discount",
+    "fixed-amount",
+    "free-period",
+    "first-month-free",
+    "bogo",
+    "free-shipping",
+    "seasonal-campaign",
+    "corporate-discount",
+    "promotional-code",
+    "usage-cap",
+    "per-customer-limit",
+    "atomic-redemption",
+    "row-lock",
+    "compare-and-swap",
+    "clawback",
+    "refund-cascade",
+    "invoice-line-discount",
+    "membership-plan-scoped",
+    "minimum-order-amount",
+    "bulk-issue",
+    "campaign-code",
+    "stackable",
+    "issuance-source",
+    "referral-issued",
+    "marketing-campaign",
+    "finance",
+    "tenant",
+    "wave-4"
+  ],
+  "priority": 61,
+  "providers": ["Academorix\\Finance\\Coupon\\Providers\\CouponServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "entitlements",
+    "compliance",
+    "tax"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "membership (Wave 4 — MembershipRenewal reads applicable coupons for the parent's next-period charge before dispatching to Finance)",
+    "invoice (Wave 4 — every invoice line resolves eligible coupons via CouponValidator + freezes a CouponRedemption snapshot inside the invoice-creation transaction)",
+    "referrals (Wave 5 — a referral program's reward can be issued as a coupon code; the referrals module calls CouponIssuer::issueForReferral() to produce a redeemable code)"
+  ],
+  "contributes": {
+    "traits": ["BelongsToCoupon", "HasCouponRedemptions"],
+    "attributes": ["AsCouponListener", "AsCouponRedemptionListener"],
+    "blueprints": ["coupons", "coupon_redemptions"],
+    "middleware": ["coupon.rate_limit", "coupon.enforce_capture_entitlement"],
+    "events": [
+      "CouponCreated",
+      "CouponUpdated",
+      "CouponActivated",
+      "CouponDeactivated",
+      "CouponExpired",
+      "CouponUsageCapReached",
+      "CouponRedeemed",
+      "CouponRedemptionRefused",
+      "CouponIssuedByReferralProgram",
+      "CouponIssuedManually",
+      "CouponClawbackRequested",
+      "CouponClawbackCompleted",
+      "CouponRedemptionReversed",
+      "CouponReportGenerated"
+    ],
+    "policies": ["CouponPolicy", "CouponRedemptionPolicy"],
+    "hooks": [
+      "ProcessCouponClawbackOnInvoiceRefunded",
+      "IssueCouponOnReferralRewardVested",
+      "CascadeCouponsOnMembershipPlanArchived",
+      "PurgeCouponDataForErasedTenant",
+      "RedactCouponRedemptionsOnUserErasure"
+    ],
+    "commands": [
+      "coupon:list",
+      "coupon:describe",
+      "coupon:create",
+      "coupon:deactivate",
+      "coupon:extend-expiry",
+      "coupon:bulk-issue",
+      "coupon:list-redemptions",
+      "coupon:reverse-redemption",
+      "coupon:report",
+      "coupon:audit-clawbacks"
+    ],
+    "jobs": [
+      "ExpireCouponsJob",
+      "ReconcileUsageCountJob",
+      "ProcessCouponClawbackJob",
+      "NotifyExpiringCouponsJob",
+      "GenerateCouponUsageReportJob"
+    ],
+    "notifications": [
+      "CouponUsageCapReachedNotification",
+      "CouponExpiredNotification",
+      "CouponRedeemedNotification",
+      "CouponClawbackNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.coupons", "tenant.{tenantId}.coupon-redemptions"],
+    "observers": ["CouponObserver", "CouponRedemptionObserver"],
+    "rules": [
+      "valid_code",
+      "valid_discount_type_amount_combo",
+      "valid_currency",
+      "valid_applicability_consistency",
+      "valid_positive_usage_cap",
+      "valid_positive_per_customer_limit",
+      "valid_effective_range",
+      "unique_active_code_per_tenant",
+      "redemption_within_valid_window"
+    ],
+    "casts": [
+      "CouponDiscountType",
+      "CouponApplicability",
+      "CouponIssuanceSource",
+      "CouponRedemptionCustomerType",
+      "CouponRedemptionAppliedToType",
+      "CouponClawbackReason"
+    ],
+    "views": [],
+    "lang": ["coupon"],
+    "config": ["coupon"],
+    "macros": [],
+    "bindings": [
+      "CouponRepository",
+      "CouponRedemptionRepository",
+      "CouponIssuer",
+      "CouponValidator",
+      "CouponRedeemer",
+      "CouponReporter",
+      "CodeGenerator",
+      "ClawbackHandler"
+    ],
+    "resources": ["coupon", "coupon-redemption", "coupon-report"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing coupon surface. Every admin route carries `sanctum` + `X-Application-Id` + `entitlement.enforce:coupon_capture`. Owner + marketing role author coupons + read redemption ledger; support role reads only. Customer-facing routes validate-only + preview-only (POST /redeem is deliberately absent — redemption is an internal service call inside the invoice-creation transaction to prevent replay attacks and preserve atomic invoice-level redemption).",
+      "routes": [
+        "GET /api/v1/coupons",
+        "POST /api/v1/coupons",
+        "GET /api/v1/coupons/{coupon}",
+        "PATCH /api/v1/coupons/{coupon}",
+        "DELETE /api/v1/coupons/{coupon}",
+        "POST /api/v1/coupons/{coupon}/deactivate",
+        "POST /api/v1/coupons/{coupon}/extend",
+        "POST /api/v1/coupons/bulk-issue",
+        "GET /api/v1/coupons/{coupon}/redemptions",
+        "GET /api/v1/coupons/redemptions",
+        "GET /api/v1/coupons/redemptions/{redemption}",
+        "POST /api/v1/coupons/redemptions/{redemption}/reverse",
+        "GET /api/v1/coupons/report",
+        "GET /api/v1/coupons/validate/{code}",
+        "POST /api/v1/coupons/{code}/preview"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant support tooling. Ops + support review coupon issuance + redemption ledgers cross-tenant for regulator-facing reporting.",
+      "routes": [
+        "GET /api/v1/platform/coupons",
+        "GET /api/v1/platform/coupons/{coupon}",
+        "GET /api/v1/platform/coupons/redemptions"
+      ]
+    }
+  }
+}

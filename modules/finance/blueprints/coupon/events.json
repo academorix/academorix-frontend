@@ -1,0 +1,311 @@
+{
+  "id": "academorix://modules/coupon/events",
+  "$version": 1,
+  "title": "coupon — published events",
+  "namespace": "Academorix\\Finance\\Coupon\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Two events are CRITICAL: `CouponClawbackRequested` (P1 signal — financial reversal that Finance module must process) and `CouponUsageCapReached` (P2 signal — the campaign ran out and admins likely want to top up OR launch a follow-up). Financial events (`CouponRedeemed` / `CouponRedemptionReversed` / `CouponClawbackCompleted`) additionally fan out to finance::invoice (Wave 4) for line-item discount application + revenue-recognition adjustment. `CouponRedeemed` fires a marketing event downstream when `issuance_source IN ('referral', 'marketing_campaign')` for ad-network conversion attribution.",
+  "events": [
+    {
+      "name": "CouponCreated",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponCreated",
+      "trigger": "CouponRepository finished a successful create. Fires exactly once per (tenant_id, code) tuple. Distinct from `CouponIssuedManually` / `CouponIssuedByReferralProgram` — those carry issuance-context; this fires unconditionally.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial-audit)",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateTenantCouponListCache"
+      ],
+      "payload": {
+        "coupon_id": "ULID (cpn_*)",
+        "tenant_id": "ULID (ten_*)",
+        "code": "string",
+        "name": "string",
+        "discount_type": "'percent' | 'fixed_amount' | 'free_period' | 'first_month_free' | 'bogo' | 'free_shipping'",
+        "discount_amount": "number | null",
+        "discount_currency": "string | null (ISO 4217)",
+        "applicability": "'any' | 'membership_only' | 'specific_membership_plans' | 'minimum_order_value'",
+        "issuance_source": "'manual' | 'referral' | 'marketing_campaign' | 'import' | 'api'",
+        "valid_from": "ISO 8601",
+        "valid_until": "ISO 8601 | null",
+        "usage_cap": "integer | null",
+        "per_customer_limit": "integer",
+        "is_stackable": "boolean",
+        "created_by": "ULID (usr_*)"
+      }
+    },
+    {
+      "name": "CouponUpdated",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponUpdated",
+      "trigger": "CouponRepository committed an update to a coupon (name, description, valid_until, usage_cap, per_customer_limit, is_stackable, applicable_plan_ids). NOT fired for `discount_type` / `discount_amount` / `discount_currency` mutations — those refuse post-redemption via observer.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateCouponCache"
+      ],
+      "payload": {
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "updated_by": "ULID"
+      }
+    },
+    {
+      "name": "CouponActivated",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponActivated",
+      "trigger": "Coupon.is_active transitioned false -> true. Common paths: manual reactivation before expiry OR admin-initiated activate after a `deactivate` reversal.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "activated_at": "ISO 8601",
+        "activated_by": "ULID"
+      }
+    },
+    {
+      "name": "CouponDeactivated",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponDeactivated",
+      "trigger": "Coupon.is_active transitioned true -> false. Causes: admin manual, usage_cap_reached auto-deactivate, applicable_plan_archived cascade, referral program archived cascade.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCouponDeactivatedInternalNotification (owner + marketing role)"
+      ],
+      "payload": {
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "deactivated_at": "ISO 8601",
+        "deactivated_by_user_id": "ULID | null (null = system cascade)",
+        "reason": "'manual' | 'usage_cap_reached' | 'applicable_plan_archived' | 'referral_program_archived' | 'expired_via_job'"
+      }
+    },
+    {
+      "name": "CouponExpired",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponExpired",
+      "trigger": "Coupon.valid_until has passed AND coupon still shows is_active=true. Detected by ExpireCouponsJob nightly sweep OR by CouponValidator.canRedeem() refusing an expired code and firing this event. Idempotent — fires exactly once per coupon.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCouponExpiredNotification (customer if the coupon was owned; admin)"
+      ],
+      "payload": {
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "code": "string",
+        "valid_until": "ISO 8601",
+        "expired_at": "ISO 8601",
+        "usage_count": "integer",
+        "usage_cap": "integer | null"
+      }
+    },
+    {
+      "name": "CouponUsageCapReached",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponUsageCapReached",
+      "trigger": "Coupon.usage_count reached Coupon.usage_cap. Fires from CouponObserver.updated when the increment crosses the threshold. P2 signal — the campaign ran out.",
+      "queue": "coupons-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCouponUsageCapReachedNotification (owner + marketing role)",
+        "observability::MetricsCollector (academorix.coupons.usage_cap_reached_total)"
+      ],
+      "payload": {
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "code": "string",
+        "usage_cap": "integer",
+        "issuance_source": "string",
+        "reached_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CouponRedeemed",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponRedeemed",
+      "trigger": "CouponRedeemer::redeem() successfully committed a CouponRedemption row + incremented Coupon.usage_count inside the enclosing invoice-creation transaction. Fires after commit.",
+      "queue": "coupons-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCouponRedeemedNotification (opt-in admin real-time redemption stream)",
+        "marketing::CaptureCouponRedeemedMarketingEvent (only when issuance_source IN ('referral', 'marketing_campaign'))",
+        "finance::ApplyDiscountToInvoiceLine (Wave 4 — the invoice module reads this and adjusts revenue-recognition)",
+        "referrals::ProgressReferralOnCouponRedeemed (only when issuance_source='referral' — notifies referrals module the associated referral progressed)"
+      ],
+      "payload": {
+        "redemption_id": "ULID (crd_*)",
+        "coupon_id": "ULID (cpn_*)",
+        "tenant_id": "ULID",
+        "code": "string",
+        "customer_type": "'user' | 'athlete'",
+        "customer_id": "ULID",
+        "redeemed_by_user_id": "ULID",
+        "applied_to_type": "'membership' | 'invoice' | 'transaction'",
+        "applied_to_id": "ULID",
+        "source_amount_cents": "integer",
+        "source_currency": "string (ISO 4217)",
+        "discount_amount_cents": "integer",
+        "final_amount_cents": "integer",
+        "discount_snapshot": "object (frozen coupon config at redemption time)",
+        "issuance_source": "string",
+        "issuance_context": "object | null",
+        "redeemed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CouponRedemptionRefused",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponRedemptionRefused",
+      "trigger": "CouponRedeemer::redeem() or CouponValidator::canRedeem() rejected the redemption attempt. Fires with the specific refusal reason. Audit-critical — supports customer support triage.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog (staff-visible for support triage)",
+        "observability::MetricsCollector (academorix.coupons.redemption_refusals_total labelled by refusal_reason)"
+      ],
+      "payload": {
+        "coupon_id": "ULID | null (null when code doesn't exist)",
+        "tenant_id": "ULID",
+        "code": "string",
+        "customer_type": "string | null",
+        "customer_id": "ULID | null",
+        "attempted_applied_to_type": "string | null",
+        "attempted_applied_to_id": "ULID | null",
+        "refusal_reason": "'COUPON_NOT_FOUND' | 'COUPON_INACTIVE' | 'COUPON_EXPIRED' | 'COUPON_NOT_YET_VALID' | 'COUPON_USAGE_CAP_REACHED' | 'COUPON_CUSTOMER_LIMIT_REACHED' | 'COUPON_APPLICABILITY_MISMATCH' | 'COUPON_MINIMUM_ORDER_NOT_MET' | 'COUPON_ALREADY_REDEEMED_ON_TARGET' | 'COUPON_CURRENCY_MISMATCH'",
+        "refused_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CouponIssuedByReferralProgram",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponIssuedByReferralProgram",
+      "trigger": "CouponIssuer::issueForReferral() successfully created a Coupon row with issuance_source='referral'. Called by growth::referrals when a ReferralReward.status transitioned to vested with a discount-type reward.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "referrals::LinkCouponToReward (records the coupon_id back onto the referral_rewards row for cross-lookup)"
+      ],
+      "payload": {
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "code": "string",
+        "referral_program_id": "ULID (rpg_*)",
+        "referral_id": "ULID (ref_*)",
+        "referral_reward_id": "ULID (rrw_*)",
+        "recipient_role": "'referrer' | 'referred'",
+        "recipient_user_id": "ULID",
+        "discount_type": "string",
+        "discount_amount": "number",
+        "issued_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CouponIssuedManually",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponIssuedManually",
+      "trigger": "CouponIssuer::issueManually() or CouponIssuer::bulkIssue() successfully created one or more Coupon rows with issuance_source IN ('manual', 'marketing_campaign', 'import', 'api'). Fires per created row.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "code": "string",
+        "issuance_source": "'manual' | 'marketing_campaign' | 'import' | 'api'",
+        "issuance_context": "object | null",
+        "campaign_name": "string | null",
+        "created_by": "ULID",
+        "issued_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CouponClawbackRequested",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponClawbackRequested",
+      "trigger": "finance::RefundIssued or finance::ChargebackFiled fires for an invoice that carried a CouponRedemption. ProcessCouponClawbackJob is dispatched. P1 signal — every clawback is a financial reversal.",
+      "queue": "coupons-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "redemption_id": "ULID",
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "clawback_reason": "'refund' | 'chargeback' | 'fraud' | 'manual_admin'",
+        "triggering_event_id": "ULID (finance event that initiated the clawback)",
+        "requested_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CouponClawbackCompleted",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponClawbackCompleted",
+      "trigger": "ProcessCouponClawbackJob finished — CouponRedemption.reversed_at set + Coupon.usage_count decremented atomically.",
+      "queue": "coupons-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCouponClawbackNotification (customer + admin — cannot-opt-out)",
+        "marketing::ReverseCouponRedemptionMarketingEvent (only when the redemption's issuance_source triggered a marketing event)"
+      ],
+      "payload": {
+        "redemption_id": "ULID",
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "customer_type": "string",
+        "customer_id": "ULID",
+        "clawback_reason": "'refund' | 'chargeback' | 'fraud' | 'manual_admin'",
+        "reversed_amount_cents": "integer",
+        "completed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CouponRedemptionReversed",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponRedemptionReversed",
+      "trigger": "Admin manually reversed a redemption via POST /coupons/redemptions/{redemption}/reverse (correction path — not a refund-cascade). Distinct from CouponClawbackCompleted which flows from a Finance refund.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCouponClawbackNotification (customer + admin)",
+        "finance::AdjustInvoiceLineDiscount (Wave 4 — the invoice module reads this and adjusts revenue-recognition)"
+      ],
+      "payload": {
+        "redemption_id": "ULID",
+        "coupon_id": "ULID",
+        "tenant_id": "ULID",
+        "reversed_by_user_id": "ULID",
+        "reason": "string (admin-provided)",
+        "reversed_amount_cents": "integer",
+        "reversed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CouponReportGenerated",
+      "class": "Academorix\\Finance\\Coupon\\Events\\CouponReportGenerated",
+      "trigger": "GenerateCouponUsageReportJob finished — the weekly per-tenant report is stored + available for download.",
+      "queue": "coupons",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchWeeklyCouponReportNotification (owner + marketing role — opt-in)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "report_id": "ULID",
+        "period_start": "ISO 8601",
+        "period_end": "ISO 8601",
+        "report_url": "string (signed S3 URL, 7d TTL)",
+        "coupon_count": "integer",
+        "redemption_count": "integer",
+        "total_discount_cents": "integer",
+        "clawback_count": "integer",
+        "generated_at": "ISO 8601"
+      }
+    }
+  ]
+}

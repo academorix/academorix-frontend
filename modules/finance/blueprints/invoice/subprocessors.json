@@ -1,0 +1,98 @@
+{
+  "id": "academorix://modules/invoice/subprocessors",
+  "$version": 1,
+  "title": "invoice — subprocessors",
+  "description": "The Invoice module engages TWO categories of third-party subprocessors: (1) PDF storage + delivery (AWS S3 for hot storage, S3 Glacier for cold archive), and (2) Enterprise-only collections agency integrations (per-tenant configurable — this file lists the platform-supported agencies). GDPR Art. 28 DPA references for each. The tenant admin acknowledges the DPA before configuring a collections agency; PDF storage is transparent (Academorix's infrastructure vendor, not an active engagement per tenant).",
+  "subprocessors": [
+    {
+      "slug": "aws_s3",
+      "vendor_name": "Amazon Web Services, Inc. (S3)",
+      "vendor_url": "https://aws.amazon.com/s3/",
+      "purpose": "Object storage for invoice + credit note PDFs. Hot storage in S3 Standard; migration to S3 Glacier at retention boundary (7 years default, 10 for Enterprise).",
+      "data_categories": ["invoice PDF binaries (containing customer billing_address, invoice line details, tax breakdown, totals)", "credit note PDF binaries"],
+      "data_hashing": "N/A — PDF content is stored encrypted at rest (SSE-KMS) but not hashed. Client-side encryption not applied.",
+      "endpoint": "s3.{region}.amazonaws.com",
+      "sub_processing_locations": ["configurable per tenant — us-east-1 default; EU tenants may pin to eu-west-1"],
+      "dpa_url": "https://aws.amazon.com/agreement/",
+      "certifications": ["SOC 2 Type 2", "ISO 27001", "ISO 27017", "ISO 27018", "PCI-DSS", "HIPAA-BAA (opt-in)"],
+      "activation_gate": "platform-level (Academorix's infrastructure)"
+    },
+    {
+      "slug": "aws_s3_glacier",
+      "vendor_name": "Amazon Web Services, Inc. (S3 Glacier)",
+      "vendor_url": "https://aws.amazon.com/s3/storage-classes/glacier/",
+      "purpose": "Cold archive for invoice + credit note PDFs after the hot retention window. Regulator-facing retention; retrieval requires 3-12h thaw.",
+      "data_categories": ["invoice PDF binaries (archived)", "credit note PDF binaries (archived)"],
+      "endpoint": "s3.{region}.amazonaws.com (Glacier storage class)",
+      "sub_processing_locations": ["same as S3 hot"],
+      "dpa_url": "https://aws.amazon.com/agreement/",
+      "certifications": ["same as S3"],
+      "activation_gate": "platform-level"
+    },
+    {
+      "slug": "aws_kms",
+      "vendor_name": "Amazon Web Services, Inc. (KMS)",
+      "vendor_url": "https://aws.amazon.com/kms/",
+      "purpose": "Server-side encryption key management for S3 PDF storage. SSE-KMS with tenant-specific data keys (envelope encryption).",
+      "data_categories": ["encryption key material (never data)"],
+      "endpoint": "kms.{region}.amazonaws.com",
+      "sub_processing_locations": ["same as S3"],
+      "dpa_url": "https://aws.amazon.com/agreement/",
+      "certifications": ["FIPS 140-2 Level 2", "SOC 2 Type 2", "ISO 27001", "ISO 27017", "ISO 27018"],
+      "activation_gate": "platform-level"
+    },
+    {
+      "slug": "collections_agency_registry",
+      "vendor_name": "Per-tenant configurable (multiple licensed agencies)",
+      "vendor_url": "N/A — tenant-owned selection",
+      "purpose": "Third-party collections agency handoff for past-due invoices. Enterprise-only. Only FDCPA-compliant (US) / EU-consumer-credit-directive-compliant (EU) licensed agencies may be configured. Notifications module owns the actual integration; this module dispatches the handoff.",
+      "data_categories": ["invoice_number", "amount_due_cents", "currency", "customer billing_address (name, address, phone, email)", "customer_tax_id (when applicable)", "days_past_due", "dunning history"],
+      "data_hashing": "none — collections agencies need the raw customer contact info to pursue the debt",
+      "endpoint": "per-agency configurable",
+      "sub_processing_locations": ["per-agency"],
+      "dpa_url": "per-agency — tenant admin acknowledges each agency's DPA before configuring",
+      "certifications": ["per-agency: FDCPA license (US), Financial Conduct Authority (UK), etc."],
+      "activation_gate": "tenant admin acknowledges the specific agency's DPA + FDCPA/regulatory license reference before configuring; Enterprise entitlement invoice_collections_integration required"
+    },
+    {
+      "slug": "custom_email_transport",
+      "vendor_name": "Per-tenant configurable (via notifications module)",
+      "vendor_url": "N/A — see notifications::subprocessors.json",
+      "purpose": "Delivery transport for invoice email (SendGrid, Postmark, SES, custom SMTP). Owned by the notifications module; this file references it because invoice emails carry PDFs + PII.",
+      "data_categories": ["customer email address", "customer name (from billing_address)", "invoice PDF attachment"],
+      "endpoint": "per-provider",
+      "sub_processing_locations": ["per-provider"],
+      "dpa_url": "see notifications::subprocessors.json",
+      "certifications": ["per-provider"],
+      "activation_gate": "delegated to notifications module"
+    }
+  ],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Email transport for invoice emails + push transport for InvoiceDueSoonNotification + collections integrations."
+    },
+    {
+      "module": "payment",
+      "reference": "payment::subprocessors.json",
+      "used_for": "Payment tokens (Stripe, Paddle) reference the payment module's subprocessor list. Invoicing does not directly touch payment providers — the MarkPaidOnPaymentIntentConfirmed listener reads confirmed intent state from the payment module."
+    },
+    {
+      "module": "tax",
+      "reference": "tax::subprocessors.json",
+      "used_for": "Tax calculation providers (Avalara, TaxJar, Stripe Tax) referenced when the tax module resolves TaxCalculation for invoice lines."
+    },
+    {
+      "module": "compliance/encryption",
+      "reference": "compliance::encryption owns the AWS KMS key hierarchy used for SSE-KMS on invoice PDF storage."
+    }
+  ],
+  "notes": [
+    "This file exists deliberately with 2 categories of active subprocessors. AWS S3 + KMS are platform-level (Academorix's infrastructure — not a per-tenant engagement). Collections agencies are per-tenant + Enterprise-only.",
+    "The tenant-facing subprocessor list (compliance/subprocessors surface) reads from this file + shows only the active subset per tenant (based on which collections agency the tenant has configured, if any).",
+    "Adding a new collections agency = adding a new entry to a data catalogue (data/collections-agency-catalog.json — TBD) + updating the notifications module's integration + updating compliance.json Art. 28 evidence.",
+    "PDF storage on S3 is protected by SSE-KMS encryption at rest — even AWS staff cannot decrypt without the tenant-specific KMS keys. Encryption keys are rotated per compliance/encryption cadence (default 90 days).",
+    "Collections agencies receive raw customer PII (name, address, phone, email) — this is regulator-mandated (FDCPA requires the agency to be able to contact the customer). The tenant admin explicitly opts-in per agency."
+  ]
+}

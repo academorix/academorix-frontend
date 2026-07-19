@@ -1,0 +1,65 @@
+{
+  "id": "academorix://modules/monitoring/broadcasts",
+  "$version": 1,
+  "title": "monitoring — realtime broadcast channels",
+  "description": "Four broadcast channel families for live UI updates. Tenant-level channel for the monitoring dashboard; alert-scoped channel for live-updating the alert list + acknowledgment status; incident-scoped channel for the incident detail live timeline; provider-scoped channel for the per-provider circuit-breaker + health indicator. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.monitoring",
+      "class": "Academorix\\Observability\\Monitoring\\Broadcasts\\TenantMonitoringChannel",
+      "description": "Tenant-wide monitoring dashboard live-update. Sink for the aggregated dashboard read-model.",
+      "authorization": "sanctum::authed AND tenant_matches AND (ops OR admin OR owner OR support)",
+      "events": [
+        "HealthCheckStatusChanged",
+        "MonitoringAlertFired",
+        "MonitoringAlertResolved",
+        "MonitoringIncidentOpened",
+        "MonitoringIncidentResolved"
+      ],
+      "throttle": "300 events/minute per channel",
+      "notes": "Payload trimmed to non-confidential fields (see data-classes.json). signal_context is included but PII-redacted."
+    },
+    {
+      "name": "tenant.{tenantId}.monitoring.alerts",
+      "class": "Academorix\\Observability\\Monitoring\\Broadcasts\\TenantMonitoringAlertsChannel",
+      "description": "Alert-scoped live updates. Powers the alerts list + acknowledgment status indicators.",
+      "authorization": "sanctum::authed AND tenant_matches AND (ops OR admin OR owner OR support)",
+      "events": [
+        "MonitoringAlertFired",
+        "MonitoringAlertAcknowledged",
+        "MonitoringAlertResolved",
+        "MonitoringAlertSuppressed"
+      ],
+      "throttle": "100 events/minute per channel"
+    },
+    {
+      "name": "tenant.{tenantId}.monitoring.incidents",
+      "class": "Academorix\\Observability\\Monitoring\\Broadcasts\\TenantMonitoringIncidentsChannel",
+      "description": "Incident-scoped live updates. Powers the incident detail live timeline.",
+      "authorization": "sanctum::authed AND tenant_matches AND (ops OR admin OR owner OR support)",
+      "events": [
+        "MonitoringIncidentOpened",
+        "MonitoringIncidentAcknowledged",
+        "MonitoringIncidentStatusUpdated",
+        "MonitoringIncidentResolved"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Every MonitoringIncidentOpened fires a companion push notification via the notifications module."
+    },
+    {
+      "name": "tenant.{tenantId}.monitoring.providers",
+      "class": "Academorix\\Observability\\Monitoring\\Broadcasts\\TenantMonitoringProvidersChannel",
+      "description": "Provider-scoped health + config activity. Powers the per-provider status chip + circuit-breaker state indicator.",
+      "authorization": "sanctum::authed AND tenant_matches AND (ops OR admin OR owner)",
+      "events": [
+        "MonitoringProviderConfigured",
+        "MonitoringProviderDeactivated",
+        "MonitoringProviderCircuitBreakerOpened",
+        "MonitoringProviderCircuitBreakerClosed",
+        "MonitoringProviderTestSent"
+      ],
+      "throttle": "30 events/minute per channel",
+      "notes": "Config field NEVER broadcast (encrypted at rest; the channel does not decrypt). Only the fact-of-change is broadcast; the SDUI re-fetches to get updated (redacted) config view."
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/activity/feature-flags",
+  "$version": 1,
+  "title": "activity — rollout flags",
+  "description": "Rollout / change-management flags for THIS module. Distinct from `features.json` (business-tier features gated by entitlement + plan). Every material change ships behind a flag per SOC 2 CC8.1.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "activity.kill-switch",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master kill-switch. Off = LogsActivity trait no-ops silently on every domain model. Existing rows still readable. Emergency freeze for a runaway write path (e.g. a domain model's overzealous logOnly() suddenly firing thousands of activities per request)."
+    },
+    {
+      "key": "activity.broadcast",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggles WebSocket broadcast to tenant.{id}.activity + user.{id}.activity. Off = frontend polls. Incident kill-switch for the reverb layer."
+    },
+    {
+      "key": "activity.batch-collapse",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Toggles the request-scoped ActivityBatcher. Off = every activity surfaces individually with no batch_uuid. Used when the batcher's cache reads are causing memory pressure OR the collapsed rendering is confusing users."
+    },
+    {
+      "key": "activity.retention-extended",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "enterprise-tenants",
+          "predicate": "tenant.subscription.plan = 'enterprise' AND tenant.entitlements.activity_retention_extended = true",
+          "state": "on"
+        }
+      ],
+      "description": "Rollout guard for the retention policy write path. Off by default; enterprise entitlement flips on. Provides an extra kill-switch beyond the entitlement so we can freeze retention writes tenant-wide during an incident."
+    },
+    {
+      "key": "activity.digest-email",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "medium-plan-and-above",
+          "predicate": "tenant.subscription.plan in ('medium', 'enterprise') AND tenant.entitlements.activity_digest_email = true",
+          "state": "on"
+        }
+      ],
+      "description": "Rollout guard for daily / weekly digest emails. Independent of the entitlement so ops can freeze digests if the scheduler is misbehaving."
+    },
+    {
+      "key": "activity.cold-archive",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [
+        {
+          "name": "canary",
+          "predicate": "tenant.metadata.canary_bucket = 'a'",
+          "state": "on"
+        }
+      ],
+      "description": "Rollout guard for ArchiveActivitiesToColdStorageJob. Off in v1 — extended-retention rows stay on the hot Postgres table until cold-archive rolls out. Canary bucket enables cold archive for one tenant per canary group first."
+    },
+    {
+      "key": "activity.backfill-tenant-id",
+      "kind": "one-shot",
+      "default": "off",
+      "description": "One-shot flag for the Wave-6 upgrade. When on for a tenant, BackfillActivityTenantIdFromJsonbJob runs on the tenant. Flipped on per-tenant during phased rollout, then decommissioned once every tenant has completed the backfill."
+    },
+    {
+      "key": "activity.review-flags",
+      "kind": "rollout",
+      "default": "off",
+      "cohorts": [],
+      "description": "Rollout guard for the monthly feature-flag review report (matches grants' equivalent). Off in Wave 6 — surfaces exist but the scheduler + notification wiring lands in a later wave."
+    }
+  ],
+  "retirement_policy": {
+    "description": "A flag lives at most 90 days after reaching 100% GA. After 90d, either the flag is deleted OR converts to a `kill-switch`. Monthly review command prints ages.",
+    "reviewCommand": "activity:review-flags"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/refund/observers",
+  "$version": 1,
+  "title": "refund — Eloquent observers",
+  "description": "Two observers enforce this module's write-time invariants. RefundObserver validates entitlement + amount within refundable + currency match at creation; determines requires_approval per threshold; dispatches InitiateProviderRefundJob on approval; runs the finalization chain (credit note + transaction + clawback fan-out + marketing negative-conversion) on succeeded transition; REFUSES ALL mutations post-succeeded (refunds are IMMUTABLE). RefundLineObserver enforces sum-consistency (refund_lines.amount_cents SUM must equal parent refund.amount_cents), refuses double-refunding an already-refunded invoice line, validates proration_config shape.",
+  "observers": [
+    {
+      "model": "Refund",
+      "observer": "Academorix\\Finance\\Refund\\Observers\\RefundObserver",
+      "handles": [
+        "creating -> populate ULID prefix `rfd_`",
+        "creating -> refuse when tenant does NOT hold `refund_capture` entitlement (returns `REFUND_CAPTURE_NOT_ENTITLED`)",
+        "creating -> refuse when refund_type='partial' AND tenant does NOT hold `refund_partial` entitlement (returns `REFUND_PARTIAL_NOT_ENTITLED`)",
+        "creating -> refuse when refund_type='prorated' AND tenant does NOT hold `refund_prorated` entitlement (returns `REFUND_PRORATED_NOT_ENTITLED`)",
+        "creating -> refuse when refund.currency != payment.currency AND tenant does NOT hold `refund_multi_currency` entitlement (returns `REFUND_MULTI_CURRENCY_NOT_ENTITLED`)",
+        "creating -> generate refund_number via RefundNumberGenerator (sequential per tenant per year — REF-<year>-<zero-padded-seq>); refuse duplicate via composite unique (tenant_id, refund_number)",
+        "creating -> validate amount_cents > 0 (returns `REFUND_INVALID_AMOUNT`)",
+        "creating -> validate amount_cents <= payment.amount_cents - payment.amount_refunded_cents (returns `REFUND_AMOUNT_EXCEEDS_REFUNDABLE`)",
+        "creating -> validate currency matches payment.currency (returns `REFUND_CURRENCY_MISMATCH`) unless refund_multi_currency entitlement is on (allows cross-currency; requires exchange_rate + fx-computed amount)",
+        "creating -> validate reason against enum (returns `REFUND_INVALID_REASON`)",
+        "creating -> validate refund_type against enum (returns `REFUND_INVALID_REFUND_TYPE`)",
+        "creating -> validate refunded_to against enum (returns `REFUND_INVALID_REFUNDED_TO`)",
+        "creating -> validate payment_id parent exists + payment.status='succeeded' (cannot refund a failed / pending payment)",
+        "creating -> validate invoice_id parent exists + matches payment.invoice_id (invoice consistency)",
+        "creating -> determine requires_approval via RefundApprovalManager: (amount_cents > refund.approval.threshold_amount_cents) OR (NOW() - payment.processed_at > refund.approval.threshold_days_since_payment days) OR (reason IN ('fraud_confirmed', 'admin_correction', 'chargeback_prevention', 'regulator_required', 'accounting_correction'))",
+        "creating -> if reason='duplicate_charge': force requires_approval=false (system-initiated auto-approve path)",
+        "creating -> if requires_approval=false: status='approved' + fire RefundApproved with auto_approved=true + dispatch InitiateProviderRefundJob",
+        "creating -> if requires_approval=true: status='awaiting_approval' + fire RefundApprovalRequired + dispatch NotifyRefundApprovalRequiredJob",
+        "creating -> validate initiated_by_user_id present (required — every refund has a human or system initiator)",
+        "creating -> fire RefundRequested",
+        "updating (status: awaiting_approval -> approved) -> require approved_by_user_id + approved_at set; REFUSE when approved_by_user_id == initiated_by_user_id (segregation of duties per SOX §404 — returns `REFUND_SELF_APPROVAL_REFUSED`); fire RefundApproved + dispatch InitiateProviderRefundJob",
+        "updating (status: awaiting_approval -> rejected) -> require rejected_by_user_id + rejected_at + rejection_reason (256 char, non-empty); REFUSE when rejected_by_user_id == initiated_by_user_id; fire RefundRejected",
+        "updating (status: awaiting_approval | approved -> cancelled) -> allow when caller is initiator OR has refunds.cancel permission; require cancelled_by_user_id + cancelled_at; fire RefundCancelled",
+        "updating (status: approved -> processing) -> require provider_reference_id set (or refunded_to != 'original_payment_method' — non-provider paths); fire RefundProcessing + RefundNotifiedProvider",
+        "updating (status: processing -> succeeded) -> require processed_at set; dispatch FinalizeRefundJob (runs credit note + transaction + invoice state + clawback fan-out + marketing negative-conversion in one txn); fire RefundSucceeded after commit",
+        "updating (status: processing -> failed) -> require failed_at + failure_reason set; fire RefundFailed",
+        "updating (status: processing -> provider_error) -> require failure_reason set; fire RefundProviderError",
+        "updating (status: provider_error -> processing) -> retry path from ReconcileRefundsJob; allow when refund is not-yet-failed; fire RefundProcessing",
+        "updating (status: provider_error -> failed) -> force-fail path via CLI admin; require failed_at + failure_reason set; fire RefundFailed",
+        "updating (any state -> anything when current status='succeeded') -> REFUSE (returns `REFUND_IMMUTABLE` — refunds are IMMUTABLE post-succeeded)",
+        "updating (any state -> anything when current status IN ('failed', 'rejected', 'cancelled')) -> REFUSE (returns `REFUND_TERMINAL_STATE` — terminal states are immutable)",
+        "updating (attempted state transition not in the state machine — e.g. awaiting_approval -> processing skipping approved) -> REFUSE (returns `REFUND_INVALID_STATE_TRANSITION`)",
+        "updating (mutation of amount_cents / currency / reason / refund_type / payment_id / invoice_id / initiated_by_user_id after status != 'awaiting_approval') -> REFUSE (returns `REFUND_TERMS_LOCKED` — these fields lock once approval starts)",
+        "updating (refund_number) -> REFUSE always (returns `REFUND_NUMBER_IMMUTABLE`)",
+        "deleting -> refuse when status IN ('processing', 'succeeded', 'failed', 'rejected', 'cancelled') — post-approval refunds are 7y-retained; retention pipeline handles hard-delete via PurgeExpiredRefundDataJob"
+      ]
+    },
+    {
+      "model": "RefundLine",
+      "observer": "Academorix\\Finance\\Refund\\Observers\\RefundLineObserver",
+      "handles": [
+        "creating -> populate ULID prefix `rfl_`",
+        "creating -> refuse when parent refund.status NOT IN ('pending', 'awaiting_approval', 'approved') — refund_lines cannot be added once dispatch begins (returns `REFUND_LINE_PARENT_LOCKED`)",
+        "creating -> refuse when parent refund exists on a different invoice_id than the target invoice_line.invoice_id (cross-invoice guard — returns `REFUND_LINE_INVOICE_MISMATCH`)",
+        "creating -> validate amount_cents > 0 (returns `REFUND_LINE_INVALID_AMOUNT`)",
+        "creating -> validate amount_cents <= invoice_line.total_cents - invoice_line.amount_refunded_cents (returns `REFUND_LINE_AMOUNT_EXCEEDS_LINE_TOTAL`)",
+        "creating -> validate currency matches parent refund.currency + invoice_line.currency (returns `REFUND_LINE_CURRENCY_MISMATCH`)",
+        "creating -> validate composite unique (tenant_id, refund_id, invoice_line_id); refuse duplicate row with `REFUND_LINE_DUPLICATE_INVOICE_LINE`",
+        "creating -> validate proration_config shape when populated: { unused_period_start, unused_period_end, total_period_days, unused_days, unused_pass_count, unused_pass_credit_cents }; refuse malformed with `REFUND_LINE_INVALID_PRORATION_CONFIG`",
+        "creating -> validate proration_config populated ONLY when parent refund.refund_type='prorated' (returns `REFUND_LINE_PRORATION_CONFIG_MISUSE`)",
+        "creating -> validate proration_config: unused_period_end > unused_period_start; unused_days <= total_period_days; unused_pass_credit_cents >= 0",
+        "creating -> validate sum of amount_cents across parent refund's refund_lines does not exceed parent refund.amount_cents; on the row being created, the sum-with-new must equal parent refund.amount_cents when this is the final line (RefundOrchestrator caller signals via metadata.is_final_line=true) OR less than when more lines are pending",
+        "creating -> fire RefundLineCreated",
+        "updating (any field) -> REFUSE (returns `REFUND_LINE_IMMUTABLE` — refund_lines lock at creation time; corrections require cancelling the parent refund + creating a new one)",
+        "deleting -> refuse when parent refund.status NOT IN ('cancelled', 'rejected') — refund_lines cascade via FK on parent delete only; direct delete refused"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "id": "academorix://modules/audit/policies",
+  "$version": 1,
+  "title": "audit — authorization policies",
+  "description": "Two policies. AuditPolicy is READ-only over HTTP — create/update/delete are all refused at the policy level (vendor observer is the only capture path; purge job is the only deletion path). AuditRetentionPolicyPolicy has full CRUD gated by the audit_retention_extended entitlement (Enterprise-only).",
+  "policies": [
+    {
+      "model": "Audit",
+      "class": "Academorix\\Observability\\Audit\\Policies\\AuditPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "audit.audits.viewAny",
+          "scope": "tenant member with audit.audits.viewAny AND either the `compliance` role OR the `owner` role OR platform_admin. Regular admins do NOT see audits — compliance-role scoping is deliberate."
+        },
+        {
+          "action": "view",
+          "permission": "audit.audits.view",
+          "scope": "audit.tenant_id === auth.tenant_id AND audit.audits.view AND (compliance OR owner role) OR platform_admin"
+        },
+        {
+          "action": "viewByEntity",
+          "permission": "audit.audits.viewAny",
+          "scope": "tenant member + compliance/owner role + the auditable's own view permission (e.g. viewing a Membership's audit trail requires membership.view too)"
+        },
+        {
+          "action": "viewByUser",
+          "permission": "audit.audits.viewAny",
+          "scope": "tenant member + compliance/owner role. Cross-user audit reads are compliance-officer territory only."
+        },
+        {
+          "action": "create",
+          "permission": null,
+          "scope": "REFUSED. Audits only enter via the vendor `Auditable` trait's observer. There is NO write path over HTTP."
+        },
+        {
+          "action": "update",
+          "permission": null,
+          "scope": "REFUSED. Audit rows are immutable. AuditObserver::updating throws NOTIFICATIONS_AUDIT_ROW_IMMUTABLE."
+        },
+        {
+          "action": "delete",
+          "permission": null,
+          "scope": "REFUSED. Only PurgeExpiredAuditsJob (via the purge service account) may delete audit rows. AuditObserver::deleting throws NOTIFICATIONS_AUDIT_ROW_DELETE_FORBIDDEN otherwise."
+        },
+        {
+          "action": "export",
+          "permission": "audit.audits.export",
+          "scope": "tenant compliance officer OR owner AND tenant has audit_export entitlement (Medium+). Enterprise + regulator export requires audit_regulator_export."
+        },
+        {
+          "action": "revealRawDiff",
+          "permission": "audit.audits.reveal_raw_diff",
+          "scope": "compliance officer OR owner AND ?include=raw_diff query param — the default wire response REDACTS old_values/new_values when the caller's role isn't the compliance officer. Reserved for regulator investigations."
+        }
+      ]
+    },
+    {
+      "model": "AuditRetentionPolicy",
+      "class": "Academorix\\Observability\\Audit\\Policies\\AuditRetentionPolicyPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "audit.retention-policies.viewAny",
+          "scope": "tenant compliance officer OR owner OR platform_admin"
+        },
+        {
+          "action": "view",
+          "permission": "audit.retention-policies.view",
+          "scope": "policy.tenant_id === auth.tenant_id"
+        },
+        {
+          "action": "create",
+          "permission": "audit.retention-policies.create",
+          "scope": "tenant owner AND tenant has audit_retention_extended entitlement (Enterprise-only). The policy MUST carry override_reason (non-empty).",
+          "notes": "One-active-policy-per-tenant constraint — refuses when tenant already has an active policy; caller must PATCH the existing policy instead."
+        },
+        {
+          "action": "update",
+          "permission": "audit.retention-policies.update",
+          "scope": "policy.tenant_id === auth.tenant_id AND tenant owner AND tenant has audit_retention_extended entitlement"
+        },
+        {
+          "action": "delete",
+          "permission": "audit.retention-policies.delete",
+          "scope": "tenant owner. Soft-delete only — sets deleted_at + resets retention_years to config default via observer. AuditObserver preserves the policy history so the compliance trail retains what was overridden and why."
+        }
+      ]
+    }
+  ]
+}

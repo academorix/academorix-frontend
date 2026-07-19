@@ -1,0 +1,39 @@
+{
+  "id": "monitoring.status-badge",
+  "title": "Monitoring status badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded badge for alert / incident / health-check-run status. Alert statuses: firing danger; acknowledged warning; resolved success; suppressed neutral; expired neutral. Incident statuses: open danger; acknowledged warning; investigating info; mitigating info; resolved success; postmortem neutral. HealthCheckRun statuses: healthy success; degraded warning; unhealthy danger; timeout danger; error danger; unknown neutral.",
+  "props": {
+    "status": { "type": "string", "required": true },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Badge",
+      "bindings": {
+        "variant": {
+          "$expr": "props.status === 'firing' || props.status === 'open' || props.status === 'unhealthy' || props.status === 'timeout' || props.status === 'error' ? 'danger' : (props.status === 'acknowledged' || props.status === 'degraded' ? 'warning' : (props.status === 'investigating' || props.status === 'mitigating' ? 'info' : (props.status === 'resolved' || props.status === 'healthy' ? 'success' : 'neutral')))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? (props.status === 'firing' || props.status === 'open' || props.status === 'unhealthy' ? 'fire' : (props.status === 'acknowledged' ? 'clock' : (props.status === 'resolved' || props.status === 'healthy' ? 'check-circle' : (props.status === 'degraded' ? 'exclamation-triangle' : (props.status === 'timeout' ? 'signal-slash' : (props.status === 'error' ? 'x-circle' : (props.status === 'postmortem' ? 'document-text' : (props.status === 'investigating' || props.status === 'mitigating' ? 'magnifying-glass' : 'ellipsis-horizontal-circle')))))))) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.status === 'firing' ? 'Firing' : (props.status === 'acknowledged' ? 'Acknowledged' : (props.status === 'resolved' ? 'Resolved' : (props.status === 'suppressed' ? 'Suppressed' : (props.status === 'expired' ? 'Expired' : (props.status === 'open' ? 'Open' : (props.status === 'investigating' ? 'Investigating' : (props.status === 'mitigating' ? 'Mitigating' : (props.status === 'postmortem' ? 'Postmortem' : (props.status === 'healthy' ? 'Healthy' : (props.status === 'degraded' ? 'Degraded' : (props.status === 'unhealthy' ? 'Unhealthy' : (props.status === 'timeout' ? 'Timeout' : (props.status === 'error' ? 'Error' : (props.status === 'unknown' ? 'Unknown' : props.status))))))))))))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "$version": 1,
+  "title": "Severity catalogue",
+  "description": "The 4 severity levels + their SLAs, notification routing, and post-incident requirements. MonitoringPagingCoordinator reads this to route alerts to providers. EscalateIncidentJob reads this for the escalation SLA. MonitoringIncidentObserver reads this for the postmortem trigger.",
+  "severities": [
+    {
+      "slug": "p1",
+      "display_name": "P1 — Critical",
+      "description": "Complete outage or critical degradation affecting production. Every fire pages the primary on-call via SMS + phone + push + email. Escalates to backup on-call after 5min without ack. Auto-triggers postmortem workflow on resolve.",
+      "mtta_target_seconds": 300,
+      "mttr_target_seconds": 14400,
+      "escalation_sla_seconds": 300,
+      "notification_channels": ["mail", "in_app", "push", "sms", "phone"],
+      "provider_routing": [
+        "paging providers (PagerDuty, Opsgenie) — always",
+        "APM providers (Sentry, Datadog) — always",
+        "dashboard — always"
+      ],
+      "requires_postmortem": true,
+      "postmortem_due_days": 5,
+      "cannot_opt_out": true,
+      "example_scenarios": [
+        "Primary database unreachable",
+        "5xx rate > 5% over 5min",
+        "Auth service down",
+        "Payment provider integration failing all requests"
+      ]
+    },
+    {
+      "slug": "p2",
+      "display_name": "P2 — High",
+      "description": "Significant degradation affecting a subset of production. Pages primary on-call via push + email + mail. Escalates after 15min without ack. Retrospective encouraged but not required.",
+      "mtta_target_seconds": 900,
+      "mttr_target_seconds": 86400,
+      "escalation_sla_seconds": 900,
+      "notification_channels": ["mail", "in_app", "push"],
+      "provider_routing": [
+        "APM providers (Sentry, Datadog) — always",
+        "paging providers (PagerDuty, Opsgenie) — if configured with p2 in enabled_severities",
+        "dashboard — always"
+      ],
+      "requires_postmortem": false,
+      "postmortem_due_days": null,
+      "cannot_opt_out": false,
+      "example_scenarios": [
+        "Cache miss rate > 30% (degraded latency)",
+        "5xx rate > 1% over 5min",
+        "DB p99 latency > 500ms sustained",
+        "Queue depth spike (backlog forming)"
+      ]
+    },
+    {
+      "slug": "p3",
+      "display_name": "P3 — Medium",
+      "description": "Minor degradation or leading indicator. In-app notification only. No paging. No escalation. Reviewed during next business hours.",
+      "mtta_target_seconds": 3600,
+      "mttr_target_seconds": 259200,
+      "escalation_sla_seconds": 3600,
+      "notification_channels": ["in_app"],
+      "provider_routing": [
+        "APM providers (Sentry) — if configured with p3 in enabled_severities",
+        "dashboard — always"
+      ],
+      "requires_postmortem": false,
+      "postmortem_due_days": null,
+      "cannot_opt_out": false,
+      "example_scenarios": [
+        "P95 latency > 500ms (leading indicator, not yet page-worthy)",
+        "TLS cert expiring in < 30 days",
+        "Disk usage > 70%"
+      ]
+    },
+    {
+      "slug": "p4",
+      "display_name": "P4 — Info",
+      "description": "Informational signal — dashboard-only. No notifications. No escalation. Used for weak signals, trends, and health-check-persistently-failing warnings.",
+      "mtta_target_seconds": null,
+      "mttr_target_seconds": null,
+      "escalation_sla_seconds": null,
+      "notification_channels": ["in_app"],
+      "provider_routing": [
+        "dashboard — always",
+        "APM providers — if configured with p4 in enabled_severities (rare — usually filtered)"
+      ],
+      "requires_postmortem": false,
+      "postmortem_due_days": null,
+      "cannot_opt_out": false,
+      "example_scenarios": [
+        "Health check reporting degraded (not unhealthy)",
+        "Slow query detected (P90 within limits)",
+        "Cache warm-up in progress"
+      ]
+    }
+  ]
+}

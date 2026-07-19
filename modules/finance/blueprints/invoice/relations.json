@@ -1,0 +1,219 @@
+{
+  "id": "academorix://modules/invoice/relations",
+  "$version": 1,
+  "title": "invoice — model relationships",
+  "description": "Three owned entities. Invoice is the aggregate root; InvoiceLine + CreditNote attach to it. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / branch_id / scope_node_id on any owned row.",
+  "internal": [
+    {
+      "from": "Invoice",
+      "kind": "hasMany",
+      "to": "InvoiceLine",
+      "foreignKey": "invoice_id",
+      "description": "Per-invoice line items. RESTRICT on invoice hard-delete via observer (financial retention prevents delete)."
+    },
+    {
+      "from": "InvoiceLine",
+      "kind": "belongsTo",
+      "to": "Invoice",
+      "foreignKey": "invoice_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — lines anchor to their invoice for audit continuity. Soft-delete on lines is only permitted while parent invoice.status='draft'."
+    },
+    {
+      "from": "Invoice",
+      "kind": "hasMany",
+      "to": "CreditNote",
+      "foreignKey": "original_invoice_id",
+      "description": "Reversal credit notes for this invoice. Zero-or-more per invoice (one per refund / adjustment / write-off)."
+    },
+    {
+      "from": "CreditNote",
+      "kind": "belongsTo",
+      "to": "Invoice",
+      "foreignKey": "original_invoice_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — credit notes anchor to their original invoice. Financial retention: invoices + credit notes both retained 7 years (10 Enterprise); credit notes may OUTLIVE invoices in the compliance archive (invoices archived at 7y; credit notes retained indefinitely via the TenantErased-only purge path)."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Invoice",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every invoice is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "Invoice",
+      "kind": "morphTo",
+      "to": "customer",
+      "foreignKey": "customer_id",
+      "morphType": "customer_type",
+      "description": "Polymorphic customer: User, Athlete, Organization. Each customer_type has its own tenant scoping; InvoiceObserver validates that customer.tenant_id == invoice.tenant_id (defense-in-depth against cross-tenant FK smuggling)."
+    },
+    {
+      "from": "Invoice",
+      "kind": "belongsTo",
+      "to": "membership::Membership",
+      "foreignKey": "membership_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Set when the invoice is for a membership renewal or initial signup. RESTRICT — cannot delete a membership with open invoices. When membership_id is set + invoice.status='paid': the load-bearing InvoicePaid handler fires marketing::CaptureMembershipPurchasedMarketingEvent."
+    },
+    {
+      "from": "Invoice",
+      "kind": "belongsTo",
+      "to": "membership::MembershipRenewal",
+      "foreignKey": "membership_renewal_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Set when the invoice is for a specific renewal period (not the initial signup). RESTRICT."
+    },
+    {
+      "from": "Invoice",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "issued_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The admin who created the invoice manually. NULL for system-created invoices (via CreateInvoiceOnMembershipCreated hook)."
+    },
+    {
+      "from": "InvoiceLine",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised tenant_id — cascades through invoice.tenant_id but explicit for query-plan + FK integrity."
+    },
+    {
+      "from": "InvoiceLine",
+      "kind": "belongsTo",
+      "to": "tax::TaxCalculation",
+      "foreignKey": "tax_calculation_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Per-line tax computation snapshot. RESTRICT — TaxCalculation cannot be deleted while referenced by a line. NULL until CalculateInvoiceTaxJob completes."
+    },
+    {
+      "from": "InvoiceLine",
+      "kind": "belongsTo",
+      "to": "coupon::CouponRedemption",
+      "foreignKey": "coupon_redemption_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Set on discount_line items when a coupon is applied. RESTRICT — CouponRedemption cannot be deleted while referenced."
+    },
+    {
+      "from": "InvoiceLine",
+      "kind": "morphTo",
+      "to": "reference",
+      "foreignKey": "reference_id",
+      "morphType": "reference_type",
+      "nullable": true,
+      "description": "Optional polymorphic link back to the source of the line (Membership, Session, Event, etc.). Used for report drill-down + auditing."
+    },
+    {
+      "from": "CreditNote",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "CreditNote",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "issued_by_user_id",
+      "onDelete": "restrict",
+      "description": "The admin who issued the credit note. RESTRICT for audit integrity — user hard-delete cannot orphan credit-note issuance records."
+    },
+    {
+      "from": "CreditNote",
+      "kind": "morphTo",
+      "to": "applied_to",
+      "foreignKey": "applied_to_id",
+      "morphType": "applied_to_type",
+      "nullable": true,
+      "description": "Polymorphic target of applied credit notes: refund::Refund / invoice::Invoice (next invoice offset) / user::UserBalance (customer balance credit). NULL when status='draft' or 'issued'."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules attach to Invoice + CreditNote via FK. See below.",
+    "examples": [
+      {
+        "module": "transaction",
+        "relation": "Transaction.invoice_id → Invoice.id",
+        "note": "Every transaction row (payment / refund / adjustment) may reference an invoice. Transactions are the double-entry ledger; invoices are the customer-facing bill. Transaction.invoice_id is RESTRICT (transactions cannot orphan)."
+      },
+      {
+        "module": "payment",
+        "relation": "PaymentIntent.metadata.invoice_id (soft reference)",
+        "note": "Payment intents carry invoice_id in their metadata jsonb (not a hard FK — the payment module is independently ledgered). The MarkPaidOnPaymentIntentConfirmed listener reads this to link back."
+      },
+      {
+        "module": "refund",
+        "relation": "Refund.invoice_id → Invoice.id",
+        "note": "Every refund references an invoice. Refund.invoice_id is RESTRICT."
+      },
+      {
+        "module": "chargeback",
+        "relation": "Chargeback.invoice_id → Invoice.id",
+        "note": "Every chargeback references an invoice. Chargeback.invoice_id is RESTRICT."
+      },
+      {
+        "module": "growth::marketing",
+        "relation": "MarketingEvent.subject_type='Invoice'|'Membership' + subject_id (polymorphic soft reference)",
+        "note": "Marketing events created via CaptureMembershipPurchasedMarketingEvent carry the invoice OR membership as their polymorphic subject. Not an FK — marketing is a fan-out layer over domain events."
+      }
+    ]
+  },
+  "morphs": [
+    {
+      "field": "customer",
+      "onModels": ["Invoice"],
+      "morphType": "customer_type",
+      "morphId": "customer_id",
+      "supportedTypes": [
+        "user::User",
+        "sports::Athlete",
+        "organization::Organization"
+      ],
+      "description": "Polymorphic customer of the invoice. Each supported type is tenant-scoped. Observer validates cross-model tenant integrity on write."
+    },
+    {
+      "field": "reference",
+      "onModels": ["InvoiceLine"],
+      "morphType": "reference_type",
+      "morphId": "reference_id",
+      "supportedTypes": [
+        "membership::Membership",
+        "membership::Pass",
+        "facility::Facility",
+        "sports::Session",
+        "sports::Event"
+      ],
+      "description": "Optional polymorphic back-reference to the source of the line item. Used for drill-down in reports + drift-detection during audits."
+    },
+    {
+      "field": "applied_to",
+      "onModels": ["CreditNote"],
+      "morphType": "applied_to_type",
+      "morphId": "applied_to_id",
+      "supportedTypes": [
+        "refund::Refund",
+        "invoice::Invoice",
+        "user::UserBalance"
+      ],
+      "description": "Polymorphic target of applied credit notes. Set on status transition issued → applied."
+    }
+  ],
+  "notes": [
+    "None of the three owned rows carry `application_id` — cascades through tenant_id → tenants.application_id per tenancy-columns.md §2. Only the 8 named rows carry application_id directly; invoices/invoice_lines/credit_notes are NOT among them.",
+    "None of the three owned rows carry `region_id`, `organization_id`, `branch_id`, or `scope_node_id`. Invoices are a domain-plane concern — the growth/scope substrate does not apply.",
+    "InvoiceLine.tax_calculation_id is a snapshot reference — when the tax rate on the underlying jurisdiction changes, the invoice line still holds the historical rate via the frozen TaxCalculation row. This is what makes invoices immutable-after-finalize.",
+    "CreditNote may OUTLIVE its original invoice in the compliance archive — invoices are archived after 7 years; credit notes retain indefinitely. The `original_invoice()` relation resolves via RESTRICT + archived-row lookup.",
+    "The morph on Invoice.customer supports Organization (a business-to-business invoice) in addition to individual customers. Organization-scoped invoices are tenant-scoped (org.tenant_id) — the observer validates this."
+  ]
+}

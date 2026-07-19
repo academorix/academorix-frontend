@@ -1,0 +1,130 @@
+{
+  "id": "academorix://modules/activity/events",
+  "$version": 1,
+  "title": "activity — domain events",
+  "description": "Seven events. `ActivityRecorded` is the primary fanout signal — fires on every vendor row insert and drives broadcast to WebSocket + digest queueing + downstream reactions. `ActivityBatchStarted / Completed` bracket a single HTTP request so collapsed feed rendering can group same-batch activities. `ActivityRetentionPolicyCreated / Updated` are admin CRUD signals. `ActivityPurgeExecuted` is retention plumbing. `ActivityFeedSubscribed` captures reads for feed-engagement analytics (functional consent tier). All events implement `ShouldDispatchAfterCommit` — activity rows must be durably persisted before downstream reactions fire.",
+  "contract": "ShouldDispatchAfterCommit",
+  "events": [
+    {
+      "name": "ActivityRecorded",
+      "class": "Academorix\\Observability\\Activity\\Events\\ActivityRecorded",
+      "trigger": "ActivityObserver@created fires after the vendor row is persisted + tenant_id / application_id are stamped. The primary broadcast + reaction signal — every downstream consumer that wants to react to activity subscribes here.",
+      "afterCommit": true,
+      "payload": {
+        "activity": "Activity",
+        "subject": "Model|null (resolved via morph map)",
+        "causer": "Model|null (resolved via morph map)",
+        "logName": "string",
+        "batchUuid": "string|null"
+      },
+      "consumers": [
+        "activity::ActivityBroadcastPublisher (pushes to tenant.{id}.activity + user.{id}.activity)",
+        "notifications::QueueActivityDigestForRecipients (opt-in per user — collect for daily/weekly digest email)",
+        "growth::analytics::CaptureActivityRecordedFunnelEvent (functional consent, sampled at 5%)",
+        "monitoring::EmitActivityRecordedMetric (RED-pattern counter)"
+      ]
+    },
+    {
+      "name": "ActivityRetentionPolicyCreated",
+      "class": "Academorix\\Observability\\Activity\\Events\\ActivityRetentionPolicyCreated",
+      "trigger": "POST /api/v1/activity-retention-policies completed successfully — a new retention override just landed.",
+      "afterCommit": true,
+      "payload": {
+        "policy": "ActivityRetentionPolicy",
+        "actor": "User",
+        "isRegulatorHold": "boolean (retention_days > 365)"
+      },
+      "consumers": [
+        "compliance::EmitRetentionOverrideCreatedSignal (SOC 2 CC6.3 evidence — every retention decision is compliance-worthy)",
+        "notifications::DispatchActivityRetentionExtendedNotification (to tenant admins when retention exceeds 365d)"
+      ]
+    },
+    {
+      "name": "ActivityRetentionPolicyUpdated",
+      "class": "Academorix\\Observability\\Activity\\Events\\ActivityRetentionPolicyUpdated",
+      "trigger": "PATCH /api/v1/activity-retention-policies/{policy} completed — retention_days or override_reason or expires_at changed. Fires only when the diff is non-trivial (skipping when only updated_at / updated_by moved).",
+      "afterCommit": true,
+      "payload": {
+        "policy": "ActivityRetentionPolicy",
+        "actor": "User",
+        "dirtyFields": "array<string>",
+        "priorValues": "array<string, mixed>",
+        "crossesRegulatorThreshold": "boolean (prior <= 365 && now > 365, or vice versa)"
+      },
+      "consumers": [
+        "compliance::EmitRetentionOverrideChangedSignal",
+        "notifications::MaybeDispatchRegulatorHoldNotification (fires when the threshold is crossed either way)"
+      ]
+    },
+    {
+      "name": "ActivityBatchStarted",
+      "class": "Academorix\\Observability\\Activity\\Events\\ActivityBatchStarted",
+      "trigger": "ActivityBatcher.beginBatch(requestId) at the start of an HTTP request that WILL generate multiple related activities. Dispatched by the `activity.enforce_scope` middleware on tenant routes.",
+      "afterCommit": false,
+      "note": "NOT afterCommit — the batch start signals the beginning of a transactional group. Rolled-back requests emit the ActivityBatchStarted but no ActivityRecorded rows for that batch — this is fine (empty batch); ReconcileActivityBatchesJob sweeps empty batches on schedule.",
+      "payload": {
+        "batchUuid": "string (uuid v4)",
+        "actor": "User|null",
+        "tenantId": "string",
+        "applicationId": "string|null",
+        "requestId": "string (correlation id)"
+      }
+    },
+    {
+      "name": "ActivityBatchCompleted",
+      "class": "Academorix\\Observability\\Activity\\Events\\ActivityBatchCompleted",
+      "trigger": "ActivityBatcher.completeBatch(requestId) on request terminate. Fires when the request wrote at least one activity — empty batches emit no completion event.",
+      "afterCommit": true,
+      "payload": {
+        "batchUuid": "string",
+        "actor": "User|null",
+        "activitiesWritten": "integer",
+        "durationMs": "integer",
+        "logNamesTouched": "array<string>"
+      },
+      "consumers": [
+        "activity::EmitBatchCollapsedFeedItem (renders 'Alice made N changes' as one collapsed row on the feed WebSocket channel)",
+        "monitoring::EmitBatchLatencyMetric"
+      ]
+    },
+    {
+      "name": "ActivityPurgeExecuted",
+      "class": "Academorix\\Observability\\Activity\\Events\\ActivityPurgeExecuted",
+      "trigger": "PurgeExpiredActivitiesJob or ArchiveActivitiesToColdStorageJob finished a sweep. Fires once per job run (not per row deleted / archived) so downstream metrics can aggregate correctly.",
+      "afterCommit": true,
+      "payload": {
+        "tenantId": "string|null (null = cross-tenant sweep)",
+        "rowsDeleted": "integer",
+        "rowsArchived": "integer",
+        "durationMs": "integer",
+        "kind": "string (purge | archive)"
+      },
+      "consumers": [
+        "notifications::DispatchActivityPurgeCompletedNotification (weekly admin digest)",
+        "monitoring::EmitPurgeVolumeMetric",
+        "compliance::EmitRetentionCascadeSignal"
+      ]
+    },
+    {
+      "name": "ActivityFeedSubscribed",
+      "class": "Academorix\\Observability\\Activity\\Events\\ActivityFeedSubscribed",
+      "trigger": "A user opened the activity feed dashboard OR subscribed to a specific tenant.{tenantId}.activity WebSocket channel. Dispatched by the /api/v1/activities/feed endpoint on successful subscription auth. Sampled at 10% (feed opens are frequent — full-rate capture would dominate analytics volume).",
+      "afterCommit": true,
+      "payload": {
+        "actor": "User",
+        "tenantId": "string",
+        "channelSubscribed": "string (channel name)",
+        "logNamesFiltered": "array<string> (which log_names the caller is subscribing to)"
+      },
+      "consumers": [
+        "growth::analytics::CaptureFeedEngagementFunnel (functional consent tier — how often do users check the feed?)"
+      ]
+    }
+  ],
+  "notes": [
+    "ActivityRecorded is the workhorse — every downstream reaction (broadcast, digest queue, analytics, monitoring) subscribes to this one event. The others are auxiliary.",
+    "ActivityRetentionPolicyCreated / Updated are the two events compliance cares about most — every retention decision on activity data is regulator-relevant. See compliance.json for the evidence trail.",
+    "ActivityBatchStarted fires SYNCHRONOUSLY (not afterCommit) because it signals request scope, not persistence. A rolled-back request emits the start but no row — the batch is empty and gets swept by ReconcileActivityBatchesJob on schedule. This is intentional and cheap.",
+    "ActivityPurgeExecuted fires once per job run, not per row — otherwise a large purge would fan out millions of events."
+  ]
+}

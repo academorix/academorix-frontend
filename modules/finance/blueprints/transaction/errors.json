@@ -1,0 +1,259 @@
+{
+  "id": "academorix://modules/transaction/errors",
+  "$version": 1,
+  "title": "transaction — error codes",
+  "namespace": "transaction",
+  "errors": [
+    {
+      "code": "TRANSACTION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.not_found"
+    },
+    {
+      "code": "TRANSACTION_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.feature_not_entitled",
+      "description": "Tenant does not hold `transaction_capture` entitlement. Master feature gate."
+    },
+    {
+      "code": "TRANSACTION_MANUAL_CREATE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.manual_create_forbidden",
+      "description": "Direct API creation of transactions is forbidden — transactions are recorded ONLY via TransactionRecorder from invoice / payment / refund / chargeback modules. Prevents ledger tampering."
+    },
+    {
+      "code": "TRANSACTION_LEDGER_HALTED",
+      "http": 409,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.ledger_halted",
+      "description": "tenant.transaction_halt_new=true — a P0 LedgerImbalanceDetected fired + halted new transactions until resolved. The originating recorder job is retryable — it will attempt again once ops clears the halt flag."
+    },
+    {
+      "code": "TRANSACTION_MULTI_CURRENCY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.multi_currency_not_entitled",
+      "description": "Cross-currency transaction attempted (currency != tenant.base_currency) but tenant lacks `transaction_multi_currency` entitlement. Medium+ tier."
+    },
+    {
+      "code": "TRANSACTION_MISSING_EXCHANGE_RATE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.missing_exchange_rate",
+      "description": "Cross-currency transaction (currency != tenant.base_currency) missing exchange_rate_to_base OR base_amount_cents. Both must be set together."
+    },
+    {
+      "code": "TRANSACTION_EXCHANGE_RATE_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.exchange_rate_mismatch",
+      "description": "base_amount_cents != ROUND(amount_cents * exchange_rate_to_base) within ±1 cent rounding tolerance. The caller computed base_amount_cents incorrectly."
+    },
+    {
+      "code": "TRANSACTION_EXCHANGE_RATE_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.exchange_rate_unavailable",
+      "description": "The configured exchange-rate provider is unreachable + all fallbacks (ecb_daily) also failed. Cross-currency transaction refused. The originating recorder job is retryable — it will attempt again after the provider recovers."
+    },
+    {
+      "code": "TRANSACTION_ORPHAN_REFERENCE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.orphan_reference",
+      "description": "The reference_type + reference_id pair does not resolve to an actual row OR the referenced entity belongs to a different tenant. Defense-in-depth against orphan transactions."
+    },
+    {
+      "code": "TRANSACTION_REVERSAL_REASON_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.reversal_reason_required",
+      "description": "source_transaction_id set but reversal_reason missing. Reversal reason + source id travel as a pair."
+    },
+    {
+      "code": "TRANSACTION_REVERSAL_REASON_ORPHAN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.reversal_reason_orphan",
+      "description": "reversal_reason set but source_transaction_id missing. Reversal reason + source id travel as a pair."
+    },
+    {
+      "code": "TRANSACTION_CROSS_TENANT_REVERSAL_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.cross_tenant_reversal_forbidden",
+      "description": "Attempted to reverse a transaction owned by a different tenant. Never valid — critical audit signal."
+    },
+    {
+      "code": "TRANSACTION_REVERSAL_SOURCE_NOT_POSTED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.reversal_source_not_posted",
+      "description": "Reversal target is not in status='posted'. Reversals require the original be fully committed first."
+    },
+    {
+      "code": "TRANSACTION_REVERSAL_ALREADY_REVERSED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.reversal_already_reversed",
+      "description": "Attempted to reverse a transaction that already has a reversal in this direction. A transaction can be reversed only once by a given reversal_reason (a refund-issued cannot be refunded twice). Repeated reversals require multiple different reversal_reason values or admin manual intervention."
+    },
+    {
+      "code": "TRANSACTION_REVERSAL_TEMPORARILY_UNAVAILABLE",
+      "http": 503,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.reversal_temporarily_unavailable",
+      "description": "The transaction.reverse feature flag is off. Ops set it during a regulator audit or a P0 incident."
+    },
+    {
+      "code": "TRANSACTION_AMENDMENT_NOTE_REQUIRED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.amendment_note_required",
+      "description": "Manual reversal via POST /transactions/{id}/reverse requires a written note ≥ 10 chars (configurable via transaction.reversal.min_note_length). Regulator-facing justification."
+    },
+    {
+      "code": "TRANSACTION_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.immutable",
+      "description": "Attempted to UPDATE a posted transaction. Every posted transaction is IMMUTABLE. Corrections happen via new reversal transactions. Critical audit signal — should never fire in a healthy codepath."
+    },
+    {
+      "code": "TRANSACTION_POST_OUT_OF_BAND",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.post_out_of_band",
+      "description": "Attempted to set posted_at outside the creating hook's atomic transaction. Never valid — the status transition draft→posted MUST happen inside the same DB transaction as the initial insert."
+    },
+    {
+      "code": "LEDGER_ENTRY_CROSS_TENANT",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.ledger_entry_cross_tenant",
+      "description": "Attempted to attach a ledger entry to a transaction in a different tenant. Defense-in-depth against FK smuggling — critical audit signal."
+    },
+    {
+      "code": "LEDGER_ENTRY_PARENT_TRANSACTION_POSTED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.ledger_entry_parent_transaction_posted",
+      "description": "Attempted to insert a new ledger entry on a transaction already in status='posted'. Entries attach ONLY during transaction creation."
+    },
+    {
+      "code": "LEDGER_ENTRY_INVALID_ACCOUNT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.ledger_entry_invalid_account",
+      "description": "Ledger entry account is not one of the 14 chart-of-accounts entries."
+    },
+    {
+      "code": "LEDGER_ENTRY_DEBIT_XOR_CREDIT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.ledger_entry_debit_xor_credit",
+      "description": "Ledger entry has both debit_cents > 0 AND credit_cents > 0, or both zero. Exactly one must be > 0."
+    },
+    {
+      "code": "LEDGER_ENTRY_CURRENCY_MISMATCH",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "transaction.errors.ledger_entry_currency_mismatch",
+      "description": "Ledger entry account_currency does not match parent transaction currency. Single-currency-per-transaction invariant."
+    },
+    {
+      "code": "LEDGER_ENTRY_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.ledger_entry_immutable",
+      "description": "Attempted to UPDATE or DELETE a ledger entry. Every entry is IMMUTABLE. Critical audit signal — should never fire in a healthy codepath."
+    },
+    {
+      "code": "LEDGER_IMBALANCE_ON_POST",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "transaction.errors.ledger_imbalance_on_post",
+      "description": "P0. SUM(debit_cents) != SUM(credit_cents) at transaction post time. Fires LedgerImbalanceDetected(scope='per_transaction') + halts the transaction. The caller must fix the entries before retrying."
+    },
+    {
+      "code": "TRANSACTION_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.insufficient_role",
+      "description": "Caller lacks the admin / finance role required for the transaction surface (viewAny/view). Reversal specifically requires admin (finance role does NOT have reverse permission)."
+    },
+    {
+      "code": "LEDGER_RECONCILIATION_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.reconciliation_not_entitled",
+      "description": "Programmatic reconciliation via GET /api/v1/ledger/reconciliation requires the Enterprise-only transaction_ledger_reconciliation_api entitlement."
+    },
+    {
+      "code": "LEDGER_REPORT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "transaction.errors.report_not_entitled",
+      "description": "General Ledger report requires Medium+ transaction_advanced_reporting entitlement."
+    }
+  ]
+}

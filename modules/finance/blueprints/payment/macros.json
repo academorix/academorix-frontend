@@ -1,0 +1,14 @@
+{
+  "id": "academorix://modules/payment/macros",
+  "$version": 1,
+  "title": "payment — published macros",
+  "description": "The payment module publishes ZERO framework macros. Every consumer touches the payment surface via injected services (PaymentIntentOrchestrator, PaymentProviderManager) or the domain-event listener path.",
+  "namespace_note": "No macros published.",
+  "macros": [],
+  "rationale": [
+    "Payment is a TRANSACTIONAL FORWARDER + LEDGER PARTICIPANT. The consumer contract is: emit a domain event (invoice finalized → intent created) or call a service (customer's SDK confirms an intent → capture flows). There is no request-level payment state that needs surfacing as a Request macro (contrast with facility::activeFacility which caches a per-request model).",
+    "The current payment intent for a request is NOT request-scoped — it's a per-invoice concept that spans multiple requests (create + confirm + succeed happen across 3+ round-trips). Any request-scoped 'current intent' macro would encourage anti-patterns (SDK state duplicated on the server).",
+    "Adding a payment-specific macro (e.g. Request::activePaymentIntent) would signal a design smell — payment intents are stateful conversation objects with the provider, not persistent per-request state.",
+    "Provider driver lookup is also NOT macro-worthy — it's DI-injected via PaymentProviderManager. Consumers requiring a driver should inject the manager + call ->forConfig() explicitly."
+  ]
+}

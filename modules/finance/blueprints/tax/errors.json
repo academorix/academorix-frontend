@@ -1,0 +1,282 @@
+{
+  "id": "academorix://modules/tax/errors",
+  "$version": 1,
+  "title": "tax — error codes",
+  "namespace": "tax",
+  "errors": [
+    {
+      "code": "TAX_RATE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.rate_not_found"
+    },
+    {
+      "code": "TAX_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.feature_not_entitled",
+      "description": "Tenant does not hold `tax_capture` entitlement. Response includes upgrade CTA in meta.upgrade_url."
+    },
+    {
+      "code": "TAX_RATE_OVERLAPPING_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "tax.errors.rate_overlapping_range",
+      "description": "Attempted to create a tax_rate whose (jurisdiction, rate_type, applies_to, effective_range) overlaps an existing row. Split the ranges or archive the existing row first."
+    },
+    {
+      "code": "TAX_RATE_INVALID_PERCENTAGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.rate_invalid_percentage",
+      "description": "Percentage must be in [0.0000, 1.0000]. Values above 1.0 rejected (100%+ tax rates almost always indicate a misconfiguration)."
+    },
+    {
+      "code": "TAX_RATE_INVALID_EFFECTIVE_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.rate_invalid_effective_range",
+      "description": "effective_from must be < effective_to when both set."
+    },
+    {
+      "code": "TAX_JURISDICTION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.jurisdiction_not_found"
+    },
+    {
+      "code": "TAX_JURISDICTION_INVALID_COUNTRY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.jurisdiction_invalid_country",
+      "description": "country_code is not a valid ISO 3166-1 alpha-2 code."
+    },
+    {
+      "code": "TAX_JURISDICTION_INVALID_STATE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.jurisdiction_invalid_state",
+      "description": "state_code is not a valid ISO 3166-2 subdivision for the given country_code."
+    },
+    {
+      "code": "TAX_JURISDICTION_INVALID_POSTAL_PATTERN",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.jurisdiction_invalid_postal_pattern",
+      "description": "postal_code_pattern is not a valid regex."
+    },
+    {
+      "code": "TAX_JURISDICTION_CUSTOM_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.jurisdiction_custom_not_entitled",
+      "description": "Enterprise-only. Add custom jurisdictions requires `tax_jurisdiction_custom` entitlement."
+    },
+    {
+      "code": "TAX_JURISDICTION_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.jurisdiction_duplicate",
+      "description": "A jurisdiction already exists with the same (tenant_id, country_code, state_code, city, postal_code_pattern, tax_type) tuple."
+    },
+    {
+      "code": "TAX_EXEMPTION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.exemption_not_found"
+    },
+    {
+      "code": "TAX_EXEMPTION_INVALID_VALIDITY_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.exemption_invalid_validity_range",
+      "description": "valid_from must be < valid_until when both set."
+    },
+    {
+      "code": "TAX_EXEMPTION_INVALID_CERTIFICATE_URL",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.exemption_invalid_certificate_url",
+      "description": "certificate_document_url must be an HTTPS S3 signed URL under the tenant-scoped bucket prefix."
+    },
+    {
+      "code": "TAX_EXEMPTION_MANAGEMENT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.exemption_management_not_entitled",
+      "description": "Tenant does not hold `tax_exemption_management` entitlement."
+    },
+    {
+      "code": "TAX_EXEMPTION_INVALID_STATUS_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "tax.errors.exemption_invalid_status_transition",
+      "description": "verification_status transition is forbidden. Valid transitions: pending → verified / rejected; verified → expired (automatic). No transitions FROM verified back to pending; no un-reject; no un-expire."
+    },
+    {
+      "code": "TAX_EXEMPTION_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.exemption_duplicate",
+      "description": "A verified exemption already exists for (tenant, customer, exemption_type, issuing_jurisdiction)."
+    },
+    {
+      "code": "TAX_CALCULATION_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.calculation_not_found"
+    },
+    {
+      "code": "TAX_CALCULATION_MISSING_AMOUNT_OR_CURRENCY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "tax.errors.calculation_missing_amount_or_currency",
+      "description": "source_amount_cents AND source_currency are both required on tax_calculations. Not user-facing — the invoice pipeline should never invoke with either missing."
+    },
+    {
+      "code": "TAX_CALCULATION_INVALID_CURRENCY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.calculation_invalid_currency",
+      "description": "source_currency is not a valid ISO 4217 3-letter uppercase code."
+    },
+    {
+      "code": "TAX_CALCULATION_MULTI_CURRENCY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.calculation_multi_currency_not_entitled",
+      "description": "Small-tier tenants are locked to source_currency == tenant.default_region.currency. Requires `tax_multi_currency` entitlement (Medium+)."
+    },
+    {
+      "code": "TAX_CALCULATION_JURISDICTION_UNRESOLVABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "tax.errors.calculation_jurisdiction_unresolvable",
+      "description": "TaxAddressResolver could not resolve a jurisdiction from the customer's address. The invoice line is BLOCKED (fail-safe against defaulting to 0% tax)."
+    },
+    {
+      "code": "TAX_CALCULATION_PROVIDER_MANDATED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "tax.errors.calculation_provider_mandated",
+      "description": "Attempted to compute via NativeCalculator for a jurisdiction where the tenant's config mandates a specific external provider (e.g. Avalara for complex US nexus). Fail-safe against under-charging."
+    },
+    {
+      "code": "TAX_CALCULATION_PROVIDER_FAILED",
+      "http": 502,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "tax.errors.calculation_provider_failed",
+      "description": "P1. The provider call failed after 3 retry attempts. The invoice line is BLOCKED until ops manually resolves (either via provider recovery or admin override). NO silent fallback to NativeCalculator."
+    },
+    {
+      "code": "TAX_CALCULATION_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "tax.errors.calculation_immutable",
+      "description": "Attempted to update / soft-delete / re-compute a tax_calculations row. Calculations are immutable after commit."
+    },
+    {
+      "code": "TAX_PROVIDER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.provider_not_found"
+    },
+    {
+      "code": "TAX_PROVIDER_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.provider_quota_exceeded",
+      "description": "Reached tax_provider_slot cap. Small: 1 per tenant. Medium: 3. Response includes upgrade path."
+    },
+    {
+      "code": "TAX_PROVIDER_ADVANCED_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.provider_advanced_not_entitled",
+      "description": "TaxJar / Avalara / Stripe Tax / Custom Webhook require Medium+ tier via `tax_advanced_providers`."
+    },
+    {
+      "code": "TAX_PROVIDER_CONFIG_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.provider_config_invalid",
+      "description": "Config jsonb does not match the per-provider JSON Schema. Response body includes the schema validation errors."
+    },
+    {
+      "code": "TAX_PROVIDER_ALREADY_CONFIGURED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.provider_already_configured",
+      "description": "Tenant already has an active config for this provider. Delete the existing one first."
+    },
+    {
+      "code": "TAX_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "tax.errors.insufficient_role",
+      "description": "Caller lacks the owner/admin/finance role required to access the tax surface."
+    }
+  ]
+}

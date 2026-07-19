@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/activity/jobs",
+  "$version": 1,
+  "title": "activity — queued jobs",
+  "description": "Four queued jobs. `BackfillActivityTenantIdFromJsonbJob` is a one-shot install migration reading `tenant_id` out of the vendor `properties` JSONB blob for existing rows. `PurgeExpiredActivitiesJob` runs nightly and respects per-tenant retention policies. `ArchiveActivitiesToColdStorageJob` runs weekly sending >90d rows to S3 cold storage. `ReconcileActivityBatchesJob` runs nightly closing orphan batches from crashed requests.",
+  "defaultQueue": "activity",
+  "defaultConnection": "redis",
+  "jobs": [
+    {
+      "class": "Academorix\\Observability\\Activity\\Jobs\\BackfillActivityTenantIdFromJsonbJob",
+      "description": "One-shot install migration. Reads `tenant_id` out of the vendor's `properties` JSONB blob and populates the newly-added `tenant_id` column. Batched (10000 rows per iteration) to avoid table locks; runs against rows WHERE tenant_id IS NULL AND properties->>'tenant_id' IS NOT NULL. Fires once per tenant on Wave 6 upgrade; verifies via a companion `activity:backfill-tenant-id --verify` command that no orphans remain.",
+      "queue": "installer",
+      "tries": 5,
+      "timeoutSeconds": 3600,
+      "backoffSeconds": [300, 900, 3600, 10800, 43200],
+      "uniqueFor": 7200,
+      "uniqueKeyExpr": "'activity:backfill-tenant-id'",
+      "implements": ["ShouldQueue", "ShouldBeUnique"],
+      "input": {
+        "batch_size": "integer (default 10000)",
+        "dry_run": "boolean (default false)"
+      }
+    },
+    {
+      "class": "Academorix\\Observability\\Activity\\Jobs\\PurgeExpiredActivitiesJob",
+      "description": "Nightly retention sweep. For each tenant: read the effective retention_days (per-log_name policy override OR config default 90d), delete activity rows WHERE created_at < now() - retention_days AND tenant_id = tenant. Respects `activity_retention_extended` entitlement — tenants without it are capped at 90d regardless of override. Fires ActivityPurgeExecuted per tenant per log_name. Batched to 5000 rows per iteration.",
+      "queue": "retention",
+      "tries": 3,
+      "timeoutSeconds": 1800,
+      "backoffSeconds": [3600, 14400, 43200],
+      "uniqueFor": 3600,
+      "uniqueKeyExpr": "'activity:purge-expired'",
+      "implements": ["ShouldQueue", "ShouldBeUnique"],
+      "input": {
+        "tenant_id": "string|null (null = every tenant)",
+        "log_name": "string|null (null = every log_name)",
+        "batch_size": "integer (default 5000)",
+        "dry_run": "boolean (default false)"
+      }
+    },
+    {
+      "class": "Academorix\\Observability\\Activity\\Jobs\\ArchiveActivitiesToColdStorageJob",
+      "description": "Weekly cold-storage rotation. For each tenant with retention > 90d: read activity rows in the 90d..retention_days window that haven't yet been archived, serialise them to Parquet, upload to the tenant's cold-storage bucket (config.activity.cold.bucket_pattern), and mark them archived. Rows past retention_days are deleted by PurgeExpiredActivitiesJob instead — this job only moves rows out of the hot table for tenants with extended retention.",
+      "queue": "retention",
+      "tries": 2,
+      "timeoutSeconds": 7200,
+      "backoffSeconds": [3600, 21600],
+      "uniqueFor": 14400,
+      "uniqueKeyExpr": "'activity:archive-cold'",
+      "implements": ["ShouldQueue", "ShouldBeUnique"],
+      "input": {
+        "tenant_id": "string|null",
+        "batch_size": "integer (default 10000)"
+      }
+    },
+    {
+      "class": "Academorix\\Observability\\Activity\\Jobs\\ReconcileActivityBatchesJob",
+      "description": "Nightly orphan-batch sweep. Finds `batch_uuid` values where ActivityBatchStarted fired but ActivityBatchCompleted never did (request crashed OR was rolled back). For each orphan: emit ActivityBatchCompleted with `activitiesWritten=0` + `orphan=true` metadata so downstream analytics can distinguish orphans from real batches. Deletes the batch_uuid from the tracking cache. Runs against tracking cache older than 24 hours — legitimately long-running requests (bulk imports) don't get swept.",
+      "queue": "retention",
+      "tries": 2,
+      "timeoutSeconds": 600,
+      "backoffSeconds": [3600, 21600],
+      "uniqueFor": 7200,
+      "uniqueKeyExpr": "'activity:reconcile-batches'",
+      "implements": ["ShouldQueue", "ShouldBeUnique"],
+      "input": {
+        "older_than_hours": "integer (default 24)",
+        "batch_size": "integer (default 1000)"
+      }
+    }
+  ],
+  "queues": {
+    "activity": {
+      "description": "Default queue for activity-adjacent jobs (subscribers, formatters). High volume; sampled at 100%."
+    },
+    "retention": {
+      "description": "Batched retention sweeps (purge, archive, reconcile). Runs off-hours per schedule.json."
+    },
+    "installer": {
+      "description": "One-shot migration jobs (BackfillActivityTenantIdFromJsonbJob). Fires once per Wave-6 upgrade; empty at steady state."
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/invoice/notifications",
+  "$version": 1,
+  "title": "invoice — notification classes + categories",
+  "namespace": "Academorix\\Finance\\Invoice\\Notifications",
+  "notifications": [
+    "InvoiceCreatedNotification",
+    "InvoiceSentNotification",
+    "InvoicePaidNotification",
+    "InvoiceDueSoonNotification",
+    "InvoicePastDueNotification",
+    "InvoiceUncollectibleNotification",
+    "InvoiceSentToCollectionsNotification",
+    "InvoiceRefundedNotification",
+    "CreditNoteIssuedNotification",
+    "InvoiceWrittenOffNotification"
+  ],
+  "categories": [
+    {
+      "slug": "invoice.created",
+      "display_name": "Invoice created",
+      "description": "A new invoice was created for you. Receipt-style notification with invoice number + amount + due date + PDF link. Fired only when the invoice module's settings.auto_send_on_finalize is enabled OR the admin manually sent the invoice.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer"
+    },
+    {
+      "slug": "invoice.sent",
+      "display_name": "Invoice sent",
+      "description": "Confirmation that the invoice email was delivered to your inbox. Includes invoice PDF link. Distinct from invoice.created — fires on every resend (including the initial send).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer"
+    },
+    {
+      "slug": "invoice.paid",
+      "display_name": "Payment received",
+      "description": "Your payment has been received. Includes invoice number, amount paid, payment method (last 4 of card / bank / check reference), and final balance. Admin also receives (confirms revenue booked).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer + tenant_admin + finance_role"
+    },
+    {
+      "slug": "invoice.due_soon",
+      "display_name": "Invoice due soon",
+      "description": "Reminder that an invoice is coming due (3 days before + 1 day before). Includes amount due, due date, payment link. Suppressed for customers with auto-pay enabled.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer"
+    },
+    {
+      "slug": "invoice.past_due",
+      "display_name": "Invoice past due",
+      "description": "Dunning reminder. Cadence: 1/7/14/30 days after due. Includes amount due, days past due, payment link, and progressively firmer copy. Compliance-note: the copy tone escalates per configured dunning schedule but never uses threatening language.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer"
+    },
+    {
+      "slug": "invoice.uncollectible",
+      "display_name": "Invoice marked uncollectible",
+      "description": "Admin notification. An invoice was marked uncollectible after the dunning ladder was exhausted (typically 90 days past due). Feeds the bad-debt write-off ledger review.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_admin + finance_role"
+    },
+    {
+      "slug": "invoice.sent_to_collections",
+      "display_name": "Invoice sent to collections",
+      "description": "Compliance-sensitive. Both customer and admin receive notification when an invoice is handed off to a third-party collections agency. Customer copy names the agency + the customer's rights under FDCPA (US) / EU consumer credit directive. Enterprise-only feature.",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer + tenant_admin + finance_role"
+    },
+    {
+      "slug": "invoice.refunded",
+      "display_name": "Refund issued",
+      "description": "A refund has been issued for one of your invoices. Includes original invoice, refund amount, credit note number + PDF link. Refund landing time depends on payment method (typically 3-10 business days).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer"
+    },
+    {
+      "slug": "credit_note.issued",
+      "display_name": "Credit note issued",
+      "description": "A credit note has been issued against your invoice. Includes credit note number, amount, reason, and the applied_to target (refund / next invoice / customer balance). PDF attached.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "customer"
+    },
+    {
+      "slug": "invoice.written_off",
+      "display_name": "Invoices written off (quarterly digest)",
+      "description": "Quarterly admin digest of invoices written off in the quarter. Includes count, total amount written off, top customers by write-off amount. Feeds accounting bad-debt expense review.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "tenant_admin + finance_role"
+    }
+  ]
+}

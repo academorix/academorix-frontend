@@ -1,0 +1,310 @@
+{
+  "$version": 1,
+  "title": "Plan sample templates",
+  "description": "15 common MembershipPlan shapes. Renders in the admin's 'quick create' plan builder as suggested starting points. Values are illustrative — admin edits before saving. Grouped by target market (youth academy / adult fitness / seasonal / premium).",
+  "templates": [
+    {
+      "template_id": "youth_monthly_standard",
+      "category": "youth_academy",
+      "display_name": "Monthly youth training",
+      "description": "The most common youth-academy plan. 8 sessions per month (2/week × 4 weeks). No trial — parents are typically confident-buyers.",
+      "shape": {
+        "name": "Monthly Youth Training",
+        "slug": "monthly-youth",
+        "price_cents": 15000,
+        "currency": "USD",
+        "billing_interval": "monthly",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": 8,
+        "passes_carry_over": false,
+        "refund_policy": "no_refund",
+        "refund_grace_days": 0,
+        "prerequisites": { "requires_athlete_medical_clearance": true, "requires_guardian_verified": true, "requires_minimum_athlete_age": 6 }
+      }
+    },
+    {
+      "template_id": "youth_monthly_with_trial",
+      "category": "youth_academy",
+      "display_name": "Monthly youth training (with 14-day free trial)",
+      "description": "Same shape but with a 14-day trial. Requires membership_trial_periods entitlement (Medium+).",
+      "shape": {
+        "name": "Monthly Youth Training — Free Trial",
+        "slug": "monthly-youth-trial",
+        "price_cents": 15000,
+        "currency": "USD",
+        "billing_interval": "monthly",
+        "billing_interval_count": 1,
+        "trial_days": 14,
+        "passes_per_period": 8,
+        "passes_carry_over": false,
+        "refund_policy": "full_within_grace",
+        "refund_grace_days": 14
+      }
+    },
+    {
+      "template_id": "youth_quarterly_termly",
+      "category": "youth_academy",
+      "display_name": "Termly youth training (quarterly billing)",
+      "description": "School-term aligned. Bills every 3 months with 36 passes (2/week × 3 months). Common in UK / AU academies aligned with school terms.",
+      "shape": {
+        "name": "Termly Youth Training",
+        "slug": "termly-youth",
+        "price_cents": 45000,
+        "currency": "GBP",
+        "billing_interval": "quarterly",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": 36,
+        "passes_carry_over": true,
+        "refund_policy": "prorated",
+        "refund_grace_days": 0
+      }
+    },
+    {
+      "template_id": "youth_annual_full_year",
+      "category": "youth_academy",
+      "display_name": "Annual youth academy (unlimited)",
+      "description": "Full-year plan with unlimited access. Higher LTV but customers churn cyclically at renewal.",
+      "shape": {
+        "name": "Annual Academy Membership",
+        "slug": "annual-academy",
+        "price_cents": 120000,
+        "currency": "USD",
+        "billing_interval": "annual",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": null,
+        "passes_carry_over": false,
+        "refund_policy": "prorated",
+        "refund_grace_days": 0
+      }
+    },
+    {
+      "template_id": "youth_dropin_pack",
+      "category": "youth_academy",
+      "display_name": "10-session dropin pack (lifetime)",
+      "description": "One-time payment for 10 sessions. Non-recurring — customer buys again when passes deplete. `billing_interval='lifetime'`.",
+      "shape": {
+        "name": "10-Session Youth Pack",
+        "slug": "youth-10-pack",
+        "price_cents": 20000,
+        "currency": "USD",
+        "billing_interval": "lifetime",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": 10,
+        "passes_carry_over": false,
+        "refund_policy": "no_refund",
+        "refund_grace_days": 0
+      }
+    },
+    {
+      "template_id": "adult_monthly_unlimited",
+      "category": "adult_fitness",
+      "display_name": "Monthly adult unlimited",
+      "description": "Adult fitness plan — unlimited access, no pass accounting.",
+      "shape": {
+        "name": "Monthly Unlimited",
+        "slug": "monthly-unlimited",
+        "price_cents": 8000,
+        "currency": "USD",
+        "billing_interval": "monthly",
+        "billing_interval_count": 1,
+        "trial_days": 7,
+        "passes_per_period": null,
+        "passes_carry_over": false,
+        "refund_policy": "no_refund",
+        "refund_grace_days": 0
+      }
+    },
+    {
+      "template_id": "adult_monthly_4_class",
+      "category": "adult_fitness",
+      "display_name": "Monthly 4-class",
+      "description": "Adult 1-class/week plan. Passes carry over one period to reduce churn.",
+      "shape": {
+        "name": "Monthly 4 Classes",
+        "slug": "monthly-4-class",
+        "price_cents": 5000,
+        "currency": "USD",
+        "billing_interval": "monthly",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": 4,
+        "passes_carry_over": true,
+        "refund_policy": "no_refund",
+        "refund_grace_days": 0
+      }
+    },
+    {
+      "template_id": "adult_annual_gym",
+      "category": "adult_fitness",
+      "display_name": "Annual gym membership",
+      "description": "Premium gym annual plan with 20% discount vs monthly.",
+      "shape": {
+        "name": "Annual Gym Access",
+        "slug": "annual-gym",
+        "price_cents": 76800,
+        "currency": "USD",
+        "billing_interval": "annual",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": null,
+        "passes_carry_over": false,
+        "refund_policy": "prorated",
+        "refund_grace_days": 30
+      }
+    },
+    {
+      "template_id": "seasonal_summer_camp",
+      "category": "seasonal",
+      "display_name": "Summer camp (8-week)",
+      "description": "Seasonal camp membership. `billing_interval='monthly'` × 2 count = 2-month cycle. Effective dates locked to summer.",
+      "shape": {
+        "name": "Summer Camp 2026",
+        "slug": "summer-camp-2026",
+        "price_cents": 60000,
+        "currency": "USD",
+        "billing_interval": "monthly",
+        "billing_interval_count": 2,
+        "trial_days": 0,
+        "passes_per_period": 32,
+        "passes_carry_over": false,
+        "effective_from": "2026-06-01T00:00:00Z",
+        "effective_until": "2026-08-31T23:59:59Z",
+        "refund_policy": "full_within_grace",
+        "refund_grace_days": 14,
+        "max_active_members": 100
+      }
+    },
+    {
+      "template_id": "seasonal_winter_training",
+      "category": "seasonal",
+      "display_name": "Winter training (12-week)",
+      "description": "Winter training block. Quarterly billing tied to a specific season.",
+      "shape": {
+        "name": "Winter Training 2026",
+        "slug": "winter-training-2026",
+        "price_cents": 50000,
+        "currency": "USD",
+        "billing_interval": "quarterly",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": 48,
+        "passes_carry_over": false,
+        "effective_from": "2026-12-01T00:00:00Z",
+        "effective_until": "2027-02-28T23:59:59Z",
+        "refund_policy": "prorated",
+        "refund_grace_days": 0
+      }
+    },
+    {
+      "template_id": "premium_1on1_coaching",
+      "category": "premium",
+      "display_name": "Premium 1-on-1 coaching",
+      "description": "High-price plan for private coaching. 4 sessions/month.",
+      "shape": {
+        "name": "1-on-1 Coaching Monthly",
+        "slug": "1on1-coaching",
+        "price_cents": 60000,
+        "currency": "USD",
+        "billing_interval": "monthly",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": 4,
+        "passes_carry_over": true,
+        "refund_policy": "prorated",
+        "refund_grace_days": 14,
+        "max_active_members": 20
+      }
+    },
+    {
+      "template_id": "premium_elite_squad",
+      "category": "premium",
+      "display_name": "Elite squad membership (annual)",
+      "description": "Elite tier annual with add-ons (equipment + kit + tournament credits).",
+      "shape": {
+        "name": "Elite Squad Annual",
+        "slug": "elite-squad-annual",
+        "price_cents": 300000,
+        "currency": "USD",
+        "billing_interval": "annual",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": null,
+        "passes_carry_over": false,
+        "refund_policy": "no_refund",
+        "refund_grace_days": 0,
+        "addon_config": { "equipment_rental": true, "kit_included": true, "tournament_entry_credit": 4 },
+        "max_active_members": 30
+      }
+    },
+    {
+      "template_id": "premium_family_package",
+      "category": "premium",
+      "display_name": "Family package (multi-athlete)",
+      "description": "Family plan with kit included. Note — Academorix models family memberships as ONE MEMBERSHIP PER ATHLETE. This template is applied N times, once per family athlete.",
+      "shape": {
+        "name": "Family Athlete",
+        "slug": "family-athlete",
+        "price_cents": 12000,
+        "currency": "USD",
+        "billing_interval": "monthly",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": 12,
+        "passes_carry_over": true,
+        "refund_policy": "prorated",
+        "refund_grace_days": 14,
+        "addon_config": { "equipment_rental": false, "kit_included": true, "tournament_entry_credit": 1 }
+      }
+    },
+    {
+      "template_id": "youth_age_scoped_u12",
+      "category": "youth_academy",
+      "display_name": "U12 age-scoped plan",
+      "description": "Age-group-scoped plan (u12 only). Refuses signups where athlete's age exceeds 12.",
+      "shape": {
+        "name": "U12 Monthly Training",
+        "slug": "u12-monthly",
+        "price_cents": 12000,
+        "currency": "USD",
+        "billing_interval": "monthly",
+        "billing_interval_count": 1,
+        "trial_days": 7,
+        "passes_per_period": 8,
+        "passes_carry_over": false,
+        "refund_policy": "full_within_grace",
+        "refund_grace_days": 14,
+        "age_group_id": "REPLACE_WITH_TENANT_U12_AGE_GROUP_ID",
+        "prerequisites": { "requires_athlete_medical_clearance": true, "requires_guardian_verified": true, "requires_minimum_athlete_age": 6 }
+      }
+    },
+    {
+      "template_id": "premium_lifetime_founder",
+      "category": "premium",
+      "display_name": "Founding member (lifetime)",
+      "description": "One-time payment for lifetime unlimited access. Rare — used for founding-member offers + veterans. Refund_policy strictly no_refund because there's no notion of unused time.",
+      "shape": {
+        "name": "Founding Member",
+        "slug": "founding-member",
+        "price_cents": 500000,
+        "currency": "USD",
+        "billing_interval": "lifetime",
+        "billing_interval_count": 1,
+        "trial_days": 0,
+        "passes_per_period": null,
+        "passes_carry_over": false,
+        "refund_policy": "no_refund",
+        "refund_grace_days": 0,
+        "max_active_members": 50
+      }
+    }
+  ],
+  "cross_reference": [
+    "SDUI plan-form's 'Start from template' picker reads this catalog + prefills the form",
+    "Templates never carry age_group_id defaults (tenant-specific ULIDs); the admin picks the age group at form time",
+    "Templates are versioned via $version — admins can rebase from newer templates as best practices evolve"
+  ]
+}

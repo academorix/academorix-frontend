@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/membership/compliance",
+  "$version": 1,
+  "title": "membership — compliance evidence",
+  "description": "Membership is finance-regulated (SOX Section 404) + PCI-adjacent (payment tokens live in payment module, this module holds no PAN/CVV) + GDPR Art. 6(1)(b) contractual basis + CAN-SPAM transactional-exempt for payment + cancellation communications + Consumer-protection refund-policy-disclosure at signup.",
+  "regimes": {
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "SOX 404 — subscription revenue records",
+          "principle": "audit trail of every subscription contract + billing cycle",
+          "evidence": "Memberships + MembershipRenewals + coupon_snapshot + tax_calculation_snapshot are 7-year retained (10 with `membership_extended_retention` entitlement). MembershipRenewal is append-only. lifetime_value_cents is monotonic. Every state transition audited."
+        },
+        {
+          "criterion": "SOX 404 — segregation of duties",
+          "principle": "who can issue refunds is distinct from who can cancel",
+          "evidence": "memberships.audit.refund permission is restricted to finance_officer + admin + owner (never coach or reception). Reissue-passes is admin-only + audit-critical. Hard-cancel requires Enterprise entitlement + finance-officer role."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "PAN + CVV never touch this module",
+          "evidence": "Payment tokens live in the payment module. Membership records only payment_method_id pointer via metadata. MembershipRenewal.failure_reason NEVER contains PAN — enforced by the payment module's PaymentIntent adapter (bounded error strings). PCI-DSS scope excludes memberships / plans / renewals / passes tables."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "contractual necessity — lawful basis for processing",
+          "evidence": "Membership contract IS the lawful basis. Every field on membership is directly necessary to execute the contract. No 'nice-to-have' data collection here."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimization",
+          "evidence": "Membership carries no direct PII — parent + athlete identities are in User + Athlete modules. Snapshots (price / coupon / tax) are transaction data, not PII."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure — with retention exception",
+          "evidence": "Terminal memberships retain 7 years (SOX 404 + tax audit) or 10 years (extended retention). GDPR Art. 17(3)(b) exception for legal obligation retention applies."
+        }
+      ]
+    },
+    "can_spam": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "transactional exemption",
+          "evidence": "Every membership notification is transactional_required (Section 5(a)(5)(A) exemption). Payment failure emails, cancellation confirmations, dunning reminders are contract-critical + exempt from opt-out. Marketing win-back campaigns (30-day post-lapsed) route through growth::marketing with marketing consent tier — separate mailing path, opt-out honored."
+        }
+      ]
+    },
+    "consumer_protection": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "refund policy disclosure at signup",
+          "evidence": "Plan.refund_policy + refund_grace_days are surfaced in the SDUI signup flow. Customer must acknowledge the refund policy before signing. Snapshot captures the acknowledged policy at signing time — even if the plan.refund_policy changes later, the membership honors the signed policy."
+        },
+        {
+          "principle": "cancellation clarity",
+          "evidence": "Cancellation confirmation email spells out soft-vs-hard-cancel semantics + refund amount + effective date + remaining passes. Never surprises the customer with unexpected charges."
+        }
+      ]
+    },
+    "regulatory_records": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "tax-audit multi-year lookback",
+          "evidence": "tax_calculation_snapshot is IMMUTABLE + retained for the entire membership + 7 (or 10) years post-terminal. Tax auditors can inspect the exact rate + jurisdiction + breakdown that applied at the point of contract signing — mid-contract VAT changes never retroactively reshape the audit trail."
+        }
+      ]
+    }
+  }
+}

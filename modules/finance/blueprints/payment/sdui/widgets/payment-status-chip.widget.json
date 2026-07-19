@@ -1,0 +1,42 @@
+{
+  "id": "payment.payment-status-chip",
+  "title": "Payment status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for payment_intent.status (initialized / requires_action / requires_payment_method / requires_confirmation / requires_capture / processing / succeeded / cancelled / failed) or payment implicit status (succeeded / partially_refunded / fully_refunded / disputed) or provider status (active / inactive).",
+  "props": {
+    "status": {
+      "type": "string",
+      "required": true
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "['succeeded', 'active'].includes(props.status) ? 'success' : (['failed', 'cancelled'].includes(props.status) ? 'danger' : (['requires_action', 'requires_confirmation', 'processing', 'partially_refunded'].includes(props.status) ? 'warning' : (['requires_payment_method', 'requires_capture', 'initialized'].includes(props.status) ? 'info' : (['fully_refunded', 'disputed', 'inactive'].includes(props.status) ? 'neutral' : 'neutral'))))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? (['succeeded', 'active'].includes(props.status) ? 'check-circle' : (['failed', 'cancelled'].includes(props.status) ? 'x-circle' : (['requires_action', 'requires_confirmation'].includes(props.status) ? 'exclamation-triangle' : (props.status === 'processing' ? 'arrow-path' : (['fully_refunded', 'partially_refunded'].includes(props.status) ? 'arrow-uturn-left' : (props.status === 'disputed' ? 'scale' : 'clock')))))) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.status === 'succeeded' ? 'Succeeded' : (props.status === 'active' ? 'Active' : (props.status === 'inactive' ? 'Inactive' : (props.status === 'failed' ? 'Failed' : (props.status === 'cancelled' ? 'Cancelled' : (props.status === 'initialized' ? 'Initialized' : (props.status === 'requires_action' ? 'Verification needed' : (props.status === 'requires_payment_method' ? 'Awaiting method' : (props.status === 'requires_confirmation' ? 'Awaiting confirm' : (props.status === 'requires_capture' ? 'Ready to capture' : (props.status === 'processing' ? 'Processing' : (props.status === 'partially_refunded' ? 'Partially refunded' : (props.status === 'fully_refunded' ? 'Fully refunded' : (props.status === 'disputed' ? 'Disputed' : props.status))))))))))))))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,249 @@
+{
+  "id": "academorix://modules/payment/schemas/payment-method",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PaymentMethod",
+  "description": "Saved payment tokens — NEVER card PAN/CVV/magnetic-stripe. Provider-scoped token IDs (Stripe pm_..., Paddle payment_method_id, etc.). Encrypted at rest. Deduplicated per customer via fingerprint hash. Carries `tenant_id` only. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "payment",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "payment_methods",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pmt_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Payment\\Models\\PaymentMethod",
+    "interface": "Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentMethodInterface",
+    "implements": ["Academorix\\Finance\\Payment\\Contracts\\Data\\PaymentMethodInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "provider": "PaymentProvider",
+      "provider_reference_id": "encrypted:string",
+      "method_type": "PaymentMethodType",
+      "exp_month": "integer",
+      "exp_year": "integer",
+      "billing_address": "array",
+      "is_default": "boolean",
+      "is_active": "boolean",
+      "last_used_at": "datetime",
+      "verified_at": "datetime",
+      "deactivated_reason": "PaymentMethodDeactivatedReason",
+      "metadata": "array"
+    },
+    "observers": ["PaymentMethodObserver"],
+    "appends": ["is_expired", "days_until_expiry", "display_name"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `pmt_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "customer_type": {
+        "type": "string",
+        "length": 96,
+        "nullable": false,
+        "description": "Polymorphic customer class name (User / Athlete). Enforced by observer to be tenant-scoped."
+      },
+      "customer_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic customer ID. NULLED (not deleted) on UserErased — the row survives so historical Payment references still resolve, but the identifier is redacted."
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: stripe / paddle / adyen / square / paypal / custom_webhook."
+      },
+      "provider_reference_id": {
+        "type": "string",
+        "length": 256,
+        "nullable": false,
+        "description": "ENCRYPTED AT REST. Provider-native token: pm_... (Stripe), payment_method_id (Paddle), storedPaymentMethodId (Adyen), CARD_NONCE (Square), payment_method (PayPal), caller-defined (custom_webhook). NEVER the raw PAN."
+      },
+      "method_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: card / bank_debit / bank_transfer / wallet / installment. Immutable after create."
+      },
+      "brand": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: visa / mastercard / amex / discover / jcb / unionpay / sepa / ach / apple_pay / google_pay / paypal / venmo / cash_app / other. Nullable for non-card methods."
+      },
+      "last4": {
+        "type": "string",
+        "length": 4,
+        "nullable": true,
+        "description": "Last 4 digits. NEVER the full PAN (PCI-DSS Level 1)."
+      },
+      "exp_month": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Card expiry month, 1-12. Nullable for non-card methods."
+      },
+      "exp_year": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Card expiry year, 4-digit. Nullable for non-card methods."
+      },
+      "fingerprint_hash": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "SHA-256 of the provider's card fingerprint. Prevents storing the same card multiple times per customer. NEVER the raw fingerprint."
+      },
+      "billing_address": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Billing address associated with the method at attach time. Shape: { line1, line2?, city, region, postal_code, country_code }. Nullable when the provider doesn't collect address details."
+      },
+      "is_default": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "Customer's default payment method. Only one is_default=true per (customer, is_active) at a time — enforced by observer via lock-and-swap."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "false when the method was deactivated (customer removed / card expired / provider failure / duplicate / fraud flag). Inactive methods retain for audit but never dispatch payments."
+      },
+      "last_used_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Last successful Payment against this method. Updated by PaymentObserver.created when payment_method_id matches."
+      },
+      "verified_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "For methods requiring micro-deposit verification (ACH). Nullable for methods that don't require verification. Payments refused until verified."
+      },
+      "deactivated_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: customer_removed / card_expired / provider_failure / duplicate / fraud_flag. NULL when is_active=true."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "customer_type", "customer_id", "fingerprint_hash"],
+        "unique": true,
+        "name": "payment_methods_customer_fingerprint_unique",
+        "predicate": "deleted_at IS NULL",
+        "description": "Prevents storing the same card multiple times per customer. Duplicate detected → observer re-activates existing instead of creating new."
+      },
+      { "columns": ["tenant_id", "customer_type", "customer_id"], "name": "payment_methods_customer_idx" },
+      { "columns": ["tenant_id", "customer_type", "customer_id", "is_default"], "name": "payment_methods_default_idx", "predicate": "is_default = true AND is_active = true AND deleted_at IS NULL" },
+      { "columns": ["exp_year", "exp_month"], "name": "payment_methods_expiry_idx", "predicate": "is_active = true AND method_type = 'card' AND deleted_at IS NULL", "description": "For SyncPaymentMethodExpiryJob — weekly sweep flags cards expiring in 30 days." },
+      { "columns": ["tenant_id", "provider"], "name": "payment_methods_provider_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "customer_type",
+    "customer_id",
+    "provider",
+    "provider_reference_id",
+    "method_type",
+    "fingerprint_hash",
+    "is_default",
+    "is_active",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pmt_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "customer_type": { "type": "string" },
+    "customer_id": { "type": ["string", "null"] },
+    "provider": {
+      "type": "string",
+      "enum": ["stripe", "paddle", "adyen", "square", "paypal", "custom_webhook"]
+    },
+    "provider_reference_id": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "method_type": {
+      "type": "string",
+      "enum": ["card", "bank_debit", "bank_transfer", "wallet", "installment"]
+    },
+    "brand": {
+      "type": ["string", "null"],
+      "enum": [null, "visa", "mastercard", "amex", "discover", "jcb", "unionpay", "sepa", "ach", "apple_pay", "google_pay", "paypal", "venmo", "cash_app", "other"]
+    },
+    "last4": { "type": ["string", "null"], "pattern": "^\\d{4}$" },
+    "exp_month": { "type": ["integer", "null"], "minimum": 1, "maximum": 12 },
+    "exp_year": { "type": ["integer", "null"], "minimum": 2000, "maximum": 2100 },
+    "fingerprint_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "billing_address": {
+      "type": ["object", "null"],
+      "additionalProperties": true,
+      "properties": {
+        "line1": { "type": ["string", "null"] },
+        "line2": { "type": ["string", "null"] },
+        "city": { "type": ["string", "null"] },
+        "region": { "type": ["string", "null"] },
+        "postal_code": { "type": ["string", "null"] },
+        "country_code": { "type": ["string", "null"], "pattern": "^[A-Z]{2}$" }
+      }
+    },
+    "is_default": { "type": "boolean" },
+    "is_active": { "type": "boolean" },
+    "last_used_at": { "type": ["string", "null"], "format": "date-time" },
+    "verified_at": { "type": ["string", "null"], "format": "date-time" },
+    "deactivated_reason": {
+      "type": ["string", "null"],
+      "enum": [null, "customer_removed", "card_expired", "provider_failure", "duplicate", "fraud_flag"]
+    },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "unique (tenant_id, customer_type, customer_id, fingerprint_hash) WHERE deleted_at IS NULL — no duplicate cards per customer",
+    "at most one is_default = true per (customer, is_active) — enforced by observer lock-and-swap",
+    "provider_reference_id encrypted at rest",
+    "provider_reference_id validates against per-provider format (Stripe pm_..., Paddle payment_method_id, Adyen storedPaymentMethodId, etc.) via valid_provider_reference_format rule",
+    "method_type immutable after create",
+    "provider immutable after create — a Stripe token cannot become an Adyen token",
+    "last4 exactly 4 digits when set (never full PAN) — PCI-DSS Level 1",
+    "fingerprint_hash SHA-256 pattern enforced — raw fingerprint prohibited",
+    "verified_at required for ACH bank_debit methods before dispatch — PaymentIntentObserver refuses when verification missing",
+    "deactivated_reason NOT NULL when is_active = false",
+    "is_active cannot flip true→false without a deactivated_reason",
+    "soft-delete allowed; 90-day grace before hard-purge via PurgeExpiredPaymentDataJob"
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "$version": 1,
+  "title": "Invoice PDF template catalogue",
+  "description": "The 4 template families shipped day-1. Each declares its use case, entitlement requirement, and the field layout summary. Templates are Blade views under resources/views/invoice/pdf/{slug}.blade.php. The InvoicePDFRenderer picks the template based on tenant entitlement + settings.invoice.pdf_template.",
+  "templates": [
+    {
+      "slug": "academorix-default",
+      "display_name": "Academorix default",
+      "description": "The default template for Small-tier tenants (no branding entitlement). Simple, clean, Academorix-branded footer with 'Powered by Academorix' + tenant name in header + billing_address in top-left + invoice details in top-right + line-item table + totals summary at bottom.",
+      "requires_entitlement": null,
+      "paper_size": "A4",
+      "layout_summary": {
+        "header": "Academorix logo (small) + 'Powered by Academorix' text",
+        "tenant_block": "Tenant name + address (from tenant.branding.address if set)",
+        "billing_address_block": "Frozen customer billing_address",
+        "invoice_details_block": "Invoice #, issue_date, due_date, payment_terms",
+        "line_items_table": "line_number, description, quantity, unit_price, total (+ tax breakdown when applicable)",
+        "totals_summary": "Subtotal + Discount + Tax + Total + Amount Paid + Amount Due"
+      }
+    },
+    {
+      "slug": "tenant-branded",
+      "display_name": "Tenant branded",
+      "description": "For Medium+ tenants with invoice_tenant_branded_pdf entitlement. Replaces Academorix branding with tenant logo + colors + footer. All other layout mirrors academorix-default.",
+      "requires_entitlement": "invoice_tenant_branded_pdf",
+      "paper_size": "A4",
+      "layout_summary": {
+        "header": "Tenant logo (from tenant.branding.logo_url) + tenant primary color band",
+        "tenant_block": "Tenant name + address + phone + email (from tenant.branding)",
+        "billing_address_block": "Frozen customer billing_address",
+        "invoice_details_block": "Invoice #, issue_date, due_date, payment_terms",
+        "line_items_table": "Same as default + tenant secondary color for header row",
+        "totals_summary": "Same as default + tenant primary color for total row",
+        "footer": "Tenant footer copy from tenant.branding.invoice_footer"
+      }
+    },
+    {
+      "slug": "minimal",
+      "display_name": "Minimal",
+      "description": "Compact single-page layout. No frills. Suitable for tenants with high-volume invoicing where each PDF must fit on one page even with many line items. Enterprise recommended.",
+      "requires_entitlement": null,
+      "paper_size": "A4",
+      "layout_summary": {
+        "header": "Small tenant name + invoice number in single line",
+        "tenant_block": "Compact: name + email + address on one line",
+        "billing_address_block": "Compact: bill-to name + address in 2 lines",
+        "line_items_table": "Reduced-padding table",
+        "totals_summary": "Right-aligned totals block, no separate tax breakdown"
+      }
+    },
+    {
+      "slug": "vat-eu",
+      "display_name": "VAT (EU) — Art. 226 compliant",
+      "description": "EU VAT Directive Art. 226-compliant layout. Includes all mandatory fields in the required order. For tenants operating in EU VAT jurisdictions.",
+      "requires_entitlement": null,
+      "paper_size": "A4",
+      "layout_summary": {
+        "header": "Tenant name + tenant VAT number (mandatory per Art. 226(3))",
+        "tenant_block": "Full name + address + VAT number + fiscal representative (if applicable)",
+        "billing_address_block": "Full customer name + address + customer VAT number (mandatory for B2B per Art. 226(4))",
+        "invoice_details_block": "Sequential invoice number (Art. 226(2)) + issue_date (Art. 226(1)) + payment_terms",
+        "line_items_table": "Description + quantity + unit_price + tax_rate (per line, mandatory per Art. 226(9)) + tax_amount + line_total",
+        "totals_summary": "Subtotal + Tax breakdown by rate (mandatory per Art. 226(9)) + Total",
+        "footer": "'Reverse charge' notice when applicable (Art. 226(11) — for cross-border B2B) + reference to the underlying supply if this is a corrective invoice (Art. 226(2)a)"
+      },
+      "notes": "Compliance-sensitive template. Tenant admin must verify their tenant VAT number is registered in tenant.branding.tax_id before switching to this template."
+    }
+  ],
+  "notes": [
+    "Templates are Blade views resolved via `resources/views/invoice/pdf/{slug}.blade.php` (shipped in this module's `resources/views` folder).",
+    "Custom templates: Enterprise tenants may register their own via `#[AsInvoicePdfRenderer(supports_templates: ['tenant-custom-{slug}'])]` — the discovery loader picks up new templates at boot.",
+    "Every template renders WITHIN the same InvoicePDFRenderer contract — the caller shouldn't know which template was chosen; the rendering pipeline is transparent.",
+    "The VAT-EU template is recommended for any tenant operating in an EU member state — even non-VAT-registered ones benefit from the Art. 226-compliant field ordering."
+  ]
+}

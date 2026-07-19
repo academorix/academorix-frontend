@@ -1,0 +1,60 @@
+{
+  "id": "monitoring.resources.monitoring-provider.test",
+  "title": "Test provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/providers/{provider}/test",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "monitoring-provider", "action": "test" },
+  "requiresPermission": "monitoring.providers.test",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    { "name": "provider", "kind": "http.get", "url": "/api/v1/monitoring/providers/{provider}", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Test provider" } },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "provider.name" } } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted" }, "bindings": { "children": { "$ref": "provider.provider" } } }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Rate limited",
+            "description": "1 test per config per minute. Additional test attempts return 429 with a Retry-After header."
+          }
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "primary", "leadingIcon": "beaker", "children": "Send synthetic P4 test alert" },
+          "actions": {
+            "onPress": {
+              "kind": "http.post",
+              "url": "/api/v1/monitoring/providers/{provider}/test",
+              "onSuccess": {
+                "kind": "toast",
+                "message": "Test alert sent. Outcome will appear in the provider's dashboard within seconds."
+              }
+            }
+          }
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "secondary", "children": "Back" },
+          "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/providers/' + $routeParams.provider + '/edit'" } }
+        }
+      ]
+    }
+  ]
+}

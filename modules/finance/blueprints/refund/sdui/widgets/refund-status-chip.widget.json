@@ -1,0 +1,40 @@
+{
+  "id": "refund.refund-status-chip",
+  "title": "Refund status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Composite chip showing the refund's overall state — combines status + optional provider_error indicator + optional requires_approval indicator into a single at-a-glance signal. Colour + icon + text label. Never colour-alone. Priority order: 'Failed' > 'Provider error' > 'Rejected' > 'Cancelled' > 'Succeeded' > 'Processing' > 'Approved' > 'Awaiting approval' > 'Pending'.",
+  "props": {
+    "status": { "type": "string", "required": true, "enum": ["pending", "awaiting_approval", "approved", "processing", "succeeded", "failed", "cancelled", "provider_error", "rejected"] },
+    "requiresApproval": { "type": "boolean", "default": false, "description": "When status='awaiting_approval', show an 'Approval required' variant of the awaiting_approval chip." },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "({ pending: 'neutral', awaiting_approval: 'warning', approved: 'accent', processing: 'accent', succeeded: 'success', failed: 'danger', cancelled: 'neutral', provider_error: 'danger', rejected: 'danger' })[props.status]"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? ({ pending: 'clock', awaiting_approval: 'clock', approved: 'check-badge', processing: 'arrow-path', succeeded: 'check-circle', failed: 'x-circle', cancelled: 'no-symbol', provider_error: 'exclamation-triangle', rejected: 'hand-raised' })[props.status] : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "({ pending: 'Pending', awaiting_approval: 'Awaiting approval', approved: 'Approved', processing: 'Processing', succeeded: 'Succeeded', failed: 'Failed', cancelled: 'Cancelled', provider_error: 'Provider error', rejected: 'Rejected' })[props.status]"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

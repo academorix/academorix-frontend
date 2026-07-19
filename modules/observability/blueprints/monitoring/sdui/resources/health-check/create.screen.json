@@ -1,0 +1,132 @@
+{
+  "id": "monitoring.resources.health-check.create",
+  "title": "Add health check",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/health-checks/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "health-check", "action": "create" },
+  "requiresPermission": "monitoring.health_checks.create",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    {
+      "name": "check_types",
+      "kind": "http.get",
+      "url": "/api/v1/monitoring/health-checks/check-types",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "MultiStepForm",
+      "props": { "className": "max-w-3xl mx-auto p-6" },
+      "children": [
+        {
+          "kind": "Step",
+          "props": { "title": "Check type", "description": "Pick what to probe." },
+          "children": [
+            {
+              "kind": "Select",
+              "props": { "label": "Check type" },
+              "bindings": {
+                "options": { "$ref": "check_types" }
+              },
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "form.set",
+                  "field": "check_type",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Target", "description": "Configure the probe target." },
+          "children": [
+            {
+              "kind": "DynamicForm",
+              "bindings": {
+                "schema": { "$expr": "check_types[form.check_type].target_schema" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": { "label": "Display name", "placeholder": "Primary DB" },
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "name",
+                  "valueExpr": "$value"
+                }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": { "label": "Slug", "placeholder": "primary-db", "description": "URL-safe unique identifier used as signal_source for alert policies." },
+              "actions": {
+                "onChange": {
+                  "kind": "form.set",
+                  "field": "slug",
+                  "valueExpr": "$value"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Schedule", "description": "Interval + timeout." },
+          "children": [
+            {
+              "kind": "Slider",
+              "props": { "label": "Interval (seconds)", "min": 15, "max": 3600, "step": 15, "defaultValue": 60 },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "interval_seconds", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Slider",
+              "props": { "label": "Timeout (seconds)", "min": 1, "max": 300, "step": 1, "defaultValue": 30 },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "timeout_seconds", "valueExpr": "$value" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Confirm" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "children": "Create health check" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/monitoring/health-checks",
+                  "body": {
+                    "name": "{{form.name}}",
+                    "slug": "{{form.slug}}",
+                    "check_type": "{{form.check_type}}",
+                    "target": "{{form.target}}",
+                    "interval_seconds": "{{form.interval_seconds}}",
+                    "timeout_seconds": "{{form.timeout_seconds}}"
+                  },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/monitoring/health-checks/' + response.data.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

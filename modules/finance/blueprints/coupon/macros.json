@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/coupon/macros",
+  "$version": 1,
+  "title": "coupon — published macros",
+  "description": "No published macros. The coupon module operates purely through service classes (CouponRedeemer / CouponValidator / CouponIssuer / CodeGenerator / ClawbackHandler) invoked from other modules' actions. There is no per-request coupon context that would justify a Request macro — a coupon is applied at explicit call sites, not implicitly from the request.",
+  "namespace_note": "No macros; documented for symmetry with the module family.",
+  "macros": [],
+  "rationale": [
+    "Referrals ships Request::activeReferralProgram / Request::inboundReferral macros because there IS a request-boundary concept — the referral cookie carries context across requests. Coupons have no equivalent — the code is submitted at the invoice-creation call site, not carried across requests.",
+    "The invoice/membership module's CreateInvoiceAction passes coupon references explicitly via CouponRedeemer::redeem(coupon: $coupon, ...) — no implicit Request context needed.",
+    "The customer-facing preview endpoint accepts { code } in the request body — the endpoint controller resolves it via CouponRepository::findByCode($tenantId, $code) and does not need a Request macro."
+  ]
+}

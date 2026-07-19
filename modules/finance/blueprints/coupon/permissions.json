@@ -1,0 +1,27 @@
+{
+  "id": "academorix://modules/coupon/permissions",
+  "$version": 1,
+  "title": "coupon — permissions",
+  "seeder": "Academorix\\Finance\\Coupon\\Database\\Seeders\\CouponPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences. Tenant plane (sanctum) — owner + marketing manage coupons + read redemption ledger; support role reads only; customers have no explicit permissions (validate/preview routes are auth'd but scoped to auth()->id() via policy). Platform plane (platform_admin) — cross-tenant read for support intervention + regulator-facing reporting. All tenant permissions carry the appropriate resource prefix (`coupons.` for the aggregate, `coupon_redemptions.` for the pivot).",
+  "permissions": [
+    { "name": "coupons.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
+    { "name": "coupons.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
+    { "name": "coupons.create", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
+    { "name": "coupons.update", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
+    { "name": "coupons.delete", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Soft-delete only for inactive coupons with no non-reversed redemptions. Retention pipeline handles hard-delete." },
+    { "name": "coupons.deactivate", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"] },
+    { "name": "coupons.extend", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"], "description": "Push valid_until forward. Refuses when the coupon is already deactivated." },
+    { "name": "coupons.bulk-issue", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"], "description": "Medium+ tier via `coupon_bulk_issue` entitlement. Batch-create N unique campaign codes." },
+    { "name": "coupons.view-financials", "guard": "sanctum", "seededOn": ["admin", "owner", "support"], "description": "Read the confidential fields: discount_amount, discount_currency, usage_cap, minimum_order_amount. Redactor strips these when the caller lacks this permission." },
+    { "name": "coupons.view-report", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner"], "description": "Read the weekly coupon usage report." },
+    { "name": "coupon_redemptions.viewAny", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
+    { "name": "coupon_redemptions.view", "guard": "sanctum", "seededOn": ["marketing", "admin", "owner", "support"] },
+    { "name": "coupon_redemptions.reverse", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Financial reversal — audit-critical. Every reverse fires CouponRedemptionReversed + notifies Finance module." },
+    { "name": "coupon_redemptions.audit-clawbacks", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Read the clawback trail for audit/compliance." },
+    { "name": "platform.coupons.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
+    { "name": "platform.coupons.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
+    { "name": "platform.coupon_redemptions.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"], "description": "Cross-tenant redemption ledger for regulator-facing reporting." }
+  ]
+}

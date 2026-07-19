@@ -1,0 +1,194 @@
+{
+  "id": "academorix://modules/refund/routes",
+  "$version": 1,
+  "title": "refund — HTTP routes",
+  "description": "Tenant-facing customer surfaces (request refund, list own, cancel while pending) + tenant-facing admin+finance surfaces (list, admin-initiate, approve, reject, force-fail, refund-lines, reconcile, pending-approvals, refund-volume report) + platform-plane cross-tenant read for support intervention. Every tenant route carries `entitlement.enforce:refund_capture`; customer routes additionally carry `refund.enforce_customer_scope` middleware (customer can only request refunds against payments where they were the customer). Approve + reject + force-fail are `refunds.approve`/`refunds.force-fail` permission-gated; segregation of duties enforced at the policy level (approver ≠ initiator).",
+  "groups": [
+    {
+      "name": "tenant-refunds-customer",
+      "prefix": "/api/v1/refunds",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:refund_capture",
+        "refund.enforce_customer_scope",
+        "throttle:refunds-customer",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Customer-facing refund request + own-refunds ledger + cancel-while-pending. `refund.enforce_customer_scope` scopes reads + writes to auth()->id() as customer. Customer-initiated reasons are limited to: customer_requested / product_not_received / product_unacceptable / subscription_cancelled (never fraud_confirmed / accounting_correction / regulator_required — admin-only).",
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\CustomerRefundController@store",
+          "permission": "refunds.request",
+          "requires_entitlement": "refund_customer_self_service",
+          "description": "Body: CustomerRefundRequestData { payment_id, amount_cents?, refund_type?, reason, reason_note, refunded_to? }. amount_cents defaults to remaining refundable amount (full refund of what's left). refund_type defaults to 'full'. reason validated against customer-allowed set. Consumes 0 slots (no slot entitlement — refunds are unlimited)."
+        },
+        {
+          "method": "GET",
+          "path": "/mine",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\CustomerRefundController@mine",
+          "permission": null,
+          "description": "Customer's own refund history. filter[status], filter[from/to] (initiated_at). Confidential financial fields ARE surfaced (customer's own money — no PII redaction beyond the payment method fingerprint which is already tokenised)."
+        },
+        {
+          "method": "GET",
+          "path": "/{refund}",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\CustomerRefundController@show",
+          "permission": null,
+          "description": "Customer's own refund detail. Refuses when refund.initiated_by_user_id != auth()->id() (customer scope guard)."
+        },
+        {
+          "method": "POST",
+          "path": "/{refund}/cancel",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\CustomerRefundController@cancel",
+          "permission": null,
+          "description": "Customer cancels own request. Body: { cancel_reason? }. Only allowed when status IN ('awaiting_approval', 'approved'). Refuses when status has progressed to 'processing' (past-return path — the customer must instead wait for provider dispatch + then request re-refund if they change their mind)."
+        }
+      ]
+    },
+    {
+      "name": "tenant-refunds-admin",
+      "prefix": "/api/v1/refunds",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:refund_capture",
+        "throttle:refunds-admin",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "description": "Admin/finance refund management. Full CRUD + approval workflow + provider reconciliation. Segregation of duties enforced by RefundPolicy (approver ≠ initiator).",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundController@index",
+          "permission": "refunds.viewAny",
+          "description": "filter[status], filter[reason], filter[refund_type], filter[refunded_to], filter[provider], filter[requires_approval] (bool), filter[initiated_at.gte/lte], filter[amount_cents.gte/lte], filter[payment_id], filter[invoice_id], filter[customer_id]. include=refund_lines,credit_note,transaction,payment,invoice. Full-tenant refund ledger."
+        },
+        {
+          "method": "POST",
+          "path": "/",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundController@store",
+          "permission": "refunds.create",
+          "description": "Admin-initiated refund. Body: AdminRefundCreateData { payment_id, amount_cents?, refund_type?, reason, reason_note, refunded_to? }. All reasons allowed (including admin-only fraud_confirmed / accounting_correction / regulator_required). Records initiated_by_user_id = auth()->id()."
+        },
+        {
+          "method": "POST",
+          "path": "/{refund}/approve",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundController@approve",
+          "permission": "refunds.approve",
+          "description": "Body: { notes? }. Refuses when refund.initiated_by_user_id == auth()->id() (segregation of duties per SOX §404 — returns REFUND_SELF_APPROVAL_REFUSED). Transitions status awaiting_approval -> approved + dispatches InitiateProviderRefundJob."
+        },
+        {
+          "method": "POST",
+          "path": "/{refund}/reject",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundController@reject",
+          "permission": "refunds.approve",
+          "description": "Body: { rejection_reason (256 char, required), notes? }. Refuses when refund.initiated_by_user_id == auth()->id() (segregation of duties). Transitions status awaiting_approval -> rejected. Fires RefundRejected + dispatches RefundRejectedNotification (customer)."
+        },
+        {
+          "method": "POST",
+          "path": "/{refund}/force-fail",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundController@forceFail",
+          "permission": "refunds.force-fail",
+          "description": "Admin escape hatch — mark a stuck provider_error refund as failed after manual provider-side investigation. Body: { failure_reason (256 char, required), notes? }. Only allowed when status='provider_error'. Fires RefundFailed."
+        },
+        {
+          "method": "GET",
+          "path": "/{refund}/lines",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundLineController@index",
+          "permission": "refunds.view",
+          "description": "Refund lines for a specific refund."
+        },
+        {
+          "method": "POST",
+          "path": "/{refund}/lines",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundLineController@store",
+          "permission": "refunds.create",
+          "description": "Body: RefundLineCreateData { invoice_line_id, amount_cents, proration_config?, reason_note?, is_final_line? }. Only allowed when parent refund.status IN ('pending', 'awaiting_approval', 'approved'). Cannot add lines once dispatch begins. Refuses double-refunding same invoice_line via composite unique."
+        },
+        {
+          "method": "POST",
+          "path": "/reconcile",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundReconcileController@dispatch",
+          "permission": "refunds.reconcile",
+          "description": "Dispatches ReconcileRefundsJob for one or all providers. Body: { provider? } (narrows to specific provider). Prints a JSON summary of pending reconciliation counts. Used when a provider outage recovers + we need to sweep stuck refunds."
+        },
+        {
+          "method": "GET",
+          "path": "/pending-approvals",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundPendingApprovalsController@index",
+          "permission": "refunds.approve",
+          "description": "Refunds stuck in awaiting_approval. Sorted by initiated_at ASC (oldest first — surfaces SLA-approaching approvals). filter[older_than_hours]. Includes hours_pending + assigned_approvers metadata for triage."
+        }
+      ]
+    },
+    {
+      "name": "tenant-refunds-report",
+      "prefix": "/api/v1/reports",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:sanctum",
+        "application.resolve",
+        "tenant.resolve",
+        "entitlement.enforce:refund_capture",
+        "throttle:refunds-admin",
+        "response.envelope"
+      ],
+      "hosts": ["tenant"],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/refund-volume",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Tenant\\Admin\\RefundReportController@volume",
+          "permission": "refunds.view-report",
+          "description": "Per-tenant refund volume rollup. Query params: period_start, period_end (default: last 30 days). Response: { total_initiated, total_succeeded, total_failed, total_refunded_cents, reason_distribution (map<reason,count>), provider_distribution, top_refunded_invoices, median_approval_to_success_hours }. Confidential financial fields redacted when caller lacks refunds.view-financials."
+        }
+      ]
+    },
+    {
+      "name": "platform-refunds-support",
+      "prefix": "/api/v1/platform/refunds",
+      "middleware": [
+        "request.id",
+        "cors.strict",
+        "versioning.resolve",
+        "auth:platform_admin",
+        "throttle:refunds-platform",
+        "response.envelope"
+      ],
+      "hosts": ["platform-admin"],
+      "description": "Cross-tenant refund read for regulator-facing reporting + support intervention. Customer PII hashed unless the caller holds platform.refund.pii.view.",
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Platform\\RefundController@index",
+          "permission": "platform.refunds.viewAny",
+          "description": "filter[tenant_id], filter[status], filter[reason], filter[initiated_at.gte/lte]. Cross-tenant scan."
+        },
+        {
+          "method": "GET",
+          "path": "/pending-approvals",
+          "controller": "Academorix\\Finance\\Refund\\Http\\Controllers\\Platform\\RefundPendingApprovalsController@index",
+          "permission": "platform.refunds.viewAny",
+          "description": "Cross-tenant pending-approval queue for support triage. Filter[tenant_id] narrows to a specific tenant. Surfaces refunds that have been pending > SLA for consumer-protection-law compliance monitoring."
+        }
+      ]
+    }
+  ]
+}

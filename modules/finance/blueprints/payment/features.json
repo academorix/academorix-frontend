@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/payment/features",
+  "$version": 1,
+  "title": "payment — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "payment.core",
+      "displayName": "Payment processing",
+      "description": "Core payment orchestration — captures against invoices via provider intents + saved payment tokens + basic dispute handling.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "payment.advanced_providers",
+      "displayName": "Adyen, Square providers",
+      "description": "Advanced provider set. Small tenants get Stripe + Paddle + PayPal + CustomWebhook only. Medium+ unlock Adyen + Square.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "payment.manual_capture",
+      "displayName": "Authorization holds",
+      "description": "Manual capture flow — authorize now, capture later. Enables pre-authorized bookings (hold funds at booking, capture at check-in).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "payment.saved_methods",
+      "displayName": "Saved payment methods",
+      "description": "Save tokenized payment methods for repeat customers. Provider-scoped tokens; never card PAN.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "payment.multi_currency",
+      "displayName": "Multi-currency",
+      "description": "Accept payments in currencies other than the tenant's default currency. Requires provider support for the target currency.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "payment.3ds2_forced",
+      "displayName": "Forced 3DS2",
+      "description": "Force 3D Secure 2 authentication on ALL card transactions regardless of amount or PSD2 threshold. Reduces fraud risk for high-risk industries.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "payment.dispute_management",
+      "displayName": "Dispute management",
+      "description": "Dispute lifecycle workflow: evidence collection, submission, accept-vs-fight decisions.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "payment.custom_webhook",
+      "displayName": "Custom webhook provider",
+      "description": "Generic HMAC-signed webhook driver for tenant-run payment gateways (Braintree direct, dLocal, PayFast, etc.). Enterprise-only — the risk profile of caller-hosted gateways requires manual security review.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "payment.reconciliation_dashboard",
+      "displayName": "Reconciliation dashboard",
+      "description": "Nightly reconciliation reports + on-demand reconcile trigger. Signal drift between our records + provider records.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "payment.extended_retention",
+      "displayName": "10-year retention",
+      "description": "Extends payments + payment_disputes retention from 7 years to 10 years. For finance regimes requiring longer ad-spend + revenue audit trails.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

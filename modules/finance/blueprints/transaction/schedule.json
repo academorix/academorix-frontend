@@ -1,0 +1,42 @@
+{
+  "id": "academorix://modules/transaction/schedule",
+  "$version": 1,
+  "title": "transaction — scheduled tasks",
+  "entries": [
+    {
+      "name": "transaction-reconcile-ledger-balances",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Transaction\\Jobs\\ReconcileLedgerBalancesJob",
+      "cron": "0 2 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 02:00 UTC. The load-bearing integrity check: for every tenant, computes SUM(debit_cents) vs SUM(credit_cents) globally per account per day + per transaction. Fires LedgerImbalanceDetected (P0) per imbalance. Also fires AccountBalanceThresholdCrossed for threshold crossings. Fires LedgerReconciliationCompleted per tenant with stats."
+    },
+    {
+      "name": "transaction-generate-general-ledger-report",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Transaction\\Jobs\\GenerateGeneralLedgerReportJob",
+      "cron": "0 6 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly 06:00 UTC on the 1st. Generates the per-tenant General Ledger (GL) report for the previous closed month. Delivers MonthlyLedgerReportNotification to finance-role users. Only fires for tenants with transaction_advanced_reporting entitlement."
+    },
+    {
+      "name": "transaction-purge-expired",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Transaction\\Jobs\\PurgeExpiredTransactionDataJob",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 04:00 UTC. Applies retention: transactions + ledger_entries > 7 years (10 for Enterprise) archived to compliance-storage then hard-deleted. NEVER hard-purges without first archiving — a copy always survives in compliance-storage per SOX 802 + AML retention."
+    },
+    {
+      "name": "transaction-detect-account-threshold-crossings",
+      "command": "transaction:detect-threshold-crossings",
+      "cron": "*/30 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 30 min. Computes per-account running balances via AccountBalanceCalculator + checks against tenant-configured thresholds (accounts_receivable high watermark, cash low watermark, refunds_owed high watermark). Fires AccountBalanceThresholdCrossed per crossing. Distinct from the nightly reconciler because threshold crossings need faster detection than 24h."
+    },
+    {
+      "name": "transaction-verify-halt-flag-consistency",
+      "command": "transaction:verify-halt-flag",
+      "cron": "*/10 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 10 min. Verifies that every tenant with tenant.transaction_halt_new=true has at least one unresolved LedgerImbalanceDetected in the last 30 days. Detects orphan halt flags (a flag left on after the imbalance was resolved). Ops signal — non-zero orphan count means we're blocking new transactions unnecessarily."
+    }
+  ]
+}

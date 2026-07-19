@@ -1,0 +1,151 @@
+{
+  "id": "academorix://modules/activity/errors",
+  "$version": 1,
+  "title": "activity — error catalogue",
+  "description": "Error codes this module emits. `user_facing` controls whether the message renders to end users (translated via i18n). `retryable` signals client-side retry. `audit_severity` routes to the correct log channel — `alert` pages on-call, `critical` fires the security-incident notification pipeline.",
+  "namespace": "activity",
+  "errors": [
+    {
+      "code": "ACTIVITY_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.activity_not_found"
+    },
+    {
+      "code": "ACTIVITY_DELETE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "activity.errors.delete_forbidden",
+      "description": "Someone attempted to hard-delete an activity row from outside the retention pipeline. Enforced at the observer layer with a static caller-marker check. Warns because it's a bug (some code path is trying to bypass retention)."
+    },
+    {
+      "code": "ACTIVITY_WRITE_FORBIDDEN",
+      "http": 405,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.write_forbidden",
+      "description": "POST / PATCH / DELETE against /api/v1/activities/* returns 405 with this code — writes happen exclusively via the vendor LogsActivity trait on domain models."
+    },
+    {
+      "code": "UNKNOWN_LOG_NAME",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "activity.errors.unknown_log_name",
+      "description": "Referenced log_name is not in data/log-names-catalog.json. Almost always indicates a typo OR a missing catalog registration when a downstream module adds a new feed. Refused by valid_log_name rule + at model boot when LogsActivity's useLogName() names an unregistered value."
+    },
+    {
+      "code": "ACTIVITY_RETENTION_POLICY_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.retention_policy_not_found"
+    },
+    {
+      "code": "ACTIVITY_RETENTION_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.retention_not_entitled",
+      "description": "retention_days > 90 without the `activity_retention_extended` entitlement (Enterprise). Payload includes the entitlement key so the frontend can offer an upgrade CTA."
+    },
+    {
+      "code": "ACTIVITY_RETENTION_OUT_OF_RANGE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.retention_out_of_range",
+      "description": "retention_days outside 30..730. 30 is the floor (never shorter than 1 month of forensic memory); 730 is the regulator-hold ceiling."
+    },
+    {
+      "code": "ACTIVITY_RETENTION_REGULATOR_HOLD_NO_EXPIRY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "activity.errors.regulator_hold_no_expiry",
+      "description": "retention_days > 365 without expires_at set. Regulator holds SHOULD document a review-by date so the override doesn't drift into permanent by default. Warn severity — this is a defensive check catching missing due-diligence."
+    },
+    {
+      "code": "ACTIVITY_RETENTION_REASON_TOO_SHORT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.reason_too_short",
+      "description": "override_reason < 20 characters (or configured settings.activity.min_reason_length)."
+    },
+    {
+      "code": "ACTIVITY_RETENTION_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.retention_duplicate",
+      "description": "A retention policy for this (tenant, log_name) pair already exists. Delete the existing one first if the intent is to reset."
+    },
+    {
+      "code": "ACTIVITY_EXPORT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.export_not_entitled",
+      "description": "Export request without the `activity_export` entitlement (Medium+)."
+    },
+    {
+      "code": "ACTIVITY_DIGEST_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "activity.errors.digest_not_entitled",
+      "description": "Attempt to opt into digest email without the `activity_digest_email` entitlement (Medium+)."
+    },
+    {
+      "code": "ACTIVITY_CROSS_TENANT_READ",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "activity.errors.cross_tenant_read",
+      "description": "Attempt to read an activity from a different tenant (bypassing BelongsToTenant scope via a raw ID query). Should be impossible at runtime — the observer refuses; this is defence in depth. Fires a security-incident notification."
+    },
+    {
+      "code": "ACTIVITY_FEED_CHANNEL_UNAUTHORIZED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "activity.errors.feed_channel_unauthorized",
+      "description": "WebSocket subscription failed authorization on tenant.{id}.activity or user.{id}.activity. Refused by the reverb channel auth callback."
+    },
+    {
+      "code": "ACTIVITY_BATCH_ORPHANED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "activity.errors.batch_orphaned",
+      "description": "ActivityBatchStarted fired but no ActivityBatchCompleted followed within the reconciliation window. Emitted by ReconcileActivityBatchesJob on the orphan sweep — informational, not raised to a caller."
+    },
+    {
+      "code": "ACTIVITY_BACKFILL_ORPHAN_DETECTED",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "activity.errors.backfill_orphan",
+      "description": "BackfillActivityTenantIdFromJsonbJob --verify found rows where tenant_id IS NULL AND properties->>'tenant_id' IS NULL. Alerts on-call — an activity row that pre-dates the backfill has no way to determine its owner tenant. Must be resolved manually before the Wave-6 upgrade is complete."
+    }
+  ]
+}

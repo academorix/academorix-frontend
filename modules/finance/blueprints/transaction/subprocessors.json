@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/transaction/subprocessors",
+  "$version": 1,
+  "title": "transaction — subprocessors",
+  "description": "The Transaction module engages up to THREE third-party subprocessors — all for exchange-rate lookup during cross-currency transactions. Tenants using multi-currency (Medium+ tier) can choose one at settings-time; tenants operating single-currency engage NO subprocessors. All three are FX-rate data providers; no PII / no financial account data / no card data flows through any of them (they receive only currency-pair codes like 'USD-EUR' at rate-fetch time). GDPR Art. 28 DPA references + Art. 30 records of processing activities apply.",
+  "subprocessors": [
+    {
+      "slug": "openexchangerates",
+      "vendor_name": "Open Exchange Rates, Inc.",
+      "vendor_url": "https://openexchangerates.org",
+      "purpose": "Exchange rate lookup for cross-currency transactions. Rate is captured at commit + frozen on the transaction row (exchange_rate_to_base + base_amount_cents). Provides 200+ currency pairs updated hourly.",
+      "data_categories": ["currency_pair_codes (e.g. 'USD-EUR' — public data)", "no PII / no account data"],
+      "data_hashing": "N/A — no PII flows through this provider",
+      "endpoint": "openexchangerates.org/api/latest.json",
+      "sub_processing_locations": ["USA"],
+      "dpa_url": "https://openexchangerates.org/terms",
+      "certifications": ["SOC 2 Type 2"],
+      "activation_gate": "tenant admin selects this provider in transaction settings + acknowledges DPA reference"
+    },
+    {
+      "slug": "fixer_io",
+      "vendor_name": "APILayer (Fixer.io)",
+      "vendor_url": "https://fixer.io",
+      "purpose": "Exchange rate lookup for cross-currency transactions. Alternative to Open Exchange Rates. Provides 170+ currencies. Real-time + historical data.",
+      "data_categories": ["currency_pair_codes", "no PII / no account data"],
+      "data_hashing": "N/A",
+      "endpoint": "api.apilayer.com/fixer/latest",
+      "sub_processing_locations": ["EU", "USA"],
+      "dpa_url": "https://apilayer.com/data-processing-agreement",
+      "certifications": ["SOC 2 Type 2", "ISO 27001"],
+      "activation_gate": "tenant admin selects this provider + acknowledges DPA"
+    },
+    {
+      "slug": "ecb_daily",
+      "vendor_name": "European Central Bank (official daily rates)",
+      "vendor_url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+      "purpose": "Official ECB daily reference rates. Fallback provider when the primary provider is unreachable. Free + no auth required. Government-sourced — regulator-preferred rate source for EU jurisdictions.",
+      "data_categories": ["currency_pair_codes", "no PII / no account data"],
+      "data_hashing": "N/A",
+      "endpoint": "www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+      "sub_processing_locations": ["EU"],
+      "dpa_url": "N/A — public government data; no DPA required",
+      "certifications": ["government-sourced"],
+      "activation_gate": "always available as fallback — no tenant activation needed"
+    }
+  ],
+  "downstream_subprocessors_referenced": [
+    {
+      "module": "notifications",
+      "reference": "notifications::subprocessors.json",
+      "used_for": "Dispatching LedgerImbalanceDetectedNotification / TransactionAmendmentAppliedNotification / AccountBalanceAlertNotification / MonthlyLedgerReportNotification via mail / SMS / push channels."
+    },
+    {
+      "module": "compliance/archive",
+      "reference": "compliance::subprocessors.json (S3 Object Lock provider)",
+      "used_for": "Archiving transactions + ledger entries to compliance-storage before hard-purge. The archive backend is S3 with Object Lock (AWS Compliance region) — AWS is the subprocessor. Also used by TenantErased archive flow."
+    },
+    {
+      "module": "audit",
+      "reference": "audit::subprocessors.json",
+      "used_for": "Every write to transactions / transaction_ledger_entries writes an audit row via the audit module. The audit module's storage subprocessor (typically AWS RDS / DocumentDB) is engaged transitively."
+    }
+  ],
+  "notes": [
+    "This module engages EXACTLY THREE subprocessors — all FX-rate providers. Contrast with growth::marketing which engages 9 (one per ad network) — the transaction module's external surface is much smaller because no PII flows out.",
+    "The transaction module DOES NOT engage payment gateway subprocessors (Stripe / Paddle / etc.) — those are the payment module's concern. This module records the MOVEMENT of money that happened via those gateways, but never talks to them directly.",
+    "The transaction module DOES NOT engage bank / clearing / ACH subprocessors — those are the bank_deposits + bank_withdrawals record entries fed by the payment module. The transaction module records the movement; the payment module talks to the banking infrastructure.",
+    "ECB Daily is not really a 'subprocessor' in the GDPR sense (no data flows; public data pull) — included for completeness because it's referenced in the compliance narrative + regulators may ask 'where does the ECB rate come from'."
+  ]
+}

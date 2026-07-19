@@ -1,0 +1,107 @@
+{
+  "id": "academorix://modules/payment/attributes",
+  "$version": 1,
+  "title": "payment — PHP attribute contracts",
+  "description": "Three class-level attributes. `#[AsPaymentListener]` subscribes a service to payment-lane events (intent lifecycle + capture + dispute + circuit-breaker). `#[AsPaymentProvider]` marks a class as a provider driver — the PaymentProviderManager discovers these at boot and registers them via createXxxDriver factories. `#[AsPaymentWebhookHandler]` marks a class as a per-provider webhook handler; the payment.webhook_verify middleware dispatches inbound webhooks to the matching handler.",
+  "namespace": "Academorix\\Finance\\Payment\\Attributes",
+  "attributes": [
+    {
+      "name": "AsPaymentListener",
+      "class": "Academorix\\Finance\\Payment\\Attributes\\AsPaymentListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to payment-lane events (PaymentIntent* / Payment* / PaymentMethod* / PaymentDispute* / PaymentProvider*). Discovery loader picks up each class at boot + wires the declared events. Consumers of critical events (PaymentDisputeLost, PaymentProviderCircuitBreakerOpened) should override queue to `payment-critical`.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`PaymentCaptured`, `PaymentDisputeOpened`, `PaymentProviderCircuitBreakerOpened`, …). Empty = subscribe to every `Academorix\\Finance\\Payment\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see events.json)."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Atomic side-effects (MarkInvoicePaidOnPaymentCaptured priority 90 → RecordTransactionOnPaymentCaptured priority 80) declare lower priorities to run before non-atomic side-effects."
+        }
+      ],
+      "example": "#[AsPaymentListener(events: ['PaymentDisputeLost'], queue: 'payment-critical', priority: 10)]\nfinal class AlertFinanceOnDisputeLost\n{\n    public function __invoke(PaymentDisputeLost $event): void\n    {\n        // Notify finance team. Dispute lost = revenue reversal.\n    }\n}"
+    },
+    {
+      "name": "AsPaymentProvider",
+      "class": "Academorix\\Finance\\Payment\\Attributes\\AsPaymentProvider",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as a payment provider driver. The PaymentProviderManager discovers these at boot and registers a createXxxDriver factory keyed on the slug. Every driver MUST implement the IPaymentProvider contract (name(), createIntent, confirmIntent, captureIntent, cancelIntent, attachPaymentMethod, detachPaymentMethod, listIntents, submitDisputeEvidence, verifyWebhookSignature) + ship a JSON Schema under data/providers/<slug>-config.schema.json for config validation + a matching webhook handler decorated with #[AsPaymentWebhookHandler].",
+      "params": [
+        {
+          "name": "slug",
+          "type": "string",
+          "description": "Provider slug matching the PaymentProvider enum (stripe, paddle, adyen, square, paypal, custom_webhook). One driver class per slug."
+        },
+        {
+          "name": "supported_method_types",
+          "type": "array<string>",
+          "description": "PaymentMethodType values this provider can dispatch: card / bank_debit / bank_transfer / wallet / installment / crypto / cash / check. Read at boot into data/provider-capability-matrix.json (source of truth). Observer enforces new PaymentMethods reference a provider that supports the requested method_type."
+        },
+        {
+          "name": "supports_3ds2",
+          "type": "bool",
+          "default": true,
+          "description": "true = the provider supports 3DS2 challenge flow. Stripe: true. Adyen: true. Square: true (via Square 3DS API). PayPal: true (via Braintree 3DS). Paddle: true (native support in Paddle Billing). CustomWebhook: caller-defined (typically false unless the caller implements 3DS2 themselves)."
+        },
+        {
+          "name": "supports_manual_capture",
+          "type": "bool",
+          "default": true,
+          "description": "true = the provider supports authorization holds (capture_method='manual'). All 6 providers support this day-1."
+        },
+        {
+          "name": "supports_saved_methods",
+          "type": "bool",
+          "default": true,
+          "description": "true = the provider supports tokenized saved methods (SetupIntent-equivalent flow). All 6 providers support this day-1."
+        },
+        {
+          "name": "supports_marketplaces",
+          "type": "bool",
+          "default": false,
+          "description": "true = the provider supports multi-party payments (marketplace splits between the platform + sub-merchants). Adyen: true. Stripe: true (via Stripe Connect). Square: true. Others: false day-1."
+        },
+        {
+          "name": "supports_webhook_verification",
+          "type": "bool",
+          "default": true,
+          "description": "true = the provider signs webhooks with a shared secret verifiable via HMAC-SHA256 (or provider-specific scheme like PayPal certificate verification). Every day-1 provider supports webhook verification."
+        }
+      ],
+      "example": "#[AsPaymentProvider(slug: 'stripe', supported_method_types: ['card', 'bank_debit', 'wallet', 'installment'], supports_3ds2: true, supports_manual_capture: true, supports_saved_methods: true, supports_marketplaces: true, supports_webhook_verification: true)]\nfinal class StripeProvider implements IPaymentProvider\n{\n    public function createIntent(PaymentIntentData $data): IntentResult { ... }\n    public function confirmIntent(PaymentIntent $intent): ConfirmResult { ... }\n    // ...\n}"
+    },
+    {
+      "name": "AsPaymentWebhookHandler",
+      "class": "Academorix\\Finance\\Payment\\Attributes\\AsPaymentWebhookHandler",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as a per-provider webhook handler. The payment.webhook_verify middleware dispatches inbound webhooks to the matching handler after signature verification. Every provider ships a handler that translates provider-native events into our internal state transitions.",
+      "params": [
+        {
+          "name": "provider",
+          "type": "string",
+          "description": "Provider slug matching the PaymentProvider enum. One handler class per provider."
+        },
+        {
+          "name": "handled_event_types",
+          "type": "array<string>",
+          "description": "Provider-native event types this handler processes. Stripe: ['payment_intent.succeeded', 'payment_intent.payment_failed', 'charge.dispute.created', 'charge.dispute.closed', 'payment_method.detached', ...]. Paddle: ['transaction.completed', 'transaction.canceled', ...]. Boot-time discovery emits a coverage report — unhandled webhook types fail-soft with a warning."
+        }
+      ],
+      "example": "#[AsPaymentWebhookHandler(provider: 'stripe', handled_event_types: ['payment_intent.succeeded', 'payment_intent.payment_failed', 'charge.dispute.created', 'charge.dispute.updated', 'charge.dispute.closed', 'payment_method.detached', 'payment_method.updated'])]\nfinal class StripeWebhookHandler implements IPaymentWebhookHandler\n{\n    public function handle(WebhookEvent $event): void { ... }\n}"
+    }
+  ]
+}

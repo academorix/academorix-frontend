@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/membership/caches",
+  "$version": 1,
+  "title": "membership — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": [
+    "membership",
+    "membership.by_athlete",
+    "membership.by_plan",
+    "membership.by_user",
+    "membership.plan_catalog",
+    "membership.passes",
+    "membership.report"
+  ],
+  "keys": [
+    {
+      "pattern": "mbr:by_athlete:{athlete_id}",
+      "description": "All memberships (active + terminal) for an athlete. Read hot on athlete detail pages.",
+      "ttlSeconds": 300,
+      "tags": ["membership", "membership.by_athlete"],
+      "invalidatedBy": ["MembershipCreated", "MembershipActivated", "MembershipCancelled", "MembershipLapsed", "MembershipRenewed"]
+    },
+    {
+      "pattern": "mbr:by_user:{user_id}",
+      "description": "All memberships associated with a User via athlete.user_id OR guardian relationship. Feeds /me/memberships.",
+      "ttlSeconds": 300,
+      "tags": ["membership", "membership.by_user"],
+      "invalidatedBy": ["MembershipCreated", "MembershipActivated", "MembershipCancelled", "MembershipLapsed"]
+    },
+    {
+      "pattern": "mbr:by_plan:{plan_id}",
+      "description": "Membership count + top-N active memberships per plan.",
+      "ttlSeconds": 300,
+      "tags": ["membership", "membership.by_plan"],
+      "invalidatedBy": ["MembershipCreated", "MembershipCancelled", "MembershipLapsed"]
+    },
+    {
+      "pattern": "mbr:plan_catalog:{tenant_id}:{branch_id}",
+      "description": "Active plan catalog for a branch. Read hot on the customer-facing signup flow.",
+      "ttlSeconds": 900,
+      "tags": ["membership", "membership.plan_catalog"],
+      "invalidatedBy": ["MembershipPlanCreated", "MembershipPlanArchived", "MembershipPlanUpdated"]
+    },
+    {
+      "pattern": "mbr:passes:{membership_id}",
+      "description": "Pass ledger for a membership — available + consumed + expired counts per current period. Feeds the pass-badge widget.",
+      "ttlSeconds": 120,
+      "tags": ["membership", "membership.passes"],
+      "invalidatedBy": ["PassIssued", "PassConsumed", "PassExpired", "PassRefunded"]
+    },
+    {
+      "pattern": "mbr:report:{tenant_id}:{branch_id}:{period}",
+      "description": "MRR + churn + dunning-recovery report data. Refreshed every 15 minutes.",
+      "ttlSeconds": 900,
+      "tags": ["membership", "membership.report"],
+      "invalidatedBy": ["scheduled refresh only"]
+    },
+    {
+      "pattern": "mbr:renewal_upcoming_7d:{tenant_id}",
+      "description": "Memberships with next_renewal_at in the coming 7 days. Feeds admin dashboards showing 'renewals this week'.",
+      "ttlSeconds": 300,
+      "tags": ["membership"],
+      "invalidatedBy": ["MembershipCreated", "MembershipRenewed", "MembershipCancelled", "MembershipPaused", "MembershipResumed"]
+    },
+    {
+      "pattern": "mbr:dunning_open:{tenant_id}",
+      "description": "Memberships with consecutive_failed_renewal_count > 0 — the tenant's active dunning list.",
+      "ttlSeconds": 120,
+      "tags": ["membership"],
+      "invalidatedBy": ["MembershipRenewalFailed", "MembershipRenewed", "MembershipRenewalRecovered", "MembershipLapsed"]
+    }
+  ]
+}

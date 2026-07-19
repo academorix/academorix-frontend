@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/activity/data/log-names-catalog",
+  "$version": 1,
+  "title": "activity — registered log names catalog",
+  "description": "Every `log_name` string a downstream module may pass to `LogOptions::useLogName()`. Seeded at module boot into the registry cache. Adding a new feed = add an entry here + PR review. Consumer modules validate their `getActivitylogOptions()` returns a log_name from this catalog at model boot; unknown values throw UNKNOWN_LOG_NAME.",
+  "log_names": [
+    {
+      "name": "default",
+      "display_label": "General",
+      "description": "Catch-all feed for activities without a domain-specific home. Consumers should prefer a specific log_name when one exists — 'default' is for edge cases + one-off events.",
+      "default_broadcast": true,
+      "default_digest_include": false,
+      "owning_module": "activity",
+      "typical_subject_types": ["*"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "bookings",
+      "display_label": "Bookings",
+      "description": "Facility bookings — create, confirm, reschedule, cancel. Every booking mutation surfaces here.",
+      "default_broadcast": true,
+      "default_digest_include": true,
+      "owning_module": "sports",
+      "typical_subject_types": ["booking", "facility"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "athletes",
+      "display_label": "Athletes",
+      "description": "Athlete lifecycle — enrollment, transfer between teams, active/inactive status. Does NOT include progress or evaluation entries (those route to audit for retention + regulator visibility).",
+      "default_broadcast": true,
+      "default_digest_include": true,
+      "owning_module": "sports",
+      "typical_subject_types": ["athlete", "athlete_enrollment"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "teams",
+      "display_label": "Teams",
+      "description": "Team formation, roster changes, coach assignments, session schedule updates.",
+      "default_broadcast": true,
+      "default_digest_include": true,
+      "owning_module": "teams",
+      "typical_subject_types": ["team", "team_member"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "branch-management",
+      "display_label": "Branch management",
+      "description": "Branch settings changes, staff assignments to branches, facility create/update at a branch. Admin-facing feed.",
+      "default_broadcast": true,
+      "default_digest_include": true,
+      "owning_module": "platform",
+      "typical_subject_types": ["branch", "facility"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "auth",
+      "display_label": "Authentication",
+      "description": "Login / logout / MFA-enrolled events. Auth events attributed to the User as subject + causer. Does NOT include password changes or MFA-secret changes (those route to audit for security-critical retention).",
+      "default_broadcast": false,
+      "default_digest_include": false,
+      "owning_module": "identity",
+      "typical_subject_types": ["user"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "billing",
+      "display_label": "Billing",
+      "description": "Invoice state transitions (draft → sent → paid → overdue). Money-sensitive field mutations (amount, tax) route to audit exclusively.",
+      "default_broadcast": true,
+      "default_digest_include": true,
+      "owning_module": "billing",
+      "typical_subject_types": ["invoice", "payment"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "attendance",
+      "display_label": "Attendance",
+      "description": "Attendance mark for a session — present / absent / late. High-volume feed on active academies; disable broadcast + digest on that feed is common. Off by default in broadcast to avoid feed noise; enabled per-tenant setting.",
+      "default_broadcast": false,
+      "default_digest_include": false,
+      "owning_module": "sports",
+      "typical_subject_types": ["attendance", "session"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "communications",
+      "display_label": "Communications",
+      "description": "Announcements, direct messages sent, broadcasts to teams. Content itself is NOT captured — activity records the metadata (recipient count, subject line, delivery status).",
+      "default_broadcast": true,
+      "default_digest_include": true,
+      "owning_module": "communications",
+      "typical_subject_types": ["announcement", "message"],
+      "since_version": "0.1.0"
+    },
+    {
+      "name": "system",
+      "display_label": "System",
+      "description": "Platform-emitted activities not attributed to a human causer — scheduled job outcomes, integration syncs, entitlement provisioning results. Causer is the SystemCauser sentinel.",
+      "default_broadcast": false,
+      "default_digest_include": false,
+      "owning_module": "activity",
+      "typical_subject_types": ["*"],
+      "since_version": "0.1.0"
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "id": "chargeback.resources.chargeback.accept",
+  "title": "Accept chargeback via RDR",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/chargebacks/{chargeback}/accept",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "chargeback", "entity": "chargeback", "action": "acceptRdr" },
+  "requiresPermission": "chargebacks.accept",
+  "requiresEntitlement": "chargeback_rdr",
+  "dataSources": [
+    {
+      "name": "chargeback",
+      "kind": "http.get",
+      "url": "/api/v1/chargebacks/{route.chargeback}?include=payment,invoice",
+      "unwrap": "data"
+    }
+  ],
+  "guards": [
+    {
+      "condition": "chargeback.rdr_eligible === true && chargeback.status === 'pending_evidence'",
+      "elseRender": {
+        "kind": "View",
+        "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto text-center py-12" },
+        "children": [
+          { "kind": "Icon", "props": { "name": "x-circle", "className": "size-12 mx-auto text-danger" } },
+          { "kind": "Text", "props": { "className": "text-lg font-medium", "children": "RDR not available" } },
+          { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "This chargeback is not eligible for Rapid Dispute Resolution. RDR requires: Visa network, chargeback below the configured threshold, tenant with the chargeback_rdr entitlement, and an unrefunded payment. The chargeback must also be in pending_evidence status." } }
+        ]
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "children": "Accept chargeback via Rapid Dispute Resolution"
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted mt-1" },
+              "bindings": {
+                "children": {
+                  "$expr": "'For chargeback ' + chargeback.chargeback_number + '. Auto-refund the customer + close the pre-chargeback state.'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium", "children": "What accepting means" } },
+            { "kind": "Text", "props": { "className": "text-sm", "children": "A refund will be issued to the customer for the full disputed amount. The chargeback will close BEFORE fully filing. No network fee. No impact on your chargeback rate. This is the cheapest defense path for low-value disputes." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-4" },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium mb-3", "children": "Cost comparison" } },
+            {
+              "kind": "Table",
+              "props": { "aria-label": "Cost comparison for chargeback outcomes" },
+              "children": [
+                {
+                  "kind": "Table.Header",
+                  "children": [
+                    { "kind": "Table.Column", "props": { "children": "Path" } },
+                    { "kind": "Table.Column", "props": { "children": "Money loss" } },
+                    { "kind": "Table.Column", "props": { "children": "Network fee" } },
+                    { "kind": "Table.Column", "props": { "children": "Rate impact" } }
+                  ]
+                },
+                {
+                  "kind": "Table.Body",
+                  "children": [
+                    {
+                      "kind": "Table.Row",
+                      "children": [
+                        { "kind": "Table.Cell", "props": { "children": "Accept via RDR (recommended)" } },
+                        {
+                          "kind": "Table.Cell",
+                          "bindings": {
+                            "children": {
+                              "$expr": "hasPermission('chargebacks.view-financials') ? formatCurrency(chargeback.amount_cents, chargeback.currency) : '••••'"
+                            }
+                          }
+                        },
+                        { "kind": "Table.Cell", "props": { "children": "$0.00" } },
+                        { "kind": "Table.Cell", "props": { "children": "None" } }
+                      ]
+                    },
+                    {
+                      "kind": "Table.Row",
+                      "children": [
+                        { "kind": "Table.Cell", "props": { "children": "Fight and lose" } },
+                        {
+                          "kind": "Table.Cell",
+                          "bindings": {
+                            "children": {
+                              "$expr": "hasPermission('chargebacks.view-financials') ? formatCurrency(chargeback.amount_cents, chargeback.currency) : '••••'"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "Table.Cell",
+                          "bindings": {
+                            "children": {
+                              "$expr": "hasPermission('chargebacks.view-financials') ? formatCurrency(chargeback.fee_cents, chargeback.currency) : '••••'"
+                            }
+                          }
+                        },
+                        { "kind": "Table.Cell", "props": { "children": "+1 chargeback toward VDMP" } }
+                      ]
+                    },
+                    {
+                      "kind": "Table.Row",
+                      "children": [
+                        { "kind": "Table.Cell", "props": { "children": "Fight and win" } },
+                        { "kind": "Table.Cell", "props": { "children": "$0.00" } },
+                        {
+                          "kind": "Table.Cell",
+                          "bindings": {
+                            "children": {
+                              "$expr": "hasPermission('chargebacks.view-financials') ? formatCurrency(chargeback.fee_cents, chargeback.currency) : '••••'"
+                            }
+                          }
+                        },
+                        { "kind": "Table.Cell", "props": { "children": "+1 chargeback toward VDMP" } }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": { "id": "accept-rdr-form" },
+          "actions": {
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/chargebacks/{route.chargeback}/accept",
+              "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id" },
+              "onError": { "kind": "toast", "variant": "danger", "messageFromError": true }
+            }
+          },
+          "children": [
+            {
+              "kind": "TextArea",
+              "props": { "label": "Notes (optional)", "name": "notes", "placeholder": "Internal notes for the audit trail...", "maxLength": 256 }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-3 mt-4" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + chargeback.id" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "type": "submit", "children": "Accept + issue refund" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

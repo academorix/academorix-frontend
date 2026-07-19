@@ -1,0 +1,15 @@
+{
+  "id": "academorix://modules/audit/analytics",
+  "$version": 1,
+  "title": "audit — analytics event declarations",
+  "description": "Audit publishes ZERO analytics events. Analytics is behavioral (Lane 4 per growth-and-observability.md). Audit is compliance (Lane 2). Merging them is the #1 misuse called out in the steering doc — an audit row NEVER becomes an analytics event and vice-versa. This module has no analytics event catalogue by design.",
+  "lane": "audit",
+  "consentTiers": [],
+  "events": [],
+  "rationale": [
+    "Analytics answers 'how are users behaving in the product?'. Audit answers 'who did what, when?'.",
+    "Analytics is consent-gated + sampled + 2-year retention. Audit is unconditional + immutable + 7-year retention.",
+    "A subject who withdraws analytics consent stops appearing in analytics. Their audit trail is preserved — regulators need the record of the mutations that happened while consent was in effect.",
+    "Downstream growth modules (marketing, funnel analytics) should NOT subscribe to AuditRecorded to derive behavioral signals. If a growth listener needs 'when did the user first do X?' evidence, the corresponding domain module should ALSO emit an analytics event via #[AsAnalyticsEventCapturer] on the domain event — not scrape audit rows."
+  ]
+}

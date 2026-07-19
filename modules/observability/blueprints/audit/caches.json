@@ -1,0 +1,64 @@
+{
+  "id": "academorix://modules/audit/caches",
+  "$version": 1,
+  "title": "audit — cache keys + tags",
+  "description": "Redis caches for tenant retention policy resolution + audited-events catalog + purge-liveness marker.",
+  "driver": "redis",
+  "ownedTags": ["audit"],
+  "keys": [
+    {
+      "pattern": "audit:retention:{tenant_id}",
+      "description": "Cache of active AuditRetentionPolicy for tenant. Contents: { retention_years, override_starts_at, override_ends_at, cached_at }. Read on every PurgeExpiredAuditsJob invocation for the tenant.",
+      "ttlSeconds": 3600,
+      "tags": ["audit", "tenant", "retention"],
+      "invalidatedBy": [
+        "AuditRetentionPolicyCreated event",
+        "AuditRetentionPolicyUpdated event",
+        "AuditRetentionExtensionExpired event"
+      ]
+    },
+    {
+      "pattern": "audit:audited_events_catalog",
+      "description": "Cache of vendor default events + registered custom transitions. Rebuilt at boot; hot on every AuditObserver::creating call for event-name validation.",
+      "ttlSeconds": 86400,
+      "tags": ["audit", "boot"],
+      "invalidatedBy": [
+        "boot (idempotent rebuild)",
+        "custom transition registration (Auditable::registerAuditableTransition)"
+      ]
+    },
+    {
+      "pattern": "audit:purge:last_completed_at",
+      "description": "Timestamp of the last successful PurgeExpiredAuditsJob completion. Written after each nightly run. Read by PurgeJobLivenessProbe.",
+      "ttlSeconds": null,
+      "tags": ["audit", "purge", "liveness"]
+    },
+    {
+      "pattern": "audit:purge:digest:{tenant_id}:{week_bucket}",
+      "description": "Accumulator for the weekly AuditPurgeCompletedNotification digest. Incremented on each AuditPurgeExecuted event by AccumulatePurgeDigestListener. Read + reset on Sundays.",
+      "ttlSeconds": 604800,
+      "tags": ["audit", "purge", "digest", "tenant"]
+    },
+    {
+      "pattern": "audit:retention:freeze:{tenant_id}",
+      "description": "Freeze marker written by FreezeRetentionOnTenantSuspendedListener when a tenant is suspended. When present, PurgeExpiredAuditsJob skips the tenant. Removed by ThawRetentionOnTenantResumedListener on resume.",
+      "ttlSeconds": null,
+      "tags": ["audit", "retention", "freeze", "tenant"],
+      "invalidatedBy": [
+        "TenantResumed event"
+      ]
+    },
+    {
+      "pattern": "audit:fire_rate:baseline:{tenant_id}:{day_bucket}",
+      "description": "Rolling 7-day baseline of audit fire rate per tenant. Written by an hourly rollup job; read by FireRateAnomalyProbe.",
+      "ttlSeconds": 604800,
+      "tags": ["audit", "fire_rate", "tenant"]
+    },
+    {
+      "pattern": "audit:export:rate_limit:{tenant_id}:{day_bucket}",
+      "description": "Daily export request counter per tenant. Incremented on POST /api/v1/audits/export. Compared against config-derived rate limit (20/day baseline).",
+      "ttlSeconds": 86400,
+      "tags": ["audit", "export", "rate_limit", "tenant"]
+    }
+  ]
+}

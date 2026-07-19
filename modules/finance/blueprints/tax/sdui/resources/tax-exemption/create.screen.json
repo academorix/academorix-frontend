@@ -1,0 +1,159 @@
+{
+  "id": "tax.resources.tax-exemption.create",
+  "title": "Submit exemption certificate",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/exemptions/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-exemption", "action": "create" },
+  "requiresPermission": "tax.exemptions.create",
+  "requiresEntitlement": "tax_exemption_management",
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "MultiStepForm",
+      "props": { "className": "max-w-3xl mx-auto p-6" },
+      "children": [
+        {
+          "kind": "Step",
+          "props": { "title": "Customer", "description": "Which customer does this exemption apply to?" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Customer type", "menuTrigger": "focus", "required": true },
+              "props_items": [
+                { "id": "user", "label": "User" },
+                { "id": "athlete", "label": "Athlete" },
+                { "id": "organization", "label": "Organization" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "customer_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Customer", "menuTrigger": "input", "required": true },
+              "props_items_source": "customers.by-type",
+              "bindings": { "queryParams": { "type": { "$ref": "form.customer_type" } } },
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "customer_id", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Exemption type", "description": "What type of exemption is this?" },
+          "children": [
+            {
+              "kind": "RadioGroup",
+              "props": { "className": "grid grid-cols-1 gap-3" },
+              "props_items_source": "tax.exemption-type-catalog",
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "exemption_type", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Certificate", "description": "Upload the exemption certificate document." },
+          "children": [
+            {
+              "kind": "Input",
+              "props": { "label": "Certificate number", "required": true, "helpText": "Tax authority-issued identifier. Restricted — legal document." },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "certificate_number", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "FileUpload",
+              "props": {
+                "label": "Certificate document (PDF or image)",
+                "required": true,
+                "accept": ".pdf,.jpg,.jpeg,.png",
+                "maxSizeBytes": 10485760,
+                "helpText": "Encrypted at rest. Accessible via time-limited signed URLs only."
+              },
+              "actions": {
+                "onUpload": {
+                  "kind": "s3.presign",
+                  "bucket": "academorix-tax-certificates",
+                  "keyPattern": "tenants/{{tenant.id}}/exemptions/{{form.customer_type}}/{{form.customer_id}}/{{uuid()}}.{{ext}}",
+                  "onResult": { "kind": "form.set", "field": "certificate_document_url", "valueExpr": "$signed_url" }
+                }
+              }
+            },
+            {
+              "kind": "Widget",
+              "widget": "tax.jurisdiction-picker",
+              "props": { "label": "Issuing jurisdiction", "required": true, "helpText": "The jurisdiction that ISSUED the certificate (e.g. US IRS for federal 501(c)(3), state Board of Equalization for reseller)." },
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "issuing_jurisdiction_id", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Validity", "description": "When is the certificate valid?" },
+          "children": [
+            {
+              "kind": "DateField",
+              "props": { "label": "Valid from", "required": true },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "valid_from", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "DateField",
+              "props": { "label": "Valid until (optional)", "helpText": "Empty = perpetual (rare — typically diplomatic)." },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "valid_until", "valueExpr": "$value" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Confirm", "description": "Review + submit." },
+          "children": [
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "info",
+                "title": "Verification workflow",
+                "description": "The submitted exemption enters verification_status='pending'. When a public registry cross-check is available for the issuing jurisdiction, an automatic verifier runs. Otherwise, a tenant admin reviews manually."
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "children": "Submit exemption" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/tax/exemptions",
+                  "body": {
+                    "customer_type": "{{form.customer_type}}",
+                    "customer_id": "{{form.customer_id}}",
+                    "exemption_type": "{{form.exemption_type}}",
+                    "certificate_number": "{{form.certificate_number}}",
+                    "certificate_document_url": "{{form.certificate_document_url}}",
+                    "issuing_jurisdiction_id": "{{form.issuing_jurisdiction_id}}",
+                    "valid_from": "{{form.valid_from}}",
+                    "valid_until": "{{form.valid_until}}"
+                  },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/tax/exemptions/' + response.data.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

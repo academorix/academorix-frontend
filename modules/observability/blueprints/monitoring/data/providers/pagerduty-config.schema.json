@@ -1,0 +1,50 @@
+{
+  "id": "academorix://modules/monitoring/data/providers/pagerduty-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "PagerDuty provider config",
+  "description": "Configuration shape for a PagerDuty Events API v2 integration. Requires monitoring_paging entitlement (Medium+).",
+  "type": "object",
+  "required": ["routing_key"],
+  "additionalProperties": false,
+  "properties": {
+    "routing_key": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{32}$",
+      "description": "PagerDuty Events API v2 integration routing key. 32-character hex string. Encrypted at rest. Sent in the payload body (not header)."
+    },
+    "service_id": {
+      "type": ["string", "null"],
+      "description": "Optional PagerDuty service ID (7-char alphanumeric). Used for cross-reference in the SDUI + for API-level operations like escalation policy lookup."
+    },
+    "escalation_policy_id": {
+      "type": ["string", "null"],
+      "description": "Optional PagerDuty escalation policy ID. When set, the driver includes it in the payload for policy-based routing."
+    },
+    "client": {
+      "type": "string",
+      "default": "Academorix Monitoring",
+      "description": "'client' field in PagerDuty payload. Identifies the source system."
+    },
+    "client_url": {
+      "type": ["string", "null"],
+      "format": "uri",
+      "description": "Optional URL back to the incident in the tenant's Academorix dashboard. PagerDuty renders this as a link in the incident view."
+    },
+    "auto_resolve_on_signal_clear": {
+      "type": "boolean",
+      "default": true,
+      "description": "true = when the monitoring alert resolves, dispatch a PagerDuty 'resolve' event with the same dedup_key. false = leave PagerDuty incidents to manual resolution."
+    },
+    "dedup_key_prefix": {
+      "type": ["string", "null"],
+      "description": "Optional prefix for the dedup_key. Alerts on the same policy dedupe via dedup_key = prefix + policy_id."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

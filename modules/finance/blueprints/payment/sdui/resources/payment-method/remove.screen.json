@@ -1,0 +1,92 @@
+{
+  "id": "payment.resources.payment-method.remove",
+  "title": "Remove payment method",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-methods/{method}/remove",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-method", "action": "delete" },
+  "requiresPermission": "payment.methods.delete",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "method",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/payment-methods/' + params.method",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-lg mx-auto p-6" },
+      "children": [
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "CardHeader",
+              "children": [
+                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Remove payment method?" } }
+              ]
+            },
+            {
+              "kind": "CardContent",
+              "props": { "className": "flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Alert",
+                  "props": {
+                    "variant": "warning",
+                    "title": "This can't be undone",
+                    "description": "The saved token will be detached from the provider. Any future payments will need to be re-authorized."
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center gap-3 p-3 border rounded" },
+                  "children": [
+                    { "kind": "Widget", "widget": "payment.method-brand-badge", "bindings": { "props.brand": { "$ref": "method.brand" }, "props.last4": { "$ref": "method.last4" } } },
+                    {
+                      "kind": "View",
+                      "children": [
+                        { "kind": "Text", "props": { "className": "text-sm font-medium" }, "bindings": { "children": { "$expr": "method.brand + ' •••• ' + method.last4" } } },
+                        { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "'Expires ' + method.exp_month + '/' + method.exp_year" } } }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center justify-end gap-2" },
+                  "children": [
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "ghost", "children": "Cancel" },
+                      "actions": {
+                        "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-methods'" }
+                      }
+                    },
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "danger", "children": "Remove" },
+                      "actions": {
+                        "onPress": {
+                          "kind": "http.delete",
+                          "urlExpr": "'/api/v1/payment-methods/' + params.method",
+                          "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/payment-methods'" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "id": "academorix://modules/tax/jobs",
+  "$version": 1,
+  "title": "tax — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Finance\\Tax\\Jobs\\SyncTaxRatesFromProviderJob",
+      "queue": "tax",
+      "purpose": "Weekly per-provider. Pulls the latest rate updates from the provider's rate catalog + upserts into tax_rates. Handles fiscal-year rate changes (e.g. UK VAT 20% → 22% at the next fiscal year boundary).",
+      "steps": [
+        "Load the tenant + provider_config",
+        "Call the provider's syncRates() driver method (TaxJar's /v2/rates endpoint, Avalara's /tax/authorities, Stripe Tax's built-in registry)",
+        "For each returned rate: upsert into tax_rates via (tenant_id, tax_jurisdiction_id, rate_type, effective_from) unique",
+        "When an existing rate has changed percentage: create a new tax_rates row with new effective_from + set effective_to on the old row (never MUTATE historical rates — the calculation-freeze pattern requires immutable snapshots)",
+        "Emit TaxRateCreated + TaxRateUpdated + TaxRateExpired events"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "(tenant_id, provider)",
+      "tries": 3,
+      "backoff": [60, 300, 1800]
+    },
+    {
+      "class": "Academorix\\Finance\\Tax\\Jobs\\CalculateTaxForInvoiceLineJob",
+      "queue": "tax",
+      "purpose": "The workhorse. Fired by the invoice module on invoice_line create. Resolves jurisdiction + rate + exemptions + persists a tax_calculations snapshot.",
+      "steps": [
+        "Load the invoice_line + customer + source_amount + source_currency",
+        "Resolve TaxJurisdiction via TaxAddressResolver::resolveForCustomer($customer) — refuse when unresolvable (TAX_CALCULATION_JURISDICTION_UNRESOLVABLE, blocks the invoice line)",
+        "Select provider — tenant's active TaxProviderConfig for the jurisdiction OR the config's default (config.default_provider_by_jurisdiction). Refuse when circuit-breaker OPEN.",
+        "Fire TaxCalculationRequested (correlation_id, ...)",
+        "PRE-DISPATCH GATE — CircuitBreakerGate check; failure = TAX_CALCULATION_PROVIDER_FAILED (blocks the line)",
+        "Load active TaxExemptions via TaxExemptionRepository::activeFor(tenant, customer, jurisdiction, today)",
+        "Call the provider driver's calculate(sourceAmountCents, sourceCurrency, jurisdiction, exemptions, appliesTo) with 10s timeout",
+        "On 2xx + valid response: freeze the result into a tax_calculations row (tax_rate_snapshot + exemption_applied + provider + provider_transaction_id + provider_metadata)",
+        "Fire TaxCalculationCompleted",
+        "On transient failure: retry with exponential backoff [1s, 5s, 15s] max 3 attempts",
+        "On terminal failure: fire TaxCalculationFailed (P1 — pages finance ops) + NEVER silently fall back to another provider",
+        "Update circuit-breaker consecutive_failure_count on failure; reset to 0 on success"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "invoice_line_id",
+      "tries": 1,
+      "note": "tries=1 because the retry semantics are OWNED by this job body (via the exponential backoff loop). Do NOT enable Laravel-level retry — it would bypass the circuit-breaker + calculation-freeze semantics."
+    },
+    {
+      "class": "Academorix\\Finance\\Tax\\Jobs\\VerifyTaxExemptionJob",
+      "queue": "tax",
+      "purpose": "Async cross-check against the issuing jurisdiction's public registry (when one exists). Dispatched from TaxExemptionObserver.creating.",
+      "steps": [
+        "Load the exemption + issuing_jurisdiction",
+        "Resolve verifier via #[AsExemptionVerifier] discovery — matches on (jurisdiction.country_code, exemption_type)",
+        "When no verifier registered: skip auto-verification, leave in pending status (manual review required)",
+        "When registered: call verifier->verify($exemption). Success = transition to verified. Failure = transition to rejected with reason from verifier.",
+        "Fire TaxExemptionVerified or TaxExemptionRejected",
+        "Store verifier response in exemption.metadata for audit trail"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "uniqueVia": "tax_exemption_id",
+      "tries": 3,
+      "backoff": [30, 120, 600]
+    },
+    {
+      "class": "Academorix\\Finance\\Tax\\Jobs\\ExpireExemptionsJob",
+      "queue": "tax",
+      "purpose": "Nightly sweep. Finds exemptions with verification_status='verified' AND valid_until <= today. Transitions to verification_status='expired'.",
+      "steps": [
+        "SELECT id FROM tax_exemptions WHERE verification_status = 'verified' AND valid_until IS NOT NULL AND valid_until <= CURRENT_DATE LIMIT 1000",
+        "For each: transition verification_status to 'expired' + fire TaxExemptionExpired",
+        "Emit metric academorix.tax.exemptions.expired_total per exemption_type"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "tax-expire-exemptions",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Tax\\Jobs\\NotifyExemptionExpiringJob",
+      "queue": "tax",
+      "purpose": "Daily. Finds exemptions expiring in 60/30/7 days that have not been warned. Fires TaxExemptionExpiringNotification per exemption.",
+      "steps": [
+        "For each threshold IN [60, 30, 7] days:",
+        "  SELECT id FROM tax_exemptions WHERE verification_status='verified' AND valid_until = CURRENT_DATE + INTERVAL threshold DAYS AND (metadata->>'warnings_sent'->>$threshold) IS NULL",
+        "  For each: dispatch TaxExemptionExpiringNotification + set metadata.warnings_sent.$threshold = now()"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "tax-notify-expiring",
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Tax\\Jobs\\PurgeExpiredCalculationsJob",
+      "queue": "tax",
+      "purpose": "Weekly sweep. Applies the calculation retention window: tax_calculations > 7 years → migrate to archive schema (matches invoice retention). NO hard-delete inside the module — regulator audit access is preserved via the archive.",
+      "steps": [
+        "SELECT id, tenant_id FROM tax_calculations WHERE created_at < now() - interval '7 years' LIMIT 5000",
+        "For Enterprise tenants with tax_extended_retention entitlement: retention is 10 years instead of 7",
+        "For each row: INSERT into tax_calculations_archive + DELETE from tax_calculations (transactional)",
+        "Emit metric academorix.tax.calculations.archived_total"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "tax-purge-calculations",
+      "tries": 1
+    },
+    {
+      "class": "Academorix\\Finance\\Tax\\Jobs\\ReconcileProviderCalculationsJob",
+      "queue": "tax",
+      "purpose": "Weekly. Spot-checks 1% of the past week's calculations against the current-day provider re-computation. Divergence indicates rate drift or provider-side algorithm change.",
+      "steps": [
+        "SELECT id, tenant_id, provider, source_amount_cents, source_currency, tax_amount_cents, calculated_at FROM tax_calculations WHERE calculated_at > now() - interval '7 days' AND random() < 0.01 LIMIT 500",
+        "For each: reload the customer + jurisdiction as they were at calculated_at, re-invoke the provider driver, capture the current-day tax_amount_cents",
+        "Compute delta = |original_tax - current_tax|",
+        "When delta > threshold (100 cents OR 1% of source): fire TaxCalculationDriftDetected (regulator-critical — may indicate the tenant is under-filing based on outdated provider algorithm)",
+        "Emit metric academorix.tax.calculations.drift_detected_total labelled by provider + severity"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "uniqueVia": "tax-reconcile-calculations",
+      "tries": 2
+    }
+  ]
+}

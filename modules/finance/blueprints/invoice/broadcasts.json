@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/invoice/broadcasts",
+  "$version": 1,
+  "title": "invoice — realtime broadcast channels",
+  "description": "Four broadcast channel families for live UI updates. Tenant-wide channel powers the admin invoice dashboard; customer channel powers the customer-facing 'my invoices' view; per-invoice line channel supports collaborative draft-invoice editing; per-invoice credit-note channel updates the credit-note list when new credits are issued. Reverb (Laravel Reverb) is the default transport; notifications module handles fanout.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.invoices",
+      "class": "Academorix\\Finance\\Invoice\\Broadcasts\\TenantInvoicesChannel",
+      "description": "Tenant-wide invoice activity stream. Sink for the admin invoice dashboard showing new invoices + status transitions + collection-status changes.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner OR support)",
+      "events": [
+        "InvoiceCreated",
+        "InvoiceFinalized",
+        "InvoiceSent",
+        "InvoicePaid",
+        "InvoicePartiallyPaid",
+        "InvoiceVoided",
+        "InvoicePastDue",
+        "InvoiceUncollectible",
+        "InvoiceWrittenOff",
+        "InvoiceRefunded",
+        "InvoiceDisputed",
+        "CreditNoteCreated",
+        "CreditNoteIssued"
+      ],
+      "throttle": "200 events/minute per channel",
+      "notes": "Payload trimmed to non-confidential fields (see data-classes.json). Revenue values (total_cents) are broadcast to admin + finance role only; support role sees the invoice number + status but not the total."
+    },
+    {
+      "name": "customer.{customerType}.{customerId}.invoices",
+      "class": "Academorix\\Finance\\Invoice\\Broadcasts\\CustomerInvoicesChannel",
+      "description": "Customer-scoped invoice activity. Powers the customer's own 'my invoices' view — new invoice notifications, payment confirmations, refunds visible in real time.",
+      "authorization": "sanctum::authed AND (auth.user.id == customerId OR auth.user is guardian_of(customerId))",
+      "events": [
+        "InvoiceCreated",
+        "InvoiceSent",
+        "InvoicePaid",
+        "InvoicePartiallyPaid",
+        "InvoiceRefunded",
+        "InvoicePastDue",
+        "CreditNoteIssued"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Only fires events for invoices where invoice.customer_id == customerId. The Broadcasts channel guard is defense-in-depth alongside invoice.enforce_customer_scope middleware."
+    },
+    {
+      "name": "invoice.{invoiceId}.lines",
+      "class": "Academorix\\Finance\\Invoice\\Broadcasts\\InvoiceLinesChannel",
+      "description": "Per-invoice line activity. Powers collaborative draft-invoice editing (two admins adding lines at the same time see each other's updates in real time). Only active while parent invoice.status='draft'.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner) AND invoice.status='draft'",
+      "events": [
+        "InvoiceLineAdded",
+        "InvoiceLineUpdated",
+        "InvoiceLineRemoved"
+      ],
+      "throttle": "60 events/minute per channel",
+      "notes": "Channel unsubscribes automatically when invoice transitions to 'open' (via a broadcast unsubscribe hook fired in InvoiceObserver.updating). No events fire on finalized invoices."
+    },
+    {
+      "name": "invoice.{invoiceId}.credit-notes",
+      "class": "Academorix\\Finance\\Invoice\\Broadcasts\\InvoiceCreditNotesChannel",
+      "description": "Per-invoice credit-note activity. Powers the credit-note list within an invoice detail view.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner OR support OR (customer AND invoice.customer_id == auth.user.id))",
+      "events": [
+        "CreditNoteCreated",
+        "CreditNoteIssued",
+        "CreditNoteApplied",
+        "CreditNoteVoided"
+      ],
+      "throttle": "20 events/minute per channel",
+      "notes": "Customers subscribed to this channel see credit notes issued against their own invoices in real time — useful for refund flows where the customer expects the credit to appear immediately."
+    }
+  ]
+}

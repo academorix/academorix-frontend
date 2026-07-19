@@ -1,0 +1,233 @@
+{
+  "id": "activity.resources.activity.list",
+  "title": "Activity feed",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/activities",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "activity",
+    "entity": "activity",
+    "action": "list"
+  },
+  "requiresPermission": "activity.viewAny",
+  "dataSources": [
+    {
+      "name": "activities",
+      "kind": "http.get",
+      "url": "/api/v1/activities",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[log_name]",
+        "filter[subject_type]",
+        "filter[causer_id]",
+        "filter[event]",
+        "filter[from]",
+        "filter[to]",
+        "filter[batched_only]",
+        "sort",
+        "page",
+        "per_page"
+      ],
+      "cache": { "ttlSeconds": 30, "staleWhileRevalidate": true }
+    },
+    {
+      "name": "logNameCatalog",
+      "kind": "http.get",
+      "url": "/api/v1/activity/log-names",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    },
+    {
+      "name": "activityFeedInfo",
+      "kind": "http.get",
+      "url": "/api/v1/activities/feed",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "identity",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "tenant.{tenantId}.activity",
+      "kind": "private",
+      "enabledExpr": "activityFeedInfo.entitled === true",
+      "onEvent": {
+        "kind": "data.prependItem",
+        "source": "activities",
+        "expr": "event.data",
+        "dedupeBy": "id"
+      }
+    }
+  ],
+  "polling": {
+    "enabledExpr": "activityFeedInfo.entitled === false",
+    "intervalMsExpr": "activityFeedInfo.poll_interval_ms",
+    "source": "activities"
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h1",
+                    "className": "text-2xl font-semibold",
+                    "children": "Activity feed"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "p",
+                    "className": "text-muted text-sm",
+                    "children": "Recent activity across your tenant."
+                  }
+                }
+              ]
+            },
+            {
+              "id": "actions",
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "LiveBadge",
+                  "bindings": {
+                    "isLive": { "$ref": "activityFeedInfo.entitled" },
+                    "label": { "$expr": "activityFeedInfo.entitled ? 'Live' : 'Polling'" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "ghost",
+                    "size": "sm",
+                    "leadingIcon": "arrow-path",
+                    "children": "Refresh"
+                  },
+                  "actions": { "onPress": { "kind": "data.refresh", "source": "activities" } }
+                },
+                {
+                  "kind": "Button",
+                  "props": {
+                    "variant": "primary",
+                    "size": "sm",
+                    "leadingIcon": "arrow-down-tray",
+                    "children": "Export"
+                  },
+                  "bindings": {
+                    "isDisabled": {
+                      "$expr": "!identity.entitlements.activity_export"
+                    }
+                  },
+                  "actions": {
+                    "onPress": {
+                      "kind": "modal.open",
+                      "modal": "activity-export-request",
+                      "propsExpr": "{ currentFilters: state.filters }"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "filters",
+          "kind": "View",
+          "props": { "className": "flex flex-wrap items-end gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Feed",
+                "name": "filter[log_name]",
+                "placeholder": "All feeds",
+                "className": "min-w-40"
+              },
+              "optionsSource": { "$ref": "logNameCatalog" },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "activities" } }
+            },
+            {
+              "kind": "Select",
+              "props": {
+                "label": "On this kind",
+                "name": "filter[subject_type]",
+                "placeholder": "Any kind",
+                "className": "min-w-40"
+              },
+              "options": [
+                { "key": "booking", "label": "Bookings" },
+                { "key": "athlete", "label": "Athletes" },
+                { "key": "team", "label": "Teams" },
+                { "key": "branch", "label": "Branches" },
+                { "key": "user", "label": "Users" }
+              ],
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "activities" } }
+            },
+            {
+              "kind": "DateRange",
+              "props": {
+                "label": "When",
+                "nameFrom": "filter[from]",
+                "nameTo": "filter[to]"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "activities" } }
+            },
+            {
+              "kind": "Toggle",
+              "props": {
+                "label": "Batched only",
+                "name": "filter[batched_only]",
+                "defaultValue": false
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "activities" } }
+            }
+          ]
+        },
+        {
+          "id": "timeline",
+          "kind": "Widget",
+          "widget": "activity.timeline",
+          "bindings": {
+            "items": { "$ref": "activities" },
+            "isLoading": { "$ref": "activities.isLoading" },
+            "hasMore": { "$ref": "activities.pagination.has_more" }
+          },
+          "props": {
+            "groupBy": "day",
+            "collapseBatches": true,
+            "showFilters": false,
+            "emptyState": {
+              "title": "Nothing to show",
+              "description": "Activity from your tenant will appear here."
+            }
+          },
+          "actions": {
+            "onLoadMore": { "kind": "data.loadNextPage", "source": "activities" }
+          }
+        }
+      ]
+    }
+  ]
+}

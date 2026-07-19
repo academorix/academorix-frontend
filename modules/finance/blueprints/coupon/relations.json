@@ -1,0 +1,105 @@
+{
+  "id": "academorix://modules/coupon/relations",
+  "$version": 1,
+  "title": "coupon — model relationships",
+  "description": "Two owned entities. Every row is tenant-scoped (cascades on tenant delete). Coupon is the aggregate root; CouponRedemption belongs to a Coupon. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / organization_id / region_id / branch_id / scope_node_id on any owned row — all cascade through tenant_id.",
+  "internal": [
+    {
+      "from": "Coupon",
+      "kind": "hasMany",
+      "to": "CouponRedemption",
+      "foreignKey": "coupon_id",
+      "description": "A coupon can be redeemed up to usage_cap times across customers (subject to per_customer_limit per customer)."
+    },
+    {
+      "from": "CouponRedemption",
+      "kind": "belongsTo",
+      "to": "Coupon",
+      "foreignKey": "coupon_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Redemptions retain 7 years for financial audit; coupon cannot be hard-deleted while redemptions exist."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Coupon",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every coupon is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "CouponRedemption",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "CouponRedemption",
+      "kind": "morphTo",
+      "to": "polymorphic",
+      "foreignKey": "customer_id",
+      "typeKey": "customer_type",
+      "onDelete": "restrict",
+      "description": "Polymorphic customer. Concrete types: user::User (usr_), athlete::Athlete (ath_). RESTRICT for audit-integrity — a customer's hard-delete cannot orphan financial-record audit history (RedactCouponRedemptionsOnUserErasure hook redacts identity 90d post-erasure but retains the row)."
+    },
+    {
+      "from": "CouponRedemption",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "redeemed_by_user_id",
+      "onDelete": "restrict",
+      "description": "The authenticated actor who performed the redemption (often the customer themselves, but may be a staff member acting on the customer's behalf via admin action)."
+    },
+    {
+      "from": "CouponRedemption",
+      "kind": "morphTo",
+      "to": "polymorphic",
+      "foreignKey": "applied_to_id",
+      "typeKey": "applied_to_type",
+      "onDelete": "restrict",
+      "description": "Polymorphic target. Concrete types: finance::Membership (mem_ — Wave 4), finance::Invoice (inv_ — Wave 4), finance::Transaction (txn_ — Wave 4). RESTRICT preserves the discount trail — invoices retain their redemptions for the full 7y retention."
+    },
+    {
+      "from": "CouponRedemption",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "reversed_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The admin who manually reversed the redemption (null for automatic refund/chargeback cascades)."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules attach in later waves:",
+    "examples": [
+      "finance::Invoice (Wave 4) — every invoice line that applied a coupon references the CouponRedemption via applied_to_id + applied_to_type='invoice'.",
+      "finance::Membership (Wave 4) — subscription renewals applying a coupon reference the CouponRedemption via applied_to_id + applied_to_type='membership'.",
+      "finance::Transaction (Wave 4) — one-off transactions applying a coupon reference the CouponRedemption via applied_to_id + applied_to_type='transaction'.",
+      "growth::marketing::MarketingEvent (Wave 5) — CouponRedeemed with issuance_source IN ('referral', 'marketing_campaign') fires a marketing event; the coupon_id + redemption_id are captured on the event row for revenue attribution.",
+      "growth::referrals::ReferralReward (Wave 5) — a reward with reward_type IN ('percent_discount', 'fixed_amount') that materializes creates a Coupon via CouponIssuer::issueForReferral(); the coupon.issuance_context.referral_reward_id links back."
+    ],
+    "note": "No inbound relations in Wave 4 beyond the internal set — this module is a finance-tier terminal aggregate (issued by admins directly OR by growth::referrals when a reward vests)."
+  },
+  "morphs": [
+    {
+      "on": "CouponRedemption.customer",
+      "types": ["user::User", "athlete::Athlete"],
+      "note": "Wave 4 ships both types. The athlete polymorph handles the case where a parent pays for their child (Athlete's) enrolment with a coupon — the customer is the Athlete (recipient), the redeemed_by_user_id is the parent User (actor)."
+    },
+    {
+      "on": "CouponRedemption.applied_to",
+      "types": ["finance::Membership", "finance::Invoice", "finance::Transaction"],
+      "note": "All three ship in Wave 4. Membership = recurring subscription renewal charge; Invoice = one-off order; Transaction = individual payment (rarely — most coupons apply at the invoice/membership level)."
+    }
+  ],
+  "notes": [
+    "Coupon does NOT carry `application_id`. Coupons cascade through the tenant's application per tenancy-columns.md §2. Cross-application coupons are non-goals — a Sports-app coupon cannot be redeemed on a Marketplace-app invoice.",
+    "CouponRedemption does NOT carry `applicable_plan_id` directly — that's a Coupon config concern (Coupon.applicable_plan_ids). The redemption freezes the coupon config into discount_snapshot for audit; the applied_to link handles the plan-membership relationship via the target's own FKs.",
+    "The composite unique index on (tenant_id, coupon_id, customer_type, customer_id, applied_to_type, applied_to_id) prevents double-redemption on the same target — a customer cannot redeem the same coupon twice on the same invoice.",
+    "CouponRedemption can have ONLY ONE parent Coupon — coupons stack at the target level (multiple redemption rows per invoice when is_stackable), not at the redemption level.",
+    "polymorphic morphTo on customer/applied_to uses `academorix/foundation`'s HasPolyRelation trait — refuses cross-tenant morph resolution at write time."
+  ]
+}

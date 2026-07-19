@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/payment/broadcasts",
+  "$version": 1,
+  "title": "payment — realtime broadcast channels",
+  "description": "Five broadcast channel families for live UI updates. Tenant-level channels for admin dashboards; customer-scoped channels for the customer's own payment method + payment status UI. Reverb driver (Laravel Reverb) is the default transport; the notifications module handles fanout. Provider config broadcasts NEVER carry decrypted config values.",
+  "channels": [
+    {
+      "name": "tenant.{tenantId}.payments",
+      "class": "Academorix\\Finance\\Payment\\Broadcasts\\TenantPaymentsChannel",
+      "description": "Tenant-wide payment activity stream. Sink for the payment dashboard showing captures + intent lifecycle + disputes.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
+      "events": [
+        "PaymentCaptured",
+        "PaymentPartiallyCaptured",
+        "PaymentCaptureFailed",
+        "PaymentIntentSucceeded",
+        "PaymentIntentFailed",
+        "PaymentIntentCancelled",
+        "PaymentIntentRequiresAction"
+      ],
+      "throttle": "200 events/minute per channel",
+      "notes": "Payload is trimmed to non-confidential fields (see data-classes.json). amount_cents visible to admin + finance; support role sees bucketed."
+    },
+    {
+      "name": "tenant.{tenantId}.payments.disputes",
+      "class": "Academorix\\Finance\\Payment\\Broadcasts\\TenantPaymentDisputesChannel",
+      "description": "Dispute lifecycle live updates. Powers the ops dispute queue view.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
+      "events": [
+        "PaymentDisputeOpened",
+        "PaymentDisputeEvidenceSubmitted",
+        "PaymentDisputeClosed",
+        "PaymentDisputeWon",
+        "PaymentDisputeLost",
+        "PaymentDisputeEscalatedToChargeback"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Every PaymentDisputeOpened fires a companion push notification via the notifications module (cannot-opt-out). The channel is for the UI live-update; the notification is for the human alert."
+    },
+    {
+      "name": "tenant.{tenantId}.payments.providers",
+      "class": "Academorix\\Finance\\Payment\\Broadcasts\\TenantPaymentProvidersChannel",
+      "description": "Provider-scoped health + config activity. Powers the per-provider status chip + circuit-breaker state indicator in the payment dashboard.",
+      "authorization": "sanctum::authed AND tenant_matches AND (finance role OR admin OR owner)",
+      "events": [
+        "PaymentProviderConfigured",
+        "PaymentProviderDeactivated",
+        "PaymentProviderCircuitBreakerOpened",
+        "PaymentReconcileCompleted"
+      ],
+      "throttle": "20 events/minute per channel",
+      "notes": "Config field NEVER broadcast (encrypted at rest; the channel does not decrypt). Only the fact-of-change is broadcast; the SDUI re-fetches to get updated (redacted) config view."
+    },
+    {
+      "name": "customer.{customerId}.payments",
+      "class": "Academorix\\Finance\\Payment\\Broadcasts\\CustomerPaymentsChannel",
+      "description": "Per-customer payment activity stream. Sinks the customer's own payment SDK — used to reactively update the customer UI when a 3DS2 challenge completes or a background async provider event resolves the intent state.",
+      "authorization": "sanctum::authed AND user_matches (or athlete guardian matches)",
+      "events": [
+        "PaymentCaptured (own payments only)",
+        "PaymentIntentSucceeded (own intents only)",
+        "PaymentIntentFailed (own intents only)",
+        "PaymentIntentRequiresAction (own intents only)"
+      ],
+      "throttle": "50 events/minute per channel",
+      "notes": "Auto-scoped by resolving customer_id from auth.user. Customer sees ONLY their own events. Payload trimmed to what the customer UI needs (no admin-only fields like risk_score)."
+    },
+    {
+      "name": "customer.{customerId}.payment-methods",
+      "class": "Academorix\\Finance\\Payment\\Broadcasts\\CustomerPaymentMethodsChannel",
+      "description": "Per-customer saved payment method events. Powers the customer's payment methods UI live-updates.",
+      "authorization": "sanctum::authed AND user_matches (or athlete guardian matches)",
+      "events": [
+        "PaymentMethodAttached",
+        "PaymentMethodDetached",
+        "PaymentMethodExpired",
+        "PaymentMethodVerified"
+      ],
+      "throttle": "20 events/minute per channel",
+      "notes": "Method summary broadcast (brand + last4 + exp); provider_reference_id NEVER broadcast (encrypted at rest)."
+    }
+  ]
+}

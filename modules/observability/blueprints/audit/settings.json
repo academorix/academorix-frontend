@@ -1,0 +1,142 @@
+{
+  "id": "academorix://modules/audit/settings",
+  "$version": 1,
+  "title": "audit — settings",
+  "description": "Tenant-facing audit settings. Small config surface — most audit behavior is central (config.audit.*) or per-policy (AuditRetentionPolicy). This settings group governs tenant-tunable behaviors: PII redaction opt-in, custom event registration inspection, notification preferences.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "audit",
+      "class": "Academorix\\Observability\\Audit\\Settings\\AuditSettings",
+      "label": "Audit",
+      "description": "Compliance-grade audit trail. Field-level diff of every mutation across every module.",
+      "icon": "shield-check",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 10,
+      "permission": "audit.audits.viewAny",
+      "sections": [
+        {
+          "label": "PII redaction",
+          "description": "Opt-in redaction of PII in old_values + new_values. Regulator-strict tenants may prefer redaction; most tenants keep it off (regulators need full context).",
+          "icon": "eye-slash",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "redact_pii_in_old_new_values",
+              "controlType": "toggle",
+              "label": "Redact PII in diff blobs",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "When on, a registered PiiRedactor runs against old_values + new_values at save time. Values matching PII patterns (email, phone, credit card, national ID) are replaced with a SHA-256 hash. Default off — regulators typically need full diff context to reconstruct the mutation. Turn on only if your specific compliance obligation (medical, financial) demands stricter minimization."
+            },
+            {
+              "name": "redact_pii_patterns",
+              "controlType": "tags",
+              "label": "Additional PII patterns to redact",
+              "defaultValue": [],
+              "validation": ["nullable", "array", "each_regex_valid"],
+              "sortOrder": 2,
+              "helpText": "Additional regex patterns to add to the PII redaction pass. Only applies when redact_pii_in_old_new_values=true. Example: `\\\\bMRN\\\\d{7}\\\\b` to redact medical record numbers matching a specific tenant format."
+            }
+          ]
+        },
+        {
+          "label": "Compliance notifications",
+          "description": "Tune the retention-policy + purge notification cadence for the compliance officer.",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "purge_digest_channel",
+              "controlType": "select",
+              "label": "Weekly purge digest delivery",
+              "defaultValue": "mail",
+              "options": {
+                "mail": "Email only",
+                "in_app": "In-app only",
+                "mail_and_in_app": "Email + in-app",
+                "none": "Silent (only pull via /api/v1/audits)"
+              },
+              "validation": ["required", "string", "in:mail,in_app,mail_and_in_app,none"],
+              "sortOrder": 1
+            },
+            {
+              "name": "retention_expiring_soon_advance_days",
+              "controlType": "number",
+              "label": "Advance-warning window for retention override expiry (days)",
+              "defaultValue": 30,
+              "min": 7,
+              "max": 90,
+              "validation": ["integer", "min:7", "max:90"],
+              "sortOrder": 2,
+              "helpText": "Number of days before an AuditRetentionPolicy.override_ends_at date to fire the expiring-soon notification. Default 30 balances 'plenty of time to renew' against 'not so early that the officer forgets'."
+            }
+          ]
+        },
+        {
+          "label": "Export defaults",
+          "description": "Default filters + format for one-click DSAR + regulator export requests.",
+          "icon": "arrow-down-tray",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "default_export_format",
+              "controlType": "select",
+              "label": "Export format",
+              "defaultValue": "jsonl",
+              "options": {
+                "jsonl": "JSON Lines (one object per line, gzip)",
+                "csv": "CSV (flat, gzip)",
+                "ndjson": "NDJSON (alias for jsonl)"
+              },
+              "validation": ["required", "string", "in:jsonl,csv,ndjson"],
+              "sortOrder": 1
+            },
+            {
+              "name": "default_export_kind",
+              "controlType": "select",
+              "label": "Default export kind",
+              "defaultValue": "dsar",
+              "options": {
+                "dsar": "DSAR (Data Subject Access Request)",
+                "regulator": "Regulator (Art. 30 record of processing)",
+                "legal_hold": "Legal Hold (litigation preservation)"
+              },
+              "validation": ["required", "string", "in:dsar,regulator,legal_hold"],
+              "sortOrder": 2
+            },
+            {
+              "name": "saved_filters",
+              "controlType": "jsonEditor",
+              "label": "Saved export filter presets",
+              "defaultValue": {},
+              "validation": ["nullable", "array"],
+              "sortOrder": 3,
+              "helpText": "Named filter presets referenced by the audit:export --filters=<name> command. E.g. { \"monthly_finance\": { \"auditable_type\": \"Membership\", \"since\": \"P30D\" } }."
+            }
+          ]
+        },
+        {
+          "label": "Chain-of-custody",
+          "description": "Chain-of-custody metadata attached to raw-diff reveals + regulator exports.",
+          "icon": "identification",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "chain_of_custody_recipients",
+              "controlType": "tags",
+              "label": "Chain-of-custody notification recipients",
+              "defaultValue": [],
+              "validation": ["nullable", "array", "each_email_valid"],
+              "sortOrder": 1,
+              "helpText": "Comma-separated emails to CC on every raw-diff reveal event. Typically the tenant's DPO + external counsel."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

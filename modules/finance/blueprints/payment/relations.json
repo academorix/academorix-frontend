@@ -1,0 +1,195 @@
+{
+  "id": "academorix://modules/payment/relations",
+  "$version": 1,
+  "title": "payment — model relationships",
+  "description": "Four owned entities. Payment is the terminal aggregate — it exists only after a successful PaymentIntent. PaymentDispute attaches to Payment. PaymentMethod is standalone (customer-scoped) and referenced by PaymentIntent + Payment. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / branch_id / scope_node_id on any owned row.",
+  "internal": [
+    {
+      "from": "PaymentIntent",
+      "kind": "hasOne",
+      "to": "Payment",
+      "foreignKey": "payment_intent_id",
+      "description": "Every succeeded PaymentIntent has exactly one Payment. Failed/cancelled intents have zero. Unique index on payments.payment_intent_id enforces the one-to-one."
+    },
+    {
+      "from": "Payment",
+      "kind": "belongsTo",
+      "to": "PaymentIntent",
+      "foreignKey": "payment_intent_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — the parent intent cannot be hard-deleted while its Payment exists. Payment retention (7y) exceeds Intent retention (90d); the intent is preserved for the payment's lifetime via the RESTRICT."
+    },
+    {
+      "from": "Payment",
+      "kind": "hasMany",
+      "to": "PaymentDispute",
+      "foreignKey": "payment_id",
+      "description": "Zero-or-more disputes per payment. Uncommon but possible (partial disputes, escalations)."
+    },
+    {
+      "from": "PaymentDispute",
+      "kind": "belongsTo",
+      "to": "Payment",
+      "foreignKey": "payment_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — disputes anchor to their payment for audit. Payment retention (7y) exceeds dispute retention window."
+    },
+    {
+      "from": "PaymentMethod",
+      "kind": "hasMany",
+      "to": "PaymentIntent",
+      "foreignKey": "payment_method_id",
+      "description": "A saved method may be used across many intents (repeat customer). Read-side only — new intents can attach the method during their requires_payment_method → requires_confirmation transition."
+    },
+    {
+      "from": "PaymentIntent",
+      "kind": "belongsTo",
+      "to": "PaymentMethod",
+      "foreignKey": "payment_method_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Nullable — first-time-payer intents attach a fresh method during the flow. RESTRICT once set — historical intents preserve the method reference even after the method soft-deletes."
+    },
+    {
+      "from": "PaymentMethod",
+      "kind": "hasMany",
+      "to": "Payment",
+      "foreignKey": "payment_method_id",
+      "description": "A saved method may have accumulated many payments over its lifetime. Read-side only."
+    },
+    {
+      "from": "Payment",
+      "kind": "belongsTo",
+      "to": "PaymentMethod",
+      "foreignKey": "payment_method_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Nullable — one-time bank transfer / mail-in check / cash-at-counter payments have no saved method. RESTRICT once set."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Payment",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every payment is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "Payment",
+      "kind": "belongsTo",
+      "to": "invoice::Invoice",
+      "foreignKey": "invoice_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — invoices carrying payments cannot be hard-deleted until retention expires."
+    },
+    {
+      "from": "Payment",
+      "kind": "belongsTo",
+      "to": "transaction::Transaction",
+      "foreignKey": "transaction_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "RESTRICT once set — the recording double-entry transaction stays for the payment's lifetime. Nullable only during the microsecond window between Payment insert + TransactionRecorder.record within the same DB transaction."
+    },
+    {
+      "from": "PaymentMethod",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "PaymentMethod",
+      "kind": "morphTo",
+      "to": "customer",
+      "foreignKey": "customer_id",
+      "morphType": "customer_type",
+      "description": "Polymorphic customer: User, Athlete. Each customer_type has its own tenant scoping; PaymentMethodObserver validates that customer.tenant_id == payment_method.tenant_id (defense-in-depth against cross-tenant FK smuggling)."
+    },
+    {
+      "from": "PaymentIntent",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "PaymentIntent",
+      "kind": "belongsTo",
+      "to": "invoice::Invoice",
+      "foreignKey": "invoice_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — invoices with active intents cannot be voided until intents terminate."
+    },
+    {
+      "from": "PaymentDispute",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "PaymentDispute",
+      "kind": "belongsTo",
+      "to": "refund::Refund",
+      "foreignKey": "refund_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "RESTRICT once set — the refund issued to resolve the dispute is anchored via this FK. Refund module owns the refund row + issues via provider API when POST /disputes/{dispute}/accept is called."
+    },
+    {
+      "from": "PaymentDispute",
+      "kind": "belongsTo",
+      "to": "chargeback::Chargeback",
+      "foreignKey": "chargeback_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "RESTRICT once set — the chargeback that this dispute escalated into (via EscalateDisputeToChargebackJob after status='lost'). Chargeback module owns the chargeback row + regulator-facing lifecycle."
+    }
+  ],
+  "inbound": {
+    "description": "Payment module rows are referenced by three downstream modules (planned consumers):",
+    "examples": [
+      {
+        "module": "refund",
+        "reference": "refunds.payment_id → payments.id (RESTRICT). Refunds attach to their originating payment. amount_refunded_cents on payments is accumulated by refund events.",
+        "cascade": "payment soft-delete refused when has open refunds; payment hard-purge only after retention window closes AND all refunds retention-purged"
+      },
+      {
+        "module": "chargeback",
+        "reference": "chargebacks.payment_id → payments.id (RESTRICT). Chargebacks attach to their originating payment. May also link back to payment_disputes.chargeback_id.",
+        "cascade": "payment cannot be hard-purged while open chargebacks exist"
+      },
+      {
+        "module": "growth::marketing",
+        "reference": "No FK. Growth reads Payment via events (MarketingEventCapturer subscribes to PaymentCaptured domain event via #[AsDomainEventMapper]). Marketing rows are self-contained; they never hold a FK on Payment.",
+        "cascade": "None"
+      }
+    ]
+  },
+  "morphs": [
+    {
+      "field": "customer",
+      "onModels": ["PaymentMethod"],
+      "morphType": "customer_type",
+      "morphId": "customer_id",
+      "supportedTypes": [
+        "user::User",
+        "sports::Athlete"
+      ],
+      "description": "Polymorphic customer of the saved payment method. User = the account owner. Athlete = the parent-managed minor (parent's UI attaches a method on the athlete's profile via delegation). Each supported type is tenant-scoped in its own module. The observer validates cross-model tenant integrity on write."
+    }
+  ],
+  "notes": [
+    "None of the four owned rows carry `application_id` — cascades through tenant_id → tenants.application_id per tenancy-columns.md §2. Only the 8 named rows carry application_id directly; payment_* is not among them.",
+    "None of the four owned rows carry `region_id`, `organization_id`, `branch_id`, or `scope_node_id`. Payment is a domain-plane concern — the growth/scope substrate does not apply.",
+    "Payment.transaction_id may be transiently NULL during the atomic Payment.create → TransactionRecorder.record sequence (same DB transaction). Query paths that need transaction MUST either JOIN with FOR SHARE or query after commit.",
+    "Payment.payment_method_id is nullable — one-time flows (bank_transfer, cash, mail-in-check) do not create a saved PaymentMethod row.",
+    "The one-to-one from PaymentIntent → Payment is enforced by BOTH the unique index on payments.payment_intent_id AND the PaymentObserver.creating check (defense-in-depth).",
+    "PaymentDispute.refund_id + PaymentDispute.chargeback_id are mutually exclusive at any given time — dispute either escalated to Chargeback OR was resolved by accepting + refunding, never both. Enforced by observer.",
+    "The morph on PaymentMethod.customer is loose — the module's PaymentMethodObserver enforces the customer_type is in the supportedTypes list, but the schema allows any (customer_type, customer_id) pair for extensibility.",
+    "The payment module NEVER holds a payment_provider_configs table — provider configs are owned by whichever module supplies the credentials (typically a shared payment-providers config, hydrated at boot). Payment refers to provider by enum slug only + reads credentials via the compliance/encryption service."
+  ]
+}

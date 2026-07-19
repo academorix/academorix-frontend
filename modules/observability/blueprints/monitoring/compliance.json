@@ -1,0 +1,133 @@
+{
+  "id": "academorix://modules/monitoring/compliance",
+  "$version": 1,
+  "title": "monitoring — compliance evidence",
+  "description": "Monitoring IS the compliance evidence for ISO 27001 A.12.4 (event logging + monitoring), SOC 2 CC7.2 (anomaly detection + incident response), and NIST 800-53 IR-4 (incident handling). This module is the record-keeping system that shows regulators the tenant has an operating incident-response process. Provider credentials encrypted at rest per SOC 2 CC6.1.",
+  "regimes": {
+    "iso27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.12.4.1",
+          "principle": "event logging",
+          "evidence": "Every alert fire + acknowledgment + resolution writes to audits with 7-year retention. monitoring_alerts + monitoring_incidents preserve the operational trail for 30d/90d hot/cold (Enterprise: 90d/1y; P1 indefinite). Every notification attempt is logged in the notification-attempts table."
+        },
+        {
+          "annex": "A.12.4.2",
+          "principle": "protection of log information",
+          "evidence": "monitoring_provider_configs.config (credentials) is encrypted at rest via the compliance/encryption service. monitoring_alerts + monitoring_incidents are append-only after terminal status (observer refuses mutations). The audit trail is immutable per the audit module's design."
+        },
+        {
+          "annex": "A.12.4.3",
+          "principle": "administrator and operator logs",
+          "evidence": "Every admin action (health check CRUD, alert policy CRUD, provider CRUD, circuit-breaker reset, alert/incident acknowledge/resolve) writes to audits with created_by/updated_by/deleted_by userstamps. Support + ops access via the platform plane is separately audited."
+        },
+        {
+          "annex": "A.16.1",
+          "principle": "incident management",
+          "evidence": "monitoring_incidents timeline (opened → acknowledged → investigating → mitigating → resolved → postmortem) formalises the ISO 27001 A.16.1 incident-response lifecycle. Every P1 incident triggers MonitoringPostmortemRequiredNotification. MTTA + MTTR are measurable via the histograms in metrics.json."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC7.1",
+          "principle": "vulnerability + change management monitoring",
+          "evidence": "This module IS the SOC 2 CC7.1 evidence. Health checks probe infrastructure; alerts fire on threshold breach; incidents formalise the response. The monitoring dashboard + platform ops cross-tenant view provide the auditor with the ongoing operational proof."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "anomaly detection + incident response",
+          "evidence": "Health-check-driven anomaly detection + threshold-triggered alerts + severity-based fan-out to paging providers + escalation SLA + postmortem workflow = the full CC7.2 apparatus. Every fired P1 alert pages within seconds; MTTA target < 5min; MTTR target < 4h."
+        },
+        {
+          "criterion": "CC6.1",
+          "principle": "logical + physical access",
+          "evidence": "Provider credentials encrypted at rest. Access to view unredacted config restricted to owner + admin roles. Support role sees redacted view. Every config change writes to audits with 7-year retention."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All 6 providers use TLS 1.2+ endpoints. Guzzle enforces TLS + certificate validation. HMAC signing (custom_webhook) uses SHA256. Provider credentials never logged; provider config is encrypted at rest."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "Per-tenant per-provider circuit breaker + retry with backoff + failover between paging providers = defense-in-depth against provider outages. An open circuit-breaker fires MonitoringProviderCircuitBreakerOpened (P1) which pages via the failover provider."
+        }
+      ]
+    },
+    "nist_800_53": {
+      "applicable": true,
+      "controls": [
+        {
+          "control": "AU-2",
+          "principle": "audit events",
+          "evidence": "Auditable trait writes to audits on every monitoring row mutation. Retention: 7 years."
+        },
+        {
+          "control": "AU-6",
+          "principle": "audit review, analysis, reporting",
+          "evidence": "monitoring:audit-suppressions Artisan command produces the suppression audit report. The platform dashboard cross-tenant view enables ops review of P1 incidents across all tenants."
+        },
+        {
+          "control": "AU-12",
+          "principle": "audit generation",
+          "evidence": "The monitoring module IS an audit generator (secondary to the audit module). Every alert + incident lifecycle event is preserved with tenant_id + severity + timestamps."
+        },
+        {
+          "control": "IR-4",
+          "principle": "incident handling",
+          "evidence": "monitoring_incidents lifecycle (open → acknowledged → investigating → mitigating → resolved → postmortem) is the IR-4 apparatus. Escalation SLA + notification routing = IR-4(1) automated support."
+        },
+        {
+          "control": "IR-5",
+          "principle": "incident monitoring",
+          "evidence": "The monitoring dashboard read-model + platform ops cross-tenant view provide the IR-5 ongoing monitoring surface."
+        },
+        {
+          "control": "IR-6",
+          "principle": "incident reporting",
+          "evidence": "MonitoringIncidentOpenedNotification + MonitoringIncidentEscalatedNotification + MonitoringPostmortemRequiredNotification = IR-6 reporting. Notifications route to tenant admin + platform ops per severity."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "10.7",
+          "principle": "audit trail retention",
+          "evidence": "monitoring_alerts retain 30d/90d hot/cold (Enterprise: 90d/1y). Combined with the underlying audit module's 7-year retention, the audit trail exceeds PCI-DSS 10.7's 1-year-hot + 6-years-archive requirement."
+        },
+        {
+          "requirement": "10.6",
+          "principle": "review logs",
+          "evidence": "monitoring:audit-suppressions + the platform dashboard cross-tenant view provide the daily-review surface required by PCI-DSS 10.6."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "This module IS the technical measure required by Art. 32(1)(d) — regular testing, assessing, and evaluating the effectiveness of technical + organisational measures for ensuring the security of processing. Health checks + alerts + incidents formalise the security-monitoring evidence."
+        },
+        {
+          "article": "Art. 33",
+          "principle": "breach notification",
+          "evidence": "MonitoringIncidentOpened (P1) fires within 5 minutes of detection. Combined with the audit module's breach-notification workflow, the tenant satisfies Art. 33's 72-hour notification-to-supervisory-authority requirement."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "TenantErased cascades hard-delete across all six monitoring tables via FK CASCADE. No cross-provider deletion request — monitoring providers store system-health events not user data; the tenant_id is the only correlation surface and it's erased with the tenant."
+        }
+      ]
+    }
+  }
+}

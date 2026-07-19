@@ -1,0 +1,279 @@
+{
+  "id": "academorix://modules/membership/schemas/membership-plan",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "MembershipPlan",
+  "description": "The SKU catalog. Per-branch plan definition — plans NEVER cross branches. Belongs to Tenant (CASCADE) + Branch (RESTRICT). Optional age_group_id (RESTRICT) narrows plan eligibility. Currency + billing_interval + branch_id + age_group_id are IMMUTABLE post-create — active memberships reference this plan's identity + billing terms. Price + trial + pass config CAN change but only apply to NEW memberships (existing memberships hold frozen snapshots). NEVER carries application_id / organization_id / region_id / scope_node_id.",
+  "type": "object",
+  "x-module": "membership",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "membership_plans",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "mbp_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Membership\\Models\\MembershipPlan",
+    "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\MembershipPlanInterface",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "HasSlug",
+      "BelongsToTenant",
+      "BelongsToBranch",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "billing_interval": "BillingInterval",
+      "billing_interval_count": "integer",
+      "trial_days": "integer",
+      "passes_per_period": "integer",
+      "passes_carry_over": "boolean",
+      "prerequisites": "array",
+      "addon_config": "array",
+      "refund_policy": "RefundPolicy",
+      "refund_grace_days": "integer",
+      "is_active": "boolean",
+      "effective_from": "datetime",
+      "effective_until": "datetime",
+      "max_active_members": "integer",
+      "current_active_members": "integer"
+    },
+    "observers": [
+      "MembershipPlanObserver"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "tenants",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "cascade"
+        }
+      },
+      "branch_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "branches",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Plans are per-branch — a plan CANNOT be shared across branches. To offer the same product at two branches, duplicate the plan. IMMUTABLE post-create."
+      },
+      "name": { "type": "string", "length": 128, "nullable": false },
+      "slug": { "type": "string", "length": 64, "nullable": false },
+      "description": { "type": "text", "nullable": true },
+      "price_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Display price in currency's minor unit. Frozen at signing on Membership.price_snapshot_cents — subsequent plan.price_cents changes never re-price existing memberships."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217. IMMUTABLE once active memberships reference this plan."
+      },
+      "billing_interval": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "description": "Enum: monthly / quarterly / annual / lifetime. IMMUTABLE once active memberships reference this plan."
+      },
+      "billing_interval_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "Multiplier — 3 with billing_interval='monthly' = every 3 months."
+      },
+      "trial_days": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "0 = no trial. When > 0 the first period is free; billing starts at trial_days. Requires `membership_trial_periods` entitlement (Medium+) on the tenant."
+      },
+      "passes_per_period": {
+        "type": "integer",
+        "nullable": true,
+        "description": "N passes issued per billing period. NULL = unlimited (no pass generation; membership grants unrestricted access)."
+      },
+      "passes_carry_over": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "When true, unused passes at period end become 'carryover' passes valid into the next period. When false, unused passes expire at period end."
+      },
+      "age_group_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "age_groups",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Restricts plan to athletes in a specific age group. IMMUTABLE post-create."
+      },
+      "prerequisites": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Requirements checked at Membership.creating — { requires_athlete_medical_clearance: bool, requires_guardian_verified: bool, requires_minimum_athlete_age: int|null }."
+      },
+      "addon_config": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Bundled add-ons — { equipment_rental: bool, kit_included: bool, tournament_entry_credit: int }. Requires `membership_addon_management` entitlement (Medium+) to modify."
+      },
+      "refund_policy": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'no_refund'",
+        "description": "Enum: no_refund / prorated / full_within_grace / by_admin_approval."
+      },
+      "refund_grace_days": {
+        "type": "integer",
+        "nullable": false,
+        "default": 14,
+        "description": "Days from contract signing during which 'full_within_grace' allows full refund. Must be 0 when refund_policy='no_refund'."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true
+      },
+      "effective_from": { "type": "timestamptz", "nullable": true },
+      "effective_until": { "type": "timestamptz", "nullable": true },
+      "max_active_members": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Capacity cap on active memberships for this plan. Null = uncapped."
+      },
+      "current_active_members": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Running count — incremented by MembershipObserver.creating; decremented by cancellation/lapse handlers. Fires MembershipPlanCapacityReached when reaching max_active_members."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "branch_id", "slug"],
+        "unique": true,
+        "name": "membership_plans_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      {
+        "columns": ["tenant_id", "branch_id", "is_active"],
+        "name": "membership_plans_active_idx"
+      },
+      {
+        "columns": ["tenant_id", "age_group_id"],
+        "name": "membership_plans_age_group_idx",
+        "predicate": "age_group_id IS NOT NULL"
+      }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "branch_id",
+    "name",
+    "slug",
+    "price_cents",
+    "currency",
+    "billing_interval",
+    "billing_interval_count",
+    "trial_days",
+    "passes_carry_over",
+    "refund_policy",
+    "refund_grace_days",
+    "is_active",
+    "current_active_members",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^mbp_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "branch_id": { "type": "string", "pattern": "^brn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "maxLength": 128, "minLength": 1 },
+    "slug": { "type": "string", "maxLength": 64, "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+    "description": { "type": ["string", "null"] },
+    "price_cents": { "type": "integer", "minimum": 0 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "billing_interval": {
+      "type": "string",
+      "enum": ["monthly", "quarterly", "annual", "lifetime"]
+    },
+    "billing_interval_count": { "type": "integer", "minimum": 1, "maximum": 12 },
+    "trial_days": { "type": "integer", "minimum": 0, "maximum": 90 },
+    "passes_per_period": { "type": ["integer", "null"], "minimum": 0 },
+    "passes_carry_over": { "type": "boolean" },
+    "age_group_id": { "type": ["string", "null"], "pattern": "^age_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "prerequisites": {
+      "type": ["object", "null"],
+      "properties": {
+        "requires_athlete_medical_clearance": { "type": "boolean" },
+        "requires_guardian_verified": { "type": "boolean" },
+        "requires_minimum_athlete_age": { "type": ["integer", "null"], "minimum": 0, "maximum": 100 }
+      }
+    },
+    "addon_config": {
+      "type": ["object", "null"],
+      "properties": {
+        "equipment_rental": { "type": "boolean" },
+        "kit_included": { "type": "boolean" },
+        "tournament_entry_credit": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "refund_policy": {
+      "type": "string",
+      "enum": ["no_refund", "prorated", "full_within_grace", "by_admin_approval"]
+    },
+    "refund_grace_days": { "type": "integer", "minimum": 0, "maximum": 90 },
+    "is_active": { "type": "boolean" },
+    "effective_from": { "type": ["string", "null"], "format": "date-time" },
+    "effective_until": { "type": ["string", "null"], "format": "date-time" },
+    "max_active_members": { "type": ["integer", "null"], "minimum": 1 },
+    "current_active_members": { "type": "integer", "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "One active plan per (tenant_id, branch_id, slug) via partial unique index",
+    "tenant_id + branch_id + age_group_id are IMMUTABLE post-create",
+    "currency + billing_interval are IMMUTABLE once active memberships reference this plan",
+    "trial_days > 0 requires `membership_trial_periods` entitlement on the tenant",
+    "refund_policy='no_refund' requires refund_grace_days = 0",
+    "refund_policy='full_within_grace' requires refund_grace_days > 0",
+    "current_active_members monotonically tracks the count of Membership rows in status IN ('pending', 'active', 'paused') referencing this plan",
+    "Archive (is_active=false) refused when active memberships exist — PreventPlanArchiveWithActiveMemberships hook"
+  ]
+}

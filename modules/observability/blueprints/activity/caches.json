@@ -1,0 +1,78 @@
+{
+  "id": "academorix://modules/activity/caches",
+  "$version": 1,
+  "title": "activity — cache keys",
+  "description": "Cache keys this module owns. Retention-policy resolution is cached per-tenant to avoid hitting the DB on every purge job iteration; log-name catalog cached at boot; batch tracking cached per-request; feed cursor cached to detect duplicate broadcast attempts.",
+  "driver": "redis",
+  "keys": [
+    {
+      "pattern": "activity:retention:{tenant_id}:{log_name}",
+      "description": "Resolved retention_days for (tenant, log_name). Reads: PurgeExpiredActivitiesJob per iteration + observer on retention-policy CRUD. Writes: on policy Create/Update/Delete via InvalidateRetentionCache listener. Miss: falls through to DB, then to config default (90d).",
+      "ttlSeconds": 3600,
+      "tags": ["activity", "activity:retention", "tenant"],
+      "invalidatedBy": [
+        "ActivityRetentionPolicyObserver@created / @updated / @deleted",
+        "TenantErased cascade"
+      ],
+      "storageTier": "l2_redis"
+    },
+    {
+      "pattern": "activity:log-name-catalog",
+      "description": "Cached copy of `data/log-names-catalog.json` seeded at boot. Consumed by `valid_log_name` rule + LogsActivity trait boot-time validation. Refreshed on `config:cache` clear or on manual `activity:refresh-catalog` command.",
+      "ttlSeconds": 86400,
+      "tags": ["activity"],
+      "note": "Un-prefixed — the log-name catalog is platform-wide (registered feeds are shared across every tenant)."
+    },
+    {
+      "pattern": "activity:batch:{request_id}",
+      "description": "Per-request batch tracker. Populated by ActivityBatcher.beginBatch() with the batch_uuid + start timestamp + tenant/application/actor. Read by every LogsActivity write to attach the correct batch_uuid. Cleared on request terminate.",
+      "ttlSeconds": 300,
+      "tags": ["activity", "activity:batch"],
+      "invalidatedBy": [
+        "ActivityBatcher.completeBatch() (normal termination)",
+        "ActivityBatchFinalizerHook (tenant tear-down)",
+        "ReconcileActivityBatchesJob (orphan sweep, age > 24h)"
+      ],
+      "storageTier": "l2_redis"
+    },
+    {
+      "pattern": "activity:broadcast-cursor:{tenant_id}:{channel}",
+      "description": "Last-broadcast activity id per (tenant, channel). Prevents duplicate broadcasts when the same event fires from multiple workers (Octane pool). The publisher compares the incoming activity.id to the cursor; skips if already broadcast.",
+      "ttlSeconds": 300,
+      "tags": ["activity", "activity:broadcast"],
+      "note": "Short TTL — the cursor doesn't need long-term persistence; it just prevents duplicates within the current broadcast burst."
+    },
+    {
+      "pattern": "activity:feed-poll-since:{tenant_id}:{user_id}",
+      "description": "For tenants without `activity_broadcast`, tracks the last poll timestamp per user. Read by /api/v1/activities?filter[from]=<since> when the frontend is polling. Prevents 'give me everything since epoch' abuse on cold-start.",
+      "ttlSeconds": 900,
+      "tags": ["activity", "activity:feed-poll"]
+    },
+    {
+      "pattern": "activity:subject-permission:{tenant_id}:{user_id}:{subject_type}:{subject_id}",
+      "description": "Cached RBAC decision — can this user see activity for this specific (subject_type, subject_id)? Consumed by `activity.enforce_scope` middleware. Fed by AccessGrantResolver's own cache; invalidated on grant lifecycle events.",
+      "ttlSeconds": 300,
+      "tags": ["activity", "grants"],
+      "invalidatedBy": [
+        "grants::GrantIssued / Revoked (cascades from grants:eval cache invalidation)"
+      ]
+    }
+  ],
+  "invalidationRules": [
+    {
+      "trigger": "ActivityRetentionPolicyCreated / Updated / Deleted",
+      "action": "Invalidate `activity:retention:{tenant_id}:{log_name}` for the affected pair (or all log_names when log_name IS NULL on the policy).",
+      "reasoning": "Retention policy is read on every purge iteration; a stale cache means rows purge on the old ceiling for up to TTL seconds after a change. TTL is 1h — long enough to avoid churn, short enough that even without explicit invalidation the wrong purge would recover within an hour."
+    },
+    {
+      "trigger": "TenantErased cascade",
+      "action": "Invalidate every activity:* cache key for the tenant. Handled by the PurgeActivitiesForErasedTenant listener as part of its cascade.",
+      "reasoning": "Post-erasure, no read should hit stale data — every cache entry for the tenant is dropped explicitly."
+    },
+    {
+      "trigger": "config:cache clear",
+      "action": "Log-name catalog + retention default cache both refreshed. Handled by the ActivityServiceProvider@boot warm-up.",
+      "reasoning": "Config changes may alter the module's fallback defaults — cached values must reload."
+    }
+  ]
+}

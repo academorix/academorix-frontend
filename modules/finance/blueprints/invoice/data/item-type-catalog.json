@@ -1,0 +1,86 @@
+{
+  "$version": 1,
+  "title": "Invoice line item type catalogue",
+  "description": "The 8 item types shipped day-1. Each type documents its tax classification (for TaxResolver dispatch), whether it permits negative unit_price (only discount_line + adjustment), whether it counts toward revenue reporting, and the polymorphic reference_type it typically links back to. Extending modules register additional types via #[AsInvoiceLineItemType].",
+  "item_types": [
+    {
+      "slug": "membership_charge",
+      "display_name": "Membership charge",
+      "description": "The recurring subscription charge for a Membership period. Links back to membership::Membership via reference_type + reference_id. Feeds the load-bearing marketing::MembershipPurchased signal.",
+      "tax_classification": "digital_services",
+      "allows_negative_unit_price": false,
+      "counts_toward_revenue": true,
+      "typical_reference_type": "membership::Membership"
+    },
+    {
+      "slug": "addon",
+      "display_name": "Add-on",
+      "description": "One-time or recurring add-on purchase (extra pass pack, premium feature, tournament entry). Links back to the underlying product via reference_type.",
+      "tax_classification": "digital_services",
+      "allows_negative_unit_price": false,
+      "counts_toward_revenue": true,
+      "typical_reference_type": "sports::Session | sports::Event | membership::Pass"
+    },
+    {
+      "slug": "setup_fee",
+      "display_name": "Setup fee",
+      "description": "One-time onboarding fee at membership signup. Not recurring. Charged on the first invoice only.",
+      "tax_classification": "physical_services",
+      "allows_negative_unit_price": false,
+      "counts_toward_revenue": true,
+      "typical_reference_type": "membership::Membership"
+    },
+    {
+      "slug": "late_fee",
+      "display_name": "Late fee",
+      "description": "Charged after a past-due invoice reaches a configurable threshold. Optional (tenant may disable in settings).",
+      "tax_classification": "physical_services",
+      "allows_negative_unit_price": false,
+      "counts_toward_revenue": true,
+      "typical_reference_type": "invoice::Invoice (the original past-due invoice)"
+    },
+    {
+      "slug": "adjustment",
+      "display_name": "Adjustment",
+      "description": "Ad-hoc manual adjustment (positive or negative) added by admin. Requires internal_notes justification. Feeds an admin-review flag for compliance.",
+      "tax_classification": "exempt",
+      "allows_negative_unit_price": true,
+      "counts_toward_revenue": true,
+      "typical_reference_type": null
+    },
+    {
+      "slug": "one_time_service",
+      "display_name": "One-time service",
+      "description": "A discrete billable service (private coaching session, custom event registration, apparel purchase). Standalone; not linked to a membership.",
+      "tax_classification": "physical_services",
+      "allows_negative_unit_price": false,
+      "counts_toward_revenue": true,
+      "typical_reference_type": "sports::Session | facility::Facility"
+    },
+    {
+      "slug": "tax_line",
+      "display_name": "Tax",
+      "description": "Line-item tax breakdown. Populated by CalculateInvoiceTaxJob when the tax module returns a per-jurisdiction breakdown. NOT counted toward revenue (tax is a separate axis on the tax-collected report).",
+      "tax_classification": "exempt",
+      "allows_negative_unit_price": false,
+      "counts_toward_revenue": false,
+      "typical_reference_type": "tax::TaxCalculation"
+    },
+    {
+      "slug": "discount_line",
+      "display_name": "Discount",
+      "description": "Coupon-driven or admin-applied discount. Carries NEGATIVE unit_price_cents (representing a reduction in subtotal). Links to coupon::CouponRedemption when the discount is coupon-driven.",
+      "tax_classification": "exempt",
+      "allows_negative_unit_price": true,
+      "counts_toward_revenue": true,
+      "typical_reference_type": "coupon::CouponRedemption",
+      "notes": "counts_toward_revenue=true because the negative amount already REDUCES the revenue total. Excluding it would double-count."
+    }
+  ],
+  "notes": [
+    "The item_type enum is the authoritative list. Adding a new type = updating this catalogue + updating the InvoiceLineItemType enum + implementing a #[AsInvoiceLineItemType] class.",
+    "tax_classification feeds the tax module's TaxResolver — it decides which jurisdiction-specific rate applies. 'exempt' means the tax module returns 0 (no tax computed).",
+    "allows_negative_unit_price is a strict check in InvoiceLineObserver.creating. Only discount_line + adjustment may carry negative unit_price_cents; every other item_type is strictly >= 0.",
+    "counts_toward_revenue drives the invoice:report --type=revenue query — the SUM aggregation filters WHERE item_type IN (types where counts_toward_revenue=true)."
+  ]
+}

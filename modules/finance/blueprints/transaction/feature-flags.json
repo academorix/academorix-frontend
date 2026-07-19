@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/transaction/feature-flags",
+  "$version": 1,
+  "title": "transaction — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions during a P0 ledger incident. Every flag is ON in normal production; off flips are ops decisions with a written audit note.",
+  "flags": [
+    {
+      "key": "transaction.record",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the RECORD path. Off = TransactionRecorder no-ops (invoice.paid / refund.issued / chargeback.filed listeners record NOTHING). Emergency-only — flip during a P0 ledger imbalance to halt new writes while ops resolves the imbalance."
+    },
+    {
+      "key": "transaction.reverse",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for the REVERSE endpoint. Off = POST /transactions/{id}/reverse returns 503 TRANSACTION_REVERSAL_TEMPORARILY_UNAVAILABLE. Used during regulator audit windows where reversals are frozen."
+    },
+    {
+      "key": "transaction.multi_currency",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ExchangeRateResolver refuses new lookups. Cross-currency transactions fail with TRANSACTION_EXCHANGE_RATE_UNAVAILABLE. Used when the rate provider is unreachable + we don't want stale rates to persist."
+    },
+    {
+      "key": "transaction.reconciler",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileLedgerBalancesJob skips. NEVER flip off outside a scheduled maintenance window — the nightly reconciler is a regulator-facing SLA."
+    },
+    {
+      "key": "transaction.threshold_detector",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the 30-min threshold-crossing check skips. AccountBalanceThresholdCrossed does not fire. Used when tuning tenant threshold configs to avoid alert storms."
+    },
+    {
+      "key": "transaction.monthly_report",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GenerateGeneralLedgerReportJob skips its monthly run. MonthlyLedgerReportNotification does not fire. Used when the report generation is bugged + we don't want stale reports going out."
+    },
+    {
+      "key": "transaction.retention_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeExpiredTransactionDataJob skips. Retention window overruns. NEVER flip off outside a specific investigation — regulator will notice."
+    },
+    {
+      "key": "transaction.halt_on_imbalance",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = LedgerImbalanceDetected fires + alerts but does NOT set tenant.transaction_halt_new=true. New transactions continue accepting. DANGEROUS — never flip off outside a scheduled tenant migration where we KNOW imbalances are expected transiently."
+    },
+    {
+      "key": "transaction.archive_before_purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = PurgeExpiredTransactionDataJob hard-purges WITHOUT archiving to compliance-storage. NEVER flip off in production — SOX 802 requires the archive."
+    },
+    {
+      "key": "transaction.balance_cache",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = AccountBalanceCalculator does NOT cache; every read is a fresh DB scan. Used when the balance cache is bugged (returns stale values); flip off + investigate."
+    }
+  ]
+}

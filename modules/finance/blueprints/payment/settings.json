@@ -1,0 +1,215 @@
+{
+  "id": "academorix://modules/payment/settings",
+  "$version": 1,
+  "title": "payment — settings",
+  "description": "Tenant-facing payment configuration + per-user preferences for payment notifications. The payment_providers table is NOT settings — those are per-provider credentials owned by the payment module itself. This file declares tenant-level defaults (default provider, 3DS2 thresholds, dispute defaults) + per-user preferences (payment notification subscription).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "payment",
+      "class": "Academorix\\Finance\\Payment\\Settings\\PaymentSettings",
+      "label": "Payment processing",
+      "description": "Tenant-wide defaults for payment captures + provider routing.",
+      "icon": "credit-card",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 50,
+      "permission": "payment.providers.viewAny",
+      "requiresEntitlement": "payment_capture",
+      "sections": [
+        {
+          "label": "Provider defaults",
+          "description": "Which provider handles new payment intents when the caller doesn't specify.",
+          "icon": "cog-6-tooth",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_provider",
+              "controlType": "select",
+              "label": "Default provider",
+              "defaultValue": "stripe",
+              "options_source": "payment.providers.active",
+              "helpText": "Fallback provider when the caller doesn't specify one at intent creation.",
+              "sortOrder": 1
+            },
+            {
+              "name": "regional_provider_routing",
+              "controlType": "key-value-map",
+              "label": "Regional routing",
+              "helpText": "Route customers from specific country codes to specific providers. Example: {US: stripe, EU: adyen, GB: adyen}. Overrides default_provider.",
+              "defaultValue": {},
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "3D Secure 2 (SCA)",
+          "description": "3DS2 authentication settings for card transactions.",
+          "icon": "shield-check",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "sca_threshold_cents",
+              "controlType": "number",
+              "label": "3DS2 required over amount",
+              "defaultValue": 3000,
+              "min": 0,
+              "max": 100000,
+              "helpText": "Card transactions above this amount require 3DS2. Default €30 (3000 cents) matches PSD2 SCA threshold. In EU regions the PSD2 threshold is legally mandated; you can only INCREASE the requirement (lower threshold), not decrease it.",
+              "sortOrder": 1
+            },
+            {
+              "name": "force_3ds2",
+              "controlType": "toggle",
+              "label": "Force 3DS2 on all card transactions",
+              "defaultValue": false,
+              "helpText": "Enterprise-only. Requires 3DS2 on every card transaction regardless of amount. Increases friction but reduces fraud risk.",
+              "requiresEntitlement": "payment_3ds2_forced",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Capture behavior",
+          "description": "How captures are handled.",
+          "icon": "arrow-down-tray",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "default_capture_method",
+              "controlType": "select",
+              "label": "Default capture method",
+              "defaultValue": "automatic",
+              "options": {
+                "automatic": "Automatic (capture at authorization)",
+                "manual": "Manual (authorization hold; capture later)"
+              },
+              "helpText": "Manual capture holds funds without transferring them. Useful for pre-authorized bookings. Requires payment_manual_capture entitlement.",
+              "requiresEntitlement": "payment_manual_capture",
+              "sortOrder": 1
+            },
+            {
+              "name": "intent_timeout_hours",
+              "controlType": "number",
+              "label": "Intent timeout (hours)",
+              "defaultValue": 24,
+              "min": 1,
+              "max": 168,
+              "helpText": "Payment intents in non-terminal status for longer than this are automatically cancelled.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Fraud & risk",
+          "description": "Fraud detection settings.",
+          "icon": "exclamation-triangle",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "auto_approve_risk_threshold",
+              "controlType": "number",
+              "label": "Auto-approve risk score threshold",
+              "defaultValue": 50,
+              "min": 0,
+              "max": 100,
+              "helpText": "Payments with provider risk score below this threshold auto-approve. Above → route to review queue.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Dispute management",
+          "description": "Dispute handling defaults.",
+          "icon": "scale",
+          "sortOrder": 5,
+          "requiresEntitlement": "payment_dispute_management",
+          "fields": [
+            {
+              "name": "auto_collect_evidence",
+              "controlType": "toggle",
+              "label": "Auto-collect dispute evidence",
+              "defaultValue": true,
+              "helpText": "When a dispute opens, automatically collect supporting evidence (invoice, membership, communication log, refund policy) into an evidence pack.",
+              "sortOrder": 1
+            },
+            {
+              "name": "high_value_dispute_threshold_cents",
+              "controlType": "number",
+              "label": "High-value dispute threshold",
+              "defaultValue": 50000,
+              "min": 1000,
+              "max": 10000000,
+              "helpText": "Disputes above this amount fire as P1 notifications. Default $500.",
+              "sortOrder": 2
+            },
+            {
+              "name": "dispute_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on new disputes",
+              "defaultValue": [],
+              "helpText": "Every user listed receives PaymentDisputeOpenedNotification. Tenant owners always notified regardless.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Notifications routing",
+          "description": "Where circuit-breaker alerts + reconcile drift alerts are delivered.",
+          "icon": "bell-alert",
+          "sortOrder": 6,
+          "fields": [
+            {
+              "name": "circuit_breaker_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on circuit-breaker opens",
+              "defaultValue": [],
+              "sortOrder": 1
+            },
+            {
+              "name": "reconcile_drift_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on reconcile drift",
+              "defaultValue": [],
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "payment_user",
+      "class": "Academorix\\Finance\\Payment\\Settings\\PaymentUserSettings",
+      "label": "My payment preferences",
+      "description": "Per-user preferences for payment notifications.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 45,
+      "sections": [
+        {
+          "label": "Payment notifications",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "receive_payment_receipts",
+              "controlType": "toggle",
+              "label": "Send me payment receipts by email",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_method_expiring_alerts",
+              "controlType": "toggle",
+              "label": "Notify me when my saved cards are about to expire",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

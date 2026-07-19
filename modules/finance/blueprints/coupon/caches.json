@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/coupon/caches",
+  "$version": 1,
+  "title": "coupon — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["coupons", "coupons.redemptions", "coupons.rate_limit"],
+  "keys": [
+    {
+      "pattern": "cpn:list:{tenant_id}",
+      "description": "Per-tenant active coupon list (filtered by is_active=true AND within valid window). Read by SDUI coupon list + validate endpoint's index scan.",
+      "ttlSeconds": 300,
+      "tags": ["coupons"],
+      "invalidatedBy": ["CouponObserver.*", "CouponActivated", "CouponDeactivated", "CouponExpired"]
+    },
+    {
+      "pattern": "cpn:code:{tenant_id}:{code}",
+      "description": "Code -> {coupon_id, is_active, valid_from, valid_until, usage_count, usage_cap, discount config} lookup. Read hot on every validate / preview / redeem path.",
+      "ttlSeconds": 60,
+      "tags": ["coupons"],
+      "invalidatedBy": ["CouponObserver.*", "CouponRedemptionObserver.created (invalidates usage_count freshness)"]
+    },
+    {
+      "pattern": "cpn:coupon:{coupon_id}",
+      "description": "Single coupon full row + config. Read by admin UI + redemption path.",
+      "ttlSeconds": 300,
+      "tags": ["coupons"],
+      "invalidatedBy": ["CouponObserver.updated"]
+    },
+    {
+      "pattern": "cpn:redemption-count:{coupon_id}:{customer_type}:{customer_id}",
+      "description": "Per-customer redemption count for a specific coupon (used to enforce per_customer_limit). Read on every validate/preview/redeem call.",
+      "ttlSeconds": 120,
+      "tags": ["coupons", "coupons.redemptions"],
+      "invalidatedBy": ["CouponRedemptionObserver.created", "CouponRedemptionObserver.updated (reversed_at flip)"]
+    },
+    {
+      "pattern": "cpn:target-redemptions:{tenant_id}:{applied_to_type}:{applied_to_id}",
+      "description": "Redemptions on a specific target (invoice/membership/transaction). Read to enforce is_stackable checks + prevent duplicate redemption on the same target.",
+      "ttlSeconds": 60,
+      "tags": ["coupons", "coupons.redemptions"],
+      "invalidatedBy": ["CouponRedemptionObserver.*"]
+    },
+    {
+      "pattern": "cpn:report:{tenant_id}:{period_key}",
+      "description": "Cached weekly report response. period_key = period_start-period_end in ISO 8601. Powers the /coupons/report endpoint's non-hot path.",
+      "ttlSeconds": 3600,
+      "tags": ["coupons"],
+      "invalidatedBy": ["GenerateCouponUsageReportJob.completed"]
+    },
+    {
+      "pattern": "cpn:rate-limit:ip:{ip_hash}",
+      "description": "IP-bucket for coupon.rate_limit middleware. Increments on every validate + preview call; expires on the hour boundary.",
+      "ttlSeconds": 3600,
+      "tags": ["coupons.rate_limit"],
+      "invalidatedBy": ["hourly boundary (natural expiry — never manually invalidated)"]
+    },
+    {
+      "pattern": "cpn:rate-limit:user:{user_id}",
+      "description": "User-bucket for coupon.rate_limit middleware. Higher cap than IP (authenticated users get more headroom).",
+      "ttlSeconds": 3600,
+      "tags": ["coupons.rate_limit"],
+      "invalidatedBy": ["hourly boundary"]
+    },
+    {
+      "pattern": "cpn:refusal-recent:{ip_hash}",
+      "description": "Rolling count of recent COUPON_NOT_FOUND / COUPON_INACTIVE refusals per IP. Reads by fraud-detection layer to escalate persistent enumeration attempts to a 403.",
+      "ttlSeconds": 86400,
+      "tags": ["coupons.rate_limit"],
+      "invalidatedBy": ["daily boundary"]
+    }
+  ]
+}

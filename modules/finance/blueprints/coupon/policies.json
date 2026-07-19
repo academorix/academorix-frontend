@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/coupon/policies",
+  "$version": 1,
+  "title": "coupon — authorization policies",
+  "description": "Two policies, one per owned entity. Admin-heavy for writes — marketing/admin/owner author coupons, only admin/owner can reverse a redemption (financial reversal — audit-critical). Every ability defers to spatie/laravel-permission for the permission check; scope narrowing runs via the ResolveScope middleware (tenant context; no branch scoping for coupons — they are tenant-wide by design).",
+  "policies": [
+    {
+      "model": "Coupon",
+      "class": "Academorix\\Finance\\Coupon\\Policies\\CouponPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "coupons.viewAny", "scope": "marketing + admin + owner + support" },
+        { "action": "view", "permission": "coupons.view", "scope": "marketing + admin + owner + support" },
+        { "action": "create", "permission": "coupons.create", "scope": "marketing + admin + owner" },
+        { "action": "update", "permission": "coupons.update", "scope": "marketing + admin + owner. Refuses discount_type / discount_amount edits once any redemption exists (returns COUPON_TERMS_LOCKED)" },
+        { "action": "delete", "permission": "coupons.delete", "scope": "admin + owner only. Soft-delete restricted to inactive coupons with zero non-reversed redemptions" },
+        { "action": "deactivate", "permission": "coupons.deactivate", "scope": "marketing + admin + owner" },
+        { "action": "extend", "permission": "coupons.extend", "scope": "marketing + admin + owner. Refuses when coupon is already deactivated + valid_until is past" },
+        { "action": "bulkIssue", "permission": "coupons.bulk-issue", "scope": "marketing + admin + owner + `coupon_bulk_issue` entitlement (Medium+)" },
+        { "action": "viewFinancials", "permission": "coupons.view-financials", "scope": "admin + owner + support only. Confidential financial fields (discount_amount, usage_cap, minimum_order_amount) are redacted for readers without this permission." },
+        { "action": "viewReport", "permission": "coupons.view-report", "scope": "marketing + admin + owner" },
+        { "action": "platformViewAny", "permission": "platform.coupons.viewAny" },
+        { "action": "platformView", "permission": "platform.coupons.view" }
+      ]
+    },
+    {
+      "model": "CouponRedemption",
+      "class": "Academorix\\Finance\\Coupon\\Policies\\CouponRedemptionPolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "coupon_redemptions.viewAny",
+          "scope": "marketing + admin + owner + support. Customers see their own redemptions through the finance::invoice ledger (never via a /me/coupon-redemptions route — coupons are never surfaced independently to end users; they appear as discount line items on invoices)."
+        },
+        {
+          "action": "view",
+          "permission": "coupon_redemptions.view",
+          "scope": "marketing + admin + owner + support"
+        },
+        {
+          "action": "reverse",
+          "permission": "coupon_redemptions.reverse",
+          "scope": "admin + owner only. Financial reversal — audit-critical. Every reverse fires CouponRedemptionReversed + notifies Finance module (Wave 4) to adjust the underlying invoice line."
+        },
+        {
+          "action": "auditClawbacks",
+          "permission": "coupon_redemptions.audit-clawbacks",
+          "scope": "admin + owner only. Read the clawback trail for compliance/audit."
+        },
+        {
+          "action": "create",
+          "permission": null,
+          "scope": "DENY ALL HTTP CREATE. Redemption is an internal service call inside the invoice/membership creation transaction via CouponRedeemer::redeem() — never a direct HTTP write from any caller. The policy explicitly denies to prevent accidental exposure."
+        },
+        { "action": "platformViewAny", "permission": "platform.coupon_redemptions.viewAny" }
+      ]
+    }
+  ]
+}

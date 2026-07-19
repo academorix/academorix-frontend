@@ -1,0 +1,327 @@
+{
+  "id": "academorix://modules/chargeback/schemas/chargeback-evidence",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "ChargebackEvidence",
+  "description": "Per-submission evidence bundle. IMMUTABLE at creation — corrections require submitting a new attempt with submission_attempt_number + 1. Carries `tenant_id` — cascades application through tenant per hierarchy.md §2. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, `scope_node_id`. NO card PAN / CVV / magnetic stripe permitted anywhere (PCI-DSS Req 3.4).",
+  "type": "object",
+  "x-module": "chargeback",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "chargeback_evidence",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "cev_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Chargeback\\Models\\ChargebackEvidence",
+    "interface": "Academorix\\Finance\\Chargeback\\Contracts\\Data\\ChargebackEvidenceInterface",
+    "implements": ["Academorix\\Finance\\Chargeback\\Contracts\\Data\\ChargebackEvidenceInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToChargeback",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "EncryptsSensitiveFields",
+      "Filterable"
+    ],
+    "casts": {
+      "submission_attempt_number": "integer",
+      "invoice_evidence": "array",
+      "receipt_evidence": "array",
+      "service_documentation": "array",
+      "refund_policy": "array",
+      "communication_log": "array",
+      "shipping_docs": "array",
+      "customer_signature_evidence": "array",
+      "provider_response": "encrypted:array",
+      "submitted_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["ChargebackEvidenceObserver"],
+    "appends": ["completeness_percent", "has_ce3_bundle"],
+    "no_soft_deletes": "true - ChargebackEvidence is 7y-retained HARD as an append-only audit row. Cascade delete only via parent chargeback purge."
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `cev_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "chargeback_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "chargebacks", "column": "id", "onDelete": "cascade" },
+        "description": "Parent chargeback. CASCADE — evidence rows co-terminous with parent."
+      },
+      "submission_attempt_number": {
+        "type": "integer",
+        "nullable": false,
+        "description": "1-indexed. Typically 1. 2+ indicates bank requested additional evidence (CE3.0 second pass). Auto-incremented by observer."
+      },
+      "invoice_evidence": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "{ invoice_id, invoice_pdf_url_signed, line_items[] }. Auto-collected from invoice module."
+      },
+      "receipt_evidence": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "{ receipt_url, receipt_number, receipt_date }. Auto-collected from payment module."
+      },
+      "service_documentation": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "{ service_dates[], attendance_records[], coach_signatures[] }. Auto-collected from attendance module when present. Confidential — customer PII."
+      },
+      "refund_policy": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "{ policy_url, policy_snapshot_at_purchase, cooling_off_days }. Frozen snapshot from settings module at purchase time."
+      },
+      "communication_log": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "{ message_ids[], support_ticket_ids[], call_recording_urls[] }. Every communication with the customer around the disputed purchase. Auto-collected from notifications + support modules."
+      },
+      "shipping_docs": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "{ tracking_number, delivery_confirmation_url }. NULL for pure service tenants."
+      },
+      "customer_signature_evidence": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "{ signature_url, ip_address, timestamp, device_fingerprint_hash }. Terms-of-service acceptance signature + SCA compliance proof. Confidential — customer PII (device_fingerprint_hash is SHA-256, never raw fingerprint)."
+      },
+      "uncategorized_text": {
+        "type": "text",
+        "nullable": true,
+        "description": "Freeform admin-authored additional context."
+      },
+      "submitted_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "When the evidence was submitted (row create time)."
+      },
+      "submitted_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The admin who submitted the evidence. RESTRICT — audit trail cannot orphan."
+      },
+      "provider_response": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "{ submission_id, status, next_action }. Populated after EvidenceSubmitter dispatches to provider. Encrypted at rest. Confidential."
+      },
+      "metadata": { "type": "jsonb", "nullable": true, "description": "Freeform metadata. May include ce3_bundle when parent chargeback.ce3_eligible=true." },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "chargeback_id", "submission_attempt_number"],
+        "unique": true,
+        "name": "chargeback_evidence_attempt_unique"
+      },
+      { "columns": ["tenant_id", "chargeback_id"], "name": "chargeback_evidence_chargeback_idx" },
+      { "columns": ["tenant_id", "submitted_by_user_id"], "name": "chargeback_evidence_submitter_idx" },
+      { "columns": ["submitted_at"], "name": "chargeback_evidence_submitted_at_idx", "order": "DESC" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "chargeback_id",
+    "submission_attempt_number",
+    "invoice_evidence",
+    "receipt_evidence",
+    "service_documentation",
+    "refund_policy",
+    "communication_log",
+    "customer_signature_evidence",
+    "submitted_at",
+    "submitted_by_user_id",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cev_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "chargeback_id": { "type": "string", "pattern": "^cbk_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "submission_attempt_number": { "type": "integer", "minimum": 1 },
+    "invoice_evidence": {
+      "type": "object",
+      "required": ["invoice_id", "invoice_pdf_url_signed", "line_items"],
+      "properties": {
+        "invoice_id": { "type": "string", "pattern": "^ivc_[0-9A-HJKMNP-TV-Z]{26}$" },
+        "invoice_pdf_url_signed": { "type": "string", "format": "uri" },
+        "line_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["invoice_line_id", "description", "amount_cents"],
+            "properties": {
+              "invoice_line_id": { "type": "string", "pattern": "^iln_[0-9A-HJKMNP-TV-Z]{26}$" },
+              "description": { "type": "string" },
+              "amount_cents": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "receipt_evidence": {
+      "type": "object",
+      "required": ["receipt_url", "receipt_number", "receipt_date"],
+      "properties": {
+        "receipt_url": { "type": "string", "format": "uri" },
+        "receipt_number": { "type": "string" },
+        "receipt_date": { "type": "string", "format": "date-time" }
+      }
+    },
+    "service_documentation": {
+      "type": "object",
+      "required": ["service_dates", "attendance_records", "coach_signatures"],
+      "properties": {
+        "service_dates": {
+          "type": "array",
+          "items": { "type": "string", "format": "date-time" }
+        },
+        "attendance_records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "attendance_id": { "type": "string" },
+              "checked_in_at": { "type": "string", "format": "date-time" },
+              "coach_id": { "type": ["string", "null"] },
+              "verified_by_signature": { "type": "boolean" }
+            }
+          }
+        },
+        "coach_signatures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "coach_id": { "type": "string" },
+              "signature_url": { "type": "string", "format": "uri" },
+              "signed_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+    "refund_policy": {
+      "type": "object",
+      "required": ["policy_url", "policy_snapshot_at_purchase", "cooling_off_days"],
+      "properties": {
+        "policy_url": { "type": "string", "format": "uri" },
+        "policy_snapshot_at_purchase": { "type": "string", "description": "Frozen text of the refund policy at purchase time." },
+        "cooling_off_days": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "communication_log": {
+      "type": "object",
+      "required": ["message_ids", "support_ticket_ids", "call_recording_urls"],
+      "properties": {
+        "message_ids": { "type": "array", "items": { "type": "string" } },
+        "support_ticket_ids": { "type": "array", "items": { "type": "string" } },
+        "call_recording_urls": { "type": "array", "items": { "type": "string", "format": "uri" } }
+      }
+    },
+    "shipping_docs": {
+      "type": ["object", "null"],
+      "properties": {
+        "tracking_number": { "type": "string" },
+        "delivery_confirmation_url": { "type": "string", "format": "uri" }
+      }
+    },
+    "customer_signature_evidence": {
+      "type": "object",
+      "required": ["signature_url", "ip_address", "timestamp", "device_fingerprint_hash"],
+      "properties": {
+        "signature_url": { "type": "string", "format": "uri" },
+        "ip_address": { "type": "string", "description": "Customer's IP at checkout. Anonymized to /24 for GDPR minimisation." },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "device_fingerprint_hash": { "type": "string", "description": "SHA-256 hex of device fingerprint. NEVER raw fingerprint content.", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "uncategorized_text": { "type": ["string", "null"] },
+    "submitted_at": { "type": "string", "format": "date-time" },
+    "submitted_by_user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "provider_response": { "type": ["object", "null"] },
+    "metadata": {
+      "type": ["object", "null"],
+      "properties": {
+        "ce3_bundle": {
+          "type": ["object", "null"],
+          "description": "Compelling Evidence 3.0 bundle when parent chargeback.ce3_eligible=true.",
+          "required": ["prior_purchase_1", "prior_purchase_2", "matching_identifiers", "evidence_category"],
+          "properties": {
+            "prior_purchase_1": {
+              "type": "object",
+              "properties": {
+                "payment_id": { "type": "string", "pattern": "^pay_[0-9A-HJKMNP-TV-Z]{26}$" },
+                "amount_cents": { "type": "integer" },
+                "processed_at": { "type": "string", "format": "date-time" },
+                "ip_address": { "type": "string" },
+                "device_fingerprint_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+              }
+            },
+            "prior_purchase_2": {
+              "type": "object",
+              "properties": {
+                "payment_id": { "type": "string", "pattern": "^pay_[0-9A-HJKMNP-TV-Z]{26}$" },
+                "amount_cents": { "type": "integer" },
+                "processed_at": { "type": "string", "format": "date-time" },
+                "ip_address": { "type": "string" },
+                "device_fingerprint_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+              }
+            },
+            "matching_identifiers": {
+              "type": "object",
+              "properties": {
+                "ip_match": { "type": "boolean" },
+                "device_fingerprint_match": { "type": "boolean" },
+                "email_match": { "type": "boolean" },
+                "shipping_address_match": { "type": "boolean" }
+              }
+            },
+            "evidence_category": {
+              "type": "string",
+              "enum": ["CE3.0"]
+            }
+          }
+        }
+      }
+    },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "submission_attempt_number auto-increments per chargeback (max + 1 at insert)",
+    "composite unique (tenant_id, chargeback_id, submission_attempt_number) — no duplicate attempts",
+    "invoice_evidence.invoice_id matches parent chargeback.invoice_id",
+    "receipt_evidence.receipt_date matches parent chargeback.filed_at within reasonable window (typically same billing cycle)",
+    "customer_signature_evidence.device_fingerprint_hash is SHA-256 hex (64 hex chars) — NEVER raw fingerprint content",
+    "customer_signature_evidence.ip_address is anonymized to /24 for GDPR minimisation",
+    "No field may contain PAN patterns (13-19 digit strings matching card BIN prefixes) — PCI-DSS Req 3.4 enforced by ChargebackEvidenceObserver.creating scan (CHARGEBACK_EVIDENCE_PCI_VIOLATION)",
+    "submitted_by_user_id must hold chargebacks.submit-evidence permission at submission time",
+    "parent chargeback.status must be IN ('pending_evidence', 'evidence_submitted') at evidence creation (CHARGEBACK_EVIDENCE_PARENT_LOCKED past that)",
+    "parent chargeback.evidence_due_by must be > NOW() at evidence creation (CHARGEBACK_EVIDENCE_DEADLINE_MISSED past deadline)",
+    "IMMUTABLE post-create (CHARGEBACK_EVIDENCE_IMMUTABLE) — corrections require submitting a new attempt with submission_attempt_number + 1",
+    "ce3_bundle metadata is populated ONLY when parent chargeback.ce3_eligible=true (via Ce3EvidenceBuilder)"
+  ]
+}

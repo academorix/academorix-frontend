@@ -1,0 +1,96 @@
+{
+  "id": "academorix://modules/chargeback/hooks",
+  "$version": 1,
+  "title": "chargeback — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Chargeback does not register a bootstrapper (nothing to hydrate at tenant-boot — the module resolves per-request), but registers twelve cascade hooks: tenant-erasure purge + archive, user-erasure redaction, dispute-lost → chargeback creation, chargeback-lost → two offsetting transactions + invoice state update + clawback fan-out + marketing negative-conversion + fraud signal, chargeback-won → reduce payment.amount_disputed_cents back, RDR-accept → refund creation.",
+  "namespace": "Academorix\\Finance\\Chargeback\\Hooks",
+  "hooks": [
+    {
+      "name": "PurgeChargebackDataForErasedTenant",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\PurgeChargebackDataForErasedTenant",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "Cascade delete via FK for non-invoice-linked chargebacks; writes compliance audit trail entry + emits count metrics per entity family (chargebacks / chargeback_evidence purged). Audit rows outlive the source rows per financial retention."
+    },
+    {
+      "name": "ArchiveChargebackFinancialRecordsOnTenantErasure",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\ArchiveChargebackFinancialRecordsOnTenantErasure",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErasing",
+      "purpose": "Runs BEFORE PurgeChargebackDataForErasedTenant. Migrates invoice-linked chargebacks (chargebacks where the parent invoice still exists in compliance_archive after tenant erasure) to compliance_archive.chargebacks + compliance_archive.chargeback_evidence. Financial-obligation retention overrides GDPR Art. 17 §3(b) exception."
+    },
+    {
+      "name": "RedactCustomerFromChargebacksOnUserErased",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\RedactCustomerFromChargebacksOnUserErased",
+      "kind": "cascade",
+      "listens_to": "user::UserErased",
+      "purpose": "GDPR minimisation. When a user is erased who submitted_by_user_id on any ChargebackEvidence: 90 days post-erasure, redact those user_id references to a hashed placeholder. Retention window unchanged; only PII fields redact. The evidence row stays for the 7-year financial audit trail."
+    },
+    {
+      "name": "CreateChargebackFromDisputeLost",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\CreateChargebackFromDisputeLost",
+      "kind": "cascade",
+      "listens_to": "payment::PaymentDisputeLost",
+      "purpose": "Wave 4 bridge. When a PaymentDispute is lost (customer's bank filed a full chargeback after the pre-chargeback dispute resolution): dispatches CreateChargebackFromDisputeJob to create a Chargeback row from the lost dispute — snapshots reason_code + reason_category + reason_description + amount + currency + provider + provider_reference_id from the parent PaymentDispute. Fires ChargebackFiled (P0)."
+    },
+    {
+      "name": "RecordOffsettingTransactionOnChargebackLost",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\RecordOffsettingTransactionOnChargebackLost",
+      "kind": "cascade",
+      "listens_to": "chargeback::ChargebackLost (self-listener within the finalization chain)",
+      "purpose": "Called by FinalizeChargebackJob step 1. Uses `transaction::TransactionRecorder::recordChargebackLoss($chargeback)` to record the double-entry ledger movement: debit chargebacks_expense, credit cash for the disputed amount. Persists transaction_id back onto the chargeback row. Runs in the same transaction as the lost status update — a Chargeback NEVER exists in lost state without its offsetting transaction (unless finalization failed + admin resolves via chargeback:reconcile)."
+    },
+    {
+      "name": "RecordNetworkFeeOnChargebackLost",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\RecordNetworkFeeOnChargebackLost",
+      "kind": "cascade",
+      "listens_to": "chargeback::ChargebackLost (self-listener within the finalization chain)",
+      "purpose": "Called by FinalizeChargebackJob step 2. Uses `NetworkFeeCalculator::compute` + `transaction::TransactionRecorder::recordChargebackFee($chargeback, $feeCents)` to record the SECONDARY offsetting Transaction for the network fee (typically $15-25 depending on network): debit chargeback_fees, credit cash. Persists fee_transaction_id back onto the chargeback row. Fires ChargebackNetworkFeeRecorded."
+    },
+    {
+      "name": "MarkInvoiceDisputedOnChargebackLost",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\MarkInvoiceDisputedOnChargebackLost",
+      "kind": "cascade",
+      "listens_to": "chargeback::ChargebackLost (self-listener within the finalization chain)",
+      "purpose": "Called by FinalizeChargebackJob step 3. Uses `invoice::InvoiceStateUpdater::markDisputed($chargeback)` to update parent invoice.status='disputed' + persists amount_disputed_cents. Also invokes `invoice::CreditNoteIssuer::createFromChargeback($chargeback)` to create the tax-reversal credit note (except for reason_category='card_recovery' where no tax reversal applies)."
+    },
+    {
+      "name": "CascadeClawbackReferralOnChargebackLost",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\CascadeClawbackReferralOnChargebackLost",
+      "kind": "cascade",
+      "listens_to": "chargeback::ChargebackLost (self-listener within the finalization chain)",
+      "purpose": "Called by FinalizeChargebackJob step 4 via ClawbackCoordinator. When the disputed invoice was linked to a materialized ReferralReward (referrals module, Wave 5): fires ChargebackClawbackReferral downstream. The referrals module handles the actual reward reversal + notifies the referrer with a 'chargeback loss' reason."
+    },
+    {
+      "name": "CascadeClawbackCouponOnChargebackLost",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\CascadeClawbackCouponOnChargebackLost",
+      "kind": "cascade",
+      "listens_to": "chargeback::ChargebackLost (self-listener within the finalization chain)",
+      "purpose": "Called by FinalizeChargebackJob step 4 via ClawbackCoordinator. When the disputed invoice had a redeemed coupon: fires ChargebackClawbackCoupon downstream. The coupon module listens + handles redemption reversal via ProcessCouponClawbackOnInvoiceCharged (sets `reversed_at` + decrements coupon.usage_count + records clawback_reason='chargeback')."
+    },
+    {
+      "name": "FireMarketingChargebackFiledOnChargebackLost",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\FireMarketingChargebackFiledOnChargebackLost",
+      "kind": "cascade",
+      "listens_to": "chargeback::ChargebackLost (self-listener within the finalization chain)",
+      "purpose": "Called by FinalizeChargebackJob step 5. Fires marketing::ChargebackFiled (Wave 5 bridge) — negative-value conversion event AND fraud signal that ad networks subtract from ROAS + retrain fraud models on. Distinct from marketing::RefundIssued in TWO ways: (1) chargebacks feed fraud models MORE heavily than refunds, (2) the reason_category field distinguishes fraud-labeled chargebacks (aggressive fraud model retraining) from consumer_disputes-labeled chargebacks (product-quality signal). Consent-gate is `advertising` — customers who have withdrawn advertising consent have their chargebacks suppressed at dispatch."
+    },
+    {
+      "name": "CreateRefundOnRdrAccept",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\CreateRefundOnRdrAccept",
+      "kind": "cascade",
+      "listens_to": "chargeback::ChargebackAcceptedRefund (self-listener)",
+      "purpose": "The RDR path handler. When admin clicks POST /chargebacks/{chargeback}/accept + RDR eligibility is verified: RdrHandler::accept creates a Refund via `refund::RefundOrchestrator::create` with reason='chargeback_prevention' + refund_type='full' + amount_cents=chargeback.amount_cents + refunded_to='original_payment_method' + metadata.originating_chargeback_id=chargeback.id. On RefundSucceeded (the finalization chain of the refund module completes), the chargeback transitions to accepted_refund + persists refund_id. Cheapest defense — no network fee, no rate impact."
+    },
+    {
+      "name": "ReducePaymentDisputedOnChargebackWon",
+      "class": "Academorix\\Finance\\Chargeback\\Hooks\\ReducePaymentDisputedOnChargebackWon",
+      "kind": "cascade",
+      "listens_to": "chargeback::ChargebackWon (self-listener)",
+      "purpose": "When a chargeback is won: UPDATE payments SET amount_disputed_cents = amount_disputed_cents - chargeback.amount_cents. Reduces the disputed amount tracking back — the money is returned. NOTE: the initial network fee is NOT refunded by the network on wins; banks keep the fee they collected. This hook reduces only the disputed_cents tracking, not the fee tracking."
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Chargeback does not need a tenant-boot hydration path — nothing per-tenant is preloaded into memory at boot. Config is fetched fresh per request; chargeback_number sequences are DB-backed; entitlements resolve per-request; rate monitoring is nightly."
+  }
+}

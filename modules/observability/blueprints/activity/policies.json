@@ -1,0 +1,113 @@
+{
+  "id": "academorix://modules/activity/policies",
+  "$version": 1,
+  "title": "activity — authorization policies",
+  "description": "Two policy classes. `ActivityPolicy` gates reads on activity rows (writes never happen over HTTP — the vendor trait is the only write path). `ActivityRetentionPolicyPolicy` gates CRUD on retention overrides. Guard-aware — each ability checks the caller's guard (sanctum / platform_admin) and gates accordingly.",
+  "policies": [
+    {
+      "class": "Academorix\\Observability\\Activity\\Policies\\ActivityPolicy",
+      "target": "Academorix\\Observability\\Activity\\Models\\Activity",
+      "guard": ["sanctum", "platform_admin"],
+      "abilities": [
+        {
+          "name": "viewAny",
+          "requires": ["activity.viewAny (sanctum, scoped to caller's tenant)"],
+          "description": "List activities in the caller's tenant. RBAC-narrowed by `activity.enforce_scope` middleware — the caller sees activities on entities they hold viewing permissions for + their own causer stream."
+        },
+        {
+          "name": "view",
+          "requires": [
+            "activity.viewAny AND (activity.tenant_id === auth_user.tenant_id) AND (activity.causer_id === auth_user.id OR caller has viewing permission on activity.subject OR caller.has('activity.audit_any'))"
+          ],
+          "description": "Show a specific activity. Tenant-scoped + subject-scoped OR admin-audit-scoped."
+        },
+        {
+          "name": "viewOwn",
+          "requires": ["auth_user is authenticated"],
+          "description": "The caller's own activity as causer. Available to every authenticated tenant user — the /activities/mine endpoint is always accessible."
+        },
+        {
+          "name": "viewByEntity",
+          "requires": [
+            "caller can view the entity itself (the entity's own policy is invoked to determine subject visibility)"
+          ],
+          "description": "Enumerate activity on a specific entity. Enforced via delegation to the entity's own policy — 'a booking's activity is visible to anyone who can view the booking'."
+        },
+        {
+          "name": "viewByUser",
+          "requires": [
+            "activity.audit_any OR (activity.viewAny AND {userId} === auth_user.id)"
+          ],
+          "description": "Enumerate activities where a specific user is causer. Callers see their own; admins with `activity.audit_any` see any user in the tenant."
+        },
+        {
+          "name": "subscribeFeed",
+          "requires": ["activity.viewAny"],
+          "description": "Authorize WebSocket subscription to activity broadcast channels. Enforced by the reverb channel auth callback — the sanctum request must present a valid PAT AND hold `activity.viewAny`."
+        },
+        {
+          "name": "export",
+          "requires": [
+            "activity.export AND tenant entitled to `activity_export` (medium plan+)"
+          ],
+          "description": "Trigger an asynchronous CSV export. Entitlement check runs alongside permission check."
+        },
+        {
+          "name": "viewAnyPlatform",
+          "guard": "platform_admin",
+          "requires": ["platform.activity.viewAny"],
+          "description": "Cross-tenant list for Academorix ops. Every list read captures the (platform_user_id, tenant_ids_touched, filters) tuple in the audit stream."
+        },
+        {
+          "name": "viewPlatform",
+          "guard": "platform_admin",
+          "requires": ["platform.activity.view"],
+          "description": "Cross-tenant detail read."
+        }
+      ]
+    },
+    {
+      "class": "Academorix\\Observability\\Activity\\Policies\\ActivityRetentionPolicyPolicy",
+      "target": "Academorix\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
+      "guard": ["sanctum"],
+      "abilities": [
+        {
+          "name": "viewAny",
+          "requires": ["activity.retention.manage"],
+          "description": "List retention policies. Admin-level compliance surface."
+        },
+        {
+          "name": "view",
+          "requires": ["activity.retention.manage AND policy.tenant_id === auth_user.tenant_id"],
+          "description": "Show a specific policy."
+        },
+        {
+          "name": "create",
+          "requires": [
+            "activity.retention.manage AND (retention_days <= 90 OR tenant entitled to `activity_retention_extended`)"
+          ],
+          "description": "Create a retention override. Entitlement gate — tenants without the entitlement can only create policies at the default (90d) or shorter; requests with retention_days > 90 return 402 GRANT_RETENTION_NOT_ENTITLED."
+        },
+        {
+          "name": "update",
+          "requires": [
+            "activity.retention.manage AND policy.tenant_id === auth_user.tenant_id AND (updated_retention_days <= 90 OR tenant entitled)"
+          ],
+          "description": "Patch a policy. Cannot change tenant_id or log_name post-create; only retention_days + override_reason + expires_at are patchable."
+        },
+        {
+          "name": "delete",
+          "requires": [
+            "activity.retention.manage AND policy.tenant_id === auth_user.tenant_id"
+          ],
+          "description": "Soft-delete a policy. Reverts the (tenant, log_name) pair to the config default; a purge sweep may fire immediately if the default is more restrictive."
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "The `viewByEntity` ability DELEGATES to the entity's own policy — that's the RBAC-scope enforcement. If a caller can't view a specific booking, they can't view its activity stream. This is enforced at the query layer in `activity.enforce_scope` middleware, not at the policy layer alone.",
+    "Every read is captured. Even a Gate::denies on `activity.view` is captured on the audit stream as a `preflight_failed` event — a denied peek at someone else's activity is a security signal.",
+    "There is no `create` / `update` / `delete` ability on `ActivityPolicy` — writes happen exclusively via the vendor `LogsActivity` trait. Attempts to POST /api/v1/activities return 405 Method Not Allowed."
+  ]
+}

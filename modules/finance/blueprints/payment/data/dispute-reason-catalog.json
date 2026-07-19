@@ -1,0 +1,133 @@
+{
+  "$version": 1,
+  "title": "Payment dispute reason catalogue",
+  "description": "The 9 dispute reasons the module supports. Each documents the typical merchant defense strategy, provider-specific mapping (Stripe's dispute reason ↔ our enum ↔ Adyen's ↔ etc.), and whether evidence collection auto-includes specific fields.",
+  "dispute_reasons": [
+    {
+      "reason": "fraudulent",
+      "display_name": "Fraudulent",
+      "description": "The cardholder claims the transaction was unauthorized. Merchant defense: prove the customer authenticated (3DS2 result, IP + device fingerprint match to history, delivery/service confirmation).",
+      "typical_defense_evidence": ["3ds_authentication_result", "service_documentation", "customer_signature", "communication_log"],
+      "auto_collected": true,
+      "provider_mapping": {
+        "stripe": "fraudulent",
+        "paddle": "fraudulent",
+        "adyen": "Fraud",
+        "square": "AMEX_NO_AUTHORIZATION / DISPUTE_UNAUTHORIZED",
+        "paypal": "UNAUTHORIZED"
+      }
+    },
+    {
+      "reason": "duplicate",
+      "display_name": "Duplicate charge",
+      "description": "The cardholder claims they were charged twice for the same purchase. Merchant defense: prove the charges are for distinct products/services or that a refund was already issued for the duplicate.",
+      "typical_defense_evidence": ["service_documentation", "refund_policy", "communication_log"],
+      "auto_collected": true,
+      "provider_mapping": {
+        "stripe": "duplicate",
+        "paddle": "duplicate",
+        "adyen": "DuplicateProcessing",
+        "square": "DUPLICATE_TRANSACTION",
+        "paypal": "DUPLICATE_TRANSACTION"
+      }
+    },
+    {
+      "reason": "product_not_received",
+      "display_name": "Product not received",
+      "description": "The cardholder claims they never received the product/service. Merchant defense: prove delivery (shipping tracking, service completion confirmation, session attendance record).",
+      "typical_defense_evidence": ["service_documentation", "customer_signature", "communication_log", "receipt"],
+      "auto_collected": true,
+      "provider_mapping": {
+        "stripe": "product_not_received",
+        "paddle": "product_not_received",
+        "adyen": "MerchandiseNotReceived",
+        "square": "GOODS_SERVICES_NOT_RECEIVED",
+        "paypal": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED"
+      }
+    },
+    {
+      "reason": "product_unacceptable",
+      "display_name": "Product unacceptable",
+      "description": "The cardholder claims the product/service was defective or not as described. Merchant defense: prove the product matched the description + no defect claims within the refund window.",
+      "typical_defense_evidence": ["product_description", "refund_policy", "service_documentation", "communication_log"],
+      "auto_collected": true,
+      "provider_mapping": {
+        "stripe": "product_unacceptable",
+        "paddle": "quality",
+        "adyen": "Quality",
+        "square": "MERCHANDISE_NOT_AS_DESCRIBED",
+        "paypal": "MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED"
+      }
+    },
+    {
+      "reason": "subscription_canceled",
+      "display_name": "Subscription canceled",
+      "description": "The cardholder claims they canceled the subscription but was still charged. Merchant defense: prove the cancellation was received AFTER the charge date OR that no cancellation was received.",
+      "typical_defense_evidence": ["service_documentation", "refund_policy", "communication_log"],
+      "auto_collected": true,
+      "provider_mapping": {
+        "stripe": "subscription_canceled",
+        "paddle": "subscription_canceled",
+        "adyen": "SubscriptionCanceled",
+        "square": "CANCELED_RECURRING_TRANSACTION",
+        "paypal": "RECURRING_TRANSACTION_MISMATCH"
+      }
+    },
+    {
+      "reason": "credit_not_processed",
+      "display_name": "Credit not processed",
+      "description": "The cardholder claims they were promised a refund/credit that was never issued. Merchant defense: prove either that the credit WAS issued OR that no credit was owed.",
+      "typical_defense_evidence": ["service_documentation", "refund_policy", "communication_log"],
+      "auto_collected": true,
+      "provider_mapping": {
+        "stripe": "credit_not_processed",
+        "paddle": "credit_not_processed",
+        "adyen": "CreditNotProcessed",
+        "square": "CREDIT_NOT_PROCESSED",
+        "paypal": "CREDIT_NOT_PROCESSED"
+      }
+    },
+    {
+      "reason": "general",
+      "display_name": "General",
+      "description": "Catch-all reason for disputes that don't fit a specific category. Merchant defense: provide all relevant evidence and describe the situation.",
+      "typical_defense_evidence": ["uncategorized_text", "service_documentation", "communication_log"],
+      "auto_collected": true,
+      "provider_mapping": {
+        "stripe": "general",
+        "paddle": "other",
+        "adyen": "General",
+        "square": "OTHER",
+        "paypal": "OTHER"
+      }
+    },
+    {
+      "reason": "customer_initiated",
+      "display_name": "Customer-initiated (informational)",
+      "description": "Customer contacted us directly + we escalated to dispute for internal tracking. Not a provider-initiated dispute. Reserved for the chargeback-listener integration when a Chargeback lands without our provider knowing first.",
+      "typical_defense_evidence": [],
+      "auto_collected": false,
+      "provider_mapping": {}
+    },
+    {
+      "reason": "unrecognized",
+      "display_name": "Unrecognized charge",
+      "description": "The cardholder doesn't recognize the merchant descriptor on their statement. Similar defense to fraudulent but usually resolves easily with a clarifying communication log + service documentation.",
+      "typical_defense_evidence": ["service_documentation", "customer_signature", "communication_log"],
+      "auto_collected": true,
+      "provider_mapping": {
+        "stripe": "unrecognized",
+        "paddle": "unrecognized",
+        "adyen": "Unrecognized",
+        "square": "TRANSACTION_AMOUNT_DIFFERS",
+        "paypal": "UNAUTHORIZED"
+      }
+    }
+  ],
+  "notes": [
+    "The reason enum is the authoritative list. Adding a new reason = updating this catalogue + updating the PaymentDisputeReason enum + updating each provider's webhook handler to map the provider-native reason to our enum.",
+    "The provider_mapping documents the reverse-direction bridge — when a provider webhook fires with their native reason string, the WebhookHandler translates it to our enum.",
+    "auto_collected=false means CollectDisputeEvidenceJob skips auto-collection for this reason — ops manually assembles evidence.",
+    "The typical_defense_evidence list guides admin UI — the SDUI evidence submission form highlights which fields to focus on given the dispute reason."
+  ]
+}

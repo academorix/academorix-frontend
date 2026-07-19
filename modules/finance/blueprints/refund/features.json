@@ -1,0 +1,81 @@
+{
+  "id": "academorix://modules/refund/features",
+  "$version": 1,
+  "title": "refund — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me -> data.features"
+  },
+  "features": [
+    {
+      "key": "refund.core",
+      "displayName": "Refunds",
+      "description": "Master feature key. Off = the whole module is invisible: no admin surfaces, no customer request path, no refund rendering on invoices.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "refund.customer_self_service",
+      "displayName": "Customer self-service refunds",
+      "description": "Enables POST /api/v1/refunds/mine for customer-initiated refund requests. When off, only admin can initiate refunds. Tenants with high-touch support flows may prefer to disable customer self-service.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "refund.partial",
+      "displayName": "Partial refunds",
+      "description": "Enables refund_type='partial' + the refund_lines editor. Small tier is limited to refund_type='full'.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "refund.prorated",
+      "displayName": "Prorated refunds",
+      "description": "Enables refund_type='prorated' for cancelled memberships. Medium+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "refund.multi_currency",
+      "displayName": "Multi-currency refunds",
+      "description": "Permits cross-currency refunds when refund.currency != parent payment.currency. Medium+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "refund.approval_workflow",
+      "displayName": "Approval workflow",
+      "description": "Enables the require-approval flow (amount + staleness + reason-based thresholds). Off = every refund auto-approves. Default ON — SOX §404 audit trail requires human-in-the-loop for financial reversals above threshold.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "refund.extended_retention",
+      "displayName": "Extended retention (10 years)",
+      "description": "Enterprise-only. Extends retention 7y -> 10y for financial audit alignment.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "refund.bulk_processing",
+      "displayName": "Bulk refund processing",
+      "description": "Enterprise-only. Unlocks bulk-refund CLI + admin bulk-issue UI for scenarios like class cancellation refunding 50+ athletes at once.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "refund.real_time_status_stream",
+      "displayName": "Real-time refund status stream",
+      "description": "Enables the tenant.{id}.refunds broadcast channel + opt-in real-time refund notifications. Useful for tenants with high refund velocity who want live visibility into approval queues + provider dispatch.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "refund.volume_report",
+      "displayName": "Refund volume report",
+      "description": "Enables the /api/v1/reports/refund-volume endpoint. All tiers get the report; the feature key exists to allow admins to disable it independently for high-load tenants.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

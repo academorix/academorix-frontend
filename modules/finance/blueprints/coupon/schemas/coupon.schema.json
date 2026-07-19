@@ -1,0 +1,244 @@
+{
+  "id": "academorix://modules/coupon/schemas/coupon",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Coupon",
+  "description": "Per-tenant discount code configuration. Carries `tenant_id` — cascades application through tenant per hierarchy.md §2. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, `scope_node_id`.",
+  "type": "object",
+  "x-module": "coupon",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "coupons",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "cpn_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Coupon\\Models\\Coupon",
+    "interface": "Academorix\\Finance\\Coupon\\Contracts\\Data\\CouponInterface",
+    "implements": ["Academorix\\Finance\\Coupon\\Contracts\\Data\\CouponInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasCouponRedemptions",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "discount_type": "CouponDiscountType",
+      "applicability": "CouponApplicability",
+      "issuance_source": "CouponIssuanceSource",
+      "discount_amount": "decimal:4",
+      "usage_cap": "integer",
+      "usage_count": "integer",
+      "per_customer_limit": "integer",
+      "minimum_order_amount": "integer",
+      "is_stackable": "boolean",
+      "is_active": "boolean",
+      "applicable_plan_ids": "array",
+      "issuance_context": "array",
+      "valid_from": "datetime",
+      "valid_until": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["CouponObserver"],
+    "appends": ["is_within_window", "is_at_cap", "remaining_uses"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `cpn_<26>`." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "code": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Uppercase alphanumeric + dash + underscore. Unique per (tenant_id, deleted_at IS NULL AND active window)."
+      },
+      "name": { "type": "string", "length": 128, "nullable": false, "description": "Admin display name." },
+      "description": { "type": "text", "nullable": true, "description": "Customer-visible marketing copy." },
+      "discount_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: percent / fixed_amount / free_period / first_month_free / bogo / free_shipping."
+      },
+      "discount_amount": {
+        "type": "decimal",
+        "precision": 10,
+        "scale": 4,
+        "nullable": true,
+        "description": "Interpretation depends on discount_type. percent: 0.0001..1.0000; fixed_amount: cents as integer stored as decimal; free_period: days as integer. NULL for first_month_free / bogo / free_shipping."
+      },
+      "discount_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217. Required when discount_type IN ('fixed_amount'); nullable for others."
+      },
+      "applicability": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'any'",
+        "description": "Enum: any / membership_only / specific_membership_plans / minimum_order_value."
+      },
+      "applicable_plan_ids": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Array of MembershipPlan IDs. Required non-empty when applicability='specific_membership_plans'."
+      },
+      "minimum_order_amount": {
+        "type": "integer",
+        "nullable": true,
+        "description": "In cents. Required when applicability='minimum_order_value'."
+      },
+      "minimum_order_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217. Required when applicability='minimum_order_value'."
+      },
+      "usage_cap": {
+        "type": "integer",
+        "nullable": true,
+        "description": "Total redemptions across all customers. NULL = unlimited. Zero refused."
+      },
+      "usage_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Running counter. Incremented atomically inside CouponRedeemer transaction. Reconciled nightly."
+      },
+      "per_customer_limit": {
+        "type": "integer",
+        "nullable": false,
+        "default": 1,
+        "description": "Max redemptions by a single customer. Default 1."
+      },
+      "valid_from": { "type": "timestamptz", "nullable": false, "description": "Coupon becomes valid at this timestamp." },
+      "valid_until": { "type": "timestamptz", "nullable": true, "description": "Coupon expires at this timestamp. NULL = open-ended (subject only to usage_cap + is_active)." },
+      "is_stackable": {
+        "type": "boolean",
+        "nullable": false,
+        "default": false,
+        "description": "When true, permits application alongside other coupons on the same target. Requires `coupon_stackable` entitlement (Enterprise)."
+      },
+      "is_active": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true,
+        "description": "Master toggle. Flipped false on: manual deactivate, usage_cap_reached, valid_until passed (via ExpireCouponsJob), applicable_plan_archived cascade."
+      },
+      "issuance_source": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "default": "'manual'",
+        "description": "Enum: manual / referral / marketing_campaign / import / api."
+      },
+      "issuance_context": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Origin metadata. Shape varies by issuance_source. referral: { referral_program_id, referral_id, referral_reward_id }. marketing_campaign: { campaign_name, campaign_id }. import: { source_file, imported_at }."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "code"],
+        "unique": true,
+        "name": "coupons_tenant_code_active_unique",
+        "predicate": "deleted_at IS NULL AND valid_from <= NOW() AND (valid_until IS NULL OR valid_until >= NOW())"
+      },
+      { "columns": ["tenant_id", "is_active"], "name": "coupons_active_idx" },
+      { "columns": ["tenant_id", "valid_from", "valid_until"], "name": "coupons_window_idx" },
+      { "columns": ["tenant_id", "issuance_source"], "name": "coupons_issuance_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "code",
+    "name",
+    "discount_type",
+    "applicability",
+    "usage_count",
+    "per_customer_limit",
+    "valid_from",
+    "is_stackable",
+    "is_active",
+    "issuance_source",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^cpn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "code": { "type": "string", "pattern": "^[A-Z0-9][A-Z0-9_-]{3,63}$", "maxLength": 64 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "description": { "type": ["string", "null"] },
+    "discount_type": {
+      "type": "string",
+      "enum": ["percent", "fixed_amount", "free_period", "first_month_free", "bogo", "free_shipping"]
+    },
+    "discount_amount": { "type": ["number", "null"], "minimum": 0 },
+    "discount_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "applicability": {
+      "type": "string",
+      "enum": ["any", "membership_only", "specific_membership_plans", "minimum_order_value"]
+    },
+    "applicable_plan_ids": {
+      "type": ["array", "null"],
+      "items": { "type": "string", "pattern": "^plan_[0-9A-HJKMNP-TV-Z]{26}$" }
+    },
+    "minimum_order_amount": { "type": ["integer", "null"], "minimum": 1 },
+    "minimum_order_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "usage_cap": { "type": ["integer", "null"], "minimum": 1 },
+    "usage_count": { "type": "integer", "minimum": 0 },
+    "per_customer_limit": { "type": "integer", "minimum": 1 },
+    "valid_from": { "type": "string", "format": "date-time" },
+    "valid_until": { "type": ["string", "null"], "format": "date-time" },
+    "is_stackable": { "type": "boolean" },
+    "is_active": { "type": "boolean" },
+    "issuance_source": {
+      "type": "string",
+      "enum": ["manual", "referral", "marketing_campaign", "import", "api"]
+    },
+    "issuance_context": { "type": ["object", "null"] },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "discount_type='percent' requires discount_amount 0.0001..1.0000 (0.25 = 25%); discount_currency null",
+    "discount_type='fixed_amount' requires positive discount_amount + non-null discount_currency",
+    "discount_type='free_period' requires discount_amount 1..365 (days); discount_currency null",
+    "discount_type='first_month_free' | 'bogo' | 'free_shipping' require NULL discount_amount + NULL discount_currency",
+    "applicability='specific_membership_plans' requires non-empty applicable_plan_ids",
+    "applicability='minimum_order_value' requires minimum_order_amount + minimum_order_currency",
+    "discount_type='bogo' forces applicability='specific_membership_plans'",
+    "discount_type IN ('free_period', 'first_month_free') forces applicability IN ('membership_only', 'specific_membership_plans')",
+    "valid_from < valid_until (when valid_until is set)",
+    "usage_count <= usage_cap (when usage_cap is set) — enforced by CouponRedeemer row lock",
+    "is_stackable=true requires `coupon_stackable` entitlement",
+    "discount_type IN ('free_period', 'first_month_free', 'bogo') requires `coupon_advanced_discount_types` entitlement",
+    "discount_type / discount_amount / discount_currency / applicability / applicable_plan_ids / minimum_order_amount cannot mutate once any redemption exists (COUPON_TERMS_LOCKED)"
+  ]
+}

@@ -1,0 +1,317 @@
+{
+  "id": "academorix://modules/refund/events",
+  "$version": 1,
+  "title": "refund — published events",
+  "namespace": "Academorix\\Finance\\Refund\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. Two events are CRITICAL: `RefundSucceeded` (P1 signal — the finalization chain fires credit-note + transaction + clawback fan-out + marketing negative-conversion), and `RefundFailed` / `RefundProviderError` (P1 signal — merchant fails to reverse a legitimate refund request, exposing customer-service + regulator risk). Financial events (`RefundApproved` / `RefundSucceeded` / `RefundClawbackReferral` / `RefundClawbackCoupon`) additionally fan out to finance::invoice for state update + finance::transaction for ledger offset + finance::credit-note (via invoice module) for reversal document. `RefundSucceeded` fires a marketing negative-value conversion downstream to protect ROAS + retrain fraud models on ad networks.",
+  "events": [
+    {
+      "name": "RefundRequested",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundRequested",
+      "trigger": "RefundRepository finished a successful create. Fires exactly once per refund. Distinct from `RefundApproved` — this fires unconditionally at initiation, before approval routing.",
+      "queue": "refunds",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial-audit)",
+        "activity::WriteToActivityLog",
+        "cache::InvalidateTenantRefundListCache",
+        "notifications::DispatchRefundRequestedNotification (customer — request confirmation)"
+      ],
+      "payload": {
+        "refund_id": "ULID (rfd_*)",
+        "tenant_id": "ULID (ten_*)",
+        "refund_number": "string (REF-2026-00000001)",
+        "payment_id": "ULID (pay_*)",
+        "invoice_id": "ULID (ivc_*)",
+        "amount_cents": "integer",
+        "currency": "string (ISO 4217)",
+        "reason": "'customer_requested' | 'product_not_received' | 'product_unacceptable' | 'duplicate_charge' | 'fraud_confirmed' | 'subscription_cancelled' | 'admin_correction' | 'chargeback_prevention' | 'regulator_required' | 'accounting_correction'",
+        "reason_note": "string",
+        "refund_type": "'full' | 'partial' | 'prorated'",
+        "refunded_to": "'original_payment_method' | 'customer_balance' | 'bank_transfer' | 'check'",
+        "requires_approval": "boolean",
+        "initiated_by_user_id": "ULID (usr_*)",
+        "initiated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RefundApprovalRequired",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundApprovalRequired",
+      "trigger": "RefundObserver.creating computed `requires_approval=true` (amount / staleness threshold OR always-approve reason). Distinct from RefundRequested (which fires unconditionally). Dispatches NotifyRefundApprovalRequiredJob to seed approver notifications.",
+      "queue": "refunds-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial-audit)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRefundApprovalRequiredNotification (admin approvers)",
+        "observability::MetricsCollector (academorix.refund.approvals_pending_total)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "amount_cents": "integer",
+        "currency": "string",
+        "reason": "string",
+        "reason_note": "string",
+        "trigger": "'amount_threshold' | 'staleness_threshold' | 'both' | 'always_approve_reason'",
+        "amount_threshold_cents": "integer | null",
+        "days_since_payment": "integer",
+        "days_threshold": "integer | null",
+        "initiated_by_user_id": "ULID"
+      }
+    },
+    {
+      "name": "RefundApproved",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundApproved",
+      "trigger": "Refund.status transitioned awaiting_approval -> approved. Approver clicked approve OR requires_approval=false path auto-transitioned at creation.",
+      "queue": "refunds-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial-audit)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRefundApprovedNotification (customer + admin)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "approved_by_user_id": "ULID | null (null when auto-approved)",
+        "approved_at": "ISO 8601",
+        "auto_approved": "boolean"
+      }
+    },
+    {
+      "name": "RefundRejected",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundRejected",
+      "trigger": "Refund.status transitioned awaiting_approval -> rejected. Approver clicked reject. Terminal state — no provider dispatch.",
+      "queue": "refunds",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial-audit)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRefundRejectedNotification (customer — with reason)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "rejected_by_user_id": "ULID",
+        "rejected_at": "ISO 8601",
+        "rejection_reason": "string (256)"
+      }
+    },
+    {
+      "name": "RefundProcessing",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundProcessing",
+      "trigger": "Refund.status transitioned approved -> processing. InitiateProviderRefundJob dispatched the provider-side createRefund call + received an async 'processing' response.",
+      "queue": "refunds",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRefundProcessedNotification (customer — money on the way, ~5-10 days for card refunds)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "'stripe' | 'paddle' | 'adyen' | 'square' | 'paypal' | 'custom_webhook'",
+        "provider_reference_id": "string | null",
+        "processing_at": "ISO 8601",
+        "estimated_delivery_at": "ISO 8601 | null (provider-communicated when available)"
+      }
+    },
+    {
+      "name": "RefundSucceeded",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundSucceeded",
+      "trigger": "Refund.status transitioned processing -> succeeded. Provider webhook OR CheckRefundProviderStatusJob confirmed terminal success. FIRES THE FINALIZATION CHAIN: credit note creation + offsetting transaction + invoice state update + clawback fan-out + marketing negative-conversion. P1 event.",
+      "queue": "refunds-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "invoice::MarkInvoiceRefundedOnFullRefundSucceeded (state update + accumulate amount_refunded_cents)",
+        "invoice::CreateCreditNoteOnRefundSucceeded (via CreditNoteIssuer — creates reversal invoice)",
+        "transaction::RecordOffsettingTransactionOnRefundSucceeded (via TransactionRecorder — debit refunds_owed, credit cash)",
+        "refund::ClawbackCoordinator (dispatches RefundClawbackReferral + RefundClawbackCoupon downstream)",
+        "marketing::FireMarketingRefundIssuedOnRefundSucceeded (negative-value conversion — ad-network ROAS adjustment)",
+        "notifications::DispatchRefundSucceededNotification (customer — money received; note: for cards, this is estimated delivery not exact)",
+        "observability::MetricsCollector (academorix.refund.succeeded_total labelled by reason)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "refund_number": "string",
+        "payment_id": "ULID",
+        "invoice_id": "ULID",
+        "credit_note_id": "ULID (crn_*) | null (populated post-CreditNoteIssuer)",
+        "transaction_id": "ULID (trx_*) | null (populated post-TransactionRecorder)",
+        "amount_cents": "integer",
+        "currency": "string",
+        "provider_fee_reversal_cents": "integer | null",
+        "reason": "string",
+        "refund_type": "string",
+        "provider": "string",
+        "provider_reference_id": "string | null",
+        "refunded_to": "string",
+        "customer_type": "'user' | 'athlete'",
+        "customer_id": "ULID",
+        "initiated_by_user_id": "ULID",
+        "approved_by_user_id": "ULID | null",
+        "processed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RefundFailed",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundFailed",
+      "trigger": "Refund.status transitioned processing -> failed. Provider returned a non-recoverable error (original charge already refunded, provider account closed, source no longer valid). Terminal. Customer + admin notified. Payment untouched.",
+      "queue": "refunds-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRefundFailedNotification (customer + admin)",
+        "observability::MetricsCollector (academorix.refund.failed_total labelled by failure_reason_category)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "payment_id": "ULID",
+        "amount_cents": "integer",
+        "currency": "string",
+        "provider": "string",
+        "failure_reason": "string (256)",
+        "provider_error_code": "string | null",
+        "failed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RefundCancelled",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundCancelled",
+      "trigger": "Refund.status transitioned awaiting_approval | approved -> cancelled. Cancel path — customer cancelled their own request OR admin cancelled before provider dispatch. Terminal.",
+      "queue": "refunds",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRefundStatusNotification (customer)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "cancelled_by_user_id": "ULID (customer or admin)",
+        "cancelled_at": "ISO 8601",
+        "cancel_reason": "string | null"
+      }
+    },
+    {
+      "name": "RefundLineCreated",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundLineCreated",
+      "trigger": "RefundLineRepository finished a successful create. Fires per line at partial / prorated refund creation. Distinct from RefundRequested (parent) — one parent request emits one RefundRequested + N RefundLineCreated events.",
+      "queue": "refunds",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "activity::WriteToActivityLog"
+      ],
+      "payload": {
+        "refund_line_id": "ULID (rfl_*)",
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_line_id": "ULID (iln_*)",
+        "amount_cents": "integer",
+        "currency": "string",
+        "proration_config": "object | null (frozen unused_period + pass_credit)",
+        "reason_note": "string | null"
+      }
+    },
+    {
+      "name": "RefundClawbackReferral",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundClawbackReferral",
+      "trigger": "RefundSucceeded fired + ClawbackCoordinator detected that the refunded invoice was linked to a materialized ReferralReward. Cascades to growth::referrals for reward reversal.",
+      "queue": "refunds-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "referrals::ProcessReferralClawback (Wave 5 — reverses the reward + notifies the referrer; coupon-rewards cascade further to coupon::ProcessCouponClawback)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_id": "ULID",
+        "referral_reward_id": "ULID (rrw_*)",
+        "reward_type": "'percent_discount' | 'fixed_amount' | 'credit' | 'points'",
+        "reward_amount_cents": "integer",
+        "requested_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RefundClawbackCoupon",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundClawbackCoupon",
+      "trigger": "RefundSucceeded fired + ClawbackCoordinator detected that the refunded invoice had a redeemed coupon. Cascades to coupon module for redemption reversal.",
+      "queue": "refunds-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "coupon::ProcessCouponClawbackOnInvoiceRefunded (reverses redemption + decrements coupon.usage_count + fires CouponClawbackCompleted)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_id": "ULID",
+        "coupon_redemption_id": "ULID (crd_*)",
+        "coupon_id": "ULID (cpn_*)",
+        "requested_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RefundNotifiedProvider",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundNotifiedProvider",
+      "trigger": "InitiateProviderRefundJob successfully called the provider's createRefund method and received a 2xx response. Distinct from RefundProcessing (which fires on the async 'processing' state after the call) — this fires immediately after the HTTP call succeeds.",
+      "queue": "refunds",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "observability::MetricsCollector (academorix.refund.provider_dispatch_total labelled by provider)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "provider_reference_id": "string",
+        "provider_response_code": "integer",
+        "notified_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RefundProviderError",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundProviderError",
+      "trigger": "Refund.status transitioned processing -> provider_error. Provider returned a non-terminal error (network timeout, transient outage, rate limit) — the refund is retryable via ReconcileRefundsJob or manual force-fail after investigation. P1 signal — actionable to ops.",
+      "queue": "refunds-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchRefundStatusNotification (admin only — do not alarm customer until terminal)",
+        "observability::MetricsCollector (academorix.refund.provider_errors_total labelled by provider + error_category)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "error_message": "string (256)",
+        "provider_error_code": "string | null",
+        "error_category": "'network_timeout' | 'rate_limit' | 'transient_5xx' | 'authentication' | 'unknown'",
+        "retry_count": "integer",
+        "occurred_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "RefundProviderReconciled",
+      "class": "Academorix\\Finance\\Refund\\Events\\RefundProviderReconciled",
+      "trigger": "Provider webhook (via payment::PaymentWebhookHandler dispatching a refund-status webhook) OR ReconcileRefundsJob detected a state change on the provider side. The refund's status is now aligned with the provider's authoritative record. Distinct from RefundSucceeded / RefundFailed — this event fires FIRST (before terminal transition) to record the reconciliation itself.",
+      "queue": "refunds",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "observability::MetricsCollector (academorix.refund.reconciliations_total labelled by drift_detected)"
+      ],
+      "payload": {
+        "refund_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "provider_reference_id": "string",
+        "provider_status": "string (provider-native status)",
+        "reconciled_local_status": "string (our terminal status after reconciliation)",
+        "drift_detected": "boolean (true when the local status differed from provider)",
+        "reconciled_at": "ISO 8601"
+      }
+    }
+  ]
+}

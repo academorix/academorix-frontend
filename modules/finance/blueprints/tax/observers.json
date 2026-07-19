@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/tax/observers",
+  "$version": 1,
+  "title": "tax — Eloquent observers",
+  "description": "Four observers enforce the module's write-time invariants: rate creation with effective-range validation + overlap detection, jurisdiction with ISO 3166 validation, exemption with certificate URL + verification workflow, and calculation with the immutable snapshot pattern.",
+  "observers": [
+    {
+      "model": "TaxRate",
+      "observer": "Academorix\\Finance\\Tax\\Observers\\TaxRateObserver",
+      "handles": [
+        "creating → populate ULID prefix `txr_`",
+        "creating → refuse when tenant does NOT hold `tax_capture` entitlement (returns `TAX_FEATURE_NOT_ENTITLED`)",
+        "creating → validate percentage in range [0.0000, 1.0000] (returns `TAX_RATE_INVALID_PERCENTAGE` — 100%+ tax rates almost always indicate misconfiguration)",
+        "creating → validate effective_from < effective_to when both set (returns `TAX_RATE_INVALID_EFFECTIVE_RANGE`)",
+        "creating → refuse overlapping (tenant_id, tax_jurisdiction_id, rate_type, applies_to, effective_range) via range-overlap query (returns `TAX_RATE_OVERLAPPING_RANGE` — two concurrent rates for the same tuple would make resolution ambiguous)",
+        "creating → default source='manual' when not provided (source='provider_synced' is set explicitly by SyncTaxRatesFromProviderJob)",
+        "creating → fire TaxRateCreated after commit",
+        "updating (percentage / effective_from / effective_to changed) → validate the new value against the same rules as create",
+        "updating → refuse when any tax_calculations row has referenced this rate via tax_rate_snapshot.rate_id (returns `TAX_CALCULATION_IMMUTABLE` — historical calculations must resolve to the exact rate that applied at issuance; rate mutation would corrupt the audit trail; instead, create a new rate with effective_from = today and set effective_to on the old rate)",
+        "updating → fire TaxRateUpdated",
+        "deleting (soft-delete) → refuse when any active tax_calculations references this rate (returns `TAX_CALCULATION_IMMUTABLE` — same rationale)",
+        "deleting (hard-delete) → refuse always (rates retain indefinitely for audit — the module has no soft-delete on tax_rates; effective_to <= today handles the 'expired' state without removing the row)"
+      ]
+    },
+    {
+      "model": "TaxJurisdiction",
+      "observer": "Academorix\\Finance\\Tax\\Observers\\TaxJurisdictionObserver",
+      "handles": [
+        "creating → populate ULID prefix `txj_`",
+        "creating → validate country_code against ISO 3166-1 alpha-2 catalog via league/iso3166 (returns `TAX_JURISDICTION_INVALID_COUNTRY`)",
+        "creating → validate state_code (when set) against ISO 3166-2 subdivisions for the country_code (returns `TAX_JURISDICTION_INVALID_STATE`)",
+        "creating → validate postal_code_pattern is a valid PCRE regex when set (returns `TAX_JURISDICTION_INVALID_POSTAL_PATTERN`)",
+        "creating → refuse when tenant_id IS NOT NULL AND tenant does NOT hold `tax_jurisdiction_custom` entitlement (returns `TAX_JURISDICTION_CUSTOM_NOT_ENTITLED` — Enterprise-only)",
+        "creating → refuse duplicate composite (tenant_id, country_code, state_code, city, postal_code_pattern, tax_type) partial WHERE deleted_at IS NULL (returns `TAX_JURISDICTION_DUPLICATE`)",
+        "creating → refuse when tenant_id IS NULL AND actor does NOT hold `super_admin` role (returns `TAX_INSUFFICIENT_ROLE` — only platform-ops can create platform-reference jurisdictions)",
+        "creating → fire TaxJurisdictionCreated",
+        "updating (country_code / state_code / postal_code_pattern changed) → re-validate against ISO catalogs; refuse when invalid",
+        "updating → fire TaxJurisdictionUpdated",
+        "updating (effective_to set to a past date) → fire internal event TaxJurisdictionDeactivated → CascadeExemptionExpiryOnJurisdictionDeactivated hook triggers exemption expiry",
+        "deleting (soft-delete) → refuse when any tax_rates references this jurisdiction (RESTRICT FK enforces this at DB level; observer surfaces a clear error message)"
+      ]
+    },
+    {
+      "model": "TaxExemption",
+      "observer": "Academorix\\Finance\\Tax\\Observers\\TaxExemptionObserver",
+      "handles": [
+        "creating → populate ULID prefix `txe_`",
+        "creating → refuse when tenant does NOT hold `tax_exemption_management` entitlement (returns `TAX_EXEMPTION_MANAGEMENT_NOT_ENTITLED`)",
+        "creating → validate valid_from < valid_until when both set (returns `TAX_EXEMPTION_INVALID_VALIDITY_RANGE`)",
+        "creating → validate certificate_document_url matches ^https://[tenant-bucket-prefix].s3.*.amazonaws.com/... (returns `TAX_EXEMPTION_INVALID_CERTIFICATE_URL` — must be an HTTPS S3 signed URL under the tenant-scoped bucket prefix; enforces cross-tenant isolation on certificate storage)",
+        "creating → validate cross-model tenant integrity: the referenced customer (User / Athlete / Organization) must belong to the same tenant_id as the exemption (defense-in-depth against cross-tenant FK smuggling)",
+        "creating → validate issuing_jurisdiction_id references a jurisdiction with tenant_id IS NULL (platform reference) OR the same tenant_id (returns `TAX_JURISDICTION_NOT_FOUND` when mismatch)",
+        "creating → refuse duplicate composite (tenant_id, customer_type, customer_id, exemption_type, issuing_jurisdiction_id) partial WHERE deleted_at IS NULL AND verification_status = 'verified' (returns `TAX_EXEMPTION_DUPLICATE` — a customer cannot have TWO verified exemptions of the same type for the same jurisdiction)",
+        "creating → encrypt certificate_document_url at rest",
+        "creating → set verification_status='pending' + verified_at=NULL + verified_by_user_id=NULL",
+        "creating → fire TaxExemptionCreated",
+        "creating → dispatch VerifyTaxExemptionJob when the issuing_jurisdiction has a registered #[AsExemptionVerifier] verifier",
+        "updating (verification_status changed) → enforce state machine: pending → verified / rejected; verified → expired (automatic only, via ExpireExemptionsJob). No transitions FROM verified back to pending. No un-reject. No un-expire. (returns `TAX_EXEMPTION_INVALID_STATUS_TRANSITION`)",
+        "updating (verification_status → verified) → require verified_by_user_id present (unless the transition is triggered by an automatic registry check) + set verified_at = now()",
+        "updating (verification_status → verified) → fire TaxExemptionVerified",
+        "updating (verification_status → rejected) → require rejection reason on metadata + fire TaxExemptionRejected",
+        "updating (verification_status → expired) → refuse manual — only ExpireExemptionsJob can transition to 'expired'",
+        "updating (certificate_document_url changed) → re-validate URL + re-encrypt + require re-verification (transition back to 'pending')",
+        "deleting (soft-delete) → refuse when any tax_calculations has referenced this exemption via exemption_applied jsonb (returns `TAX_CALCULATION_IMMUTABLE`)",
+        "deleting (hard-delete) → allow only when soft-deleted > 7 years ago (regulator audit retention)"
+      ]
+    },
+    {
+      "model": "TaxCalculation",
+      "observer": "Academorix\\Finance\\Tax\\Observers\\TaxCalculationObserver",
+      "handles": [
+        "creating → populate ULID prefix `txc_`",
+        "creating → refuse when tenant does NOT hold `tax_capture` entitlement (returns `TAX_FEATURE_NOT_ENTITLED`)",
+        "creating → require source_amount_cents AND source_currency both present (returns `TAX_CALCULATION_MISSING_AMOUNT_OR_CURRENCY`)",
+        "creating → validate source_currency is a valid ISO 4217 3-letter uppercase code (returns `TAX_CALCULATION_INVALID_CURRENCY`)",
+        "creating → refuse when source_currency != tenant.default_region.currency AND tenant does NOT hold `tax_multi_currency` entitlement (returns `TAX_CALCULATION_MULTI_CURRENCY_NOT_ENTITLED` — Medium+ only)",
+        "creating → refuse when tenant has a mandated provider config for the jurisdiction AND the calculation is being computed via NativeCalculator (returns `TAX_CALCULATION_PROVIDER_MANDATED` — fail-safe against under-charging on complex nexus jurisdictions)",
+        "creating → freeze tax_rate_snapshot jsonb (rate_id + percentage + jurisdiction + effective_at date) into the row",
+        "creating → freeze exemption_applied jsonb (certificate_number + exemption_type + issuing_jurisdiction + valid_from + valid_until) when an exemption was applied",
+        "creating → set calculated_at = now() (immutable timestamp — regulator audit)",
+        "creating → fire TaxCalculationCompleted",
+        "updating → REFUSE ALL — tax_calculations rows are IMMUTABLE after commit (returns `TAX_CALCULATION_IMMUTABLE`)",
+        "deleting → REFUSE ALL — tax_calculations retain 7 years (10 for Enterprise) via PurgeExpiredCalculationsJob migrating to tax_calculations_archive; no soft-delete + no hard-delete inside the module. The FK CASCADE on tenant_id cascades on TenantErased AFTER MigrateCalculationsToArchiveOnTenantErased runs (priority 20 vs the cascade's priority 50)."
+      ]
+    }
+  ]
+}

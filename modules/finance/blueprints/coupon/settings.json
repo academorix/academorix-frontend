@@ -1,0 +1,133 @@
+{
+  "id": "academorix://modules/coupon/settings",
+  "$version": 1,
+  "title": "coupon — settings",
+  "description": "Tenant-facing preferences (per-tenant coupon defaults + rate-limit thresholds + retention window override). No user-level preferences — coupons are admin-authored artifacts, never a user preference surface.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "coupon",
+      "class": "Academorix\\Finance\\Coupon\\Settings\\CouponSettings",
+      "label": "Coupons",
+      "description": "Tenant-wide defaults for coupon issuance + validation.",
+      "icon": "ticket",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 55,
+      "permission": "coupons.viewAny",
+      "requiresEntitlement": "coupon_capture",
+      "sections": [
+        {
+          "label": "Coupon defaults",
+          "description": "Default values applied to newly-created coupons. Overridable per coupon.",
+          "icon": "cog",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_discount_type",
+              "controlType": "select",
+              "label": "Default discount type",
+              "defaultValue": "percent",
+              "options": {
+                "percent": "Percent discount",
+                "fixed_amount": "Fixed amount",
+                "free_period": "Free period (Medium+)",
+                "first_month_free": "First month free (Medium+)",
+                "bogo": "Buy one, get one (Medium+)",
+                "free_shipping": "Free shipping"
+              },
+              "sortOrder": 1
+            },
+            {
+              "name": "default_per_customer_limit",
+              "controlType": "number",
+              "label": "Default per-customer limit",
+              "defaultValue": 1,
+              "min": 1,
+              "helpText": "How many times a single customer can redeem the coupon. 1 = one-shot per customer.",
+              "sortOrder": 2
+            },
+            {
+              "name": "default_stackable",
+              "controlType": "toggle",
+              "label": "Default: stackable",
+              "defaultValue": false,
+              "helpText": "Allow multiple coupons per invoice by default. Requires Enterprise `coupon_stackable`.",
+              "requiresEntitlement": "coupon_stackable",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Rate limits",
+          "description": "Preview + validate endpoint rate limits (protects against brute-force enumeration).",
+          "icon": "shield-check",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "rate_limit_ip_per_hour",
+              "controlType": "number",
+              "label": "Max preview/validate calls per IP per hour",
+              "defaultValue": 20,
+              "min": 1,
+              "max": 100,
+              "helpText": "10 is a safe default. Raise for high-traffic tenants; lower for high-risk industries.",
+              "sortOrder": 1
+            },
+            {
+              "name": "rate_limit_user_per_hour",
+              "controlType": "number",
+              "label": "Max preview/validate calls per authenticated user per hour",
+              "defaultValue": 60,
+              "min": 1,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Reporting",
+          "icon": "chart-bar",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "weekly_report_recipients",
+              "controlType": "multi-user-select",
+              "label": "Weekly report recipients",
+              "helpText": "Users to notify when the weekly coupon usage report is generated. Empty = no notification (report still generated + available via GET /coupons/report).",
+              "sortOrder": 1
+            },
+            {
+              "name": "notify_on_every_redemption",
+              "controlType": "toggle",
+              "label": "Notify admins on every redemption",
+              "defaultValue": false,
+              "helpText": "Opt-in real-time push. Useful for high-value / limited campaigns. Off by default (most tenants don't want per-redemption pings).",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "icon": "archive-box",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "retention_years",
+              "controlType": "select",
+              "label": "Retention window",
+              "defaultValue": 7,
+              "options": {
+                "7": "7 years (default)",
+                "10": "10 years (Enterprise)"
+              },
+              "helpText": "10 years requires the `coupon_extended_retention` entitlement.",
+              "requiresEntitlement": "coupon_extended_retention",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

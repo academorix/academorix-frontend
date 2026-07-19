@@ -1,0 +1,133 @@
+{
+  "$version": 1,
+  "title": "Refund reason catalogue",
+  "description": "Every valid refund reason + its properties + validation bounds + display metadata. The valid_reason rule reads this catalogue. The RefundObserver + RefundApprovalManager use it to gate customer-vs-admin path + always-approve determination.",
+  "reasons": [
+    {
+      "reason": "customer_requested",
+      "display_name": "Customer requested",
+      "description": "Customer explicitly asked for the refund. No product/service issue identified. Discretionary refund at merchant option.",
+      "customer_allowed": true,
+      "admin_allowed": true,
+      "always_require_approval": false,
+      "auto_approve": false,
+      "typical_use_case": "'I changed my mind about the annual membership before using it.' Discretionary refund based on tenant's refund policy.",
+      "example_display": "Customer changed their mind",
+      "regulator_relevance": null
+    },
+    {
+      "reason": "product_not_received",
+      "display_name": "Product not received",
+      "description": "Service not rendered (missed class due to coach absence, cancelled event, facility closure). Customer paid for something that didn't happen.",
+      "customer_allowed": true,
+      "admin_allowed": true,
+      "always_require_approval": false,
+      "auto_approve": false,
+      "typical_use_case": "'The 8am spin class was cancelled 30 min before start, but I already paid.'",
+      "example_display": "Service not delivered",
+      "regulator_relevance": "consumer protection law — likely mandated refund window in most jurisdictions"
+    },
+    {
+      "reason": "product_unacceptable",
+      "display_name": "Product unacceptable",
+      "description": "Service rendered but quality issue (equipment failure mid-class, coach absence, facility issue during a paid slot). Customer received something substandard.",
+      "customer_allowed": true,
+      "admin_allowed": true,
+      "always_require_approval": false,
+      "auto_approve": false,
+      "typical_use_case": "'The gym A/C failed during my hour-long PT session — the room was 30°C.'",
+      "example_display": "Quality issue",
+      "regulator_relevance": "consumer protection law — likely partial refund mandate"
+    },
+    {
+      "reason": "duplicate_charge",
+      "display_name": "Duplicate charge",
+      "description": "Provider or ops caught a duplicate capture (same invoice paid twice due to network retry / customer double-clicking / provider bug). AUTO-APPROVE — system-initiated.",
+      "customer_allowed": false,
+      "admin_allowed": true,
+      "always_require_approval": false,
+      "auto_approve": true,
+      "typical_use_case": "Finance ops caught the duplicate via nightly reconciliation. Refund is 100% automated — no human approval needed.",
+      "example_display": "Duplicate charge auto-refunded",
+      "regulator_relevance": "PCI-DSS + card network rules — duplicate charges must be reversed promptly"
+    },
+    {
+      "reason": "fraud_confirmed",
+      "display_name": "Fraud confirmed",
+      "description": "Fraud team confirmed the card was stolen (chargeback prevention). Admin-only reason. Customer NEVER sees this reason on their notification — the notification presents a generic 'refund processed for security reasons' message.",
+      "customer_allowed": false,
+      "admin_allowed": true,
+      "always_require_approval": true,
+      "auto_approve": false,
+      "typical_use_case": "Card processor flagged a transaction as fraudulent; ops confirms via manual review before refunding.",
+      "example_display": "Security refund",
+      "regulator_relevance": "PCI-DSS + AML — fraud confirmation triggers additional audit trail requirements"
+    },
+    {
+      "reason": "subscription_cancelled",
+      "display_name": "Subscription cancelled",
+      "description": "Membership cancelled mid-period → prorated refund of unused time. Typically used with refund_type='prorated'.",
+      "customer_allowed": true,
+      "admin_allowed": true,
+      "always_require_approval": false,
+      "auto_approve": false,
+      "typical_use_case": "'Cancelling my annual membership 3 months in — refund me for the remaining 9 months.' Prorated refund via ProrationCalculator.",
+      "example_display": "Membership cancellation refund",
+      "regulator_relevance": "consumer protection law — proration may be regulator-mandated in some jurisdictions"
+    },
+    {
+      "reason": "admin_correction",
+      "display_name": "Admin correction",
+      "description": "Ops caught a billing error (wrong plan applied, coupon should have been honoured, tax mis-calculated). Admin-only reason. Requires approval.",
+      "customer_allowed": false,
+      "admin_allowed": true,
+      "always_require_approval": true,
+      "auto_approve": false,
+      "typical_use_case": "'Our checkout page had a bug for 2 hours; 12 customers were charged the annual rate instead of monthly. Refund the difference to each.'",
+      "example_display": "Billing correction",
+      "regulator_relevance": "US tax law + SOX §404 — billing corrections require audit trail"
+    },
+    {
+      "reason": "chargeback_prevention",
+      "display_name": "Chargeback prevention",
+      "description": "Customer threatened chargeback; ops issues refund proactively to avoid provider fees + network scrutiny. Often initiated by payment::PaymentDisputeAccepted event.",
+      "customer_allowed": false,
+      "admin_allowed": true,
+      "always_require_approval": true,
+      "auto_approve": false,
+      "typical_use_case": "Customer wrote 'I'll charge back if you don't refund' in a support ticket — refunding avoids the ~$25 chargeback fee + network scrutiny.",
+      "example_display": "Dispute resolution refund",
+      "regulator_relevance": "Card network rules — chargeback rate above 1% triggers processor scrutiny; proactive refunds keep rate low"
+    },
+    {
+      "reason": "regulator_required",
+      "display_name": "Regulator required",
+      "description": "Data protection authority / consumer protection agency directive (e.g. cooling-off period breach, deceptive practices ruling, GDPR non-compliance findings). Admin-only reason. Legal-team-approved.",
+      "customer_allowed": false,
+      "admin_allowed": true,
+      "always_require_approval": true,
+      "auto_approve": false,
+      "typical_use_case": "'CA regulator ruled our cooling-off period disclosure was unclear. Refund the 47 affected customers.'",
+      "example_display": "Regulatory refund",
+      "regulator_relevance": "GDPR / CCPA / consumer protection law — regulator-mandated retention + reporting"
+    },
+    {
+      "reason": "accounting_correction",
+      "display_name": "Accounting correction",
+      "description": "Finance team caught a downstream accounting error requiring reversal (mis-classified revenue, tax-jurisdiction correction, currency-conversion error post-payment). Admin-only reason. Finance-team-approved.",
+      "customer_allowed": false,
+      "admin_allowed": true,
+      "always_require_approval": true,
+      "auto_approve": false,
+      "typical_use_case": "'Q3 audit caught 3 payments incorrectly attributed to CA tax jurisdiction; refund the incorrect tax + re-invoice with correct tax.'",
+      "example_display": "Accounting reversal",
+      "regulator_relevance": "US tax law + SOX §404 + audit trail requirements"
+    }
+  ],
+  "notes": [
+    "customer_allowed=false reasons are refused from POST /refunds/mine (customer path). RefundObserver returns REFUND_ADMIN_REASON_FROM_CUSTOMER 403 on violation.",
+    "auto_approve=true reasons (currently just duplicate_charge) force requires_approval=false regardless of amount / staleness thresholds. System-initiated path.",
+    "always_require_approval=true reasons force requires_approval=true regardless of thresholds. These are the sensitive-reason set (fraud / admin / regulator / accounting / chargeback_prevention).",
+    "The customer-facing rendering NEVER surfaces admin-only reasons directly — the notification presents a generic message ('refund processed', 'security refund', 'billing correction') to protect ongoing investigations."
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/coupon/data-classes",
+  "$version": 1,
+  "title": "coupon — field classification",
+  "description": "Coupon data is a mix of commercial reference data (public within tenant admin — code strings, discount config), operational identifiers (redemption customer_id, applied_to_id), financial records (discount_amount_cents + final_amount_cents on every redemption — 7y financial retention), marketing-adjacent metadata (issuance_context tagging referral / campaign), and per-customer usage counters. No health / medical / minor-specific data on any row.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Coupon.id",
+      "Coupon.tenant_id",
+      "Coupon.code (customer-facing — printed on invoices, marketing collateral)",
+      "Coupon.name",
+      "Coupon.description",
+      "Coupon.is_active",
+      "Coupon.discount_type",
+      "Coupon.applicability",
+      "Coupon.valid_from",
+      "Coupon.valid_until",
+      "Coupon.is_stackable",
+      "Coupon.issuance_source",
+      "CouponRedemption.status (derived: reversed_at NULL vs not)",
+      "CouponRedemption.redeemed_at"
+    ],
+    "internal": [
+      "Coupon.usage_count (internal counter — admin-visible)",
+      "Coupon.per_customer_limit",
+      "Coupon.applicable_plan_ids",
+      "Coupon.issuance_context",
+      "Coupon.created_by",
+      "Coupon.updated_by",
+      "Coupon.deleted_by",
+      "Coupon.created_at",
+      "Coupon.updated_at",
+      "Coupon.deleted_at",
+      "CouponRedemption.id",
+      "CouponRedemption.tenant_id",
+      "CouponRedemption.coupon_id",
+      "CouponRedemption.customer_type",
+      "CouponRedemption.customer_id",
+      "CouponRedemption.redeemed_by_user_id",
+      "CouponRedemption.applied_to_type",
+      "CouponRedemption.applied_to_id",
+      "CouponRedemption.reversed_at",
+      "CouponRedemption.reversed_by_user_id"
+    ],
+    "confidential": [
+      "Coupon.discount_amount (tenant-competitive — competitors would benefit from seeing the exact reward table)",
+      "Coupon.discount_currency",
+      "Coupon.usage_cap (campaign-size signal — competitors would infer the tenant's marketing budget)",
+      "Coupon.minimum_order_amount",
+      "Coupon.minimum_order_currency",
+      "CouponRedemption.source_amount_cents (pre-discount amount — reveals the customer's spend)",
+      "CouponRedemption.source_currency",
+      "CouponRedemption.discount_amount_cents",
+      "CouponRedemption.final_amount_cents",
+      "CouponRedemption.discount_snapshot (composite — frozen coupon config at redemption time)"
+    ],
+    "restricted": [
+      "CouponRedemption.clawback_reason (financial + potentially fraud-linked — admin-only visibility)"
+    ],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [
+      "Coupon.discount_type + discount_amount + discount_currency (financial-audit alignment — 7 year retention)",
+      "Coupon.usage_count + usage_cap (budget-audit)",
+      "CouponRedemption.source_amount_cents + discount_amount_cents + final_amount_cents (revenue-recognition impact — 7-year financial retention)",
+      "CouponRedemption.discount_snapshot (frozen config that was applied — audit-critical for post-hoc reconstruction)",
+      "CouponRedemption.reversed_at + clawback_reason (financial reversal audit)"
+    ],
+    "audit_log": [
+      "Coupon.is_active (every toggle recorded)",
+      "Coupon.discount_type + discount_amount + discount_currency (frozen after first redemption)",
+      "Coupon.valid_until (extensions logged)",
+      "Coupon.usage_count (every increment — reconciled nightly for drift detection)",
+      "Coupon.applicable_plan_ids (mutation logged)",
+      "Coupon.per_customer_limit + usage_cap (mutation logged)",
+      "CouponRedemption.reversed_at + clawback_reason + reversed_by_user_id (reversal audit trail 7y)"
+    ]
+  },
+  "notes": [
+    "Coupon.code is deliberately public — the whole point is customer-facing display. The confidential fields are the *terms* of the discount (amount + currency + caps) — competitors gaining access to a tenant's coupons list would learn campaign structure + budget shape.",
+    "CouponRedemption.discount_snapshot is a COMPOSITE — it freezes the coupon config at redemption time. Egress rendering routes through DiscountSnapshotBuilder's redactor to strip currency + amount fields when the caller lacks coupons.view-financials permission.",
+    "No PII on the Coupon row directly. CouponRedemption carries customer_id which is a FK — the underlying User/Athlete PII cascades through their own module's redaction on erasure.",
+    "regulated_financial fields align with 7-year retention. Extended to 10y with Enterprise `coupon_extended_retention`.",
+    "No PCI-DSS scope: NO card data / PAN / CVV on any owned row. Payment linkage flows through the Finance module (Wave 4) via applied_to_id -> Invoice/Transaction FK.",
+    "issuance_context on Coupon is CONFIDENTIAL because it may reveal referral program IDs + marketing campaign IDs to unauthorised readers. Only admin/owner can read it."
+  ]
+}

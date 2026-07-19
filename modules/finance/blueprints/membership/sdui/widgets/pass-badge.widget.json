@@ -1,0 +1,61 @@
+{
+  "id": "membership.widgets.pass-badge",
+  "title": "Pass badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "membership.pass-badge",
+  "description": "Compact 'N passes remaining' indicator. Powers the parent-facing dashboard's pass-usage cue + the kiosk check-in confirmation. Color coded green (>=4 remaining), yellow (1-3 remaining), red (0 remaining).",
+  "params": {
+    "membership_id": { "type": "string", "required": true },
+    "size": { "type": "string", "required": false, "default": "sm" },
+    "show_expiring": {
+      "type": "boolean",
+      "required": false,
+      "default": true,
+      "description": "When true and the earliest pass valid_until is within 7 days, renders a subscript 'expires DD/MM'."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "pass_summary",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/memberships/' + $params.membership_id + '/passes?summary=true'",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 120 }
+    }
+  ],
+  "nodes": [
+    {
+      "kind": "View",
+      "props": { "className": "inline-flex flex-col items-start gap-0.5" },
+      "children": [
+        {
+          "kind": "Chip",
+          "propsExpr": "{ size: $params.size, variant: (pass_summary.available_count >= 4 ? 'success' : pass_summary.available_count >= 1 ? 'warning' : 'danger'), className: 'font-medium tabular-nums' }",
+          "children": [
+            {
+              "kind": "Icon",
+              "props": { "name": "ticket", "className": "size-3 mr-1" }
+            },
+            {
+              "kind": "Text",
+              "bindings": {
+                "childrenExpr": "pass_summary.available_count + (pass_summary.available_count === 1 ? ' pass' : ' passes')"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "childrenExpr": "'expires ' + $formatDate(pass_summary.earliest_valid_until, 'D MMM')",
+            "hidden": {
+              "$expr": "!$params.show_expiring || !pass_summary.earliest_valid_until || $daysUntil(pass_summary.earliest_valid_until) > 7 || pass_summary.available_count === 0"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

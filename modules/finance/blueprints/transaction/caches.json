@@ -1,0 +1,124 @@
+{
+  "id": "academorix://modules/transaction/caches",
+  "$version": 1,
+  "title": "transaction — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["transaction", "transaction.balances", "transaction.reconciliation", "transaction.reports"],
+  "keys": [
+    {
+      "pattern": "trx:balance:{tenant_id}:{account}",
+      "description": "Running balance per (tenant, account) in the tenant's base currency. Read by AccountBalanceCalculator on every read + by the SDUI ledger-account list. Hot path — every ledger entry write invalidates the affected account's key.",
+      "ttlSeconds": 60,
+      "tags": ["transaction", "transaction.balances", "tenant"],
+      "invalidatedBy": [
+        "TransactionLedgerEntryObserver.created (invalidates the specific account's key)",
+        "LedgerReconciliationCompleted (invalidates all keys after reconciler run to force fresh reads)",
+        "TransactionReversed (invalidates every account touched by both the source + reversal transactions)"
+      ]
+    },
+    {
+      "pattern": "trx:balance:{tenant_id}:{account}:{currency}",
+      "description": "Running balance per (tenant, account, currency) — for multi-currency tenants where an account (e.g. cash) may hold balances in multiple currencies simultaneously. Same TTL + invalidation as the base-currency key.",
+      "ttlSeconds": 60,
+      "tags": ["transaction", "transaction.balances", "tenant"],
+      "invalidatedBy": [
+        "TransactionLedgerEntryObserver.created",
+        "LedgerReconciliationCompleted"
+      ]
+    },
+    {
+      "pattern": "trx:balance-history:{tenant_id}:{account}:{from}:{to}",
+      "description": "Running-balance history for the account over a date range. Feeds the SDUI account-history view. Longer TTL because history is stable (transactions are IMMUTABLE — only new writes at now() append to the series).",
+      "ttlSeconds": 600,
+      "tags": ["transaction", "transaction.balances", "tenant"],
+      "invalidatedBy": [
+        "TransactionLedgerEntryObserver.created (invalidates every history key whose (from, to) window covers created_at)"
+      ]
+    },
+    {
+      "pattern": "trx:threshold-crossed:{tenant_id}:{account}:{watermark_kind}",
+      "description": "Tracks whether the threshold-crossing detector has already fired an alert for the current threshold state — prevents alert-storming when the balance oscillates around the threshold. TTL 1h (aligns with the 30-min detector cadence + slop).",
+      "ttlSeconds": 3600,
+      "tags": ["transaction", "transaction.balances", "tenant"],
+      "invalidatedBy": ["TTL only"]
+    },
+    {
+      "pattern": "trx:kind-catalog",
+      "description": "Parsed data/kind-catalog.json. Read by TransactionObserver.creating for kind validation + by SDUI kind-picker widget. Loaded once at boot + rarely invalidated.",
+      "ttlSeconds": 86400,
+      "tags": ["transaction"],
+      "invalidatedBy": ["boot-time reload", "manual: transaction:reload-catalogs"]
+    },
+    {
+      "pattern": "trx:chart-of-accounts",
+      "description": "Parsed data/chart-of-accounts-catalog.json. Read by TransactionLedgerEntryObserver.creating for account validation + by SDUI account-picker widget. Loaded once at boot + rarely invalidated.",
+      "ttlSeconds": 86400,
+      "tags": ["transaction"],
+      "invalidatedBy": ["boot-time reload", "manual"]
+    },
+    {
+      "pattern": "trx:enabled-accounts:{tenant_id}",
+      "description": "Per-tenant enabled account list. A tenant may disable specific accounts via settings (e.g. skip chargebacks_expense if they never take chargebacks). Read by TransactionLedgerEntryObserver + by SDUI account-picker.",
+      "ttlSeconds": 3600,
+      "tags": ["transaction", "tenant"],
+      "invalidatedBy": [
+        "settings::TenantSettingsUpdated (when key touches transaction.accounts.enabled)"
+      ]
+    },
+    {
+      "pattern": "trx:exchange-rate:{from_currency}:{to_currency}",
+      "description": "Cached exchange rate for a currency pair. TTL 1h (aligns with the transaction.exchange_rate.cache_ttl_seconds config). Fresh fetches update the key + notify TransactionCurrencyConverted downstream listeners.",
+      "ttlSeconds": 3600,
+      "tags": ["transaction"],
+      "invalidatedBy": [
+        "TTL only",
+        "manual: transaction:refresh-exchange-rates"
+      ]
+    },
+    {
+      "pattern": "trx:halt-flag:{tenant_id}",
+      "description": "The tenant's transaction_halt_new flag. Read by TransactionObserver.creating on every write. Very short TTL (10s) because clearing the flag needs to propagate quickly across all workers when ops resolves an imbalance.",
+      "ttlSeconds": 10,
+      "tags": ["transaction", "tenant"],
+      "invalidatedBy": [
+        "compliance::LedgerImbalanceRaised (sets true)",
+        "compliance::LedgerImbalanceResolved (sets false)"
+      ]
+    },
+    {
+      "pattern": "trx:reconciliation:latest:{tenant_id}",
+      "description": "Latest reconciler-run stats per tenant. Fed by the SDUI reconciliation-report screen. TTL 25h (aligns with nightly cadence + 1h slop).",
+      "ttlSeconds": 90000,
+      "tags": ["transaction", "transaction.reconciliation", "tenant"],
+      "invalidatedBy": [
+        "LedgerReconciliationCompleted"
+      ]
+    },
+    {
+      "pattern": "trx:reconciliation:imbalances:{tenant_id}",
+      "description": "Unresolved imbalance count per tenant. Feeds the SDUI imbalance-count badge.",
+      "ttlSeconds": 60,
+      "tags": ["transaction", "transaction.reconciliation", "tenant"],
+      "invalidatedBy": [
+        "LedgerImbalanceDetected (increments)",
+        "compliance::LedgerImbalanceResolved (decrements / clears)"
+      ]
+    },
+    {
+      "pattern": "trx:report:gl:{tenant_id}:{year}:{month}",
+      "description": "Cached General Ledger report for the (tenant, year, month) tuple. Fed by GenerateGeneralLedgerReportJob output. Long TTL (30d) because the report is stable — the underlying transactions are immutable + closed months don't change.",
+      "ttlSeconds": 2592000,
+      "tags": ["transaction", "transaction.reports", "tenant"],
+      "invalidatedBy": [
+        "manual: transaction:invalidate-report (used after a legitimate month-end adjustment)"
+      ]
+    },
+    {
+      "pattern": "trx:number-generator-seq:{tenant_id}:{year}",
+      "description": "Current sequence value for the transaction_number generator per (tenant, year). Used only inside the Postgres advisory lock to avoid a DB round-trip on every increment. Sync-back to DB on every 100 sequence increments.",
+      "ttlSeconds": 60,
+      "tags": ["transaction", "tenant"],
+      "invalidatedBy": ["TTL only", "advisory-lock release"]
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "id": "academorix://modules/audit/errors",
+  "$version": 1,
+  "title": "audit — error codes",
+  "description": "Audit-scoped error codes. Namespace: NOTIFICATIONS_AUDIT_* to match the notifications family convention. Every code maps to an HTTP status + retryability flag + user-facing bit + audit severity. Most codes fire against the retention-policy or export surfaces; the audit row itself has narrow error surface (immutable, no CRUD over HTTP).",
+  "namespace": "audit",
+  "errors": [
+    {
+      "code": "NOTIFICATIONS_AUDIT_CAPTURE_DISABLED",
+      "http": 503,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "audit.errors.capture_disabled",
+      "description": "audit.capture kill switch is OFF OR audit_capture entitlement is revoked. Vendor observer is unbound; no audit rows write. Should NEVER be true in a normal-operating environment — a live compliance-officer alert fires + a security audit row is written for the disablement."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_TENANT_ID_MISSING",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "audit.errors.tenant_id_missing",
+      "description": "AuditObserver::creating detected null tenant_id. Defense-in-depth against vendor drift. Indicates a code path that produced an audit without our expected tenant context — a bug or a rogue direct-vendor call. Refuses the write + fires a security alert."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_UNKNOWN_EVENT_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "audit.errors.unknown_event_type",
+      "description": "AuditObserver::creating received an event name outside the closed set (vendor defaults + registered custom events). Refuses the write + emits a compliance alert (typo in a custom event registration, or a rogue caller producing arbitrary event strings)."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_ROW_IMMUTABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "audit.errors.row_immutable",
+      "description": "AuditObserver::updating throws. Audit rows are immutable after write. Someone tried to mutate an existing audit row via Eloquent save() or update(). Refused with a security-alert-level audit trail entry."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_ROW_DELETE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "audit.errors.row_delete_forbidden",
+      "description": "AuditObserver::deleting refuses because caller is not PurgeExpiredAuditsJob. Manual DELETE attempt on the audits table — fires a security alert."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_ROUTE_READ_ONLY",
+      "http": 405,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "audit.errors.route_read_only",
+      "description": "audit.enforce_read_only middleware refused non-GET on a /audits* route. Belt-and-braces guard against rogue route registration."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_RETENTION_NOT_ENTITLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "audit.errors.retention_not_entitled",
+      "description": "Tenant lacks audit_retention_extended entitlement (Enterprise-only). AuditRetentionPolicy create/update refused. User-facing so tenant admin can request Enterprise upgrade."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_RETENTION_POLICY_ALREADY_ACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "audit.errors.retention_policy_already_active",
+      "description": "Tenant already has an active AuditRetentionPolicy (deleted_at IS NULL). POST refused — caller must PATCH the existing policy or DELETE it first."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_INVALID_RETENTION_YEARS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "audit.errors.invalid_retention_years",
+      "description": "retention_years is not in [1..config.audit.retention.max_years]. Default max is 10."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_INVALID_OVERRIDE_DATES",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "audit.errors.invalid_override_dates",
+      "description": "override_starts_at >= override_ends_at (when override_ends_at is set). Dates are inconsistent."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_INVALID_OVERRIDE_REASON",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "audit.errors.invalid_override_reason",
+      "description": "override_reason failed the shape check (10-500 char non-empty string). Compliance officer must justify the retention override with a descriptive reason."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_EXPORT_NOT_ENTITLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "audit.errors.export_not_entitled",
+      "description": "Tenant lacks audit_export entitlement (Medium+). Export via POST /api/v1/audits/export refused. Regulator export additionally requires audit_regulator_export (Enterprise) — separate error code below."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_REGULATOR_EXPORT_NOT_ENTITLED",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "audit.errors.regulator_export_not_entitled",
+      "description": "Tenant lacks audit_regulator_export entitlement (Enterprise-only). Regulator-shaped export refused."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_EXPORT_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "audit.errors.export_rate_limited",
+      "description": "Tenant hit the daily export rate limit (20/day baseline). Retry-after header points to next available window."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_EXPORT_ROW_COUNT_EXCEEDED",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "audit.errors.export_row_count_exceeded",
+      "description": "Export request estimated row count exceeds config.audit.export.max_rows_per_export (5M). Caller must chunk by date range or auditable_type."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_BACKFILL_LOCKED",
+      "http": 409,
+      "retryable": true,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "audit.errors.backfill_locked",
+      "description": "audit:backfill-tenant-id refused because another backfill invocation is already running (distributed lock held). Retry after the current job completes."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_REVEAL_RAW_DIFF_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "alert",
+      "i18n_key": "audit.errors.reveal_raw_diff_forbidden",
+      "description": "Caller lacks audit.audits.reveal_raw_diff permission. The reveal is compliance-officer only + writes a chain-of-custody audit row on every successful reveal. This code fires on the refusal + fires a security alert (attempted diff-reveal by unprivileged caller)."
+    },
+    {
+      "code": "NOTIFICATIONS_AUDIT_AUDITABLE_TYPE_UNKNOWN",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "audit.errors.auditable_type_unknown",
+      "description": "byEntity filter references an auditable_type that does not resolve at boot (not a valid audited model class). Refused with 404."
+    }
+  ]
+}

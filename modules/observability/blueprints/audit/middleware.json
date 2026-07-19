@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/audit/middleware",
+  "$version": 1,
+  "title": "audit — HTTP middleware",
+  "description": "One owned middleware — `audit.enforce_read_only` — used on every /audits* route as defense-in-depth against a rogue route registration attempting to expose non-GET methods. Refuses PATCH / POST / PUT / DELETE with 405 Method Not Allowed.",
+  "middleware": [
+    {
+      "alias": "audit.enforce_read_only",
+      "class": "Academorix\\Observability\\Audit\\Http\\Middleware\\EnforceAuditReadOnly",
+      "kind": "route-scoped",
+      "purpose": "Belt-and-braces refusal of non-GET methods on any /audits* route. AuditPolicy already refuses create/update/delete at the authorization layer; this middleware refuses at the request-parsing layer BEFORE authorization runs. Prevents any future rogue route registration from accidentally exposing a write path.",
+      "steps": [
+        "Load the request method.",
+        "IF method === 'GET' OR method === 'HEAD' OR method === 'OPTIONS': next().",
+        "ELSE: return 405 Method Not Allowed with response body { code: 'NOTIFICATIONS_AUDIT_ROUTE_READ_ONLY', message: 'Audit routes are read-only. Capture is via the vendor Auditable trait; there is no HTTP write path.' }.",
+        "Write a security audit row logging the refused request (event=security.audit_write_attempt_refused, actor from request context, path from request URI, method from request)."
+      ],
+      "notes": "Skips the enforcement for POST /audits/export + POST /audit-retention-policies + PATCH/DELETE /audit-retention-policies/{policy} — those legitimately need non-GET methods. The enforcement targets the audit ROW routes (/audits + /audits/{audit} + /audits/by-*), not the retention-policy CRUD or the async export request route.",
+      "config_toggle": "config.audit.immutability.enforce_read_only_middleware (true by default; can be off in test env)"
+    }
+  ],
+  "delegated": {
+    "entitlements.check": {
+      "movedTo": "modules/entitlements",
+      "reason": "Universal entitlement gate. Applied on every route via `entitlements.check:audit_capture` etc."
+    },
+    "tenant.resolve": {
+      "movedTo": "modules/tenancy",
+      "reason": "Universal tenant resolution."
+    },
+    "audit.enforce_capture_kill_switch": {
+      "movedTo": "audit.capture feature flag + audit_capture entitlement",
+      "reason": "Capture is switched off at the ObserverUnbindingListener level (fires when audit_capture entitlement is revoked OR the audit.capture feature flag is off). No middleware needed — the vendor observer is never even called."
+    }
+  }
+}

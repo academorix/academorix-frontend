@@ -1,0 +1,119 @@
+{
+  "id": "academorix://modules/payment/health",
+  "$version": 1,
+  "title": "payment — health probes",
+  "probes": [
+    {
+      "name": "payment-schema-migrations-applied",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\SchemaMigrationsAppliedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every migration this module ships has run: payments, payment_methods, payment_intents, payment_disputes, plus their indexes (payments_tenant_number_unique, payment_methods_customer_fingerprint_unique, payment_intents_stale_idx, payment_disputes_evidence_due_idx).",
+      "timeoutMs": 500
+    },
+    {
+      "name": "payment-provider-drivers-registered",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\ProviderDriversRegisteredProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every advertised provider (via #[AsPaymentProvider]) is registered with the PaymentProviderManager + its createXxxDriver factory resolves without errors. Fails hard when a driver class is missing.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "payment-webhook-handlers-registered",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\WebhookHandlersRegisteredProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every provider has a matching webhook handler registered via #[AsPaymentWebhookHandler]. Missing handlers would cause inbound webhooks to fail-soft silently.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "payment-provider-schemas-loaded",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\ProviderSchemasLoadedProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms every data/providers/<provider>-config.schema.json is present + parseable. Missing schemas would make provider config create silently accept invalid credentials.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "payment-encryption-keys-available",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\EncryptionKeysAvailableProbe",
+      "category": "startup",
+      "critical": true,
+      "description": "Confirms the compliance/encryption service is reachable + both encryption keys (token_key_version, client_secret_key_version) resolve. Missing keys would prevent every capture (encryption fails on Insert).",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "payment-in-flight-intent-backlog",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\InFlightIntentBacklogProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Warns when > 500 payment_intents rows are in non-terminal status for > 60 min. Indicates confirmation flow has stalled or providers are unreachable.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "payment-open-circuit-breakers",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\OpenCircuitBreakersProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Reads the count of payment_provider_configs with circuit_breaker_open_until IS NOT NULL AND > now(). Non-zero indicates at least one tenant × provider has payment capture degraded. Every open breaker over 24h is a P1 signal.",
+      "timeoutMs": 200
+    },
+    {
+      "name": "payment-unresolved-disputes",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\UnresolvedDisputesProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts payment_disputes rows in non-terminal statuses. Warns at 100, alerts at 500. Signal for ops workload + regulator-audit exposure.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "payment-evidence-due-soon",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\EvidenceDueSoonProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts payment_disputes rows with evidence_due_by in the next 7 days AND evidence_submitted_at IS NULL. Non-zero indicates ops has pending workload before the provider deadlines.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "payment-capture-failure-rate",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\CaptureFailureRateProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Reads the trailing 15-minute per-provider capture failure rate. > 10% failure rate on ANY provider triggers a warning. > 25% triggers an alert.",
+      "timeoutMs": 1000
+    },
+    {
+      "name": "payment-reconciler-recent",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\ReconcilerRecentProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Confirms ReconcilePaymentIntentsJob completed within the last 48 hours (nightly cadence + 24h slop). Stale reconciler indicates scheduler drift.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "payment-webhook-signature-failures",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\WebhookSignatureFailuresProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Counts PaymentWebhookReceived events with signature_valid=false in the last 60 min. Non-zero indicates either attacker attempts OR misconfigured signing secret on a provider config. Alert threshold: 10.",
+      "timeoutMs": 500
+    },
+    {
+      "name": "payment-provider-health-per-tenant",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\ProviderHealthPerTenantProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "For each (tenant, provider) with is_active=true: reports success_rate + circuit_breaker_state + last_success_at. Feeds the platform ops dashboard.",
+      "timeoutMs": 3000
+    },
+    {
+      "name": "payment-3ds-challenge-completion-rate",
+      "class": "Academorix\\Finance\\Payment\\Health\\Probes\\ThreeDsChallengeCompletionRateProbe",
+      "category": "readiness",
+      "critical": false,
+      "description": "Reads the trailing 24h 3DS2 challenge completion rate (authenticated / total_challenged). < 60% is a signal that customers are abandoning 3DS2 flows (UX issue) or issuers are rejecting.",
+      "timeoutMs": 1000
+    }
+  ]
+}

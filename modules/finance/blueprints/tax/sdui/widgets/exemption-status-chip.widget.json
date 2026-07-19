@@ -1,0 +1,49 @@
+{
+  "id": "tax.exemption-status-chip",
+  "title": "Exemption status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for exemption verification_status. Values: pending (yellow with clock icon), verified (green with check icon), rejected (red with x icon), expired (grey with archive icon).",
+  "props": {
+    "status": {
+      "type": "string",
+      "required": true
+    },
+    "size": {
+      "type": "string",
+      "default": "sm",
+      "enum": ["xs", "sm", "md", "lg"]
+    },
+    "showIcon": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.status === 'verified' ? 'success' : (props.status === 'rejected' ? 'danger' : (props.status === 'pending' ? 'warning' : 'neutral'))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? (props.status === 'verified' ? 'shield-check' : (props.status === 'rejected' ? 'x-circle' : (props.status === 'pending' ? 'clock' : 'archive-box'))) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.status === 'verified' ? 'Verified' : (props.status === 'pending' ? 'Pending review' : (props.status === 'rejected' ? 'Rejected' : (props.status === 'expired' ? 'Expired' : props.status)))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

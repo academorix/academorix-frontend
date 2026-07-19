@@ -1,0 +1,106 @@
+{
+  "id": "academorix://modules/invoice/attributes",
+  "$version": 1,
+  "title": "invoice — PHP attribute contracts",
+  "description": "Three class-level attributes. `#[AsInvoiceListener]` subscribes a service to invoice-lane events. `#[AsInvoiceLineItemType]` registers a new item_type + its rendering + tax classification rules. `#[AsInvoicePdfRenderer]` marks a class as an invoice PDF renderer implementation (default is DomPDF; Enterprise tenants may register wkhtmltopdf or other engines).",
+  "namespace": "Academorix\\Finance\\Invoice\\Attributes",
+  "attributes": [
+    {
+      "name": "AsInvoiceListener",
+      "class": "Academorix\\Finance\\Invoice\\Attributes\\AsInvoiceListener",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a service as a subscriber to invoice-lane events (InvoiceCreated / Finalized / Sent / Viewed / Paid / PartiallyPaid / Voided / Uncollectible / PastDue / Refunded / Disputed / Dunning* / WrittenOff / Line* / CreditNote*). Discovery loader picks up each class at boot + wires the declared events.",
+      "params": [
+        {
+          "name": "events",
+          "type": "array<string>",
+          "default": [],
+          "description": "Array of event short names (`InvoicePaid`, `CreditNoteIssued`, `InvoiceUncollectible`, …). Empty = subscribe to every `Academorix\\Finance\\Invoice\\Events\\*` event. Names resolve against events.json at boot; typos abort boot with a discovery error."
+        },
+        {
+          "name": "queue",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional queue override. Falls back to the event's default queue (see events.json — most events default to 'invoice'; state-transition events use 'invoice-critical')."
+        },
+        {
+          "name": "priority",
+          "type": "integer",
+          "default": 100,
+          "description": "Handler ordering within a single event. Lower runs first. Cascade listeners (FireMarketingCaptureOnInvoicePaid runs at 100; internal audit writes run at 200 so external side-effects fire first)."
+        }
+      ],
+      "example": "#[AsInvoiceListener(events: ['InvoicePaid'], queue: 'invoice', priority: 50)]\nfinal class SendCustomThankYouOnInvoicePaid\n{\n    public function __invoke(InvoicePaid $event): void\n    {\n        // Tenant-specific post-payment automation.\n    }\n}"
+    },
+    {
+      "name": "AsInvoiceLineItemType",
+      "class": "Academorix\\Finance\\Invoice\\Attributes\\AsInvoiceLineItemType",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as an InvoiceLineItemType registration. Each item_type declared here becomes a valid value for invoice_lines.item_type. Provides rendering hints (SDUI columns), tax classification (which tax_type applies), and unit_price sign convention (must be >= 0 vs may be negative).",
+      "params": [
+        {
+          "name": "slug",
+          "type": "string",
+          "description": "Unique item_type slug: membership_charge / addon / setup_fee / late_fee / adjustment / one_time_service / tax_line / discount_line. Additional types shipped by extending modules use their prefix (e.g. facility::session_charge)."
+        },
+        {
+          "name": "display_name",
+          "type": "string",
+          "description": "Human-readable label for SDUI rendering."
+        },
+        {
+          "name": "tax_classification",
+          "type": "string",
+          "description": "Tax classification for the tax module's TaxResolver. 'goods' / 'digital_services' / 'physical_services' / 'exempt' / 'partial'. Feeds jurisdiction-specific rate lookup."
+        },
+        {
+          "name": "allows_negative_unit_price",
+          "type": "bool",
+          "default": false,
+          "description": "true = the observer accepts negative unit_price_cents for this item_type (used by 'discount_line' + 'adjustment'). false = strict >= 0 (default)."
+        },
+        {
+          "name": "counts_toward_revenue",
+          "type": "bool",
+          "default": true,
+          "description": "true = this line's total_cents feeds the revenue report. false = internal accounting line (e.g. 'tax_line' — tax is a separate report axis)."
+        }
+      ],
+      "example": "#[AsInvoiceLineItemType(slug: 'setup_fee', display_name: 'Setup fee', tax_classification: 'physical_services', allows_negative_unit_price: false, counts_toward_revenue: true)]\nfinal class SetupFeeItemType\n{\n    public function describe(): string { return 'One-time setup fee'; }\n}"
+    },
+    {
+      "name": "AsInvoicePdfRenderer",
+      "class": "Academorix\\Finance\\Invoice\\Attributes\\AsInvoicePdfRenderer",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as an invoice PDF renderer implementation. Registered with the InvoicePDFRenderer factory at boot. Default implementation is DomPDF; Enterprise tenants may register wkhtmltopdf (better CSS support) or a custom renderer.",
+      "params": [
+        {
+          "name": "slug",
+          "type": "string",
+          "description": "Renderer slug: 'dompdf' / 'wkhtmltopdf' / 'chromium' / custom."
+        },
+        {
+          "name": "supports_templates",
+          "type": "array<string>",
+          "description": "Template slugs this renderer supports. 'academorix-default' / 'tenant-branded' / 'minimal' / 'vat-eu'. The factory picks a renderer that supports the tenant's active template."
+        },
+        {
+          "name": "typical_latency_ms",
+          "type": "integer",
+          "default": 500,
+          "description": "Typical rendering latency in ms. Feeds the health probe + timeout configuration."
+        },
+        {
+          "name": "requires_entitlement",
+          "type": "string | null",
+          "default": null,
+          "description": "Optional entitlement gate for this renderer. Enterprise-only renderers (wkhtmltopdf) declare 'invoice_advanced_pdf'."
+        }
+      ],
+      "example": "#[AsInvoicePdfRenderer(slug: 'dompdf', supports_templates: ['academorix-default', 'tenant-branded', 'minimal'], typical_latency_ms: 350)]\nfinal class DomPdfInvoiceRenderer implements IInvoicePdfRenderer\n{\n    public function render(Invoice $invoice, string $template): string { ... }\n}"
+    }
+  ]
+}

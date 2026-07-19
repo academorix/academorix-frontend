@@ -1,0 +1,100 @@
+{
+  "$version": 1,
+  "title": "Currency conversion provider catalogue",
+  "description": "The 3 exchange-rate providers supported by ExchangeRateResolver. Tenants using multi-currency (Medium+ tier) choose a provider at settings time. openexchangerates is the default; fixer_io is an alternative; ecb_daily is always-available fallback + regulator-preferred for EU jurisdictions.",
+  "providers": [
+    {
+      "slug": "openexchangerates",
+      "display_name": "Open Exchange Rates",
+      "vendor_url": "https://openexchangerates.org",
+      "endpoint": "https://openexchangerates.org/api/latest.json",
+      "auth_method": "app_id query param",
+      "coverage": "200+ currencies",
+      "update_frequency": "hourly",
+      "historical_rates_supported": true,
+      "regulator_preference": "acceptable for USD-anchored tenants + reference-rate reporting",
+      "cost_note": "Paid API — configured via TRANSACTION_OPENEXCHANGERATES_APP_ID Doppler secret",
+      "circuit_breaker_defaults": {
+        "failure_threshold": 5,
+        "open_duration_seconds": 3600,
+        "half_open_test_events": 1
+      },
+      "notes": [
+        "Recommended default for USD-anchored tenants",
+        "Historical rate lookup available via /historical/{date}.json endpoint",
+        "Free tier limited to 1000 requests/month; production tenants use paid tier"
+      ]
+    },
+    {
+      "slug": "fixer_io",
+      "display_name": "Fixer.io (via APILayer)",
+      "vendor_url": "https://fixer.io",
+      "endpoint": "https://api.apilayer.com/fixer/latest",
+      "auth_method": "apikey header",
+      "coverage": "170+ currencies",
+      "update_frequency": "1-60 seconds (paid tiers) / 1h (free tier)",
+      "historical_rates_supported": true,
+      "regulator_preference": "acceptable for EU-anchored tenants; ECB-source rates on the highest tier",
+      "cost_note": "Paid API — configured via TRANSACTION_FIXER_IO_API_KEY Doppler secret",
+      "circuit_breaker_defaults": {
+        "failure_threshold": 5,
+        "open_duration_seconds": 3600,
+        "half_open_test_events": 1
+      },
+      "notes": [
+        "Alternative to Open Exchange Rates",
+        "Higher tiers offer real-time rates + more historical data + ECB-official rate sourcing",
+        "Historical rate lookup available via /{YYYY-MM-DD} endpoint"
+      ]
+    },
+    {
+      "slug": "ecb_daily",
+      "display_name": "European Central Bank (official daily rates)",
+      "vendor_url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html",
+      "endpoint": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+      "auth_method": "none (public government data)",
+      "coverage": "30+ major currencies (EUR base)",
+      "update_frequency": "daily at 16:00 CET",
+      "historical_rates_supported": true,
+      "historical_rates_endpoint": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist.xml (last 90 days)",
+      "regulator_preference": "PREFERRED for EU jurisdictions — official ECB reference rates are the regulator's own source. Regulator audits use ECB rates by default.",
+      "cost_note": "Free — no auth, no cost, no rate limit",
+      "circuit_breaker_defaults": {
+        "failure_threshold": 3,
+        "open_duration_seconds": 1800,
+        "half_open_test_events": 1
+      },
+      "notes": [
+        "The 'fallback' provider — always available regardless of tenant settings",
+        "Regulator-preferred for EU tenants (VAT reporting, IFRS reporting)",
+        "Only daily updates — less useful for high-frequency FX tenants",
+        "EUR-based; rate lookups for non-EUR pairs cross-triangulate via EUR (USD-GBP = USD-EUR / GBP-EUR)"
+      ]
+    }
+  ],
+  "fallback_chain": [
+    {
+      "position": 1,
+      "provider": "tenant-configured-primary",
+      "description": "First attempt: use whichever provider the tenant selected in settings (openexchangerates default)."
+    },
+    {
+      "position": 2,
+      "provider": "ecb_daily",
+      "description": "Fallback attempt: if the primary is unreachable OR returns an error, try ECB Daily. Always available."
+    },
+    {
+      "position": 3,
+      "provider": "cached_stale",
+      "description": "Last resort: use the last cached rate for the currency pair, even if stale beyond max_stale_seconds. Refuses when the cache is empty (returns TRANSACTION_EXCHANGE_RATE_UNAVAILABLE)."
+    }
+  ],
+  "notes": [
+    "The ExchangeRateResolver walks the fallback chain in order — every failure is logged with the provider slug + error code + duration for ops visibility.",
+    "Rate captures are IMMUTABLE after transaction commit — the historical report will always use the frozen rate from the transaction row, regardless of what the provider's current rate is.",
+    "Regulator preference: EU tenants should configure ecb_daily as their primary for IFRS + VAT audit ease. US tenants can use openexchangerates (USD-anchored is the natural fit).",
+    "Rate caching TTL is 1h (transaction.exchange_rate.cache_ttl_seconds). Max stale is 6h (transaction.exchange_rate.max_stale_seconds). Beyond max stale, the resolver forces a fresh fetch or fails hard.",
+    "Failure modes across all three: (a) network timeout → retry with backoff via the ExchangeRateResolver's built-in retry; (b) auth failure (401) → circuit-breaker opens fast; (c) rate limit (429) → wait per Retry-After header then retry; (d) invalid currency pair → fail hard (TRANSACTION_EXCHANGE_RATE_UNAVAILABLE for the specific pair).",
+    "Regulators + auditors may request the provider slug + rate source for a specific historical transaction — the rate_provider field on the transaction row records this. Adjust the FreezeExchangeRateOnCrossCurrencyTransaction hook to record which provider actually served the rate (may differ from the tenant's primary if the fallback triggered)."
+  ]
+}

@@ -1,0 +1,234 @@
+{
+  "id": "academorix://modules/monitoring/metrics",
+  "$version": 1,
+  "title": "monitoring — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.monitoring",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["check_type", "signal_type", "severity", "status", "provider", "reason"],
+    "forbiddenAsLabels": ["tenant_id", "health_check_id", "health_check_run_id", "monitoring_alert_id", "monitoring_incident_id", "provider_config_id", "signal_source"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.monitoring.health_checks.created_total",
+      "kind": "counter",
+      "unit": "checks",
+      "labels": ["check_type"]
+    },
+    {
+      "name": "academorix.monitoring.health_check_runs.total",
+      "kind": "counter",
+      "unit": "runs",
+      "labels": ["check_type", "status"],
+      "description": "One increment per health check execution. status = healthy / degraded / unhealthy / timeout / error."
+    },
+    {
+      "name": "academorix.monitoring.health_check_runs.latency_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [10, 50, 200, 1000, 5000, 30000],
+      "labels": ["check_type"],
+      "description": "Latency of the probe itself (not the observer). Powers latency alert policies via signal_type=latency_p95 / latency_p99."
+    },
+    {
+      "name": "academorix.monitoring.health_check_runs.consecutive_failure_count",
+      "kind": "gauge",
+      "unit": "count",
+      "labels": ["check_type"],
+      "description": "Current consecutive_failure_count aggregated per check_type. Non-zero indicates unhealthy trends."
+    },
+    {
+      "name": "academorix.monitoring.alert_policies.created_total",
+      "kind": "counter",
+      "unit": "policies",
+      "labels": ["signal_type", "severity"]
+    },
+    {
+      "name": "academorix.monitoring.alert_policies.evaluation_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [10, 50, 200, 1000, 5000],
+      "labels": ["signal_type"],
+      "description": "EvaluateAlertPoliciesJob per-policy evaluation duration. Slow evals delay alert firing."
+    },
+    {
+      "name": "academorix.monitoring.alerts.fired_total",
+      "kind": "counter",
+      "unit": "alerts",
+      "labels": ["severity", "signal_type"],
+      "description": "Every P1 fire is a pageable event."
+    },
+    {
+      "name": "academorix.monitoring.alerts.acknowledged_total",
+      "kind": "counter",
+      "unit": "alerts",
+      "labels": ["severity"]
+    },
+    {
+      "name": "academorix.monitoring.alerts.resolved_total",
+      "kind": "counter",
+      "unit": "alerts",
+      "labels": ["severity", "resolved_by"],
+      "description": "resolved_by = auto / manual."
+    },
+    {
+      "name": "academorix.monitoring.alerts.suppressed_total",
+      "kind": "counter",
+      "unit": "alerts",
+      "labels": ["severity", "reason"],
+      "description": "reason = after_hours / weekend / silenced."
+    },
+    {
+      "name": "academorix.monitoring.alerts.time_to_ack_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "buckets": [60, 300, 900, 3600, 14400, 86400],
+      "labels": ["severity"],
+      "description": "fired_at → acknowledged_at."
+    },
+    {
+      "name": "academorix.monitoring.alerts.time_to_resolve_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "buckets": [300, 900, 3600, 14400, 86400, 604800],
+      "labels": ["severity", "resolved_by"]
+    },
+    {
+      "name": "academorix.monitoring.alerts.firing",
+      "kind": "gauge",
+      "unit": "alerts",
+      "labels": ["severity"],
+      "description": "Current count of firing alerts per severity."
+    },
+    {
+      "name": "academorix.monitoring.incidents.opened_total",
+      "kind": "counter",
+      "unit": "incidents",
+      "labels": ["severity"]
+    },
+    {
+      "name": "academorix.monitoring.incidents.acknowledged_total",
+      "kind": "counter",
+      "unit": "incidents",
+      "labels": ["severity"]
+    },
+    {
+      "name": "academorix.monitoring.incidents.escalated_total",
+      "kind": "counter",
+      "unit": "incidents",
+      "labels": ["severity"],
+      "description": "Every increment is a missed SLA."
+    },
+    {
+      "name": "academorix.monitoring.incidents.resolved_total",
+      "kind": "counter",
+      "unit": "incidents",
+      "labels": ["severity", "resolved_by"]
+    },
+    {
+      "name": "academorix.monitoring.incidents.time_to_resolve_seconds",
+      "kind": "histogram",
+      "unit": "seconds",
+      "buckets": [900, 3600, 14400, 86400, 604800],
+      "labels": ["severity"],
+      "description": "MTTR — the primary SLO reporting metric."
+    },
+    {
+      "name": "academorix.monitoring.incidents.open",
+      "kind": "gauge",
+      "unit": "incidents",
+      "labels": ["severity", "status"],
+      "description": "Current count of open incidents per severity + status."
+    },
+    {
+      "name": "academorix.monitoring.notifications.attempted_total",
+      "kind": "counter",
+      "unit": "attempts",
+      "labels": ["provider", "attempt_number"],
+      "description": "attempt_number bucketed as string ('1', '2', '3', '4+')."
+    },
+    {
+      "name": "academorix.monitoring.notifications.succeeded_total",
+      "kind": "counter",
+      "unit": "notifications",
+      "labels": ["provider"]
+    },
+    {
+      "name": "academorix.monitoring.notifications.failed_total",
+      "kind": "counter",
+      "unit": "notifications",
+      "labels": ["provider", "error_code_bucket", "is_transient"]
+    },
+    {
+      "name": "academorix.monitoring.notifications.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [50, 200, 1000, 5000, 15000],
+      "labels": ["provider", "response_status_class"],
+      "description": "End-to-end NotifyProvidersJob latency (gate check → transform → HTTP → response parse)."
+    },
+    {
+      "name": "academorix.monitoring.circuit_breakers.opened_total",
+      "kind": "counter",
+      "unit": "opens",
+      "labels": ["provider"],
+      "description": "P1 signal. Every increment pages ops."
+    },
+    {
+      "name": "academorix.monitoring.circuit_breakers.closed_total",
+      "kind": "counter",
+      "unit": "closes",
+      "labels": ["provider", "was_auto_close"]
+    },
+    {
+      "name": "academorix.monitoring.circuit_breakers.currently_open",
+      "kind": "gauge",
+      "unit": "breakers",
+      "labels": ["provider"]
+    },
+    {
+      "name": "academorix.monitoring.providers.configured_total",
+      "kind": "counter",
+      "unit": "configs",
+      "labels": ["provider", "test_mode"]
+    },
+    {
+      "name": "academorix.monitoring.providers.deactivated_total",
+      "kind": "counter",
+      "unit": "deactivations",
+      "labels": ["provider", "reason"]
+    },
+    {
+      "name": "academorix.monitoring.providers.test_events_sent_total",
+      "kind": "counter",
+      "unit": "tests",
+      "labels": ["provider", "outcome"]
+    },
+    {
+      "name": "academorix.monitoring.entitlement.gate_refusals_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["entitlement_key"],
+      "description": "Route hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
+    },
+    {
+      "name": "academorix.monitoring.retention.health_check_runs_purged_total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": []
+    },
+    {
+      "name": "academorix.monitoring.retention.alerts_purged_total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": []
+    },
+    {
+      "name": "academorix.monitoring.retention.incidents_purged_total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": ["severity"]
+    }
+  ]
+}

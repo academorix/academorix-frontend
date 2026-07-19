@@ -1,0 +1,114 @@
+{
+  "id": "academorix://modules/membership/entitlements",
+  "$version": 1,
+  "title": "membership — declared entitlements",
+  "description": "Nine entitlement keys. `membership_capture` is the master boolean — off means the whole module is inert. `membership_plan_slot` caps plan-catalog size per tenant. `membership_slot` is enforced via plan.max_active_members. Tier-gated features enable trial periods, multi-currency, prorated hard-cancels, gift memberships, add-on management, and extended retention. Entitlements NEVER carry `application_id` on membership rows — they resolve via the tenant's active TenantSubscription (which itself carries application_id, per hierarchy.md §2).",
+  "reference": {
+    "publishedBy": "entitlements",
+    "seededFrom": "Plan.default_entitlements"
+  },
+  "kinds": [
+    { "kind": "boolean" },
+    { "kind": "slot" }
+  ],
+  "entitlements": [
+    {
+      "key": "membership_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master toggle for the whole module. On every tier by default — a tenant on any tier can capture memberships. Off = every MembershipObserver create refuses with `MEMBERSHIP_CAPTURE_NOT_ENTITLED`. Used to soft-disable memberships during migrations or emergency freeze.",
+      "enforcedBy": [
+        "MembershipObserver.creating refuses when gate off",
+        "MembershipPlanObserver.creating refuses when gate off",
+        "Routes gate at HTTP layer via `enforce_entitlement:membership_capture` middleware alias",
+        "SDUI screens hidden when features array lacks 'membership.core'"
+      ]
+    },
+    {
+      "key": "membership_plan_slot",
+      "kind": "slot",
+      "unit": "plans per tenant",
+      "defaultsByPlan": { "small": 5, "medium": 25, "enterprise": null },
+      "description": "Cap on the number of active MembershipPlan rows per tenant. Small: 5 (typical small academy runs 3-5 plans). Medium: 25. Enterprise: unlimited. Consumed on MembershipPlanCreated; released on MembershipPlanArchived. Reconciler adjusts on TenantSubscription downgrade.",
+      "enforcedBy": [
+        "MembershipPlanObserver.creating consumes 1 unit via EntitlementGate::consume('membership_plan_slot')",
+        "MembershipPlanObserver.updating (is_active → false) releases 1 unit",
+        "TenantSubscription downgrade triggers a warning; existing over-quota plans continue to serve existing memberships but new plans refused"
+      ]
+    },
+    {
+      "key": "membership_slot",
+      "kind": "slot",
+      "unit": "active memberships per tenant",
+      "defaultsByPlan": { "small": 50, "medium": 500, "enterprise": null },
+      "description": "Cap on the number of Membership rows in status IN ('pending', 'active', 'paused') per tenant. Aggregate across all plans + branches. Additional to plan.max_active_members (which caps per-plan). Consumed on MembershipCreated; released on cancel/lapse/expire.",
+      "enforcedBy": [
+        "MembershipObserver.creating consumes 1 unit via EntitlementGate::consume('membership_slot')",
+        "MembershipObserver.updating (status → cancelled/lapsed/expired) releases 1 unit",
+        "TenantSubscription downgrade freezes new membership acceptance until below cap"
+      ]
+    },
+    {
+      "key": "membership_trial_periods",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables MembershipPlan.trial_days > 0. When ON, plans can define a free trial period; memberships start with a trial period before first paid renewal. When OFF (Small default), plan.trial_days must be 0.",
+      "enforcedBy": [
+        "MembershipPlanObserver.creating refuses trial_days > 0 when gate off",
+        "MembershipObserver.creating refuses when plan.trial_days > 0 and gate off (defense-in-depth)",
+        "SDUI plan-form hides trial_days field when features lacks 'membership.trial_periods'"
+      ]
+    },
+    {
+      "key": "membership_multi_currency",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables plans + memberships in currencies other than the tenant's default region currency. When OFF (Small default), all plans + memberships use the tenant's home Region.currency. When ON (Medium+), memberships can bind to any Region + any currency the plan declares.",
+      "enforcedBy": [
+        "MembershipPlanObserver.creating refuses plan.currency != tenant.default_region.currency when gate off",
+        "MembershipObserver.creating refuses membership.currency != plan.currency when gate off (Medium+ can promote to per-membership override in future)"
+      ]
+    },
+    {
+      "key": "membership_hard_cancel_prorated_refund",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables cancellation_kind='hard_immediate' with prorated refund computation. When OFF (Small + Medium default), cancel endpoint accepts only cancellation_kind='soft_period_end' (no refund; membership ends at period boundary). When ON, admin/customer can hard-cancel + trigger refund based on plan.refund_policy.",
+      "enforcedBy": [
+        "MembershipObserver.updating (status → cancelled with cancellation_kind='hard_immediate') refuses when gate off AND plan.refund_policy IN ('prorated', 'full_within_grace')",
+        "SDUI cancel dialog shows only soft-cancel option when features lacks 'membership.hard_cancel'",
+        "CalculateProratedRefundOnHardCancel hook no-ops for tenants without the entitlement"
+      ]
+    },
+    {
+      "key": "membership_gift_memberships",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Enables one User purchasing a membership on behalf of another family's Athlete. The purchaser becomes primary_guardian_id even without an AthleteGuardian relationship — a special GIFT AthleteGuardian row is created with type='gift'.",
+      "enforcedBy": [
+        "MembershipObserver.creating: when primary_guardian_id's AthleteGuardian.athlete_id != this.athlete_id, refuses with `MEMBERSHIP_GUARDIAN_INVALID` unless gate on AND the guardian relationship is created with type='gift'",
+        "SDUI gift-membership button hidden when features lacks 'membership.gift'"
+      ]
+    },
+    {
+      "key": "membership_addon_management",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables plan.addon_config { equipment_rental, kit_included, tournament_entry_credit }. When OFF (Small default), addon_config must be empty. When ON, admin can bundle add-ons with the plan; charged as part of the invoice on first activation + each renewal.",
+      "enforcedBy": [
+        "MembershipPlanObserver.creating + updating refuse non-empty addon_config when gate off",
+        "SDUI plan-form hides addon section when features lacks 'membership.addons'"
+      ]
+    },
+    {
+      "key": "membership_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends terminal-membership retention from 7 years (default) to 10 years for SOX + tax-audit purposes. When OFF, PurgeCompletedMembershipsJob purges at year 7. When ON, purge deferred to year 10.",
+      "enforcedBy": [
+        "PurgeCompletedMembershipsJob checks tenant's entitlement + uses 10-year cutoff when ON, else 7-year",
+        "GenerateMembershipStatementsJob is aware of extended retention when producing tenant-level annual statements"
+      ]
+    }
+  ]
+}

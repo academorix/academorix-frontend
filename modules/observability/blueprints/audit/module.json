@@ -1,0 +1,149 @@
+{
+  "$version": 1,
+  "name": "audit",
+  "alias": "audit",
+  "namespace": "Academorix\\Observability\\Audit",
+  "description": "The audit lane. Wraps vendor `owen-it/laravel-auditing` to provide compliance-grade, immutable-after-write field-level diff records for every mutating operation across every module. Answers 'who did what, when?' with a regulator/DPO audience. Zero loss tolerance — every audit row survives a rolled-back transaction (deliberate — the audit trail records the ATTEMPT, not just success). 7-year retention default (extends to 10y with `audit_retention_extended` Enterprise entitlement). Adapts the vendor `audits` table by adding `tenant_id` NOT NULL + `application_id` NULLABLE + composite indexes (tenant_id, created_at) + (application_id, tenant_id, created_at) + (auditable_type, auditable_id, created_at) + (user_type, user_id, created_at) + (event, tenant_id, created_at), and backfilling from existing `new_values.tenant_id` jsonb blobs. Ships two aggregates: `Audit` (the vendor's audits table wrapped with our BelongsToTenant trait + a strict read-only surface), and `AuditRetentionPolicy` (per-tenant retention override — Enterprise tenants can extend past the default 7y with an override_reason + override window). Every module in the codebase adds the vendor's `Auditable` trait to its models; the vendor observer captures create/update/delete/restored + custom events automatically. This module does NOT capture events — it OWNS the storage schema adaptation + query surface + retention scheduling + regulator/DSAR export. The consumer contract is: use the vendor `Auditable` trait; this module handles the rest.",
+  "keywords": [
+    "audit",
+    "audit-trail",
+    "compliance",
+    "regulatory",
+    "immutable",
+    "owen-it",
+    "laravel-auditing",
+    "field-level-diff",
+    "who-did-what",
+    "gdpr",
+    "sox",
+    "hipaa",
+    "pci-dss",
+    "iso-27001",
+    "soc-2",
+    "retention",
+    "7-year",
+    "dpo",
+    "regulator",
+    "export",
+    "purge",
+    "backfill",
+    "observability",
+    "wave-6"
+  ],
+  "priority": 20,
+  "providers": ["Academorix\\Observability\\Audit\\Providers\\AuditServiceProvider"],
+  "files": [],
+  "dependencies": ["foundation", "tenancy", "application", "user"],
+  "extendedBy": [],
+  "planned_consumers": [
+    "every module in the codebase that ships mutating aggregates — each adds the vendor `Auditable` trait to its Eloquent models; the vendor observer captures create/update/delete/restored + custom events automatically. This module never enumerates them exhaustively — the consumer count is 'every domain module', not a fixed list."
+  ],
+  "contributes": {
+    "traits": [],
+    "attributes": [],
+    "blueprints": ["audits", "audit_retention_policies"],
+    "middleware": ["audit.enforce_read_only"],
+    "events": [
+      "AuditRecorded",
+      "AuditRetentionPolicyCreated",
+      "AuditRetentionPolicyUpdated",
+      "AuditRetentionExtensionExpired",
+      "AuditPurgeExecuted",
+      "AuditExportRequested"
+    ],
+    "policies": ["AuditPolicy", "AuditRetentionPolicyPolicy"],
+    "hooks": ["PurgeAuditDataForErasedTenantHook", "SnapshotApplicationIdOnAuditCreatingHook"],
+    "commands": [
+      "audit:list",
+      "audit:show",
+      "audit:count-by-tenant",
+      "audit:backfill-tenant-id",
+      "audit:purge",
+      "audit:extend-retention",
+      "audit:export"
+    ],
+    "jobs": [
+      "BackfillAuditTenantIdFromJsonbJob",
+      "PurgeExpiredAuditsJob",
+      "ExpireRetentionOverridesJob",
+      "ExportAuditsToArchiveJob",
+      "GenerateComplianceReportJob"
+    ],
+    "notifications": [
+      "AuditRetentionPolicyExtendedNotification",
+      "AuditRetentionExtensionExpiringSoonNotification",
+      "AuditPurgeCompletedNotification",
+      "AuditExportReadyNotification"
+    ],
+    "broadcasts": ["tenant.{tenantId}.audit.retention-policy", "tenant.{tenantId}.audit.exports"],
+    "observers": ["AuditObserver", "AuditRetentionPolicyObserver"],
+    "rules": [
+      "valid_retention_years",
+      "valid_override_dates",
+      "valid_event_type",
+      "valid_auditable_type_exists",
+      "valid_override_reason_shape"
+    ],
+    "casts": ["AuditEventType", "AuditRetentionPolicyStatus", "AuditFieldDiff"],
+    "views": [],
+    "lang": ["audit"],
+    "config": ["audit"],
+    "macros": [],
+    "bindings": [
+      "AuditRepository",
+      "AuditRetentionPolicyRepository",
+      "RetentionResolver",
+      "AuditPurger",
+      "AuditExporter",
+      "AuditQuery",
+      "TenantIdBackfiller"
+    ],
+    "resources": ["audit", "audit-retention-policy", "audit-export"]
+  },
+  "attribute_driven": {
+    "description": "Audit is NOT attribute-driven — capture is exclusively via the vendor `owen-it/laravel-auditing` package's `Auditable` trait on domain models. There is no `AsAuditableEventCapturer` attribute, no `AsAuditProviderDriver`, no custom capturer registry. The vendor's observer is the single capture path. This module OWNS the storage schema adaptation + read surface + retention + export — never the capture pipeline. Modules opt in by composing the vendor's trait onto their Eloquent models; the vendor observer does the rest.",
+    "attributes": {}
+  },
+  "vendor_adaptation": {
+    "description": "This module adapts the vendor `owen-it/laravel-auditing` package's schema + model contract. The vendor ships an `audits` table with bigint auto-increment PK + polymorphic auditable + polymorphic user + JSON old_values + JSON new_values + created_at. Our adaptation adds `tenant_id UUID NOT NULL` + `application_id UUID NULLABLE` + composite indexes without touching the vendor's own columns.",
+    "vendor_package": {
+      "name": "owen-it/laravel-auditing",
+      "minimum_version": "^13.0",
+      "docs": "https://laravel-auditing.com/",
+      "vendor_observer": "OwenIt\\Auditing\\AuditableObserver — attaches to every model composing the Auditable trait, fires on save/delete/restore/custom, writes an `audits` row."
+    },
+    "extensions": [
+      "Add `tenant_id UUID NOT NULL` column (backfilled from `new_values.tenant_id` for existing rows)",
+      "Add `application_id UUID NULLABLE` column (NULL = platform-plane audit)",
+      "Add composite indexes for tenant + application + entity + actor + event query patterns",
+      "Wrap vendor `Audit` model with our own `Academorix\\Observability\\Audit\\Models\\Audit` that adds `BelongsToTenant` trait (global scope + auto-fill on save)",
+      "Add read-only enforcement middleware on every /audits route (refuses non-GET methods)",
+      "Add AuditRetentionPolicy aggregate for per-tenant retention overrides",
+      "Add scheduled PurgeExpiredAuditsJob per-tenant honoring the retention policy",
+      "Ship `TenantIdBackfiller` service + `audit:backfill-tenant-id` one-shot migration helper command"
+    ],
+    "primary_key_note": "The audit table sticks with the vendor's bigint auto-increment PK. No ULID conversion in Wave 6 — converting the entire vendor schema would require forking `owen-it/laravel-auditing`, and existing customer rows would need re-keying. The `aud_` ULID prefix is REGISTERED in `modules/foundation/data/ulid-prefixes.json` (owned by this module) but RESERVED for a future Wave 7+ redesign; today's audit rows carry bigint IDs matching the vendor."
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing audit reads (compliance dashboards) + retention policy CRUD (Enterprise) + DSAR/regulator export request. Every route requires the `audit_capture` entitlement (all tiers baseline); export routes additionally require `audit_export` (Medium+); retention policy CRUD requires `audit_retention_extended` (Enterprise); regulator-shaped exports require `audit_regulator_export` (Enterprise).",
+      "routes": [
+        "GET /api/v1/audits",
+        "GET /api/v1/audits/{audit}",
+        "GET /api/v1/audits/by-entity/{auditable_type}/{auditable_id}",
+        "GET /api/v1/audits/by-user/{user}",
+        "POST /api/v1/audits/export",
+        "GET /api/v1/audits/exports",
+        "GET /api/v1/audits/exports/{export}",
+        "GET /api/v1/audit-retention-policies",
+        "POST /api/v1/audit-retention-policies",
+        "PATCH /api/v1/audit-retention-policies/{policy}",
+        "DELETE /api/v1/audit-retention-policies/{policy}"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant support tooling. Regulator-issued cross-tenant reads + exports. Runs on the platform_admin guard with cross-application authority.",
+      "routes": ["GET /api/v1/platform/audits", "POST /api/v1/platform/audits/export"]
+    }
+  }
+}

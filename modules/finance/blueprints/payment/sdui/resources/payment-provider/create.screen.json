@@ -1,0 +1,110 @@
+{
+  "id": "payment.resources.payment-provider.create",
+  "title": "Add payment provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-providers/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-provider", "action": "create" },
+  "requiresPermission": "payment.providers.create",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "capabilities",
+      "kind": "http.get",
+      "url": "/api/v1/payment-providers/capabilities",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "MultiStepForm",
+      "props": { "className": "max-w-3xl mx-auto p-6" },
+      "children": [
+        {
+          "kind": "Step",
+          "props": { "title": "Choose provider", "description": "Which payment gateway do you want to add?" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus" },
+              "bindings": { "items": { "$ref": "capabilities" } },
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Credentials", "description": "Enter your provider credentials. Encrypted at rest." },
+          "children": [
+            {
+              "kind": "DynamicForm",
+              "bindings": {
+                "schema": { "$expr": "capabilities[form.provider].config_schema" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Regional routing", "description": "Optional. Route customers from specific countries to this provider." },
+          "children": [
+            {
+              "kind": "TextArea",
+              "props": { "label": "Country codes (comma-separated)", "placeholder": "US,CA,MX" },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "regions", "valueExpr": "$value.split(',').map(s => s.trim())" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Confirm", "description": "Review + create." },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "bindings": {
+                "items": {
+                  "$expr": "[{label: 'Provider', value: form.provider}, {label: 'Regions', value: form.regions?.join(', ') || 'all'}]"
+                }
+              }
+            },
+            {
+              "kind": "Alert",
+              "props": {
+                "variant": "warning",
+                "title": "Data processing agreement",
+                "description": "Adding this provider means Academorix will forward payment data to the provider. Please confirm you have accepted the provider's DPA."
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "children": "Create provider" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/payment-providers",
+                  "body": {
+                    "provider": "{{form.provider}}",
+                    "config": "{{form.config}}",
+                    "regions": "{{form.regions}}"
+                  },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/payment-providers'"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

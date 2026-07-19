@@ -1,0 +1,110 @@
+{
+  "id": "payment.resources.payment.list",
+  "title": "Payments",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payments",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment", "action": "list" },
+  "requiresPermission": "payment.payments.viewAny",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "payments",
+      "kind": "http.get",
+      "url": "/api/v1/payments",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payments" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Every captured payment across all your invoices." } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items_source": "payment.providers",
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Method type", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "card", "label": "Card" },
+                { "id": "bank_debit", "label": "Bank debit" },
+                { "id": "bank_transfer", "label": "Bank transfer" },
+                { "id": "wallet", "label": "Wallet" },
+                { "id": "installment", "label": "BNPL" },
+                { "id": "cash", "label": "Cash" },
+                { "id": "check", "label": "Check" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "payment_method_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "DateRangePicker",
+              "props": { "label": "Date range", "className": "min-w-64" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.setMany",
+                  "fields": { "from": "$value.start", "to": "$value.end" }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "payments" },
+            "isLoading": { "$ref": "payments.isLoading" }
+          },
+          "props": {
+            "className": "w-full",
+            "columns": [
+              { "field": "payment_number", "label": "Number", "sortable": true, "width": 160 },
+              { "field": "provider", "label": "Provider", "width": 100, "renderer": { "kind": "Text", "formatter": "titlecase" } },
+              { "field": "amount_cents", "label": "Amount", "sortable": true, "width": 120, "renderer": { "kind": "Text", "formatter": "currency" } },
+              { "field": "currency", "label": "Currency", "width": 80 },
+              { "field": "payment_method_type", "label": "Method", "width": 100, "renderer": { "widget": "payment.method-brand-badge" } },
+              { "field": "three_ds_result", "label": "3DS", "width": 80, "renderer": { "widget": "payment.3ds-badge" } },
+              { "field": "risk_score", "label": "Risk", "width": 90, "renderer": { "widget": "payment.risk-score-indicator" } },
+              { "field": "captured_at", "label": "Captured", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "datetime-relative" }
+            ],
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/payments/' + row.id"
+            }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No payments yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Payments appear here as customers pay their invoices." } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

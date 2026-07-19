@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/chargeback/features",
+  "$version": 1,
+  "title": "chargeback — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me -> data.features"
+  },
+  "features": [
+    {
+      "key": "chargeback.core",
+      "displayName": "Chargebacks",
+      "description": "Master feature key. Off = the whole module is invisible: no admin surfaces, no evidence submission workflow, no rate report. Chargebacks still record in the DB (bank-forced writes cannot be suppressed) but no tenant-facing UI renders them.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "chargeback.evidence_submission",
+      "displayName": "Evidence submission",
+      "description": "Enables the evidence submission workflow. Small tier defaults on — without it, all chargebacks auto-lose on deadline (evidence never submitted -> expired).",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "chargeback.rdr",
+      "displayName": "Rapid Dispute Resolution (RDR)",
+      "description": "Enables the RDR auto-refund path — Visa-only. Auto-refund below the configured threshold to close pre-chargeback state. No network fee. No rate impact. Medium+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "chargeback.ce3",
+      "displayName": "Compelling Evidence 3.0 (CE3.0)",
+      "description": "Enables the CE3.0 evidence builder for eligible Visa fraud chargebacks. Assembles two prior legitimate purchases + matching IP + device fingerprint alongside standard evidence. Dramatically higher win rates for eligible disputes. Medium+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "chargeback.rate_monitoring",
+      "displayName": "Chargeback rate monitoring",
+      "description": "Enables the rate tracker + VDMP/MDMP threshold alerts. Rolling 60-day rate per network monitored nightly. Default ON — merchant-account risk visibility is business-critical.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "chargeback.extended_retention",
+      "displayName": "Extended retention (10 years)",
+      "description": "Enterprise-only. Extends retention 7y -> 10y for financial audit alignment.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "chargeback.advanced_reporting",
+      "displayName": "Advanced chargeback reporting",
+      "description": "Enables the rich rate + reason + provider distribution reports. Small tier gets a basic rate-only report; Medium+ adds full distribution + RDR/CE3 metrics + win rate + median days to decision.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "chargeback.real_time_status_stream",
+      "displayName": "Real-time chargeback status stream",
+      "description": "Enables the tenant.{id}.chargebacks broadcast channel + opt-in real-time chargeback notifications. Useful for tenants with high chargeback velocity who want live visibility into evidence queues + rate alerts.",
+      "defaultEnabled": false,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

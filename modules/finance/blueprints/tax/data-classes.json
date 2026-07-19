@@ -1,0 +1,99 @@
+{
+  "id": "academorix://modules/tax/data-classes",
+  "$version": 1,
+  "title": "tax — field classification",
+  "description": "Tax carries FINANCIAL RECORDS + LEGAL DOCUMENTS. tax_amount + rate percentage are competitor intel (revealing tenant tax posture). Certificate numbers + documents are RESTRICTED (legal identifiers). Provider credentials are RESTRICTED (financial-critical). Every calculation is a REGULATED_FINANCIAL record with 7-10 year retention.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "TaxRate.id",
+      "TaxRate.tenant_id",
+      "TaxRate.tax_jurisdiction_id",
+      "TaxRate.rate_type",
+      "TaxRate.name",
+      "TaxRate.applies_to",
+      "TaxRate.effective_from",
+      "TaxRate.effective_to",
+      "TaxRate.source",
+      "TaxJurisdiction.id",
+      "TaxJurisdiction.tenant_id",
+      "TaxJurisdiction.country_code",
+      "TaxJurisdiction.state_code",
+      "TaxJurisdiction.name",
+      "TaxJurisdiction.tax_type",
+      "TaxJurisdiction.nexus_type",
+      "TaxJurisdiction.effective_from",
+      "TaxJurisdiction.effective_to",
+      "TaxExemption.id",
+      "TaxExemption.tenant_id",
+      "TaxExemption.exemption_type",
+      "TaxExemption.issuing_jurisdiction_id",
+      "TaxExemption.valid_from",
+      "TaxExemption.valid_until",
+      "TaxExemption.verification_status",
+      "TaxExemption.verified_at",
+      "TaxCalculation.id",
+      "TaxCalculation.tenant_id",
+      "TaxCalculation.provider",
+      "TaxCalculation.calculated_at"
+    ],
+    "internal": [
+      "TaxRate.provider_reference_id",
+      "TaxRate.created_at",
+      "TaxRate.updated_at",
+      "TaxJurisdiction.city",
+      "TaxJurisdiction.postal_code_pattern",
+      "TaxExemption.customer_type",
+      "TaxExemption.customer_id",
+      "TaxExemption.verified_by_user_id",
+      "TaxCalculation.invoice_line_id",
+      "TaxCalculation.provider_transaction_id"
+    ],
+    "confidential": [
+      "TaxRate.percentage (competitor intel — reveals a tenant's tax posture per jurisdiction; bucketed on egress + never carried in analytics)",
+      "TaxRate.is_inclusive",
+      "TaxJurisdiction.registration_number (the tenant's own VAT/GST/EIN number — reveals tenant's tax jurisdiction posture)",
+      "TaxCalculation.source_amount_cents (revenue amount — competitor tenant cross-inference risk)",
+      "TaxCalculation.source_currency",
+      "TaxCalculation.tax_amount_cents (computed tax — same risk as source amount)",
+      "TaxCalculation.tax_rate_snapshot (contains the rate percentage + rate_id — same rationale as TaxRate.percentage)",
+      "TaxCalculation.exemption_applied (contains certificate_number redacted, but the fact-of-exemption is competitor intel)",
+      "TaxCalculation.provider_metadata (may contain provider-side identifiers that map back to the tenant's account)"
+    ],
+    "restricted": [
+      "TaxExemption.certificate_number (LEGAL IDENTIFIER — cannot be freely distributed; support role sees redacted view)",
+      "TaxExemption.certificate_document_url (ENCRYPTED AT REST — encrypted S3 URL pointer. Access via time-limited signed URLs only. NEVER decrypted in logs, notifications, broadcasts, or wire projections.)"
+    ],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [
+      "TaxCalculation.source_amount_cents + source_currency (financial audit — 7-year retention; 10 for Enterprise)",
+      "TaxCalculation.tax_amount_cents (financial audit — 7-year retention; 10 for Enterprise)",
+      "TaxCalculation.tax_rate_snapshot (frozen rate for regulator audit — 7-year retention)",
+      "TaxCalculation.exemption_applied (frozen exemption for regulator audit — 7-year retention)",
+      "TaxCalculation.provider (which provider computed the tax — regulator audit)",
+      "TaxCalculation.provider_transaction_id (provider-side reference for regulator cross-check)",
+      "TaxCalculation.calculated_at (timestamp — regulator audit)",
+      "TaxRate.percentage + effective_from + effective_to (historical rate audit — indefinite retention while active + 7 years post-expiry)",
+      "TaxExemption.certificate_number + certificate_document_url (legal audit — 7 years post-expiry)"
+    ],
+    "audit_log": [
+      "TaxRate.percentage (every change — financial retention 7 years)",
+      "TaxRate.effective_from + effective_to (every change)",
+      "TaxJurisdiction.registration_number (every change — the tenant's own VAT/GST/EIN)",
+      "TaxExemption.verification_status (every transition — pending → verified / rejected / expired)",
+      "TaxExemption.certificate_number + certificate_document_url (every mutation — encrypted in audit blob)",
+      "TaxCalculation.* (every write — but there are no updates on tax_calculations, only creates; hence audit only captures the create)",
+      "provider config credentials (every mutation — encrypted in audit blob)"
+    ]
+  },
+  "notes": [
+    "TaxRate.percentage is CONFIDENTIAL not RESTRICTED because it's shared with the customer at invoice display time (e.g. 'VAT 20%'). But raw percentage NEVER flows through analytics or broadcasts — it's bucketed. Reasoning: aggregate percentage exposure across N tenants would reveal each tenant's tax posture to competitors.",
+    "TaxExemption.certificate_number is RESTRICTED because certificate numbers are legally identifying documents. A leaked reseller certificate could be reused fraudulently.",
+    "TaxExemption.certificate_document_url is RESTRICTED (highest classification) — the certificate PDF itself is a legal document. Encryption at rest is mandatory; the URL field is NEVER included in broadcasts, notifications, or audit blobs (audit blob stores the encrypted ciphertext, not the underlying signed URL).",
+    "TaxCalculation.tax_rate_snapshot + exemption_applied are FROZEN JSONB blobs — the entire snapshot is regulated_financial. This is deliberate: regulator audit must see EXACTLY what applied at issuance, not a reconstruction from current-day rates.",
+    "PCI-DSS scope: NO card / PAN / CVV fields on any tax row. TaxCalculation.source_amount_cents is a currency amount only. Payment references upstream `transaction` module tokens (Wave 4 peer).",
+    "regulated_financial tagging applies to every tax_calculations field. The retention pipeline honours the 7-year rule (10 for Enterprise) on the entire row.",
+    "TaxJurisdiction.registration_number (the tenant's own VAT/GST/EIN number) is CONFIDENTIAL — competitor intel that reveals a tenant's tax registration posture."
+  ]
+}

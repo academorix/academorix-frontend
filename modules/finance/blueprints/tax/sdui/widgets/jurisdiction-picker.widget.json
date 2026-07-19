@@ -1,0 +1,79 @@
+{
+  "id": "tax.jurisdiction-picker",
+  "title": "Tax jurisdiction picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Country + state autocomplete backed by the ISO 3166 catalog + tenant-custom jurisdictions. Single-select by default; multi-select mode available via multiSelect prop. Filters by search input (matches country name, ISO code, or state code). Merges platform-reference jurisdictions with tenant-custom.",
+  "props": {
+    "label": {
+      "type": "string",
+      "default": "Jurisdiction"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "multiSelect": {
+      "type": "boolean",
+      "default": false
+    },
+    "helpText": {
+      "type": "string",
+      "required": false
+    }
+  },
+  "dataSources": [
+    {
+      "name": "jurisdictions",
+      "kind": "http.get",
+      "url": "/api/v1/tax/jurisdictions?limit=500",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "bindings": {
+        "label": { "$ref": "props.label" },
+        "isRequired": { "$ref": "props.required" },
+        "description": { "$ref": "props.helpText" },
+        "items": {
+          "$expr": "jurisdictions.map(j => ({ id: j.id, label: j.name + ' (' + j.country_code + (j.state_code ? '-' + j.state_code : '') + ')', tax_type: j.tax_type, source: j.tenant_id ? 'custom' : 'platform' }))"
+        },
+        "selectionMode": { "$expr": "props.multiSelect ? 'multiple' : 'single'" }
+      },
+      "props": {
+        "menuTrigger": "input",
+        "placeholder": "Search country or state..."
+      },
+      "itemRenderer": {
+        "kind": "View",
+        "props": { "className": "flex items-center justify-between gap-2 p-2" },
+        "children": [
+          { "kind": "Text", "bindings": { "children": { "$ref": "item.label" } } },
+          {
+            "kind": "View",
+            "props": { "className": "flex items-center gap-1" },
+            "children": [
+              {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "info" },
+                "bindings": { "children": { "$ref": "item.tax_type" } }
+              },
+              {
+                "kind": "Chip",
+                "props": { "size": "xs", "variant": "warning" },
+                "bindings": {
+                  "hidden": { "$expr": "item.source !== 'custom'" },
+                  "children": "Custom"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

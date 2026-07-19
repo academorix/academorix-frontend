@@ -1,0 +1,212 @@
+{
+  "id": "coupon.resources.coupon.bulk-issue",
+  "title": "Bulk issue coupons",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coupons/bulk-issue",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coupon", "entity": "coupon", "action": "bulk-issue" },
+  "requiresPermission": "coupons.bulk-issue",
+  "requiresEntitlement": "coupon_bulk_issue",
+  "dataSources": [
+    {
+      "name": "templates",
+      "kind": "static",
+      "sourcePath": "modules/finance/blueprints/coupon/data/code-format-templates.json",
+      "unwrap": "templates"
+    },
+    {
+      "name": "slot_entitlement",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/coupon_slot",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Bulk issue coupons" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Generate N unique codes for a named campaign in one shot. Consumes coupon_slot entitlement per code." } }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info", "className": "mb-2" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": { "size": "sm", "label": "Coupon slots" },
+                  "bindings": {
+                    "cap": { "$ref": "slot_entitlement.value_cap" },
+                    "used": { "$ref": "slot_entitlement.value_used" }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "'You have ' + (slot_entitlement.value_cap - slot_entitlement.value_used) + ' slots remaining.'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "id": "bulk-issue-form",
+            "onSubmit": {
+              "kind": "http.post",
+              "url": "/api/v1/coupons/bulk-issue",
+              "onSuccessNavigate": "/tenant/coupons"
+            }
+          },
+          "children": [
+            {
+              "kind": "FieldSet",
+              "props": { "legend": "Campaign" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "campaign_name",
+                    "label": "Campaign name",
+                    "placeholder": "SUMMER 2026",
+                    "helpText": "Used in the code template ({CAMPAIGN} substitution) + tagged on every generated coupon's issuance_context.",
+                    "isRequired": true
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "count",
+                    "label": "Number of codes",
+                    "minValue": 1,
+                    "maxValue": 10000,
+                    "isRequired": true,
+                    "helpText": "Max 10000 per bulk call. Refused when count > remaining slots."
+                  },
+                  "bindings": {
+                    "maxValue": {
+                      "$expr": "Math.min(10000, slot_entitlement.value_cap - slot_entitlement.value_used)"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "FieldSet",
+              "props": { "legend": "Code format" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": {
+                    "name": "code_template",
+                    "label": "Template",
+                    "menuTrigger": "focus",
+                    "isRequired": true
+                  },
+                  "bindings": {
+                    "items": { "$ref": "templates" }
+                  },
+                  "itemRenderer": {
+                    "kind": "View",
+                    "children": [
+                      { "kind": "Text", "props": { "className": "font-mono text-sm" }, "bindings": { "children": { "$ref": "item.template" } } },
+                      { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$ref": "item.typical_use_case" } } },
+                      { "kind": "Text", "props": { "className": "text-xs text-muted" }, "bindings": { "children": { "$expr": "'Example: ' + item.example" } } }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "FieldSet",
+              "props": { "legend": "Discount + caps" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "discount_type", "label": "Discount type", "menuTrigger": "focus", "isRequired": true },
+                  "props_items": [
+                    { "id": "percent", "label": "Percent discount" },
+                    { "id": "fixed_amount", "label": "Fixed amount" },
+                    { "id": "free_shipping", "label": "Free shipping" }
+                  ]
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "discount_amount", "label": "Amount", "minValue": 0 },
+                  "bindings": {
+                    "hidden": { "$expr": "form.discount_type === 'free_shipping'" }
+                  }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "name": "discount_currency", "label": "Currency", "menuTrigger": "focus" },
+                  "bindings": {
+                    "hidden": { "$expr": "form.discount_type !== 'fixed_amount'" },
+                    "isRequired": { "$expr": "form.discount_type === 'fixed_amount'" }
+                  },
+                  "props_items": [
+                    { "id": "USD", "label": "USD" },
+                    { "id": "EUR", "label": "EUR" },
+                    { "id": "GBP", "label": "GBP" }
+                  ]
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "usage_cap", "label": "Per-code usage cap", "minValue": 1, "defaultValue": 1, "isRequired": true, "helpText": "Typical: 1 (each code redeemable once)." }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "per_customer_limit", "label": "Per-customer limit", "minValue": 1, "defaultValue": 1, "isRequired": true }
+                }
+              ]
+            },
+            {
+              "kind": "FieldSet",
+              "props": { "legend": "Validity" },
+              "children": [
+                {
+                  "kind": "DatePicker",
+                  "props": { "name": "valid_from", "label": "Valid from", "isRequired": true, "defaultValue": "now" }
+                },
+                {
+                  "kind": "DatePicker",
+                  "props": { "name": "valid_until", "label": "Valid until", "helpText": "Recommended: set an end date for campaign codes." }
+                }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "type": "submit", "className": "self-end" },
+              "bindings": {
+                "children": {
+                  "$expr": "'Generate ' + (form.count || 0) + ' codes'"
+                },
+                "disabled": {
+                  "$expr": "!form.count || form.count < 1 || form.count > (slot_entitlement.value_cap - slot_entitlement.value_used)"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "id": "academorix://modules/tax/policies",
+  "$version": 1,
+  "title": "tax — authorization policies",
+  "description": "Four policies, one per owned model. Every ability resolves through spatie/laravel-permission, then narrows by tenant scope. Write actions on TaxCalculation are NEVER allowed via API — calculations are persisted only via the CalculateTaxForInvoiceLineJob path (calculation-freeze pattern). Real-time preview is a distinct ability that does NOT persist.",
+  "policies": [
+    {
+      "model": "TaxRate",
+      "class": "Academorix\\Finance\\Tax\\Policies\\TaxRatePolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "tax.rates.viewAny", "scope": "any tenant member with tax_capture entitlement + finance/admin/owner/support role" },
+        { "action": "view", "permission": "tax.rates.view" },
+        { "action": "create", "permission": "tax.rates.create", "scope": "finance + admin + owner. Requires tax_capture entitlement." },
+        { "action": "update", "permission": "tax.rates.update", "scope": "finance + admin + owner. Refused at observer layer when the rate has been referenced by any tax_calculation." },
+        { "action": "delete", "permission": "tax.rates.delete", "scope": "admin + owner. Soft-delete only." },
+        { "action": "sync", "permission": "tax.rates.sync", "scope": "finance + admin + owner. Trigger on-demand SyncTaxRatesFromProviderJob." },
+        { "action": "platformViewAny", "permission": "platform.tax.rates.viewAny" }
+      ]
+    },
+    {
+      "model": "TaxJurisdiction",
+      "class": "Academorix\\Finance\\Tax\\Policies\\TaxJurisdictionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "tax.jurisdictions.viewAny", "scope": "any tenant member with tax_capture. Sees both platform-reference (tenant_id IS NULL) + tenant-custom jurisdictions." },
+        { "action": "view", "permission": "tax.jurisdictions.view" },
+        { "action": "create", "permission": "tax.jurisdictions.create", "scope": "finance + admin + owner. Requires tax_jurisdiction_custom entitlement (Enterprise-only for tenant-scoped custom jurisdictions)." },
+        { "action": "update", "permission": "tax.jurisdictions.update", "scope": "finance + admin + owner. Refused on platform-reference jurisdictions (tenant_id IS NULL) unless caller is super_admin." },
+        { "action": "delete", "permission": "tax.jurisdictions.delete", "scope": "admin + owner. Soft-delete only. Refused when any tax_rates references the jurisdiction (RESTRICT FK)." }
+      ]
+    },
+    {
+      "model": "TaxExemption",
+      "class": "Academorix\\Finance\\Tax\\Policies\\TaxExemptionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "tax.exemptions.viewAny", "scope": "customers see own exemptions (customer_type='User' AND customer_id=me); admin/owner/finance/compliance see all tenant exemptions; support sees cross-tenant redacted view" },
+        { "action": "view", "permission": "tax.exemptions.view", "scope": "same as viewAny + certificate_number redacted for support role" },
+        { "action": "create", "permission": "tax.exemptions.create", "scope": "authenticated user for own customer record OR admin/owner/finance for any customer in tenant. Requires tax_exemption_management entitlement." },
+        { "action": "update", "permission": "tax.exemptions.create", "scope": "same as create. Note: verification_status transitions go through dedicated verify/reject abilities, not update." },
+        { "action": "verify", "permission": "tax.exemptions.verify", "scope": "admin + owner + compliance role. Transitions verification_status pending → verified." },
+        { "action": "reject", "permission": "tax.exemptions.reject", "scope": "admin + owner + compliance role. Transitions verification_status pending → rejected with reason." },
+        { "action": "delete", "permission": "NEVER", "scope": "exemptions retain 7 years post-expiry via retention pipeline" }
+      ]
+    },
+    {
+      "model": "TaxCalculation",
+      "class": "Academorix\\Finance\\Tax\\Policies\\TaxCalculationPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "tax.calculations.viewAny", "scope": "any tenant member with tax_capture + finance/admin/owner/support role" },
+        { "action": "view", "permission": "tax.calculations.view", "scope": "same as viewAny" },
+        { "action": "create", "permission": "NEVER", "scope": "calculations are persisted ONLY via the CalculateTaxForInvoiceLineJob path (invoice-line listener). No direct API create." },
+        { "action": "preview", "permission": "tax.calculations.preview", "scope": "finance + admin + owner. Real-time preview via POST /api/v1/tax/calculate — does NOT persist a calculation row." },
+        { "action": "update", "permission": "NEVER", "scope": "calculations are immutable after commit" },
+        { "action": "delete", "permission": "NEVER", "scope": "calculations migrate to archive at 7 years; no manual delete" },
+        { "action": "platformViewAny", "permission": "platform.tax.calculations.viewAny", "scope": "cross-tenant support tool for platform ops" },
+        { "action": "platformView", "permission": "platform.tax.calculations.view" }
+      ]
+    }
+  ]
+}

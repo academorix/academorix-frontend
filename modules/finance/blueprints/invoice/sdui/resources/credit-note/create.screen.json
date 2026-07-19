@@ -1,0 +1,167 @@
+{
+  "id": "invoice.resources.credit-note.create",
+  "title": "Issue credit note",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/credit-notes/create",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "invoice", "entity": "credit-note", "action": "create" },
+  "requiresPermission": "invoice.credit-notes.create",
+  "requiresEntitlement": "credit_note_issuance",
+  "dataSources": [
+    {
+      "name": "original_invoice",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/invoices/' + $route.original_invoice_id",
+      "unwrap": "data",
+      "enabledWhen": "$route.original_invoice_id != null"
+    },
+    {
+      "name": "existing_credit_notes",
+      "kind": "http.get",
+      "url": "/api/v1/credit-notes",
+      "unwrap": "data",
+      "queryFromValues": { "original_invoice_id": "$route.original_invoice_id" },
+      "enabledWhen": "$route.original_invoice_id != null"
+    }
+  ],
+  "state": {
+    "original_invoice_id": { "type": "string", "defaultFromRoute": "original_invoice_id" },
+    "amount_cents": { "type": "integer", "default": 0 },
+    "reason": { "type": "string", "default": "refund" },
+    "reason_note": { "type": "string", "default": null }
+  },
+  "computed": {
+    "already_credited_cents": {
+      "expr": "existing_credit_notes.filter(cn => cn.status != 'voided').reduce((sum, cn) => sum + cn.amount_cents, 0)"
+    },
+    "remaining_creditable_cents": {
+      "expr": "original_invoice.total_cents - already_credited_cents"
+    },
+    "requires_note": {
+      "expr": "state.reason IN ['adjustment', 'customer_dispute_resolved', 'accounting_correction']"
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-3xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Issue credit note" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Reverse part or all of a paid invoice. The original invoice remains unchanged." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "title": "Original invoice" },
+          "visibleWhen": "state.original_invoice_id != null",
+          "children": [
+            {
+              "kind": "DefinitionList",
+              "props": {
+                "items": [
+                  { "label": "Invoice", "valueRef": "original_invoice.invoice_number" },
+                  { "label": "Customer", "valueRef": "original_invoice.billing_address.name" },
+                  { "label": "Issued", "valueRef": "original_invoice.issue_date", "formatter": "date" },
+                  { "label": "Total", "valueRef": "original_invoice.total_cents", "formatter": "currency", "currencyField": "original_invoice.currency" },
+                  { "label": "Already credited", "valueRef": "computed.already_credited_cents", "formatter": "currency", "currencyField": "original_invoice.currency", "visibleWhen": "computed.already_credited_cents > 0" },
+                  { "label": "Remaining creditable", "valueRef": "computed.remaining_creditable_cents", "formatter": "currency", "currencyField": "original_invoice.currency", "emphasized": true }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "title": "Credit details" },
+          "children": [
+            {
+              "kind": "InvoicePicker",
+              "props": { "label": "Original invoice", "helpText": "Only paid/partially-paid/refunded/disputed/written-off invoices can be credited." },
+              "visibleWhen": "state.original_invoice_id == null",
+              "filter": { "status": ["paid", "partially_paid", "refunded", "disputed", "written_off"] },
+              "actions": { "onChange": { "kind": "state.set", "field": "original_invoice_id", "valueExpr": "$value" } }
+            },
+            {
+              "kind": "CurrencyField",
+              "props": { "label": "Amount to credit", "helpText": "Positive amount. Cannot exceed the remaining creditable amount." },
+              "bindings": {
+                "value": { "$state": "amount_cents" },
+                "currency": { "$ref": "original_invoice.currency" },
+                "max": { "$ref": "computed.remaining_creditable_cents" }
+              },
+              "actions": { "onChange": { "kind": "state.set", "field": "amount_cents", "valueExpr": "$value" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Reason", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "refund", "label": "Refund", "description": "Money returned to customer" },
+                { "id": "adjustment", "label": "Adjustment", "description": "Post-payment adjustment (requires note)" },
+                { "id": "write_off", "label": "Write-off", "description": "Uncollectible or bad debt" },
+                { "id": "duplicate", "label": "Duplicate", "description": "Same invoice issued twice" },
+                { "id": "customer_dispute_resolved", "label": "Customer dispute resolved", "description": "Resolution of a dispute (requires note)" },
+                { "id": "accounting_correction", "label": "Accounting correction", "description": "Correct a bookkeeping error (requires note)" }
+              ],
+              "bindings": { "selectedKey": { "$state": "reason" } },
+              "actions": { "onSelectionChange": { "kind": "state.set", "field": "reason", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Reason note", "rows": 4, "helpText": "Required for adjustment, dispute-resolution, and accounting-correction." },
+              "visibleWhen": "computed.requires_note",
+              "required": "computed.requires_note",
+              "bindings": { "value": { "$state": "reason_note" } },
+              "actions": { "onChange": { "kind": "state.set", "field": "reason_note", "valueExpr": "$value" } }
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info" },
+          "children": [
+            { "kind": "Text", "props": { "children": "Once issued, credit notes are IMMUTABLE. They can only be voided while still in 'draft' status. After applying (to a refund, next invoice, or customer balance), they cannot be modified." } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/credit-notes" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Issue credit note" },
+              "disabled": "state.amount_cents <= 0 || state.original_invoice_id == null || (computed.requires_note && !state.reason_note)",
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/credit-notes",
+                  "body": {
+                    "original_invoice_id": "$state.original_invoice_id",
+                    "amount_cents": "$state.amount_cents",
+                    "reason": "$state.reason",
+                    "reason_note": "$state.reason_note"
+                  },
+                  "confirm": { "title": "Issue credit note?", "message": "The credit note will be issued + a PDF generated + the customer notified. This is irreversible." },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/credit-notes/' + $response.data.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

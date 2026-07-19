@@ -1,0 +1,53 @@
+{
+  "id": "academorix://modules/transaction/observers",
+  "$version": 1,
+  "title": "transaction — Eloquent observers",
+  "description": "Two observers enforce the module's load-bearing invariants: transaction lifecycle (draft → posted transition, transaction-number generation, cross-currency snapshotting, ledger balance check, IMMUTABILITY after post) + ledger entry integrity (debit XOR credit, parent-transaction not-posted-yet, IMMUTABILITY after create).",
+  "observers": [
+    {
+      "model": "Transaction",
+      "observer": "Academorix\\Finance\\Transaction\\Observers\\TransactionObserver",
+      "handles": [
+        "creating → populate ULID prefix `trx_`",
+        "creating → refuse when tenant does NOT hold `transaction_capture` entitlement (returns `TRANSACTION_FEATURE_NOT_ENTITLED`) — master gate; every tenant has this on but this check ensures dormant/lapsed tenants can't record",
+        "creating → refuse when tenant.transaction_halt_new = true (set by HaltNewTransactionsOnImbalance when a P0 imbalance was detected; returns `TRANSACTION_LEDGER_HALTED`)",
+        "creating → generate transaction_number via TransactionNumberGenerator (Postgres advisory lock keyed by (tenant_id, YEAR(effective_date)); pattern 'TXN-YYYY-NNNNNNNN' with monotonically increasing per-year sequence)",
+        "creating → validate kind is one of 12 TransactionKind values",
+        "creating → validate reference_type + reference_id resolves to an actual row (defense-in-depth against orphan transactions); refuse with `TRANSACTION_ORPHAN_REFERENCE` when the referenced entity does not exist OR belongs to a different tenant",
+        "creating → validate currency is a valid ISO 4217 code",
+        "creating → validate amount_cents > 0 (always positive — direction indicated by the ledger entries, not the amount)",
+        "creating → cross-currency snapshotting: if currency != tenant.base_currency: require exchange_rate_to_base + base_amount_cents; refuse when either is null (returns `TRANSACTION_MISSING_EXCHANGE_RATE`); validate exchange_rate_to_base > 0; validate base_amount_cents = ROUND(amount_cents * exchange_rate_to_base) within a ±1 cent rounding tolerance; refuse otherwise (returns `TRANSACTION_EXCHANGE_RATE_MISMATCH`)",
+        "creating → validate cross-currency + fires TransactionCurrencyConverted (afterCommit)",
+        "creating → set status='draft'; posted_at intentionally left null until the ledger balancing step runs",
+        "creating → validate reversal_reason is set IFF source_transaction_id is set (they travel as a pair); refuse otherwise (returns `TRANSACTION_REVERSAL_REASON_REQUIRED` or `TRANSACTION_REVERSAL_REASON_ORPHAN`)",
+        "creating → when source_transaction_id set: validate source_transaction belongs to the same tenant (`TRANSACTION_CROSS_TENANT_REVERSAL_FORBIDDEN`) AND is in status='posted' (`TRANSACTION_REVERSAL_SOURCE_NOT_POSTED`)",
+        "creating → validate metadata jsonb ≤ 8KB (bounded — the audit trail already captures verbose context)",
+        "creating → fires TransactionCreated (afterCommit)",
+        "created → (subsequent step in the same DB transaction the caller opened): after ALL ledger entries have been inserted, TransactionObserver::finalize() validates SUM(debit_cents) == SUM(credit_cents) > 0 across every entry; refuse when unbalanced (returns `LEDGER_IMBALANCE_ON_POST` — fires LedgerImbalanceDetected at scope='per_transaction')",
+        "created → set status='posted' + posted_at=now(); fires TransactionPosted (afterCommit)",
+        "updating → REFUSE ALL — transactions are IMMUTABLE after post (returns `TRANSACTION_IMMUTABLE`). The only allowed writes are the initial insert + the ledger-balancing status transition draft→posted, both of which happen inside the creating hook's atomic transaction. Any subsequent UPDATE is a bug.",
+        "updating (posted_at set from null → now()) → allowed ONLY within the creating hook's transaction; refuse otherwise (returns `TRANSACTION_POST_OUT_OF_BAND`)",
+        "deleting (soft-delete) → REFUSE — transactions are append-only. Reversal via new offsetting transaction. Model does not use SoftDeletes trait.",
+        "deleting (hard-delete) → REFUSE except when called by PurgeExpiredTransactionDataJob (which archives to compliance-storage first). Enforced by checking the current Doppler context env AND the actor is a system user with the transaction.purge permission."
+      ]
+    },
+    {
+      "model": "TransactionLedgerEntry",
+      "observer": "Academorix\\Finance\\Transaction\\Observers\\TransactionLedgerEntryObserver",
+      "handles": [
+        "creating → populate ULID prefix `tld_`",
+        "creating → verify parent transaction exists + belongs to the same tenant (defense-in-depth against cross-tenant FK smuggling; returns `LEDGER_ENTRY_CROSS_TENANT`)",
+        "creating → refuse when parent transaction.status != 'draft' — ledger entries attach ONLY during transaction creation (returns `LEDGER_ENTRY_PARENT_TRANSACTION_POSTED`); once a transaction is posted, no more entries can be added",
+        "creating → validate account is one of 14 LedgerAccount values (returns `LEDGER_ENTRY_INVALID_ACCOUNT`)",
+        "creating → validate account_currency is a valid ISO 4217 code",
+        "creating → enforce debit XOR credit: exactly one of debit_cents / credit_cents must be > 0; the other must be 0 (returns `LEDGER_ENTRY_DEBIT_XOR_CREDIT`)",
+        "creating → validate debit_cents >= 0 AND credit_cents >= 0 (no negative entries — direction indicated by which column is populated)",
+        "creating → validate description is non-empty + ≤ 256 chars",
+        "creating → refuse when the caller attempted to attach an entry with account_currency != transaction.currency (single-currency-per-transaction invariant; returns `LEDGER_ENTRY_CURRENCY_MISMATCH`)",
+        "creating → fires LedgerEntryRecorded (afterCommit)",
+        "updating → REFUSE ALL — ledger entries are IMMUTABLE (returns `LEDGER_ENTRY_IMMUTABLE`). Corrections happen via new reversal transactions, never mutation.",
+        "deleting → REFUSE ALL — append-only. Model does NOT use SoftDeletes. Hard-purge cascades from PurgeExpiredTransactionDataJob via FK CASCADE after the parent transaction is archived + purged."
+      ]
+    }
+  ]
+}

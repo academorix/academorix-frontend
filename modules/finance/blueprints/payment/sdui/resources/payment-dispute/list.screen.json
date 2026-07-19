@@ -1,0 +1,100 @@
+{
+  "id": "payment.resources.payment-dispute.list",
+  "title": "Payment disputes",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-disputes",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-dispute", "action": "list" },
+  "requiresPermission": "payment.disputes.viewAny",
+  "requiresEntitlement": "payment_dispute_management",
+  "dataSources": [
+    {
+      "name": "disputes",
+      "kind": "http.get",
+      "url": "/api/v1/payment-disputes",
+      "unwrap": "data",
+      "queryFromFilters": true,
+      "defaultFilters": { "status": "needs_response,under_review,warning_needs_response,warning_under_review" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payment disputes" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Chargebacks + inquiries requiring your response." } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-56" },
+              "props_items": [
+                { "id": "warning_needs_response", "label": "Warning — needs response" },
+                { "id": "warning_under_review", "label": "Warning — under review" },
+                { "id": "warning_closed", "label": "Warning — closed" },
+                { "id": "needs_response", "label": "Needs response" },
+                { "id": "under_review", "label": "Under review" },
+                { "id": "charge_refunded", "label": "Refunded (accepted)" },
+                { "id": "won", "label": "Won" },
+                { "id": "lost", "label": "Lost" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Reason", "menuTrigger": "focus", "className": "min-w-56" },
+              "props_items_source": "payment.dispute-reason-catalog",
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "reason", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "disputes" },
+            "isLoading": { "$ref": "disputes.isLoading" }
+          },
+          "props": {
+            "className": "w-full",
+            "columns": [
+              { "field": "opened_at", "label": "Opened", "sortable": true, "defaultSort": "desc", "width": 140, "formatter": "datetime-relative" },
+              { "field": "provider", "label": "Provider", "width": 100, "renderer": { "kind": "Text", "formatter": "titlecase" } },
+              { "field": "reason", "label": "Reason", "width": 200, "renderer": { "kind": "Text", "formatter": "titlecase-space" } },
+              { "field": "amount_cents", "label": "Amount", "sortable": true, "width": 120, "renderer": { "kind": "Text", "formatter": "currency" } },
+              { "field": "status", "label": "Status", "sortable": true, "width": 160, "renderer": { "widget": "payment.dispute-status-chip" } },
+              { "field": "evidence_due_by", "label": "Evidence due", "sortable": true, "width": 140, "formatter": "datetime-relative-days" }
+            ],
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/payment-disputes/' + row.id + '/submit-evidence'"
+            }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "scale", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No disputes to respond to" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Disputes appear here when customers challenge a payment via their bank." } }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

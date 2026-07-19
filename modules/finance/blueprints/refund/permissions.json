@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/refund/permissions",
+  "$version": 1,
+  "title": "refund — permissions",
+  "seeder": "Academorix\\Finance\\Refund\\Database\\Seeders\\RefundPermissionSeeder",
+  "isSystem": true,
+  "description": "Two audiences. Tenant plane (sanctum) — owner + finance + admin manage refunds + read refund ledger; support role reads only; marketing role reads reports only (for ROAS analysis); customers hold `refunds.request` to submit own refund requests + `refunds.cancel` scoped to own refunds. Platform plane (platform_admin) — cross-tenant read for support intervention + regulator-facing reporting. All tenant permissions carry the appropriate resource prefix (`refunds.` for the aggregate, `refunds.view-financials` for confidential fields).",
+  "permissions": [
+    { "name": "refunds.viewAny", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
+    { "name": "refunds.view", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"] },
+    { "name": "refunds.create", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"], "description": "Admin-initiated refund path (POST /api/v1/refunds). Distinct from refunds.request (customer path)." },
+    { "name": "refunds.request", "guard": "sanctum", "seededOn": ["athlete", "coach", "staff", "customer", "member"], "description": "Customer-initiated refund path (POST /api/v1/refunds/mine). Requires `refund_customer_self_service` entitlement. Customer-allowed reasons only." },
+    { "name": "refunds.approve", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"], "description": "Approve OR reject a refund. Segregation of duties — REFUSED when caller is initiator (SOX §404). Same permission covers both approve + reject actions." },
+    { "name": "refunds.cancel", "guard": "sanctum", "seededOn": ["athlete", "coach", "staff", "customer", "member", "finance", "admin", "owner"], "description": "Cancel a pending refund. Customer role scoped to own refunds via policy; admin roles can cancel any tenant refund still in awaiting_approval / approved." },
+    { "name": "refunds.force-fail", "guard": "sanctum", "seededOn": ["admin", "owner"], "description": "Admin escape hatch — mark a stuck provider_error refund as failed after manual provider-side investigation. High-privilege — only admin + owner." },
+    { "name": "refunds.reconcile", "guard": "sanctum", "seededOn": ["finance", "admin", "owner"], "description": "Dispatches ReconcileRefundsJob. Sweeps stuck refunds after provider outage recovery." },
+    { "name": "refunds.view-report", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "marketing", "support"], "description": "Read the refund volume report. Marketing role holds for ROAS analysis (refund rate feeds attribution modelling)." },
+    { "name": "refunds.view-financials", "guard": "sanctum", "seededOn": ["finance", "admin", "owner", "support"], "description": "Read the confidential financial fields: amount_cents, currency, provider_fee_reversal_cents, exchange_rate. Redactor strips these when the caller lacks this permission." },
+    { "name": "platform.refunds.viewAny", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
+    { "name": "platform.refunds.view", "guard": "platform_admin", "seededOn": ["super_admin", "ops", "support"] },
+    { "name": "platform.refunds.pii.view", "guard": "platform_admin", "seededOn": ["super_admin"], "description": "Cross-tenant view WITH customer PII (customer_id / customer name / email unmasked). Reserved for regulator-facing investigations. Default view hashes PII." }
+  ]
+}

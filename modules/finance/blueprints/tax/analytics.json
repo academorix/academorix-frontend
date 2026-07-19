@@ -1,0 +1,121 @@
+{
+  "id": "academorix://modules/tax/analytics",
+  "$version": 1,
+  "title": "tax — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics"],
+  "note": "Tax carries financial + compliance-critical signals. Its ANALYTICS.json declares product-analytics events that the growth::analytics lane emits about THIS MODULE's admin surfaces (rate CRUD, exemption verification, provider CRUD, calculation drift detection). Tax-lane transactions themselves are financial records — they never flow through the analytics lane.",
+  "events": [
+    {
+      "name": "Tax Rate Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "rate_type", "jurisdiction_country_code", "percentage_bucket", "source"],
+      "description": "Admin created a new tax rate. percentage_bucket = '0-5' | '5-10' | '10-20' | '20-30' | '30+' (bounded cardinality; raw percentage is confidential per data-classes.json)."
+    },
+    {
+      "name": "Tax Rate Updated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "rate_type", "field_changed"]
+    },
+    {
+      "name": "Tax Rate Sync Triggered",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "outcome", "rate_change_count_bucket"],
+      "description": "outcome = 'succeeded' | 'failed'. rate_change_count_bucket = '0' | '1-10' | '11-100' | '100+'."
+    },
+    {
+      "name": "Tax Jurisdiction Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "country_code", "state_code", "tax_type", "is_platform_reference"]
+    },
+    {
+      "name": "Tax Exemption Created",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "exemption_type", "issuing_jurisdiction_country_code"]
+    },
+    {
+      "name": "Tax Exemption Verified",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "exemption_type", "verification_method", "days_to_verify_bucket"],
+      "description": "verification_method = 'manual' | 'automatic_registry_check'. days_to_verify_bucket = '0' | '1' | '2-7' | '8-30' | '30+'."
+    },
+    {
+      "name": "Tax Exemption Rejected",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "exemption_type", "rejection_reason_bucket"]
+    },
+    {
+      "name": "Tax Exemption Expired",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "exemption_type", "was_warning_sent"],
+      "description": "Compliance-relevant — expired exemptions transition to failing verification at calculation time. Consent tier: essential."
+    },
+    {
+      "name": "Tax Calculation Completed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "latency_ms_bucket", "applied_exemption"],
+      "description": "P0 event volume metric — powers provider-health dashboards. tax_amount_cents NEVER on this event (confidential per data-classes.json). Consent tier: essential (financial-audit signal)."
+    },
+    {
+      "name": "Tax Calculation Failed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "error_code_bucket", "invoice_line_blocked"],
+      "description": "P1 event — every failure blocks an invoice line (fail-safe against under-charging). Consent tier: essential."
+    },
+    {
+      "name": "Tax Provider Configured",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "enabled_jurisdiction_count_bucket"]
+    },
+    {
+      "name": "Tax Provider Test Sent",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "outcome", "latency_ms_bucket"]
+    },
+    {
+      "name": "Tax Provider Circuit Breaker Opened",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "consecutive_failure_count"],
+      "description": "P1 event — every fire indicates the tenant's tax calculation pipeline is degraded. Consent tier: essential."
+    },
+    {
+      "name": "Tax Calculation Drift Detected",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "provider", "calculation_count", "drift_percentage_bucket"],
+      "description": "Regulator-critical. ReconcileProviderCalculationsJob spot-checked calculations and found a mismatch. Consent tier: essential."
+    },
+    {
+      "name": "Tax Annual Report Generated",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "year", "jurisdiction_count", "total_calculation_count_bucket"]
+    },
+    {
+      "name": "Tax Real-time Preview Requested",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "provider", "was_calculation_persisted"],
+      "description": "POST /api/v1/tax/calculate real-time preview (does NOT persist a calculation record). Used by pricing pages + cart previews."
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw tax_amount_cents / source_amount_cents / percentage — always bucketed. Prevents cross-tenant revenue inference from aggregated data.",
+    "Analytics NEVER carry certificate_number / certificate_document_url — those are RESTRICTED (financial-critical PII).",
+    "The 'essential' consent tier for Circuit Breaker Opened + Calculation Drift + Calculation Failed + Exemption Expired is deliberate — system-health + financial-audit signals cannot be opted out.",
+    "This file is DISTINCT from the tax-lane records. tax_calculations rows are financial records with 7-year retention; this analytics.json is the growth::analytics feed about the admin experience of managing the tax surface — a different lane, different consent, different retention."
+  ]
+}

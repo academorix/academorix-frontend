@@ -1,0 +1,113 @@
+{
+  "id": "tax.resources.tax-calculation.detail",
+  "title": "Tax calculation",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/calculations/:calculationId",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-calculation", "action": "view" },
+  "requiresPermission": "tax.calculations.view",
+  "requiresEntitlement": "tax_capture",
+  "dataSources": [
+    {
+      "name": "calculation",
+      "kind": "http.get",
+      "url": "/api/v1/tax/calculations/{{routeParams.calculationId}}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax calculation" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted font-mono" }, "bindings": { "children": { "$ref": "calculation.id" } } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Calculation summary" } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Provider", "field": "calculation.provider" },
+                  { "label": "Provider transaction ID", "field": "calculation.provider_transaction_id", "className": "font-mono" },
+                  { "label": "Invoice line", "field": "calculation.invoice_line_id", "className": "font-mono" },
+                  { "label": "Pre-tax amount", "field": "calculation.source_amount_cents", "formatter": "currency", "currencyField": "calculation.source_currency" },
+                  { "label": "Tax amount", "field": "calculation.tax_amount_cents", "formatter": "currency", "currencyField": "calculation.source_currency" },
+                  { "label": "Currency", "field": "calculation.source_currency" },
+                  { "label": "Calculated at", "field": "calculation.calculated_at", "formatter": "datetime" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Tax rate snapshot" } },
+            { "kind": "Text", "props": { "className": "text-xs text-muted mb-3", "children": "Frozen at calculation time. IMMUTABLE — this is the rate that regulators see." } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Rate ID", "field": "calculation.tax_rate_snapshot.rate_id", "className": "font-mono" },
+                  { "label": "Percentage", "field": "calculation.tax_rate_snapshot.percentage", "formatter": "percent" },
+                  { "label": "Rate type", "field": "calculation.tax_rate_snapshot.rate_type" },
+                  { "label": "Applies to", "field": "calculation.tax_rate_snapshot.applies_to" },
+                  { "label": "Jurisdiction country", "field": "calculation.tax_rate_snapshot.jurisdiction.country_code" },
+                  { "label": "Jurisdiction state", "field": "calculation.tax_rate_snapshot.jurisdiction.state_code" },
+                  { "label": "Effective at", "field": "calculation.tax_rate_snapshot.effective_at", "formatter": "date" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "bindings": { "hidden": { "$expr": "!calculation.exemption_applied" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Exemption applied" } },
+            { "kind": "Text", "props": { "className": "text-xs text-muted mb-3", "children": "Frozen at calculation time." } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Exemption ID", "field": "calculation.exemption_applied.exemption_id", "className": "font-mono" },
+                  { "label": "Exemption type", "field": "calculation.exemption_applied.exemption_type" },
+                  { "label": "Certificate number (redacted)", "field": "calculation.exemption_applied.certificate_number", "formatter": "redacted-tail-4" },
+                  { "label": "Issuing jurisdiction", "field": "calculation.exemption_applied.issuing_jurisdiction_id" },
+                  { "label": "Valid from", "field": "calculation.exemption_applied.valid_from", "formatter": "date" },
+                  { "label": "Valid until", "field": "calculation.exemption_applied.valid_until", "formatter": "date" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "bindings": { "hidden": { "$expr": "!calculation.provider_metadata" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Provider metadata" } },
+            {
+              "kind": "DescriptionList",
+              "bindings": { "items": { "$expr": "Object.entries(calculation.provider_metadata).map(([k,v]) => ({label: k, value: v}))" } }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

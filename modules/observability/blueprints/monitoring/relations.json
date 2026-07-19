@@ -1,0 +1,148 @@
+{
+  "id": "academorix://modules/monitoring/relations",
+  "$version": 1,
+  "title": "monitoring — model relationships",
+  "description": "Six owned entities. HealthCheck is the parent of HealthCheckRun. MonitoringAlertPolicy is the parent of MonitoringAlert. MonitoringIncident groups MonitoringAlert rows (nullable — an alert may not yet be grouped). MonitoringProviderConfig is standalone (tenant-scoped) — alerts reference providers via the policy's notify_provider_configs jsonb array, not a direct FK. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / region_id / organization_id / scope_node_id on any owned row.",
+  "internal": [
+    {
+      "from": "HealthCheck",
+      "kind": "hasMany",
+      "to": "HealthCheckRun",
+      "foreignKey": "health_check_id",
+      "description": "Per-execution runs. RESTRICT on health_check hard-delete — runs anchor to their check for audit."
+    },
+    {
+      "from": "HealthCheckRun",
+      "kind": "belongsTo",
+      "to": "HealthCheck",
+      "foreignKey": "health_check_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — runs anchor to their check. Check's hard-delete only happens after 90-day grace + all its runs are purged."
+    },
+    {
+      "from": "MonitoringAlertPolicy",
+      "kind": "hasMany",
+      "to": "MonitoringAlert",
+      "foreignKey": "monitoring_alert_policy_id",
+      "description": "Every alert fires against a policy. RESTRICT on policy delete."
+    },
+    {
+      "from": "MonitoringAlert",
+      "kind": "belongsTo",
+      "to": "MonitoringAlertPolicy",
+      "foreignKey": "monitoring_alert_policy_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — alerts anchor to their firing policy for auditing."
+    },
+    {
+      "from": "MonitoringIncident",
+      "kind": "hasMany",
+      "to": "MonitoringAlert",
+      "foreignKey": "monitoring_incident_id",
+      "description": "Grouped alerts. Nullable — an alert may not yet be grouped."
+    },
+    {
+      "from": "MonitoringAlert",
+      "kind": "belongsTo",
+      "to": "MonitoringIncident",
+      "foreignKey": "monitoring_incident_id",
+      "onDelete": "set null",
+      "nullable": true,
+      "description": "SET NULL on incident hard-delete — a hard-deleted incident releases its alerts back to un-grouped state (unusual — usually the incident lives longer than the alerts)."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "HealthCheck",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "HealthCheckRun",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Denormalised tenant_id — cascades through health_check.tenant_id but explicit for query-plan + FK integrity."
+    },
+    {
+      "from": "MonitoringAlertPolicy",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "MonitoringAlert",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "MonitoringAlert",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "acknowledged_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The user who acknowledged the alert. RESTRICT for audit-integrity — user hard-delete cannot orphan acknowledgment records."
+    },
+    {
+      "from": "MonitoringAlert",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "resolved_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The user who manually resolved (NULL for auto-resolve)."
+    },
+    {
+      "from": "MonitoringIncident",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "MonitoringIncident",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "acknowledged_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The user who acknowledged the incident."
+    },
+    {
+      "from": "MonitoringIncident",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "resolved_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The user who manually resolved (NULL for auto-resolve)."
+    },
+    {
+      "from": "MonitoringProviderConfig",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    }
+  ],
+  "inbound": {
+    "description": "Monitoring does NOT have inbound relations. No downstream module attaches to monitoring rows. Monitoring is a leaf in the observability tier — its role is to observe the system, not to be consumed by other domain rows.",
+    "examples": [],
+    "note": "The audit + activity modules read monitoring events for compliance retention but do NOT hold FKs on monitoring rows. Their tables ({audits, activity_log}) store the audit trail with tenant_id + application_id (per tenancy-columns.md §2) — those two rows DO carry application_id; the six monitoring rows do NOT."
+  },
+  "morphs": [],
+  "notes": [
+    "None of the six owned rows carry `application_id` — cascades through tenant_id → tenants.application_id per tenancy-columns.md §2. Only the 8 named rows carry application_id directly; monitoring_* is not among them.",
+    "None of the six owned rows carry `region_id`, `organization_id`, or `scope_node_id`. Monitoring is a domain-plane concern — the growth/scope substrate does not apply.",
+    "MonitoringAlertPolicy.notify_provider_configs is a jsonb array of MonitoringProviderConfig ULIDs — NOT a FK. This is deliberate — the array is deep-copied at policy save + the individual configs are RESTRICT on delete. This lets a config be de-configured from a policy without the delete cascade rewriting the policy's arrays.",
+    "MonitoringIncident.oncall_page_config is similarly a jsonb — { primary_provider: <config_id>, escalation_policy: { after_seconds, escalation_provider: <config_id> } }. NOT FKs.",
+    "The monitoring_alert.monitoring_incident_id nullable FK is the ONLY optional attachment — every alert eventually attaches to an incident (via GroupAlertsIntoIncidentJob) but the attachment is asynchronous. Alerts in status='suppressed' or 'expired' may never attach — a nullable FK is correct."
+  ]
+}

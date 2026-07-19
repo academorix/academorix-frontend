@@ -1,0 +1,195 @@
+{
+  "$version": 1,
+  "title": "Chart of accounts catalogue",
+  "description": "The 14 chart-of-accounts entries the module supports. Each account documents its regulator_category (asset / liability / equity / revenue / expense), typical balance direction, default currency behaviour, and canonical use cases across the 12 transaction kinds. The ChartOfAccountsRegistry reads this catalogue at boot; the SDUI account-picker widget renders tenant-facing options; the LedgerReporter groups by regulator_category for GL exports.",
+  "accounts": [
+    {
+      "account": "revenue",
+      "display_name": "Revenue",
+      "regulator_category": "revenue",
+      "typical_balance": "credit",
+      "description": "Recognized income from invoice payments, coupon-adjusted. Every invoice-payment transaction credits revenue (typically indirectly — the immediate credit is accounts_receivable, which was previously debited when the invoice was created). Coupon credits reduce revenue.",
+      "default_currency": null,
+      "default_currency_note": "Uses tenant.base_currency. Multi-currency tenants may hold multiple currency balances simultaneously.",
+      "enabled_by_default": true,
+      "used_by_kinds": ["coupon_credit (credit side)", "adjustment (revenue reversal for refunds)"],
+      "regulator_notes": "The primary top-line revenue metric on the P&L statement. Regulators expect to see monthly + YTD totals."
+    },
+    {
+      "account": "accounts_receivable",
+      "display_name": "Accounts Receivable",
+      "regulator_category": "asset",
+      "typical_balance": "debit",
+      "description": "Money owed to the tenant by customers. Debited when an invoice is created; credited when the invoice is paid (invoice_payment transaction).",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["invoice_payment (credit side)", "write_off (credit side)"],
+      "regulator_notes": "Balance sheet asset. High values may signal collection risk — high_watermark alerts fire when the balance exceeds tenant-configured thresholds."
+    },
+    {
+      "account": "cash",
+      "display_name": "Cash",
+      "regulator_category": "asset",
+      "typical_balance": "debit",
+      "description": "Money the tenant currently holds in its operational cash account. Debited on invoice payments + credit refunds + chargebacks + fee charges + bank deposits + tax remittances.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["invoice_payment (debit side)", "refund_issued (credit side)", "chargeback_debit (credit side)", "tax_remittance (credit side)", "fee_charge (credit side)", "bank_deposit (credit side)", "bank_withdrawal (debit side)", "currency_conversion (both sides in different currencies)"],
+      "regulator_notes": "Balance sheet asset — critical for liquidity reporting. low_watermark alerts fire when balance falls below configured threshold."
+    },
+    {
+      "account": "refunds_owed",
+      "display_name": "Refunds Owed",
+      "regulator_category": "liability",
+      "typical_balance": "credit",
+      "description": "Money the tenant owes to customers who requested refunds but haven't yet been paid. Debited when the refund is actually disbursed to the customer.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["refund_issued (debit side, in the paired transaction)"],
+      "regulator_notes": "Balance sheet liability. High values may signal disbursement backlog — high_watermark alerts fire."
+    },
+    {
+      "account": "refunds_expense",
+      "display_name": "Refunds Expense",
+      "regulator_category": "expense",
+      "typical_balance": "debit",
+      "description": "P&L expense recognizing the revenue reversal on refunds. Debited alongside a revenue credit in the adjustment transaction paired with refund_issued.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["adjustment (debit side, paired with refund_issued)"],
+      "regulator_notes": "P&L expense — reduces reported income. Tracked separately from write_offs because refunds have a distinct customer-service story."
+    },
+    {
+      "account": "tax_payable",
+      "display_name": "Tax Payable",
+      "regulator_category": "liability",
+      "typical_balance": "credit",
+      "description": "Tax the tenant has collected from customers but hasn't yet remitted to the regulator. Debited on tax_remittance transactions.",
+      "default_currency": null,
+      "default_currency_note": "Some tenants pin this to their jurisdiction currency (e.g. EUR for EU tenants filing VAT to a EU authority).",
+      "enabled_by_default": true,
+      "used_by_kinds": ["tax_remittance (debit side)"],
+      "regulator_notes": "Balance sheet liability — regulator-critical. VAT report exports the tax_payable movements over a period. high_watermark alerts fire when balance exceeds configured filing threshold (indicates a filing is due)."
+    },
+    {
+      "account": "gateway_fees",
+      "display_name": "Gateway Fees",
+      "regulator_category": "expense",
+      "typical_balance": "debit",
+      "description": "Payment gateway fees (Stripe / Paddle / etc.) charged on payment captures. Debited on fee_charge transactions.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["fee_charge (debit side)"],
+      "regulator_notes": "P&L expense — critical for gross-margin analysis. Ops teams track this separately from other expenses to negotiate gateway rates."
+    },
+    {
+      "account": "bank_deposits",
+      "display_name": "Bank Deposits",
+      "regulator_category": "asset",
+      "typical_balance": "debit",
+      "description": "Cash moved out of operational cash into a bank deposit account. Debited on bank_deposit transactions; credited on bank_withdrawal transactions.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["bank_deposit (debit side)", "bank_withdrawal (credit side)"],
+      "regulator_notes": "Balance sheet asset. Distinct from cash because deposits have different liquidity characteristics (some are locked, some are money-market with returns)."
+    },
+    {
+      "account": "write_offs",
+      "display_name": "Write-offs",
+      "regulator_category": "expense",
+      "typical_balance": "debit",
+      "description": "Uncollectible invoices written off as loss. Debited on write_off transactions.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["write_off (debit side)"],
+      "regulator_notes": "P&L expense. Regulators + auditors review this to verify appropriate collection efforts before write-off + to identify uncollectibility patterns."
+    },
+    {
+      "account": "coupons_expense",
+      "display_name": "Coupons Expense",
+      "regulator_category": "expense",
+      "typical_balance": "debit",
+      "description": "Coupon discounts recognized as marketing expense. Debited on coupon_credit transactions.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["coupon_credit (debit side)"],
+      "regulator_notes": "P&L expense — signals marketing efficiency. High values may indicate over-generous couponing."
+    },
+    {
+      "account": "chargebacks_expense",
+      "display_name": "Chargebacks Expense",
+      "regulator_category": "expense",
+      "typical_balance": "debit",
+      "description": "Chargebacks (customer disputes) recognized as expense. Debited on chargeback_debit transactions.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": ["chargeback_debit (debit side)"],
+      "regulator_notes": "P&L expense. Regulators use this + PCI-DSS 5.4 to assess fraud + dispute rates. Sustained high values may trigger merchant-account risk reviews."
+    },
+    {
+      "account": "accounts_payable",
+      "display_name": "Accounts Payable",
+      "regulator_category": "liability",
+      "typical_balance": "credit",
+      "description": "Money the tenant owes to third parties (vendors, suppliers, subprocessors). Credited when a bill is recognized; debited when paid.",
+      "default_currency": null,
+      "enabled_by_default": true,
+      "used_by_kinds": [],
+      "used_by_kinds_note": "Not currently used by the built-in transaction kinds. Reserved for future modules (a vendor-payables module in Wave 5+) OR manual adjustment transactions.",
+      "regulator_notes": "Balance sheet liability. Ops uses this to track vendor obligations."
+    },
+    {
+      "account": "prepayments",
+      "display_name": "Prepayments",
+      "regulator_category": "asset",
+      "typical_balance": "debit",
+      "description": "Money the tenant has paid in advance for services not yet consumed (e.g. annual insurance premiums). Debited on prepayment; credited as service is consumed.",
+      "default_currency": null,
+      "enabled_by_default": false,
+      "used_by_kinds": [],
+      "used_by_kinds_note": "Reserved for future modules. Not currently used by the built-in transaction kinds. Enterprise tenants may enable this manually for expense-accrual accounting.",
+      "regulator_notes": "Balance sheet asset. Reflects future economic benefit."
+    },
+    {
+      "account": "deferred_revenue",
+      "display_name": "Deferred Revenue",
+      "regulator_category": "liability",
+      "typical_balance": "credit",
+      "description": "Revenue collected in advance for services not yet delivered (e.g. an annual subscription paid upfront). Credited on payment; debited as service is delivered + revenue is recognized (per FASB ASC 606).",
+      "default_currency": null,
+      "enabled_by_default": false,
+      "used_by_kinds": [],
+      "used_by_kinds_note": "Reserved for future modules (Wave 5+ revenue-recognition automation). Enterprise tenants may enable this manually for subscription-revenue deferral accounting.",
+      "regulator_notes": "Balance sheet liability. Critical for FASB ASC 606 compliance on subscription businesses. Currently manual — Wave 5+ will automate the revenue-recognition schedule."
+    }
+  ],
+  "regulator_categories": [
+    {
+      "category": "asset",
+      "description": "Balance sheet — resources the tenant owns/controls. Positive typical balance = debit. Includes: cash, accounts_receivable, bank_deposits, prepayments."
+    },
+    {
+      "category": "liability",
+      "description": "Balance sheet — obligations to third parties. Positive typical balance = credit. Includes: accounts_payable, refunds_owed, tax_payable, deferred_revenue."
+    },
+    {
+      "category": "equity",
+      "description": "Balance sheet — owner's residual claim. No accounts in this category currently (equity accounting is out-of-scope for Wave 4 SaaS-tenant use)."
+    },
+    {
+      "category": "revenue",
+      "description": "P&L — income recognized. Positive typical balance = credit. Includes: revenue."
+    },
+    {
+      "category": "expense",
+      "description": "P&L — costs recognized. Positive typical balance = debit. Includes: refunds_expense, gateway_fees, coupons_expense, chargebacks_expense, write_offs."
+    }
+  ],
+  "notes": [
+    "The account enum is the authoritative list. Adding a new account = updating this catalogue + updating the LedgerAccount enum + updating the ChartOfAccountsRegistry + registering an #[AsLedgerAccount] class.",
+    "enabled_by_default: true = every newly-provisioned tenant gets this account in their opening_balance transaction. enabled_by_default: false = the account is opt-in (rare — reserved for accounts that only apply to specific tenant types).",
+    "The regulator_category groupings drive the GL report structure — assets + liabilities appear on the balance sheet section; revenue + expenses appear on the P&L section.",
+    "Currency behaviour: most accounts use the tenant's base_currency. tax_payable may pin to a jurisdiction currency for EU VAT tenants. cash + bank_deposits may hold balances in multiple currencies simultaneously for multi-currency tenants.",
+    "Some accounts (prepayments, deferred_revenue, accounts_payable) are declared but not USED by the built-in transaction kinds. They exist for tenants who need manual adjustment transactions + for future modules (vendor-payables, revenue-recognition automation)."
+  ]
+}

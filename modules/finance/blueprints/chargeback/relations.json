@@ -1,0 +1,120 @@
+{
+  "id": "academorix://modules/chargeback/relations",
+  "$version": 1,
+  "title": "chargeback — model relationships",
+  "description": "Two owned entities. Every row is tenant-scoped (cascades on tenant delete). Chargeback is the aggregate root; ChargebackEvidence belongs to a Chargeback. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / organization_id / region_id / branch_id / scope_node_id on any owned row — all cascade through tenant_id. Chargeback references Payment + Invoice + PaymentDispute + Transaction + Refund with RESTRICT semantics — financial records cannot orphan reversal records.",
+  "internal": [
+    {
+      "from": "Chargeback",
+      "kind": "hasMany",
+      "to": "ChargebackEvidence",
+      "foreignKey": "chargeback_id",
+      "description": "A chargeback can have zero (pending — no evidence submitted yet) or many (typically 1, sometimes 2-3 when bank requests additional evidence — CE3.0 second pass) chargeback_evidence rows. The latest one (max submission_attempt_number) is authoritative for the bank's review; historical attempts are audit trail."
+    },
+    {
+      "from": "ChargebackEvidence",
+      "kind": "belongsTo",
+      "to": "Chargeback",
+      "foreignKey": "chargeback_id",
+      "onDelete": "cascade",
+      "description": "CASCADE on delete. Evidence rows are pivot rows co-terminous with the parent chargeback."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Chargeback",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every chargeback is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "ChargebackEvidence",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Chargeback",
+      "kind": "belongsTo",
+      "to": "payment::Payment",
+      "foreignKey": "payment_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Payment cannot be deleted while any chargeback references it — financial records are 7y-retained + cannot orphan reversal records."
+    },
+    {
+      "from": "Chargeback",
+      "kind": "belongsTo",
+      "to": "invoice::Invoice",
+      "foreignKey": "invoice_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT. Invoice + chargeback retain co-terminously."
+    },
+    {
+      "from": "Chargeback",
+      "kind": "belongsTo",
+      "to": "payment::PaymentDispute",
+      "foreignKey": "payment_dispute_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Set when the chargeback was escalated from a lost PaymentDispute. NULL when the chargeback originated directly via provider webhook (some networks skip the pre-chargeback state). RESTRICT prevents orphan dispute references."
+    },
+    {
+      "from": "Chargeback",
+      "kind": "belongsTo",
+      "to": "transaction::Transaction",
+      "foreignKey": "transaction_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Populated when FinalizeChargebackJob step 1 records the offsetting Transaction (debit chargebacks_expense, credit cash). NULL until lost/expired. RESTRICT prevents orphan ledger entries."
+    },
+    {
+      "from": "Chargeback",
+      "kind": "belongsTo",
+      "to": "transaction::Transaction",
+      "foreignKey": "fee_transaction_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Populated when FinalizeChargebackJob step 2 records the network-fee Transaction (debit chargeback_fees, credit cash). NULL until lost/expired. RESTRICT."
+    },
+    {
+      "from": "Chargeback",
+      "kind": "belongsTo",
+      "to": "refund::Refund",
+      "foreignKey": "refund_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Populated when the RDR path is taken — RdrHandler created a Refund via refund::RefundOrchestrator. NULL otherwise. RESTRICT — refund cannot be deleted while chargeback references it."
+    },
+    {
+      "from": "ChargebackEvidence",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "submitted_by_user_id",
+      "onDelete": "restrict",
+      "description": "The admin who submitted the evidence. RESTRICT — audit trail cannot orphan. User erasure triggers RedactCustomerFromChargebacksOnUserErased hook 90d post-erasure."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules attach in later waves:",
+    "examples": [
+      "growth::marketing::MarketingEvent (Wave 5) — ChargebackLost fires a negative-value + fraud-signal marketing event; the marketing_event row carries chargeback_id for revenue attribution reversal + fraud model retraining.",
+      "growth::referrals::ReferralReward (Wave 5) — ChargebackClawbackReferral cascades to referrals; the reversed reward references chargeback_id via metadata.clawback_chargeback_id.",
+      "finance::coupon::CouponRedemption — ChargebackClawbackCoupon cascades to coupon; the reversed redemption's clawback_reason='chargeback' is set + coupon.usage_count decremented.",
+      "refund::Refund — when RDR path is taken, the refund's metadata.originating_chargeback_id references the chargeback that triggered the RDR auto-refund."
+    ],
+    "note": "No inbound relations in Wave 4 beyond the growth-module bridges — this module is a finance-tier terminal aggregate (initiated only by provider webhooks OR the payment::PaymentDisputeLost cascade)."
+  },
+  "morphs": [],
+  "notes": [
+    "Chargeback does NOT carry `application_id`. Chargebacks cascade through the tenant's application per tenancy-columns.md §2. Cross-application chargebacks are non-goals — a Sports-app chargeback cannot reference a Marketplace-app payment.",
+    "ChargebackEvidence composite unique on (tenant_id, chargeback_id, submission_attempt_number) prevents duplicate submission attempts + enforces monotonic attempt numbering.",
+    "Cross-chargeback invariant: sum of amount_cents across all NON-terminal-lost chargebacks for a given payment_id must not exceed payment.amount_cents - payment.amount_refunded_cents (a chargeback cannot exceed the un-refunded portion of the parent payment). Enforced at observer level via SELECT ... FOR UPDATE on parent payment.",
+    "transaction_id + fee_transaction_id are nullable during non-terminal states. Once chargeback transitions to lost or expired, BOTH MUST be set (FinalizeChargebackJob populates them). If FinalizeChargebackJob step fails, the chargeback stays in terminal status with metadata.finalization_error set — admin resolves via chargeback:reconcile CLI.",
+    "refund_id is populated ONLY on the RDR path (accepted_refund state). Chargebacks lost or won never have refund_id set.",
+    "payment_dispute_id is NULLABLE because some networks/providers skip the pre-chargeback state — the chargeback fires directly via provider webhook without a preceding PaymentDispute row. In that case, this module creates the Chargeback via HandleChargebackWebhook → ChargebackOrchestrator::createFromWebhook without a payment_dispute_id set.",
+    "user_id references (submitted_by_user_id on ChargebackEvidence) are RESTRICT — user cannot be hard-deleted while evidence rows reference them. UserErased triggers the redaction hook (90d post-erasure) to replace user_ids with a hashed placeholder while retaining the audit trail."
+  ]
+}

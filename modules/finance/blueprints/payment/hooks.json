@@ -1,0 +1,93 @@
+{
+  "id": "academorix://modules/payment/hooks",
+  "$version": 1,
+  "title": "payment — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Payment registers hooks for tenant erasure cascade + user erasure redaction + tenant suspension cascade + invoice-driven intent creation + payment-captured side effects + dispute escalation. No bootstrapper — payment does not need per-request tenant hydration.",
+  "namespace": "Academorix\\Finance\\Payment\\Hooks",
+  "hooks": [
+    {
+      "name": "PurgePaymentDataForErasedTenant",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\PurgePaymentDataForErasedTenant",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "Cascade delete via FK CASCADE across the four payment tables. Writes the compliance audit trail entry + emits count metrics per entity family (payments / payment_methods / payment_intents / payment_disputes purged) + fires best-effort provider-side deletion requests (Stripe Customer.delete, Paddle customer deletion, Adyen shopper deletion, Square customer deletion, PayPal customer deletion) so the propagation is transparent to auditors.",
+      "compliance": "GDPR Art. 17 §3 — financial-record archival preserves the compliance evidence. Payment records archived to compliance service before hard-delete. AML retention preserved via archive."
+    },
+    {
+      "name": "ArchivePaymentFinancialRecordsOnTenantErasure",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\ArchivePaymentFinancialRecordsOnTenantErasure",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "priority": 90,
+      "purpose": "Runs BEFORE PurgePaymentDataForErasedTenant (lower priority number). Archives every Payment + PaymentDispute row to the compliance module's financial-record archive (separate storage; regulator-facing). Preserves the immutable financial evidence without keeping the tenant's identifying details.",
+      "compliance": "GDPR Art. 17 §3 exception — legal obligation to retain financial records supersedes erasure right. National tax law (7y baseline; 10y Enterprise). AML transaction record retention."
+    },
+    {
+      "name": "RedactCustomerFromPaymentsOnUserErased",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\RedactCustomerFromPaymentsOnUserErased",
+      "kind": "user_erasure",
+      "listens_to": "user::UserErased",
+      "purpose": "Individual GDPR Art. 17. Nulls billing_details_snapshot.name + email + phone on payments where the customer resolved to the erased user. Also nulls PaymentMethod.customer_id on methods owned by the user. Payment rows themselves survive (financial retention).",
+      "compliance": "GDPR Art. 17 §3 — subject-identifying fields redacted; financial rows preserved. Provider-side deletion requests dispatched (best-effort)."
+    },
+    {
+      "name": "DeactivatePaymentMethodsOnUserErased",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\DeactivatePaymentMethodsOnUserErased",
+      "kind": "user_erasure",
+      "listens_to": "user::UserErased",
+      "purpose": "Soft-deletes every PaymentMethod owned by the erased user. Dispatches provider-side detach. Prevents future captures against the erased user's stored tokens."
+    },
+    {
+      "name": "CreatePaymentIntentOnInvoiceFinalized",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\CreatePaymentIntentOnInvoiceFinalized",
+      "kind": "bridge",
+      "listens_to": "invoice::InvoiceFinalized",
+      "priority": 100,
+      "purpose": "The primary bridge from invoice → payment. Creates a PaymentIntent for the finalized invoice using the tenant's default provider config + the customer's default PaymentMethod (if any). Skipped when invoice.total_cents = 0."
+    },
+    {
+      "name": "MarkInvoicePaidOnPaymentCaptured",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\MarkInvoicePaidOnPaymentCaptured",
+      "kind": "atomic_side_effect",
+      "listens_to": "PaymentCaptured",
+      "priority": 90,
+      "purpose": "Runs in the same DB transaction as the Payment insert (via observer.creating running inside the wrapping transaction). Updates parent Invoice.status → 'paid' (full amount) or 'partially_paid' (partial capture). Updates Invoice.amount_paid_cents += payment.amount_cents.",
+      "note": "If this hook fails, the whole Payment insert rolls back — an invoice must not be marked paid without a corresponding Payment row."
+    },
+    {
+      "name": "RecordTransactionOnPaymentCaptured",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\RecordTransactionOnPaymentCaptured",
+      "kind": "atomic_side_effect",
+      "listens_to": "PaymentCaptured",
+      "priority": 80,
+      "purpose": "Runs in the same DB transaction as the Payment insert. Dispatches TransactionRecorder.record($payment) to create the double-entry ledger movement: debit cash, credit accounts_receivable. Sets payment.transaction_id.",
+      "note": "If this hook fails, the whole Payment insert rolls back — no Payment exists without its transaction record."
+    },
+    {
+      "name": "FireMarketingCaptureOnPaymentCaptured",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\FireMarketingCaptureOnPaymentCaptured",
+      "kind": "attribution",
+      "listens_to": "PaymentCaptured",
+      "priority": 20,
+      "purpose": "Fires the domain event `finance.membership_purchased` when the parent invoice references a membership. The growth::marketing module's MarketingEventCapturer picks it up via #[AsDomainEventMapper] + dispatches to configured ad-network providers. Runs AFTER the atomic side effects (Invoice.mark_paid + Transaction.record) but BEFORE commit — a failure here does NOT roll back the payment (marketing capture is fail-soft; a lost signal is one wasted ad-network dispatch, not a lost payment)."
+    },
+    {
+      "name": "EscalateDisputeToChargebackOnLost",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\EscalateDisputeToChargebackOnLost",
+      "kind": "escalation",
+      "listens_to": "PaymentDisputeLost",
+      "purpose": "Fires when a PaymentDispute transitions to status='lost'. Dispatches EscalateDisputeToChargebackJob → creates a Chargeback row via the chargeback module + sets dispute.chargeback_id. This is the bridge from the pre-chargeback dispute lifecycle to the regulator-facing chargeback lifecycle."
+    },
+    {
+      "name": "DetachPaymentMethodsOnTenantSuspended",
+      "class": "Academorix\\Finance\\Payment\\Hooks\\DetachPaymentMethodsOnTenantSuspended",
+      "kind": "cascade",
+      "listens_to": "tenancy::TenantSuspended",
+      "purpose": "Soft-deletes every payment_method for the suspended tenant with deactivated_reason='tenant_suspended'. Dispatches provider-side detach (best-effort). Cancels in-flight intents. Prevents captures during the suspension window.",
+      "note": "Reversible — TenantResumed reactivates the methods that were deactivated by the suspension cascade (checks the audit trail for reason='tenant_suspended')."
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Payment does not need a tenant-boot hydration path — every operation is on-demand load from the DB. Contrast with modules like `tenancy` (bootstraps request-context) or `settings` (bootstraps config cache) that need per-request tenant hydration."
+  }
+}

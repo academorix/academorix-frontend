@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/audit/features",
+  "$version": 1,
+  "title": "audit — feature keys",
+  "description": "Feature keys published against feature-flag::FeatureFlag. Distinct from feature-flags.json (which is the pennant kill-switch panel — for ops emergency use). These are tenant-facing capabilities gated by plan tier.",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features (string[])",
+    "seededFrom": "BusinessType.default_config.features",
+    "distinctFrom": "feature-flags.json (kill switches)"
+  },
+  "features": [
+    {
+      "key": "audit.enabled",
+      "displayName": "Compliance-grade audit trail",
+      "description": "Master enable for audit capture. Every tenant baseline. Off in feature manifest = a tenant explicitly asked to be off-audit (extremely rare, requires legal sign-off, never actually shipped as a plan variant).",
+      "defaultEnabled": true,
+      "planTiers": ["free", "small", "medium", "enterprise"]
+    },
+    {
+      "key": "audit.export.self_service",
+      "displayName": "Self-service audit export",
+      "description": "Enables POST /api/v1/audits/export. Non-entitled tenants must open a support ticket for exports.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "audit.export.regulator_shape",
+      "displayName": "Regulator-shaped export",
+      "description": "Enables kind=regulator on the export request. Payload includes chain-of-custody metadata + signed manifest (HMAC-SHA256 with the platform's regulator-signing key from Doppler). Cross-application rollup (Enterprise only).",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "audit.retention.extended",
+      "displayName": "Extended retention (10 years)",
+      "description": "Enables creating an AuditRetentionPolicy with retention_years > 7 (up to 10). Requires an override_reason.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "audit.raw_diff_reveal",
+      "displayName": "Raw diff reveal",
+      "description": "Enables ?include=raw_diff on the audit show/list endpoints. Compliance-officer scoped by permission. Every reveal writes a chain-of-custody meta-audit row.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "audit.pii_redaction",
+      "displayName": "PII redaction in diff blobs",
+      "description": "Enables the tenant-level opt-in for redacting PII in old_values + new_values at save time. Regulator-strict tenants may want it; most keep it off. See settings.audit.redact_pii_in_old_new_values.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "audit.archive_migration",
+      "displayName": "Hot-to-cold archive migration",
+      "description": "Enables the weekly ExportAuditsToArchiveJob for tenants past the hot-window row-count threshold. Reduces primary DB storage cost while preserving compliance retention.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "audit.monthly_compliance_report",
+      "displayName": "Monthly compliance report",
+      "description": "Enables the GenerateComplianceReportJob monthly per-tenant run. Payload conforms to regulator export schemas. Uploaded to archive bucket with S3 object-lock (compliance mode, 7y retention).",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

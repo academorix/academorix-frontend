@@ -1,0 +1,178 @@
+{
+  "id": "academorix://modules/transaction/config",
+  "$version": 1,
+  "title": "transaction — developer configuration",
+  "configFile": "config/transaction.php",
+  "envPrefix": "TRANSACTION_",
+  "sections": {
+    "numbering": {
+      "keys": [
+        {
+          "path": "transaction.numbering.series_pattern",
+          "type": "string",
+          "default": "TXN-{year}-{seq:08d}",
+          "description": "Format of transaction_number. {year} = 4-digit calendar year (from effective_date); {seq:08d} = zero-padded 8-digit sequence per tenant per year. The Postgres advisory lock keyed on (tenant_id, year) guarantees monotonicity."
+        },
+        {
+          "path": "transaction.numbering.per_year_reset",
+          "type": "bool",
+          "default": true,
+          "description": "true = sequence resets to 1 on Jan 1 of each calendar year (default). false = sequence never resets (single monotonic sequence forever). Regulator-preferred: true (per-year restart makes financial-year audits easier)."
+        },
+        {
+          "path": "transaction.numbering.advisory_lock_timeout_ms",
+          "type": "int",
+          "default": 5000,
+          "description": "Postgres advisory-lock acquire timeout for the transaction-number generator. Bounded to prevent lock contention from spiking under high concurrent record rates."
+        }
+      ]
+    },
+    "accounts": {
+      "keys": [
+        {
+          "path": "transaction.accounts.enabled",
+          "type": "array",
+          "default": [
+            "revenue",
+            "accounts_receivable",
+            "cash",
+            "refunds_owed",
+            "refunds_expense",
+            "tax_payable",
+            "gateway_fees",
+            "bank_deposits",
+            "write_offs",
+            "coupons_expense",
+            "chargebacks_expense",
+            "accounts_payable",
+            "prepayments",
+            "deferred_revenue"
+          ],
+          "description": "Chart-of-accounts entries enabled per default. Tenants can override the enabled list via the transaction settings (a tenant that never issues chargebacks can drop chargebacks_expense — but the 14 above are baked into the module's Recorder + Reporter code paths)."
+        },
+        {
+          "path": "transaction.accounts.high_watermarks_cents",
+          "type": "array",
+          "default": {
+            "accounts_receivable": 5000000,
+            "refunds_owed": 1000000,
+            "tax_payable": 500000
+          },
+          "description": "Per-account high-watermark thresholds (cents) for AccountBalanceThresholdCrossed alerts. accounts_receivable > $50k = collection risk; refunds_owed > $10k = needs disbursement; tax_payable > $5k = filing due."
+        },
+        {
+          "path": "transaction.accounts.low_watermarks_cents",
+          "type": "array",
+          "default": {
+            "cash": 100000
+          },
+          "description": "Per-account low-watermark thresholds (cents). cash < $1k = liquidity risk. Tenant admins customize via settings."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "transaction.reconciliation.schedule_hour_utc",
+          "type": "int",
+          "default": 2,
+          "description": "Hour of day (UTC) for nightly reconciler. Defaults to 02:00 — off-peak, before the monthly report window."
+        },
+        {
+          "path": "transaction.reconciliation.expected_imbalances",
+          "type": "int",
+          "default": 0,
+          "description": "Baseline for reconciler alerts. ANY imbalance above 0 is a P0 signal."
+        },
+        {
+          "path": "transaction.reconciliation.max_transactions_per_run",
+          "type": "int",
+          "default": 100000,
+          "description": "Chunking bound for the reconciler. Larger tenants split into multiple runs."
+        },
+        {
+          "path": "transaction.reconciliation.halt_new_on_imbalance",
+          "type": "bool",
+          "default": true,
+          "description": "true (default) = set tenant.transaction_halt_new = true when LedgerImbalanceDetected fires + refuse new transactions until resolved. false = alert but keep accepting new transactions. Regulator-preferred: true."
+        }
+      ]
+    },
+    "base_currency": {
+      "keys": [
+        {
+          "path": "transaction.base_currency.source_of_truth",
+          "type": "string",
+          "default": "tenant::Tenant.base_currency",
+          "description": "Where transactionobserver reads the tenant's base currency from. Cross-currency transactions compute base_amount_cents against this currency."
+        },
+        {
+          "path": "transaction.base_currency.default",
+          "type": "string",
+          "default": "USD",
+          "description": "Fallback when tenant.base_currency is null (should never happen — tenant provisioning always sets it). Regulator-preferred: fail hard rather than silently default; the module's observer errors when the tenant.base_currency is missing rather than using this fallback in production."
+        }
+      ]
+    },
+    "exchange_rate": {
+      "keys": [
+        {
+          "path": "transaction.exchange_rate.provider",
+          "type": "string",
+          "default": "openexchangerates",
+          "description": "Default rate provider. Enum: openexchangerates / fixer_io / ecb_daily / manual. Tenant admins can override via settings."
+        },
+        {
+          "path": "transaction.exchange_rate.cache_ttl_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "How long an ExchangeRateResolver caches a fetched rate. 1h default. Regulators want the rate at commit-time frozen; caching within an hour is acceptable for consistency across a batch of transactions."
+        },
+        {
+          "path": "transaction.exchange_rate.max_stale_seconds",
+          "type": "int",
+          "default": 21600,
+          "description": "Maximum age of a cached rate before the resolver forces a fresh fetch. 6h. If the provider is down for > 6h, the resolver falls back to the ecb_daily official rate; if THAT fails, the transaction is refused (returns TRANSACTION_EXCHANGE_RATE_UNAVAILABLE)."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "transaction.retention.years",
+          "type": "int",
+          "default": 7,
+          "description": "Default retention window. Enterprise tenants with transaction_extended_retention entitlement: 10 years."
+        },
+        {
+          "path": "transaction.retention.archive_before_purge",
+          "type": "bool",
+          "default": true,
+          "description": "true (default) = every purge is preceded by an atomic export to compliance-storage. false = hard-purge without archive (DANGEROUS — NEVER flip off in production; SOX 802 requires the archive)."
+        }
+      ]
+    },
+    "reversal": {
+      "keys": [
+        {
+          "path": "transaction.reversal.require_admin_note",
+          "type": "bool",
+          "default": true,
+          "description": "true (default) = every manual reversal via POST /transactions/{id}/reverse requires a written note ≥ 10 chars. Regulator-preferred: true."
+        },
+        {
+          "path": "transaction.reversal.min_note_length",
+          "type": "int",
+          "default": 10,
+          "description": "Minimum required amendment_note length. Prevents blank / one-word notes that don't survive regulator review."
+        },
+        {
+          "path": "transaction.reversal.allowed_reasons",
+          "type": "array",
+          "default": ["refund", "chargeback", "error_correction", "accounting_adjustment"],
+          "description": "The reversal_reason values accepted by the module. Manual reversals via HTTP always use 'accounting_adjustment'; the other three are auto-recorded by RecordRefundIssuedTransactionJob / RecordChargebackTransactionJob."
+        }
+      ]
+    }
+  }
+}

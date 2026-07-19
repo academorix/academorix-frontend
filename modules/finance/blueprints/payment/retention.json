@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/payment/retention",
+  "$version": 1,
+  "title": "payment — retention windows",
+  "description": "Payments are financial records (7 years default, 10 for Enterprise). Payment methods retain while active + 90-day grace after deactivation. Payment intents retain 90 days (transient state — success → creates payment; failure → audit only). Payment disputes retain per financial retention (7y baseline; 10y Enterprise).",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(c) — data minimisation",
+    "gdpr Art. 17 — right to erasure (with financial-retention carve-out)",
+    "gdpr Art. 17 §3 — carve-out: legal obligation to retain financial records supersedes erasure right",
+    "soc2 CC6.3 — audit trail retention",
+    "pci-dss 10.7 — audit trail retention 1 year hot + 6 years archive",
+    "pci-dss 3.4 — no card PAN storage (never applicable — we only store tokens)",
+    "psd2 Art. 78 — 5-year retention for SCA authentication records",
+    "ccpa §1798.140 — sale-of-personal-information records retention",
+    "national tax law — 7-year financial-record retention (US, EU, UK, CA baselines)",
+    "aml — 5-year (EU) or 7-year (US) transaction-record retention for suspicious activity reporting",
+    "sox §404 — 7-year audit trail retention"
+  ],
+  "retention": [
+    {
+      "entity": "Payment",
+      "hot": { "days": 365, "description": "Active + first year for support queries, refund window, dispute deadlines" },
+      "cold": { "days": "2555 (7 years)", "description": "Financial-audit retention. Enterprise tenants with payment_extended_retention entitlement: 3650 (10 years)." },
+      "purge": {
+        "trigger": "> 7 years past created_at (10 years for Enterprise) AND no open refunds AND no open disputes",
+        "action": "hard delete via PurgeExpiredPaymentDataJob + emit financial-record-archive event (Art. 17 §3 — archived not deleted)",
+        "notes": "Payments cannot be hard-deleted while refunds accumulate (RESTRICT FK from refunds.payment_id). The retention window is measured from the LAST such reference clearing. Payment rows with active/recent disputes are similarly blocked."
+      }
+    },
+    {
+      "entity": "PaymentMethod",
+      "hot": { "days": "while active" },
+      "cold": { "days": 90, "description": "Grace period after soft-delete for audit / rollback / re-attach detection." },
+      "purge": {
+        "trigger": "soft-deleted > 90 days ago AND no active payment_intents references",
+        "action": "hard delete",
+        "notes": "The 90-day grace is deliberate — customers who remove a card and re-add the same one within 3 months get their existing PaymentMethod re-activated (fingerprint deduplication), preserving payment history continuity. After the grace, the row hard-purges but the historical audit trail retains (7y)."
+      }
+    },
+    {
+      "entity": "PaymentIntent",
+      "hot": { "days": 30 },
+      "cold": { "days": 90, "description": "Transient state — succeeded intents produce a Payment row that carries the financial record forward. Failed/cancelled intents retain briefly for audit correlation, then purge." },
+      "purge": {
+        "trigger": "> 90 days past created_at AND status IN ('cancelled', 'failed', 'succeeded')",
+        "action": "hard delete",
+        "notes": "Succeeded intents' data survives on the Payment row (payment_intent_id FK is RESTRICT — the intent stays until the payment retention window closes). In-flight intents (non-terminal) past 24h are handled by ExpireStalePaymentIntentsJob (not retention)."
+      }
+    },
+    {
+      "entity": "PaymentDispute",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years)", "description": "Financial + regulator audit. 10 years for Enterprise with payment_extended_retention." },
+      "purge": {
+        "trigger": "> 7 years (10 years Enterprise) past created_at AND status IS terminal AND no escalated Chargeback references (chargebacks may cascade delete via FK RESTRICT)",
+        "action": "hard delete",
+        "notes": "Every dispute is a compliance-sensitive event that a regulator may audit years later. The retention is deliberately conservative."
+      }
+    },
+    {
+      "entity": "payments.billing_details_snapshot jsonb",
+      "hot": { "days": "co-terminous with payment" },
+      "purge": {
+        "trigger": "payment hard-delete",
+        "action": "cascaded (blob is a sub-field, not a separate table)",
+        "notes": "Billing snapshot outlives customer profile changes — a customer's address change does not affect historical payment records. This IS PII, retained for its parent payment's lifetime."
+      }
+    },
+    {
+      "entity": "payments.provider_metadata (encrypted)",
+      "hot": { "days": 90 },
+      "cold": { "days": "co-terminous with payment" },
+      "purge": {
+        "trigger": "payment hard-delete",
+        "action": "cascaded",
+        "notes": "Encrypted at rest. Encryption keys rotate per config.encryption.token_key_version. Historical rows retain their key_version for backward-compat decryption."
+      }
+    },
+    {
+      "entity": "payment_methods.provider_reference_id + payment_intents.provider_reference_id + payment_intents.client_secret (encrypted)",
+      "hot": { "days": "while active" },
+      "purge": {
+        "trigger": "row hard-delete",
+        "action": "cascaded",
+        "notes": "Encryption keys managed by the compliance/encryption service. Distinct keys for provider_reference_id vs client_secret (defense-in-depth). Historical rows carry key_version for backward-compat decryption."
+      }
+    }
+  ],
+  "special_cases": [
+    {
+      "case": "TenantErased cascade",
+      "action": "FK CASCADE hard-deletes payments + payment_methods + payment_intents + payment_disputes for the tenant → immutable financial records archived to compliance service per Art. 17 §3 exception",
+      "notes": "Audit rows written during those events survive per audit module's outlives-source design. Regulators can still trace the erased tenant's activity — but the tenant's own data is gone. The financial-record archive preserves proof of compliance for regulators without keeping the tenant's identifying details."
+    },
+    {
+      "case": "UserErased (individual GDPR Art. 17)",
+      "action": "RedactUserFromPaymentsJob nulls customer identifying fields on affected payment_methods + billing_details_snapshot fields on affected payments + fires provider-side deletion requests (Stripe Customer.delete, Adyen shopper deletion) → historical payment records survive (Art. 17 §3 exception)",
+      "notes": "The payment row itself survives (financial retention) but the subject-identifying fields are redacted. Provider-side deletion is best-effort — payment module records the deletion request; the provider is responsible for honoring it."
+    },
+    {
+      "case": "TenantSuspended",
+      "action": "payment_methods soft-deleted for the suspended tenant → dispatches deactivate to providers via detach; payments preserve state; payment_intents in non-terminal statuses transitioned to cancelled with reason='tenant_suspended'",
+      "notes": "Reversible — TenantResumed reactivates the payment_methods that were deactivated by the suspension cascade (checks the audit trail for reason='tenant_suspended')."
+    },
+    {
+      "case": "PaymentMethod with existing Payment references",
+      "action": "PaymentMethod soft-delete is permitted; existing Payments preserve the payment_method_id reference (RESTRICT FK); the method row is hard-purged after 90-day grace + when no non-terminal payment_intents reference it",
+      "notes": "This is the 'referenced deleted method' path. Historical payments continue to reference the historical method row via RESTRICT — the join returns the soft-deleted row until hard-purge."
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention.",
+    "TenantErased cascades hard-delete via FK CASCADE, but the audit rows written during those events survive the cascade (per audit module's outlives-source design). Financial-record archive preserves the compliance evidence.",
+    "The compliance/data-subject-rights module orchestrates UserErased across all modules including this one — the module registers `RedactUserFromPaymentsJob` as a compliance callback.",
+    "The refund module has its own retention that MATCHES the payment retention (7y / 10y Enterprise) — refunds cannot outlive their parent payment.",
+    "The chargeback module has its own retention that matches or exceeds this module's — a Chargeback born from a PaymentDispute retains at least as long as the source dispute."
+  ]
+}

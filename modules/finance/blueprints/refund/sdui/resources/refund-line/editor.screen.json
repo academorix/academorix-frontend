@@ -1,0 +1,192 @@
+{
+  "id": "refund.resources.refund-line.editor",
+  "title": "Refund lines",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/refunds/{refund}/lines",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "refund", "entity": "refund-line", "action": "editor" },
+  "requiresPermission": "refunds.create",
+  "requiresEntitlement": "refund_capture",
+  "dataSources": [
+    {
+      "name": "refund",
+      "kind": "http.get",
+      "url": "/api/v1/refunds/{refund}",
+      "unwrap": "data"
+    },
+    {
+      "name": "refund_lines",
+      "kind": "http.get",
+      "url": "/api/v1/refunds/{refund}/lines",
+      "unwrap": "data"
+    },
+    {
+      "name": "invoice_lines",
+      "kind": "http.get",
+      "url": "/api/v1/invoices/{refund.invoice_id}/lines",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-5xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Refund lines" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "text-sm text-muted" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Refund ' + refund.refund_number + ' — ' + refund.refund_type + ' refund of ' + formatCurrency(refund.amount_cents, refund.currency)"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Alert",
+          "props": { "variant": "warning" },
+          "bindings": {
+            "hidden": { "$expr": "['pending', 'awaiting_approval', 'approved'].includes(refund.status)" }
+          },
+          "children": [
+            { "kind": "Text", "props": { "children": "Refund lines can only be edited while the parent refund is pending, awaiting approval, or approved. This refund has progressed past that state." } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-2" },
+          "bindings": {
+            "hidden": { "$expr": "refund.refund_type !== 'partial'" }
+          },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Line-by-line partial refund" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted mb-2", "children": "Select which invoice lines to refund and how much of each." } },
+            {
+              "kind": "Table",
+              "bindings": {
+                "items": { "$ref": "invoice_lines" }
+              },
+              "columns": [
+                { "key": "description", "label": "Description" },
+                { "key": "total_cents", "label": "Line total", "renderer": "currency", "params": { "currency": "row.currency" } },
+                { "key": "amount_refunded_cents", "label": "Already refunded", "renderer": "currency", "params": { "currency": "row.currency" } },
+                {
+                  "key": "refund_amount",
+                  "label": "Refund amount",
+                  "renderer": {
+                    "kind": "NumberField",
+                    "props": { "step": 0.01, "min": 0 },
+                    "bindings": {
+                      "maxValue": { "$expr": "(row.total_cents - row.amount_refunded_cents) / 100" }
+                    },
+                    "actions": {
+                      "onChange": {
+                        "kind": "form.set",
+                        "field": "line_amounts",
+                        "path": "row.id",
+                        "valueExpr": "Math.round($value * 100)"
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between p-3 bg-muted/20 rounded" },
+              "children": [
+                { "kind": "Text", "props": { "className": "font-medium", "children": "Sum of line amounts" } },
+                {
+                  "kind": "Text",
+                  "props": { "className": "font-mono" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "formatCurrency(sumValues(form.line_amounts), refund.currency)"
+                    }
+                  }
+                },
+                {
+                  "kind": "Chip",
+                  "props": { "size": "sm" },
+                  "bindings": {
+                    "variant": {
+                      "$expr": "sumValues(form.line_amounts) === refund.amount_cents ? 'success' : 'warning'"
+                    },
+                    "children": {
+                      "$expr": "sumValues(form.line_amounts) === refund.amount_cents ? 'Matches refund total' : 'Sum must equal ' + formatCurrency(refund.amount_cents, refund.currency)"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-2" },
+          "bindings": {
+            "hidden": { "$expr": "refund.refund_type !== 'prorated'" }
+          },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Prorated refund" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted mb-2", "children": "The refund amount is computed from the unused period. Pass credits + penalties are applied to the base amount." } },
+            {
+              "kind": "Widget",
+              "widget": "refund.proration-preview",
+              "bindings": {
+                "paymentId": { "$ref": "refund.payment_id" },
+                "cancellationDate": { "$ref": "form.cancellation_date" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-end gap-2 mt-4" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "outline", "children": "Back" },
+              "actions": { "onPress": { "kind": "navigate", "back": true } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Save lines" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/refunds/{refund}/lines",
+                  "body": { "$ref": "form" },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/refunds/' + refund.id",
+                    "onSuccessToast": "Refund lines saved."
+                  }
+                }
+              },
+              "bindings": {
+                "disabled": {
+                  "$expr": "refund.refund_type === 'partial' && sumValues(form.line_amounts) !== refund.amount_cents"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

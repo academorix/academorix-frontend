@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/monitoring/data/providers/datadog-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Datadog provider config",
+  "description": "Configuration shape for a Datadog APM + events integration.",
+  "type": "object",
+  "required": ["api_key", "application_key"],
+  "additionalProperties": false,
+  "properties": {
+    "api_key": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Datadog API key. 32-character hex string. Encrypted at rest. Sent as DD-API-KEY header."
+    },
+    "application_key": {
+      "type": "string",
+      "minLength": 40,
+      "description": "Datadog application key. 40-character hex string. Encrypted at rest. Sent as DD-APPLICATION-KEY header."
+    },
+    "site": {
+      "type": "string",
+      "enum": ["datadoghq.com", "datadoghq.eu", "us3.datadoghq.com", "us5.datadoghq.com", "ap1.datadoghq.com", "ddog-gov.com"],
+      "default": "datadoghq.com",
+      "description": "Datadog deployment region. Determines the events endpoint URL."
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["normal", "low"],
+      "default": "normal",
+      "description": "Datadog event priority. 'normal' shows in stream; 'low' filters out of default stream."
+    },
+    "default_tags": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_.-]*:[a-zA-Z0-9_.-]+$"
+      },
+      "description": "Optional default tags applied to every dispatched event. Format: 'key:value'. Example: ['env:production', 'service:api']."
+    },
+    "aggregation_key_prefix": {
+      "type": ["string", "null"],
+      "description": "Optional prefix for Datadog's event aggregation_key. Alerts on the same policy dedupe via aggregation_key = prefix + policy_id."
+    },
+    "attach_signal_context_as_tags": {
+      "type": "boolean",
+      "default": true,
+      "description": "true = alert.signal_context jsonb keys become Datadog event tags. false = signal_context serialized into event text only."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

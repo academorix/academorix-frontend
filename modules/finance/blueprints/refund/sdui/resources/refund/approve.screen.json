@@ -1,0 +1,93 @@
+{
+  "id": "refund.resources.refund.approve",
+  "title": "Approve refund",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/refunds/{refund}/approve",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "refund", "entity": "refund", "action": "approve" },
+  "requiresPermission": "refunds.approve",
+  "requiresEntitlement": "refund_capture",
+  "dataSources": [
+    {
+      "name": "refund",
+      "kind": "http.get",
+      "url": "/api/v1/refunds/{refund}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Modal",
+      "props": { "size": "lg", "title": "Approve refund", "isOpen": true },
+      "actions": {
+        "onClose": { "kind": "navigate", "back": true }
+      },
+      "children": [
+        {
+          "kind": "Alert",
+          "props": { "variant": "danger" },
+          "bindings": {
+            "hidden": { "$expr": "refund.initiated_by_user_id !== auth.user.id" }
+          },
+          "children": [
+            { "kind": "Text", "props": { "className": "font-medium", "children": "You cannot approve your own refund request." } },
+            { "kind": "Text", "props": { "children": "Segregation of duties (SOX §404) requires another approver to review this refund. Please forward to a colleague." } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col gap-4" },
+          "bindings": {
+            "hidden": { "$expr": "refund.initiated_by_user_id === auth.user.id" }
+          },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "props": { "className": "border rounded-lg p-4 bg-muted/20" },
+              "bindings": {
+                "items": {
+                  "$expr": "[{ label: 'Refund number', value: refund.refund_number }, { label: 'Amount', value: formatCurrency(refund.amount_cents, refund.currency) }, { label: 'Type', value: refund.refund_type }, { label: 'Reason', value: refund.reason.split('_').map(w => w[0].toUpperCase() + w.slice(1)).join(' ') }, { label: 'Reason note', value: refund.reason_note }, { label: 'Initiated by', value: refund.initiated_by_user_id }, { label: 'Days since payment', value: getDaysSincePayment(refund.payment_id) + ' days' }]"
+                }
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": { "label": "Internal approval notes (optional)", "placeholder": "Notes for the audit trail — not customer-visible." },
+              "actions": { "onChange": { "kind": "form.set", "field": "notes", "valueExpr": "$value" } }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-end gap-2 mt-4" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "children": "Cancel" },
+                  "actions": { "onPress": { "kind": "navigate", "back": true } }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "check", "children": "Approve refund" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "url": "/api/v1/refunds/{refund}/approve",
+                      "body": { "$ref": "form" },
+                      "onSuccess": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/refunds/' + refund.id",
+                        "onSuccessToast": "Refund approved. Provider dispatch initiated."
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/chargeback/notifications",
+  "$version": 1,
+  "title": "chargeback — notification classes + categories",
+  "namespace": "Academorix\\Finance\\Chargeback\\Notifications",
+  "notifications": [
+    "ChargebackFiledNotification",
+    "ChargebackEvidenceOverdueNotification",
+    "ChargebackWonNotification",
+    "ChargebackLostNotification",
+    "ChargebackRateThresholdExceededNotification",
+    "ChargebackEvidenceReminderNotification",
+    "ChargebackAcceptedRefundNotification"
+  ],
+  "categories": [
+    {
+      "slug": "chargeback.filed",
+      "display_name": "Chargeback filed",
+      "description": "Admin-facing. P0. Sent immediately when a chargeback is filed by the bank (via CreateChargebackFromDisputeJob OR ChargebackWebhookReceived). Money has been forcibly reversed — admin must act to defend within the evidence deadline. Includes chargeback_number + amount + reason_code + reason_description + evidence_due_by + link to the evidence-submission UI. NOT sent to customers (customers file with their bank, not with us — surfacing chargeback state to the customer may violate some card network rules).",
+      "default_channels": ["mail", "in_app", "push", "sms"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "chargeback.evidence_overdue",
+      "display_name": "Chargeback evidence deadline approaching",
+      "description": "Admin-facing. Escalating cadence — sent at (evidence_due_by - 7 days) [P2], (evidence_due_by - 3 days) [P1], (evidence_due_by - 1 day) [P0]. Includes days_remaining + current evidence_completeness_percent + direct link to the evidence-submission UI. Actionable — deadline missed = auto-loss (chargeback transitions to expired + finalization chain fires).",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "chargeback.won",
+      "display_name": "Chargeback won",
+      "description": "Admin-facing. Sent when chargeback transitions to `won` (bank sided with merchant). Money returned. Includes decision_reason + days_to_decision + link to the chargeback detail. NOT sent to customers (some card networks explicitly prohibit surfacing chargeback outcomes to the customer).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "chargeback.lost",
+      "display_name": "Chargeback lost",
+      "description": "Admin-facing. P1. Sent when chargeback transitions to `lost` (bank sided with customer) OR `expired` (deadline missed, auto-loss). Money permanently gone. Includes decision_reason + amount + fee_cents + total_cost + link to the chargeback detail. Recommendations for prevention (fraud check tuning, refund policy review, chargeback prevention alerts). NOT sent to customers.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "chargeback.rate_threshold_exceeded",
+      "display_name": "Chargeback rate threshold exceeded",
+      "description": "Admin-facing + Academorix platform ops. P1. Sent when the tenant's rolling 60-day chargeback rate crosses the network's VDMP/MDMP threshold (0.9% Visa / 1.5% Mastercard / 1.0% Amex / 1.0% Discover). Merchant-account termination risk if sustained. Includes current_rate + threshold + chargebacks_count + transactions_count + days_over_threshold + prevention recommendations. Actionable — ops must intervene (fraud review, policy update, RDR enrollment for eligible tenants).",
+      "default_channels": ["mail", "in_app", "push"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "chargeback.evidence_reminder",
+      "display_name": "Chargeback evidence — additional information requested",
+      "description": "Admin-facing. Sent when the bank requests additional evidence on an already-submitted chargeback (CE3.0 second pass, missing documentation, etc.). Distinct from chargeback.evidence_overdue (which fires on approaching deadlines). Includes the bank's request notes + updated evidence_due_by + link to the evidence-submission UI.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "chargeback.accepted_refund",
+      "display_name": "Chargeback resolved via refund (RDR)",
+      "description": "Customer + admin. Sent when RDR (Rapid Dispute Resolution) auto-refund path is chosen — the chargeback was closed BEFORE fully filing by issuing a refund. Customer sees a refund confirmation (framed as 'your dispute has been resolved — a refund has been issued'). Admin sees the RDR outcome (no fee, no rate impact). Only fires on Visa chargebacks below the RDR threshold when the tenant holds `chargeback_rdr` entitlement.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "id": "academorix://modules/membership/settings",
+  "$version": 1,
+  "title": "membership — settings",
+  "description": "Tenant-facing preferences for the membership workflow (renewal cadence, dunning tone, cancellation grace, statement schedule).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "membership",
+      "class": "Academorix\\Finance\\Membership\\Settings\\MembershipSettings",
+      "label": "Memberships",
+      "description": "Tenant-wide membership workflow settings.",
+      "icon": "credit-card",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 52,
+      "permission": "memberships.viewAny",
+      "sections": [
+        {
+          "label": "Billing",
+          "icon": "banknotes",
+          "sortOrder": 1,
+          "fields": [
+            { "name": "default_currency", "controlType": "select", "label": "Default currency", "defaultValue": "USD", "options_source": "iso4217", "sortOrder": 1 },
+            { "name": "reuse_coupon_on_renewal", "controlType": "toggle", "label": "Reapply coupons on renewals (subject to coupon rules)", "defaultValue": true, "sortOrder": 2 }
+          ]
+        },
+        {
+          "label": "Renewals + dunning",
+          "icon": "arrow-path",
+          "sortOrder": 2,
+          "fields": [
+            { "name": "renewal_upcoming_notification_days", "controlType": "number", "label": "Days before renewal to notify", "defaultValue": 7, "min": 1, "max": 30, "sortOrder": 1 },
+            { "name": "dunning_first_reminder_hours", "controlType": "number", "label": "Hours after failed payment for first reminder", "defaultValue": 24, "min": 1, "max": 168, "sortOrder": 2 },
+            { "name": "dunning_second_reminder_hours", "controlType": "number", "label": "Hours for second reminder", "defaultValue": 72, "min": 1, "max": 336, "sortOrder": 3 },
+            { "name": "dunning_third_reminder_hours", "controlType": "number", "label": "Hours for third reminder", "defaultValue": 168, "min": 1, "max": 672, "sortOrder": 4 },
+            { "name": "dunning_sms_from_attempt", "controlType": "number", "label": "Attempt at which SMS dunning kicks in", "defaultValue": 3, "min": 1, "max": 4, "requiresEntitlement": "membership.dunning_sms", "sortOrder": 5 }
+          ]
+        },
+        {
+          "label": "Cancellation",
+          "icon": "x-mark",
+          "sortOrder": 3,
+          "fields": [
+            { "name": "default_cancellation_kind", "controlType": "select", "label": "Default cancellation flow", "defaultValue": "soft_period_end", "options": { "soft_period_end": "Soft (ends at period)", "hard_immediate": "Hard (immediate + prorated refund)" }, "sortOrder": 1 },
+            { "name": "cancellation_reason_min_length", "controlType": "number", "label": "Minimum length for cancellation reason", "defaultValue": 3, "min": 0, "max": 50, "sortOrder": 2 },
+            { "name": "self_serve_buyers_remorse_hours", "controlType": "number", "label": "Buyer's remorse window (hours)", "defaultValue": 24, "min": 0, "max": 168, "helpText": "Hours after signup during which customer can hard-cancel without admin approval (regardless of tier).", "sortOrder": 3 }
+          ]
+        },
+        {
+          "label": "Passes",
+          "icon": "ticket",
+          "sortOrder": 4,
+          "fields": [
+            { "name": "pass_expiring_notification_days", "controlType": "number", "label": "Days before pass expiry to notify customer", "defaultValue": 7, "min": 0, "max": 30, "sortOrder": 1 }
+          ]
+        },
+        {
+          "label": "Statements",
+          "icon": "document-chart-bar",
+          "sortOrder": 5,
+          "fields": [
+            { "name": "monthly_statement_day_of_month", "controlType": "number", "label": "Day of month for monthly statement generation", "defaultValue": 1, "min": 1, "max": 28, "sortOrder": 1 },
+            { "name": "monthly_statement_delivery_channel", "controlType": "select", "label": "Statement delivery", "defaultValue": "email", "options": { "email": "Email PDF", "in_app_only": "In-app only", "email_and_in_app": "Email + in-app" }, "sortOrder": 2 }
+          ]
+        }
+      ]
+    }
+  ]
+}

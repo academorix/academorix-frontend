@@ -1,0 +1,105 @@
+{
+  "$version": 1,
+  "title": "Proration formula catalogue",
+  "description": "Per-billing_interval proration formula for computing prorated refunds on cancelled memberships. ProrationCalculator reads this catalogue to select the right formula. Freezes proration_config on the refund_line at creation time — later formula changes never retroactively adjust historical refunds.",
+  "formulas": [
+    {
+      "billing_interval": "daily",
+      "display_name": "Daily",
+      "description": "Membership charged per day. Proration is straightforward — refund_amount = (unused_days / total_period_days) × amount_cents. total_period_days = 1 for daily plans; unused_days = 0 (no proration for a partial day).",
+      "formula": "unused_days / total_period_days * amount_cents",
+      "day_count_convention": "actual_days",
+      "unused_days_computation": "total_period_days - days_since_period_start",
+      "typical_period_days": 1,
+      "notes": "Daily plans don't typically have partial-period cancellations — you cancelled today, you paid for today, no refund. But the formula is defined for consistency."
+    },
+    {
+      "billing_interval": "weekly",
+      "display_name": "Weekly",
+      "description": "Membership charged per week. total_period_days = 7. unused_days = 7 - days_since_period_start (clamped to 0..7).",
+      "formula": "unused_days / 7 * amount_cents",
+      "day_count_convention": "actual_days",
+      "unused_days_computation": "7 - days_since_period_start",
+      "typical_period_days": 7,
+      "notes": "Weekly plans use calendar day count. Cancel Wednesday, unused_days = 4 (Thu-Sun); refund = 4/7 × $30 = $17.14."
+    },
+    {
+      "billing_interval": "monthly",
+      "display_name": "Monthly",
+      "description": "Membership charged per month. total_period_days = 30 by default (accountant-friendly) OR 'actual' (28/29/30/31) via config. unused_days = total_period_days - days_since_period_start.",
+      "formula": "unused_days / total_period_days * amount_cents",
+      "day_count_convention_default": 30,
+      "day_count_convention_alternative": "actual_days_in_month",
+      "day_count_convention_config": "refund.proration.month_day_count",
+      "unused_days_computation": "total_period_days - days_since_period_start",
+      "typical_period_days": 30,
+      "notes": "Monthly plans default to 30-day count for consistency across all months. Tenants may switch to actual_days_in_month via config — but the default handles DST + month-length nondeterminism cleanly. Cancel day 12 of a monthly period = unused_days = 18; refund = 18/30 × $60 = $36."
+    },
+    {
+      "billing_interval": "quarterly",
+      "display_name": "Quarterly",
+      "description": "Membership charged every 3 months. total_period_days = 90. unused_days = 90 - days_since_period_start.",
+      "formula": "unused_days / 90 * amount_cents",
+      "day_count_convention": "30_day_months_x_3",
+      "unused_days_computation": "90 - days_since_period_start",
+      "typical_period_days": 90,
+      "notes": "Quarterly billing uses 90-day count (30-day months × 3). Cancel day 45 = unused_days = 45; refund = 45/90 × $180 = $90 (half-back)."
+    },
+    {
+      "billing_interval": "annual",
+      "display_name": "Annual",
+      "description": "Membership charged annually. total_period_days = 365. unused_days = 365 - days_since_period_start. Common shape for cancelled annual memberships requesting proration.",
+      "formula": "unused_days / 365 * amount_cents",
+      "day_count_convention": "365_days",
+      "unused_days_computation": "365 - days_since_period_start",
+      "typical_period_days": 365,
+      "notes": "Annual plans always use 365-day count (ignore leap years for simplicity + accountant-friendliness). Cancel day 90 of a 365-day period = unused_days = 275; refund = 275/365 × $600 = $451.37."
+    },
+    {
+      "billing_interval": "one_time",
+      "display_name": "One-time",
+      "description": "One-off purchase (single class, event ticket, day pass). No proration — refund is all-or-nothing.",
+      "formula": "not_applicable",
+      "day_count_convention": null,
+      "unused_days_computation": null,
+      "typical_period_days": null,
+      "notes": "One-time purchases refuse refund_type='prorated' (returns REFUND_PRORATION_TARGET_NOT_MEMBERSHIP). Use refund_type='full' or 'partial' instead. The RefundObserver enforces this."
+    }
+  ],
+  "pass_credit_computation": {
+    "description": "For memberships with passes (e.g. '10 sessions per month'), the proration additionally accounts for used_pass_count + unused_pass_count. Refund is reduced by used passes (customer got value) + credited for unused passes (customer paid but didn't use).",
+    "formula": "base_refund_amount - (used_pass_count × pass_valuation_cents) + (unused_pass_count × pass_valuation_cents)",
+    "notes": "The two adjustments can offset — 5 used + 5 unused = zero net adjustment. pass_valuation_cents defaults to config refund.proration.pass_valuation_cents (500) but tenant may override per-plan. Frozen into proration_config on the refund_line."
+  },
+  "example": {
+    "scenario": "Annual $600 membership, cancelled on day 90. 20 passes total (unlimited use); 5 used, 15 unused. pass_valuation_cents = 500 ($5 per pass).",
+    "computation": {
+      "amount_cents": 60000,
+      "total_period_days": 365,
+      "days_since_period_start": 90,
+      "unused_days": 275,
+      "base_refund": "275 / 365 × 60000 = 45205 cents ($452.05)",
+      "used_pass_penalty": "5 × 500 = 2500 cents ($25)",
+      "unused_pass_credit": "15 × 500 = 7500 cents ($75)",
+      "final_refund_amount_cents": "45205 - 2500 + 7500 = 50205 cents ($502.05)"
+    },
+    "frozen_proration_config": {
+      "unused_period_start": "2026-04-01T00:00:00Z",
+      "unused_period_end": "2026-12-31T00:00:00Z",
+      "total_period_days": 365,
+      "unused_days": 275,
+      "unused_pass_count": 15,
+      "unused_pass_credit_cents": 7500,
+      "used_pass_count": 5,
+      "used_pass_penalty_cents": 2500,
+      "billing_interval": "annual",
+      "formula_schema_version": 1
+    }
+  },
+  "notes": [
+    "The proration_config is IMMUTABLE post-refund_line creation. Later changes to the membership plan pricing / pass_valuation NEVER retroactively adjust historical refunds.",
+    "formula_schema_version tracks the shape of proration_config. Bumped when new fields are added (e.g. a future 'discount_at_purchase' adjustment) so downstream consumers branch cleanly.",
+    "used_pass_count + unused_pass_count come from the membership::PassLedger at cancellation time. The refund module reads them via a helper — never queries the pass ledger directly.",
+    "For memberships without passes (unlimited-access plans), used_pass_count + unused_pass_count are 0 — the pass adjustments are zero and only the base_refund matters."
+  ]
+}

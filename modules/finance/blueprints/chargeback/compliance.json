@@ -1,0 +1,217 @@
+{
+  "id": "academorix://modules/chargeback/compliance",
+  "$version": 1,
+  "title": "chargeback — compliance evidence",
+  "description": "Chargeback module is financial-record-critical (every chargeback is a bank-forced revenue reversal — SOX + tax audit relevant + card network audit relevant) + PII-adjacent (customer_id + submitted_by_user_id captured on every submission + evidence bundles may contain IP address / device fingerprint hash / service attendance records) + advertising-adjacent (feeds negative-value marketing events + fraud model retraining) + card-network-audit-critical (chargeback rate above 0.9% Visa / 1.5% Mastercard triggers merchant-account risk programs). GDPR (Art. 5, 6, 17), CFPB Fair Credit Billing Act, PSD2 (EU), US tax law (7y financial record), SOX 404 (internal controls), SOC 2 CC6.3, PCI-DSS Req 3.4 + 10.5.3 (no PAN storage + audit trail retention), Card Network Rules (VDMP / MDMP / equivalent enforcement).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(a)",
+          "principle": "lawfulness + fairness + transparency",
+          "evidence": "Every chargeback records the trigger source (payment_dispute_id when escalated, or webhook_id when direct-from-provider) + submitter of evidence + timestamps + reason code. Full auditability. Bank's decision + rationale captured on won/lost. Customer is transparently informed by their bank; the tenant is transparently informed by us via ChargebackFiledNotification (P0)."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Chargeback captures only what the defense computation needs: reference to parent payment + invoice + reason code + amount. Evidence bundle carries service documentation + policy snapshots + communication logs — all pertinent to the disputed transaction. NO card PAN / CVV / magnetic stripe anywhere (enforced by PCI-DSS scan on evidence submission)."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "7-year retention window justified by SOX + tax + card network audit obligations. Enterprise 10-year extension for regulated tenants. Automated purge via PurgeExpiredChargebackDataJob."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract",
+          "evidence": "Chargeback processing is contractual — the tenant/customer agreement + card network merchant agreement both mandate chargeback handling. Terms of chargeback + evidence submission + acceptance workflow constitute the contract."
+        },
+        {
+          "article": "Art. 6(1)(f)",
+          "principle": "legitimate interest",
+          "evidence": "Fraud prevention + merchant-account preservation are legitimate business interests. Rate monitoring + fraud-model retraining feedback loops fall under this basis. Balancing test documented in compliance/chargeback-legitimate-interest-assessment.md."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "UserErased (as submitter of evidence) triggers RedactCustomerFromChargebacksOnUserErased — 90 days post-erasure, redact submitted_by_user_id references to a hashed placeholder. Row survives for the 7-year financial audit trail (financial-obligation carve-out per Art. 17 §3(b)). Customer PII within evidence bundles (IP address, device fingerprint hash) is hashed at collection; no reversible PII is stored."
+        },
+        {
+          "article": "Art. 22",
+          "principle": "automated decision-making",
+          "evidence": "No fully-automated decisions with legal effect. Chargeback outcome is decided by the BANK (external decision-maker) — this module records the outcome. The RDR path is human-initiated (admin clicks accept); rate threshold alerts are informational (do not auto-close tenant accounts)."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "Chargeback is IMMUTABLE post-terminal. Evidence rows are immutable at creation. Customer-scope middleware NOT needed (no customer routes exist — chargebacks are admin-only). Confidential financial fields (amount_cents, fee_cents, provider_metadata) require chargebacks.view-financials permission. Evidence bundles require chargebacks.view-evidence permission (segregated from view-financials)."
+        }
+      ]
+    },
+    "cfpb_fcba": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Fair Credit Billing Act (US, 15 USC §1666)",
+          "principle": "consumer chargeback rights + non-retaliation",
+          "evidence": "Chargebacks are customer-initiated + bank-processed — the tenant cannot prevent them. This module does NOT surface chargeback state to the customer (some card networks explicitly prohibit surfacing). This module does NOT permit merchant retaliation against a customer who filed a chargeback — no customer-visible flag / restriction based on chargeback history. Chargeback outcome does not affect the customer's account standing on the tenant's product surface."
+        }
+      ]
+    },
+    "psd2": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "PSD2 (EU) Strong Customer Authentication (SCA)",
+          "principle": "customer authentication evidence surfaced during dispute",
+          "evidence": "Chargeback evidence bundles include customer_signature_evidence with IP address + timestamp + device_fingerprint_hash — the SCA proof from checkout. The evidence proves the customer authenticated the transaction at the required strength for the network."
+        }
+      ]
+    },
+    "us_tax_law": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "financial audit trail",
+          "principle": "traceable audit trail of every revenue reversal",
+          "evidence": "Every lost chargeback carries: amount_cents, currency, reason_code, reason_category + TWO linked transaction_ids (disputed amount + network fee) + linked credit_note_id (via invoice::CreditNoteIssuer). Cross-referenced with parent payment + invoice for full revenue-recognition audit. Retained 7 years."
+        },
+        {
+          "requirement": "state sales tax nexus reporting",
+          "principle": "record of tax reversal per jurisdiction",
+          "evidence": "The parent invoice carries jurisdiction via finance::tax::TaxCalculation. The credit note issued on lost chargeback carries the tax reversal per line. Reduces output VAT / sales tax for the reporting period."
+        }
+      ]
+    },
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "SOX 404 — internal controls over financial reporting",
+          "principle": "audit trail on chargeback authorization + reversal",
+          "evidence": "Every chargeback state transition is Auditable (7-year retention). Evidence submission requires refunds.submit-evidence permission. RDR accept requires refunds.accept + separate chargeback_rdr entitlement. Manual mark-lost requires admin+owner role only. Terms are IMMUTABLE post-terminal. Force-lost restricted to admin+owner + requires 256-char decision_reason for audit trail."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "Chargeback CRUD requires finance/admin/owner. Evidence submission requires separate chargebacks.submit-evidence permission. RDR accept requires admin+owner + separate entitlement. Manual mark-lost requires admin+owner + written decision_reason. Confidential financial fields require chargebacks.view-financials permission. Evidence bundles require chargebacks.view-evidence permission (segregated — some support roles need chargeback context but not customer PII drill-down). Platform-plane cross-tenant read requires super_admin/ops/support role."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All routes are TLS-only + require auth:sanctum (tenant) or auth:platform_admin (platform). Provider webhooks verified via payment::PaymentWebhookVerifier signature check."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "academorix.chargeback.atomicity.failures_total = 0 target. academorix.chargeback.finalization_failures_total = 0 target. Every ChargebackLost fires the 5-step finalization chain + records metrics; failures dispatch a warn + alert."
+        },
+        {
+          "criterion": "CC7.4",
+          "principle": "incident detection + response",
+          "evidence": "academorix.chargeback.rate_threshold_exceeded_total counter — P1 signal on VDMP/MDMP threshold breach. MonitorChargebackRateJob nightly. Platform-plane rate-threshold-alerts endpoint for cross-tenant risk monitoring by Academorix ops."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "Cross-chargeback invariant prevents over-charging beyond payment amount. Immutable-after-terminal prevents accidental mutation. Evidence deadline monitoring prevents auto-loss surprises. Rate threshold monitoring prevents merchant-account termination surprises. RDR path provides low-cost defense for small disputes."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.12.4 Logging + monitoring",
+          "principle": "financial audit log",
+          "evidence": "Chargeback + ChargebackEvidence rows are Auditable (7-year retention). Every state transition + every field mutation + every reversal audit-logged. Audit-log entries survive cascade deletes."
+        },
+        {
+          "annex": "A.9 Access control",
+          "principle": "role-based access",
+          "evidence": "Two-guard permission surface (sanctum + platform_admin). Confidential financial fields restricted to finance+admin+support+owner. Evidence viewing restricted to chargebacks.view-evidence. RDR accept + manual mark-lost restricted per role."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "1.4.3 (Contrast Minimum)",
+          "principle": "readable text",
+          "evidence": "The chargeback-status-chip + network-badge + reason-code-picker widgets use HeroUI's design tokens which meet AA contrast by default. Status colours never rely on colour alone — each carries a text label."
+        },
+        {
+          "criterion": "2.1.1 (Keyboard)",
+          "principle": "keyboard operable",
+          "evidence": "Chargeback list + detail + evidence submission wizard + RDR accept modal + mark-lost modal are fully keyboard-navigable per HeroUI ComboBox + Modal + Form semantics."
+        },
+        {
+          "criterion": "3.3.1 (Error Identification)",
+          "principle": "explicit error surfacing",
+          "evidence": "Every observer refusal returns a specific error code (CHARGEBACK_MANAGEMENT_NOT_ENTITLED, CHARGEBACK_INVALID_REASON_CODE, CHARGEBACK_EVIDENCE_DEADLINE_MISSED, CHARGEBACK_IMMUTABLE, etc.) + user-facing message. Refusal responses include actionable reason + support-contact CTA when appropriate."
+        }
+      ]
+    },
+    "card_network_rules": {
+      "applicable": true,
+      "controls": [
+        {
+          "regime": "Visa VDMP (Visa Dispute Monitoring Program)",
+          "threshold_percent": 0.009,
+          "principle": "chargeback rate above 0.9% triggers merchant risk program",
+          "evidence": "MonitorChargebackRateJob computes rolling 60-day rate per network + fires ChargebackRateThresholdExceeded when rate >= 0.9%. Dispatches P1 admin notification + Academorix platform ops alert. Sustained breaches lead to merchant-account termination — early warning at 75% of threshold gives ops runway to intervene."
+        },
+        {
+          "regime": "Mastercard MDMP (Mastercard Dispute Monitoring Program)",
+          "threshold_percent": 0.015,
+          "principle": "chargeback rate above 1.5% triggers merchant risk program",
+          "evidence": "Same monitoring, different threshold + label."
+        },
+        {
+          "regime": "Amex Enhanced Dispute",
+          "threshold_percent": 0.01,
+          "principle": "chargeback rate above 1.0% triggers Amex review",
+          "evidence": "Same monitoring, different threshold + label."
+        },
+        {
+          "regime": "Discover Merchant Dispute Program",
+          "threshold_percent": 0.01,
+          "principle": "chargeback rate above 1.0% triggers Discover review",
+          "evidence": "Same monitoring, different threshold + label."
+        },
+        {
+          "regime": "Visa CE3.0 (Compelling Evidence 3.0)",
+          "principle": "structured evidence framework for fraud disputes",
+          "evidence": "Ce3EvidenceBuilder assembles CE3.0-shape evidence (two prior legitimate purchases + matching IP + device fingerprint) alongside standard evidence for eligible fraud chargebacks. Enterprise + Medium tenants only (via chargeback_ce3 entitlement)."
+        },
+        {
+          "regime": "Visa Rapid Dispute Resolution (RDR)",
+          "principle": "auto-refund below threshold to close pre-chargeback state",
+          "evidence": "RdrHandler creates a Refund via refund::RefundOrchestrator BEFORE the chargeback fully files. No network fee. No rate impact. Enterprise + Medium tenants only (via chargeback_rdr entitlement)."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Req 10.5.3 — transaction reversal audit trail",
+          "principle": "audit trail retained 1y online + 3y total minimum",
+          "evidence": "Chargeback records retained 7y (10y Enterprise) — exceeds PCI-DSS minimum. Every state transition records the provider_reference_id (token, never PAN) + fee_cents + reason_code."
+        },
+        {
+          "requirement": "Req 3.4 — no PAN storage",
+          "principle": "never store card data",
+          "evidence": "Chargeback evidence submission observer scans every evidence body for PAN patterns (13-19 digit strings matching card BIN prefixes) + refuses with CHARGEBACK_EVIDENCE_PCI_VIOLATION. Only tokens + last-4 + BIN permitted in evidence. Device fingerprints stored as SHA-256 hashes (never raw)."
+        }
+      ]
+    }
+  }
+}

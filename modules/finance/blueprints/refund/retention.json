@@ -1,0 +1,82 @@
+{
+  "id": "academorix://modules/refund/retention",
+  "$version": 1,
+  "title": "refund — retention windows",
+  "description": "Refund data is financial-audit critical. Every refund is a compliance-relevant financial event — a reversal of previously-recognised revenue. Default retention 7 years (SOX + SOC 2 CC6.3 + national tax law baselines: US, EU, UK, CA). Enterprise tier extends to 10y via `refund_extended_retention`. TenantErased cascades FK CASCADE hard-delete of every owned row EXCEPT invoice-linked refunds — those migrate to a compliance archive for legal-obligation retention. Consumer-protection-law SLAs (14-30 day refund windows) do NOT affect retention — those govern how quickly refunds MUST complete, not how long records live.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) — storage limitation (retention windows justified by tax + fraud audit)",
+    "gdpr Art. 17 — right to erasure (with financial-retention carve-out per Art. 17 §3(b))",
+    "gdpr Art. 6(1)(b) — lawful basis: contract (refund = contractual reversal)",
+    "us tax law — 7-year financial-record retention (reversal accounting for revenue-recognition audit)",
+    "sox 404 — internal controls over financial reporting (reversal trail retained)",
+    "soc2 CC6.3 — audit trail retention",
+    "iso 27001 Annex A.12.3 — audit log retention",
+    "ccpa 1798.100 — right to know + right to delete (with retention carve-out)",
+    "ca cop 1748 — California cooling-off period refund records retained 3 years minimum",
+    "eu consumer rights directive 2011/83/EU — 14-day cooling-off records retained per member-state law (typically 5-10 years)",
+    "uk consumer rights act 2015 — records of refunds under statutory rights retained 6 years minimum",
+    "pci-dss Req 10.5.3 — transaction reversal audit trail retention 1 year online + 3 years total minimum"
+  ],
+  "retention": [
+    {
+      "entity": "Refund",
+      "hot": { "days": 365, "description": "Active + first year — dispute resolution + regulator inquiry response window." },
+      "cold": { "days": "2555 (7 years) post-processed_at; 3650 (10 years) with `refund_extended_retention` (Enterprise)" },
+      "purge": {
+        "trigger": "> 7 (or 10) years past processed_at",
+        "action": "hard delete via PurgeExpiredRefundDataJob; invoice-linked refunds migrate to compliance_archive.refunds",
+        "notes": "Every refund traces back to a payment + invoice + credit note + transaction. Retention aligns with the longest-lived downstream — invoice/payment retention is 7y+, so refunds retention is at least 7y."
+      }
+    },
+    {
+      "entity": "RefundLine",
+      "hot": { "days": 365, "description": "Active + first year — dispute resolution." },
+      "cold": { "days": "2555 (7 years) post-parent-refund.processed_at; 3650 (10 years) with `refund_extended_retention`" },
+      "purge": {
+        "trigger": "co-terminous with parent refund purge (FK CASCADE)",
+        "action": "hard delete when parent refund purges; migrate to compliance_archive.refund_lines when parent migrates",
+        "notes": "Refund lines are pivot rows — retention follows the parent refund exactly."
+      }
+    },
+    {
+      "entity": "RefundLine.proration_config",
+      "hot": { "days": "co-terminous with RefundLine" },
+      "purge": {
+        "trigger": "co-terminous with RefundLine hard-delete",
+        "action": "cascaded (JSONB column on the refund_line row)",
+        "notes": "The proration_config is IMMUTABLE post-refund_line creation. No PII lives in the blob (only unused_period + pass credit counts)."
+      }
+    }
+  ],
+  "special_paths": [
+    {
+      "trigger": "TenantErasing (fires BEFORE TenantErased)",
+      "action": "ArchiveRefundFinancialRecordsOnTenantErasure hook migrates invoice-linked refunds (refunds where the parent invoice still exists in compliance_archive after tenant erasure) to compliance_archive.refunds + compliance_archive.refund_lines. Financial-obligation retention overrides GDPR Art. 17 §3(b) exception. Non-invoice-linked refunds skip archive."
+    },
+    {
+      "trigger": "TenantErased",
+      "action": "PurgeRefundDataForErasedTenant hook FK CASCADE hard-deletes every refund + refund_line row EXCEPT the already-archived ones (from ArchiveRefundFinancialRecordsOnTenantErasure). Audit trail rows survive per audit module design (outlives-source)."
+    },
+    {
+      "trigger": "UserErased (as initiator / approver / rejector / cancelled_by / reversed_by / customer)",
+      "action": "RedactCustomerFromRefundsOnUserErased hook: schedule a 90-day-post-erasure redaction of user_id references on refunds where the user played any role. Row survives for the 7-year audit trail; the user identity is redacted to a hashed placeholder.",
+      "carve_out": "Retention windows on the refund row unchanged — financial retention overrides erasure per legal-obligation carve-out per GDPR Art. 17 §3(b) + US tax law."
+    },
+    {
+      "trigger": "RefundSucceeded",
+      "action": "Retention window BEGINS at processed_at. Prior refund states (pending / awaiting_approval / approved / processing) do NOT count toward the 7y window — a refund pending for 30 days then succeeded has 7y+30d total lifetime."
+    },
+    {
+      "trigger": "RefundFailed / RefundRejected / RefundCancelled",
+      "action": "Retention window BEGINS at the terminal-state timestamp (failed_at / rejected_at / cancelled_at). Terminal-state refunds are retained the full 7y for regulator + support-triage lookup."
+    }
+  ],
+  "cross_reference": [
+    "audit::retention.json — audit rows outlive their source rows regardless (financial audit + tax audit trail).",
+    "activity::retention.json — activity rows follow their own tier-based retention.",
+    "finance::invoice retention — invoice-linked refunds align with invoice retention windows.",
+    "finance::payment retention — payment records must survive at least as long as their refunds.",
+    "finance::credit-note retention — credit notes issued by CreditNoteIssuer align with parent invoice retention.",
+    "finance::transaction retention — offsetting transactions align with parent refund retention (co-terminous)."
+  ]
+}

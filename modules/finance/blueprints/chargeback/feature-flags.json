@@ -1,0 +1,69 @@
+{
+  "id": "academorix://modules/chargeback/feature-flags",
+  "$version": 1,
+  "title": "chargeback — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "chargeback.webhook_ingest",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for chargeback webhook ingest. Off = HandleChargebackWebhook refuses to create OR reconcile chargebacks — webhook payloads are recorded to the payment module's webhook log but not acted upon. Emergency-only during severe module outages. Chargebacks will still fire when the flag flips back on (webhook log replay)."
+    },
+    {
+      "key": "chargeback.evidence_submission",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = SubmitChargebackEvidenceJob refuses to dispatch to providers. Evidence rows still persist locally. Emergency-only during provider outages. Chargebacks auto-lose on deadline if the flag stays off past evidence_due_by."
+    },
+    {
+      "key": "chargeback.rdr_path",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = POST /chargebacks/{chargeback}/accept refuses with 503 CHARGEBACK_RDR_MAINTENANCE. Emergency-only when the refund module is unstable + we cannot rely on the RDR-triggered refund cascade."
+    },
+    {
+      "key": "chargeback.finalization_chain",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = FinalizeChargebackJob skips the five finalization steps (transactions + invoice state + clawbacks + marketing). Chargeback still transitions to lost but WITHOUT downstream side effects. EMERGENCY-ONLY — leaves accounting in an inconsistent state until manual reconciliation. Never flip off without a follow-up chargeback:reconcile run."
+    },
+    {
+      "key": "chargeback.clawback_cascade",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ChargebackLost does NOT fire ChargebackClawbackReferral / ChargebackClawbackCoupon downstream. Referral rewards + coupon redemptions do NOT reverse. Emergency-only if the cascade is misbehaving — admin manual reversal via referrals + coupon module CLIs then required."
+    },
+    {
+      "key": "chargeback.marketing_lane",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ChargebackLost does NOT fire marketing::ChargebackFiled. Ad-network ROAS adjustment + fraud model retraining pause. Used when marketing module is unstable."
+    },
+    {
+      "key": "chargeback.reconciler_jobs",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CheckChargebackStatusJob + MarkExpiredChargebacksJob + MonitorChargebackRateJob + PurgeExpiredChargebackDataJob skip. Only flip off for maintenance windows."
+    },
+    {
+      "key": "chargeback.rate_monitoring",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = MonitorChargebackRateJob skips ALL tenants (regardless of chargeback_rate_monitoring entitlement). No VDMP/MDMP threshold alerts fire. Merchant-account risk visibility lost. Emergency-only."
+    },
+    {
+      "key": "chargeback.evidence_auto_collection",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CollectChargebackEvidenceJob skips. Admin must manually enter every evidence piece. Used during upstream module (invoice / notifications / support) instability."
+    },
+    {
+      "key": "chargeback.report_delivery",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = the chargeback-rate report endpoint returns 503. Used when the report generation is under load or the underlying query is unhealthy."
+    }
+  ]
+}

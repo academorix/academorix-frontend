@@ -1,0 +1,121 @@
+{
+  "id": "academorix://modules/invoice/caches",
+  "$version": 1,
+  "title": "invoice — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["invoice", "invoice.reports", "invoice.aging", "invoice.tenant"],
+  "keys": [
+    {
+      "pattern": "inv:num-seq:{tenant_id}:{year}",
+      "description": "Sequential invoice number counter per tenant per year. The observer reads this via Postgres advisory lock — the cache key is a fast-path lookup for the current counter value. Rebuilt from DB on cache miss.",
+      "ttlSeconds": 86400,
+      "tags": ["invoice", "invoice.tenant"],
+      "invalidatedBy": [
+        "InvoiceCreated (increments the counter)",
+        "manual: invoice:renumber-year (admin tool for repairing corrupted counters)"
+      ]
+    },
+    {
+      "pattern": "inv:cn-num-seq:{tenant_id}:{year}",
+      "description": "Same pattern for credit note counters.",
+      "ttlSeconds": 86400,
+      "tags": ["invoice", "invoice.tenant"],
+      "invalidatedBy": ["CreditNoteCreated"]
+    },
+    {
+      "pattern": "inv:customer-aging:{tenant_id}:{customer_type}:{customer_id}",
+      "description": "Per-customer aging summary (current / 1-30 / 31-60 / 61-90 / 91+ buckets). Read by the customer's own invoice view + support tools. TTL is short because payment events immediately invalidate.",
+      "ttlSeconds": 300,
+      "tags": ["invoice", "invoice.aging", "tenant"],
+      "invalidatedBy": [
+        "InvoicePaid",
+        "InvoicePastDue",
+        "InvoicePartiallyPaid",
+        "InvoiceUncollectible",
+        "InvoiceWrittenOff",
+        "CreditNoteApplied"
+      ]
+    },
+    {
+      "pattern": "inv:tenant-aging-summary:{tenant_id}",
+      "description": "Tenant-wide aging summary. Feeds the /api/v1/reports/invoice-aging endpoint + the SDUI aging-timeline widget.",
+      "ttlSeconds": 300,
+      "tags": ["invoice", "invoice.aging", "invoice.tenant"],
+      "invalidatedBy": [
+        "InvoicePaid",
+        "InvoicePastDue",
+        "InvoiceUncollectible",
+        "InvoiceWrittenOff"
+      ]
+    },
+    {
+      "pattern": "inv:revenue-report:{tenant_id}:{from}:{to}:{group_by}",
+      "description": "Materialised revenue report per (tenant, date range, grouping). Fed by GET /reports/revenue + the monthly-report scheduled job. Long TTL because paid-invoice history is append-only for delivered periods.",
+      "ttlSeconds": 3600,
+      "tags": ["invoice", "invoice.reports", "invoice.tenant"],
+      "invalidatedBy": [
+        "manual: invoice:invalidate-reports (rare — bulk correction)",
+        "TTL"
+      ]
+    },
+    {
+      "pattern": "inv:tax-collected:{tenant_id}:{from}:{to}:{jurisdiction}",
+      "description": "Tax collected per jurisdiction over a date range. Feeds VAT/GST return prep. Long TTL because past periods don't change.",
+      "ttlSeconds": 3600,
+      "tags": ["invoice", "invoice.reports", "invoice.tenant"],
+      "invalidatedBy": ["TTL", "manual"]
+    },
+    {
+      "pattern": "inv:pdf-signed-url:{invoice_id}:{version}",
+      "description": "Pre-signed S3 URL for the invoice PDF. Regenerated when the current signed URL is < 24h from expiry. Version increments on PDF regenerate.",
+      "ttlSeconds": 604800,
+      "tags": ["invoice", "invoice.tenant"],
+      "invalidatedBy": ["InvoicePDFRegenerated", "GenerateInvoicePDFJob completes"]
+    },
+    {
+      "pattern": "inv:cn-pdf-signed-url:{credit_note_id}:{version}",
+      "description": "Same pattern for credit note PDFs.",
+      "ttlSeconds": 604800,
+      "tags": ["invoice"],
+      "invalidatedBy": ["GenerateCreditNotePDFJob completes"]
+    },
+    {
+      "pattern": "inv:customer-scope:{tenant_id}:{user_id}",
+      "description": "Cached list of invoice IDs a customer may access (own + guardian-of). Read by invoice.enforce_customer_scope middleware on every /invoices/mine request. Short TTL because guardian relationships change rarely but invoice creation is frequent.",
+      "ttlSeconds": 300,
+      "tags": ["invoice", "tenant"],
+      "invalidatedBy": [
+        "InvoiceCreated (invalidates the customer + their guardians)",
+        "user::UserRelationshipUpdated (guardian assignment)",
+        "TTL"
+      ]
+    },
+    {
+      "pattern": "inv:dunning-schedule:{tenant_id}",
+      "description": "Tenant's active dunning schedule (day+3/7/14/30/60 default or Enterprise-customized). Read by DispatchDunningRemindersJob.",
+      "ttlSeconds": 3600,
+      "tags": ["invoice", "invoice.tenant"],
+      "invalidatedBy": [
+        "settings::SettingChanged for group='invoice'",
+        "TTL"
+      ]
+    },
+    {
+      "pattern": "inv:template:{tenant_id}:{template_slug}",
+      "description": "Rendered PDF template (Blade view compilation). Read at every PDF render. Cached across renders for a tenant.",
+      "ttlSeconds": 86400,
+      "tags": ["invoice"],
+      "invalidatedBy": [
+        "tenant::BrandingUpdated",
+        "manual"
+      ]
+    },
+    {
+      "pattern": "inv:eligible-item-types:{tenant_id}",
+      "description": "List of item_type slugs available to the tenant (base 8 + any extending modules registered via #[AsInvoiceLineItemType]). Read by SDUI line-item picker.",
+      "ttlSeconds": 3600,
+      "tags": ["invoice", "invoice.tenant"],
+      "invalidatedBy": ["boot-time discovery re-run", "TTL"]
+    }
+  ]
+}

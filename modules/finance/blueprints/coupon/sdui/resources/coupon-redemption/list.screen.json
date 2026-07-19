@@ -1,0 +1,212 @@
+{
+  "id": "coupon.resources.coupon-redemption.list",
+  "title": "Coupon redemptions",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coupons/redemptions",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coupon", "entity": "coupon-redemption", "action": "list" },
+  "requiresPermission": "coupon_redemptions.viewAny",
+  "requiresEntitlement": "coupon_capture",
+  "dataSources": [
+    {
+      "name": "redemptions",
+      "kind": "http.get",
+      "url": "/api/v1/coupons/redemptions",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Coupon redemptions" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "The full ledger of coupon uses across your tenant. Financial columns require the view-financials permission." } }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "TextField",
+              "props": { "label": "Coupon code", "placeholder": "Filter by code", "className": "min-w-56" },
+              "actions": {
+                "onChange": { "kind": "filter.set", "field": "code", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Applied to", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "membership", "label": "Membership" },
+                { "id": "invoice", "label": "Invoice" },
+                { "id": "transaction", "label": "Transaction" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "applied_to_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "State", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "false", "label": "Active" },
+                { "id": "true", "label": "Reversed" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "reversed", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "DateRangePicker",
+              "props": { "label": "Redeemed", "className": "min-w-72" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.set-range",
+                  "fieldGte": "redeemed_at.gte",
+                  "fieldLte": "redeemed_at.lte",
+                  "valueExpr": "$value"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "className": "border rounded-lg" },
+          "bindings": {
+            "items": { "$ref": "redemptions" },
+            "isLoading": { "$ref": "redemptions.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "code",
+              "label": "Code",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-sm" },
+                "bindings": { "children": { "$ref": "row.coupon.code" } }
+              }
+            },
+            {
+              "id": "customer",
+              "label": "Customer",
+              "cell": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "variant": { "$expr": "row.customer_type === 'user' ? 'info' : 'accent'" },
+                      "children": { "$expr": "row.customer_type === 'user' ? 'User' : 'Athlete'" }
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "text-sm" },
+                    "bindings": {
+                      "children": { "$expr": "row.customer_display_name || row.customer_id" }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "applied_to",
+              "label": "Applied to",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "sm", "variant": "neutral" },
+                "bindings": {
+                  "children": { "$ref": "row.applied_to_type" }
+                }
+              }
+            },
+            {
+              "id": "discount",
+              "label": "Discount",
+              "requiresPermission": "coupons.view-financials",
+              "redactedFallback": { "kind": "Text", "props": { "className": "text-muted", "children": "••••" } },
+              "cell": {
+                "kind": "Text",
+                "bindings": {
+                  "children": {
+                    "$expr": "formatMoney(row.discount_amount_cents, row.source_currency)"
+                  }
+                }
+              }
+            },
+            {
+              "id": "final",
+              "label": "Final",
+              "requiresPermission": "coupons.view-financials",
+              "redactedFallback": { "kind": "Text", "props": { "className": "text-muted", "children": "••••" } },
+              "cell": {
+                "kind": "Text",
+                "bindings": {
+                  "children": {
+                    "$expr": "formatMoney(row.final_amount_cents, row.source_currency)"
+                  }
+                }
+              }
+            },
+            {
+              "id": "redeemed_at",
+              "label": "Redeemed",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm text-muted" },
+                "bindings": {
+                  "children": { "$expr": "formatDate(row.redeemed_at, 'relative')" }
+                }
+              }
+            },
+            {
+              "id": "state",
+              "label": "State",
+              "cell": {
+                "kind": "Chip",
+                "props": { "size": "sm" },
+                "bindings": {
+                  "hidden": { "$expr": "!row.reversed_at" },
+                  "variant": "danger",
+                  "children": {
+                    "$expr": "'Reversed (' + row.clawback_reason + ')'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "actions",
+              "label": "",
+              "cell": {
+                "kind": "Button",
+                "props": { "variant": "outline", "size": "sm", "children": "Reverse" },
+                "requiresPermission": "coupon_redemptions.reverse",
+                "bindings": {
+                  "hidden": { "$expr": "!!row.reversed_at" }
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/coupons/redemptions/' + row.id + '/reverse'"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "id": "academorix://modules/chargeback/entitlements",
+  "$version": 1,
+  "title": "chargeback — declared entitlements",
+  "description": "Seven entitlement keys. `chargeback_management` is the boolean master gate — on for every tier by default (chargebacks are bank-forced, so the tracker fires regardless; the workflow features gate here). `chargeback_evidence_submission` (Small+) permits evidence submission workflow (default on — without it, chargebacks auto-lose on deadline). `chargeback_rdr` (Medium+) unlocks the Rapid Dispute Resolution auto-refund path (Visa-only). `chargeback_ce3` (Medium+) unlocks Compelling Evidence 3.0 evidence builder (Visa-only). `chargeback_rate_monitoring` (Small+, default on) enables the rate tracker + alerts. `chargeback_extended_retention` (Enterprise) extends 7y to 10y. `chargeback_advanced_reporting` (Medium+) unlocks rich rate + reason + provider distribution reports.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "chargeback_management",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate for the chargeback module workflow. Chargebacks still fire regardless (they're bank-forced — the platform cannot prevent a bank from filing) but the tenant-facing workflow features (evidence submission, RDR accept, admin surfaces, reports) require this gate. Every tier defaults on. Off = the module is inert for the tenant's admin surfaces but chargebacks still record + fire finalization chain on lost.",
+      "enforcedBy": [
+        "chargeback.enforce_management_entitlement middleware on every /api/v1/chargebacks/* route",
+        "SDUI surfaces hidden when features array does not include 'chargeback.core'"
+      ]
+    },
+    {
+      "key": "chargeback_evidence_submission",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Enables POST /api/v1/chargebacks/{chargeback}/evidence — evidence submission workflow. When off, chargebacks auto-lose on deadline (evidence deadlines pass; MarkExpiredChargebacksJob transitions to expired = auto-loss). Off is a rare emergency-only flip — no tenant should have this off in normal operation.",
+      "enforcedBy": [
+        "POST /chargebacks/{chargeback}/evidence route carries entitlement.enforce:chargeback_evidence_submission middleware",
+        "ChargebackEvidenceObserver.creating refuses when the gate is closed",
+        "SDUI evidence-submission UI hidden when entitlement is off"
+      ]
+    },
+    {
+      "key": "chargeback_rdr",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Rapid Dispute Resolution auto-refund path (Visa-only). Medium+ tier. When on + chargeback is RDR-eligible: admin can accept via POST /chargebacks/{chargeback}/accept — creates a Refund via refund::RefundOrchestrator BEFORE the chargeback fully files. No network fee. No rate impact. Cheapest defense for low-value disputes. Small tier tenants must fight every chargeback via evidence submission (or accept the loss).",
+      "enforcedBy": [
+        "POST /chargebacks/{chargeback}/accept route carries entitlement.enforce:chargeback_rdr middleware",
+        "ChargebackObserver.creating computes rdr_eligible=false when entitlement is off (regardless of amount + payment history)",
+        "SDUI accept-via-RDR button hidden when entitlement is off"
+      ]
+    },
+    {
+      "key": "chargeback_ce3",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Compelling Evidence 3.0 evidence builder (Visa-only, fraud-reason-only). Medium+ tier. When on + chargeback is CE3-eligible: Ce3EvidenceBuilder assembles the CE3.0 evidence shape (two prior legitimate purchases + matching IP + device fingerprint) alongside standard evidence. High win rates for eligible fraud chargebacks. Requires >= 120 days of purchase history + 2 prior successful payments from the same customer.",
+      "enforcedBy": [
+        "ChargebackObserver.creating computes ce3_eligible=false when entitlement is off",
+        "SDUI CE3-augmented evidence UI hidden when entitlement is off",
+        "Ce3EvidenceBuilder refuses to assemble when entitlement is off"
+      ]
+    },
+    {
+      "key": "chargeback_rate_monitoring",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Chargeback rate tracker + alerts. Default ON for every tier. Off = MonitorChargebackRateJob skips the tenant; no VDMP/MDMP threshold alerts fire. Emergency-off only (small tenants who explicitly disable rate monitoring accept the merchant-account risk).",
+      "enforcedBy": [
+        "MonitorChargebackRateJob skips tenants where entitlement is off",
+        "SDUI rate-report dashboard hidden when entitlement is off"
+      ]
+    },
+    {
+      "key": "chargeback_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends retention 7y → 10y for financial audit alignment (some regulated tenants require 10y for tax audit trails on chargeback financial records + reversal accounting).",
+      "enforcedBy": [
+        "PurgeExpiredChargebackDataJob reads the entitlement to select the retention window (7y default; 10y when on)",
+        "ArchiveChargebackFinancialRecordsOnTenantErasure applies the 10y window when the tenant held the entitlement at erasure time"
+      ]
+    },
+    {
+      "key": "chargeback_advanced_reporting",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Medium+ tier. Unlocks the rich rate + reason + provider distribution reports. Small tier receives a basic rate-only report (current rate per network + threshold status); Medium+ additionally gets reason_category / reason_code distribution + provider distribution + RDR acceptance rate + CE3 evidence submission rate + median days_to_decision + win rate.",
+      "enforcedBy": [
+        "GET /reports/chargeback-rate refuses advanced fields when entitlement is off (returns basic rollup only)",
+        "SDUI advanced report widgets hidden when entitlement is off"
+      ]
+    }
+  ]
+}

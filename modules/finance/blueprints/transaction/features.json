@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/transaction/features",
+  "$version": 1,
+  "title": "transaction — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "transaction.core",
+      "displayName": "Ledger + transactions",
+      "description": "The double-entry money-movement ledger. Every invoice payment / refund / chargeback / coupon credit / tax remittance / fee charge produces one or more transactions with balanced ledger entries.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "transaction.multi_currency",
+      "displayName": "Multi-currency transactions",
+      "description": "Record transactions in currencies other than the tenant's base currency. Exchange rate is captured atomically at commit + used for base-currency-normalized reporting. Medium+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "transaction.advanced_reporting",
+      "displayName": "General Ledger report",
+      "description": "Monthly GL report + custom GL exports as accountant-shaped CSV + JSONL. Per-account opening balance + all posted transactions + closing balance + total debits + total credits. Medium+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "transaction.ledger_reconciliation_api",
+      "displayName": "Programmatic ledger reconciliation",
+      "description": "On-demand invocation of ReconcileLedgerBalancesJob + read-access to the reconciliation-run audit trail via API. For Enterprise finance teams integrating with external audit tooling.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "transaction.extended_retention",
+      "displayName": "10-year transaction retention",
+      "description": "Extends transaction + ledger-entry retention from 7 years to 10 years. For finance regimes that require > 7-year audit trails. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "transaction.reversal_dashboard",
+      "displayName": "Ledger reversal + amendment dashboard",
+      "description": "SDUI surface for admin-authored ledger corrections. Requires the admin role + a written amendment note. Every reversal writes a critical audit row (retention 7 years).",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "transaction.reconciliation_report",
+      "displayName": "Reconciliation audit trail view",
+      "description": "SDUI surface showing the last N reconciler runs + any detected imbalances. Read-only.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "transaction.threshold_alerts",
+      "displayName": "Account balance threshold alerts",
+      "description": "AccountBalanceThresholdCrossed alerts route to configured recipients when a per-account balance crosses a watermark (e.g. accounts_receivable > $50k).",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "id": "audit.resources.audit.by-entity",
+  "title": "Audit trail — by entity",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/audits/by-entity/:auditable_type/:auditable_id",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit", "action": "byEntity" },
+  "requiresPermission": "audit.audits.viewAny",
+  "dataSources": [
+    {
+      "name": "audits",
+      "kind": "http.get",
+      "url": "/api/v1/audits/by-entity/{route.auditable_type}/{route.auditable_id}",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": ["filter[event]", "filter[since]", "filter[until]", "sort", "page", "per_page"]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "leadingIcon": "arrow-left", "children": "Back" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/audit/audits" } }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "'Audit trail — ' + classBasename(route.auditable_type) + ' ' + route.auditable_id"
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Every mutation across the lifecycle of this entity. Reverse-chronological."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No audit rows for this entity",
+              "description": "This entity has no recorded mutations in the window. If you expect audit rows, verify the entity's model composes the OwenIt\\Auditing\\Auditable trait.",
+              "icon": "shield-check"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "audits" },
+            "isLoading": { "$ref": "audits.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "event",
+              "header": "Event",
+              "cell": {
+                "kind": "Widget",
+                "widget": "audit.audit-event-chip",
+                "props": {
+                  "event": { "$ref": "row.event" },
+                  "size": "sm",
+                  "showIcon": true,
+                  "showLabel": true
+                }
+              }
+            },
+            {
+              "id": "actor",
+              "header": "Actor",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "font-mono text-xs" },
+                "bindings": {
+                  "children": {
+                    "$expr": "row.user_id ? (row.user_type ? row.user_type + ':' + row.user_id : row.user_id) : 'system'"
+                  }
+                }
+              }
+            },
+            {
+              "id": "changes",
+              "header": "Changes",
+              "cell": {
+                "kind": "Widget",
+                "widget": "audit.audit-diff-summary",
+                "props": { "diff_summary": { "$ref": "row.diff_summary" }, "size": "sm" }
+              }
+            },
+            {
+              "id": "when",
+              "header": "When",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatRelative(row.created_at)" } }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "isIconOnly": true,
+                  "leadingIcon": "chevron-right",
+                  "ariaLabel": "View audit row"
+                },
+                "actions": {
+                  "onPress": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/audit/audits/' + row.id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

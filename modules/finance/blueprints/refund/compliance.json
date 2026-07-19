@@ -1,0 +1,190 @@
+{
+  "id": "academorix://modules/refund/compliance",
+  "$version": 1,
+  "title": "refund — compliance evidence",
+  "description": "Refund module is financial-record-critical (every refund is a reversal that impacts recognised revenue — SOX + tax audit relevant) + PII-adjacent (customer_id + initiated_by_user_id + approved_by_user_id captured on every refund) + advertising-adjacent (feeds negative-value marketing events for ROAS adjustment) + consumer-protection-adjacent (regulator-mandated refund SLAs vary 14-30 days by jurisdiction). GDPR (Art. 5, 6, 17), CAN-SPAM Act (refund notifications), US tax law (7y financial record), SOX 404 (internal controls + segregation of duties), SOC 2 CC6.3, PCI-DSS (token-based reversal, no card data).",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(a)",
+          "principle": "lawfulness + fairness + transparency",
+          "evidence": "Every refund records initiator + approver (when applicable) + timestamp + reason — full auditability. Terms of the reversal frozen at succeeded state (amount + currency + reason) — no post-hoc mutation. Customer notified at every state transition (RefundRequested / RefundApproved / RefundProcessed / RefundSucceeded / RefundFailed / RefundRejected)."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Refund captures only what the reversal computation needs: reference to parent payment + invoice + reason + amount. No incidental PII beyond initiated_by_user_id + approved_by_user_id which are FKs to the user module."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "7-year retention window justified by tax + SOX financial-record obligations. Enterprise 10-year extension for regulated tenants. Automated purge via PurgeExpiredRefundDataJob."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract",
+          "evidence": "Refund processing is contractual — the tenant/customer agreement + consumer-protection law both mandate refund handling. Terms of refund + reasons + approval workflow constitute the contract."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "UserErased (as any actor on refunds) triggers RedactCustomerFromRefundsOnUserErased — 90 days post-erasure, redact user_id references to a hashed placeholder. Row survives for the 7-year financial audit trail (financial-obligation carve-out per Art. 17 §3(b))."
+        },
+        {
+          "article": "Art. 22",
+          "principle": "automated decision-making",
+          "evidence": "No fully-automated decisions with legal/significant effect. Approval is human-decided (approver clicks approve/reject); the requires_approval computation is rule-based (thresholds + reasons) but auto-approval only applies to explicit reasons (duplicate_charge is system-initiated by finance ops). Refusal responses always include an actionable reason code + support-contact CTA."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "Refund is IMMUTABLE post-succeeded. Segregation of duties enforced (approver ≠ initiator). Customer-scope middleware blocks cross-customer refund lookups. Confidential financial fields (amount_cents, provider_fee_reversal_cents) require refunds.view-financials permission."
+        }
+      ]
+    },
+    "can_spam": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "unsubscribe link",
+          "principle": "one-click opt-out",
+          "evidence": "Every notification is transactional (state transitions, financial reversals) — cannot-opt-out per US CAN-SPAM 4(a)(3)(a) (required for the refund-flow disclosure). No promotional refund content exists — refund is a contractual event, not marketing."
+        },
+        {
+          "requirement": "physical postal address",
+          "principle": "identification of the sender",
+          "evidence": "Every refund email footer includes the tenant's registered business address (populated from tenant.legal_address_json)."
+        },
+        {
+          "requirement": "no false / misleading header + subject",
+          "principle": "clear identification",
+          "evidence": "Notification email subjects are fixed shape: 'Your refund request has been received' / 'Your refund has been approved' / 'Your refund is processing' / 'Your refund is complete' / 'Your refund could not be processed' — no clickbait / misleading language."
+        }
+      ]
+    },
+    "us_tax_law": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "financial audit trail",
+          "principle": "traceable audit trail of every revenue reversal",
+          "evidence": "Every succeeded refund carries: amount_cents, currency, reason, refund_type + a linked credit_note_id (reversal invoice via invoice module) + a linked transaction_id (offsetting double-entry ledger via transaction module). Cross-referenced with parent payment + invoice for full revenue-recognition audit. Retained 7 years."
+        },
+        {
+          "requirement": "state sales tax nexus reporting",
+          "principle": "record of tax reversal per jurisdiction",
+          "evidence": "The parent invoice carries jurisdiction via finance::tax::TaxCalculation. The credit note issued on succeeded refund carries the tax reversal per line. Reduces output VAT / sales tax for the reporting period."
+        }
+      ]
+    },
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "SOX 404 — internal controls over financial reporting",
+          "principle": "segregation of duties + audit trail on reversal authorization",
+          "evidence": "Refund.create requires finance/admin/owner role OR customer for own refunds. Refund.approve requires refunds.approve permission AND approver ≠ initiator (REFUSED via RefundPolicy::approve). Every write + reversal is Auditable (7-year retention). Terms are IMMUTABLE post-succeeded (REFUND_IMMUTABLE). Force-fail restricted to admin+owner only."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "Refund CRUD requires finance/admin/owner. Approve/reject requires refunds.approve + approver ≠ initiator. Force-fail requires admin/owner only. Confidential financial fields (amount_cents, provider_fee_reversal_cents) require refunds.view-financials permission. Platform-plane cross-tenant read requires super_admin/ops/support role."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All routes are TLS-only + require auth:sanctum (tenant) or auth:platform_admin (platform). refund.enforce_customer_scope middleware blocks cross-customer refund access."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "academorix.refund.atomicity.failures_total = 0 target. academorix.refund.finalization_failures_total = 0 target. Every RefundSucceeded fires the finalization chain + records metrics; failures dispatch RefundProviderError + alert."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "Sum-invariant across refunds prevents over-refunding. Immutable-after-succeeded prevents accidental mutation. Approval workflow prevents unauthorized reversals. Reconciler job catches provider-side state drift. Force-fail escape hatch for stuck refunds."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.12.4 Logging + monitoring",
+          "principle": "financial audit log",
+          "evidence": "Refund + RefundLine rows are Auditable (7-year retention). Every state transition + every field mutation + every reversal audit-logged. Audit-log entries survive cascade deletes."
+        },
+        {
+          "annex": "A.9 Access control",
+          "principle": "role-based access",
+          "evidence": "Two-guard permission surface (sanctum + platform_admin). Confidential financial fields restricted to finance+admin+support+owner. Financial reversal (approve/force-fail) restricted per role. Bulk-processing restricted to Enterprise + admin+owner."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "1.4.3 (Contrast Minimum)",
+          "principle": "readable text",
+          "evidence": "The refund-status-chip + reason-picker widgets use HeroUI's design tokens which meet AA contrast by default. Status colours never rely on colour alone — each carries a text label."
+        },
+        {
+          "criterion": "2.1.1 (Keyboard)",
+          "principle": "keyboard operable",
+          "evidence": "Refund request wizard + approve/reject modal + refund-line editor are fully keyboard-navigable per HeroUI ComboBox + Modal + Form semantics."
+        },
+        {
+          "criterion": "3.3.1 (Error Identification)",
+          "principle": "explicit error surfacing",
+          "evidence": "Every observer refusal returns a specific error code (REFUND_CAPTURE_NOT_ENTITLED, REFUND_AMOUNT_EXCEEDS_REFUNDABLE, REFUND_SELF_APPROVAL_REFUSED, etc.) + user-facing message. Refund refusal responses include actionable reason + support-contact CTA when appropriate."
+        }
+      ]
+    },
+    "consumer_protection": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "SLA-bound refund resolution",
+          "principle": "regulator-mandated refund windows",
+          "evidence": "Approval SLA metric (academorix.refund.approvals_stale_total) fires P2 signals when refunds sit > 24h in awaiting_approval. Provider-side dispatch SLA (5-10 days for card refunds) is provider-communicated + surfaced to customer via RefundProcessedNotification. Force-fail escape hatch for stuck refunds (> 240 poll attempts = 10 days at hourly cadence)."
+        },
+        {
+          "regulator": "california ccpa §1798.100",
+          "evidence": "14-30 day refund windows for specific purchase types. Refund SLA monitored via metrics. Records retained 3 years minimum (7y default exceeds)."
+        },
+        {
+          "regulator": "eu consumer rights directive 2011/83/EU",
+          "evidence": "14-day cooling-off period. Refund requests via POST /refunds/mine within 14 days of purchase auto-approve for eligible purchase types (configurable via refund.reason.auto_approve when tenant enables customer-driven cooling-off)."
+        },
+        {
+          "regulator": "uk consumer rights act 2015",
+          "evidence": "Statutory rights refund windows retained 6 years minimum (7y default exceeds)."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Req 10.5.3 — transaction reversal audit trail",
+          "principle": "audit trail retained 1y online + 3y total minimum",
+          "evidence": "Refund records retained 7y (10y Enterprise) — exceeds PCI-DSS minimum. Every reversal records the parent payment's provider_reference_id (token, never PAN) + provider_fee_reversal_cents."
+        },
+        {
+          "requirement": "Req 3.4 — no PAN storage",
+          "principle": "never store card data",
+          "evidence": "Refund uses provider token from parent payment (payment.provider_reference_id). Refund NEVER receives / stores / logs card PAN / CVV / magnetic stripe / PIN — the refund provider driver dispatches the reversal using the token."
+        }
+      ]
+    }
+  }
+}

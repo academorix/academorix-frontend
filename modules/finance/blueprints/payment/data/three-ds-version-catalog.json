@@ -1,0 +1,50 @@
+{
+  "$version": 1,
+  "title": "3D Secure version catalogue",
+  "description": "3DS version support matrix. 3DS 1.0.2 is the legacy protocol (deprecated by most issuers 2022+); 3DS 2.1.0 was the original 3DS2 spec; 3DS 2.2.0 added merchant-exempted flow (frictionless authentication + delegated authentication + issuer risk-based decisioning).",
+  "versions": [
+    {
+      "version": "1.0.2",
+      "display_name": "3D Secure 1 (legacy)",
+      "description": "Original 3DS protocol. Redirect-based challenge flow. Deprecated by Visa + Mastercard 2022+; issuers may reject or downgrade to 2.x. NOT ISSUED FROM ACADEMORIX — kept in enum for historical Payment.three_ds_version values.",
+      "supported_by_providers": [],
+      "typical_challenge_ux": "iframe redirect to issuer's ACS page",
+      "psd2_compliant": false
+    },
+    {
+      "version": "2.1.0",
+      "display_name": "3D Secure 2.1",
+      "description": "Original 3DS2 spec. Adds device fingerprinting + risk-based authentication + frictionless flow (issuer can approve without customer challenge if risk-signals are strong). PSD2-compliant.",
+      "supported_by_providers": ["stripe", "adyen", "paypal", "square"],
+      "typical_challenge_ux": "in-app challenge (SDK) or biometric prompt on issuer's app",
+      "psd2_compliant": true
+    },
+    {
+      "version": "2.2.0",
+      "display_name": "3D Secure 2.2",
+      "description": "Adds merchant-initiated flow (Merchant Initiated Transactions can bypass 3DS2 under specific exemptions), delegated authentication (issuer defers to merchant-owned authentication), and richer risk data. PSD2-compliant. Recommended default.",
+      "supported_by_providers": ["stripe", "adyen"],
+      "typical_challenge_ux": "in-app challenge with richer context / biometric / frictionless",
+      "psd2_compliant": true
+    }
+  ],
+  "outcome_semantics": {
+    "authenticated": "Customer completed the challenge OR frictionless flow approved. LIABILITY SHIFT — issuer bears fraud liability.",
+    "not_attempted": "Merchant chose to skip 3DS2 (permitted under specific exemptions — small transactions, whitelisted merchants). Merchant retains liability.",
+    "rejected": "Customer failed the challenge OR issuer rejected. Payment declined.",
+    "not_supported": "Issuing bank doesn't support 3DS2. Fallback to 3DS1 or friction-full flow — merchant retains liability.",
+    "bypassed": "Merchant exemption (low-value transaction < €30, whitelisted merchant, low-risk merchant risk-based analysis). Merchant retains liability."
+  },
+  "psd2_thresholds": {
+    "eu_default_amount_cents": 3000,
+    "eu_default_currency": "EUR",
+    "notes": "PSD2 SCA required for card transactions >= €30 in EEA + UK + Switzerland unless exemption applies. Tenants can override the threshold per region via payment.three_ds.required_over_amount_cents (only INCREASE required auth — cannot decrease below the legal threshold in EU regions)."
+  },
+  "supported_currencies": [
+    "USD", "EUR", "GBP", "CHF", "CAD", "AUD", "NZD", "JPY", "CNY", "HKD", "SGD", "INR",
+    "SEK", "NOK", "DKK", "PLN", "CZK", "HUF", "RON", "BGN", "HRK",
+    "MXN", "BRL", "ARS", "CLP", "COP", "PEN",
+    "ZAR", "AED", "SAR", "ILS", "TRY", "EGP",
+    "THB", "MYR", "IDR", "PHP", "VND", "KRW", "TWD"
+  ]
+}

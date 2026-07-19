@@ -1,0 +1,54 @@
+{
+  "id": "academorix://modules/coupon/helpers",
+  "$version": 1,
+  "title": "coupon — helper functions",
+  "description": "Ergonomic helpers for resolving coupons by code, computing hypothetical discounts, generating unique codes, and reading redemption counts. All helpers are thin wrappers around bound services — never business logic.",
+  "namespace": "Academorix\\Finance\\Coupon\\Support",
+  "helpers": [
+    {
+      "signature": "resolve_coupon(string $code, string $tenantId): ?Coupon",
+      "purpose": "Cache-aware lookup for a coupon within a tenant. Returns the Coupon model or null when the code is unknown / soft-deleted. Does NOT check the active window — callers may want to surface COUPON_EXPIRED with details on an inactive coupon.",
+      "delegates_to": "CouponRepository::findByCode()"
+    },
+    {
+      "signature": "coupon_is_redeemable(Coupon $coupon, string $customerType, string $customerId, string $appliedToType, string $appliedToId, int $sourceAmountCents, string $sourceCurrency): array{is_redeemable: bool, refusal_reason: ?string}",
+      "purpose": "Pure read of every redemption gate for a proposed (coupon, customer, target, amount) tuple. Does NOT touch the DB counter. Returns the first refusal_reason that trips, or is_redeemable=true. Used by preview + validate endpoints.",
+      "delegates_to": "CouponValidator::canRedeem()"
+    },
+    {
+      "signature": "compute_coupon_discount(Coupon $coupon, int $sourceAmountCents, string $sourceCurrency): array{discount_amount_cents: int, final_amount_cents: int, discount_snapshot: array}",
+      "purpose": "Given a coupon + source amount, computes the resulting discount + final amount + frozen snapshot. Read-only. Called by preview endpoint + by CouponRedeemer inside the redemption transaction.",
+      "delegates_to": "CouponValidator::computeDiscount()"
+    },
+    {
+      "signature": "customer_redemption_count(string $tenantId, string $couponId, string $customerType, string $customerId): int",
+      "purpose": "Count of non-reversed redemptions for a specific (coupon, customer) pair. Used to enforce per_customer_limit. Cached via cpn:redemption-count:{coupon_id}:{customer_type}:{customer_id} (60s TTL).",
+      "delegates_to": "CouponRedemptionRepository::countActiveForCustomer()"
+    },
+    {
+      "signature": "coupon_has_capacity(Coupon $coupon): bool",
+      "purpose": "Returns true when coupon.usage_cap IS NULL OR coupon.usage_count < coupon.usage_cap. Consulted before every redemption to short-circuit refusal path.",
+      "delegates_to": "CouponValidator::hasCapacity()"
+    },
+    {
+      "signature": "generate_unique_code(string $tenantId, string $template, int $entropyBits = 40): string",
+      "purpose": "Generate a code from a template respecting the collision-retry loop. Templates: {RAND8} / {RAND4} / {SEQ} / {CAMPAIGN} / literal. Returns the generated code (guaranteed unique against active codes in the tenant). Throws when collision retries exhausted (rare — > 40-bit entropy on per-tenant scope).",
+      "delegates_to": "CodeGenerator::generate()"
+    },
+    {
+      "signature": "is_advanced_discount_type(string $discountType): bool",
+      "purpose": "Returns true when the discount type requires the `coupon_advanced_discount_types` entitlement. Types: free_period, first_month_free, bogo. Small tier types (percent, fixed_amount, free_shipping) return false.",
+      "delegates_to": "CouponValidator::isAdvancedDiscountType()"
+    },
+    {
+      "signature": "coupon_snapshot_shape_version(): int",
+      "purpose": "Returns the current discount_snapshot schema version — bumped when the frozen snapshot shape changes. Downstream marketing + finance consumers branch on this.",
+      "delegates_to": "config('coupon.marketing.attribution_snapshot_shape_version')"
+    }
+  ],
+  "notes": [
+    "Helpers deliberately delegate — testing swaps the bound service to a stub, and every helper follows.",
+    "No helper directly touches the DB — everything routes through repositories or services.",
+    "coupon_is_redeemable() is intentionally a `read` — the atomic write path is CouponRedeemer::redeem() which acquires the row lock. Preview + validate call the helper; only the invoice/membership creation transaction calls redeem()."
+  ]
+}

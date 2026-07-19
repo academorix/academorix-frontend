@@ -1,0 +1,141 @@
+{
+  "id": "tax.resources.tax-exemption.verify",
+  "title": "Verify exemption",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/exemptions/:exemptionId/verify",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-exemption", "action": "verify" },
+  "requiresPermission": "tax.exemptions.verify",
+  "requiresEntitlement": "tax_exemption_management",
+  "dataSources": [
+    {
+      "name": "exemption",
+      "kind": "http.get",
+      "url": "/api/v1/tax/exemptions/{{routeParams.exemptionId}}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Verify exemption" } },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Certificate details" } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Exemption type", "field": "exemption.exemption_type" },
+                  { "label": "Certificate number", "field": "exemption.certificate_number" },
+                  { "label": "Customer", "expr": "exemption.customer_type + ' (' + exemption.customer_id + ')'" },
+                  { "label": "Issuing jurisdiction", "field": "exemption.issuing_jurisdiction_id" },
+                  { "label": "Valid from", "field": "exemption.valid_from", "formatter": "date" },
+                  { "label": "Valid until", "field": "exemption.valid_until", "formatter": "date" },
+                  { "label": "Submitted at", "field": "exemption.created_at", "formatter": "datetime-relative" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Certificate document" } },
+            {
+              "kind": "Button",
+              "props": { "variant": "secondary", "leadingIcon": "document-text", "children": "View certificate (opens in new tab)" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.get",
+                  "url": "/api/v1/tax/exemptions/{{exemption.id}}/certificate-url",
+                  "onResult": {
+                    "kind": "window.open",
+                    "urlExpr": "response.signed_url",
+                    "target": "_blank"
+                  }
+                }
+              }
+            },
+            { "kind": "Text", "props": { "className": "text-xs text-muted mt-3", "children": "Signed URL valid for 4 hours. Every access writes an audit event." } }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "bindings": { "hidden": { "$expr": "!exemption.metadata.verifier_response" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Automatic registry check" } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Verifier", "field": "exemption.metadata.verifier_response.verifier" },
+                  { "label": "Outcome", "field": "exemption.metadata.verifier_response.outcome" },
+                  { "label": "Registry match", "field": "exemption.metadata.verifier_response.matched" },
+                  { "label": "Notes", "field": "exemption.metadata.verifier_response.notes" }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-3" },
+          "children": [
+            {
+              "kind": "TextArea",
+              "props": {
+                "label": "Verification note",
+                "placeholder": "Optional. Written to audit trail.",
+                "rows": 3
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "note", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "check", "children": "Verify + approve" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.post",
+                      "url": "/api/v1/tax/exemptions/{{exemption.id}}/verify",
+                      "body": { "note": "{{form.note}}" },
+                      "onSuccess": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/tax/exemptions/' + exemption.id"
+                      }
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "danger", "leadingIcon": "x-mark", "children": "Reject" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "navigate",
+                      "toExpr": "'/tenant/tax/exemptions/' + exemption.id + '/reject'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

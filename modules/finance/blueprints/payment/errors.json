@@ -1,0 +1,335 @@
+{
+  "id": "academorix://modules/payment/errors",
+  "$version": 1,
+  "title": "payment — error codes",
+  "namespace": "payment",
+  "errors": [
+    {
+      "code": "PAYMENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.not_found"
+    },
+    {
+      "code": "PAYMENT_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.feature_not_entitled",
+      "description": "Tenant does not hold `payment_capture` entitlement. Response includes upgrade CTA in meta.upgrade_url."
+    },
+    {
+      "code": "PAYMENT_MANUAL_CREATE_FORBIDDEN",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "payment.errors.manual_create_forbidden",
+      "description": "Direct API creation of Payment rows is forbidden — payments are created by PaymentIntent.succeeded transition only."
+    },
+    {
+      "code": "PAYMENT_MISSING_INVOICE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.missing_invoice",
+      "description": "Attempted to create a PaymentIntent without a valid invoice_id."
+    },
+    {
+      "code": "PAYMENT_INTENT_NOT_SUCCEEDED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "payment.errors.intent_not_succeeded",
+      "description": "Internal invariant violation. A Payment row insert was attempted with a payment_intent_id pointing at a non-succeeded intent. Always signals a bug or a race condition."
+    },
+    {
+      "code": "PAYMENT_IMMUTABLE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "payment.errors.immutable",
+      "description": "Attempted to mutate a field on a Payment row that is IMMUTABLE after create. Only amount_refunded_cents + amount_disputed_cents + transaction_id may be updated post-create."
+    },
+    {
+      "code": "PAYMENT_REFUND_EXCEEDS_CAPTURE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "payment.errors.refund_exceeds_capture",
+      "description": "Attempted to set amount_refunded_cents > amount_cents. Cannot refund more than was captured."
+    },
+    {
+      "code": "PAYMENT_INVOICE_TERMINAL",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.invoice_terminal",
+      "description": "Attempted to create a PaymentIntent against an invoice in terminal status (paid, void, uncollectible, refunded)."
+    },
+    {
+      "code": "PAYMENT_INTENT_ALREADY_IN_FLIGHT",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.intent_already_in_flight",
+      "description": "An in-flight PaymentIntent already exists for the invoice. Cancel the existing one first, or continue with it."
+    },
+    {
+      "code": "PAYMENT_INTENT_INVALID_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "payment.errors.intent_invalid_transition",
+      "description": "Attempted a state transition that violates the intent state machine. Always signals a bug."
+    },
+    {
+      "code": "PAYMENT_INTENT_NEXT_ACTION_MISSING",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "payment.errors.intent_next_action_missing",
+      "description": "Internal invariant violation. Intent transitioned to requires_action without next_action_type populated."
+    },
+    {
+      "code": "PAYMENT_INTENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.intent_not_found"
+    },
+    {
+      "code": "PAYMENT_METHOD_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.method_not_found"
+    },
+    {
+      "code": "PAYMENT_METHOD_INACTIVE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.method_inactive",
+      "description": "Attempted to use a payment method that is is_active=false (deactivated). Re-attach + verify to reactivate."
+    },
+    {
+      "code": "PAYMENT_METHOD_IN_USE",
+      "http": 409,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.method_in_use",
+      "description": "Attempted to deactivate a payment method currently referenced by an in-flight PaymentIntent. Wait for the intent to reach terminal status."
+    },
+    {
+      "code": "PAYMENT_METHOD_DUPLICATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.method_duplicate",
+      "description": "A payment method with the same fingerprint_hash already exists for the customer. Returned response includes the existing method_id — the SDK should activate + use that instead."
+    },
+    {
+      "code": "PAYMENT_METHOD_MISSING_DEACTIVATED_REASON",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "payment.errors.method_missing_deactivated_reason",
+      "description": "Attempted to flip is_active=false without providing deactivated_reason."
+    },
+    {
+      "code": "PAYMENT_METHOD_VERIFICATION_NOT_APPLICABLE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.method_verification_not_applicable",
+      "description": "Attempted to verify a payment method that doesn't require verification (only bank_debit methods require ACH micro-deposit verification)."
+    },
+    {
+      "code": "PAYMENT_SAVED_METHODS_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.saved_methods_not_entitled",
+      "description": "Tenant does not hold `payment_saved_methods` entitlement. Every tier gets this — signals a plan misconfiguration."
+    },
+    {
+      "code": "PAYMENT_MANUAL_CAPTURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.manual_capture_not_entitled",
+      "description": "Attempted capture_method='manual' without `payment_manual_capture` entitlement (Medium+ only)."
+    },
+    {
+      "code": "PAYMENT_MULTI_CURRENCY_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.multi_currency_not_entitled",
+      "description": "Attempted intent with currency != tenant.default_currency without `payment_multi_currency` entitlement (Medium+ only)."
+    },
+    {
+      "code": "PAYMENT_DISPUTE_MANAGEMENT_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.dispute_management_not_entitled",
+      "description": "Tenant does not hold `payment_dispute_management` entitlement. Every tier gets this — signals a plan misconfiguration."
+    },
+    {
+      "code": "PAYMENT_DISPUTE_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.dispute_not_found"
+    },
+    {
+      "code": "PAYMENT_DISPUTE_MISSING_PAYMENT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "payment.errors.dispute_missing_payment",
+      "description": "Internal invariant violation. Attempted to create a dispute without a valid parent payment_id."
+    },
+    {
+      "code": "PAYMENT_DISPUTE_INVALID_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "payment.errors.dispute_invalid_transition",
+      "description": "Attempted a dispute state transition that violates the state machine. Always signals a bug or provider webhook malformation."
+    },
+    {
+      "code": "PAYMENT_PROVIDER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.provider_not_found"
+    },
+    {
+      "code": "PAYMENT_PROVIDER_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.provider_quota_exceeded",
+      "description": "Reached payment_provider_slot cap. Small: 1 per tenant. Medium: 3. Response includes upgrade path."
+    },
+    {
+      "code": "PAYMENT_ADVANCED_PROVIDER_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.advanced_provider_not_entitled",
+      "description": "Adyen / Square require Medium+ tier."
+    },
+    {
+      "code": "PAYMENT_CUSTOM_WEBHOOK_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.custom_webhook_not_entitled",
+      "description": "Custom Webhook provider requires Enterprise tier."
+    },
+    {
+      "code": "PAYMENT_PROVIDER_CONFIG_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.provider_config_invalid",
+      "description": "Config jsonb does not match the per-provider JSON Schema. Response body includes the schema validation errors."
+    },
+    {
+      "code": "PAYMENT_INVALID_PROVIDER",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.invalid_provider"
+    },
+    {
+      "code": "PAYMENT_INVALID_PROVIDER_REFERENCE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.invalid_provider_reference",
+      "description": "provider_reference_id does not match the per-provider format regex."
+    },
+    {
+      "code": "PAYMENT_INVALID_CURRENCY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.invalid_currency",
+      "description": "Currency is not ISO 4217 or not in the supported list."
+    },
+    {
+      "code": "PAYMENT_INVALID_POSITIVE_AMOUNT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "payment.errors.invalid_positive_amount",
+      "description": "amount_cents must be > 0."
+    },
+    {
+      "code": "PAYMENT_INVALID_LAST4",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "critical",
+      "i18n_key": "payment.errors.invalid_last4",
+      "description": "PCI-DSS Level 1 violation attempt. last4 field was set to something other than 4 digits (potentially the full PAN)."
+    },
+    {
+      "code": "PAYMENT_WEBHOOK_SIGNATURE_INVALID",
+      "http": 400,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "warn",
+      "i18n_key": "payment.errors.webhook_signature_invalid",
+      "description": "Provider webhook signature failed HMAC verification. Returned 400 with EMPTY body (no error details echoed to prevent leaking internal state to a potential attacker). Every fire writes a PaymentWebhookReceived audit trail row with signature_valid=false."
+    },
+    {
+      "code": "PAYMENT_CIRCUIT_BREAKER_OPEN",
+      "http": 503,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "payment.errors.circuit_breaker_open",
+      "description": "The payment provider's circuit breaker is currently open. New captures are paused until the breaker auto-resets or ops manually resets it. Retry-After header populated."
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "id": "academorix://modules/tax/schemas/tax-exemption",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TaxExemption",
+  "description": "Per-tenant exemption certificate. Carries `tenant_id` + polymorphic customer (User / Athlete / Organization) + `issuing_jurisdiction_id`. certificate_document_url ENCRYPTED at rest (RESTRICTED classification — legal document). NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "tax",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "tax_exemptions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "txe_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Tax\\Models\\TaxExemption",
+    "interface": "Academorix\\Finance\\Tax\\Contracts\\Data\\TaxExemptionInterface",
+    "implements": ["Academorix\\Finance\\Tax\\Contracts\\Data\\TaxExemptionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToTaxJurisdiction",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "exemption_type": "TaxExemptionType",
+      "certificate_document_url": "encrypted:string",
+      "valid_from": "date",
+      "valid_until": "date",
+      "verification_status": "TaxExemptionVerificationStatus",
+      "verified_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["TaxExemptionObserver"],
+    "appends": ["is_active", "is_expiring_soon"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "customer_type": {
+        "type": "string",
+        "length": 96,
+        "nullable": false,
+        "description": "Polymorphic customer class name (User / Athlete / Organization)."
+      },
+      "customer_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic customer ID. Nullable after UserErased-triggered redaction (Art. 17 with financial-obligation carve-out)."
+      },
+      "exemption_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: reseller / non_profit / diplomatic / rural / religious / educational / government / medical / disability."
+      },
+      "certificate_number": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Tax authority-issued identifier. RESTRICTED classification — legal identifier. Redacted for support role."
+      },
+      "certificate_document_url": {
+        "type": "string",
+        "length": 512,
+        "nullable": false,
+        "description": "ENCRYPTED AT REST. S3 signed URL to uploaded PDF/JPEG certificate under tenant-scoped bucket prefix. Accessed via time-limited signed URLs only."
+      },
+      "issuing_jurisdiction_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tax_jurisdictions", "column": "id", "onDelete": "restrict" },
+        "description": "The jurisdiction that ISSUED the certificate (e.g. US IRS for federal 501(c)(3), state Board of Equalization for reseller). Distinct from the jurisdictions the exemption applies TO (inferred from customer address at calculation time)."
+      },
+      "valid_from": {
+        "type": "date",
+        "nullable": false,
+        "description": "Inclusive date the certificate is valid from."
+      },
+      "valid_until": {
+        "type": "date",
+        "nullable": true,
+        "description": "Exclusive date the certificate expires. Null = perpetual (rare — typically diplomatic)."
+      },
+      "verification_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'pending'",
+        "description": "Enum: pending / verified / rejected / expired."
+      },
+      "verified_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The reviewer who verified. Null when automatic registry cross-check succeeded."
+      },
+      "verified_at": { "type": "timestamptz", "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true, "description": "Includes rejection_reason, warnings_sent (60/30/7-day cadence tracking), verifier_response (registry cross-check response snapshot)." },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "customer_type", "customer_id", "exemption_type", "issuing_jurisdiction_id"],
+        "unique": true,
+        "name": "tax_exemptions_customer_type_jurisdiction_unique",
+        "predicate": "deleted_at IS NULL AND verification_status = 'verified'"
+      },
+      { "columns": ["tenant_id", "customer_type", "customer_id"], "name": "tax_exemptions_customer_idx" },
+      { "columns": ["tenant_id", "verification_status", "valid_until"], "name": "tax_exemptions_status_expiry_idx" },
+      { "columns": ["issuing_jurisdiction_id"], "name": "tax_exemptions_jurisdiction_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "customer_type", "exemption_type", "certificate_number", "certificate_document_url", "issuing_jurisdiction_id", "valid_from", "verification_status", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^txe_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "customer_type": { "type": "string" },
+    "customer_id": { "type": ["string", "null"] },
+    "exemption_type": { "type": "string", "enum": ["reseller", "non_profit", "diplomatic", "rural", "religious", "educational", "government", "medical", "disability"] },
+    "certificate_number": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "certificate_document_url": { "type": "string", "format": "uri", "maxLength": 512, "pattern": "^https://" },
+    "issuing_jurisdiction_id": { "type": "string", "pattern": "^txj_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "valid_from": { "type": "string", "format": "date" },
+    "valid_until": { "type": ["string", "null"], "format": "date" },
+    "verification_status": { "type": "string", "enum": ["pending", "verified", "rejected", "expired"] },
+    "verified_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "verified_at": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "valid_from < valid_until when both set",
+    "certificate_document_url is HTTPS S3 signed URL under tenant-scoped bucket prefix",
+    "certificate_document_url encrypted at rest",
+    "unique verified exemption per (tenant, customer, exemption_type, issuing_jurisdiction) partial WHERE deleted_at IS NULL AND verification_status='verified'",
+    "state machine: pending → verified / rejected; verified → expired (automatic only). No transitions FROM verified back to pending. No un-reject. No un-expire.",
+    "verification_status='verified' requires verified_at set + (verified_by_user_id set OR metadata.verification_method='automatic_registry_check')",
+    "verification_status='rejected' requires metadata.rejection_reason set",
+    "hard-delete allowed only after > 7 years past valid_until (regulator audit)"
+  ]
+}

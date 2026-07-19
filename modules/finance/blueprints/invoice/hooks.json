@@ -1,0 +1,87 @@
+{
+  "id": "academorix://modules/invoice/hooks",
+  "$version": 1,
+  "title": "invoice — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Invoice registers hooks for tenant erasure (financial-record archive), user erasure (customer PII redaction), and the load-bearing membership → invoice → marketing signal chain.",
+  "namespace": "Academorix\\Finance\\Invoice\\Hooks",
+  "hooks": [
+    {
+      "name": "PurgeInvoiceDataForErasedTenant",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\PurgeInvoiceDataForErasedTenant",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "Cascade delete via FK CASCADE across invoices / invoice_lines / credit_notes. Runs ArchiveInvoiceFinancialRecordsOnTenantErasure first — copies every invoice + credit note into the compliance archive (S3 Glacier + audit metadata) BEFORE the tables are dropped. Emits count metrics + compliance audit entry per entity family.",
+      "compliance": "GDPR Art. 17 (right to erasure) with the Art. 17 §3 legal-obligation carve-out — financial records are retained in the compliance archive for the regulator retention window (7-10 years) even after tenant erasure. The tenant's own DB rows are hard-deleted; the regulator-facing copies survive."
+    },
+    {
+      "name": "ArchiveInvoiceFinancialRecordsOnTenantErasure",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\ArchiveInvoiceFinancialRecordsOnTenantErasure",
+      "kind": "tenant_erasure_prep",
+      "listens_to": "tenancy::TenantErasureRequested",
+      "purpose": "Fires BEFORE the TenantErased cascade. Copies every invoice + credit_note (with lines + billing_address snapshots) into the compliance archive. Also copies the PDFs from S3 hot storage to S3 Glacier with the tenant_id + erasure_date tags. This is the mechanism that satisfies GDPR Art. 17 §3 (legal obligation retention) — the tenant sees their data gone; the regulator can still audit.",
+      "compliance": "SOX §404 + national tax law (7-year retention, extended to 10 for Enterprise with invoice_extended_retention entitlement) supersedes tenant erasure. Compliance archive is regulator-facing + limited-access + separate encryption keys."
+    },
+    {
+      "name": "RedactCustomerFromInvoicesOnUserErased",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\RedactCustomerFromInvoicesOnUserErased",
+      "kind": "user_erasure",
+      "listens_to": "user::UserErased",
+      "purpose": "Individual GDPR Art. 17. When a specific User is erased (not the whole tenant), nulls billing_address.name / .phone / .email / customer_tax_id on affected invoices AND sets customer_id=NULL. The invoice row itself survives (financial retention) with the personal fields redacted. Same for credit_notes.",
+      "compliance": "GDPR Art. 17 (individual). The invoice/credit_note rows survive per Art. 17 §3 (legal obligation); the PII fields are redacted to satisfy the erasure. Regulator can still audit by tenant_id + invoice_number."
+    },
+    {
+      "name": "CreateInvoiceOnMembershipCreated",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\CreateInvoiceOnMembershipCreated",
+      "kind": "cascade",
+      "listens_to": "membership::MembershipCreated",
+      "purpose": "The load-bearing money flow. When a new Membership is created (parent purchases subscription for athlete), atomically create a draft invoice with lines for: the plan price (item_type='membership_charge'), any setup fee (item_type='setup_fee'), any coupon discount (item_type='discount_line', negative unit_price). Sets invoice.membership_id + membership_renewal_id (when applicable). Runs in the SAME database transaction as the Membership.creating observer — either both succeed or both roll back (per membership module's atomic_membership_invoice_creation rule).",
+      "note": "Membership.freeze_tax_calculation_snapshot fires FIRST; then this hook creates the invoice with a matching tax snapshot referenced by tax_calculation_id on the membership_charge line. Order matters."
+    },
+    {
+      "name": "FinalizeInvoiceOnAllLinesTaxed",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\FinalizeInvoiceOnAllLinesTaxed",
+      "kind": "cascade",
+      "listens_to": "tax::TaxCalculationCompleted",
+      "purpose": "When the tax module completes a TaxCalculation for an invoice line, check if EVERY line on the parent invoice now has tax_calculation_id set. If so + the invoice.status='draft' + settings.auto_finalize_on_tax_complete=true: dispatch FinalizeInvoiceJob. This is the async-tax path — invoice creation kicks off tax calculation in parallel; when tax finishes, the invoice auto-finalizes."
+    },
+    {
+      "name": "MarkPaidOnPaymentIntentConfirmed",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\MarkPaidOnPaymentIntentConfirmed",
+      "kind": "cascade",
+      "listens_to": "payment::PaymentIntentConfirmed",
+      "purpose": "When the payment module confirms a payment intent linked to an invoice, transition the invoice status. Fetches transaction.amount_cents from the transaction module; when SUM(transactions for this invoice) == invoice.total_cents → status=paid; when 0 < SUM < total → status=partially_paid. Fires InvoicePaid (which cascades to marketing) or InvoicePartiallyPaid."
+    },
+    {
+      "name": "DispatchDunningOnInvoicePastDue",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\DispatchDunningOnInvoicePastDue",
+      "kind": "cascade",
+      "listens_to": "invoice::InvoicePastDue",
+      "purpose": "When an invoice transitions to past_due, immediately enqueue the day+3 DispatchDunningRemindersJob (delayed appropriately). Subsequent escalations are self-scheduling — each DispatchDunningRemindersJob enqueues the next stage's job with the correct delay."
+    },
+    {
+      "name": "FireMarketingCaptureOnInvoicePaid",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\FireMarketingCaptureOnInvoicePaid",
+      "kind": "cascade",
+      "listens_to": "invoice::InvoicePaid",
+      "purpose": "LOAD-BEARING. When an invoice is paid AND invoice.membership_id is set, fires the marketing::CaptureMembershipPurchasedMarketingEvent domain-event mapper. This is the direct linkage between the load-bearing finance event and the marketing lane's revenue attribution — a paid membership invoice IS a membership purchase conversion signal for the ad networks.",
+      "note": "Per growth-and-observability.md, the marketing lane maps this event to marketing_events.event_type='membership_purchased' with value_amount_cents = invoice.total_cents. Fan-out to all configured providers (Meta CAPI, Google Ads, etc.)."
+    },
+    {
+      "name": "IssueCreditNoteOnRefundIssued",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\IssueCreditNoteOnRefundIssued",
+      "kind": "cascade",
+      "listens_to": "refund::RefundIssued",
+      "purpose": "When the refund module issues a refund for an invoice's payment, atomically create a CreditNote via GenerateCreditNoteJob. This is how the immutable-after-finalize invariant is preserved — invoices are never mutated; refunds always issue credit notes that reference the original."
+    },
+    {
+      "name": "PreventInvoiceMutationAfterFinalize",
+      "class": "Academorix\\Finance\\Invoice\\Hooks\\PreventInvoiceMutationAfterFinalize",
+      "kind": "guard",
+      "listens_to": "invoice::InvoiceObserver.updating (internal)",
+      "purpose": "Defense-in-depth. The InvoiceObserver already refuses mutation of frozen fields (billing_address, currency, invoice_number, issue_date, totals after finalize). This hook wraps the observer with a policy-layer check that fires on any InvoiceUpdating internal event — providing a second layer of defense. Fires INVOICE_IMMUTABLE_AFTER_FINALIZE for any refused mutation."
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Invoice does not need a tenant-boot hydration path — every operation is on-demand load from the DB. Contrast with modules like tenancy (bootstraps request-context) or settings (bootstraps config cache) that need per-request tenant hydration."
+  }
+}

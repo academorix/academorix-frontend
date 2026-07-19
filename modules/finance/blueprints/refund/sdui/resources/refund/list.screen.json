@@ -1,0 +1,252 @@
+{
+  "id": "refund.resources.refund.list",
+  "title": "Refunds",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/refunds",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "refund", "entity": "refund", "action": "list" },
+  "requiresPermission": "refunds.viewAny",
+  "requiresEntitlement": "refund_capture",
+  "dataSources": [
+    {
+      "name": "refunds",
+      "kind": "http.get",
+      "url": "/api/v1/refunds",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "pending_approvals_count",
+      "kind": "http.get",
+      "url": "/api/v1/refunds/pending-approvals?count_only=1",
+      "unwrap": "data"
+    }
+  ],
+  "broadcasts": [
+    { "channel": "tenant.{tenantId}.refunds", "onEvent": ["*"], "action": "refresh" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Refunds" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Payment reversals for customer requests, cancelled memberships, and admin corrections." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "outline", "leadingIcon": "queue-list", "children": "Pending approvals" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/refunds/pending-approvals" } },
+                  "bindings": {
+                    "badge": { "$ref": "pending_approvals_count.count" },
+                    "hidden": { "$expr": "!hasPermission('refunds.approve')" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "New refund" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/refunds/new" } },
+                  "requiresPermission": "refunds.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "pending", "label": "Pending" },
+                { "id": "awaiting_approval", "label": "Awaiting approval" },
+                { "id": "approved", "label": "Approved" },
+                { "id": "processing", "label": "Processing" },
+                { "id": "succeeded", "label": "Succeeded" },
+                { "id": "failed", "label": "Failed" },
+                { "id": "cancelled", "label": "Cancelled" },
+                { "id": "provider_error", "label": "Provider error" },
+                { "id": "rejected", "label": "Rejected" }
+              ],
+              "actions": {
+                "onSelectionChange": {
+                  "kind": "filter.set",
+                  "field": "status",
+                  "valueExpr": "$selectedKey"
+                }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Reason", "menuTrigger": "focus", "className": "min-w-52" },
+              "props_items": [
+                { "id": "customer_requested", "label": "Customer requested" },
+                { "id": "product_not_received", "label": "Product not received" },
+                { "id": "product_unacceptable", "label": "Product unacceptable" },
+                { "id": "duplicate_charge", "label": "Duplicate charge" },
+                { "id": "fraud_confirmed", "label": "Fraud confirmed" },
+                { "id": "subscription_cancelled", "label": "Subscription cancelled" },
+                { "id": "admin_correction", "label": "Admin correction" },
+                { "id": "chargeback_prevention", "label": "Chargeback prevention" },
+                { "id": "regulator_required", "label": "Regulator required" },
+                { "id": "accounting_correction", "label": "Accounting correction" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "reason", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Type", "menuTrigger": "focus", "className": "min-w-36" },
+              "props_items": [
+                { "id": "full", "label": "Full" },
+                { "id": "partial", "label": "Partial" },
+                { "id": "prorated", "label": "Prorated" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "refund_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "stripe", "label": "Stripe" },
+                { "id": "paddle", "label": "Paddle" },
+                { "id": "adyen", "label": "Adyen" },
+                { "id": "square", "label": "Square" },
+                { "id": "paypal", "label": "PayPal" },
+                { "id": "custom_webhook", "label": "Custom" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+          "bindings": {
+            "items": { "$ref": "refunds" },
+            "isLoading": { "$ref": "refunds.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "col-span-full text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "arrow-uturn-left", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No refunds yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Refunds appear here once customers request them or you initiate one." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4 hover:shadow-md transition-shadow cursor-pointer" },
+            "actions": {
+              "onPress": { "kind": "navigate", "toExpr": "'/tenant/refunds/' + row.id" }
+            },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-2 mb-2" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "children": [
+                      {
+                        "kind": "Text",
+                        "props": { "className": "font-mono text-sm font-medium" },
+                        "bindings": { "children": { "$ref": "row.refund_number" } }
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-xs text-muted mt-0.5" },
+                        "bindings": {
+                          "children": {
+                            "$expr": "row.reason.split('_').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "Widget",
+                    "widget": "refund.refund-status-chip",
+                    "bindings": {
+                      "status": { "$ref": "row.status" },
+                      "requiresApproval": { "$ref": "row.requires_approval" }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2 mt-2" },
+                "children": [
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "neutral" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "({ full: 'Full', partial: 'Partial', prorated: 'Prorated' })[row.refund_type]"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Chip",
+                    "props": { "size": "sm", "variant": "neutral" },
+                    "bindings": {
+                      "children": { "$ref": "row.provider" }
+                    }
+                  }
+                ]
+              },
+              {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-3 text-xs text-muted mt-3" },
+                "children": [
+                  {
+                    "kind": "Text",
+                    "bindings": {
+                      "hidden": { "$expr": "!hasPermission('refunds.view-financials')" },
+                      "children": {
+                        "$expr": "formatCurrency(row.amount_cents, row.currency)"
+                      }
+                    }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "ml-auto" },
+                    "bindings": {
+                      "children": {
+                        "$expr": "'Initiated ' + formatDate(row.initiated_at, 'relative')"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

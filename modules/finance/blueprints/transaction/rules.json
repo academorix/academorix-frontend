@@ -1,0 +1,72 @@
+{
+  "id": "academorix://modules/transaction/rules",
+  "$version": 1,
+  "title": "transaction — validation rules",
+  "description": "Custom Laravel validation rules published by TransactionServiceProvider::boot(). All rules are used both by the observer chain (for authoritative refusal on write) AND by the internal TransactionRecorder input data classes (for pre-persist validation with clear error surfaces).",
+  "namespace": "Academorix\\Finance\\Transaction\\Rules",
+  "rules": [
+    {
+      "name": "valid_kind",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\ValidKind",
+      "signature": "valid_kind",
+      "description": "Value is one of the 12 transaction kinds: invoice_payment / refund_issued / chargeback_debit / coupon_credit / tax_remittance / fee_charge / adjustment / write_off / bank_deposit / bank_withdrawal / currency_conversion / opening_balance. Backed by the TransactionKind enum cast + data/kind-catalog.json.",
+      "default_message": "The :attribute must be a valid transaction kind. See data/kind-catalog.json for the full list."
+    },
+    {
+      "name": "valid_currency",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\ValidCurrency",
+      "signature": "valid_currency",
+      "description": "ISO 4217 3-letter uppercase currency code (USD / EUR / GBP / etc.). The transaction's currency is frozen at commit — every downstream ledger entry MUST use the same currency (single-currency-per-transaction invariant).",
+      "default_message": "The :attribute must be a valid ISO 4217 currency code (e.g. USD, EUR, GBP)."
+    },
+    {
+      "name": "valid_positive_amount",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\ValidPositiveAmount",
+      "signature": "valid_positive_amount",
+      "description": "amount_cents is a strictly-positive bigint (> 0). Direction is indicated by the ledger entries, NEVER by a negative amount. A reversal transaction is a first-class transaction with its own positive amount; the reversal_reason + source_transaction_id fields tie it back to the original.",
+      "default_message": "The :attribute must be strictly positive. Direction is indicated by the ledger entries — reversals use a new transaction with reversal_reason + source_transaction_id."
+    },
+    {
+      "name": "valid_exchange_rate_when_cross_currency",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\ValidExchangeRateWhenCrossCurrency",
+      "signature": "valid_exchange_rate_when_cross_currency",
+      "description": "When currency != tenant.base_currency: exchange_rate_to_base MUST be set AND > 0 AND ≤ 1,000,000 (sanity bound); base_currency MUST equal tenant.base_currency; base_amount_cents MUST be set AND equal ROUND(amount_cents * exchange_rate_to_base) within ±1 cent rounding tolerance. When currency == tenant.base_currency: all three fields MUST be null.",
+      "default_message": "Cross-currency transactions require exchange_rate_to_base + base_currency + base_amount_cents. Same-currency transactions must leave all three null."
+    },
+    {
+      "name": "valid_account",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\ValidAccount",
+      "signature": "valid_account",
+      "description": "Value is one of the 14 chart-of-accounts entries: revenue / accounts_receivable / cash / refunds_owed / refunds_expense / tax_payable / gateway_fees / bank_deposits / write_offs / coupons_expense / chargebacks_expense / accounts_payable / prepayments / deferred_revenue. Backed by the LedgerAccount enum cast + data/chart-of-accounts-catalog.json.",
+      "default_message": "The :attribute must be a valid chart-of-accounts entry. See data/chart-of-accounts-catalog.json."
+    },
+    {
+      "name": "debit_xor_credit",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\DebitXorCredit",
+      "signature": "debit_xor_credit",
+      "description": "Exactly ONE of debit_cents / credit_cents is > 0; the other MUST be 0. Applied to every TransactionLedgerEntry row. Refusal returns `LEDGER_ENTRY_DEBIT_XOR_CREDIT`. Both zero OR both positive is a bug.",
+      "default_message": "Each ledger entry must be exactly one of debit or credit — never both, never neither."
+    },
+    {
+      "name": "sum_debits_equals_sum_credits_per_transaction",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\SumDebitsEqualsSumCreditsPerTransaction",
+      "signature": "sum_debits_equals_sum_credits_per_transaction",
+      "description": "The load-bearing double-entry invariant. Across every ledger entry in a transaction: SUM(debit_cents) == SUM(credit_cents) AND SUM(debit_cents) > 0. Refusal returns `LEDGER_IMBALANCE_ON_POST` + fires LedgerImbalanceDetected(scope='per_transaction'). Applied at transaction post time (in TransactionObserver::finalize()); reasserted nightly by ReconcileLedgerBalancesJob for defense-in-depth.",
+      "default_message": "Ledger unbalanced: SUM(debits) = :sum_debits, SUM(credits) = :sum_credits. Every transaction MUST balance."
+    },
+    {
+      "name": "unique_transaction_number_per_tenant_year",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\UniqueTransactionNumberPerTenantYear",
+      "signature": "unique_transaction_number_per_tenant_year",
+      "description": "transaction_number is unique per (tenant_id, YEAR(effective_date)). Enforced by DB partial unique index. TransactionNumberGenerator uses a Postgres advisory lock keyed by (tenant_id, year) to generate monotonically increasing sequences 'TXN-YYYY-NNNNNNNN' — this rule enforces the shape + delegates uniqueness to the DB.",
+      "default_message": "transaction_number must match 'TXN-YYYY-NNNNNNNN' + be unique per tenant per year. Collisions indicate the advisory lock was bypassed."
+    },
+    {
+      "name": "immutable_after_post",
+      "class": "Academorix\\Finance\\Transaction\\Rules\\ImmutableAfterPost",
+      "signature": "immutable_after_post",
+      "description": "Applied to every TransactionObserver.updating call: refuses ALL updates when status='posted'. The only allowed status transition is draft→posted, and that happens inside the creating hook's atomic transaction. Any subsequent UPDATE is a bug. Refusal returns `TRANSACTION_IMMUTABLE`.",
+      "default_message": "Posted transactions are immutable. Corrections happen via new offsetting transactions (POST /transactions/{id}/reverse), never mutation."
+    }
+  ]
+}

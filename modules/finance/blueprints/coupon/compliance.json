@@ -1,0 +1,153 @@
+{
+  "id": "academorix://modules/coupon/compliance",
+  "$version": 1,
+  "title": "coupon — compliance evidence",
+  "description": "Coupon module is financial-record-adjacent (every redemption is a discount that reduced invoice-line revenue — SOX + tax audit relevant) + PII-adjacent (customer_id + redeemed_by_user_id captured on every redemption) + advertising-adjacent (feeds marketing conversion events for referral + campaign coupons) + rate-limit-relevant (preview endpoint protected against brute-force code enumeration). GDPR (Art. 5, 6, 17), CAN-SPAM Act (promotional coupon emails), US tax law (7y financial record), SOX 404 (internal controls), SOC 2 CC6.3.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 5(1)(a)",
+          "principle": "lawfulness + fairness + transparency",
+          "evidence": "Every coupon redemption records the customer + actor + timestamp — full auditability. Terms of the discount frozen in discount_snapshot at redemption time — no post-hoc mutation of what the customer received."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "CouponRedemption captures only what the discount computation needs: customer identity, target identity, source amount, currency. No incidental PII beyond that. Coupon rows carry NO customer identity at all — the coupon is a config artifact, not a user artifact."
+        },
+        {
+          "article": "Art. 5(1)(e)",
+          "principle": "storage limitation",
+          "evidence": "7-year retention window justified by tax + SOX financial-record obligations. Enterprise 10-year extension for regulated tenants. Automated purge via PurgeExpiredCouponsJob."
+        },
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract",
+          "evidence": "Coupon redemption is contractual — the tenant offers the discount, the customer accepts by redeeming. Coupon terms + applicability constitute the contract."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "UserErased (as customer on redemptions) triggers RedactCouponRedemptionsOnUserErasure — 90 days post-erasure, redact customer_id + customer_type. Row survives for the 7-year financial audit trail (financial-obligation carve-out per Art. 17 §3(b))."
+        },
+        {
+          "article": "Art. 22",
+          "principle": "automated decision-making",
+          "evidence": "No fully-automated decisions with legal/significant effect. Coupon validation is rule-based (applicability + usage_cap + per_customer_limit + minimum-order) — all human-authored config, not automated profiling. Refusal responses always include an actionable reason code + support-contact CTA."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "discount_snapshot is IMMUTABLE. discount_type + discount_amount become immutable once even one redemption commits. Rate-limit middleware prevents brute-force code enumeration. Confidential financial fields (discount_amount, usage_cap, minimum_order_amount) require coupons.view-financials permission."
+        }
+      ]
+    },
+    "can_spam": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "unsubscribe link",
+          "principle": "one-click opt-out",
+          "evidence": "Every CouponExpiredNotification + weekly report notification email carries an unsubscribe link. CouponRedeemedNotification is opt-in only (settings.notify_on_every_redemption default off). CouponClawbackNotification is transactional (cannot-opt-out per US CAN-SPAM 4(a)(3)(a) — required for the reversal disclosure)."
+        },
+        {
+          "requirement": "physical postal address",
+          "principle": "identification of the sender",
+          "evidence": "Every promotional coupon email footer includes the tenant's registered business address (populated from tenant.legal_address_json)."
+        },
+        {
+          "requirement": "no false / misleading header + subject",
+          "principle": "clear identification",
+          "evidence": "Notification email subjects are fixed shape: 'Your coupon reward is on the way' / 'Coupon usage cap reached' / 'Your discount has been reversed' — no clickbait / misleading language. Templates validated on tenant customisation via NotificationsService's template linter."
+        }
+      ]
+    },
+    "us_tax_law": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "financial audit trail",
+          "principle": "traceable audit trail of every discount applied to revenue",
+          "evidence": "Every CouponRedemption carries: source_amount_cents, discount_amount_cents, final_amount_cents, source_currency + a frozen discount_snapshot. Cross-referenced with the parent Invoice/Membership/Transaction for full revenue-recognition audit. Retained 7 years."
+        },
+        {
+          "requirement": "state sales tax nexus reporting",
+          "principle": "record of discount applied per jurisdiction",
+          "evidence": "The parent invoice-line carries the jurisdiction via finance::tax::TaxCalculation. Coupon module records the discount that reduced the taxable base; tax module records the tax on the post-discount amount. The two are cross-referenced for sales tax audit."
+        }
+      ]
+    },
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "SOX 404 — internal controls over financial reporting",
+          "principle": "segregation of duties + audit trail on discount authorization",
+          "evidence": "Coupon.create requires marketing/admin/owner role. CouponRedemption.reverse requires admin/owner only (financial reversal — separated from create authority). Every write + reversal is Auditable (7-year retention). Terms are immutable post-first-redemption (COUPON_TERMS_LOCKED)."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.3",
+          "principle": "restricted access + segregation of duties",
+          "evidence": "Coupon CRUD requires marketing/admin/owner. Redemption reversal requires admin/owner. Confidential financial fields (discount_amount, usage_cap) require coupons.view-financials permission. Platform-plane cross-tenant read requires super_admin/ops/support role."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All routes are TLS-only + require auth:sanctum (tenant) or auth:platform_admin (platform). Coupon.rate_limit middleware protects preview/validate endpoints from brute-force enumeration."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "academorix.coupon.atomicity.failures_total = 0 target. academorix.coupon.usage_count.drift_ratio = 0 target. Every CouponClawbackRequested + CouponClawbackCompleted fires audit rows + notifications."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "Row-lock atomic redemption prevents double-spend races. Composite unique index on redemptions prevents duplicate rows. usage_cap + per_customer_limit prevent overuse. Reconciler job (ReconcileUsageCountJob) catches counter drift. Every clawback path notifies Finance module for the credit reversal."
+        }
+      ]
+    },
+    "iso_27001": {
+      "applicable": true,
+      "controls": [
+        {
+          "annex": "A.12.4 Logging + monitoring",
+          "principle": "financial audit log",
+          "evidence": "Coupon + CouponRedemption rows are Auditable (7-year retention). Every state transition on Coupon (is_active, valid_until, usage_count, applicable_plan_ids) + every reversal on CouponRedemption is logged. Audit-log entries survive cascade deletes."
+        },
+        {
+          "annex": "A.9 Access control",
+          "principle": "role-based access",
+          "evidence": "Two-guard permission surface (sanctum + platform_admin). Confidential financial fields (discount_amount, usage_cap) restricted to admin+support+owner. Financial reversal (redemption reverse) restricted to admin+owner. Bulk-issue restricted to Medium+ tier via entitlement + marketing/admin/owner permission."
+        }
+      ]
+    },
+    "wcag_2_2_aa": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "1.4.3 (Contrast Minimum)",
+          "principle": "readable text",
+          "evidence": "The discount-type-chip + coupon-status-badge use HeroUI's design tokens which meet AA contrast by default. Discount type colours never rely on colour alone — each carries a text label."
+        },
+        {
+          "criterion": "2.1.1 (Keyboard)",
+          "principle": "keyboard operable",
+          "evidence": "Bulk-issue wizard + reverse-redemption modal are fully keyboard-navigable per HeroUI ComboBox + Modal + Form semantics."
+        },
+        {
+          "criterion": "3.3.1 (Error Identification)",
+          "principle": "explicit error surfacing",
+          "evidence": "Every observer refusal returns a specific error code (COUPON_CAPTURE_NOT_ENTITLED, COUPON_SLOT_QUOTA_EXCEEDED, etc.) + user-facing message. Redemption refusal responses include actionable reason + support-contact CTA when appropriate."
+        }
+      ]
+    }
+  }
+}

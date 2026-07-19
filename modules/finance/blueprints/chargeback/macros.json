@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/chargeback/macros",
+  "$version": 1,
+  "title": "chargeback — published macros",
+  "description": "No published macros. The chargeback module operates purely through service classes (ChargebackOrchestrator / EvidenceCollector / EvidenceSubmitter / RdrHandler / Ce3EvidenceBuilder / ChargebackRateCalculator / NetworkFeeCalculator / ClawbackCoordinator) invoked from HTTP controllers + CLI commands + event listeners. There is no per-request chargeback context that would justify a Request macro — a chargeback is created by webhook OR by the CreateChargebackFromDisputeLost cascade, not by an authenticated end-user request.",
+  "namespace_note": "No macros; documented for symmetry with the module family.",
+  "macros": [],
+  "rationale": [
+    "Referrals ships Request::activeReferralProgram / Request::inboundReferral macros because there IS a request-boundary concept — the referral cookie carries context across requests. Chargebacks have no equivalent — chargebacks are bank-initiated + webhook-triggered, not carried in the request.",
+    "The customer-facing chargeback UI does not exist — chargebacks are admin-only surface. No customer request context to expose.",
+    "The admin-facing chargeback UI + CLI pass every parameter explicitly. No implicit context needed."
+  ]
+}

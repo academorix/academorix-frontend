@@ -1,0 +1,92 @@
+{
+  "id": "academorix://modules/membership/analytics",
+  "$version": 1,
+  "title": "membership — product analytics",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "description": "Membership analytics feed churn + LTV + dunning-recovery dashboards. Financial-signal events (activated / renewed / lapsed / cancelled / refunded / charged-back) use consent tier 'essential' — the business needs these signals for revenue reporting regardless of user marketing consent. Behavioural events (trial_started / pass_consumed) use 'functional'. Marketing analytics (win-back conversion tracking) is deferred to growth::analytics.",
+  "events": [
+    {
+      "name": "Membership Created",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "plan_id", "billing_interval", "price_bucket", "currency", "used_coupon", "used_trial"],
+      "description": "Fires on MembershipCreated. Essential — revenue-signal for MRR forecasting."
+    },
+    {
+      "name": "Membership Activated",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "plan_id", "billing_interval", "price_bucket", "days_from_signup_to_activation_bucket"]
+    },
+    {
+      "name": "Membership Renewed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "plan_id", "attempt_number", "amount_bucket", "was_recovered_from_dunning"]
+    },
+    {
+      "name": "Membership Renewal Failed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "attempt_number", "failure_reason_category"]
+    },
+    {
+      "name": "Membership Lapsed",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "plan_id", "lifetime_value_bucket", "consecutive_failed_renewal_count"],
+      "description": "Terminal involuntary churn. Feeds win-back campaign eligibility (30-day trigger via growth::marketing)."
+    },
+    {
+      "name": "Membership Cancelled",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "plan_id", "cancellation_kind", "cancellation_reason_category", "days_active_bucket", "lifetime_value_bucket"]
+    },
+    {
+      "name": "Membership Refunded",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "refund_amount_bucket", "refund_reason_category"]
+    },
+    {
+      "name": "Membership Charged Back",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "amount_bucket", "reason_code"],
+      "description": "P1. Every chargeback tracked for compliance signal."
+    },
+    {
+      "name": "Trial Started",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "plan_id", "trial_days"]
+    },
+    {
+      "name": "Trial Converted",
+      "kind": "track",
+      "consent_required": "essential",
+      "properties": ["tenant_id", "plan_id", "trial_days"],
+      "description": "High-value conversion event. Essential — funnel measurement."
+    },
+    {
+      "name": "Pass Consumed",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "plan_id", "pass_type", "days_from_issue_to_consumption_bucket"]
+    },
+    {
+      "name": "Plan Capacity Reached",
+      "kind": "track",
+      "consent_required": "functional",
+      "properties": ["tenant_id", "plan_id"]
+    }
+  ],
+  "notes": [
+    "Analytics NEVER carry raw price_amount_cents, lifetime_value_cents, refund_amount — always bucketed (0, <50, <200, <1000, <5000, 5000+).",
+    "Dunning failure reasons categorised into ~10 buckets — never raw gateway messages (which may hint at customer PAN state via error text).",
+    "Cancellation reasons categorised into ~15 buckets — free-text cancellation_reason on the membership stays server-side; analytics gets the bucket only.",
+    "Marketing-consent-gated win-back campaigns live in growth::marketing — not tracked here. This module tracks revenue signals; growth::analytics tracks marketing outcomes."
+  ]
+}

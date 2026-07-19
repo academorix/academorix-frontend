@@ -1,0 +1,138 @@
+{
+  "id": "academorix://modules/activity/metrics",
+  "$version": 1,
+  "title": "activity — OpenTelemetry metrics",
+  "description": "OpenTelemetry / Prometheus metrics this module emits. RED pattern for the write hot-path (every LogsActivity fire); RED-adjacent for the feed read path; volume + retention counters for capacity planning + audit-adjacent volume reports.",
+  "instrumentation": "open-telemetry/sdk",
+  "namespace": "academorix.activity",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["tenant_id_bucket", "log_name", "subject_type", "event", "outcome"],
+    "forbiddenAsLabels": ["tenant_id", "user_id", "subject_id", "causer_id", "activity_id", "batch_uuid"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.activity.recorded.total",
+      "kind": "counter",
+      "unit": "activities",
+      "labels": ["tenant_id_bucket", "log_name", "subject_type", "event"],
+      "description": "Increments on every ActivityRecorded event. Primary write-volume signal — drives capacity planning + tenant-quota transparency."
+    },
+    {
+      "name": "academorix.activity.write.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [1, 2, 5, 10, 25, 50, 100, 250, 1000],
+      "labels": ["log_name", "outcome"],
+      "description": "LogsActivity trait fire latency. Every domain write pays this cost as tail latency. P95 target < 25ms. outcome: written | skipped | error."
+    },
+    {
+      "name": "academorix.activity.write.errors.total",
+      "kind": "counter",
+      "unit": "errors",
+      "labels": ["log_name", "error_code"],
+      "description": "LogsActivity trait fire that raised. Should be zero — activity writes must be fail-soft (log + swallow, never re-raise into the domain write path)."
+    },
+    {
+      "name": "academorix.activity.batch.size",
+      "kind": "histogram",
+      "unit": "activities",
+      "buckets": [1, 2, 3, 5, 10, 25, 50, 100],
+      "labels": ["tenant_id_bucket"],
+      "description": "Activities per batch. High values suggest bulk-write use cases that should probably route through a dedicated batch API instead of individual mutations."
+    },
+    {
+      "name": "academorix.activity.batch.orphaned.total",
+      "kind": "counter",
+      "unit": "batches",
+      "labels": [],
+      "description": "Batches with no matching ActivityBatchCompleted after the reconciliation window. Fed by ReconcileActivityBatchesJob. Should be low (< 1% of started batches)."
+    },
+    {
+      "name": "academorix.activity.feed.reads.total",
+      "kind": "counter",
+      "unit": "requests",
+      "labels": ["tenant_id_bucket", "endpoint"],
+      "description": "Feed endpoint request count. endpoint: list | show | by-entity | by-user | mine | feed."
+    },
+    {
+      "name": "academorix.activity.feed.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [5, 10, 25, 50, 100, 250, 1000, 5000],
+      "labels": ["endpoint"],
+      "description": "Feed endpoint response time. P95 target < 250ms for list; < 100ms for show."
+    },
+    {
+      "name": "academorix.activity.broadcast.sent.total",
+      "kind": "counter",
+      "unit": "broadcasts",
+      "labels": ["channel_kind"],
+      "description": "Broadcast dispatches. channel_kind: tenant | user | batch_collapsed."
+    },
+    {
+      "name": "academorix.activity.broadcast.suppressed.total",
+      "kind": "counter",
+      "unit": "broadcasts",
+      "labels": ["reason"],
+      "description": "Broadcasts suppressed. reason: not_entitled | log_name_disabled | duplicate_cursor_hit | reverb_unreachable."
+    },
+    {
+      "name": "academorix.activity.purge.rows_deleted.total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": ["tenant_id_bucket", "log_name"],
+      "description": "Rows deleted by PurgeExpiredActivitiesJob. Feeds retention transparency + capacity planning."
+    },
+    {
+      "name": "academorix.activity.purge.duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [100, 500, 2000, 10000, 60000, 600000],
+      "labels": ["tenant_id_bucket"],
+      "description": "PurgeExpiredActivitiesJob end-to-end duration. Bimodal distribution — small tenants finish in seconds; large tenants take minutes."
+    },
+    {
+      "name": "academorix.activity.archive.rows_archived.total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": ["tenant_id_bucket"],
+      "description": "Rows archived to cold storage by ArchiveActivitiesToColdStorageJob."
+    },
+    {
+      "name": "academorix.activity.retention.policies_active",
+      "kind": "gauge",
+      "unit": "policies",
+      "labels": ["retention_tier"],
+      "description": "Point-in-time count of active retention policies. retention_tier: standard (<= 90d) | extended (91..365d) | regulator_hold (> 365d). Sampled every 300s."
+    },
+    {
+      "name": "academorix.activity.backfill.rows_migrated.total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": [],
+      "description": "Rows updated by BackfillActivityTenantIdFromJsonbJob. Monotonically decreasing to zero as Wave-6 upgrade completes."
+    },
+    {
+      "name": "academorix.activity.backfill.orphans_detected.total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": [],
+      "description": "Rows where tenant_id remained NULL after backfill (properties.tenant_id also NULL). Fires the ACTIVITY_BACKFILL_ORPHAN_DETECTED alert. Should be zero."
+    },
+    {
+      "name": "academorix.activity.digest.emails_sent.total",
+      "kind": "counter",
+      "unit": "emails",
+      "labels": ["cadence"],
+      "description": "Digest emails sent. cadence: daily | weekly."
+    },
+    {
+      "name": "academorix.activity.subject_permission.cache.hit_ratio",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": [],
+      "description": "Cache hit ratio on the RBAC subject-permission check. SLO target: > 0.95 — the feed's read hot-path depends on this."
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "id": "academorix://modules/activity/notifications",
+  "$version": 1,
+  "title": "activity — Laravel notifications",
+  "description": "Two notifications this module owns. `ActivityDigestEmailNotification` is the daily/weekly summary email of activity a user has opted into. `ActivityPurgeCompletedNotification` is the weekly admin digest showing which activity rows were purged / archived last week (transparency requirement per the retention promise).",
+  "namespace": "Academorix\\Observability\\Activity\\Notifications",
+  "notifications": [
+    {
+      "class": "Academorix\\Observability\\Activity\\Notifications\\ActivityDigestEmailNotification",
+      "channels": ["mail"],
+      "consentTier": "functional",
+      "targets": ["User (opted in via /settings/notifications) who follow at least one activity subject"],
+      "template": {
+        "mail": "activity::email.digest",
+        "markdown": true
+      },
+      "queue": "digest",
+      "description": "Daily or weekly summary of activity for entities the recipient follows OR every activity where the recipient is a causer. Body groups activities by log_name + subject (e.g. 'Court 3 booking — 5 changes this week; Alice's athlete profile — 2 progress updates'). Includes deep-links back to the tenant dashboard's feed. Suppressed for recipients with 0 activities in the window. Gated by `activity_digest_email` entitlement (Medium+); non-entitled tenants don't see the opt-in setting at all.",
+      "consentBinding": "consent.activity_digest_email — functional tier",
+      "unsubscribeMechanism": "in-email link + /settings/notifications toggle"
+    },
+    {
+      "class": "Academorix\\Observability\\Activity\\Notifications\\ActivityPurgeCompletedNotification",
+      "channels": ["mail", "database"],
+      "consentTier": "transactional",
+      "targets": ["User with role owner OR admin OR compliance_officer in the tenant"],
+      "template": {
+        "mail": "activity::email.purge-completed",
+        "markdown": true
+      },
+      "queue": "notifications",
+      "description": "Weekly admin digest — shows purge / archive activity from the past 7 days. Body: 'Last week we deleted X activity rows past their retention (default: 90d) + archived Y rows in the extended-retention window'. Transparency requirement — tenants who set retention overrides should see the operational impact. Suppressed when the tenant had 0 purges + 0 archives in the window. Always ON — always transactional-consent — retention transparency is a compliance-adjacent obligation."
+    }
+  ],
+  "consentTierNotes": {
+    "functional": "Digest email is a functional consent tier — the user opted in explicitly via /settings/notifications and can revoke at any time. Suppressed globally if consent is missing or revoked (checked at dispatch time, per `growth-and-observability.md §7`).",
+    "transactional": "Purge notifications are transactional — a tenant admin must see them to fulfil the retention transparency obligation. Not gated by marketing opt-out; the opt-out mechanism is 'don't be a tenant admin', not 'unsubscribe'."
+  },
+  "notes": [
+    "Digest cadence (daily / weekly) is a per-user setting persisted on `user_preferences.activity_digest_cadence`. The scheduler runs BOTH the daily + weekly jobs; the notification checks the recipient's preference and skips those who don't match.",
+    "Non-recipient roles (`member`, `staff`, `coach`) get the digest based on entities they follow — the RBAC filter in `activity.enforce_scope` narrows the digest content to permitted subjects.",
+    "ActivityPurgeCompletedNotification is idempotent — running the underlying `ActivityPurgeExecuted` event handler twice does NOT double-send. The notification tracks last-sent via metadata on the tenant's `notifications_metadata` bucket."
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/coupon/feature-flags",
+  "$version": 1,
+  "title": "coupon — kill switches",
+  "engine": "laravel/pennant",
+  "description": "Operational kill switches distinct from the tier-based `features.json` gates. These are for emergency-off / staged rollout / per-tenant ops interventions. Every flag is ON in normal production; off flips are ops decisions.",
+  "flags": [
+    {
+      "key": "coupon.redemption_writes",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master toggle for CouponRedeemer::redeem(). Off = every redemption call refuses with 503 COUPON_REDEMPTION_MAINTENANCE. The invoice/membership module handles the refusal by refusing the invoice line or creating it without the discount (configurable per calling module). Emergency-only (used during DB migrations of the coupons table)."
+    },
+    {
+      "key": "coupon.clawback_cascade",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = finance::RefundIssued / ChargebackFiled do NOT cascade to coupon clawback. Admins must reverse redemptions manually. Emergency-only if the cascade is misbehaving."
+    },
+    {
+      "key": "coupon.marketing_lane",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = CouponRedeemed does NOT fire marketing events downstream. Ad-network optimisation pauses. Used when marketing module is unstable."
+    },
+    {
+      "key": "coupon.referral_bridge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = IssueCouponOnReferralRewardVested hook skips. referrals::ReferralRewardVested with discount reward type does NOT auto-create a coupon. Manual admin issue path still works. Emergency-only if the referrals bridge is misbehaving."
+    },
+    {
+      "key": "coupon.reconciler_jobs",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = ReconcileUsageCountJob + ExpireCouponsJob + NotifyExpiringCouponsJob skip. Only flip off for maintenance windows."
+    },
+    {
+      "key": "coupon.rate_limit",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = coupon.rate_limit middleware becomes a no-op. Every preview + validate call proceeds without rate limiting. Emergency-only if the rate limiter is misbehaving OR during a legitimate high-traffic promotional event where the limits become false-positive."
+    },
+    {
+      "key": "coupon.usage_cap_hard_enforce",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = usage_cap is advisory-only; redemptions proceed past the cap. Emergency-only when a tenant is willing to overshoot a campaign cap and reconcile later. Every fire of a refusal with the flag off produces a warn-severity audit row."
+    },
+    {
+      "key": "coupon.report_delivery",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Off = GenerateCouponUsageReportJob still runs BUT does NOT dispatch the WeeklyCouponReportNotification email. Report remains available via GET /coupons/report. Used when notification module is unstable."
+    }
+  ]
+}

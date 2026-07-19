@@ -1,0 +1,115 @@
+{
+  "id": "academorix://modules/monitoring/retention",
+  "$version": 1,
+  "title": "monitoring — retention windows",
+  "description": "Health check runs 7d hot / 30d cold (Enterprise: 30d/90d via monitoring_extended_retention). Alerts 30d hot / 90d cold (Enterprise: 90d/1y). Incidents 90d hot / 1y cold (Enterprise: indefinite retention on P1 incidents for postmortem archive). Health check configs + alert policies + provider configs retained while active + 90d grace after soft-delete.",
+  "compliance_regimes_referenced": [
+    "iso27001 A.12.4 — event logging + monitoring",
+    "soc2 CC7.2 — anomaly detection + incident response",
+    "nist 800-53 IR-4 — incident handling",
+    "pci-dss 10.7 — audit trail retention 1 year hot + 6 years archive (monitoring rows retain shorter — they're operational not compliance)",
+    "gdpr Art. 32 — technical measures for security"
+  ],
+  "retention": [
+    {
+      "entity": "HealthCheck",
+      "hot": { "days": "while active", "description": "Active health check configs retained indefinitely" },
+      "cold": { "days": 90, "description": "Grace period after soft-delete for audit / rollback" },
+      "purge": {
+        "trigger": "soft-deleted > 90 days ago",
+        "action": "hard delete",
+        "notes": "The 90-day grace allows the ops team to restore an accidentally-deleted check. After grace, the row is hard-purged but the historical config lives in the audit trail (retention 7 years)."
+      }
+    },
+    {
+      "entity": "HealthCheckRun",
+      "hot": { "days": 7, "description": "Support-debugging window. 30 days for Enterprise with monitoring_extended_retention." },
+      "cold": { "days": 30, "description": "Trend analysis + retrospective. 90 days for Enterprise." },
+      "purge": {
+        "trigger": "> 30 days past created_at (90 days for Enterprise)",
+        "action": "hard delete via PurgeExpiredHealthCheckRunsJob",
+        "notes": "Runs are append-only + high-volume. The signal drops to zero after 30d — the trend + policy evaluation are what matter beyond the debug window. The alert firing history (which persists longer) captures the essential 'was there a breach?' record."
+      }
+    },
+    {
+      "entity": "MonitoringAlertPolicy",
+      "hot": { "days": "while active" },
+      "cold": { "days": 90, "description": "Grace period after soft-delete" },
+      "purge": {
+        "trigger": "soft-deleted > 90 days ago",
+        "action": "hard delete",
+        "notes": "Historical policy config lives in the audit trail for 7 years."
+      }
+    },
+    {
+      "entity": "MonitoringAlert",
+      "hot": { "days": 30, "description": "Recent-alert dashboard visibility. 90 days for Enterprise." },
+      "cold": { "days": 90, "description": "Retrospective + trend analysis. 365 days for Enterprise." },
+      "purge": {
+        "trigger": "> 90 days past created_at AND status IN ('resolved', 'expired', 'suppressed')",
+        "action": "hard delete via PurgeResolvedIncidentsJob",
+        "notes": "Alerts in status='firing' or 'acknowledged' are NEVER purged (defense-in-depth — a fired alert past 90d indicates a stuck alert that ops missed). The retention job explicitly refuses to hard-purge non-terminal-status alerts."
+      }
+    },
+    {
+      "entity": "MonitoringIncident",
+      "hot": { "days": 90, "description": "Active + recent incident visibility." },
+      "cold": { "days": 365, "description": "Retrospective + trend analysis. Indefinite for Enterprise with monitoring_extended_retention (P1 postmortem archive)." },
+      "purge": {
+        "trigger": "> 365 days past resolved_at AND status='resolved' AND (severity != 'p1' OR tenant does NOT hold monitoring_extended_retention)",
+        "action": "hard delete via PurgeResolvedIncidentsJob",
+        "notes": "P1 incidents on Enterprise tenants with monitoring_extended_retention are NEVER auto-purged. This is by-design — the postmortem archive is compliance evidence for the tenant's incident response process."
+      }
+    },
+    {
+      "entity": "MonitoringProviderConfig",
+      "hot": { "days": "while active" },
+      "cold": { "days": 90, "description": "Grace period after soft-delete for audit / rollback." },
+      "purge": {
+        "trigger": "soft-deleted > 90 days ago",
+        "action": "hard delete",
+        "notes": "The 90-day grace allows the ops team to review the config change after a compromise or rollback. After grace, the row is hard-purged but the historical config data (encrypted ciphertext) survives in the audit trail."
+      }
+    },
+    {
+      "entity": "health_check_runs.response_body + error_details (potentially PII)",
+      "hot": { "days": "co-terminous with run" },
+      "purge": {
+        "trigger": "run hard-delete",
+        "action": "cascaded (blobs are sub-fields)",
+        "notes": "PII redaction happens at CREATE (HealthCheckRunObserver scans + redacts). The stored blobs contain '[REDACTED]' placeholders for detected PII."
+      }
+    },
+    {
+      "entity": "monitoring_provider_configs.config (encrypted credentials)",
+      "hot": { "days": "co-terminous with config" },
+      "purge": {
+        "trigger": "config hard-delete",
+        "action": "cascaded",
+        "notes": "Encryption keys managed by compliance/encryption service. Key rotation does not invalidate historical rows (each row carries its key version). Rotated keys are retained for 90 days past retirement so historical audit rows remain decryptable during that window."
+      }
+    }
+  ],
+  "special_cases": [
+    {
+      "case": "TenantErased cascade",
+      "action": "hard delete of every health_checks / health_check_runs / monitoring_alerts / monitoring_alert_policies / monitoring_incidents / monitoring_provider_configs row via FK CASCADE",
+      "notes": "Audit trail rows written during those events survive per audit module's outlives-source design. Regulators can still trace the erased tenant's monitoring activity — but the tenant's own data is gone."
+    },
+    {
+      "case": "TenantSuspended",
+      "action": "provider_configs marked is_active=false; health_checks marked is_enabled=false; runs stop firing; existing alerts + incidents continue to their terminal state",
+      "notes": "Retention windows still apply as normal (existing data ages out per the standard windows). The suspension pauses new data creation but doesn't affect retention."
+    },
+    {
+      "case": "Enterprise tenant downgrading from monitoring_extended_retention",
+      "action": "PurgeResolvedIncidentsJob applies the shorter retention starting from the next run. Historical rows older than the new window are purged over subsequent runs (rate-limited to 5000/run for db backpressure).",
+      "notes": "The tenant retains 30-day access to the extended-retention data before the shorter window applies (grace)."
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention.",
+    "TenantErased cascades hard-delete via FK CASCADE, but the audit rows written during those events survive the cascade (per audit module's outlives-source design).",
+    "Monitoring rows do NOT carry `application_id` per tenancy-columns.md §2 — retention is purely a per-row-age concern; no application-scoped retention variance."
+  ]
+}

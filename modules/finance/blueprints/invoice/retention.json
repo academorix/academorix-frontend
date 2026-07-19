@@ -1,0 +1,131 @@
+{
+  "id": "academorix://modules/invoice/retention",
+  "$version": 1,
+  "title": "invoice — retention windows",
+  "description": "Invoices are the tenant's canonical financial-record entity. Retention is 7 years default (10 for Enterprise with invoice_extended_retention). Credit notes retain the same window in the primary DB but MIGRATE to the compliance archive for indefinite retention (regulator may audit years later). Invoice lines cascade with parents. PDFs move from S3 hot (7 years) to S3 Glacier cold (indefinite). TenantErased archives ALL records before the FK CASCADE — the tenant sees data gone, regulators still have visibility.",
+  "compliance_regimes_referenced": [
+    "sox §404 — 7-year retention on financial records",
+    "gaap + ifrs — sequential immutable numbering; immutable-after-finalize",
+    "vat directive 2006/112/EC Art. 244 — EU VAT invoices retention 10y in most member states",
+    "us national tax law (26 CFR §1.6001-1) — 7-year retention baseline",
+    "canada income tax act §230 — 6-year retention (we round up to 7 for uniformity)",
+    "uk vat notice 700/21 — 6-year retention (Enterprise gets 10)",
+    "gdpr Art. 6(1)(b) — contractual necessity; retention outlives consent revocation",
+    "gdpr Art. 17 §3 — legal-obligation carve-out for financial-record retention",
+    "pci-dss 10.7 — audit trail retention 1 year hot + 6 years archive"
+  ],
+  "retention": [
+    {
+      "entity": "Invoice",
+      "hot": {
+        "days": 365,
+        "description": "Recent active + first year for aging queries, dispute resolution, tenant self-service"
+      },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Financial-audit retention. Enterprise with invoice_extended_retention: 3650 (10 years)."
+      },
+      "purge": {
+        "trigger": "> 7 years past created_at (10 for Enterprise) AND status IS terminal (paid / void / refunded / written_off / uncollectible)",
+        "action": "MIGRATE to compliance archive (S3 Glacier with regulator metadata) — DO NOT hard-delete the DB row (audit history depends on the FK RESTRICT chain surviving)",
+        "notes": "Invoices in 'draft' status are never purged by the retention job — a stuck draft is a data-hygiene issue, not a retention concern. A decade-old draft would indicate abandoned data + a clean-up task for ops."
+      }
+    },
+    {
+      "entity": "InvoiceLine",
+      "hot": { "days": 365 },
+      "cold": {
+        "days": "2555 (7 years)",
+        "description": "Cascaded with parent invoice retention."
+      },
+      "purge": {
+        "trigger": "Cascaded via FK RESTRICT — cannot be purged independently of parent invoice",
+        "action": "N/A — lines are never independently retained-out",
+        "notes": "The RESTRICT FK ensures lines outlive purge attempts on the parent — the archive step must copy lines with the parent."
+      }
+    },
+    {
+      "entity": "CreditNote",
+      "hot": { "days": "indefinite while relevant (7-10 years typical)" },
+      "cold": {
+        "days": "indefinite",
+        "description": "Credit notes are the highest-integrity retention class in the module. Every issued/applied credit note represents a financial reversal — regulators may audit years later."
+      },
+      "purge": {
+        "trigger": "TenantErased cascade (via FK CASCADE) ONLY — never scheduled/timed",
+        "action": "Hard delete only on tenant erasure (after compliance-archive copy)",
+        "notes": "Applied credit notes still live on — resolution is recorded via applied_at + applied_to_type + applied_to_id but the row does not become purgeable. Rationale: every credit note represents a financial reversal that regulators, finance teams, and tax auditors all care about."
+      }
+    },
+    {
+      "entity": "Invoice PDF (S3)",
+      "hot": {
+        "days": 2555,
+        "description": "S3 Standard-tier storage for 7 years. Enterprise: 3650."
+      },
+      "cold": {
+        "days": "indefinite",
+        "description": "S3 Glacier after hot retention. Retrieval requires 3-12h thaw."
+      },
+      "purge": {
+        "trigger": "Never auto-purged from Glacier — only on TenantErased",
+        "action": "S3 Glacier lifecycle rule migrates from hot to cold at 7 years (10 for Enterprise)",
+        "notes": "PDFs are immutable — regenerating an invoice produces a new PDF with a new S3 key; the historical PDF survives at the original path for audit reference."
+      }
+    },
+    {
+      "entity": "Credit Note PDF (S3)",
+      "hot": {
+        "days": 3650,
+        "description": "10 years hot for all tenants — credit notes are higher-tier than invoices."
+      },
+      "cold": { "days": "indefinite" },
+      "purge": {
+        "trigger": "TenantErased only",
+        "action": "N/A",
+        "notes": "Credit note PDFs are retained indefinitely — same reasoning as CreditNote rows."
+      }
+    },
+    {
+      "entity": "invoice.billing_address + shipping_address + customer_tax_id (frozen snapshots)",
+      "hot": { "days": "co-terminous with invoice" },
+      "purge": {
+        "trigger": "invoice migration to archive",
+        "action": "Cascaded (snapshots are sub-fields, not separate tables)",
+        "notes": "The snapshots outlive individual customer profile changes — the invoice carries its historical billing details for its lifetime + compliance archive."
+      }
+    }
+  ],
+  "special_cases": [
+    {
+      "case": "TenantErased cascade",
+      "action": "ArchiveInvoiceFinancialRecordsOnTenantErasure runs FIRST (compliance-archive copy). THEN PurgeInvoiceDataForErasedTenant hard-deletes via FK CASCADE.",
+      "notes": "The compliance archive is regulator-facing, separate-encryption-keys, limited-access. Even after tenant erasure, regulators can audit the tenant's invoice history via their platform admin escalation path. Audit rows written during those events survive per audit module's outlives-source design."
+    },
+    {
+      "case": "UserErased (individual GDPR Art. 17)",
+      "action": "RedactCustomerFromInvoicesOnUserErased nulls customer_id + PII fields (billing_address.name / .phone / .email, customer_tax_id) on affected invoices + credit_notes.",
+      "notes": "The invoice/credit_note rows survive (financial retention per Art. 17 §3). Regulators can still audit by tenant_id + invoice_number; personal identifiers are redacted."
+    },
+    {
+      "case": "Enterprise invoice_extended_retention",
+      "action": "Retention windows extended from 7 → 10 years across invoices + credit notes + PDFs.",
+      "notes": "Some regimes (EU VAT, Canadian federal tax, UK VAT with adjustments) mandate 10-year retention. Enterprise tenants operating in those jurisdictions activate this entitlement."
+    },
+    {
+      "case": "Migration from S3 hot to Glacier",
+      "action": "S3 lifecycle rule tagged `invoice_hot_years=7` (or 10) triggers automatic migration.",
+      "notes": "Signed-URL generation transparently handles Glacier retrieval — the first access to a Glacier-migrated PDF queues a thaw job; subsequent accesses (within 3-12h) return the thawed URL. Enterprise tenants may configure keep-hot forever via config('invoice.retention.pdf_hot_years')."
+    },
+    {
+      "case": "Draft invoices > 90 days old",
+      "action": "Not purged, but ops-visible via health probe `invoice-stale-drafts`. Retention job ignores draft status.",
+      "notes": "A 90-day-old draft indicates abandoned workflow — data-hygiene issue, not retention. Ops decides whether to void + hard-delete or preserve."
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention.",
+    "TenantErased cascades hard-delete via FK CASCADE, but the audit rows written during those events survive the cascade (per audit module's outlives-source design) + the compliance archive holds the source data.",
+    "The compliance/data-subject-rights module orchestrates UserErased across all modules including this one — the module registers `RedactCustomerFromInvoicesOnUserErased` as a compliance callback."
+  ]
+}

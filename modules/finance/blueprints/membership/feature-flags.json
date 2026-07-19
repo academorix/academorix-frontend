@@ -1,0 +1,18 @@
+{
+  "id": "academorix://modules/membership/feature-flags",
+  "$version": 1,
+  "title": "membership — kill switches",
+  "engine": "laravel/pennant",
+  "flags": [
+    { "key": "membership.create_writes", "kind": "kill-switch", "default": "on", "description": "Master toggle for membership creation. Off = POST /memberships returns 503. Emergency freeze during migrations." },
+    { "key": "membership.state_transitions", "kind": "kill-switch", "default": "on", "description": "Off = every state-transition endpoint (pause/resume/cancel) returns 503." },
+    { "key": "membership.renewal_processor", "kind": "kill-switch", "default": "on", "description": "Off = ProcessMembershipRenewalJob no-ops. Renewals accumulate but don't charge — customers keep access; billing catches up when re-enabled. Use during payment gateway outages." },
+    { "key": "membership.retry_processor", "kind": "kill-switch", "default": "on", "description": "Off = RetryFailedRenewalJob no-ops." },
+    { "key": "membership.lapse_processor", "kind": "kill-switch", "default": "on", "description": "Off = LapseMembershipJob no-ops. Failed memberships stay in active state — use during business events (grace period announcement)." },
+    { "key": "membership.expire_processor", "kind": "kill-switch", "default": "on", "description": "Off = ExpireMembershipJob no-ops." },
+    { "key": "membership.pass_expiry", "kind": "kill-switch", "default": "on", "description": "Off = ExpireStalePassesJob no-ops. Passes stay available past their valid_until." },
+    { "key": "membership.statements", "kind": "kill-switch", "default": "on", "description": "Off = GenerateMembershipStatementsJob no-ops." },
+    { "key": "membership.retention_purge", "kind": "kill-switch", "default": "on", "description": "Off = 7/10-year hard-purge job no-ops. Use during compliance investigations." },
+    { "key": "membership.chargeback_notifications", "kind": "kill-switch", "default": "on", "description": "Off = MembershipChargedBackNotification suppressed. Use ONLY during dispute-storm scenarios (mass fraud attack) to prevent admin inbox flood while the security team investigates." }
+  ]
+}

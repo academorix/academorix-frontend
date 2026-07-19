@@ -1,0 +1,58 @@
+{
+  "id": "academorix://modules/refund/policies",
+  "$version": 1,
+  "title": "refund — authorization policies",
+  "description": "Two policies, one per owned entity. Segregation of duties is the load-bearing invariant — approve/reject/force-fail refuse when the actor is the initiator (per SOX §404). Customer path scoped by `refund.enforce_customer_scope` middleware; admin path opens to finance + admin + owner roles. Every ability defers to spatie/laravel-permission for the permission check; scope narrowing runs via the ResolveScope middleware (tenant context; no branch scoping — refunds are tenant-wide by design).",
+  "policies": [
+    {
+      "model": "Refund",
+      "class": "Academorix\\Finance\\Refund\\Policies\\RefundPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "refunds.viewAny", "scope": "finance + admin + owner + support" },
+        { "action": "view", "permission": "refunds.view", "scope": "finance + admin + owner + support + customer (own refund only — refund.initiated_by_user_id == auth()->id() OR refund.customer_id == auth()->id())" },
+        { "action": "create", "permission": "refunds.create", "scope": "finance + admin + owner. Customer path uses refunds.request (POST /refunds/mine) — segregated permission to allow different consent flows." },
+        { "action": "request", "permission": "refunds.request", "scope": "authenticated tenant users. Requires `refund_customer_self_service` entitlement. Customer-allowed reasons only (customer_requested / product_not_received / product_unacceptable / subscription_cancelled)." },
+        { "action": "approve", "permission": "refunds.approve", "scope": "finance + admin + owner. REFUSES when refund.initiated_by_user_id == auth()->id() (segregation of duties per SOX §404 — returns REFUND_SELF_APPROVAL_REFUSED)." },
+        { "action": "reject", "permission": "refunds.approve", "scope": "finance + admin + owner. Same segregation of duties as approve — cannot reject own request." },
+        { "action": "cancel", "permission": "refunds.cancel", "scope": "customer (own refund only) + admin + owner + finance. Only when status IN ('awaiting_approval', 'approved'). Refused once dispatch begins." },
+        { "action": "forceFail", "permission": "refunds.force-fail", "scope": "admin + owner only. Escape hatch for stuck provider_error refunds after manual provider-side investigation." },
+        { "action": "reconcile", "permission": "refunds.reconcile", "scope": "admin + owner + finance. Dispatches ReconcileRefundsJob." },
+        { "action": "viewReport", "permission": "refunds.view-report", "scope": "finance + admin + owner + marketing (read-only)" },
+        { "action": "viewFinancials", "permission": "refunds.view-financials", "scope": "finance + admin + owner + support. Confidential financial fields (amount_cents, currency, provider_fee_reversal_cents) are redacted for readers without this permission." },
+        { "action": "platformViewAny", "permission": "platform.refunds.viewAny" },
+        { "action": "platformView", "permission": "platform.refunds.view" }
+      ]
+    },
+    {
+      "model": "RefundLine",
+      "class": "Academorix\\Finance\\Refund\\Policies\\RefundLinePolicy",
+      "abilities": [
+        {
+          "action": "viewAny",
+          "permission": "refunds.viewAny",
+          "scope": "Inherit from parent refund. If viewer can see the parent refund, they can see its lines."
+        },
+        {
+          "action": "view",
+          "permission": "refunds.view",
+          "scope": "Inherit from parent refund."
+        },
+        {
+          "action": "create",
+          "permission": "refunds.create",
+          "scope": "Inherit from parent refund's create permission. Only allowed when parent refund.status IN ('pending', 'awaiting_approval', 'approved'). Requires `refund_partial` or `refund_prorated` entitlement based on parent refund_type."
+        },
+        {
+          "action": "update",
+          "permission": null,
+          "scope": "DENY ALL. Refund lines are IMMUTABLE at creation — corrections require cancelling the parent refund + creating a new one."
+        },
+        {
+          "action": "delete",
+          "permission": null,
+          "scope": "DENY ALL. Refund lines cascade via FK on parent delete only; direct delete refused."
+        }
+      ]
+    }
+  ]
+}

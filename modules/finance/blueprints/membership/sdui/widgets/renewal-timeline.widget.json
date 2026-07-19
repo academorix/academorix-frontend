@@ -1,0 +1,64 @@
+{
+  "id": "membership.widgets.renewal-timeline",
+  "title": "Renewal timeline",
+  "version": 1,
+  "kind": "SduiWidget",
+  "widget": "membership.renewal-timeline",
+  "description": "Visual timeline showing renewal history for a membership. Each dot = a MembershipRenewal — green (succeeded), red (failed_transient/failed_permanent), yellow (attempting). Timeline extends to next_renewal_at with an 'upcoming' marker. Used on membership detail pages + admin dunning dashboards.",
+  "params": {
+    "membership_id": { "type": "string", "required": true },
+    "max_dots": { "type": "integer", "required": false, "default": 12 }
+  },
+  "dataSources": [
+    {
+      "name": "renewals",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/memberships/' + $params.membership_id + '/renewals?limit=' + $params.max_dots",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    },
+    {
+      "name": "membership",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/memberships/' + $params.membership_id",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "kind": "View",
+      "props": { "className": "flex items-center gap-1 py-2" },
+      "children": [
+        {
+          "kind": "Repeat",
+          "bindings": { "items": { "$ref": "renewals" } },
+          "template": {
+            "kind": "Tooltip",
+            "propsExpr": "{ content: 'Period ' + $formatDate(item.period_starts_at, 'D MMM YYYY') + ' — attempt ' + item.attempt_number + ' — ' + item.status + (item.failure_reason ? ' (' + item.failure_reason + ')' : '') }",
+            "children": [
+              {
+                "kind": "View",
+                "propsExpr": "{ className: 'size-3 rounded-full ' + (item.status === 'succeeded' ? 'bg-success-500' : item.status === 'failed_transient' ? 'bg-warning-500' : item.status === 'failed_permanent' ? 'bg-danger-500' : item.status === 'attempting' ? 'bg-info-500 animate-pulse' : 'bg-neutral-300') }"
+              }
+            ]
+          }
+        },
+        {
+          "kind": "Tooltip",
+          "propsExpr": "{ content: 'Next renewal ' + $formatDate(membership.next_renewal_at, 'D MMM YYYY') }",
+          "bindings": {
+            "hidden": {
+              "$expr": "!membership.next_renewal_at || membership.status !== 'active'"
+            }
+          },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "size-3 rounded-full border-2 border-dashed border-neutral-400 bg-transparent" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

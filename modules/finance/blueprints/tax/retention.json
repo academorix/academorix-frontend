@@ -1,0 +1,118 @@
+{
+  "id": "academorix://modules/tax/retention",
+  "$version": 1,
+  "title": "tax — retention windows",
+  "description": "Tax calculations are financial records — 7 years (10 for Enterprise). Tax rates + jurisdictions retain indefinitely for historical audit (calculation-freeze depends on the rate being resolvable years later). Exemptions retain 7 years post-expiry. TenantErased migrates calculations to compliance archive rather than hard-deleting.",
+  "compliance_regimes_referenced": [
+    "IRS Publication 583 — 7-year business tax record retention (US)",
+    "EU VAT Directive Art. 244 — records retention for VAT (typically 10 years for some regimes)",
+    "UK HMRC — 6-year record retention (extended to 10 for certain sectors)",
+    "Canadian CRA — 6-year record retention",
+    "GDPR Art. 17(3)(b) — carve-out: legal obligation supersedes erasure right",
+    "PCI-DSS 10.7 — 1 year hot + 6 years archive for audit trail",
+    "SOC 2 CC7.4 — restore + retention procedures documented"
+  ],
+  "retention": [
+    {
+      "entity": "TaxRate",
+      "hot": { "days": 3650, "description": "Active rates + first 10 years of historical rates hot for calculation-freeze lookups. Old rates are hit rarely but must be resolvable for audit." },
+      "cold": { "days": "indefinite", "description": "Historical rates NEVER hard-deleted. They anchor calculation-freeze snapshots — dropping them would corrupt the audit trail." },
+      "purge": {
+        "trigger": "TenantErased cascade only",
+        "action": "hard delete (FK CASCADE from tenant_id)",
+        "notes": "Tenant erasure removes tenant-scoped rates. Platform-reference rates (there are none — every rate is tenant-scoped) would never be purged."
+      }
+    },
+    {
+      "entity": "TaxJurisdiction (tenant-scoped)",
+      "hot": { "days": "while active" },
+      "cold": { "days": "indefinite" },
+      "purge": {
+        "trigger": "TenantErased cascade",
+        "action": "hard delete (FK CASCADE)",
+        "notes": "Tenant-scoped custom jurisdictions cascade on tenant erasure."
+      }
+    },
+    {
+      "entity": "TaxJurisdiction (platform reference — tenant_id IS NULL)",
+      "hot": { "days": "indefinite" },
+      "cold": { "days": "indefinite" },
+      "purge": {
+        "trigger": "manual (super_admin only, via database migration + audit)",
+        "action": "hard delete",
+        "notes": "Platform-reference jurisdictions are effectively immortal — they underpin every tenant's calculations. Removing one requires a coordinated migration + audit event."
+      }
+    },
+    {
+      "entity": "TaxExemption",
+      "hot": { "days": 730, "description": "Active exemptions + first 2 years post-expiry hot for calculation-freeze lookups" },
+      "cold": { "days": "2555 (7 years post valid_until)", "description": "Regulator audit retention: 7 years past the exemption's expiry date." },
+      "purge": {
+        "trigger": "> 7 years past valid_until",
+        "action": "hard delete via PurgeExpiredExemptionsJob (weekly)",
+        "notes": "Exemptions valid_until IS NULL retain indefinitely (perpetual exemptions — rare, typically diplomatic). Certificate documents in S3 are purged in the same sweep via CertificateStorage::purge()."
+      }
+    },
+    {
+      "entity": "TaxCalculation",
+      "hot": { "days": 365, "description": "Active + first year for reporting, support queries, dispute resolution" },
+      "cold": { "days": "2555 (7 years)", "description": "Financial-record retention. Enterprise tenants with tax_extended_retention entitlement: 3650 (10 years)." },
+      "purge": {
+        "trigger": "> 7 years past calculated_at (10 years for Enterprise)",
+        "action": "MIGRATE to tax_calculations_archive (linked to invoice_lines_archive) — NEVER hard-delete inside the module",
+        "notes": "This is the module's most-important retention rule. Tax calculations NEVER hard-delete inside the module — they migrate to compliance archive. The archive retention runs 10 years from calculation date (matches the most-restrictive regulator regime). Regulator audits can reach into the archive via the compliance module's data-subject-rights surface."
+      }
+    },
+    {
+      "entity": "tax_calculations.tax_rate_snapshot + exemption_applied jsonb blobs",
+      "hot": { "days": "co-terminous with calculation" },
+      "purge": {
+        "trigger": "calculation archive migration",
+        "action": "cascaded (blobs are sub-fields, not separate tables)",
+        "notes": "The snapshots outlive individual rate changes / exemption revocations on the source rows — that's the whole point of the freeze pattern. The calculation carries its historical rate + exemption for its lifetime."
+      }
+    },
+    {
+      "entity": "tax_provider_configs.config (encrypted)",
+      "hot": { "days": "while active" },
+      "cold": { "days": 90 },
+      "purge": {
+        "trigger": "soft-deleted > 90 days ago",
+        "action": "hard delete",
+        "notes": "90-day grace allows rollback after credential rotation errors. After grace, credentials are purged but the historical config data survives in the audit trail (7 years)."
+      }
+    },
+    {
+      "entity": "tax_exemptions.certificate_document_url (S3 documents)",
+      "hot": { "days": "co-terminous with exemption" },
+      "cold": { "days": "co-terminous with exemption" },
+      "purge": {
+        "trigger": "exemption hard-delete (7 years post valid_until)",
+        "action": "S3 delete + tombstone via CertificateStorage::purge()",
+        "notes": "Certificate documents in S3 use the same retention as their parent exemption row. Deletion is via CertificateStorage which writes an audit tombstone (regulators may need proof of deletion)."
+      }
+    }
+  ],
+  "special_cases": [
+    {
+      "case": "TenantErased cascade — priority ordering",
+      "action": "MigrateCalculationsToArchiveOnTenantErased hook (priority 20) migrates tax_calculations to tax_calculations_archive BEFORE PurgeTaxDataForErasedTenant (priority 50) cascades other tax tables",
+      "notes": "The FK CASCADE on tax_calculations.tenant_id is a defensive fallback — the archive migration should always complete first. Without the archive migration, tax_calculations would be hard-deleted on tenant erasure, corrupting regulator audit trail."
+    },
+    {
+      "case": "UserErased (individual GDPR Art. 17)",
+      "action": "RedactUserFromTaxRecords nulls customer_id on tax_exemptions WHERE customer_type='User' AND customer_id=erased_user.id. tax_calculations preserve the calculation record with any subject-identifying fields in metadata nulled.",
+      "notes": "Art. 17(3)(b) carve-out — tax record retention is a legal obligation that supersedes erasure right. The core tax_amount + tax_rate_snapshot + calculated_at survive."
+    },
+    {
+      "case": "CertificateEncryptionKeyRotated",
+      "action": "ReencryptCertificateUrlsOnKeyRotation background sweep re-encrypts every tax_exemptions.certificate_document_url with the new key. Runs chunked to avoid blocking.",
+      "notes": "SOC 2 CC6.7 encryption key rotation. Every 90 days by default."
+    }
+  ],
+  "cross_reference": [
+    "The audit rows written by Auditable outlive the source rows per audit::retention.json — audit retention is 7 years regardless of source-row retention.",
+    "TenantErased cascade migrates calculations to compliance archive via a priority-20 hook that runs BEFORE the FK CASCADE.",
+    "The compliance/data-subject-rights module orchestrates UserErased across all modules — the tax module registers `RedactUserFromTaxRecords` as a compliance callback with the Art. 17(3)(b) carve-out semantics."
+  ]
+}

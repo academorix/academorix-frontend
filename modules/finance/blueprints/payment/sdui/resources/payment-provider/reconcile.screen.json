@@ -1,0 +1,106 @@
+{
+  "id": "payment.resources.payment-provider.reconcile",
+  "title": "Reconcile payment provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-providers/{provider}/reconcile",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-provider", "action": "reconcile" },
+  "requiresPermission": "payment.providers.reconcile",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/payment-providers/' + params.provider",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "Text",
+          "props": { "as": "h1", "className": "text-2xl font-semibold" },
+          "bindings": { "children": { "$expr": "'Reconcile ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)" } }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Reconciliation",
+            "description": "Polls the provider for intent state drift + reconciles any mismatches with our records. Runs nightly automatically; use this for immediate investigation."
+          }
+        },
+        {
+          "kind": "Card",
+          "children": [
+            { "kind": "CardHeader", "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Last run" } }] },
+            {
+              "kind": "CardContent",
+              "children": [
+                {
+                  "kind": "DescriptionList",
+                  "bindings": {
+                    "items": {
+                      "$expr": "[{label: 'Last success', value: provider.last_success_at}, {label: 'Last failure', value: provider.last_failure_at}, {label: 'Consecutive failures', value: provider.consecutive_failure_count}]"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "bindings": { "hidden": { "$expr": "form.result !== undefined" } },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "children": "Run reconciliation" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "urlExpr": "'/api/v1/payment-providers/' + params.provider + '/reconcile'",
+                  "onSuccess": {
+                    "kind": "form.setMany",
+                    "fields": { "result": "$response.data" }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "bindings": { "hidden": { "$expr": "!form.result" } },
+          "children": [
+            {
+              "kind": "CardHeader",
+              "children": [
+                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Reconciliation complete" } }
+              ]
+            },
+            {
+              "kind": "CardContent",
+              "children": [
+                {
+                  "kind": "DescriptionList",
+                  "bindings": {
+                    "items": {
+                      "$expr": "[{label: 'Intents polled', value: form.result?.intents_polled}, {label: 'Drift count', value: form.result?.drift_count}, {label: 'Reconciled', value: form.result?.reconciled_count}]"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

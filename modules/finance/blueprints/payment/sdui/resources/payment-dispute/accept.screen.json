@@ -1,0 +1,101 @@
+{
+  "id": "payment.resources.payment-dispute.accept",
+  "title": "Accept dispute",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-disputes/{dispute}/accept",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-dispute", "action": "accept" },
+  "requiresPermission": "payment.disputes.accept",
+  "requiresEntitlement": "payment_dispute_management",
+  "dataSources": [
+    {
+      "name": "dispute",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/payment-disputes/' + params.dispute",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6" },
+      "children": [
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "CardHeader",
+              "children": [
+                { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Accept this dispute?" } }
+              ]
+            },
+            {
+              "kind": "CardContent",
+              "props": { "className": "flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Alert",
+                  "props": {
+                    "variant": "warning",
+                    "title": "This will refund the customer",
+                    "description": "Accepting the dispute concedes without fighting. A refund is issued via the refund module + the dispute is marked charge_refunded."
+                  }
+                },
+                {
+                  "kind": "DescriptionList",
+                  "bindings": {
+                    "items": {
+                      "$expr": "[{label: 'Reason', value: dispute.reason.replace('_', ' ')}, {label: 'Amount', value: dispute.amount_cents}, {label: 'Currency', value: dispute.currency}, {label: 'Opened', value: dispute.opened_at}]"
+                    }
+                  }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": {
+                    "label": "Note (required for audit trail)",
+                    "rows": 4,
+                    "required": true,
+                    "placeholder": "Why are you accepting rather than fighting? This note is written to the audit trail."
+                  },
+                  "actions": {
+                    "onChange": { "kind": "form.set", "field": "note", "valueExpr": "$value" }
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-center justify-end gap-2" },
+                  "children": [
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "ghost", "children": "Cancel" },
+                      "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-disputes'" } }
+                    },
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "danger", "children": "Accept + refund" },
+                      "bindings": { "disabled": { "$expr": "!form.note || form.note.length < 10" } },
+                      "actions": {
+                        "onPress": {
+                          "kind": "http.post",
+                          "urlExpr": "'/api/v1/payment-disputes/' + params.dispute + '/accept'",
+                          "body": { "note": "{{form.note}}" },
+                          "onSuccess": {
+                            "kind": "navigate",
+                            "toExpr": "'/tenant/payment-disputes'"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

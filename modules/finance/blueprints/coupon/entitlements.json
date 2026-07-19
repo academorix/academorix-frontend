@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/coupon/entitlements",
+  "$version": 1,
+  "title": "coupon — declared entitlements",
+  "description": "Six entitlement keys. `coupon_capture` is the boolean master gate — on for every tier by default. `coupon_slot` caps the number of ACTIVE coupons per tenant (Small=10, Medium=100, Enterprise=unlimited). `coupon_bulk_issue` (Medium+) unlocks the POST /coupons/bulk-issue endpoint for campaign codes. `coupon_advanced_discount_types` (Medium+) unlocks `free_period`, `first_month_free`, `bogo` discount types — Small tier limited to `percent` + `fixed_amount` + `free_shipping`. `coupon_stackable` (Enterprise) permits multiple coupons applied to a single invoice with defined precedence. `coupon_extended_retention` (Enterprise) extends the 7y retention window to 10y for regulated tenants.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "coupon_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is inert: no coupons may be created, existing coupons refuse new redemptions, validate/preview routes return 402. Every tier defaults on — off is an emergency ops-flip only.",
+      "enforcedBy": [
+        "coupon.enforce_capture_entitlement middleware on every /api/v1/coupons/* route",
+        "CouponObserver refuses create when the gate is closed",
+        "CouponRedeemer::redeem() refuses when the gate is closed (surfaces as COUPON_CAPTURE_NOT_ENTITLED on the caller — invoice/membership module)",
+        "SDUI surfaces hidden when features array does not include 'coupon.core'"
+      ]
+    },
+    {
+      "key": "coupon_slot",
+      "kind": "slot",
+      "unit": "coupons",
+      "defaultsByPlan": { "small": 10, "medium": 100, "enterprise": null },
+      "description": "How many ACTIVE coupons a tenant can hold concurrently. Small: 10 (one primary + a few seasonal). Medium: 100 (campaign codes + partner codes). Enterprise: unlimited. Consumed on create; released on delete OR on transition to `is_active=false` past valid_until.",
+      "enforcedBy": [
+        "CouponObserver.creating consumes 1 unit via EntitlementGate::consume('coupon_slot')",
+        "CouponObserver.deleted releases 1 unit",
+        "ExpireCouponsJob releases 1 unit when the coupon expires (valid_until past + is_active flipped false)"
+      ]
+    },
+    {
+      "key": "coupon_bulk_issue",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables POST /api/v1/coupons/bulk-issue — batch-create N unique campaign codes for a named marketing campaign. Small tenants create coupons one at a time.",
+      "enforcedBy": [
+        "POST /coupons/bulk-issue route carries entitlement.enforce:coupon_bulk_issue middleware",
+        "BulkIssueCouponAction refuses when the gate is closed"
+      ]
+    },
+    {
+      "key": "coupon_advanced_discount_types",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables discount_type IN ('free_period', 'first_month_free', 'bogo'). Small tier limited to `percent` + `fixed_amount` + `free_shipping`.",
+      "enforcedBy": [
+        "CouponObserver.creating refuses when discount_type IS IN advanced set AND entitlement is off (returns COUPON_ADVANCED_DISCOUNT_NOT_ENTITLED)",
+        "SDUI create form filters the discount_type ComboBox options by entitlement"
+      ]
+    },
+    {
+      "key": "coupon_stackable",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Permits multiple coupons applied to a single invoice with defined precedence order (first_month_free -> bogo -> percent -> fixed_amount -> free_shipping -> free_period). When off: one coupon per invoice; the invoice/membership module refuses a second redemption with COUPON_STACKING_NOT_ENTITLED.",
+      "enforcedBy": [
+        "CouponObserver.creating refuses when is_stackable=true AND entitlement is off",
+        "CouponRedeemer::redeem() refuses when a redemption already exists on the same (applied_to_type, applied_to_id) AND is_stackable would need to be true on both coupons AND entitlement is off"
+      ]
+    },
+    {
+      "key": "coupon_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends retention from 7y default to 10y for financial audit alignment (some regulated tenants require 10y for tax audit trails on discount records).",
+      "enforcedBy": [
+        "PurgeExpiredCouponsJob reads the entitlement to select the retention window (7y default; 10y when on)",
+        "MigrateRedemptionsToArchiveOnTenantErased applies the 10y window when the tenant held the entitlement at erasure time"
+      ]
+    }
+  ]
+}

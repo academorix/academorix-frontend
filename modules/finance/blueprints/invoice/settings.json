@@ -1,0 +1,248 @@
+{
+  "id": "academorix://modules/invoice/settings",
+  "$version": 1,
+  "title": "invoice — settings",
+  "description": "Tenant-facing invoice configuration + per-user preferences for report subscriptions. The invoices table is NOT settings — this file declares tenant-level defaults (numbering series, dunning cadence overrides, notification routing) + per-user preferences (aging report subscription).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "invoice",
+      "class": "Academorix\\Finance\\Invoice\\Settings\\InvoiceSettings",
+      "label": "Invoicing",
+      "description": "Tenant-wide defaults for invoice numbering, delivery, and dunning.",
+      "icon": "document-text",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 30,
+      "permission": "invoice.invoices.viewAny",
+      "requiresEntitlement": "invoice_capture",
+      "sections": [
+        {
+          "label": "Numbering",
+          "description": "Invoice + credit note numbering conventions.",
+          "icon": "hashtag",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "default_series",
+              "controlType": "text",
+              "label": "Default series prefix",
+              "defaultValue": "INV",
+              "helpText": "Invoice numbers start with this prefix. Small tenants locked to 'INV'; Medium+ may set to 'SO', 'RECEIPT', or a custom 3-8 char slug.",
+              "requiresEntitlement": "invoice_custom_series",
+              "sortOrder": 1
+            },
+            {
+              "name": "per_year_reset",
+              "controlType": "toggle",
+              "label": "Reset counter on Jan 1st",
+              "defaultValue": true,
+              "helpText": "true = counter resets each year (2026-000001 → 2027-000001). false = monotonic across years. Change requires ops review — mid-year change can create numbering ambiguity.",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Delivery",
+          "description": "How invoices are delivered to customers.",
+          "icon": "envelope",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "auto_send_on_finalize",
+              "controlType": "toggle",
+              "label": "Auto-send email on finalize",
+              "defaultValue": true,
+              "helpText": "true = SendInvoiceEmailJob dispatches automatically on finalize. false = admin manually invokes POST /invoices/{invoice}/send.",
+              "sortOrder": 1
+            },
+            {
+              "name": "email_bcc",
+              "controlType": "email-multi",
+              "label": "BCC on every invoice email",
+              "defaultValue": [],
+              "helpText": "Typically your finance-team email(s). Applied to every outbound invoice email.",
+              "sortOrder": 2
+            },
+            {
+              "name": "tracking_pixel_enabled",
+              "controlType": "toggle",
+              "label": "Include tracking pixel",
+              "defaultValue": true,
+              "helpText": "true = fire InvoiceViewed when the customer opens the email. false = disable (some tenants prefer for privacy).",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Dunning",
+          "description": "Past-due reminder cadence.",
+          "icon": "clock",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "cadence",
+              "controlType": "day-array",
+              "label": "Reminder cadence (days past due)",
+              "defaultValue": [3, 7, 14, 30, 60],
+              "helpText": "Enterprise-only — customize the default day+3/7/14/30/60 schedule.",
+              "requiresEntitlement": "invoice_dunning_advanced",
+              "sortOrder": 1
+            },
+            {
+              "name": "uncollectible_after_days",
+              "controlType": "number",
+              "label": "Uncollectible threshold (days past due)",
+              "defaultValue": 90,
+              "min": 60,
+              "max": 365,
+              "sortOrder": 2
+            },
+            {
+              "name": "pause_on_customer_action",
+              "controlType": "toggle",
+              "label": "Pause dunning when customer responds",
+              "defaultValue": true,
+              "helpText": "true = pause when customer opens payment link or contacts support. false = dunning continues regardless.",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Collections",
+          "description": "Third-party collections agency handoff. Enterprise-only.",
+          "icon": "briefcase",
+          "sortOrder": 4,
+          "requiresEntitlement": "invoice_collections_integration",
+          "fields": [
+            {
+              "name": "collections_agency",
+              "controlType": "text",
+              "label": "Collections agency slug",
+              "helpText": "Must be a pre-configured licensed agency in the notifications module.",
+              "sortOrder": 1
+            },
+            {
+              "name": "send_to_collections_after_days",
+              "controlType": "number",
+              "label": "Handoff threshold (days past due)",
+              "defaultValue": 60,
+              "min": 30,
+              "max": 365,
+              "sortOrder": 2
+            },
+            {
+              "name": "write_off_after_days",
+              "controlType": "number",
+              "label": "Write-off threshold (days past due)",
+              "defaultValue": 180,
+              "min": 90,
+              "max": 730,
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "PDF branding",
+          "description": "Invoice PDF template selection.",
+          "icon": "photo",
+          "sortOrder": 5,
+          "requiresEntitlement": "invoice_tenant_branded_pdf",
+          "fields": [
+            {
+              "name": "pdf_template",
+              "controlType": "select",
+              "label": "PDF template",
+              "defaultValue": "tenant-branded",
+              "options": {
+                "tenant-branded": "Tenant branded (logo + colors from branding module)",
+                "minimal": "Minimal (compact single-page)",
+                "vat-eu": "VAT (EU) — Art. 226-compliant layout"
+              },
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Notification routing",
+          "description": "Where invoice-related admin notifications are delivered.",
+          "icon": "bell-alert",
+          "sortOrder": 6,
+          "fields": [
+            {
+              "name": "uncollectible_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on uncollectible invoices",
+              "defaultValue": [],
+              "helpText": "Every user listed receives InvoiceUncollectibleNotification. Tenant owners always notified regardless.",
+              "sortOrder": 1
+            },
+            {
+              "name": "write_off_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on written-off quarterly digest",
+              "defaultValue": [],
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "invoice_user",
+      "class": "Academorix\\Finance\\Invoice\\Settings\\InvoiceUserSettings",
+      "label": "My invoicing preferences",
+      "description": "Per-user preferences for invoice reports + alerts.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 35,
+      "sections": [
+        {
+          "label": "Report subscriptions",
+          "icon": "chart-bar",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "receive_monthly_revenue_report",
+              "controlType": "toggle",
+              "label": "Send me the monthly revenue report",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_quarterly_write_off_digest",
+              "controlType": "toggle",
+              "label": "Send me the quarterly write-off digest",
+              "defaultValue": true,
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Alert subscriptions",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "receive_uncollectible_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on invoices marked uncollectible",
+              "defaultValue": true,
+              "helpText": "This preference only takes effect if the tenant admin listed you in uncollectible_notify_users. Owners always receive.",
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_reconcile_drift_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on payment reconciliation drift (ops only)",
+              "defaultValue": false,
+              "sortOrder": 2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "academorix://modules/audit/feature-flags",
+  "$version": 1,
+  "title": "audit — kill switches + rollout controls",
+  "description": "Kill switches for audit capture + purge + export. All default ON. Turning capture off is EMERGENCY-ONLY — requires compliance-officer approval + a signed security audit row for the disablement.",
+  "engine": "laravel/pennant",
+  "flags": [
+    {
+      "key": "audit.capture",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Master audit capture kill switch. Off = unbind the vendor AuditableObserver so subsequent mutations write no audit rows. Existing rows unchanged. EMERGENCY ONLY — requires compliance-officer approval + a signed security audit row. Used during migration incidents or catastrophic capture pipeline failures. Paired with the audit_capture entitlement for a two-key disablement (both must be off to actually stop capture)."
+    },
+    {
+      "key": "audit.purge",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "PurgeExpiredAuditsJob kill switch. Off = the nightly job skips execution. Retention windows are still tracked; when the switch flips back on, purge catches up on the backlog. Used during regulator investigations that require freezing all purges cross-tenant until the investigation completes."
+    },
+    {
+      "key": "audit.export",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "Export request kill switch. Off = POST /api/v1/audits/export returns 503. Used during platform-wide incidents affecting the S3 archive bucket or the notification pipeline."
+    },
+    {
+      "key": "audit.retention_override_expiry",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "ExpireRetentionOverridesJob kill switch. Off = policies do NOT expire even when override_ends_at elapses. Used when a legal counsel needs to freeze policy transitions during ongoing litigation."
+    },
+    {
+      "key": "audit.archive_migration",
+      "kind": "kill-switch",
+      "default": "on",
+      "description": "ExportAuditsToArchiveJob kill switch. Off = hot-to-cold migration paused. Used during S3-side incidents or cost-management windows."
+    },
+    {
+      "key": "audit.reveal_raw_diff",
+      "kind": "rollout",
+      "default": "on",
+      "description": "Raw-diff reveal capability. On = compliance-officer role may reveal old_values + new_values via ?include=raw_diff. Off = reveal returns 403 for everyone (including compliance officer). Emergency mode when a PII leak is suspected and reveal is temporarily locked."
+    },
+    {
+      "key": "audit.pii_redaction_enforced",
+      "kind": "rollout",
+      "default": "off",
+      "description": "Platform-wide enforcement of PII redaction in old_values + new_values (overrides tenant-level opt-in setting). On = redact for ALL tenants regardless of their setting. Off = each tenant honors its own setting.audit.redact_pii_in_old_new_values."
+    },
+    {
+      "key": "audit.tenant_erasure_migrate_to_archive",
+      "kind": "rollout",
+      "default": "on",
+      "description": "Enforces the MIGRATE-to-archive behavior on TenantErased (audit rows survive tenant erasure per §retention.json). Off = fall back to cascade-delete. NEVER turn off in production — turning off risks Art. 30 records-of-processing violation. Off allowed only in test envs to speed up test-tenant teardown."
+    }
+  ]
+}

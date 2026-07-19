@@ -1,0 +1,160 @@
+{
+  "id": "academorix://modules/membership/schemas/pass",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Pass",
+  "description": "A per-session admission credit issued by an active membership. Belongs to Tenant (CASCADE) + Membership (RESTRICT). Optional consumed_by_session_id (Session, RESTRICT) tracks WHICH session consumed the pass. Consumption is idempotent — a consumed pass cannot be consumed again; refunding a pass returns it to available (rare — admin override). Passes are issued in bulk by IssuePassesForPeriodJob when a membership activates or renews; a monthly plan with passes_per_period=4 generates 4 rows. NEVER carries application_id / organization_id / region_id / scope_node_id.",
+  "type": "object",
+  "x-module": "membership",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "passes",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "pss_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Membership\\Models\\Pass",
+    "interface": "Academorix\\Finance\\Membership\\Contracts\\Data\\PassInterface",
+    "traits": [
+      "HasFactory",
+      "HasPrefixedUlid",
+      "BelongsToTenant",
+      "BelongsToMembership",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "pass_type": "PassType",
+      "valid_from": "datetime",
+      "valid_until": "datetime",
+      "consumed_at": "datetime",
+      "refunded_at": "datetime"
+    },
+    "observers": [
+      "PassObserver"
+    ],
+    "appends": [
+      "is_available",
+      "is_expired",
+      "is_consumed"
+    ]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 30, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onUpdate": "cascade", "onDelete": "cascade" }
+      },
+      "membership_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": false,
+        "foreign": {
+          "table": "memberships",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        }
+      },
+      "pass_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'standard'",
+        "description": "Enum: standard / trial / bonus / carryover / event / promotional."
+      },
+      "valid_from": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Start of the pass's validity window — usually current_period_starts_at of the parent membership. IMMUTABLE."
+      },
+      "valid_until": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "End of validity — usually current_period_ends_at. IMMUTABLE. Carryover passes extend into the next period."
+      },
+      "consumed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When the pass was used (linked to a session check-in). Idempotent — cannot be set twice."
+      },
+      "consumed_by_session_id": {
+        "type": "string",
+        "length": 30,
+        "nullable": true,
+        "foreign": {
+          "table": "sessions",
+          "column": "id",
+          "onUpdate": "cascade",
+          "onDelete": "restrict"
+        },
+        "description": "Wave 3+ session module. Which session used this pass."
+      },
+      "refunded_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Admin reversal of a consumption (rare — session cancelled after check-in). When set, consumed_at is cleared."
+      },
+      "refund_reason": { "type": "string", "length": 128, "nullable": true },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 30, "nullable": true },
+      "updated_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_by": { "type": "string", "length": 30, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "membership_id", "valid_from"], "name": "passes_by_membership_period_idx" },
+      { "columns": ["tenant_id", "membership_id", "consumed_at"], "name": "passes_availability_idx", "predicate": "deleted_at IS NULL" },
+      { "columns": ["tenant_id", "valid_until"], "name": "passes_expiry_sweep_idx", "predicate": "consumed_at IS NULL AND deleted_at IS NULL", "description": "Feeds ExpireStalePassesJob's nightly sweep." },
+      { "columns": ["tenant_id", "consumed_by_session_id"], "name": "passes_session_idx", "predicate": "consumed_by_session_id IS NOT NULL" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "membership_id",
+    "pass_type",
+    "valid_from",
+    "valid_until",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^pss_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "membership_id": { "type": "string", "pattern": "^mbr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "pass_type": {
+      "type": "string",
+      "enum": ["standard", "trial", "bonus", "carryover", "event", "promotional"]
+    },
+    "valid_from": { "type": "string", "format": "date-time" },
+    "valid_until": { "type": "string", "format": "date-time" },
+    "consumed_at": { "type": ["string", "null"], "format": "date-time" },
+    "consumed_by_session_id": { "type": ["string", "null"], "pattern": "^ses_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "refunded_at": { "type": ["string", "null"], "format": "date-time" },
+    "refund_reason": { "type": ["string", "null"], "maxLength": 128 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": false,
+  "x-invariants": [
+    "tenant_id + membership_id + pass_type + valid_from + valid_until are IMMUTABLE post-create",
+    "consumed_at cannot be set twice (idempotence)",
+    "consumed_at can only be set when now() BETWEEN valid_from AND valid_until AND parent membership.status = 'active'",
+    "refunded_at clears consumed_at (admin reversal path)",
+    "Passes cannot be hard-deleted while linked to a session check-in — the session module holds the reference",
+    "Total unconsumed passes per active-period must not exceed plan.passes_per_period (enforced by PassObserver.creating)"
+  ]
+}

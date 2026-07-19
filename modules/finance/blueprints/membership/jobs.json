@@ -1,0 +1,187 @@
+{
+  "id": "academorix://modules/membership/jobs",
+  "$version": 1,
+  "title": "membership — background jobs",
+  "jobs": [
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\CreateMembershipInvoiceJob",
+      "queue": "finance",
+      "purpose": "Dispatched from CreateInvoiceOnMembershipCreated hook when the initial invoice-create path needs to run async (e.g. Wave 4.5+ invoice module ships with retry semantics). Wave 4 inception: this job is a no-op fallback — the hook does the work in-band. Left as scaffolding for later.",
+      "steps": [
+        "Load Membership by id + verify status='pending' + verify no invoice already exists",
+        "Invoke invoice::InvoiceCreator with membership snapshot + line items (price + tax + coupon)",
+        "Attach invoice_id back to membership via back-reference"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 600,
+      "tries": 5,
+      "backoff": [10, 60, 300, 900]
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\ChargeMembershipPaymentIntentJob",
+      "queue": "finance-critical",
+      "purpose": "Attempts to charge the payment method for a MembershipRenewal. Called on renewal.creating (initial attempt) + by RetryFailedRenewalJob (retries). Delegates to the payment module's PaymentIntent.confirm — never touches PAN/CVV directly.",
+      "steps": [
+        "Load MembershipRenewal by id + set status='attempting' + attempted_at=now()",
+        "Load Membership.payment_method_id via metadata (Wave 4.5+ from payment module)",
+        "Invoke payment::PaymentIntent.confirm(membership, renewal.total_amount_cents, currency) with idempotency key = renewal.id",
+        "On success: MembershipRenewal.status='succeeded' + succeeded_at=now(); MembershipRenewalObserver fires MembershipRenewed or MembershipRenewalRecovered",
+        "On transient failure (network/gateway): MembershipRenewal.status='failed_transient' + failure_reason; MembershipRenewalObserver fires MembershipRenewalFailed; retry ladder scheduled",
+        "On permanent failure (declined/frozen card/insufficient funds classified as terminal): MembershipRenewal.status='failed_permanent' + failure_reason; MembershipRenewalObserver + LapseMembershipJob"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 1800,
+      "tries": 3,
+      "backoff": [30, 120, 300]
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\ProcessMembershipRenewalJob",
+      "queue": "finance-critical",
+      "purpose": "Hourly: sweep active memberships whose next_renewal_at <= now() + create a fresh MembershipRenewal + dispatch ChargeMembershipPaymentIntentJob.",
+      "steps": [
+        "SELECT id FROM memberships WHERE status='active' AND next_renewal_at IS NOT NULL AND next_renewal_at <= now() AND deleted_at IS NULL ORDER BY next_renewal_at ASC LIMIT 500",
+        "For each: verify no OPEN renewal exists for the current period (defense-in-depth against duplicate charging)",
+        "Create MembershipRenewal with attempt_number=1, period_starts_at=membership.next_renewal_at, period_ends_at=next+billing_interval",
+        "Recompute tax + coupon for the new period (NOT frozen membership snapshots)",
+        "Dispatch ChargeMembershipPaymentIntentJob for the new renewal"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\RetryFailedRenewalJob",
+      "queue": "finance-critical",
+      "purpose": "Hourly: sweep MembershipRenewal rows with status='failed_transient' AND next_attempt_at <= now() + create the next attempt row + dispatch ChargeMembershipPaymentIntentJob.",
+      "steps": [
+        "SELECT id FROM membership_renewals WHERE status='failed_transient' AND next_attempt_at IS NOT NULL AND next_attempt_at <= now() LIMIT 500",
+        "For each: check membership.consecutive_failed_renewal_count and previous attempt_number",
+        "If attempt_number < 4: create new MembershipRenewal with attempt_number+1, same period bounds, dispatch ChargeMembershipPaymentIntentJob",
+        "If attempt_number == 4 AND still failing: dispatch LapseMembershipJob"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\LapseMembershipJob",
+      "queue": "finance-critical",
+      "purpose": "Terminal lapse. Transitions membership.status from active/paused to lapsed after 3+ consecutive failed renewals. Expires remaining passes. Fires MembershipLapsed. Growth analytics keys off this for involuntary-churn dashboards.",
+      "steps": [
+        "Load Membership by id",
+        "Verify consecutive_failed_renewal_count >= 3 (defense-in-depth)",
+        "Set status='lapsed', lapsed_at=now(), expires_at=now(), next_renewal_at=null",
+        "MembershipObserver fires MembershipLapsed + invokes ExpirePassesOnMembershipLapsed hook",
+        "Decrement plan.current_active_members"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\ExpireMembershipJob",
+      "queue": "finance",
+      "purpose": "Nightly: sweep memberships with expires_at <= now() AND status IN ('active','paused') (soft-cancelled memberships past their period end) + transition to expired.",
+      "steps": [
+        "SELECT id FROM memberships WHERE status IN ('active','paused') AND expires_at IS NOT NULL AND expires_at <= now() AND deleted_at IS NULL LIMIT 500",
+        "For each: transition status→expired; MembershipObserver fires MembershipExpired; decrement plan.current_active_members"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\IssuePassesForPeriodJob",
+      "queue": "finance",
+      "purpose": "Dispatched on MembershipActivated + on MembershipRenewed. Generates plan.passes_per_period Pass rows for the current period. When plan.passes_carry_over is true + unused passes exist from the previous period, re-issues them as pass_type='carryover' with new valid_until.",
+      "steps": [
+        "Load Membership + Plan",
+        "If plan.passes_per_period is null: no-op (unlimited access — no pass accounting)",
+        "For i in 1..plan.passes_per_period: create Pass(membership_id, tenant_id, pass_type='standard'|'trial'|'carryover', valid_from=current_period_starts_at, valid_until=current_period_ends_at)",
+        "If plan.passes_carry_over: query prior-period unconsumed passes + re-issue with new valid_until"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 300,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\ExpireStalePassesJob",
+      "queue": "finance",
+      "purpose": "Nightly: sweep unconsumed passes past valid_until + fire PassExpired per pass. Skips carryover passes that plan opts to re-issue on next renewal (those expire naturally at the next renewal boundary).",
+      "steps": [
+        "SELECT id FROM passes WHERE consumed_at IS NULL AND valid_until < now() AND deleted_at IS NULL LIMIT 5000",
+        "For each: PassObserver fires PassExpired; sets soft-delete for cleanup after retention window"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\NotifyRenewalUpcomingJob",
+      "queue": "notifications",
+      "purpose": "Daily: sweep active memberships with next_renewal_at in exactly 7 days + dispatch MembershipRenewalUpcomingNotification.",
+      "steps": [
+        "SELECT id FROM memberships WHERE status='active' AND next_renewal_at BETWEEN (now() + interval '7 days') AND (now() + interval '7 days 24 hours') AND deleted_at IS NULL",
+        "Dedup: notification-log check to avoid double-notify",
+        "Dispatch notification to primary_guardian_id -> user"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 86400,
+      "tries": 2
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\NotifyPaymentFailureJob",
+      "queue": "notifications-critical",
+      "purpose": "Dispatched by TriggerRetryLadderOnRenewalFailed. Sends dunning emails at 24h, 72h, 7d after each failed attempt. Transactional (contract-critical) — cannot-opt-out.",
+      "steps": [
+        "Load Membership + latest failed MembershipRenewal",
+        "Compute payment-update deep-link + retry-attempt-at + amount-due",
+        "Dispatch DunningEmail to primary_guardian_id at 24h/72h/7d cadences per attempt_number"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\ProcessMembershipCancellationJob",
+      "queue": "finance",
+      "purpose": "Fires from MembershipCanceller when cancellation_kind='hard_immediate'. Coordinates the refund calculation + refund module dispatch. Wave 4.5+ Redux — invokes refund::RefundOrchestrator; Wave 4 inception: emits stub events for downstream module wiring.",
+      "steps": [
+        "Load Membership by id",
+        "Verify status='cancelled' AND cancellation_kind='hard_immediate' AND cancellation_effective_at=now()",
+        "Compute prorated refund per plan.refund_policy (via CalculateProratedRefundOnHardCancel hook)",
+        "Dispatch refund request via refund module OR emit stub Membership.RefundPending event",
+        "Store refund_id in metadata when refund module confirms"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 3600,
+      "tries": 3
+    },
+    {
+      "class": "Academorix\\Finance\\Membership\\Jobs\\GenerateMembershipStatementsJob",
+      "queue": "finance",
+      "purpose": "Monthly: produce a per-tenant statement PDF of all memberships (active + terminal) for the month. Feeds tenant admin dashboards + tax-audit archives. Storage module owns the PDF; this job orchestrates content generation.",
+      "steps": [
+        "For each tenant with active memberships: aggregate MRR / churn / new / lapsed / cancelled / refunded totals for the month",
+        "Compose statement PDF with per-branch breakdowns + top-level KPIs",
+        "Persist via storage module with tag='membership-statement' + retention=7y (or 10y with `membership_extended_retention` entitlement)",
+        "Notify tenant admin with statement-ready email"
+      ],
+      "shouldQueue": true,
+      "shouldBeUnique": true,
+      "uniqueFor": 2592000,
+      "tries": 2
+    }
+  ]
+}

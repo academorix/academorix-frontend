@@ -1,0 +1,183 @@
+{
+  "id": "academorix://modules/chargeback/settings",
+  "$version": 1,
+  "title": "chargeback — settings",
+  "description": "Tenant-facing preferences (rate monitoring thresholds, RDR configuration, evidence collection defaults, notification cadence, retention window). No user-level preferences — chargebacks are admin-managed workflows, not user preferences.",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "chargeback",
+      "class": "Academorix\\Finance\\Chargeback\\Settings\\ChargebackSettings",
+      "label": "Chargebacks",
+      "description": "Tenant-wide chargeback workflow configuration.",
+      "icon": "shield-exclamation",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 59,
+      "permission": "chargebacks.viewAny",
+      "requiresEntitlement": "chargeback_management",
+      "sections": [
+        {
+          "label": "Rate monitoring",
+          "description": "Thresholds for VDMP/MDMP compliance monitoring.",
+          "icon": "chart-bar",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "rate_monitoring_enabled",
+              "controlType": "toggle",
+              "label": "Enable rate monitoring",
+              "defaultValue": true,
+              "helpText": "Monitor rolling 60-day chargeback rate per network. Alerts when rate crosses VDMP/MDMP threshold. Recommended ON — merchant-account termination risk if unmonitored.",
+              "requiresEntitlement": "chargeback_rate_monitoring",
+              "sortOrder": 1
+            },
+            {
+              "name": "custom_threshold_visa_percent",
+              "controlType": "number",
+              "label": "Visa VDMP threshold override (percent)",
+              "defaultValue": 0.9,
+              "min": 0.1,
+              "max": 5.0,
+              "step": 0.1,
+              "helpText": "Override the default 0.9% Visa VDMP threshold. Enterprise tenants may enforce stricter internal thresholds (0.5% early-warning). Cannot exceed 5.0% (would be effectively disabled).",
+              "requiresEntitlement": "chargeback_rate_monitoring",
+              "sortOrder": 2
+            },
+            {
+              "name": "custom_threshold_mastercard_percent",
+              "controlType": "number",
+              "label": "Mastercard MDMP threshold override (percent)",
+              "defaultValue": 1.5,
+              "min": 0.1,
+              "max": 5.0,
+              "step": 0.1,
+              "requiresEntitlement": "chargeback_rate_monitoring",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Rapid Dispute Resolution (RDR)",
+          "description": "Visa RDR auto-refund configuration.",
+          "icon": "arrow-uturn-left",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "rdr_enabled",
+              "controlType": "toggle",
+              "label": "Enable RDR",
+              "defaultValue": true,
+              "helpText": "Auto-refund below threshold to close pre-chargeback state. No network fee. No rate impact. Visa-only.",
+              "requiresEntitlement": "chargeback_rdr",
+              "sortOrder": 1
+            },
+            {
+              "name": "rdr_auto_refund_threshold_cents",
+              "controlType": "number",
+              "label": "RDR auto-refund threshold (cents)",
+              "defaultValue": 5000,
+              "min": 100,
+              "max": 100000,
+              "helpText": "Chargebacks below this amount become RDR-eligible for auto-refund. Default 5000 = $50. Small tenants may raise to $100; enterprise may lower to $25.",
+              "requiresEntitlement": "chargeback_rdr",
+              "sortOrder": 2
+            },
+            {
+              "name": "rdr_min_customer_purchase_history_days",
+              "controlType": "number",
+              "label": "Min customer purchase history days",
+              "defaultValue": 30,
+              "min": 0,
+              "max": 365,
+              "helpText": "New customers below this history threshold are NOT offered RDR (higher fraud risk).",
+              "requiresEntitlement": "chargeback_rdr",
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Evidence collection",
+          "description": "Auto-collection + deadline reminder defaults.",
+          "icon": "document-check",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "evidence_auto_collect_on_create",
+              "controlType": "toggle",
+              "label": "Auto-collect evidence on chargeback filed",
+              "defaultValue": true,
+              "helpText": "Pre-populates the evidence bundle from invoice + membership + notifications + support modules. Admin reviews + potentially edits before submission.",
+              "requiresEntitlement": "chargeback_evidence_submission",
+              "sortOrder": 1
+            },
+            {
+              "name": "evidence_deadline_reminder_cadence_days",
+              "controlType": "multi-select",
+              "label": "Deadline reminder cadence (days before)",
+              "defaultValue": [7, 3, 1],
+              "options": {
+                "14": "14 days before",
+                "7": "7 days before",
+                "3": "3 days before",
+                "1": "1 day before"
+              },
+              "helpText": "Days-before-deadline at which ChargebackEvidenceOverdue notifications fire.",
+              "requiresEntitlement": "chargeback_evidence_submission",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Notifications",
+          "icon": "bell",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "notify_admins_on_filed_channels",
+              "controlType": "multi-select",
+              "label": "Admin notification channels on chargeback filed",
+              "defaultValue": ["mail", "in_app", "push", "sms"],
+              "options": {
+                "mail": "Email",
+                "in_app": "In-app",
+                "push": "Push notification",
+                "sms": "SMS"
+              },
+              "helpText": "P0 event — SMS included by default for immediate awareness. Tenant may drop SMS via override.",
+              "sortOrder": 1
+            },
+            {
+              "name": "notification_recipients",
+              "controlType": "multi-user-select",
+              "label": "Additional admin notification recipients",
+              "helpText": "Users to always notify on chargeback events. Overrides the default (any user holding chargebacks.viewAny permission).",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "icon": "archive-box",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "retention_years",
+              "controlType": "select",
+              "label": "Retention window",
+              "defaultValue": 7,
+              "options": {
+                "7": "7 years (default)",
+                "10": "10 years (Enterprise)"
+              },
+              "helpText": "10 years requires the chargeback_extended_retention entitlement.",
+              "requiresEntitlement": "chargeback_extended_retention",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

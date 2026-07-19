@@ -1,0 +1,242 @@
+{
+  "$version": 1,
+  "title": "Canonical double-entry patterns",
+  "description": "The 10 canonical double-entry patterns the module supports. Each pattern documents a business scenario + the exact debit/credit ledger entries the TransactionRecorder will emit. Every pattern preserves the SUM(debits) == SUM(credits) invariant. Consumers reading this catalogue understand exactly what ledger entries their event will produce.",
+  "patterns": [
+    {
+      "pattern_id": "invoice-paid",
+      "scenario": "Customer pays an invoice",
+      "trigger_event": "invoice::InvoicePaid",
+      "recorder_method": "TransactionRecorder::recordInvoicePayment(invoice, exchange_rate_snapshot?)",
+      "kind": "invoice_payment",
+      "transactions": [
+        {
+          "kind": "invoice_payment",
+          "reference_type": "Invoice",
+          "reference_id": "{invoice.id}",
+          "amount": "{invoice.total_amount_cents}",
+          "ledger_entries": [
+            { "account": "cash", "side": "debit", "amount": "{invoice.total_amount_cents}", "description": "Cash received on invoice {invoice.number}" },
+            { "account": "accounts_receivable", "side": "credit", "amount": "{invoice.total_amount_cents}", "description": "AR cleared for invoice {invoice.number}" }
+          ]
+        }
+      ],
+      "balance_check": "SUM(debits) = {invoice.total_amount_cents}, SUM(credits) = {invoice.total_amount_cents}, delta = 0",
+      "regulator_notes": "The primary revenue-recording flow. Money moved in from a customer paying the invoice. Note: the initial invoice creation debits AR + credits revenue in the invoice module's own transaction (separate movement, not this pattern)."
+    },
+    {
+      "pattern_id": "refund-issued",
+      "scenario": "Customer receives a refund",
+      "trigger_event": "refund::RefundIssued",
+      "recorder_method": "TransactionRecorder::recordRefund(refund, source_invoice_payment_transaction, exchange_rate_snapshot?)",
+      "kind": "refund_issued + adjustment (two transactions)",
+      "transactions": [
+        {
+          "kind": "refund_issued",
+          "reference_type": "Refund",
+          "reference_id": "{refund.id}",
+          "source_transaction_id": "{original_invoice_payment_transaction.id}",
+          "reversal_reason": "refund",
+          "amount": "{refund.amount_cents}",
+          "ledger_entries": [
+            { "account": "refunds_owed", "side": "debit", "amount": "{refund.amount_cents}", "description": "Refund liability recognized" },
+            { "account": "cash", "side": "credit", "amount": "{refund.amount_cents}", "description": "Money removed from cash" }
+          ]
+        },
+        {
+          "kind": "adjustment",
+          "reference_type": "Refund",
+          "reference_id": "{refund.id}",
+          "source_transaction_id": "{original_invoice_payment_transaction.id}",
+          "reversal_reason": "refund",
+          "amount": "{refund.amount_cents}",
+          "ledger_entries": [
+            { "account": "refunds_expense", "side": "debit", "amount": "{refund.amount_cents}", "description": "Refund recognized as expense" },
+            { "account": "revenue", "side": "credit", "amount": "{refund.amount_cents}", "description": "Revenue reversed" }
+          ]
+        }
+      ],
+      "balance_check": "Transaction 1: SUM(debits) = {refund.amount_cents}, SUM(credits) = {refund.amount_cents}, delta = 0. Transaction 2: SUM(debits) = {refund.amount_cents}, SUM(credits) = {refund.amount_cents}, delta = 0.",
+      "regulator_notes": "Every refund produces TWO transactions — one for the money flow, one for the revenue reversal. Both reference the same original invoice_payment transaction via source_transaction_id. Regulator can trace: invoice_payment (revenue recognized) → refund_issued (money out) + adjustment (revenue reversed) — net effect: zero revenue + net cash outflow of refund.amount_cents."
+    },
+    {
+      "pattern_id": "chargeback-debited",
+      "scenario": "Customer files chargeback with their bank",
+      "trigger_event": "chargeback::ChargebackFiled",
+      "recorder_method": "TransactionRecorder::recordChargeback(chargeback, source_invoice_payment_transaction, exchange_rate_snapshot?)",
+      "kind": "chargeback_debit",
+      "transactions": [
+        {
+          "kind": "chargeback_debit",
+          "reference_type": "Chargeback",
+          "reference_id": "{chargeback.id}",
+          "source_transaction_id": "{original_invoice_payment_transaction.id}",
+          "reversal_reason": "chargeback",
+          "amount": "{chargeback.amount_cents}",
+          "ledger_entries": [
+            { "account": "chargebacks_expense", "side": "debit", "amount": "{chargeback.amount_cents}", "description": "Chargeback loss recognized" },
+            { "account": "cash", "side": "credit", "amount": "{chargeback.amount_cents}", "description": "Money removed by the bank" }
+          ]
+        }
+      ],
+      "balance_check": "SUM(debits) = {chargeback.amount_cents}, SUM(credits) = {chargeback.amount_cents}, delta = 0",
+      "regulator_notes": "Distinct from refund_issued because chargebacks are INVOLUNTARY. Revenue is NOT reversed (the underlying invoice remains paid from an accounting perspective — the bank forced a chargeback but the customer's obligation to pay stands). If the tenant later loses the dispute, an additional adjustment records the write-off; if won, the money returns via a reversal (currently manual accounting_adjustment)."
+    },
+    {
+      "pattern_id": "coupon-redeemed",
+      "scenario": "Customer redeems a coupon on a purchase",
+      "trigger_event": "coupon::CouponRedeemed",
+      "recorder_method": "TransactionRecorder::recordCouponCredit(coupon_redemption)",
+      "kind": "coupon_credit",
+      "transactions": [
+        {
+          "kind": "coupon_credit",
+          "reference_type": "CouponRedemption",
+          "reference_id": "{coupon_redemption.id}",
+          "amount": "{coupon_redemption.discount_cents}",
+          "ledger_entries": [
+            { "account": "coupons_expense", "side": "debit", "amount": "{coupon_redemption.discount_cents}", "description": "Coupon discount recognized as marketing expense" },
+            { "account": "revenue", "side": "credit", "amount": "{coupon_redemption.discount_cents}", "description": "Revenue reduction for the coupon discount" }
+          ]
+        }
+      ],
+      "balance_check": "SUM(debits) = {coupon_redemption.discount_cents}, SUM(credits) = {coupon_redemption.discount_cents}, delta = 0",
+      "regulator_notes": "Recognizes the coupon as marketing expense + revenue reduction. This transaction fires AT the invoice payment (in the same DB transaction typically). The following invoice_payment transaction then records the full amount that hit cash + the AR. Net effect on revenue: (invoice.subtotal - coupon.discount) — recognized via the two paired transactions."
+    },
+    {
+      "pattern_id": "tax-remitted",
+      "scenario": "Tenant files + pays tax to a regulator",
+      "trigger_event": "tax::TaxRemitted",
+      "recorder_method": "TransactionRecorder::recordTaxRemittance(tax_remittance, exchange_rate_snapshot?)",
+      "kind": "tax_remittance",
+      "transactions": [
+        {
+          "kind": "tax_remittance",
+          "reference_type": "TaxRemittance",
+          "reference_id": "{tax_remittance.id}",
+          "amount": "{tax_remittance.amount_cents}",
+          "ledger_entries": [
+            { "account": "tax_payable", "side": "debit", "amount": "{tax_remittance.amount_cents}", "description": "Tax liability cleared" },
+            { "account": "cash", "side": "credit", "amount": "{tax_remittance.amount_cents}", "description": "Money to tax authority" }
+          ]
+        }
+      ],
+      "balance_check": "SUM(debits) = {tax_remittance.amount_cents}, SUM(credits) = {tax_remittance.amount_cents}, delta = 0",
+      "regulator_notes": "Clears the tax_payable liability. The GL report's tax_payable slice + this transaction's history give regulators the full VAT filing audit trail."
+    },
+    {
+      "pattern_id": "gateway-fee-charged",
+      "scenario": "Payment gateway charges a processing fee",
+      "trigger_event": "payment::PaymentCaptured (when gateway_fee_cents > 0)",
+      "recorder_method": "TransactionRecorder::recordGatewayFee(payment)",
+      "kind": "fee_charge",
+      "transactions": [
+        {
+          "kind": "fee_charge",
+          "reference_type": "Payment",
+          "reference_id": "{payment.id}",
+          "amount": "{payment.gateway_fee_cents}",
+          "ledger_entries": [
+            { "account": "gateway_fees", "side": "debit", "amount": "{payment.gateway_fee_cents}", "description": "Gateway fee expense" },
+            { "account": "cash", "side": "credit", "amount": "{payment.gateway_fee_cents}", "description": "Fee removed by gateway" }
+          ]
+        }
+      ],
+      "balance_check": "SUM(debits) = {payment.gateway_fee_cents}, SUM(credits) = {payment.gateway_fee_cents}, delta = 0",
+      "regulator_notes": "Records the fee as a separate transaction from the associated invoice_payment (for clean fee tracking). Ops teams review gateway_fees over time to negotiate rate reductions."
+    },
+    {
+      "pattern_id": "write-off",
+      "scenario": "Invoice marked uncollectible + written off",
+      "trigger_event": "invoice::InvoiceWrittenOff",
+      "recorder_method": "TransactionRecorder::recordWriteOff(invoice)",
+      "kind": "write_off",
+      "transactions": [
+        {
+          "kind": "write_off",
+          "reference_type": "Invoice",
+          "reference_id": "{invoice.id}",
+          "amount": "{invoice.total_amount_cents}",
+          "ledger_entries": [
+            { "account": "write_offs", "side": "debit", "amount": "{invoice.total_amount_cents}", "description": "Loss recognized on write-off" },
+            { "account": "accounts_receivable", "side": "credit", "amount": "{invoice.total_amount_cents}", "description": "Receivable removed" }
+          ]
+        }
+      ],
+      "balance_check": "SUM(debits) = {invoice.total_amount_cents}, SUM(credits) = {invoice.total_amount_cents}, delta = 0",
+      "regulator_notes": "Distinct from refund_issued — a refund reverses a PAID transaction; a write-off recognizes a NEVER-PAID invoice as loss. Regulators + auditors review write_offs to verify collection efforts were made + to identify uncollectibility patterns."
+    },
+    {
+      "pattern_id": "bank-deposit",
+      "scenario": "Tenant moves cash from operational cash to a bank deposit",
+      "trigger_event": "internal — TransactionRecorder invoked from a support tool or scheduled bank-sweep",
+      "recorder_method": "TransactionRecorder::recordBankDeposit(amount_cents, currency, description)",
+      "kind": "bank_deposit",
+      "transactions": [
+        {
+          "kind": "bank_deposit",
+          "reference_type": null,
+          "reference_id": null,
+          "amount": "{amount_cents}",
+          "ledger_entries": [
+            { "account": "bank_deposits", "side": "debit", "amount": "{amount_cents}", "description": "{description}" },
+            { "account": "cash", "side": "credit", "amount": "{amount_cents}", "description": "Cash to bank" }
+          ]
+        }
+      ],
+      "balance_check": "SUM(debits) = {amount_cents}, SUM(credits) = {amount_cents}, delta = 0",
+      "regulator_notes": "External banking flow — the transaction records the movement; the actual bank integration happens outside this module. Reversal via bank_withdrawal pattern."
+    },
+    {
+      "pattern_id": "bank-withdrawal",
+      "scenario": "Tenant moves cash from bank deposit back to operational cash",
+      "trigger_event": "internal — TransactionRecorder invoked from a support tool",
+      "recorder_method": "TransactionRecorder::recordBankWithdrawal(amount_cents, currency, description)",
+      "kind": "bank_withdrawal",
+      "transactions": [
+        {
+          "kind": "bank_withdrawal",
+          "reference_type": null,
+          "reference_id": null,
+          "amount": "{amount_cents}",
+          "ledger_entries": [
+            { "account": "cash", "side": "debit", "amount": "{amount_cents}", "description": "Cash from bank" },
+            { "account": "bank_deposits", "side": "credit", "amount": "{amount_cents}", "description": "{description}" }
+          ]
+        }
+      ],
+      "balance_check": "SUM(debits) = {amount_cents}, SUM(credits) = {amount_cents}, delta = 0",
+      "regulator_notes": "Mirror of bank_deposit — cash moves back to operational."
+    },
+    {
+      "pattern_id": "currency-converted",
+      "scenario": "Tenant converts cash from one currency to another",
+      "trigger_event": "internal — TransactionRecorder invoked from a support tool",
+      "recorder_method": "TransactionRecorder::recordCurrencyConversion(source_cash_cents, source_currency, target_cash_cents, target_currency, exchange_rate_snapshot)",
+      "kind": "currency_conversion",
+      "transactions": [
+        {
+          "kind": "currency_conversion",
+          "reference_type": null,
+          "reference_id": null,
+          "amount": "{source_cash_cents}",
+          "currency": "{source_currency}",
+          "base_amount_cents": "{target_cash_cents in base currency terms}",
+          "ledger_entries": [
+            { "account": "cash", "side": "debit", "amount": "{target_cash_cents}", "account_currency": "{target_currency}", "description": "Cash gained in target currency" },
+            { "account": "cash", "side": "credit", "amount": "{source_cash_cents}", "account_currency": "{source_currency}", "description": "Cash lost in source currency" }
+          ]
+        }
+      ],
+      "balance_check": "This is the ONE exception to the single-currency-per-transaction invariant. Debits are in target_currency; credits are in source_currency. TransactionObserver::finalize() balances by base_currency-normalized amounts using exchange_rate_to_base. Rounding differences (typically ≤ 1 cent) recorded as a companion adjustment transaction to preserve exact balance.",
+      "regulator_notes": "Rare — explicit FX conversion of cash. Most cross-currency handled implicitly via the transaction.currency + exchange_rate_to_base fields on business transactions."
+    }
+  ],
+  "notes": [
+    "All 10 patterns preserve the double-entry invariant: SUM(debits) == SUM(credits) per transaction, single-currency-per-transaction (except currency_conversion which normalizes via base_currency).",
+    "The refund-issued pattern is the only one that ships as TWO transactions — because refunds simultaneously affect cash AND revenue recognition. Every other business-critical pattern is one transaction.",
+    "Every pattern preserves the reference chain — reference_type + reference_id resolve to the originating business entity for the regulator audit trail.",
+    "The source_transaction_id + reversal_reason pair appears on refund + chargeback + write-off patterns because each of them is reversing a prior invoice_payment. Manual adjustment reversals use reversal_reason='accounting_adjustment' via POST /transactions/{id}/reverse.",
+    "New patterns land here as new modules integrate. Wave 4.5 adds explicit patterns from the payment / refund / chargeback modules; Wave 5+ may add revenue-recognition patterns (deferred_revenue → revenue) + payables patterns (accounts_payable ↔ cash)."
+  ]
+}

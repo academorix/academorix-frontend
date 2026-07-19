@@ -1,0 +1,35 @@
+{
+  "id": "academorix://modules/transaction/policies",
+  "$version": 1,
+  "title": "transaction — authorization policies",
+  "description": "Two policies, one per owned model. WRITE actions on Transaction + TransactionLedgerEntry are NEVER exposed to HTTP — transactions are recorded ONLY through internal service calls (TransactionRecorder) by invoice / payment / refund / chargeback modules. The one exception is the reversal endpoint, which creates a NEW offsetting transaction (never mutates). Ledger entries are ALWAYS internal — no HTTP surface for them at all.",
+  "policies": [
+    {
+      "model": "Transaction",
+      "class": "Academorix\\Finance\\Transaction\\Policies\\TransactionPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "transaction.viewAny", "scope": "admin + finance role only. Support role has cross-tenant view via the platform plane, NOT the tenant plane." },
+        { "action": "view", "permission": "transaction.view", "scope": "admin + finance role. Same scoping as viewAny." },
+        { "action": "create", "permission": "NEVER", "scope": "transactions are recorded ONLY via TransactionRecorder from invoice / payment / refund / chargeback modules. Direct HTTP create is refused with `TRANSACTION_MANUAL_CREATE_FORBIDDEN` at the route layer (there is no POST /transactions endpoint; the policy exists to defend against a future misconfigured route)." },
+        { "action": "update", "permission": "NEVER", "scope": "transactions are IMMUTABLE after post. TransactionObserver.updating refuses at the model layer; this policy is defense-in-depth." },
+        { "action": "delete", "permission": "NEVER", "scope": "transactions are append-only. Hard-purge only via PurgeExpiredTransactionDataJob (after archive to compliance-storage)." },
+        { "action": "reverse", "permission": "transaction.reverse", "scope": "admin ONLY (finance role does NOT hold reverse). Every reversal creates a new offsetting transaction — the original stays immutable. The reversal endpoint requires a written note + writes to audits with 7-year retention." },
+        { "action": "viewLedgerEntries", "permission": "transaction.ledger_entries.view", "scope": "same audience as view — admin + finance role." },
+        { "action": "platformViewAny", "permission": "platform.transaction.viewAny", "scope": "platform_ops + support — cross-tenant support tooling" },
+        { "action": "platformView", "permission": "platform.transaction.view" }
+      ]
+    },
+    {
+      "model": "TransactionLedgerEntry",
+      "class": "Academorix\\Finance\\Transaction\\Policies\\TransactionLedgerEntryPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "transaction.ledger_entries.viewAny", "scope": "admin + finance role. Ledger entries are the audit-critical row-level record — every read is logged." },
+        { "action": "view", "permission": "transaction.ledger_entries.view", "scope": "same as viewAny." },
+        { "action": "create", "permission": "NEVER", "scope": "ledger entries are created ONLY by TransactionRecorder inside the parent transaction's atomic DB transaction. Every entry has exactly one point of entry: the transaction's creating hook. There is no HTTP surface." },
+        { "action": "update", "permission": "NEVER", "scope": "ledger entries are IMMUTABLE (append-only). Corrections happen via new reversal transactions." },
+        { "action": "delete", "permission": "NEVER", "scope": "hard-purge cascades from PurgeExpiredTransactionDataJob via FK CASCADE after the parent transaction is archived." },
+        { "action": "platformViewAny", "permission": "platform.transaction.ledger_entries.viewAny", "scope": "platform_ops — cross-tenant ledger-integrity investigations during audits" }
+      ]
+    }
+  ]
+}

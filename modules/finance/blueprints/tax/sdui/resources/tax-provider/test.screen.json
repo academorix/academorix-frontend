@@ -1,0 +1,107 @@
+{
+  "id": "tax.resources.tax-provider.test",
+  "title": "Test tax provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/providers/:providerId/test",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-provider", "action": "test" },
+  "requiresPermission": "tax.providers.test",
+  "requiresEntitlement": "tax_capture",
+  "dataSources": [
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "url": "/api/v1/tax/providers/{{routeParams.providerId}}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Test ' + provider.provider" } } },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Sandbox calculation",
+            "description": "Sends a synthetic calculation via the provider's sandbox endpoint. Does NOT persist a tax_calculations row. Used for onboarding validation + post-credential-rotation smoke tests."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-3" },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "tax.jurisdiction-picker",
+              "props": { "label": "Jurisdiction", "required": true },
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "jurisdiction_id", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "NumberField",
+              "props": { "label": "Amount (cents)", "placeholder": "10000", "min": 1, "required": true },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "amount_cents", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": { "label": "Currency (ISO 4217)", "placeholder": "USD", "maxLength": 3, "required": true },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "currency", "valueExpr": "$value.toUpperCase()" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "leadingIcon": "paper-airplane", "children": "Send test calculation" },
+              "bindings": { "disabled": { "$expr": "!form.jurisdiction_id || !form.amount_cents || !form.currency" } },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/tax/providers/{{provider.id}}/test",
+                  "body": {
+                    "jurisdiction": "{{form.jurisdiction_id}}",
+                    "amount_cents": "{{form.amount_cents}}",
+                    "currency": "{{form.currency}}"
+                  },
+                  "onResult": {
+                    "kind": "state.set",
+                    "field": "test_result"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "bindings": { "hidden": { "$expr": "!state.test_result" } },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Test result" } },
+            {
+              "kind": "DescriptionList",
+              "props": {
+                "items": [
+                  { "label": "Outcome", "field": "state.test_result.outcome" },
+                  { "label": "Computed tax", "field": "state.test_result.tax_amount_cents", "formatter": "currency", "currencyField": "state.test_result.currency" },
+                  { "label": "Effective rate", "field": "state.test_result.effective_rate_percentage", "formatter": "percent" },
+                  { "label": "Latency", "field": "state.test_result.latency_ms", "formatter": "duration-ms" },
+                  { "label": "Provider transaction ID", "field": "state.test_result.provider_transaction_id", "className": "font-mono" },
+                  { "label": "Error", "field": "state.test_result.error_message" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

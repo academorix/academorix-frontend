@@ -1,0 +1,163 @@
+{
+  "id": "chargeback.resources.chargeback-pending-evidence.queue",
+  "title": "Pending evidence queue",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/chargebacks/pending-evidence",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "chargeback", "entity": "chargeback-pending-evidence", "action": "list" },
+  "requiresPermission": "chargebacks.submit-evidence",
+  "requiresEntitlement": "chargeback_evidence_submission",
+  "dataSources": [
+    {
+      "name": "queue",
+      "kind": "http.get",
+      "url": "/api/v1/chargebacks/pending-evidence",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "broadcasts": [
+    { "channel": "tenant.{tenantId}.chargebacks.pending-evidence", "onEvent": ["*"], "action": "refresh" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": { "as": "h1", "className": "text-2xl font-semibold" },
+              "children": "Pending evidence queue"
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-sm text-muted mt-1" },
+              "children": "Chargebacks awaiting your evidence submission — sorted by deadline (soonest first)."
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Deadline within", "menuTrigger": "focus", "className": "min-w-40" },
+              "props_items": [
+                { "id": "1", "label": "1 day" },
+                { "id": "3", "label": "3 days" },
+                { "id": "7", "label": "7 days" },
+                { "id": "14", "label": "14 days" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "days_remaining_lte", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 gap-4" },
+          "bindings": {
+            "items": { "$ref": "queue" },
+            "isLoading": { "$ref": "queue.isLoading" }
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "check-circle", "className": "size-12 mx-auto text-success" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "All caught up!" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "No chargebacks are pending evidence submission." } }
+            ]
+          },
+          "itemRenderer": {
+            "kind": "Card",
+            "props": { "className": "p-4" },
+            "children": [
+              {
+                "kind": "View",
+                "props": { "className": "flex items-start justify-between gap-4" },
+                "children": [
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col gap-1" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "props": { "className": "font-mono font-medium" },
+                            "bindings": { "children": { "$ref": "row.chargeback_number" } }
+                          },
+                          {
+                            "kind": "Widget",
+                            "widget": "chargeback.network-badge",
+                            "bindings": { "network": { "$ref": "row.network" } }
+                          },
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "sm" },
+                            "bindings": {
+                              "variant": {
+                                "$expr": "row.days_remaining < 1 ? 'danger' : (row.days_remaining < 3 ? 'warning' : (row.days_remaining < 7 ? 'accent' : 'success'))"
+                              },
+                              "children": {
+                                "$expr": "row.days_remaining < 1 ? ('< 24h remaining') : (row.days_remaining + ' day' + (row.days_remaining !== 1 ? 's' : '') + ' remaining')"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "Text",
+                        "props": { "className": "text-sm text-muted" },
+                        "bindings": { "children": { "$ref": "row.reason_description" } }
+                      },
+                      {
+                        "kind": "Widget",
+                        "widget": "chargeback.evidence-completeness-indicator",
+                        "bindings": { "percent": { "$ref": "row.current_evidence_completeness_percent" } }
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col gap-2" },
+                    "children": [
+                      {
+                        "kind": "Button",
+                        "props": { "variant": "primary", "size": "sm", "leadingIcon": "document-check", "children": "Submit evidence" },
+                        "actions": {
+                          "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + row.id + '/submit-evidence'" }
+                        }
+                      },
+                      {
+                        "kind": "Button",
+                        "props": { "variant": "outline", "size": "sm", "leadingIcon": "check-circle", "children": "Accept via RDR" },
+                        "actions": {
+                          "onPress": { "kind": "navigate", "toExpr": "'/tenant/chargebacks/' + row.id + '/accept'" }
+                        },
+                        "bindings": {
+                          "hidden": { "$expr": "!(row.rdr_eligible === true && hasPermission('chargebacks.accept'))" }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

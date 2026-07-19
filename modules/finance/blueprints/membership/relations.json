@@ -1,0 +1,219 @@
+{
+  "id": "academorix://modules/membership/relations",
+  "$version": 1,
+  "title": "membership — model relationships",
+  "description": "Four owned entities. Membership belongs to Tenant + Region + Branch + Athlete + MembershipPlan directly + optional AthleteGuardian + Coupon + TaxCalculation. MembershipPlan belongs to Tenant + Branch + optional AgeGroup. MembershipRenewal belongs to Tenant + Membership + optional Invoice + optional Coupon. Pass belongs to Tenant + Membership + optional Session. None carry `application_id` / `organization_id` / `scope_node_id` — forbidden columns. Cascades organization + application through the belongs-to chain.",
+  "internal": [
+    {
+      "from": "MembershipPlan",
+      "kind": "hasMany",
+      "to": "Membership",
+      "foreignKey": "membership_plan_id"
+    },
+    {
+      "from": "Membership",
+      "kind": "hasMany",
+      "to": "MembershipRenewal",
+      "foreignKey": "membership_id"
+    },
+    {
+      "from": "Membership",
+      "kind": "hasMany",
+      "to": "Pass",
+      "foreignKey": "membership_id"
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Membership",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Membership",
+      "kind": "belongsTo",
+      "to": "region::Region",
+      "foreignKey": "region_id",
+      "onDelete": "restrict",
+      "description": "Commercial + regulatory zone. Drives currency + tax rules. Per hierarchy §14 belongs-to matrix."
+    },
+    {
+      "from": "Membership",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Membership",
+      "kind": "belongsTo",
+      "to": "athlete::Athlete",
+      "foreignKey": "athlete_id",
+      "onDelete": "restrict",
+      "description": "The athlete the membership entitles. RESTRICT — athletes cannot be archived while active memberships reference them."
+    },
+    {
+      "from": "Membership",
+      "kind": "belongsTo",
+      "to": "membership::MembershipPlan",
+      "foreignKey": "membership_plan_id",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Membership",
+      "kind": "belongsTo",
+      "to": "athlete_guardian::AthleteGuardian",
+      "foreignKey": "primary_guardian_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "The AthleteGuardian responsible for payment. Nullable — memberships for adult athletes have no guardian. When the guardian relationship terminates, set null (admin notified)."
+    },
+    {
+      "from": "Membership",
+      "kind": "belongsTo",
+      "to": "coupon::Coupon",
+      "foreignKey": "coupon_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Coupon redeemed at signing. RESTRICT — coupons cannot be hard-deleted while memberships reference their redemption (audit trail)."
+    },
+    {
+      "from": "Membership",
+      "kind": "belongsTo",
+      "to": "tax::TaxCalculation",
+      "foreignKey": "tax_calculation_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Tax calculation at signing. RESTRICT — cannot be deleted while memberships reference it."
+    },
+
+    {
+      "from": "MembershipPlan",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "MembershipPlan",
+      "kind": "belongsTo",
+      "to": "branch::Branch",
+      "foreignKey": "branch_id",
+      "onDelete": "restrict",
+      "description": "Plans belong to ONE branch. Cross-branch offering requires duplicating the plan."
+    },
+    {
+      "from": "MembershipPlan",
+      "kind": "belongsTo",
+      "to": "age_group::AgeGroup",
+      "foreignKey": "age_group_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Optional age-group scoping."
+    },
+
+    {
+      "from": "MembershipRenewal",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "MembershipRenewal",
+      "kind": "belongsTo",
+      "to": "membership::Membership",
+      "foreignKey": "membership_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT — memberships cannot be hard-deleted while renewal audit rows reference them. Financial retention outlives the membership."
+    },
+    {
+      "from": "MembershipRenewal",
+      "kind": "belongsTo",
+      "to": "invoice::Invoice",
+      "foreignKey": "invoice_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Wave 4.5+ — the invoice for this renewal period."
+    },
+    {
+      "from": "MembershipRenewal",
+      "kind": "belongsTo",
+      "to": "coupon::Coupon",
+      "foreignKey": "coupon_id",
+      "nullable": true,
+      "onDelete": "restrict"
+    },
+
+    {
+      "from": "Pass",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Pass",
+      "kind": "belongsTo",
+      "to": "membership::Membership",
+      "foreignKey": "membership_id",
+      "onDelete": "restrict"
+    },
+    {
+      "from": "Pass",
+      "kind": "belongsTo",
+      "to": "session::Session",
+      "foreignKey": "consumed_by_session_id",
+      "nullable": true,
+      "onDelete": "restrict",
+      "description": "Wave 3+ session module."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream Wave 4.5+ modules attach:",
+    "examples": [
+      "invoice::Invoice — carries membership_id back-reference on the invoice side (atomic invoice creation)",
+      "transaction::Transaction — carries membership_id for payment records",
+      "payment::PaymentIntent — carries membership_id",
+      "refund::Refund — references membership_id + renewal_id",
+      "chargeback::Chargeback — references membership_id + transaction_id",
+      "growth::marketing::WinBackCampaign — references membership_id post-lapsed"
+    ],
+    "onDelete": "RESTRICT by convention on domain FKs referencing memberships.id; PurgeMembershipDataForErasedTenant coordinates cascade order for TenantErased."
+  },
+  "morphs": [],
+  "accessor_chain": {
+    "description": "The Membership model delegates presentation accessors to its aggregates.",
+    "Membership": {
+      "athlete_display_name": "athlete->display_name",
+      "plan_display_name": "membership_plan->name",
+      "primary_guardian_display_name": "primary_guardian->user->display_name",
+      "region_display_name": "region->name",
+      "branch_display_name": "branch->name",
+      "is_currently_active": "status = 'active'",
+      "requires_renewal_soon": "status = 'active' AND next_renewal_at IS NOT NULL AND next_renewal_at BETWEEN now() AND now() + 7 days",
+      "remaining_passes_count": "passes()->where('consumed_at', null)->whereBetween('valid_from', ..., 'valid_until', ...)->count()",
+      "days_until_renewal": "computed floor((next_renewal_at - now()) / 86400) when active",
+      "cancellation_kind": "cancelled_at IS NULL ? null : (cancellation_effective_at = cancelled_at ? 'hard_immediate' : 'soft_period_end')"
+    },
+    "MembershipPlan": {
+      "is_at_capacity": "current_active_members >= max_active_members",
+      "seats_remaining": "max_active_members - current_active_members",
+      "trial_supported": "trial_days > 0",
+      "carries_addons": "addon_config IS NOT NULL AND addon_config != '{}'"
+    },
+    "Pass": {
+      "is_available": "consumed_at IS NULL AND now() BETWEEN valid_from AND valid_until AND refunded_at IS NULL",
+      "is_expired": "consumed_at IS NULL AND now() > valid_until",
+      "is_consumed": "consumed_at IS NOT NULL AND refunded_at IS NULL"
+    }
+  },
+  "notes": [
+    "Membership carries `application_id` INDIRECTLY via its Tenant.",
+    "Cascades organization + application through tenant → application.",
+    "region_id + branch_id + athlete_id + membership_plan_id + tenant_id + billing_interval + currency + price_snapshot_cents + coupon_snapshot + tax_calculation_snapshot are IMMUTABLE post-create.",
+    "Plan changes (upgrade/downgrade) create a NEW Membership row + terminate the old — never mutate membership_plan_id in place."
+  ]
+}

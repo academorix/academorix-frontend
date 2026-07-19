@@ -1,0 +1,138 @@
+{
+  "id": "academorix://modules/tax/compliance",
+  "$version": 1,
+  "title": "tax — compliance evidence",
+  "description": "Tax is FINANCIAL-RECORD-CRITICAL. Every calculation is a record subject to regulator audit for 7-10 years (VAT MOSS, US Wayfair, EU VAT Directive, Canadian GST/HST). Exemption certificates are legal documents. PCI-DSS scope (never card data) applies. GDPR Art. 6(1)(c) legal-obligation basis for retention.",
+  "regimes": {
+    "vat_moss": {
+      "applicable": true,
+      "controls": [
+        {
+          "regime": "EU VAT MOSS (Mini One Stop Shop)",
+          "principle": "quarterly VAT filing for digital services across EU member states",
+          "evidence": "tax_calculations rows include the customer's jurisdiction + rate applied + source_amount + tax_amount. The annual/quarterly report endpoint aggregates by jurisdiction for MOSS filing. Rate snapshots are IMMUTABLE so filed amounts always match issued invoices."
+        }
+      ]
+    },
+    "us_wayfair": {
+      "applicable": true,
+      "controls": [
+        {
+          "regime": "South Dakota v. Wayfair, Inc.",
+          "principle": "economic nexus tracking for US sales tax",
+          "evidence": "tax_jurisdictions.nexus_type supports 'physical', 'economic', 'marketplace' — tenants declare their nexus per state. The provider integration (TaxJar / Avalara) reads nexus_addresses on each call. Every calculation snapshots the applicable nexus in provider_metadata for regulator audit."
+        }
+      ]
+    },
+    "gst_hst": {
+      "applicable": true,
+      "controls": [
+        {
+          "regime": "Canadian GST/HST",
+          "principle": "federal + provincial tax rates",
+          "evidence": "tax_rates supports multiple concurrent rates per jurisdiction (federal GST 5% + provincial e.g. Ontario HST 8% aggregates to 13% HST). rate_type='gst' | 'hst'. Effective-range time bounds handle provincial fiscal-year rate changes."
+        }
+      ]
+    },
+    "vat_directive": {
+      "applicable": true,
+      "controls": [
+        {
+          "regime": "EU VAT Directive 2006/112/EC",
+          "principle": "EU-wide VAT compliance",
+          "evidence": "Every EU jurisdiction is seeded in the platform reference set with its current standard VAT rate. Effective-range time bounds handle rate changes at fiscal-year boundaries (e.g. UK 20% → 17.5% during COVID, then back to 20%)."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(c)",
+          "principle": "legal basis: compliance with legal obligation",
+          "evidence": "Tax data retention is required by tax authorities (7 years US IRS, 10 years EU under certain regimes). GDPR Art. 17(3)(b) carve-out permits retention beyond a data subject erasure request when necessary to comply with a legal obligation. tax_calculations survive UserErased with subject-identifying fields nulled; the calculation record itself persists for regulator audit."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "Certificate documents accessed via time-limited S3 signed URLs, never distributed as base64 blobs in API responses. certificate_number is CONFIDENTIAL — support role sees redacted view. provider credentials + certificate_document_url encrypted at rest."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Customer subject-of-data export includes tax_calculations where subject matches. The export shows applied rate + exemption + calculated tax at each event; certificate documents are exported via 24h-signed S3 URLs (not the underlying encryption keys)."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure (with financial-retention carve-out)",
+          "evidence": "TenantErased cascades hard-delete of tax_rates + tax_jurisdictions + tax_exemptions via FK CASCADE. tax_calculations MIGRATE to a compliance archive linked to invoice retention rather than hard-delete (regulator audit may need them years after the tenant's erasure event). UserErased nulls customer-identifying fields on tax_exemptions while preserving the calculation record."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "processor contracts",
+          "evidence": "TaxJar / Avalara / Stripe Tax are Data Processors under Art. 28 — tenant admin acknowledges DPA references before configuring the provider. subprocessors.json documents each. NativeCalculator + CustomWebhook are not Academorix processors (local computation / tenant-hosted respectively)."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical + physical access",
+          "evidence": "tax_provider_configs.config (credentials) is encrypted at rest. certificate_document_url (exemption certificate location) is encrypted at rest. Access restricted to owner + admin + finance roles. Support role sees redacted view."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All provider endpoints use TLS 1.2+. Guzzle enforces certificate validation. HMAC signing for CustomWebhook uses SHA256. Certificate documents accessed via time-limited S3 signed URLs (default 15min expiry, max 4h)."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "TaxProviderCircuitBreakerOpened + TaxCalculationFailed + TaxCalculationDriftDetected are P1 signals. Every fire pages finance ops. academorix.tax.calculations.failed_total + academorix.tax.calculations.drift_detected_total counters tracked; spikes surface a compliance-relevant tax pipeline degradation."
+        },
+        {
+          "criterion": "CC7.3",
+          "principle": "system operations",
+          "evidence": "The ReconcileProviderCalculationsJob spot-checks 1% of calculations weekly against provider re-computation. Divergence triggers TaxCalculationDriftDetected + human review before regulator filing."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "Calculation-freeze pattern (§4 readme) + fail-safe provider policy (no silent fallback) + immutable audit trail on tax_calculations = defense-in-depth against the compliance-critical failure modes (retroactive rate changes, silent under-charging, missing regulator audit trail)."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "3.4",
+          "principle": "no PAN storage",
+          "evidence": "tax_calculations.source_amount_cents is a currency amount only. NO PAN / CVV / expiry / cardholder name on any tax row. Refund tax reversal carries only the negative amount (no card_last4). Payment references upstream `transaction` module tokens (Wave 4 peer)."
+        },
+        {
+          "requirement": "10.7",
+          "principle": "audit trail retention",
+          "evidence": "Every write to tax_rates / tax_jurisdictions / tax_exemptions / tax_calculations emits an audit row (Auditable trait). Financial-record retention: 7 years (10 for Enterprise via tax_extended_retention entitlement). tax_calculations are immutable after commit — no updates to audit."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "§1798.100",
+          "principle": "right to know",
+          "evidence": "Same as GDPR Art. 15 access. Users can request the full tax calculation history where they are the customer."
+        },
+        {
+          "section": "§1798.105",
+          "principle": "right to delete (with tax-record carve-out)",
+          "evidence": "CCPA §1798.105(d)(6) provides an explicit carve-out for records required to comply with a legal obligation. Tax records survive user delete request; the underlying user data is redacted while the calculation record persists."
+        }
+      ]
+    }
+  }
+}

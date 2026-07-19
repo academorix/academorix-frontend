@@ -1,0 +1,66 @@
+{
+  "id": "invoice.widgets.currency-picker",
+  "title": "Currency picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "namespace": "invoice",
+  "widget": "currency-picker",
+  "description": "ISO 4217 currency picker. Defaults to tenant.default_currency. Entitlement-aware — disables non-default currencies on Small tier without invoice_multi_currency. Used in the invoice create wizard + the invoice list filter + the credit-note create wizard.",
+  "props": {
+    "label": { "type": "string", "default": "Currency" },
+    "selectedKey": {
+      "type": "string",
+      "description": "Currently selected ISO 4217 code."
+    },
+    "placeholder": { "type": "string", "default": "Select currency..." },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
+    "showFullList": {
+      "type": "boolean",
+      "default": false,
+      "description": "true = show all ISO 4217 currencies. false = show the tenant's configured currency set from settings.invoice.enabled_currencies."
+    }
+  },
+  "dataSources": [
+    {
+      "name": "currencies",
+      "kind": "http.get",
+      "url": "/api/v1/reference/currencies",
+      "unwrap": "data",
+      "description": "Returns [{ code, name, symbol }] from the tax module's currency catalogue."
+    },
+    {
+      "name": "tenant",
+      "kind": "http.get",
+      "url": "/api/v1/tenants/me",
+      "unwrap": "data"
+    },
+    {
+      "name": "multi_currency_gate",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/invoice_multi_currency",
+      "unwrap": "data"
+    }
+  ],
+  "logic": {
+    "defaultCurrency": {
+      "expr": "tenant.default_currency"
+    },
+    "eligibleCurrencies": {
+      "expr": "multi_currency_gate.value_enabled ? currencies : currencies.filter(c => c.code == tenant.default_currency)"
+    }
+  },
+  "renderShape": {
+    "type": "ComboBox",
+    "menuTrigger": "focus",
+    "items": "{eligibleCurrencies}",
+    "itemLabelExpr": "$item.code + ' — ' + $item.name",
+    "itemIdField": "code",
+    "helpText": {
+      "when": "!multi_currency_gate.value_enabled",
+      "text": "Multi-currency invoicing requires Medium tier. Upgrade to invoice in currencies other than {tenant.default_currency}."
+    }
+  },
+  "accessibility": {
+    "ariaLabel": "Select currency"
+  }
+}

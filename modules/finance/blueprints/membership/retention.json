@@ -1,0 +1,115 @@
+{
+  "id": "academorix://modules/membership/retention",
+  "$version": 1,
+  "title": "membership — retention windows",
+  "description": "Active + paused memberships never expire. Terminal memberships retain 7 years post-transition (SOX 404 + tax audit). Enterprise extends to 10 years via `membership_extended_retention` entitlement. Renewals + passes co-terminate with their parent membership. Refund + chargeback records survive tenant erasure in the compliance archive.",
+  "compliance_regimes_referenced": [
+    "sox_404 (7-year subscription revenue record retention)",
+    "gdpr Art. 17(3)(b) (legal-obligation retention exception)",
+    "consumer_protection (refund-policy audit trail)",
+    "tax audit multi-year lookback"
+  ],
+  "retention": [
+    {
+      "entity": "Membership — pending / active / paused",
+      "hot": { "days": "indefinite (until terminal transition)" }
+    },
+    {
+      "entity": "Membership — cancelled",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post cancelled_at)" },
+      "purge": {
+        "trigger": "> 7 years past cancelled_at (or > 10 years when `membership_extended_retention` on)",
+        "action": "hard delete via retention module + compliance archive stub for refund records"
+      }
+    },
+    {
+      "entity": "Membership — lapsed",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post lapsed_at)" },
+      "purge": {
+        "trigger": "> 7 years past lapsed_at",
+        "action": "hard delete",
+        "notes": "Lapsed lifetime_value_cents preserved in analytics archive (aggregated, non-PII)."
+      }
+    },
+    {
+      "entity": "Membership — refunded",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post refunded_at)" },
+      "purge": {
+        "trigger": "> 7 years past refunded_at",
+        "action": "hard delete",
+        "notes": "Refund records themselves live in compliance archive with distinct retention (10 years universal for chargeback + refund records — regulatory floor)."
+      }
+    },
+    {
+      "entity": "Membership — expired",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post expired_at)" },
+      "purge": {
+        "trigger": "> 7 years past expired_at",
+        "action": "hard delete"
+      }
+    },
+    {
+      "entity": "MembershipPlan — active",
+      "hot": { "days": "indefinite" }
+    },
+    {
+      "entity": "MembershipPlan — archived (is_active=false)",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post archive)" },
+      "purge": {
+        "trigger": "> 7 years past archive AND no membership references remain",
+        "action": "hard delete"
+      }
+    },
+    {
+      "entity": "MembershipRenewal (all statuses — append-only)",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post creation)" },
+      "purge": {
+        "trigger": "> 7 years past created_at + parent membership eligible for purge",
+        "action": "cascade delete with parent membership",
+        "notes": "Failed renewals preserved for the full retention window — dunning-effectiveness analytics need multi-year lookback."
+      }
+    },
+    {
+      "entity": "Pass — consumed",
+      "hot": { "days": 365 },
+      "cold": { "days": "2555 (7 years post consumed_at — audit)" },
+      "purge": {
+        "trigger": "> 7 years past consumed_at",
+        "action": "hard delete"
+      }
+    },
+    {
+      "entity": "Pass — unused expired",
+      "hot": { "days": 30 },
+      "cold": { "days": "90 (short retention — no audit value)" },
+      "purge": {
+        "trigger": "> 90 days past valid_until",
+        "action": "hard delete"
+      }
+    },
+    {
+      "entity": "coupon_snapshot + tax_calculation_snapshot JSONB",
+      "hot": { "days": "co-terminous with parent membership" },
+      "purge": {
+        "trigger": "parent membership hard-delete",
+        "action": "cascaded via the membership row"
+      }
+    }
+  ],
+  "extended_retention": {
+    "description": "Enterprise tenants may hold `membership_extended_retention` to extend all terminal-membership retention windows from 7 to 10 years. This applies uniformly to memberships + renewals; does NOT change consumed-pass retention (7 already covers audit); does NOT change unused-pass retention.",
+    "controlled_by": "membership_extended_retention entitlement",
+    "checked_by": "PurgeCompletedMembershipsJob at purge decision time"
+  },
+  "cross_reference": [
+    "TenantErased cascades hard-delete of every membership + plan + renewal + pass. Refund + chargeback records survive in compliance archive with 10-year regulatory floor.",
+    "AthleteArchived + cascade=true triggers soft-cancel of active memberships; terminal transition sets standard 7-year retention timer.",
+    "compliance module owns the refund + chargeback archive — retention there is a distinct policy that outlives this module's retention window."
+  ]
+}

@@ -1,0 +1,210 @@
+{
+  "id": "invoice.resources.invoice.list",
+  "title": "Invoices",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/invoices",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "invoice", "entity": "invoice", "action": "list" },
+  "requiresPermission": "invoice.invoices.viewAny",
+  "requiresEntitlement": "invoice_capture",
+  "dataSources": [
+    {
+      "name": "invoices",
+      "kind": "http.get",
+      "url": "/api/v1/invoices",
+      "unwrap": "data",
+      "queryFromFilters": true
+    },
+    {
+      "name": "aging_summary",
+      "kind": "http.get",
+      "url": "/api/v1/reports/invoice-aging",
+      "unwrap": "data"
+    },
+    {
+      "name": "invoice_slot",
+      "kind": "http.get",
+      "url": "/api/v1/entitlements/invoice_slot_per_month",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Invoices" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Track money owed by your customers. Create, finalize, and manage invoices + credit notes." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": { "size": "sm", "label": "Invoices this month" },
+                  "bindings": {
+                    "cap": { "$ref": "invoice_slot.value_cap" },
+                    "used": { "$ref": "invoice_slot.value_used" }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "children": "Create invoice", "className": "shrink-0" },
+                  "requiresPermission": "invoice.invoices.create",
+                  "actions": {
+                    "onPress": { "kind": "navigate", "to": "/tenant/invoices/create" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Widget",
+          "widget": "invoice.aging-timeline",
+          "props": { "compact": true, "className": "w-full" },
+          "bindings": {
+            "aging": { "$ref": "aging_summary" }
+          }
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "draft", "label": "Draft" },
+                { "id": "open", "label": "Open" },
+                { "id": "paid", "label": "Paid" },
+                { "id": "partially_paid", "label": "Partially paid" },
+                { "id": "pastdue", "label": "Past due" },
+                { "id": "void", "label": "Voided" },
+                { "id": "uncollectible", "label": "Uncollectible" },
+                { "id": "refunded", "label": "Refunded" },
+                { "id": "disputed", "label": "Disputed" },
+                { "id": "written_off", "label": "Written off" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Series", "menuTrigger": "focus", "className": "min-w-32" },
+              "props_items_source": "invoice.series-catalog",
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "series", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "Widget",
+              "widget": "invoice.currency-picker",
+              "props": { "label": "Currency", "className": "min-w-32" },
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "currency", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "DateRangePicker",
+              "props": { "label": "Issue date", "className": "min-w-64" },
+              "actions": {
+                "onChange": {
+                  "kind": "filter.setMany",
+                  "fields": { "from": "$value.start", "to": "$value.end" }
+                }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Past due only" },
+              "actions": {
+                "onChange": { "kind": "filter.set", "field": "past_due", "valueExpr": "$isSelected" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "invoices" },
+            "isLoading": { "$ref": "invoices.isLoading" }
+          },
+          "props": {
+            "className": "w-full",
+            "columns": [
+              { "field": "invoice_number", "label": "Number", "sortable": true, "width": 160 },
+              { "field": "customer_display", "label": "Customer", "sortable": false, "width": 220, "renderer": { "kind": "Text", "formatter": "customer" } },
+              { "field": "status", "label": "Status", "sortable": true, "width": 140, "renderer": { "widget": "invoice.invoice-status-chip" } },
+              { "field": "issue_date", "label": "Issued", "sortable": true, "width": 120, "formatter": "date" },
+              { "field": "due_date", "label": "Due", "sortable": true, "width": 140, "renderer": { "widget": "invoice.payment-terms-badge" } },
+              { "field": "total_cents", "label": "Total", "sortable": true, "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "currencyField": "currency", "align": "right" } },
+              { "field": "amount_due_cents", "label": "Due", "sortable": true, "width": 140, "renderer": { "kind": "Text", "formatter": "currency", "currencyField": "currency", "align": "right" } },
+              { "field": "created_at", "label": "Created", "sortable": true, "defaultSort": "desc", "width": 140, "formatter": "datetime-relative" }
+            ],
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/invoices/' + row.id"
+            },
+            "rowActions": [
+              {
+                "action": "finalize",
+                "label": "Finalize",
+                "icon": "check-circle",
+                "visibleWhen": "row.status == 'draft'",
+                "requiresPermission": "invoice.invoices.finalize",
+                "confirm": { "title": "Finalize invoice?", "message": "This will freeze the invoice + send it to the customer. Cannot be undone." },
+                "onPress": { "kind": "http.post", "urlExpr": "'/api/v1/invoices/' + row.id + '/finalize'" }
+              },
+              {
+                "action": "resend",
+                "label": "Resend email",
+                "icon": "envelope",
+                "visibleWhen": "row.status IN ['open', 'partially_paid', 'pastdue']",
+                "requiresPermission": "invoice.invoices.resend",
+                "onPress": { "kind": "http.post", "urlExpr": "'/api/v1/invoices/' + row.id + '/resend'" }
+              },
+              {
+                "action": "issue_credit_note",
+                "label": "Issue credit note",
+                "icon": "arrow-uturn-left",
+                "visibleWhen": "row.status IN ['paid', 'partially_paid', 'refunded', 'disputed', 'written_off']",
+                "requiresPermission": "invoice.credit-notes.create",
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/credit-notes/create?original_invoice_id=' + row.id" }
+              }
+            ]
+          },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "document-text", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No invoices yet" } },
+              { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Invoices are created automatically when customers purchase memberships, or you can create one manually." } },
+              {
+                "kind": "Button",
+                "props": { "variant": "primary", "children": "Create your first invoice", "className": "mt-6" },
+                "requiresPermission": "invoice.invoices.create",
+                "actions": { "onPress": { "kind": "navigate", "to": "/tenant/invoices/create" } }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

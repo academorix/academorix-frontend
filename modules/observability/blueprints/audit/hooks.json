@@ -1,0 +1,45 @@
+{
+  "id": "academorix://modules/audit/hooks",
+  "$version": 1,
+  "title": "audit — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Audit registers two hooks: the tenant-erasure MIGRATE-to-archive cascade (audit is DIFFERENT from analytics/marketing/activity — no cascade-delete) and the request-context application_id snapshot on audit creating.",
+  "namespace": "Academorix\\Observability\\Audit\\Hooks",
+  "hooks": [
+    {
+      "name": "PurgeAuditDataForErasedTenantHook",
+      "class": "Academorix\\Observability\\Audit\\Hooks\\PurgeAuditDataForErasedTenantHook",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "MIGRATE audit rows for the erased tenant to a dedicated S3 archive bucket (`AUDIT_ERASURE_ARCHIVE_S3_BUCKET`). Do NOT cascade-delete — regulators may need proof of the erasure years later. The archive object is: (a) named by erasure event id + tenant id; (b) written with S3 object-lock (compliance mode, indefinite); (c) referenced from an ErasureArchiveManifest table for later regulator discovery. AuditRetentionPolicy IS cascade-deleted (its target tenant is gone; the policy no longer applies).",
+      "steps": [
+        "Load the tenant's audit rows (streaming query, batched 10k rows/batch).",
+        "Stream to a jsonl.gz file (one file per tenant, or chunked by month for very large tenants).",
+        "Multipart upload to AUDIT_ERASURE_ARCHIVE_S3_BUCKET with object-lock compliance mode.",
+        "HEAD-verify integrity.",
+        "Write an ErasureArchiveManifest row (bucket, key, row_count, min/max created_at, sha256, tenant_id, erasure_event_id).",
+        "DELETE the audit rows from the primary table.",
+        "DELETE the tenant's AuditRetentionPolicy row (cascade delete).",
+        "Fire an AuditTenantErasureArchived event (informational)."
+      ],
+      "compliance": "GDPR Art. 17 balanced against Art. 30. Erasing a subject or tenant DOES NOT erase the record of the processing that occurred while they were a subject/tenant. The migration to a compliance archive satisfies BOTH — the tenant's active-processing rows are removed from the primary system, while the regulator retains ability to prove what happened during the tenant's lifecycle."
+    },
+    {
+      "name": "SnapshotApplicationIdOnAuditCreatingHook",
+      "class": "Academorix\\Observability\\Audit\\Hooks\\SnapshotApplicationIdOnAuditCreatingHook",
+      "kind": "audit_lifecycle",
+      "listens_to": "Audit.creating (vendor observer chain)",
+      "purpose": "Runs BEFORE our AuditObserver::creating. When the vendor observer produces an audit row without an application_id (which is always — the vendor doesn't know about our column), this hook resolves the current request's application_id from the ResolveApplication middleware's binding (`X-Application-Id` header). Populates audit.application_id from that. Skipped for platform-plane audits (no X-Application-Id header on platform routes) — audit.application_id stays NULL.",
+      "steps": [
+        "Read the vendor-produced audit row model instance.",
+        "IF audit.application_id IS NOT NULL: skip (already set by caller or downstream hook).",
+        "Resolve app::CurrentApplication from the container.",
+        "IF resolved application: audit.application_id = application.id.",
+        "ELSE: audit.application_id stays NULL (platform-plane audit).",
+        "Continue to AuditObserver::creating."
+      ]
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Audit does not need a per-request tenant hydration path — the vendor observer + our AuditObserver handle everything at the model-event boundary. Contrast with modules like `tenancy` (bootstraps request-context) or `settings` (bootstraps config cache) that need per-request tenant hydration."
+  }
+}

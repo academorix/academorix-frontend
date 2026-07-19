@@ -1,0 +1,212 @@
+{
+  "id": "academorix://modules/payment/config",
+  "$version": 1,
+  "title": "payment — developer configuration",
+  "configFile": "config/payment.php",
+  "envPrefix": "PAYMENT_",
+  "sections": {
+    "providers": {
+      "keys": [
+        {
+          "path": "payment.providers.stripe.api_version",
+          "type": "string",
+          "default": "2024-06-20",
+          "description": "Stripe API version. Bump on Stripe's major-version changes."
+        },
+        {
+          "path": "payment.providers.stripe.endpoint",
+          "type": "string",
+          "default": "https://api.stripe.com/v1",
+          "description": "Stripe API base URL. Override for regional deployments."
+        },
+        {
+          "path": "payment.providers.paddle.api_version",
+          "type": "string",
+          "default": "v2"
+        },
+        {
+          "path": "payment.providers.paddle.endpoint",
+          "type": "string",
+          "default": "https://api.paddle.com"
+        },
+        {
+          "path": "payment.providers.adyen.api_version",
+          "type": "string",
+          "default": "v71"
+        },
+        {
+          "path": "payment.providers.adyen.endpoint",
+          "type": "string",
+          "default": "https://checkout-live.adyen.com"
+        },
+        {
+          "path": "payment.providers.square.endpoint",
+          "type": "string",
+          "default": "https://connect.squareup.com/v2"
+        },
+        {
+          "path": "payment.providers.paypal.endpoint",
+          "type": "string",
+          "default": "https://api-m.paypal.com/v2"
+        }
+      ]
+    },
+    "capture": {
+      "keys": [
+        {
+          "path": "payment.capture.default_method",
+          "type": "string",
+          "default": "automatic",
+          "env": "PAYMENT_CAPTURE_DEFAULT",
+          "description": "Default capture_method for new intents. 'automatic' = capture on authorization. 'manual' = authorization hold (requires payment_manual_capture entitlement)."
+        },
+        {
+          "path": "payment.capture.timeout_seconds",
+          "type": "int",
+          "env": "PAYMENT_CAPTURE_TIMEOUT",
+          "default": 30,
+          "description": "Per-provider HTTP timeout for capture calls. Longer than the standard HTTP timeout because captures involve provider async processing."
+        }
+      ]
+    },
+    "three_ds": {
+      "keys": [
+        {
+          "path": "payment.three_ds.required_over_amount_cents",
+          "type": "int",
+          "env": "PAYMENT_3DS_THRESHOLD",
+          "default": 3000,
+          "description": "Card transactions above this amount require 3DS2. Default €30 (3000 cents) matches PSD2 SCA threshold. Tenants can override per-region if their acquiring bank has different thresholds."
+        },
+        {
+          "path": "payment.three_ds.required_currencies",
+          "type": "array",
+          "default": ["EUR", "GBP", "CHF", "NOK", "SEK", "DKK"],
+          "description": "Currencies for which 3DS2 is enforced above the threshold. PSD2 applies primarily to EEA + UK + Switzerland."
+        },
+        {
+          "path": "payment.three_ds.high_risk_regions",
+          "type": "array",
+          "default": [],
+          "description": "Country codes for which 3DS2 is force-required regardless of amount. Tenant can populate based on their fraud data."
+        }
+      ]
+    },
+    "fraud": {
+      "keys": [
+        {
+          "path": "payment.fraud.auto_approve_risk_score_below",
+          "type": "int",
+          "env": "PAYMENT_FRAUD_AUTO_APPROVE",
+          "default": 50,
+          "description": "Risk score threshold for auto-approve. Payments with provider risk_score < this value auto-approve. Above → route to fraud review queue (delegated to provider Radar-equivalent)."
+        },
+        {
+          "path": "payment.fraud.review_risk_score_between",
+          "type": "array",
+          "default": [50, 75],
+          "description": "Risk-review band. Payments in this range surface to admin for manual review before capture."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "payment.reconciliation.schedule_cron",
+          "type": "string",
+          "default": "0 3 * * *",
+          "description": "Cron schedule for the nightly ReconcilePaymentIntentsJob. Default: 03:00 UTC nightly."
+        },
+        {
+          "path": "payment.reconciliation.lookback_hours",
+          "type": "int",
+          "default": 24,
+          "description": "How far back to poll provider intent lists for drift detection."
+        },
+        {
+          "path": "payment.reconciliation.expected_drift_count",
+          "type": "int",
+          "default": 0,
+          "description": "Baseline drift count for alerting. Any finding above this fires PaymentReconcileDriftNotification."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "payment.retention.payment_years",
+          "type": "int",
+          "default": 7,
+          "description": "payments retention. 10 years for Enterprise tenants with payment_extended_retention entitlement."
+        },
+        {
+          "path": "payment.retention.payment_dispute_years",
+          "type": "int",
+          "default": 7,
+          "description": "payment_disputes retention. 10 years for Enterprise."
+        },
+        {
+          "path": "payment.retention.payment_intent_days",
+          "type": "int",
+          "default": 90,
+          "description": "payment_intents retention (transient state; success → creates payment; failure → audit only)."
+        },
+        {
+          "path": "payment.retention.payment_method_grace_days",
+          "type": "int",
+          "default": 90,
+          "description": "Soft-deleted payment_methods retained this many days before hard-purge."
+        }
+      ]
+    },
+    "timeout": {
+      "keys": [
+        {
+          "path": "payment.timeout.intent_abandonment_hours",
+          "type": "int",
+          "env": "PAYMENT_INTENT_TIMEOUT",
+          "default": 24,
+          "description": "ExpireStalePaymentIntentsJob marks intents in non-terminal status for longer than this as 'cancelled' with cancellation_reason='expired'."
+        },
+        {
+          "path": "payment.timeout.dispute_evidence_days_before_warning",
+          "type": "int",
+          "default": 3,
+          "description": "NotifyDisputeEvidenceDueJob fires this many days before evidence_due_by."
+        }
+      ]
+    },
+    "dispute": {
+      "keys": [
+        {
+          "path": "payment.dispute.high_value_threshold_cents",
+          "type": "int",
+          "default": 50000,
+          "description": "Disputes with amount_cents >= this threshold fire as P1 notifications (paged on-call). Default $500."
+        },
+        {
+          "path": "payment.dispute.auto_collect_communication_log_days",
+          "type": "int",
+          "default": 90,
+          "description": "CollectDisputeEvidenceJob reads communication_log from the notifications module for this many trailing days."
+        }
+      ]
+    },
+    "encryption": {
+      "keys": [
+        {
+          "path": "payment.encryption.token_key_version",
+          "type": "int",
+          "default": 1,
+          "description": "Current encryption key version for TokenEncryptor. Bump on rotation. Historical rows carry their own key_version for backward-compat decryption."
+        },
+        {
+          "path": "payment.encryption.client_secret_key_version",
+          "type": "int",
+          "default": 1,
+          "description": "Encryption key version for payment_intents.client_secret. Distinct from token_key_version — defense-in-depth."
+        }
+      ]
+    }
+  }
+}

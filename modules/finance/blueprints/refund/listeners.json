@@ -1,0 +1,112 @@
+{
+  "id": "academorix://modules/refund/listeners",
+  "$version": 1,
+  "title": "refund — subscribed events",
+  "listeners": [
+    {
+      "event": "refund::RefundSucceeded",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\CreateCreditNoteOnRefundSucceeded",
+      "queue": "refunds-critical",
+      "priority": 20,
+      "purpose": "Finalization chain step 2. Called by FinalizeRefundJob. Uses invoice::CreditNoteIssuer::createFromRefund($event->refund_id) to create a reversal credit note. Persists credit_note_id back onto the refund row."
+    },
+    {
+      "event": "refund::RefundSucceeded",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\RecordOffsettingTransactionOnRefundSucceeded",
+      "queue": "refunds-critical",
+      "priority": 10,
+      "purpose": "Finalization chain step 1 (runs before credit note). Uses transaction::TransactionRecorder::recordOffset($event->refund_id) to record the double-entry ledger movement: debit refunds_owed, credit cash. Persists transaction_id back onto the refund row."
+    },
+    {
+      "event": "refund::RefundSucceeded",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\MarkInvoiceRefundedOnFullRefundSucceeded",
+      "queue": "refunds-critical",
+      "priority": 30,
+      "purpose": "Finalization chain step 3. Uses invoice::InvoiceStateUpdater::applyRefund($event->refund_id) to update parent invoice state: full refund → invoice.status='refunded' + refunded_at; partial → 'partially_refunded' + accumulates amount_refunded_cents. Also updates payment.amount_refunded_cents."
+    },
+    {
+      "event": "refund::RefundSucceeded",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\CascadeClawbackOnRefundSucceeded",
+      "queue": "refunds-critical",
+      "priority": 40,
+      "purpose": "Finalization chain step 4. Uses ClawbackCoordinator::fanOut($event->refund_id) to dispatch RefundClawbackReferral (when materialized referral reward exists) + RefundClawbackCoupon (when redeemed coupon exists) events downstream."
+    },
+    {
+      "event": "refund::RefundSucceeded",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\FireMarketingRefundIssuedOnRefundSucceeded",
+      "queue": "refunds-critical",
+      "priority": 50,
+      "purpose": "Finalization chain step 5. Dispatches marketing::RefundIssued negative-value conversion event (Wave 5 bridge). Ad networks subtract from ROAS + retrain fraud models. Consent-gate: advertising tier."
+    },
+    {
+      "event": "refund::RefundSucceeded",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\NotifyCustomerAndAdminOnRefundSucceeded",
+      "queue": "notifications",
+      "priority": 60,
+      "purpose": "Dispatches RefundSucceededNotification to customer + admin (per tenant setting refund.notify_admins_on_status). Runs AFTER the finalization chain — customer sees the notification only when the refund is fully processed downstream."
+    },
+    {
+      "event": "refund::RefundFailed",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\NotifyCustomerAndAdminOnRefundFailed",
+      "queue": "notifications",
+      "priority": 40,
+      "purpose": "Dispatches RefundFailedNotification to customer + admin. Includes support-contact CTA + a next-step alternative (bank transfer / check via manual finance path)."
+    },
+    {
+      "event": "refund::RefundRejected",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\NotifyCustomerOnRefundRejected",
+      "queue": "notifications",
+      "priority": 40,
+      "purpose": "Dispatches RefundRejectedNotification to customer. Includes the rejection_reason (256 char admin-provided) + support-contact CTA."
+    },
+    {
+      "event": "refund::RefundApprovalRequired",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\DispatchApprovalNotifications",
+      "queue": "notifications",
+      "priority": 30,
+      "purpose": "Wraps NotifyRefundApprovalRequiredJob dispatch. Filters approvers via segregation-of-duties (excludes initiated_by_user_id)."
+    },
+    {
+      "event": "refund::RefundProviderError",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\NotifyAdminOnProviderError",
+      "queue": "notifications",
+      "priority": 40,
+      "purpose": "Dispatches admin notification on provider_error state. Does NOT alarm customer until refund reaches terminal failed state — provider errors are typically transient + resolve on next reconcile."
+    },
+    {
+      "event": "payment::PaymentDisputeAccepted",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\InitiateRefundOnDisputeAccepted",
+      "queue": "refunds-critical",
+      "priority": 40,
+      "purpose": "Wave 4 bridge. When admin ops accepts a payment dispute rather than fight: auto-create a Refund with reason='chargeback_prevention' + refund_type='full'. The refund transitions through the normal state machine but bypasses `refund_customer_self_service` entitlement."
+    },
+    {
+      "event": "payment::PaymentWebhookReceived",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\HandleRefundWebhook",
+      "queue": "refunds",
+      "priority": 50,
+      "purpose": "Wave 4 bridge. Payment module's webhook handler dispatches this event on refund-status webhooks (e.g. Stripe 'charge.refunded', Paddle 'transaction.refunded'). This listener parses the provider event + calls RefundReconciler::reconcileFromWebhook() to transition the local refund to succeeded/failed."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\RedactUserFromRefundsOnUserErased",
+      "queue": "refunds",
+      "priority": 50,
+      "purpose": "GDPR minimisation. When a user is erased as initiator / approver / rejector / cancelled_by / reversed_by on any Refund: schedule 90-day-post-erasure redaction of user_id references. Retention window unchanged."
+    },
+    {
+      "event": "tenancy::TenantErasing",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\ArchiveRefundFinancialRecordsOnTenantErasure",
+      "queue": "refunds",
+      "priority": 40,
+      "purpose": "Migrates invoice-linked refunds to compliance_archive.refunds + compliance_archive.refund_lines BEFORE the TenantErased cascade. Financial-obligation retention override."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Finance\\Refund\\Listeners\\PurgeRefundDataForErasedTenant",
+      "queue": "refunds",
+      "priority": 60,
+      "purpose": "Cascade delete via FK for non-archived refunds; writes compliance audit trail entry + emits count metrics."
+    }
+  ]
+}

@@ -1,0 +1,157 @@
+{
+  "id": "activity.screens.by-entity",
+  "title": "Entity activity",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/activity/by-entity/{subject_type}/{subject_id}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "activity",
+    "entity": "activity",
+    "action": "by-entity"
+  },
+  "requiresPermission": "activity.viewAny",
+  "dataSources": [
+    {
+      "name": "activities",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/activities/by-entity/{subject_type}/{subject_id}",
+      "params": ["subject_type", "subject_id"],
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[log_name]",
+        "filter[from]",
+        "filter[to]",
+        "page",
+        "per_page"
+      ],
+      "cache": { "ttlSeconds": 30, "staleWhileRevalidate": true }
+    },
+    {
+      "name": "logNameCatalog",
+      "kind": "http.get",
+      "url": "/api/v1/activity/log-names",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    },
+    {
+      "name": "activityFeedInfo",
+      "kind": "http.get",
+      "url": "/api/v1/activities/feed",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "tenant.{tenantId}.activity",
+      "kind": "private",
+      "enabledExpr": "activityFeedInfo.entitled === true",
+      "filter": {
+        "$expr": "event.data.subject_type === params.subject_type && event.data.subject_id === params.subject_id"
+      },
+      "onEvent": {
+        "kind": "data.prependItem",
+        "source": "activities",
+        "expr": "event.data",
+        "dedupeBy": "id"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "id": "breadcrumbs",
+          "kind": "Breadcrumbs",
+          "props": {
+            "items": [
+              { "label": "Activity feed", "route": "/tenant/activities" },
+              { "label": { "$expr": "params.subject_type + ' activity'" } }
+            ]
+          }
+        },
+        {
+          "id": "header",
+          "kind": "View",
+          "children": [
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold"
+              },
+              "bindings": {
+                "children": {
+                  "$expr": "'Activity on ' + params.subject_type + ' ' + params.subject_id"
+                }
+              }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "p",
+                "className": "text-muted text-sm",
+                "children": "Every recorded event for this entity."
+              }
+            }
+          ]
+        },
+        {
+          "id": "filters",
+          "kind": "View",
+          "props": { "className": "flex flex-wrap items-end gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Feed",
+                "name": "filter[log_name]",
+                "placeholder": "All feeds",
+                "className": "min-w-40"
+              },
+              "optionsSource": { "$ref": "logNameCatalog" },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "activities" } }
+            },
+            {
+              "kind": "DateRange",
+              "props": {
+                "label": "When",
+                "nameFrom": "filter[from]",
+                "nameTo": "filter[to]"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "activities" } }
+            }
+          ]
+        },
+        {
+          "id": "timeline",
+          "kind": "Widget",
+          "widget": "activity.timeline",
+          "bindings": {
+            "items": { "$ref": "activities" },
+            "isLoading": { "$ref": "activities.isLoading" },
+            "hasMore": { "$ref": "activities.pagination.has_more" }
+          },
+          "props": {
+            "groupBy": "day",
+            "collapseBatches": true,
+            "hideSubject": true,
+            "emptyState": {
+              "title": "No activity yet",
+              "description": "Nothing has happened on this entity in the retention window."
+            }
+          },
+          "actions": {
+            "onLoadMore": { "kind": "data.loadNextPage", "source": "activities" }
+          }
+        }
+      ]
+    }
+  ]
+}

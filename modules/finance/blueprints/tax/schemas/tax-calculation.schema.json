@@ -1,0 +1,174 @@
+{
+  "id": "academorix://modules/tax/schemas/tax-calculation",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TaxCalculation",
+  "description": "Per-invoice-line tax computation record. IMMUTABLE audit trail. Carries `tenant_id` + `invoice_line_id`. Freezes tax_rate_snapshot + exemption_applied at calculation time — rate changes AFTER invoice issuance NEVER retroactively re-tax historical invoices. NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "tax",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "tax_calculations",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "txc_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Tax\\Models\\TaxCalculation",
+    "interface": "Academorix\\Finance\\Tax\\Contracts\\Data\\TaxCalculationInterface",
+    "implements": ["Academorix\\Finance\\Tax\\Contracts\\Data\\TaxCalculationInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "source_amount_cents": "integer",
+      "tax_amount_cents": "integer",
+      "tax_rate_snapshot": "array",
+      "exemption_applied": "array",
+      "provider": "TaxProvider",
+      "provider_metadata": "array",
+      "calculated_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["TaxCalculationObserver"],
+    "appends": ["effective_rate_percentage", "was_exemption_applied"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "invoice_line_id": {
+        "type": "uuid",
+        "nullable": true,
+        "foreign": { "table": "invoice_lines", "column": "id", "onDelete": "restrict" },
+        "description": "The invoice line being taxed. RESTRICT — a line with a calculation cannot be hard-deleted. NULL for real-time preview calculations that were persisted with metadata.persist_preview=true (rare)."
+      },
+      "source_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Pre-tax amount. May be negative for refund tax reversals."
+      },
+      "source_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217 3-letter uppercase code."
+      },
+      "tax_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Computed tax. Negative when source_amount_cents is negative (refund reversal)."
+      },
+      "tax_rate_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "FROZEN AT CALCULATION TIME. Shape: { rate_id, percentage, jurisdiction: { id, country_code, state_code }, rate_type, applies_to, effective_at }. IMMUTABLE — this is the load-bearing invariant of the module."
+      },
+      "exemption_applied": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "FROZEN AT CALCULATION TIME when an exemption was applied. Shape: { exemption_id, certificate_number (redacted), exemption_type, issuing_jurisdiction_id, valid_from, valid_until }. Null when no exemption applied."
+      },
+      "provider": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: taxjar / avalara / stripe_tax / native_calculator / custom_webhook."
+      },
+      "provider_transaction_id": {
+        "type": "string",
+        "length": 128,
+        "nullable": true,
+        "description": "Provider-side reference (e.g. TaxJar tax_id, Avalara transaction docCode, Stripe Tax calculation ID). Null for NativeCalculator (no external reference)."
+      },
+      "provider_metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Additional provider response context: nexus applied (US Wayfair), per-jurisdiction breakdown (Canadian federal + provincial), latency_ms, provider API version."
+      },
+      "calculated_at": {
+        "type": "timestamptz",
+        "nullable": false,
+        "description": "Immutable timestamp — regulator audit. Not updatable."
+      },
+      "metadata": { "type": "jsonb", "nullable": true, "description": "Includes correlation_id (request-scoped tracing), frozen_by_payment (defense-in-depth marker set on transaction::PaymentCaptured)." },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      { "columns": ["tenant_id", "calculated_at"], "name": "tax_calculations_tenant_time_idx" },
+      { "columns": ["invoice_line_id"], "name": "tax_calculations_invoice_line_idx", "predicate": "invoice_line_id IS NOT NULL" },
+      { "columns": ["tenant_id", "provider", "calculated_at"], "name": "tax_calculations_provider_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "source_amount_cents", "source_currency", "tax_amount_cents", "tax_rate_snapshot", "provider", "calculated_at", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^txc_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "invoice_line_id": { "type": ["string", "null"], "format": "uuid" },
+    "source_amount_cents": { "type": "integer" },
+    "source_currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "tax_amount_cents": { "type": "integer" },
+    "tax_rate_snapshot": {
+      "type": "object",
+      "required": ["rate_id", "percentage", "jurisdiction", "rate_type", "applies_to", "effective_at"],
+      "properties": {
+        "rate_id": { "type": "string", "pattern": "^txr_[0-9A-HJKMNP-TV-Z]{26}$" },
+        "percentage": { "type": "number", "minimum": 0, "maximum": 1 },
+        "jurisdiction": {
+          "type": "object",
+          "required": ["id", "country_code"],
+          "properties": {
+            "id": { "type": "string", "pattern": "^txj_[0-9A-HJKMNP-TV-Z]{26}$" },
+            "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+            "state_code": { "type": ["string", "null"] }
+          }
+        },
+        "rate_type": { "type": "string" },
+        "applies_to": { "type": "string" },
+        "effective_at": { "type": "string", "format": "date" }
+      }
+    },
+    "exemption_applied": {
+      "type": ["object", "null"],
+      "properties": {
+        "exemption_id": { "type": "string", "pattern": "^txe_[0-9A-HJKMNP-TV-Z]{26}$" },
+        "certificate_number": { "type": "string", "description": "REDACTED on egress except for admin/owner roles" },
+        "exemption_type": { "type": "string" },
+        "issuing_jurisdiction_id": { "type": "string", "pattern": "^txj_[0-9A-HJKMNP-TV-Z]{26}$" },
+        "valid_from": { "type": "string", "format": "date" },
+        "valid_until": { "type": ["string", "null"], "format": "date" }
+      }
+    },
+    "provider": { "type": "string", "enum": ["taxjar", "avalara", "stripe_tax", "native_calculator", "custom_webhook"] },
+    "provider_transaction_id": { "type": ["string", "null"], "maxLength": 128 },
+    "provider_metadata": { "type": ["object", "null"] },
+    "calculated_at": { "type": "string", "format": "date-time" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "IMMUTABLE after commit — no soft-delete, no updates, no deletes",
+    "tax_rate_snapshot is FROZEN JSONB (the load-bearing invariant of the module)",
+    "exemption_applied is FROZEN JSONB when set",
+    "source_currency present when source_amount_cents present (both always required together)",
+    "calculated_at is set on create + immutable",
+    "hard-deletion is FORBIDDEN — calculations migrate to tax_calculations_archive at 7 years (10 for Enterprise) via PurgeExpiredCalculationsJob",
+    "TenantErased cascade migrates rows to archive BEFORE FK CASCADE fires (MigrateCalculationsToArchiveOnTenantErased priority-20 hook)",
+    "provider_transaction_id present when provider != 'native_calculator'"
+  ]
+}

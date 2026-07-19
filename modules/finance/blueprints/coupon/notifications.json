@@ -1,0 +1,56 @@
+{
+  "id": "academorix://modules/coupon/notifications",
+  "$version": 1,
+  "title": "coupon — notification classes + categories",
+  "namespace": "Academorix\\Finance\\Coupon\\Notifications",
+  "notifications": [
+    "CouponUsageCapReachedNotification",
+    "CouponExpiredNotification",
+    "CouponRedeemedNotification",
+    "CouponClawbackNotification"
+  ],
+  "categories": [
+    {
+      "slug": "coupon.usage_cap_reached",
+      "display_name": "Coupon usage cap reached",
+      "description": "Admin-facing. Sent to tenant admins + marketing role when a coupon's usage_count hits its usage_cap. Includes recent-redemption rollup + suggested action (top up cap / launch a follow-up campaign / accept the campaign closed).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    },
+    {
+      "slug": "coupon.expired",
+      "display_name": "Coupon expired",
+      "description": "Admin-facing. Sent to tenant admins + marketing role when a coupon reaches its valid_until timestamp. Also fires at 14/7/1 day windows before expiry for coupons with usage_count > 0 (informational warning — not a terminal event).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": false
+    },
+    {
+      "slug": "coupon.redeemed",
+      "display_name": "Coupon redeemed",
+      "description": "Admin-facing REAL-TIME redemption stream. Opt-in — most tenants don't need per-redemption pings. Useful for high-value / limited campaigns where admins want live visibility.",
+      "default_channels": ["in_app", "push"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": false
+    },
+    {
+      "slug": "coupon.clawback",
+      "display_name": "Coupon discount reversed",
+      "description": "Sent to the redemption customer + tenant admin when a redemption is reversed (refund / chargeback / fraud / manual admin). Cannot-opt-out — the customer needs to know their applied discount was reversed. Includes clawback_reason + next-step guidance (support contact for disputes).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true
+    }
+  ]
+}

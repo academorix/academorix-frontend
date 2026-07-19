@@ -1,0 +1,75 @@
+{
+  "id": "transaction.balance-indicator",
+  "title": "Account balance indicator",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Running-balance badge for one account. Shows the current amount (in base_currency) + a trailing sparkline over the last 30 days + a threshold state indicator (green = normal, yellow = above_high_watermark, red = below_low_watermark). Used inside the ledger-account list row cells + can be embedded on dashboards.",
+  "props": {
+    "account": {
+      "type": "object",
+      "required": true,
+      "description": "The LedgerAccount object with current_balance_cents + currency + threshold_state + optional trailing_history."
+    },
+    "size": { "type": "string", "default": "md", "enum": ["sm", "md", "lg"] },
+    "show_sparkline": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-3" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex flex-col items-end" },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "$currency($ref('props.account.current_balance_cents'), $ref('props.account.currency'))"
+                }
+              },
+              "props": { "className": "font-mono font-semibold" }
+            },
+            {
+              "kind": "Chip",
+              "bindings": {
+                "variant": {
+                  "$expr": "$ref('props.account.threshold_state') === 'normal' ? 'default' : ($ref('props.account.threshold_state') === 'above_high_watermark' ? 'warning' : 'danger')"
+                }
+              },
+              "props": { "size": "xs", "className": "mt-1" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "bindings": {
+                    "children": {
+                      "$expr": "$ref('props.account.threshold_state') === 'normal' ? 'Normal' : ($ref('props.account.threshold_state') === 'above_high_watermark' ? 'High' : 'Low')"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Sparkline",
+          "bindings": {
+            "hidden": {
+              "$expr": "!props.show_sparkline || !$ref('props.account.trailing_history') || $ref('props.account.trailing_history').length === 0"
+            },
+            "data": { "$ref": "props.account.trailing_history" }
+          },
+          "props": {
+            "xField": "recorded_at",
+            "yField": "running_balance_cents",
+            "className": "w-24 h-8",
+            "showAxis": false,
+            "showTooltip": true
+          }
+        }
+      ]
+    }
+  ]
+}

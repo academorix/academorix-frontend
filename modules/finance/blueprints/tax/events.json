@@ -1,0 +1,286 @@
+{
+  "id": "academorix://modules/tax/events",
+  "$version": 1,
+  "title": "tax — published events",
+  "namespace": "Academorix\\Finance\\Tax\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. TaxCalculationFailed + TaxProviderCircuitBreakerOpened are the CRITICAL events of the module — the former signals a blocked invoice line (regulator-relevant); the latter signals a provider outage that will accumulate blocked lines until reset. TaxCalculationDriftDetected is regulator-critical — surfaces when a spot-check reconciliation shows a snapshotted rate diverges from the current-day computation.",
+  "events": [
+    {
+      "name": "TaxRateCreated",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxRateCreated",
+      "trigger": "TaxRateObserver.creating committed a new tax_rates row. Fires exactly once per (tenant_id, tax_jurisdiction_id, rate_type, effective_from) tuple.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record)",
+        "tax::InvalidateRateCache",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_rate_id": "ULID (txr_*)",
+        "tenant_id": "ULID (ten_*)",
+        "tax_jurisdiction_id": "ULID (txj_*)",
+        "rate_type": "string (9 enum values)",
+        "percentage": "decimal 5,4",
+        "applies_to": "string (5 enum values)",
+        "effective_from": "date",
+        "effective_to": "date | null",
+        "source": "string (manual / provider_synced / import / migration)"
+      }
+    },
+    {
+      "name": "TaxRateUpdated",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxRateUpdated",
+      "trigger": "TaxRateObserver.updating committed a mutation on an existing rate.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "tax::InvalidateRateCache",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_rate_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "updated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaxRateExpired",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxRateExpired",
+      "trigger": "Scheduled sweep found a rate whose effective_to <= today. Automatic transition. Note: this does NOT delete the rate — historical rates persist for calculation-freeze lookups.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "tax::InvalidateRateCache",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_rate_id": "ULID",
+        "tenant_id": "ULID",
+        "tax_jurisdiction_id": "ULID",
+        "rate_type": "string",
+        "expired_at": "date"
+      }
+    },
+    {
+      "name": "TaxJurisdictionCreated",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxJurisdictionCreated",
+      "trigger": "TaxJurisdictionObserver.creating committed a new jurisdiction.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "tax::InvalidateJurisdictionCache",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_jurisdiction_id": "ULID (txj_*)",
+        "tenant_id": "ULID | null (null = platform reference)",
+        "country_code": "string (ISO 3166-1)",
+        "state_code": "string | null (ISO 3166-2)",
+        "city": "string | null",
+        "postal_code_pattern": "string | null",
+        "tax_type": "string (5 enum values)",
+        "nexus_type": "string | null"
+      }
+    },
+    {
+      "name": "TaxJurisdictionUpdated",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxJurisdictionUpdated",
+      "trigger": "TaxJurisdictionObserver.updating committed a mutation.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "tax::InvalidateJurisdictionCache",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_jurisdiction_id": "ULID",
+        "tenant_id": "ULID | null",
+        "changed_fields": "string[]"
+      }
+    },
+    {
+      "name": "TaxExemptionCreated",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxExemptionCreated",
+      "trigger": "TaxExemptionObserver.creating committed a new exemption row with verification_status='pending'.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "tax::DispatchVerifyTaxExemptionJob (async cross-check against public registry when available)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_exemption_id": "ULID (txe_*)",
+        "tenant_id": "ULID",
+        "customer_type": "string (User / Athlete / Organization)",
+        "customer_id": "ULID",
+        "exemption_type": "string (9 enum values)",
+        "issuing_jurisdiction_id": "ULID",
+        "valid_from": "date",
+        "valid_until": "date | null"
+      }
+    },
+    {
+      "name": "TaxExemptionVerified",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxExemptionVerified",
+      "trigger": "VerifyTaxExemptionJob succeeded OR admin manually approved via /verify. verification_status transitions pending → verified. Sets verified_at + verified_by_user_id.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchTaxExemptionVerifiedNotification (informs the customer/tenant admin)",
+        "tax::InvalidateExemptionCache",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_exemption_id": "ULID",
+        "tenant_id": "ULID",
+        "verified_by_user_id": "ULID | null (null = automatic registry cross-check)",
+        "verification_method": "string (manual / automatic_registry_check)",
+        "verified_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaxExemptionRejected",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxExemptionRejected",
+      "trigger": "VerifyTaxExemptionJob failed cross-check OR admin manually rejected via /reject. verification_status transitions pending → rejected. Requires --reason.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchTaxExemptionRejectedNotification (informs the customer/tenant admin with reason)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_exemption_id": "ULID",
+        "tenant_id": "ULID",
+        "rejected_by_user_id": "ULID | null",
+        "rejection_reason": "string (invalid_certificate / expired_at_creation / jurisdiction_mismatch / fraudulent / other)",
+        "rejection_note": "string | null",
+        "rejected_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaxExemptionExpired",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxExemptionExpired",
+      "trigger": "Scheduled ExpireExemptionsJob found an exemption whose valid_until <= today. Automatic transition verified → expired.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years post-expiry)",
+        "tax::InvalidateExemptionCache",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "tax_exemption_id": "ULID",
+        "tenant_id": "ULID",
+        "customer_type": "string",
+        "customer_id": "ULID",
+        "exemption_type": "string",
+        "expired_at": "date"
+      }
+    },
+    {
+      "name": "TaxCalculationRequested",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxCalculationRequested",
+      "trigger": "TaxCalculator::calculate() invoked. Fires BEFORE the provider call. Distinct from TaxCalculationCompleted (per-provider-per-attempt success). Reserved for provider-latency observability + drift detection instrumentation.",
+      "queue": "tax",
+      "consumers": [
+        "monitoring::MetricsCollector (starts calculation-duration histogram)"
+      ],
+      "payload": {
+        "correlation_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_line_id": "ULID | null (null when calculation is a real-time preview via POST /calculate)",
+        "source_amount_cents": "integer",
+        "source_currency": "string (ISO 4217)",
+        "provider": "string",
+        "requested_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaxCalculationCompleted",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxCalculationCompleted",
+      "trigger": "TaxCalculator::calculate() persisted a tax_calculations row. Terminal state — the calculation is IMMUTABLE thereafter.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years / 10 for Enterprise)",
+        "tax::InvalidateCalculationCountCache",
+        "monitoring::MetricsCollector (increments academorix.tax.calculations.completed_total; records dispatch duration)"
+      ],
+      "payload": {
+        "tax_calculation_id": "ULID (txc_*)",
+        "tenant_id": "ULID",
+        "invoice_line_id": "ULID | null",
+        "source_amount_cents": "integer",
+        "source_currency": "string",
+        "tax_amount_cents": "integer",
+        "provider": "string",
+        "applied_exemption": "boolean",
+        "latency_ms": "integer",
+        "calculated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaxCalculationFailed",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxCalculationFailed",
+      "trigger": "CRITICAL. Provider call failed after 3 retry attempts OR jurisdiction unresolvable OR provider mandated but circuit-breaker open. NO tax_calculations row persisted. The invoice line is BLOCKED (fail-safe against under-charging tax).",
+      "queue": "tax-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchTaxCalculationBlockedNotification (P1 — pages finance ops)",
+        "monitoring::MetricsCollector (increments academorix.tax.calculations.failed_total)",
+        "tax::MaybeOpenCircuitBreaker"
+      ],
+      "payload": {
+        "correlation_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_line_id": "ULID | null",
+        "provider": "string",
+        "failure_reason": "string (provider_permanent_failure / provider_timeout / jurisdiction_unresolvable / circuit_breaker_open / auth_failure)",
+        "error_code": "string | null",
+        "error_message": "string",
+        "attempt_count": "integer",
+        "failed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaxProviderConfigured",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxProviderConfigured",
+      "trigger": "TaxProviderConfigObserver committed a new provider config row.",
+      "queue": "tax",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — provider connection is a compliance-relevant integration)",
+        "notifications::DispatchTaxConfigurationChangedNotification (audit trail for tenant admins)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "provider_config_id": "ULID",
+        "tenant_id": "ULID",
+        "provider": "string",
+        "enabled_jurisdictions": "string[] (country codes)",
+        "configured_by_user_id": "ULID",
+        "configured_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "TaxProviderCircuitBreakerOpened",
+      "class": "Academorix\\Finance\\Tax\\Events\\TaxProviderCircuitBreakerOpened",
+      "trigger": "CRITICAL. consecutive_failure_count reached failure_threshold. Sets circuit_breaker_open_until = now() + open_duration_seconds. Blocks all subsequent calculations until the timer elapses. Every fire is P1 — invoice lines are queuing up blocked.",
+      "queue": "tax-critical",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "notifications::DispatchTaxProviderCircuitBreakerOpenedNotification (cannot-opt-out — pages finance ops)",
+        "monitoring::MetricsCollector (increments academorix.tax.circuit_breakers.opened_total)"
+      ],
+      "payload": {
+        "tenant_id": "ULID",
+        "provider": "string",
+        "provider_config_id": "ULID",
+        "consecutive_failure_count": "integer",
+        "open_until": "ISO 8601",
+        "last_error_code": "string | null",
+        "last_error_message": "string | null",
+        "opened_at": "ISO 8601"
+      }
+    }
+  ]
+}

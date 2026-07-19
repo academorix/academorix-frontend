@@ -1,0 +1,88 @@
+{
+  "id": "academorix://modules/invoice/features",
+  "$version": 1,
+  "title": "invoice — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "invoice.core",
+      "displayName": "Invoicing",
+      "description": "Invoice creation, finalization, delivery, and payment tracking. Master feature — enables the whole /api/v1/invoices/* surface.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "invoice.credit_notes",
+      "displayName": "Credit notes",
+      "description": "Issue credit notes for refunds, adjustments, and write-offs. Reverses paid invoices without mutating them.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "invoice.custom_series",
+      "displayName": "Custom invoice series",
+      "description": "Configure tenant-specific invoice number prefixes (INV / SO / RECEIPT / custom 3-8 char). Small tenants get 'INV' only.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "invoice.multi_currency",
+      "displayName": "Multi-currency invoicing",
+      "description": "Invoice in currencies other than tenant.default_currency. Currency frozen at issuance.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "invoice.tenant_branded_pdf",
+      "displayName": "Tenant-branded invoice PDFs",
+      "description": "Apply tenant branding (logo, colors, footer) to invoice PDFs. Small tenants get the default Academorix-branded template.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "invoice.dunning_advanced",
+      "displayName": "Advanced dunning configuration",
+      "description": "Customize the dunning cadence beyond the default day+3/7/14/30/60 schedule. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "invoice.collections_integration",
+      "displayName": "Third-party collections integration",
+      "description": "Automated handoff to a licensed collections agency after N days past due. Enterprise-only.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "invoice.extended_retention",
+      "displayName": "10-year retention",
+      "description": "Extend invoice + credit-note retention from 7 → 10 years. For finance regimes that require longer audit trails (EU VAT, some US states, Canada federal tax).",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "invoice.aging_report",
+      "displayName": "Invoice aging report",
+      "description": "0-30 / 31-60 / 61-90 / 91+ day past-due aging buckets. Feeds AR management.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "invoice.revenue_report",
+      "displayName": "Revenue report",
+      "description": "Invoiced + collected + AR balance grouped by day/week/month/item_type.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "invoice.tax_collected_report",
+      "displayName": "Tax collected report",
+      "description": "Tax collected grouped by jurisdiction. Feeds VAT/GST/sales-tax return preparation.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    }
+  ]
+}

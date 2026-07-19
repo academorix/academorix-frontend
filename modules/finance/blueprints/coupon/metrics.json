@@ -1,0 +1,145 @@
+{
+  "id": "academorix://modules/coupon/metrics",
+  "$version": 1,
+  "title": "coupon — OpenTelemetry metrics",
+  "instrumentation": "self via telemetry",
+  "namespace": "academorix.coupon",
+  "labelConventions": {
+    "always": [],
+    "commonlyAvailable": ["discount_type", "applicability", "issuance_source", "refusal_reason", "clawback_reason", "code_type_bucket"],
+    "forbiddenAsLabels": ["tenant_id", "coupon_id", "redemption_id", "customer_id", "code", "campaign_name", "discount_amount", "source_amount"]
+  },
+  "metrics": [
+    {
+      "name": "academorix.coupon.count",
+      "kind": "gauge",
+      "unit": "coupons",
+      "labels": ["is_active", "discount_type", "issuance_source"],
+      "description": "Count of coupons per (is_active, discount_type, issuance_source). Sampled hourly."
+    },
+    {
+      "name": "academorix.coupon.slots_used",
+      "kind": "gauge",
+      "unit": "slots",
+      "labels": [],
+      "description": "Percentage of `coupon_slot` entitlement consumed across all tenants. Sampled hourly."
+    },
+    {
+      "name": "academorix.coupon.creations_total",
+      "kind": "counter",
+      "unit": "coupons",
+      "labels": ["issuance_source", "discount_type"]
+    },
+    {
+      "name": "academorix.coupon.deactivations_total",
+      "kind": "counter",
+      "unit": "coupons",
+      "labels": ["reason"]
+    },
+    {
+      "name": "academorix.coupon.expirations_total",
+      "kind": "counter",
+      "unit": "coupons",
+      "labels": []
+    },
+    {
+      "name": "academorix.coupon.usage_cap_reached_total",
+      "kind": "counter",
+      "unit": "coupons",
+      "labels": ["issuance_source"]
+    },
+    {
+      "name": "academorix.coupon.redemptions_total",
+      "kind": "counter",
+      "unit": "redemptions",
+      "labels": ["discount_type", "applicability", "issuance_source", "applied_to_type"]
+    },
+    {
+      "name": "academorix.coupon.redemption_refusals_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["refusal_reason"],
+      "description": "Every refusal fires. Rate-limited enumeration attempts surface as refusal_reason='COUPON_NOT_FOUND' spikes."
+    },
+    {
+      "name": "academorix.coupon.redemption_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [5, 25, 100, 500, 2000],
+      "labels": [],
+      "description": "CouponRedeemer::redeem() duration including the SELECT FOR UPDATE row lock + insert + counter increment. P99 target < 200ms."
+    },
+    {
+      "name": "academorix.coupon.reversals_total",
+      "kind": "counter",
+      "unit": "redemptions",
+      "labels": ["reason"],
+      "description": "reason IN ('manual_admin', 'refund', 'chargeback', 'fraud')."
+    },
+    {
+      "name": "academorix.coupon.clawbacks_total",
+      "kind": "counter",
+      "unit": "clawbacks",
+      "labels": ["clawback_reason"],
+      "description": "Clawback events triggered by finance::RefundIssued / ChargebackFiled."
+    },
+    {
+      "name": "academorix.coupon.bulk_issue_count_bucket",
+      "kind": "histogram",
+      "unit": "coupons",
+      "buckets": [10, 100, 1000, 10000],
+      "labels": [],
+      "description": "Bulk-issue count distribution — how many codes each bulk-issue produces."
+    },
+    {
+      "name": "academorix.coupon.atomicity.failures_total",
+      "kind": "counter",
+      "unit": "failures",
+      "labels": ["failure_point"],
+      "description": "CRITICAL. CouponRedeemer transaction atomicity failures. Should stay at 0. failure_point: 'redemption_insert' / 'counter_increment' / 'row_lock_timeout' / 'unknown'."
+    },
+    {
+      "name": "academorix.coupon.usage_count.drift_ratio",
+      "kind": "gauge",
+      "unit": "ratio",
+      "labels": [],
+      "description": "ReconcileUsageCountJob measures the drift between coupons.usage_count vs the recomputed COUNT(*) over non-reversed redemptions. Should stay 0. Any drift > 0 is a bug in the counter-increment path."
+    },
+    {
+      "name": "academorix.coupon.rate_limit_hits_total",
+      "kind": "counter",
+      "unit": "hits",
+      "labels": ["bucket_type"],
+      "description": "bucket_type: 'ip' / 'user'. Every 429 fire increments the appropriate bucket."
+    },
+    {
+      "name": "academorix.coupon.preview_duration_ms",
+      "kind": "histogram",
+      "unit": "ms",
+      "buckets": [5, 25, 100, 500],
+      "labels": [],
+      "description": "POST /coupons/{code}/preview + GET /coupons/validate/{code} HTTP latency. P99 target < 100ms."
+    },
+    {
+      "name": "academorix.coupon.entitlement.gate_refusals_total",
+      "kind": "counter",
+      "unit": "refusals",
+      "labels": ["entitlement_key"],
+      "description": "Route hits refused by the entitlement middleware. Product signal for upgrade-CTA impressions."
+    },
+    {
+      "name": "academorix.coupon.retention.purged_total",
+      "kind": "counter",
+      "unit": "rows",
+      "labels": ["entity"],
+      "description": "PurgeExpiredCouponsJob emits. entity: 'coupons' / 'coupon_redemptions'."
+    },
+    {
+      "name": "academorix.coupon.marketing_events_dispatched_total",
+      "kind": "counter",
+      "unit": "events",
+      "labels": ["issuance_source"],
+      "description": "How many marketing events fire per issuance_source. issuance_source: 'referral' / 'marketing_campaign' (others skip the marketing lane)."
+    }
+  ]
+}

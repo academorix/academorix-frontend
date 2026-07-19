@@ -1,0 +1,68 @@
+{
+  "id": "invoice.widgets.aging-timeline",
+  "title": "Aging timeline",
+  "version": 1,
+  "kind": "SduiWidget",
+  "namespace": "invoice",
+  "widget": "aging-timeline",
+  "description": "Horizontal stacked bar chart showing AR balance across aging buckets (current / 1-30 / 31-60 / 61-90 / 91+). Interactive drill-down — clicking a bucket navigates to the filtered invoice list. Used at the top of the invoice list + as the main visual on the aging report screen.",
+  "props": {
+    "aging": {
+      "type": "object",
+      "description": "Aging summary from GET /api/v1/reports/invoice-aging. Shape: { current_cents, past_due_1_30_cents, past_due_31_60_cents, past_due_61_90_cents, past_due_91_plus_cents, currency }.",
+      "required": true
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "true = single-line horizontal bar with buckets. false = full-height with per-bucket labels + drill-down affordance."
+    },
+    "showLegend": {
+      "type": "boolean",
+      "default": false
+    },
+    "onBucketPress": {
+      "type": "action",
+      "description": "Fires when the caller clicks a bucket. Default: navigate to filtered invoice list with past_due=1 + bucket range."
+    }
+  },
+  "buckets": [
+    { "field": "current_cents", "label": "Current", "color": "success", "bucket_key": "current", "filter": { "past_due": false } },
+    { "field": "past_due_1_30_cents", "label": "1-30d", "color": "warning-light", "bucket_key": "1_30", "filter": { "past_due": true, "days_past_due_min": 1, "days_past_due_max": 30 } },
+    { "field": "past_due_31_60_cents", "label": "31-60d", "color": "warning", "bucket_key": "31_60", "filter": { "past_due": true, "days_past_due_min": 31, "days_past_due_max": 60 } },
+    { "field": "past_due_61_90_cents", "label": "61-90d", "color": "danger-light", "bucket_key": "61_90", "filter": { "past_due": true, "days_past_due_min": 61, "days_past_due_max": 90 } },
+    { "field": "past_due_91_plus_cents", "label": "91+d", "color": "danger", "bucket_key": "91_plus", "filter": { "past_due": true, "days_past_due_min": 91 } }
+  ],
+  "logic": {
+    "totalCents": {
+      "expr": "aging.current_cents + aging.past_due_1_30_cents + aging.past_due_31_60_cents + aging.past_due_61_90_cents + aging.past_due_91_plus_cents"
+    },
+    "bucketPercent": {
+      "expr": "bucket => totalCents > 0 ? Math.round((bucket.value / totalCents) * 100) : 0"
+    }
+  },
+  "renderShape": {
+    "type": "StackedBar",
+    "orientation": "horizontal",
+    "buckets": "{buckets}",
+    "bindings": {
+      "valueForBucket": "$aging[bucket.field]"
+    },
+    "onBucketPress": {
+      "kind": "navigate",
+      "toExpr": "'/tenant/invoices?' + $bucket.filter"
+    },
+    "renderLegend": "{showLegend}",
+    "renderPercentLabels": "{!compact}",
+    "renderAbsoluteLabels": "{!compact}",
+    "emptyState": {
+      "when": "totalCents == 0",
+      "message": "No outstanding invoices."
+    }
+  },
+  "accessibility": {
+    "ariaLabel": "Invoice aging: {totalCents} across {buckets.length} buckets. Click a bucket for details.",
+    "role": "img",
+    "keyboardNavigation": true
+  }
+}

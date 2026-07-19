@@ -1,0 +1,300 @@
+{
+  "id": "academorix://modules/monitoring/errors",
+  "$version": 1,
+  "title": "monitoring — error codes",
+  "namespace": "monitoring",
+  "errors": [
+    {
+      "code": "MONITORING_HEALTH_CHECK_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.health_check_not_found"
+    },
+    {
+      "code": "MONITORING_FEATURE_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.feature_not_entitled",
+      "description": "Tenant does not hold `monitoring_capture` entitlement. Response includes upgrade CTA in meta.upgrade_url."
+    },
+    {
+      "code": "MONITORING_HEALTH_CHECK_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.health_check_quota_exceeded",
+      "description": "Tenant reached the monitoring_health_check_slot cap. Small: 5, Medium: 25. Response includes upgrade path."
+    },
+    {
+      "code": "MONITORING_INVALID_CHECK_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.invalid_check_type",
+      "description": "check_type is not one of the 10 supported values. See data/check-type-catalog.json."
+    },
+    {
+      "code": "MONITORING_INVALID_CHECK_TARGET",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.invalid_check_target",
+      "description": "target jsonb does not match the schema for the given check_type. Response includes per-field validation errors."
+    },
+    {
+      "code": "MONITORING_INTERVAL_TOO_SHORT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.interval_too_short",
+      "description": "interval_seconds < 15. Rate-limit floor to prevent DDoS-like probing of tenant infrastructure."
+    },
+    {
+      "code": "MONITORING_INVALID_TIMEOUT",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.invalid_timeout",
+      "description": "timeout_seconds >= interval_seconds. A timeout longer than the interval would overlap runs."
+    },
+    {
+      "code": "MONITORING_CUSTOM_METRICS_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.custom_metrics_not_entitled",
+      "description": "check_type = 'custom_script' OR signal_type = 'custom_metric' requires Enterprise tier via monitoring_custom_metrics entitlement."
+    },
+    {
+      "code": "MONITORING_HEALTH_CHECK_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.health_check_rate_limited",
+      "description": "Manual /run endpoint invoked too frequently. 1 per check per minute. Response includes Retry-After header."
+    },
+    {
+      "code": "MONITORING_ALERT_POLICY_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.alert_policy_not_found"
+    },
+    {
+      "code": "MONITORING_ALERT_POLICY_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.alert_policy_quota_exceeded",
+      "description": "Reached monitoring_alert_policy_slot cap. Small: 10, Medium: 50."
+    },
+    {
+      "code": "MONITORING_INVALID_SIGNAL_TYPE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.invalid_signal_type",
+      "description": "signal_type not one of the 7 supported values."
+    },
+    {
+      "code": "MONITORING_INVALID_SIGNAL_SOURCE",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.invalid_signal_source",
+      "description": "signal_source does not reference a real subject. For health_check_status: signal_source must be an existing health_check.slug. For metric-based signals: signal_source must match a known metric name."
+    },
+    {
+      "code": "MONITORING_INVALID_SEVERITY",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.invalid_severity",
+      "description": "severity not in {p1, p2, p3, p4}."
+    },
+    {
+      "code": "MONITORING_INVALID_THRESHOLD_OPERATOR",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.invalid_threshold_operator",
+      "description": "threshold_operator not in {greater_than, less_than, equals, not_equals}."
+    },
+    {
+      "code": "MONITORING_INVALID_NOTIFY_PROVIDERS",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.invalid_notify_providers",
+      "description": "notify_provider_configs must be a non-empty array of active MonitoringProviderConfig ULIDs in the same tenant."
+    },
+    {
+      "code": "MONITORING_POLICY_HAS_ACTIVE_ALERTS",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.policy_has_active_alerts",
+      "description": "Cannot delete or change severity on a policy with firing alerts. Resolve those alerts first."
+    },
+    {
+      "code": "MONITORING_ALERT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.alert_not_found"
+    },
+    {
+      "code": "MONITORING_ALERT_INVALID_STATE_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.alert_invalid_state_transition",
+      "description": "Cannot transition alert from {current_state} to {requested_state}. Valid transitions: firing → acknowledged → resolved; firing → resolved (skip ack); firing → expired (auto)."
+    },
+    {
+      "code": "MONITORING_INCIDENT_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.incident_not_found"
+    },
+    {
+      "code": "MONITORING_INCIDENT_INVALID_STATE_TRANSITION",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.incident_invalid_state_transition",
+      "description": "Cannot transition incident from {current_state} to {requested_state}. Valid transitions: open → acknowledged → investigating → mitigating → resolved → postmortem."
+    },
+    {
+      "code": "MONITORING_INCIDENT_NOT_RESOLVED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.incident_not_resolved",
+      "description": "Cannot soft-delete an unresolved incident. Resolve first."
+    },
+    {
+      "code": "MONITORING_PROVIDER_NOT_FOUND",
+      "http": 404,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.provider_not_found"
+    },
+    {
+      "code": "MONITORING_PROVIDER_QUOTA_EXCEEDED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.provider_quota_exceeded",
+      "description": "Reached monitoring_provider_slot cap. Small: 1. Medium: 3. Response includes upgrade path."
+    },
+    {
+      "code": "MONITORING_PAGING_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.paging_not_entitled",
+      "description": "PagerDuty / Opsgenie providers require Medium+ tier via monitoring_paging entitlement."
+    },
+    {
+      "code": "MONITORING_APM_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.apm_not_entitled",
+      "description": "Datadog provider requires Medium+ tier via monitoring_apm entitlement."
+    },
+    {
+      "code": "MONITORING_PROMETHEUS_NOT_ENTITLED",
+      "http": 402,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.prometheus_not_entitled",
+      "description": "Prometheus provider requires Enterprise tier via monitoring_prometheus entitlement."
+    },
+    {
+      "code": "MONITORING_PROVIDER_CONFIG_INVALID",
+      "http": 422,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.provider_config_invalid",
+      "description": "config jsonb does not match the per-provider JSON Schema. Response body includes the schema validation errors."
+    },
+    {
+      "code": "MONITORING_PROVIDER_ALREADY_CONFIGURED",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.provider_already_configured",
+      "description": "Tenant already has an active config with this (provider, name) tuple. Delete the existing one first."
+    },
+    {
+      "code": "MONITORING_PROVIDER_CIRCUIT_OPEN_ON_DEACTIVATE",
+      "http": 409,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "warn",
+      "i18n_key": "monitoring.errors.provider_circuit_open_on_deactivate",
+      "description": "Cannot deactivate a provider config while its circuit-breaker is open. Reset the breaker first (monitoring:reset-circuit-breaker or POST /providers/{id}/reset-circuit-breaker)."
+    },
+    {
+      "code": "MONITORING_PROVIDER_TEST_RATE_LIMITED",
+      "http": 429,
+      "retryable": true,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.provider_test_rate_limited",
+      "description": "Manual /test endpoint invoked too frequently. 1 per config per minute. Response includes Retry-After header."
+    },
+    {
+      "code": "MONITORING_INSUFFICIENT_ROLE",
+      "http": 403,
+      "retryable": false,
+      "user_facing": true,
+      "audit_severity": "info",
+      "i18n_key": "monitoring.errors.insufficient_role",
+      "description": "Caller lacks the ops/admin/owner/support role required to access the monitoring surface."
+    },
+    {
+      "code": "MONITORING_STUCK_EVALUATOR",
+      "http": 500,
+      "retryable": false,
+      "user_facing": false,
+      "audit_severity": "critical",
+      "i18n_key": "monitoring.errors.stuck_evaluator",
+      "description": "EvaluateAlertPoliciesJob has not run in > 5 minutes. Every occurrence is a P1 signal — alerts are not firing."
+    }
+  ]
+}

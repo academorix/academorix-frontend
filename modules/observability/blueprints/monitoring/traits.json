@@ -1,0 +1,155 @@
+{
+  "id": "academorix://modules/monitoring/traits",
+  "$version": 1,
+  "title": "monitoring — trait composition",
+  "description": "Five owned traits. `BelongsToHealthCheck` is the FK trait for downstream HealthCheckRun. `HasHealthCheckRuns` exposes the inverse scoped queries. `BelongsToMonitoringAlertPolicy` is the FK trait for MonitoringAlert. `BelongsToMonitoringIncident` is the FK trait (nullable) on MonitoringAlert. `HasMonitoringAlerts` exposes the inverse on MonitoringAlertPolicy + MonitoringIncident. Order matters when composed with BelongsToTenant — tenant MUST come first so the scope chain observes the tenant context.",
+  "owned": [
+    {
+      "trait": "Academorix\\Observability\\Monitoring\\Concerns\\BelongsToHealthCheck",
+      "description": "Mixed into HealthCheckRun. Adds the `healthCheck()` belongsTo relation. Refuses to save a row whose health_check_id points at a check in a different tenant than the row itself (defense-in-depth against cross-tenant FK smuggling).",
+      "public": true,
+      "usedBy": ["monitoring::HealthCheckRun (required health_check_id)"],
+      "conflicts_with": [],
+      "composition_notes": [
+        "Order: `BelongsToTenant` must appear BEFORE `BelongsToHealthCheck` in the trait list."
+      ]
+    },
+    {
+      "trait": "Academorix\\Observability\\Monitoring\\Concerns\\HasHealthCheckRuns",
+      "description": "Composed onto the HealthCheck model. Adds `->runs()` (hasMany over HealthCheckRun), `->recentRuns($seconds)` (scope for the trailing window), `->latestRun()` (most recent run for status queries), `->recentFailureCount($seconds)` (helper for the AlertPolicyEvaluator).",
+      "public": true,
+      "usedBy": ["monitoring::HealthCheck"]
+    },
+    {
+      "trait": "Academorix\\Observability\\Monitoring\\Concerns\\BelongsToMonitoringAlertPolicy",
+      "description": "Mixed into MonitoringAlert. Adds the `policy()` belongsTo relation. Refuses cross-tenant FK.",
+      "public": true,
+      "usedBy": ["monitoring::MonitoringAlert (required monitoring_alert_policy_id)"]
+    },
+    {
+      "trait": "Academorix\\Observability\\Monitoring\\Concerns\\BelongsToMonitoringIncident",
+      "description": "Mixed into MonitoringAlert. Adds the `incident()` belongsTo relation. NULLABLE — a firing alert may not yet be grouped into an incident (GroupAlertsIntoIncidentJob attaches it asynchronously).",
+      "public": true,
+      "usedBy": ["monitoring::MonitoringAlert (nullable monitoring_incident_id)"]
+    },
+    {
+      "trait": "Academorix\\Observability\\Monitoring\\Concerns\\HasMonitoringAlerts",
+      "description": "Composed onto the MonitoringAlertPolicy AND MonitoringIncident models. Adds `->alerts()` (hasMany), `->firingAlerts()` (scope status='firing'), `->acknowledgedAlerts()` (scope status='acknowledged'), `->resolvedAlerts()` (scope status='resolved'), `->hasFiringAlerts()` (bool helper used by the observer's soft-delete refusal).",
+      "public": true,
+      "usedBy": ["monitoring::MonitoringAlertPolicy", "monitoring::MonitoringIncident"]
+    }
+  ],
+  "consumed": {
+    "framework": [
+      { "trait": "Illuminate\\Database\\Eloquent\\Factories\\HasFactory" },
+      { "trait": "Illuminate\\Database\\Eloquent\\Concerns\\HasUlids" },
+      {
+        "trait": "Illuminate\\Database\\Eloquent\\SoftDeletes",
+        "reason": "HealthCheck, MonitoringAlertPolicy, MonitoringIncident, MonitoringProviderConfig. NOT HealthCheckRun (append-only). NOT MonitoringAlert (retained per the retention pipeline; hard-purged only)."
+      }
+    ],
+    "foundation": [
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUlids" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasUserstamps" },
+      { "trait": "Academorix\\Foundation\\Concerns\\HasMetadata" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Filterable" },
+      { "trait": "Academorix\\Foundation\\Concerns\\Searchable", "reason": "HealthCheck + MonitoringAlertPolicy + MonitoringIncident (searchable by name / slug / title). NOT HealthCheckRun + MonitoringAlert (accessed via relations from their parents)." }
+    ],
+    "tenants": [
+      { "trait": "Academorix\\Tenancy\\Concerns\\BelongsToTenant", "reason": "Every owned row carries tenant_id per tenancy-columns.md §3." }
+    ],
+    "audit": [
+      { "trait": "Academorix\\Audit\\Concerns\\Auditable", "reason": "Every write to the six tables is compliance-relevant." }
+    ],
+    "activity": [
+      { "trait": "Academorix\\Activity\\Concerns\\HasActivityLog", "reason": "MonitoringAlertPolicy + MonitoringIncident + MonitoringProviderConfig — admin actions feed the staff-visible activity feed. NOT HealthCheck / HealthCheckRun / MonitoringAlert — either high-volume OR already covered by audit." }
+    ]
+  },
+  "composition": {
+    "health_check": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasHealthCheckRuns",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ]
+    },
+    "health_check_run": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToHealthCheck",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable"
+      ],
+      "notes": "NO SoftDeletes — runs are append-only; hard-purged by PurgeExpiredHealthCheckRunsJob only. NO HasActivityLog — high-volume."
+    },
+    "monitoring_alert_policy": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMonitoringAlerts",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ]
+    },
+    "monitoring_alert": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "BelongsToMonitoringAlertPolicy",
+        "BelongsToMonitoringIncident",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "Filterable"
+      ],
+      "notes": "NO SoftDeletes — alerts are per-fire records; hard-purged only. NO HasActivityLog — high-volume."
+    },
+    "monitoring_incident": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMonitoringAlerts",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "Searchable",
+        "SoftDeletes"
+      ]
+    },
+    "monitoring_provider_config": {
+      "traits": [
+        "HasFactory",
+        "HasUlids",
+        "BelongsToTenant",
+        "HasMetadata",
+        "HasUserstamps",
+        "Auditable",
+        "HasActivityLog",
+        "Filterable",
+        "SoftDeletes"
+      ],
+      "notes": "SoftDeletes for the deactivate path (soft-delete + 90-day grace before hard-purge). Auditable is critical — credentials + circuit-breaker state changes are compliance-relevant."
+    }
+  }
+}

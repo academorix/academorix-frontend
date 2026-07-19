@@ -1,0 +1,122 @@
+{
+  "id": "payment.resources.payment-provider.edit",
+  "title": "Edit payment provider",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-providers/{provider}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-provider", "action": "update" },
+  "requiresPermission": "payment.providers.update",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "provider",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/payment-providers/' + params.provider",
+      "unwrap": "data"
+    },
+    {
+      "name": "capabilities",
+      "kind": "http.get",
+      "url": "/api/v1/payment-providers/capabilities",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + provider.provider.charAt(0).toUpperCase() + provider.provider.slice(1)" } } },
+                { "kind": "Widget", "widget": "payment.payment-status-chip", "bindings": { "props.status": { "$expr": "provider.is_active ? 'active' : 'inactive'" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "CardHeader",
+              "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Credentials" } }]
+            },
+            {
+              "kind": "CardContent",
+              "children": [
+                {
+                  "kind": "DynamicForm",
+                  "bindings": {
+                    "schema": { "$expr": "capabilities[provider.provider].config_schema" },
+                    "defaultValues": { "$ref": "provider.config" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "CardHeader",
+              "children": [{ "kind": "Text", "props": { "as": "h2", "className": "text-lg font-medium", "children": "Status" } }]
+            },
+            {
+              "kind": "CardContent",
+              "props": { "className": "flex flex-col gap-4" },
+              "children": [
+                {
+                  "kind": "Switch",
+                  "props": { "label": "Active" },
+                  "bindings": { "defaultValue": { "$ref": "provider.is_active" } },
+                  "actions": {
+                    "onChange": { "kind": "form.set", "field": "is_active", "valueExpr": "$value" }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center justify-end gap-2" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "children": "Cancel" },
+              "actions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-providers'" } }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Save changes" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.patch",
+                  "urlExpr": "'/api/v1/payment-providers/' + params.provider",
+                  "body": {
+                    "config": "{{form.config}}",
+                    "is_active": "{{form.is_active}}"
+                  },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/payment-providers'"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

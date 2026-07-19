@@ -1,0 +1,116 @@
+{
+  "id": "payment.resources.payment-method.add",
+  "title": "Add payment method",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-methods/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-method", "action": "create" },
+  "requiresPermission": "payment.methods.create",
+  "requiresEntitlement": "payment_saved_methods",
+  "dataSources": [
+    {
+      "name": "providers",
+      "kind": "http.get",
+      "url": "/api/v1/payment-providers?filter[is_active]=true",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "MultiStepForm",
+      "props": { "className": "max-w-2xl mx-auto p-6" },
+      "children": [
+        {
+          "kind": "Step",
+          "props": { "title": "Provider", "description": "Choose which payment provider to save this method with." },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus" },
+              "bindings": { "items": { "$ref": "providers" } },
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Card details", "description": "Your card information is tokenized by the provider before it reaches our servers." },
+          "children": [
+            {
+              "kind": "ProviderSdk",
+              "bindings": {
+                "provider": { "$ref": "form.provider" },
+                "flow": "setup_intent"
+              },
+              "actions": {
+                "onTokenized": {
+                  "kind": "form.setMany",
+                  "fields": {
+                    "provider_reference_id": "$token.id",
+                    "method_type": "$token.type",
+                    "brand": "$token.card.brand",
+                    "last4": "$token.card.last4",
+                    "exp_month": "$token.card.exp_month",
+                    "exp_year": "$token.card.exp_year",
+                    "fingerprint_hash": "$token.card.fingerprint_hash"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Step",
+          "props": { "title": "Confirm", "description": "Review + save." },
+          "children": [
+            {
+              "kind": "DescriptionList",
+              "bindings": {
+                "items": {
+                  "$expr": "[{label: 'Provider', value: form.provider}, {label: 'Brand', value: form.brand}, {label: 'Last 4', value: form.last4}, {label: 'Expires', value: form.exp_month + '/' + form.exp_year}]"
+                }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "Set as default payment method", "defaultValue": true },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "is_default", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "size": "lg", "children": "Save method" },
+              "actions": {
+                "onPress": {
+                  "kind": "http.post",
+                  "url": "/api/v1/payment-methods",
+                  "body": {
+                    "provider": "{{form.provider}}",
+                    "provider_reference_id": "{{form.provider_reference_id}}",
+                    "method_type": "{{form.method_type}}",
+                    "brand": "{{form.brand}}",
+                    "last4": "{{form.last4}}",
+                    "exp_month": "{{form.exp_month}}",
+                    "exp_year": "{{form.exp_year}}",
+                    "fingerprint_hash": "{{form.fingerprint_hash}}",
+                    "is_default": "{{form.is_default}}"
+                  },
+                  "onSuccess": {
+                    "kind": "navigate",
+                    "toExpr": "'/tenant/payment-methods'"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

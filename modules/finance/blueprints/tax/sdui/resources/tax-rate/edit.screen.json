@@ -1,0 +1,102 @@
+{
+  "id": "tax.resources.tax-rate.edit",
+  "title": "Edit tax rate",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/rates/:rateId/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-rate", "action": "edit" },
+  "requiresPermission": "tax.rates.update",
+  "requiresEntitlement": "tax_capture",
+  "dataSources": [
+    {
+      "name": "rate",
+      "kind": "http.get",
+      "url": "/api/v1/tax/rates/{{routeParams.rateId}}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + rate.name" } } },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "Calculation-freeze pattern",
+            "description": "Editing a rate that has been referenced by any calculation will be REFUSED. Instead: create a new rate + set effective_to on this one."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "Input",
+              "props": { "label": "Name", "required": true },
+              "bindings": { "initialValue": { "$ref": "rate.name" } },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "DateField",
+              "props": { "label": "Effective to", "helpText": "Set to close out an old rate at a fiscal-year boundary." },
+              "bindings": { "initialValue": { "$ref": "rate.effective_to" } },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "effective_to", "valueExpr": "$value" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-3", "children": "Danger zone" } },
+            {
+              "kind": "Button",
+              "props": { "variant": "danger", "leadingIcon": "trash", "children": "Delete rate" },
+              "requiresPermission": "tax.rates.delete",
+              "actions": {
+                "onPress": {
+                  "kind": "confirm",
+                  "title": "Delete this rate?",
+                  "message": "Soft-delete. Refused when any tax_calculations reference this rate.",
+                  "onConfirm": {
+                    "kind": "http.delete",
+                    "url": "/api/v1/tax/rates/{{rate.id}}",
+                    "onSuccess": { "kind": "navigate", "to": "/tenant/tax/rates" }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "primary", "size": "lg", "children": "Save changes" },
+          "actions": {
+            "onPress": {
+              "kind": "http.patch",
+              "url": "/api/v1/tax/rates/{{rate.id}}",
+              "body": {
+                "name": "{{form.name}}",
+                "effective_to": "{{form.effective_to}}"
+              },
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/tax/rates/' + rate.id"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

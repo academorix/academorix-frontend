@@ -1,0 +1,89 @@
+{
+  "id": "payment.risk-score-indicator",
+  "title": "Payment risk score indicator",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Visual indicator for payment.risk_score (0-100). Colour-coded: 0-49 low (green), 50-74 elevated (amber), 75-100 highest (red). Includes tooltip with the underlying risk_level enum when available.",
+  "props": {
+    "score": {
+      "type": ["integer", "null"],
+      "required": false
+    },
+    "level": {
+      "type": ["string", "null"],
+      "required": false
+    },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Tooltip",
+      "bindings": {
+        "hidden": { "$expr": "props.score === null || props.score === undefined" }
+      },
+      "props": {
+        "content": {
+          "$expr": "'Risk level: ' + (props.level || (props.score < 50 ? 'low' : (props.score < 75 ? 'elevated' : 'highest'))) + ' (score: ' + props.score + ')'"
+        }
+      },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2" },
+          "children": [
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "w-1 h-3 rounded" },
+                  "bindings": {
+                    "className": {
+                      "$expr": "'w-1 h-3 rounded ' + (props.score >= 0 ? 'bg-success' : 'bg-neutral')"
+                    }
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "w-1 h-3 rounded ml-0.5" },
+                  "bindings": {
+                    "className": {
+                      "$expr": "'w-1 h-3 rounded ml-0.5 ' + (props.score >= 25 ? (props.score >= 75 ? 'bg-danger' : (props.score >= 50 ? 'bg-warning' : 'bg-success')) : 'bg-neutral')"
+                    }
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "w-1 h-3 rounded ml-0.5" },
+                  "bindings": {
+                    "className": {
+                      "$expr": "'w-1 h-3 rounded ml-0.5 ' + (props.score >= 50 ? (props.score >= 75 ? 'bg-danger' : 'bg-warning') : 'bg-neutral')"
+                    }
+                  }
+                },
+                {
+                  "kind": "View",
+                  "props": { "className": "w-1 h-3 rounded ml-0.5" },
+                  "bindings": {
+                    "className": {
+                      "$expr": "'w-1 h-3 rounded ml-0.5 ' + (props.score >= 75 ? 'bg-danger' : 'bg-neutral')"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "Text",
+              "props": { "className": "text-xs font-mono text-muted" },
+              "bindings": {
+                "children": { "$expr": "props.score !== null && props.score !== undefined ? props.score.toString() : '—'" }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

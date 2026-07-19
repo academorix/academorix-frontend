@@ -1,0 +1,74 @@
+{
+  "id": "academorix://modules/tax/listeners",
+  "$version": 1,
+  "title": "tax — subscribed events",
+  "listeners": [
+    {
+      "event": "invoice::InvoiceLineCreated",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\DispatchCalculateTaxForInvoiceLine",
+      "queue": "tax",
+      "priority": 50,
+      "purpose": "Wave 4 primary bridge. Fires the CalculateTaxForInvoiceLineJob for every new invoice_line. Runs after commit so unregistered lines don't fire. This is the primary tax-lane entry point."
+    },
+    {
+      "event": "invoice::InvoiceLineUpdated",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\RefuseTaxRecomputeOnInvoiceLineUpdate",
+      "queue": "tax",
+      "priority": 30,
+      "purpose": "Compliance-critical. Refuses tax re-computation when an invoice_line is updated post-issuance. Instead: logs a warning + emits metric academorix.tax.invoice_line_updated_post_calculation. Regulator audit requires that once tax is calculated + invoice is issued, the tax stays frozen. Legitimate corrections require a credit memo + a new invoice, not a mutation."
+    },
+    {
+      "event": "coupon::CouponRedeemed",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\WaitForCouponBeforeTaxCalculation",
+      "queue": "tax",
+      "priority": 20,
+      "purpose": "Wave 4 bridge. When a coupon is redeemed BEFORE the invoice_line is created, the coupon module signals the discount. This listener ensures the tax calculation waits for the coupon adjustment to settle (via a temporary lock on the invoice_line's tax_calculation_id). Once the coupon adjusts the source_amount_cents, tax is computed on the adjusted amount. Idempotent — subsequent CouponRedeemed on the same line no-ops."
+    },
+    {
+      "event": "transaction::PaymentCaptured",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\FreezeTaxCalculationOnPaymentCapture",
+      "queue": "tax",
+      "priority": 40,
+      "purpose": "Wave 4 bridge. Terminal defense-in-depth. When a payment is captured, marks the tax_calculations row's metadata.frozen_by_payment=true. Downstream code refuses to mutate frozen calculations at the ORM layer (already immutable at DB level; this is a semantic marker for support tooling)."
+    },
+    {
+      "event": "region::RegionUpdated",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\ReconcileJurisdictionOnRegionChange",
+      "queue": "tax",
+      "priority": 100,
+      "purpose": "When a tenant's default_region changes (currency + timezone + country attributes), reconciles any single-currency tenants against tax_multi_currency entitlement. Warns via TaxConfigurationChangedNotification when the region change would require multi-currency support the tenant lacks."
+    },
+    {
+      "event": "user::UserProfileUpdated",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\LogAddressChangeForFutureCalculations",
+      "queue": "tax",
+      "purpose": "When a customer's shipping/billing address changes, logs an audit event. Does NOT retroactively re-tax historical calculations (calculation-freeze). Future calculations use the updated address."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\PurgeTaxDataForErasedTenant",
+      "queue": "tax",
+      "priority": 50,
+      "purpose": "Cascade delete via FK CASCADE on tax_rates + tax_jurisdictions + tax_exemptions. Distinct from MigrateCalculationsToArchiveOnTenantErased which runs at priority 20 to preserve the calculation ledger. This listener writes the compliance audit trail entry + emits count metrics per entity family."
+    },
+    {
+      "event": "tenancy::TenantErased",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\MigrateCalculationsToArchiveOnTenantErased",
+      "queue": "tax",
+      "priority": 20,
+      "purpose": "Runs BEFORE PurgeTaxDataForErasedTenant (priority 20 < 50). Migrates tax_calculations rows to tax_calculations_archive schema linked to invoice_lines_archive. Preserves the full row for 10-year regulator audit."
+    },
+    {
+      "event": "user::UserErased",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\RedactUserFromTaxRecords",
+      "queue": "tax",
+      "purpose": "Individual GDPR Art. 17 with financial-obligation carve-out (Art. 17(3)(b)). Nulls customer_id on tax_exemptions WHERE customer_type='User' AND customer_id=erased_user.id. tax_calculations rows themselves preserve the calculation record but null any subject-identifying fields in metadata. The core tax_amount + tax_rate_snapshot + calculated_at survive for regulator audit."
+    },
+    {
+      "event": "compliance::CertificateEncryptionKeyRotated",
+      "listener": "Academorix\\Finance\\Tax\\Listeners\\ReencryptCertificateUrlsOnKeyRotation",
+      "queue": "tax",
+      "purpose": "When the compliance/encryption service rotates the certificate_document_url encryption key, re-encrypts every tax_exemptions row with the new key. Runs as a background chunked sweep to avoid blocking the rotation. Each chunk emits a progress metric."
+    }
+  ]
+}

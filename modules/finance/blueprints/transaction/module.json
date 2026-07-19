@@ -1,0 +1,182 @@
+{
+  "$version": 1,
+  "name": "transaction",
+  "alias": "transaction",
+  "namespace": "Academorix\\Finance\\Transaction",
+  "description": "The money-movement ledger. Answers 'where has every dollar flowed across accounts?'. FUNDAMENTALLY DISTINCT from Membership (the contract), Invoice (money owed), and Payment (a successful capture) — Transaction is the append-only double-entry ledger that records the movement itself. Ships TWO tables: `transactions` (root record — one row per business-level money movement; ties together the source + destination + amount + kind of movement) and `transaction_ledger_entries` (double-entry line items — debit + credit pair for every movement — enforces the balanced-books invariant). Every transaction has AT LEAST TWO ledger entries summing to zero (double-entry principle). Twelve transaction kinds (invoice_payment / refund_issued / chargeback_debit / coupon_credit / tax_remittance / fee_charge / adjustment / write_off / bank_deposit / bank_withdrawal / currency_conversion / opening_balance) map onto twelve chart-of-accounts entries (revenue / accounts_receivable / cash / refunds_owed / refunds_expense / tax_payable / gateway_fees / bank_deposits / write_offs / coupons_expense / chargebacks_expense / accounts_payable / prepayments / deferred_revenue). Transactions IMMUTABLE after commit — reversal happens via a NEW offsetting transaction (pointing at the original via source_transaction_id + reversal_reason), never mutation. Multi-currency support: transaction.currency frozen at commit; if a cross-currency movement (tenant base currency ≠ transaction currency), exchange_rate_to_base + base_amount_cents captured atomically. Every ledger entry constraint: exactly one of debit_cents / credit_cents > 0 per row. Invariant: SUM(debit_cents) == SUM(credit_cents) per transaction (enforced by TransactionObserver at commit + reasserted nightly by LedgerReconciler). Ships the `TransactionRecorder` service used atomically by invoice / payment / refund / chargeback modules during their own operations — every invoice paid → one transaction recorded → [debit: cash, credit: accounts_receivable] ledger entries; every refund issued → one transaction recorded → [debit: refunds_owed, credit: cash] + [debit: refunds_expense, credit: revenue]. Read-only HTTP surface (admin + finance role only) — writes ONLY through internal service. Reversal via POST /transactions/{txn}/reverse (admin-only, requires reason + approval). LedgerImbalanceDetected is the module's CRITICAL P0 event — it should NEVER fire; if it does, ledger is broken + new transactions halt until resolved.",
+  "keywords": [
+    "transaction",
+    "ledger",
+    "double-entry",
+    "chart-of-accounts",
+    "money-movement",
+    "financial-audit",
+    "sox-404",
+    "gaap",
+    "ifrs",
+    "sarbanes-oxley",
+    "pci-dss",
+    "vat-remittance",
+    "aml",
+    "anti-money-laundering",
+    "revenue",
+    "accounts-receivable",
+    "cash",
+    "refunds-owed",
+    "tax-payable",
+    "gateway-fees",
+    "bank-deposits",
+    "chargebacks-expense",
+    "prepayments",
+    "deferred-revenue",
+    "reversal",
+    "offsetting-entry",
+    "multi-currency",
+    "exchange-rate-snapshot",
+    "reconciliation",
+    "general-ledger",
+    "immutable",
+    "append-only",
+    "distinct-from-invoice",
+    "distinct-from-payment",
+    "distinct-from-membership",
+    "wave-4"
+  ],
+  "priority": 64,
+  "providers": ["Academorix\\Finance\\Transaction\\Providers\\TransactionServiceProvider"],
+  "files": [],
+  "dependencies": [
+    "foundation",
+    "tenancy",
+    "application",
+    "user",
+    "entitlements",
+    "compliance",
+    "invoice",
+    "membership",
+    "tax"
+  ],
+  "extendedBy": [],
+  "planned_consumers": [
+    "payment (Wave 4.5 — every successful payment capture records an invoice_payment transaction via TransactionRecorder)",
+    "refund (Wave 4.5 — every refund records a refund_issued transaction with offsetting ledger entries)",
+    "chargeback (Wave 4.5 — every chargeback records a chargeback_debit transaction with the disputed amount)"
+  ],
+  "contributes": {
+    "traits": ["BelongsToTransaction", "HasLedgerEntries"],
+    "attributes": ["AsTransactionListener", "AsLedgerAccount", "AsTransactionKind"],
+    "blueprints": ["transactions", "transaction_ledger_entries"],
+    "middleware": [],
+    "events": [
+      "TransactionCreated",
+      "TransactionPosted",
+      "TransactionReversed",
+      "TransactionAmendmentRequested",
+      "LedgerEntryRecorded",
+      "LedgerImbalanceDetected",
+      "AccountBalanceThresholdCrossed",
+      "TenantOpeningBalanceRecorded",
+      "TransactionCurrencyConverted",
+      "LedgerReconciliationCompleted"
+    ],
+    "policies": ["TransactionPolicy", "TransactionLedgerEntryPolicy"],
+    "hooks": [
+      "RecordOpeningBalanceOnTenantProvisioned",
+      "PurgeTransactionDataForErasedTenant",
+      "ArchiveTransactionsToComplianceOnTenantErased",
+      "PreventNegativeAmountsOnObserver",
+      "FreezeExchangeRateOnCrossCurrencyTransaction"
+    ],
+    "commands": [
+      "transaction:list",
+      "transaction:describe",
+      "transaction:reverse",
+      "ledger:list-entries",
+      "ledger:account-balance",
+      "ledger:reconcile",
+      "ledger:report",
+      "ledger:export",
+      "ledger:opening-balance",
+      "ledger:audit-imbalances"
+    ],
+    "jobs": [
+      "RecordInvoicePaidTransactionJob",
+      "RecordRefundIssuedTransactionJob",
+      "RecordChargebackTransactionJob",
+      "ReconcileLedgerBalancesJob",
+      "GenerateGeneralLedgerReportJob",
+      "PurgeExpiredTransactionDataJob"
+    ],
+    "notifications": [
+      "LedgerImbalanceDetectedNotification",
+      "TransactionAmendmentAppliedNotification",
+      "AccountBalanceAlertNotification",
+      "MonthlyLedgerReportNotification"
+    ],
+    "broadcasts": [
+      "tenant.{tenantId}.transactions",
+      "tenant.{tenantId}.ledger",
+      "tenant.{tenantId}.ledger.reconciliation"
+    ],
+    "observers": ["TransactionObserver", "TransactionLedgerEntryObserver"],
+    "rules": [
+      "valid_kind",
+      "valid_currency",
+      "valid_positive_amount",
+      "valid_exchange_rate_when_cross_currency",
+      "valid_account",
+      "debit_xor_credit",
+      "sum_debits_equals_sum_credits_per_transaction",
+      "unique_transaction_number_per_tenant_year",
+      "immutable_after_post"
+    ],
+    "casts": [
+      "TransactionKind",
+      "TransactionStatus",
+      "TransactionReversalReason",
+      "LedgerAccount",
+      "ExchangeRateSnapshot"
+    ],
+    "views": [],
+    "lang": ["transaction"],
+    "config": ["transaction"],
+    "macros": [],
+    "bindings": [
+      "TransactionRepository",
+      "TransactionLedgerEntryRepository",
+      "TransactionRecorder",
+      "TransactionReverser",
+      "TransactionNumberGenerator",
+      "ExchangeRateResolver",
+      "LedgerReconciler",
+      "LedgerReporter",
+      "ChartOfAccountsRegistry",
+      "AccountBalanceCalculator"
+    ],
+    "resources": ["transaction", "transaction-ledger-entry"]
+  },
+  "hosts": {
+    "tenant": {
+      "description": "Tenant-facing READ-ONLY ledger surface. Admin + finance role only. Every route carries `sanctum` guard + `X-Application-Id` header + `entitlement.enforce:transaction_capture`. Write actions are NEVER exposed — transactions are recorded ONLY through internal service calls by invoice / payment / refund / chargeback modules. Reversal is an admin-only escape hatch that creates a NEW offsetting transaction (never mutates).",
+      "routes": [
+        "GET /api/v1/transactions",
+        "GET /api/v1/transactions/{transaction}",
+        "GET /api/v1/transactions/{transaction}/ledger-entries",
+        "POST /api/v1/transactions/{transaction}/reverse",
+        "GET /api/v1/ledger/accounts",
+        "GET /api/v1/ledger/accounts/{account}",
+        "GET /api/v1/ledger/accounts/{account}/history",
+        "GET /api/v1/ledger/report",
+        "GET /api/v1/ledger/reconciliation"
+      ]
+    },
+    "platform-admin": {
+      "description": "Cross-tenant support tooling — ops + support review ledger health, escalate imbalances, force reconciliation runs during audits.",
+      "routes": [
+        "GET /api/v1/platform/transactions",
+        "POST /api/v1/platform/ledger/reconcile",
+        "GET /api/v1/platform/ledger/imbalances"
+      ]
+    }
+  }
+}

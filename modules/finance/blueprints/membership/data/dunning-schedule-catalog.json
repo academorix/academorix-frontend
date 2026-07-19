@@ -1,0 +1,76 @@
+{
+  "$version": 1,
+  "title": "Dunning schedule catalog",
+  "description": "Reference table for the retry ladder + dunning notification cadence. Enumerates the sequence of retry attempts + reminder notifications after a failed renewal. Feeds TriggerRetryLadderOnRenewalFailed hook + NotifyPaymentFailureJob scheduling.",
+  "schedule": {
+    "retry_ladder": [
+      {
+        "attempt_number": 1,
+        "trigger": "membership.next_renewal_at reached",
+        "delay_from_previous_days": 0,
+        "description": "Initial payment attempt at scheduled renewal. If succeeds, MembershipRenewed fires + period extends. If transient failure, schedules attempt 2."
+      },
+      {
+        "attempt_number": 2,
+        "trigger": "day+3 from attempt 1 failure",
+        "delay_from_previous_days": 3,
+        "description": "First retry. By this point NotifyPaymentFailureJob has sent a 24-hour reminder AND a 72-hour reminder."
+      },
+      {
+        "attempt_number": 3,
+        "trigger": "day+7 from attempt 2 failure (day+10 from attempt 1)",
+        "delay_from_previous_days": 7,
+        "description": "Second retry. Adds SMS to the dunning channel mix if tenant holds `membership_dunning_sms` entitlement."
+      },
+      {
+        "attempt_number": 4,
+        "trigger": "day+14 from attempt 3 failure (day+24 from attempt 1)",
+        "delay_from_previous_days": 14,
+        "description": "Final retry. Failure at this step triggers LapseMembershipJob after config.membership.renewal.grace_days_after_final_failure (default 3 additional days)."
+      }
+    ],
+    "notification_cadence_per_attempt": [
+      {
+        "delay_hours_after_failure": 24,
+        "channels": ["mail", "in_app"],
+        "template": "MembershipRenewalFailedNotification",
+        "content_type": "informational_action_required",
+        "description": "First reminder. Shows failure + deep-link to update payment method + next attempt date."
+      },
+      {
+        "delay_hours_after_failure": 72,
+        "channels": ["mail", "in_app"],
+        "template": "MembershipRenewalFailedNotification",
+        "content_type": "urgent_action_required",
+        "description": "Second reminder. Escalated tone."
+      },
+      {
+        "delay_hours_after_failure": 168,
+        "channels": ["mail", "in_app", "sms_if_entitled_and_attempt_3+"],
+        "template": "MembershipRenewalFailedNotification",
+        "content_type": "final_notice_before_lapse",
+        "description": "Third reminder. SMS added when tenant holds membership.dunning_sms feature AND attempt_number >= 3. Final warning before lapse."
+      }
+    ],
+    "post_lapse_communication": {
+      "trigger": "MembershipLapsed",
+      "channels": ["mail", "in_app"],
+      "template": "MembershipLapsedNotification",
+      "content_type": "terminal_with_reactivation_deep_link",
+      "description": "Terminal communication after final failed attempt + grace expires. Includes deep-link to update payment method + resume membership — some customers reactivate after seeing the terminal email."
+    },
+    "post_lapse_marketing_win_back": {
+      "trigger": "MembershipLapsed + 30 days elapsed + customer has marketing consent",
+      "owned_by": "growth::marketing (NOT this module)",
+      "consent_tier": "marketing",
+      "opt_out_allowed": true,
+      "description": "Marketing-consent-gated win-back campaigns. Not owned here — this module publishes the MembershipLapsed event; growth module subscribes."
+    }
+  },
+  "cross_reference": [
+    "retry_ladder values feed config.membership.billing.retry_ladder_days default of [3, 7, 14]",
+    "notification_cadence_per_attempt values feed config.membership.dunning.hours_after_failure_* defaults",
+    "SMS threshold controlled by config.membership.dunning.sms_after_attempt_number (default 3)",
+    "Tenants can override the cadence via settings/membership section 2 — reminder hours are user-configurable within 1-168h bounds"
+  ]
+}

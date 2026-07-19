@@ -1,0 +1,137 @@
+{
+  "id": "invoice.resources.reports.revenue",
+  "title": "Revenue report",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/reports/revenue",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "invoice", "entity": "reports", "action": "revenue" },
+  "requiresPermission": "invoice.reports.revenue.view",
+  "requiresEntitlement": "invoice_capture",
+  "dataSources": [
+    {
+      "name": "revenue",
+      "kind": "http.get",
+      "url": "/api/v1/reports/revenue",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "state": {
+    "from": { "type": "date", "defaultFromToday": { "monthsAgo": 6 } },
+    "to": { "type": "date", "defaultFromToday": true },
+    "group_by": { "type": "string", "default": "month" }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Revenue" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Invoiced vs collected revenue over time. Feeds monthly financial statements." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "DateRangePicker",
+                  "props": { "label": "Range" },
+                  "bindings": { "value": { "start": { "$state": "from" }, "end": { "$state": "to" } } },
+                  "actions": {
+                    "onChange": {
+                      "kind": "state.setMany",
+                      "fields": { "from": "$value.start", "to": "$value.end" }
+                    }
+                  }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Group by", "menuTrigger": "focus", "className": "min-w-32" },
+                  "props_items": [
+                    { "id": "day", "label": "Day" },
+                    { "id": "week", "label": "Week" },
+                    { "id": "month", "label": "Month" },
+                    { "id": "item_type", "label": "Item type" }
+                  ],
+                  "bindings": { "selectedKey": { "$state": "group_by" } },
+                  "actions": { "onSelectionChange": { "kind": "state.set", "field": "group_by", "valueExpr": "$selectedKey" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-3 gap-4" },
+          "children": [
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "revenue.summary.invoiced_cents" } },
+              "props": { "label": "Total invoiced", "formatter": "currency", "variant": "primary" }
+            },
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "revenue.summary.collected_cents" } },
+              "props": { "label": "Total collected", "formatter": "currency", "variant": "success" }
+            },
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "revenue.summary.ar_balance_cents" } },
+              "props": { "label": "AR balance", "formatter": "currency", "variant": "warning" }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "title": "Revenue over time" },
+          "children": [
+            {
+              "kind": "LineChart",
+              "bindings": { "series": { "$ref": "revenue.timeseries" } },
+              "props": {
+                "xField": "period",
+                "yFields": [
+                  { "field": "invoiced_cents", "label": "Invoiced", "color": "primary" },
+                  { "field": "collected_cents", "label": "Collected", "color": "success" }
+                ],
+                "yFormatter": "currency",
+                "height": 320
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "title": "Detail" },
+          "children": [
+            {
+              "kind": "DataGrid",
+              "bindings": { "items": { "$ref": "revenue.rows" } },
+              "props": {
+                "columns": [
+                  { "field": "period", "label": "Period", "width": 160 },
+                  { "field": "invoice_count", "label": "Invoices", "width": 100, "align": "right" },
+                  { "field": "invoiced_cents", "label": "Invoiced", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "collected_cents", "label": "Collected", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "ar_balance_cents", "label": "AR balance", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "collection_rate", "label": "Collection %", "width": 120, "align": "right", "formatter": "percent" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

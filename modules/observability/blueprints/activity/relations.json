@@ -1,0 +1,180 @@
+{
+  "id": "academorix://modules/activity/relations",
+  "$version": 1,
+  "title": "activity — cross-module relations",
+  "description": "Two aggregates. `Activity` is the vendor-adapted `activity_log` row: polymorphic subject (the thing something happened to) + polymorphic causer (the actor who did it) — plus hard FKs on `tenant_id` and (nullable) `application_id`. `ActivityRetentionPolicy` is a tenant-scoped per-log_name override on top of the config default. Cross-tenant FKs are forbidden; every read is scoped by `BelongsToTenant`.",
+  "anchors": [
+    {
+      "model": {
+        "name": "Activity",
+        "class": "Academorix\\Observability\\Activity\\Models\\Activity",
+        "schemaRef": "academorix://modules/activity/schemas/activity"
+      },
+      "relations": [
+        {
+          "name": "tenant",
+          "type": "BelongsTo",
+          "target": {
+            "module": "tenancy",
+            "model": "Tenant",
+            "class": "Academorix\\Tenancy\\Models\\Tenant"
+          },
+          "foreignKey": "tenant_id",
+          "ownerKey": "id",
+          "onDelete": "cascade",
+          "description": "Owning tenant. Auto-filled by BelongsToTenant on save; every read auto-scopes to the caller's tenant."
+        },
+        {
+          "name": "application",
+          "type": "BelongsTo",
+          "target": {
+            "module": "application",
+            "model": "Application",
+            "class": "Academorix\\Application\\Models\\Application"
+          },
+          "foreignKey": "application_id",
+          "ownerKey": "id",
+          "nullable": true,
+          "onDelete": "set null",
+          "description": "Application under which the mutation happened. Auto-filled from the `X-Application-Id` request header on tenant-audience writes. NULL for platform-audience rows (a PlatformUser mutation with no active application context)."
+        }
+      ],
+      "morphs": [
+        {
+          "name": "subject",
+          "type": "MorphTo",
+          "morphType": "subject_type",
+          "morphId": "subject_id",
+          "description": "The thing the activity happened TO. Concrete class resolved via the vendor's morph map (registered by domain modules composing `LogsActivity`). Nullable — a `system.startup` activity may have no subject.",
+          "registeredBy": "spatie/activitylog morph map + LogsActivityDiscovery",
+          "expectedSubjects": [
+            {
+              "module": "sports",
+              "model": "Booking",
+              "subjectTypeKey": "booking",
+              "note": "'Alice booked Court 3 for tomorrow' — the archetypal activity."
+            },
+            {
+              "module": "sports",
+              "model": "Athlete",
+              "subjectTypeKey": "athlete",
+              "note": "Progress updates, attendance marks, evaluation notes."
+            },
+            {
+              "module": "teams",
+              "model": "Team",
+              "subjectTypeKey": "team",
+              "note": "Roster changes, session schedule updates."
+            },
+            {
+              "module": "platform",
+              "model": "Branch",
+              "subjectTypeKey": "branch",
+              "note": "Branch settings changes, staff assignments."
+            },
+            {
+              "module": "identity",
+              "model": "User",
+              "subjectTypeKey": "user",
+              "note": "Auth events (last_login_at updates), profile updates. NOT for RBAC changes — those route to audit exclusively."
+            }
+          ]
+        },
+        {
+          "name": "causer",
+          "type": "MorphTo",
+          "morphType": "causer_type",
+          "morphId": "causer_id",
+          "description": "The actor who did the thing. Vendor's `CauserResolver` picks up `auth_user` automatically; explicit `->causedBy($user)` overrides. Nullable — a system-triggered mutation has no human causer (`ReconcileActivityBatchesJob` closing an orphan batch, a scheduled maintenance task).",
+          "registeredBy": "spatie/activitylog CauserResolver",
+          "expectedCausers": [
+            {
+              "module": "user",
+              "model": "User",
+              "causerTypeKey": "user",
+              "note": "The primary case — every logged-in tenant user."
+            },
+            {
+              "module": "user",
+              "model": "PlatformUser",
+              "causerTypeKey": "platform_user",
+              "note": "Academorix support ops causing mutations on behalf of a tenant. Rare; every one is also captured on the audit stream."
+            },
+            {
+              "module": "identity",
+              "model": "ServiceAccount",
+              "causerTypeKey": "service_account",
+              "note": "Machine credentials for automated integrations. Actor identity resolvable via `causer_id` → service_account row."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "model": {
+        "name": "ActivityRetentionPolicy",
+        "class": "Academorix\\Observability\\Activity\\Models\\ActivityRetentionPolicy",
+        "schemaRef": "academorix://modules/activity/schemas/activity-retention-policy"
+      },
+      "relations": [
+        {
+          "name": "tenant",
+          "type": "BelongsTo",
+          "target": {
+            "module": "tenancy",
+            "model": "Tenant",
+            "class": "Academorix\\Tenancy\\Models\\Tenant"
+          },
+          "foreignKey": "tenant_id",
+          "ownerKey": "id",
+          "onDelete": "cascade",
+          "description": "Owning tenant. Retention policies are strictly per-tenant."
+        }
+      ],
+      "morphs": []
+    }
+  ],
+  "outbound": {
+    "description": "Cross-references from Activity + ActivityRetentionPolicy without hard FKs.",
+    "reads": [
+      {
+        "from": "Activity.log_name",
+        "kind": "cross-reference",
+        "to": {
+          "module": "activity",
+          "table": "data/log-names-catalog.json",
+          "column": "name"
+        },
+        "validated_by": "valid_log_name rule (write-time check; unknown names refused with UNKNOWN_LOG_NAME)",
+        "description": "The `log_name` string is one of the registered feed names — 'default', 'bookings', 'auth', 'branch-management', etc. Catalog is a blueprint fixture that seeds the module's own registry table at boot."
+      },
+      {
+        "from": "Activity.properties.batch_uuid + Activity.properties",
+        "kind": "vendor-integration",
+        "to": {
+          "module": "activity",
+          "table": "activity_log (self)",
+          "column": "batch_uuid"
+        },
+        "description": "The vendor's `batch_uuid` column groups rows written from one HTTP request. Not FK-constrained — the value is populated by `ActivityBatcher` at request start and cleared at request end."
+      }
+    ]
+  },
+  "inbound": {
+    "description": "Downstream consumers compose `LogsActivity` on their models. This module doesn't track them centrally — the vendor's morph map is the registry.",
+    "consumers_at_wave_6": [
+      "sports::Booking → 'default' + 'bookings' log_names",
+      "sports::Athlete → 'default' + 'athletes' log_names",
+      "teams::Team → 'default' + 'teams' log_names",
+      "platform::Branch → 'branch-management' log_name",
+      "identity::User → 'auth' log_name (login/logout/mfa transitions only)",
+      "billing::Invoice → 'billing' log_name (state transitions only — mutations to money-sensitive fields route to audit exclusively)"
+    ]
+  },
+  "notes": [
+    "Polymorphic subject + causer are the extension seams. The activity module does NOT know that `booking` means Sports' Booking — it just knows a string key registered in the vendor's morph map.",
+    "The `tenant_id` FK is HARD — every activity strictly lives inside its tenant. The `application_id` FK is nullable — platform-audience mutations (a PlatformUser action) leave it NULL.",
+    "The `Activity` model does NOT compose HasApplication or BelongsToApplication trait. It carries `application_id` per the eight-row exception in `tenancy-columns.md §2` (activity_log is one of the eight rows that carry application_id directly), but the fill happens in the observer, not a trait.",
+    "`ActivityRetentionPolicy` is a small aggregate — just tenant scoping. No polymorphism, no causer. Owner + admin CRUD only."
+  ]
+}

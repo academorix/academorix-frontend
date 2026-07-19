@@ -1,0 +1,250 @@
+{
+  "id": "academorix://modules/transaction/schemas/transaction",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Transaction",
+  "description": "The money-movement ledger root record. One row per business-level money movement. Carries `tenant_id` only — cascades application/region/organization through the tenant. IMMUTABLE after status='posted'. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, or `scope_node_id`. Reversal via NEW offsetting transaction (source_transaction_id + reversal_reason).",
+  "type": "object",
+  "x-module": "transaction",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "transactions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "trx_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Transaction\\Models\\Transaction",
+    "interface": "Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionInterface",
+    "implements": ["Academorix\\Finance\\Transaction\\Contracts\\Data\\TransactionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasLedgerEntries",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "HasActivityLog",
+      "Filterable",
+      "Searchable"
+    ],
+    "casts": {
+      "kind": "TransactionKind",
+      "status": "TransactionStatus",
+      "reversal_reason": "TransactionReversalReason",
+      "amount_cents": "integer",
+      "base_amount_cents": "integer",
+      "exchange_rate_to_base": "decimal:10",
+      "metadata": "array",
+      "effective_date": "date",
+      "posted_at": "datetime"
+    },
+    "observers": ["TransactionObserver"],
+    "appends": ["is_terminal", "is_reversed", "is_reversal", "regulator_category_touched"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `trx_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "transaction_number": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Sequential number per (tenant, year). Format 'TXN-YYYY-NNNNNNNN'. Composite unique with tenant_id + YEAR(effective_date). Generated via Postgres advisory lock in TransactionNumberGenerator."
+      },
+      "kind": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "One of 12 TransactionKind values. See data/kind-catalog.json."
+      },
+      "reference_type": {
+        "type": "string",
+        "length": 96,
+        "nullable": true,
+        "description": "Polymorphic reference source class name (Invoice / Payment / Refund / Chargeback / CouponRedemption / TaxRemittance / TenantProvisioning). Null for arbitrary manual adjustments."
+      },
+      "reference_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "Polymorphic reference source ID. Nullable together with reference_type."
+      },
+      "amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Transaction amount in cents. STRICTLY POSITIVE — direction indicated by ledger entries, never by sign. Reversal transactions have their own positive amount + point at the source via source_transaction_id."
+      },
+      "currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217 3-letter code. Frozen at commit. Every ledger entry in the transaction uses the same currency (single-currency-per-transaction invariant — except for currency_conversion kind which is the one exception)."
+      },
+      "base_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": true,
+        "description": "ISO 4217 3-letter code. Set only when currency != tenant.base_currency (cross-currency transactions). Equals the tenant's base_currency at commit time."
+      },
+      "base_amount_cents": {
+        "type": "bigint",
+        "nullable": true,
+        "description": "Amount in the tenant's base_currency. Set only when currency != tenant.base_currency. Equals ROUND(amount_cents * exchange_rate_to_base) with ±1 cent rounding tolerance."
+      },
+      "exchange_rate_to_base": {
+        "type": "decimal(20,10)",
+        "nullable": true,
+        "description": "The exchange rate captured at commit time. FROZEN — historical reports use this rate, never the current market rate. IAS 21 compliance."
+      },
+      "status": {
+        "type": "string",
+        "length": 16,
+        "nullable": false,
+        "default": "'draft'",
+        "description": "Enum: draft / posted. Transitions ONE WAY (draft → posted). Posted is IMMUTABLE."
+      },
+      "effective_date": {
+        "type": "date",
+        "nullable": false,
+        "description": "The settlement date. May differ from created_at for backfilled transactions. Regulator-critical — every GL report keys off effective_date."
+      },
+      "posted_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "When status transitioned to 'posted'. Set inside the creating hook's atomic transaction. Null while status='draft'."
+      },
+      "source_transaction_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "transactions", "column": "id", "onDelete": "restrict" },
+        "description": "Self-referential FK. Set for reversal transactions (points at the transaction being reversed). RESTRICT — the original cannot be hard-deleted while any reversal references it."
+      },
+      "reversal_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: refund / chargeback / error_correction / accounting_adjustment. Travels with source_transaction_id (both set or both null)."
+      },
+      "description": {
+        "type": "string",
+        "length": 512,
+        "nullable": false,
+        "description": "Human-readable ledger-line description. Rendered on GL reports."
+      },
+      "metadata": {
+        "type": "jsonb",
+        "nullable": true,
+        "description": "Bounded to ≤ 8KB. Support-context that references PII by ID (never PAN / CVV / raw card data). May contain the payment_intent_id (a token, never card data) or the invoice.number reference for cross-check."
+      },
+      "created_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The actor who invoked the recording flow. Null for system-recorded transactions (e.g. RecordInvoicePaidTransactionJob has no human actor)."
+      },
+      "updated_by": { "type": "string", "length": 64, "nullable": true, "note": "Populated only by the observer during the creating→posted transition; refuses to update after posted." },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "transaction_number", "effective_date_year"],
+        "unique": true,
+        "name": "transactions_tenant_number_year_unique",
+        "predicate": "extract(year from effective_date) = extract(year from effective_date)",
+        "description": "Composite unique index on (tenant_id, transaction_number, YEAR(effective_date)). Enforced by DB — TransactionNumberGenerator uses a Postgres advisory lock keyed on (tenant_id, year) for monotonic generation."
+      },
+      { "columns": ["tenant_id", "effective_date"], "name": "transactions_tenant_effective_idx" },
+      { "columns": ["tenant_id", "kind", "effective_date"], "name": "transactions_tenant_kind_effective_idx" },
+      { "columns": ["reference_type", "reference_id"], "name": "transactions_reference_idx" },
+      { "columns": ["source_transaction_id"], "name": "transactions_source_idx" },
+      { "columns": ["tenant_id", "status", "posted_at"], "name": "transactions_status_idx" },
+      { "columns": ["tenant_id", "created_at"], "name": "transactions_recent_idx" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "transaction_number",
+    "kind",
+    "amount_cents",
+    "currency",
+    "status",
+    "effective_date",
+    "description",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^trx_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "transaction_number": { "type": "string", "pattern": "^TXN-[0-9]{4}-[0-9]{8}$" },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "invoice_payment",
+        "refund_issued",
+        "chargeback_debit",
+        "coupon_credit",
+        "tax_remittance",
+        "fee_charge",
+        "adjustment",
+        "write_off",
+        "bank_deposit",
+        "bank_withdrawal",
+        "currency_conversion",
+        "opening_balance"
+      ]
+    },
+    "reference_type": {
+      "type": ["string", "null"],
+      "enum": [null, "Invoice", "Payment", "Refund", "Chargeback", "CouponRedemption", "TaxRemittance", "TenantProvisioning"]
+    },
+    "reference_id": { "type": ["string", "null"], "maxLength": 64 },
+    "amount_cents": { "type": "integer", "minimum": 1 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "base_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+    "base_amount_cents": { "type": ["integer", "null"], "minimum": 1 },
+    "exchange_rate_to_base": { "type": ["string", "number", "null"], "minimum": 0 },
+    "status": { "type": "string", "enum": ["draft", "posted"] },
+    "effective_date": { "type": "string", "format": "date" },
+    "posted_at": { "type": ["string", "null"], "format": "date-time" },
+    "source_transaction_id": { "type": ["string", "null"], "pattern": "^trx_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "reversal_reason": {
+      "type": ["string", "null"],
+      "enum": [null, "refund", "chargeback", "error_correction", "accounting_adjustment"]
+    },
+    "description": { "type": "string", "minLength": 1, "maxLength": 512 },
+    "metadata": { "type": ["object", "null"] },
+    "created_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "amount_cents > 0 (strictly positive — direction indicated by ledger entries, never by sign)",
+    "currency, exchange_rate_to_base, base_amount_cents, base_currency are frozen at post; never mutable after",
+    "state transitions are ONE WAY: draft → posted. No draft-from-posted transitions.",
+    "posted transactions are IMMUTABLE — TransactionObserver refuses ALL updates + deletes",
+    "cross-currency transactions require base_currency + base_amount_cents + exchange_rate_to_base ALL set together (or ALL null for same-currency)",
+    "reversal_reason IS NOT NULL iff source_transaction_id IS NOT NULL — they travel as a pair",
+    "source_transaction_id must reference a transaction in the same tenant AND in status='posted'",
+    "transaction_number is unique per (tenant_id, YEAR(effective_date))",
+    "the sum of all associated ledger entries SUM(debit_cents) == SUM(credit_cents) > 0 (enforced at post time; reasserted nightly)",
+    "reference_type and reference_id are BOTH set or BOTH null",
+    "kind='opening_balance' can occur at most once per tenant"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "academorix://modules/audit/entitlements",
+  "$version": 1,
+  "title": "audit — entitlements",
+  "description": "Four entitlements gating audit capture (all tiers baseline), self-service export (Medium+), extended retention (Enterprise), and regulator-shaped cross-application export (Enterprise). Audit is a compliance requirement; the master entitlement is ON for every tier so no tenant ever operates without audit capture.",
+  "reference": {
+    "publishedBy": "entitlements",
+    "resolvedBy": "GET /api/auth/me → data.quota_summary",
+    "seededFrom": "BusinessType.default_config.entitlements"
+  },
+  "kinds": [{ "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "audit_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": true, "small": true, "medium": true, "enterprise": true },
+      "description": "Master gate. ON for every tenant because audit is a compliance requirement, not a product feature. The entitlement exists as an emergency kill switch (paired with the `audit.capture` feature flag) — turning it OFF requires an explicit compliance-officer approval + legal review. When OFF, the vendor `AuditableObserver` is unbinded (via the `AuditObserverUnbindingListener`), and modules composing the vendor `Auditable` trait continue to run but never persist audit rows."
+    },
+    {
+      "key": "audit_export",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": true, "enterprise": true },
+      "description": "Self-service DSAR / regulator export via POST /api/v1/audits/export. Non-Medium+ tenants must open a support ticket for exports. Enterprise additionally has audit_regulator_export (below) for cross-application rollups."
+    },
+    {
+      "key": "audit_retention_extended",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": false, "enterprise": true },
+      "description": "Enables creating AuditRetentionPolicy with retention_years up to 10 (the config-level max_years). Non-Enterprise tenants are locked at the default_years (7). Common triggers: regulator hold, lawsuit hold, HIPAA covered-entity requirement, medical-record retention rule."
+    },
+    {
+      "key": "audit_regulator_export",
+      "kind": "boolean",
+      "defaultsByPlan": { "free": false, "small": false, "medium": false, "enterprise": true },
+      "description": "Regulator-shaped export via POST /api/v1/platform/audits/export. Cross-application (per tenants.application_id, so this composes across a tenant's activity across every Academorix product they're on). Payload conforms to regulator export schemas (see schemas/audit-regulator-export.schema.json planned Wave 7). Enterprise-only because the payload includes cross-app rollup + a signed manifest hash + a chain-of-custody metadata block that non-Enterprise tenants shouldn't need."
+    }
+  ]
+}

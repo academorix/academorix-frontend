@@ -1,0 +1,48 @@
+{
+  "$version": 1,
+  "title": "Dunning schedule catalogue",
+  "description": "Pre-defined dunning cadences. The default (day+3/7/14/30/60) applies to all tiers. Enterprise tenants with invoice_dunning_advanced may activate one of the pre-built alternate schedules OR configure a custom one via settings. Every cadence stage carries a copy severity tone that bounds the InvoicePastDueNotification template — 'friendly' at day+3, escalating to 'final' at day+30, then 'collections' at day+60 when the collections integration is enabled.",
+  "schedules": {
+    "default": {
+      "display_name": "Default (recommended)",
+      "description": "Balanced cadence for most tenants. Not too aggressive; not too passive. Suitable for B2C subscriptions + individual customers.",
+      "stages": [
+        { "day": 3, "stage_key": "day_3", "severity": "friendly", "channels": ["mail", "in_app"], "copy_summary": "Reminder — your invoice from {issue_date} is now 3 days past due. Please pay when convenient." },
+        { "day": 7, "stage_key": "day_7", "severity": "reminder", "channels": ["mail", "in_app"], "copy_summary": "Your invoice from {issue_date} is 7 days past due. Please pay to avoid interruption of service." },
+        { "day": 14, "stage_key": "day_14", "severity": "firm", "channels": ["mail", "in_app", "push"], "copy_summary": "Your invoice from {issue_date} is now 14 days past due. Please contact support if there's an issue." },
+        { "day": 30, "stage_key": "day_30", "severity": "final", "channels": ["mail", "in_app", "push"], "copy_summary": "Final notice — your invoice from {issue_date} is 30 days past due. Service may be suspended if not paid within 7 days." },
+        { "day": 60, "stage_key": "day_60", "severity": "collections", "channels": ["mail", "in_app", "push"], "copy_summary": "Your invoice will be referred to a collections agency in 3 days if not resolved. Please contact support urgently." }
+      ]
+    },
+    "aggressive": {
+      "display_name": "Aggressive (B2B enterprise)",
+      "description": "Faster cadence for B2B with net-30 or net-60 terms where any past-due is unusual. Enterprise-only.",
+      "requires_entitlement": "invoice_dunning_advanced",
+      "stages": [
+        { "day": 1, "stage_key": "day_1", "severity": "friendly", "channels": ["mail"], "copy_summary": "Invoice past due by 1 day — please pay at your earliest convenience." },
+        { "day": 3, "stage_key": "day_3", "severity": "reminder", "channels": ["mail", "in_app"] },
+        { "day": 7, "stage_key": "day_7", "severity": "firm", "channels": ["mail", "in_app", "push"] },
+        { "day": 14, "stage_key": "day_14", "severity": "final", "channels": ["mail", "in_app", "push"] },
+        { "day": 30, "stage_key": "day_30", "severity": "collections", "channels": ["mail", "in_app", "push"] }
+      ]
+    },
+    "gentle": {
+      "display_name": "Gentle (community + long-term customers)",
+      "description": "Slower cadence for tenants with tight-knit communities where a firm dunning tone would damage the relationship. Enterprise-only.",
+      "requires_entitlement": "invoice_dunning_advanced",
+      "stages": [
+        { "day": 7, "stage_key": "day_7", "severity": "friendly", "channels": ["mail"] },
+        { "day": 21, "stage_key": "day_21", "severity": "reminder", "channels": ["mail", "in_app"] },
+        { "day": 45, "stage_key": "day_45", "severity": "firm", "channels": ["mail", "in_app"] },
+        { "day": 75, "stage_key": "day_75", "severity": "final", "channels": ["mail", "in_app", "push"] },
+        { "day": 120, "stage_key": "day_120", "severity": "collections", "channels": ["mail", "in_app", "push"] }
+      ]
+    }
+  },
+  "notes": [
+    "The default schedule applies to all tiers. Only Enterprise with invoice_dunning_advanced entitlement may switch schedules.",
+    "Enterprise tenants may also configure a completely custom schedule via settings.dunning.cadence (an array of days). The severity tones auto-map by day count: <7 = friendly; 7-14 = reminder; 15-30 = firm; 31-60 = final; > 60 = collections.",
+    "channels IN ('mail', 'in_app', 'push') — SMS is not shipped for dunning day-1 (compliance-sensitive; some jurisdictions restrict SMS dunning).",
+    "The dispatch job runs at 09:00 tenant-local time (per tenant.timezone) — dunning emails arrive at business hours regardless of tenant location."
+  ]
+}

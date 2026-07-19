@@ -1,0 +1,188 @@
+{
+  "id": "membership.resources.membership.report-dashboard",
+  "title": "Membership report",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/memberships/report",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "membership", "entity": "membership", "action": "report" },
+  "requiresPermission": "memberships.report",
+  "dataSources": [
+    { "name": "report", "kind": "http.get", "url": "/api/v1/memberships/report", "unwrap": "data", "queryFromFilters": true },
+    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[is_active]=true", "unwrap": "data", "cache": { "ttlSeconds": 300 } }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Membership report" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "MRR, churn, and dunning-recovery — the customer-subscription revenue signal. Distinct from the SaaS-billing view (that lives in Billing → Tenant subscription)." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Branch", "menuTrigger": "focus", "className": "min-w-48" },
+                  "bindings": { "items": { "$ref": "branches" } },
+                  "actions": { "onSelectionChange": { "kind": "filter.set", "field": "branch_id", "valueExpr": "$selectedKey" } }
+                },
+                {
+                  "kind": "ComboBox",
+                  "props": { "label": "Period", "menuTrigger": "focus", "className": "min-w-40", "defaultSelectedKey": "this-month" },
+                  "props_items": [
+                    { "id": "this-month", "label": "This month" },
+                    { "id": "last-month", "label": "Last month" },
+                    { "id": "last-3-months", "label": "Last 3 months" },
+                    { "id": "last-12-months", "label": "Last 12 months" },
+                    { "id": "year-to-date", "label": "Year to date" }
+                  ],
+                  "actions": { "onSelectionChange": { "kind": "filter.set", "field": "period", "valueExpr": "$selectedKey" } }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-4 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Body",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs uppercase text-muted", "children": "MRR" } },
+                    { "kind": "Text", "props": { "className": "text-3xl font-bold tabular-nums mt-1" }, "bindings": { "childrenExpr": "$formatCurrency(report.mrr_cents, report.currency)" } },
+                    { "kind": "Text", "props": { "className": "text-xs text-muted mt-1" }, "bindings": { "childrenExpr": "'ARR ' + $formatCurrency(report.arr_cents, report.currency)" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Body",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs uppercase text-muted", "children": "Active memberships" } },
+                    { "kind": "Text", "props": { "className": "text-3xl font-bold tabular-nums mt-1" }, "bindings": { "children": { "$ref": "report.active_count" } } },
+                    { "kind": "Text", "props": { "className": "text-xs text-muted mt-1" }, "bindings": { "childrenExpr": "'+' + report.new_this_period + ' new this period'" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Body",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs uppercase text-muted", "children": "Churn rate" } },
+                    { "kind": "Text", "props": { "className": "text-3xl font-bold tabular-nums mt-1" }, "bindings": { "childrenExpr": "report.churn_rate_percent.toFixed(1) + '%'" } },
+                    { "kind": "Text", "props": { "className": "text-xs text-muted mt-1" }, "bindings": { "childrenExpr": "report.churned_this_period + ' churned (voluntary: ' + report.voluntary_churn_count + ', lapsed: ' + report.involuntary_churn_count + ')'" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Body",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-xs uppercase text-muted", "children": "Dunning recovery" } },
+                    { "kind": "Text", "props": { "className": "text-3xl font-bold tabular-nums mt-1" }, "bindings": { "childrenExpr": "report.dunning_recovery_rate_percent.toFixed(1) + '%'" } },
+                    { "kind": "Text", "props": { "className": "text-xs text-muted mt-1" }, "bindings": { "childrenExpr": "report.dunning_open_count + ' currently in dunning'" } }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "Card.Header",
+              "children": [{ "kind": "Text", "props": { "className": "text-lg font-semibold", "children": "MRR trend — last 12 months" } }]
+            },
+            {
+              "kind": "Card.Body",
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "core.line-chart",
+                  "bindings": {
+                    "series": { "$ref": "report.mrr_trend_series" },
+                    "yFormat": "currency",
+                    "xFormat": "month"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-2 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Header",
+                  "children": [{ "kind": "Text", "props": { "className": "text-lg font-semibold", "children": "Trial conversion" } }]
+                },
+                {
+                  "kind": "Card.Body",
+                  "children": [
+                    { "kind": "Text", "props": { "className": "text-4xl font-bold tabular-nums" }, "bindings": { "childrenExpr": "report.trial_conversion_rate_percent.toFixed(1) + '%'" } },
+                    { "kind": "Text", "props": { "className": "text-xs text-muted mt-2" }, "bindings": { "childrenExpr": "report.trials_started_this_period + ' trials started, ' + report.trials_converted_this_period + ' converted'" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "Card.Header",
+                  "children": [{ "kind": "Text", "props": { "className": "text-lg font-semibold", "children": "Top plans" } }]
+                },
+                {
+                  "kind": "Card.Body",
+                  "children": [
+                    {
+                      "kind": "Widget",
+                      "widget": "core.leaderboard",
+                      "bindings": {
+                        "items": { "$ref": "report.top_plans" },
+                        "labelField": "plan_name",
+                        "valueField": "mrr_contribution_cents",
+                        "valueFormat": "currency"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

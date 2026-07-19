@@ -1,0 +1,55 @@
+{
+  "id": "payment.dispute-status-chip",
+  "title": "Payment dispute status chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for payment_dispute.status. Warning states (warning_*) are lighter (yellow); full dispute states are stronger (red for needs_response, blue for under_review, green for won, red for lost, grey for accepted/charge_refunded/warning_closed). Includes evidence-due countdown when props.evidenceDueBy is set and status is 'needs_response'.",
+  "props": {
+    "status": { "type": "string", "required": true },
+    "evidenceDueBy": { "type": "string", "required": false },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex items-center gap-2" },
+      "children": [
+        {
+          "kind": "Chip",
+          "bindings": {
+            "variant": {
+              "$expr": "props.status === 'won' ? 'success' : (props.status === 'lost' ? 'danger' : (props.status === 'needs_response' ? 'danger' : (props.status === 'under_review' ? 'info' : (props.status === 'charge_refunded' ? 'warning' : (props.status === 'warning_needs_response' ? 'warning' : (props.status === 'warning_under_review' ? 'info' : (['warning_closed'].includes(props.status) ? 'neutral' : 'neutral')))))))"
+            },
+            "size": { "$ref": "props.size" }
+          },
+          "props": {
+            "leadingIcon": {
+              "$expr": "props.status === 'won' ? 'check-circle' : (props.status === 'lost' ? 'x-circle' : (props.status === 'needs_response' ? 'exclamation-triangle' : (props.status === 'under_review' ? 'clock' : (props.status === 'charge_refunded' ? 'arrow-uturn-left' : (props.status.startsWith('warning_') ? 'exclamation-circle' : 'scale')))))"
+            }
+          },
+          "children": [
+            {
+              "kind": "Text",
+              "bindings": {
+                "children": {
+                  "$expr": "props.status === 'warning_needs_response' ? 'Warning — respond' : (props.status === 'warning_under_review' ? 'Warning — reviewing' : (props.status === 'warning_closed' ? 'Warning closed' : (props.status === 'needs_response' ? 'Needs response' : (props.status === 'under_review' ? 'Under review' : (props.status === 'charge_refunded' ? 'Refunded (accepted)' : (props.status === 'won' ? 'Won' : (props.status === 'lost' ? 'Lost' : props.status)))))))"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Text",
+          "props": { "className": "text-xs text-muted" },
+          "bindings": {
+            "children": {
+              "$expr": "props.evidenceDueBy && props.status === 'needs_response' ? ('Due ' + props.evidenceDueBy) : ''"
+            },
+            "hidden": { "$expr": "!props.evidenceDueBy || props.status !== 'needs_response'" }
+          }
+        }
+      ]
+    }
+  ]
+}

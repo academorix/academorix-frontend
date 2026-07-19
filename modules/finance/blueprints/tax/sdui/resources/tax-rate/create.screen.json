@@ -1,0 +1,141 @@
+{
+  "id": "tax.resources.tax-rate.create",
+  "title": "Add tax rate",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/rates/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-rate", "action": "create" },
+  "requiresPermission": "tax.rates.create",
+  "requiresEntitlement": "tax_capture",
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Add tax rate" } },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "info",
+            "title": "Calculation-freeze pattern",
+            "description": "Once this rate is referenced by any tax calculation, it becomes IMMUTABLE. Rate changes at fiscal-year boundaries require creating a new rate and setting effective_to on the old — the two rows coexist."
+          }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "tax.jurisdiction-picker",
+              "props": { "label": "Jurisdiction", "required": true },
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "tax_jurisdiction_id", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Rate type", "menuTrigger": "focus", "required": true },
+              "props_items_source": "tax.rate-type-catalog",
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "rate_type", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": {
+                "label": "Name",
+                "placeholder": "UK VAT Standard",
+                "required": true,
+                "helpText": "Human-readable label."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "NumberField",
+              "props": {
+                "label": "Percentage",
+                "placeholder": "0.20",
+                "step": 0.0001,
+                "min": 0,
+                "max": 1,
+                "required": true,
+                "helpText": "Decimal between 0.0000 and 1.0000. 0.20 = 20%."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "percentage", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Switch",
+              "props": {
+                "label": "Tax included in price",
+                "helpText": "true = price INCLUDES tax; false = tax ADDED to price."
+              },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "is_inclusive", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Applies to", "menuTrigger": "focus" },
+              "props_items": [
+                { "id": "all", "label": "All (services + goods + digital + physical)" },
+                { "id": "services", "label": "Services" },
+                { "id": "goods", "label": "Goods" },
+                { "id": "digital", "label": "Digital" },
+                { "id": "physical", "label": "Physical" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "form.set", "field": "applies_to", "valueExpr": "$selectedKey" }
+              }
+            },
+            {
+              "kind": "DateField",
+              "props": { "label": "Effective from", "required": true },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "effective_from", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "DateField",
+              "props": { "label": "Effective to (optional)", "helpText": "Leave empty for open-ended." },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "effective_to", "valueExpr": "$value" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "primary", "size": "lg", "children": "Create rate" },
+          "actions": {
+            "onPress": {
+              "kind": "http.post",
+              "url": "/api/v1/tax/rates",
+              "body": {
+                "tax_jurisdiction_id": "{{form.tax_jurisdiction_id}}",
+                "rate_type": "{{form.rate_type}}",
+                "name": "{{form.name}}",
+                "percentage": "{{form.percentage}}",
+                "is_inclusive": "{{form.is_inclusive}}",
+                "applies_to": "{{form.applies_to}}",
+                "effective_from": "{{form.effective_from}}",
+                "effective_to": "{{form.effective_to}}"
+              },
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/tax/rates/' + response.data.id"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

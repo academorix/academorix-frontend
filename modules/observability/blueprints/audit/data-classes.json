@@ -1,0 +1,84 @@
+{
+  "id": "academorix://modules/audit/data-classes",
+  "$version": 1,
+  "title": "audit — field classification",
+  "description": "Field-level classification per foundation's five-tier taxonomy. Audit's `old_values` + `new_values` are the load-bearing surfaces — they may contain RAW PII (email, phone, medical record numbers, financial identifiers) because regulators require full diff context to reconstruct a mutation. Encrypted at rest via Postgres TDE. NEVER surfaced on the tenant wire without the audit.audits.reveal_raw_diff permission + a chain-of-custody meta-audit row.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Audit.id",
+      "Audit.event",
+      "Audit.created_at",
+      "AuditRetentionPolicy.id",
+      "AuditRetentionPolicy.retention_years",
+      "AuditRetentionPolicy.override_starts_at",
+      "AuditRetentionPolicy.override_ends_at",
+      "AuditRetentionPolicy.created_at",
+      "AuditRetentionPolicy.updated_at",
+      "AuditExport.id",
+      "AuditExport.export_kind",
+      "AuditExport.status",
+      "AuditExport.row_count",
+      "AuditExport.signed_url_expires_at",
+      "AuditExport.created_at"
+    ],
+    "internal": [
+      "Audit.tenant_id",
+      "Audit.application_id",
+      "Audit.auditable_type",
+      "Audit.auditable_id",
+      "Audit.user_type",
+      "Audit.user_id",
+      "Audit.url",
+      "Audit.user_agent",
+      "Audit.tags",
+      "AuditRetentionPolicy.tenant_id",
+      "AuditRetentionPolicy.override_reason",
+      "AuditRetentionPolicy.notes",
+      "AuditExport.tenant_id",
+      "AuditExport.requested_by_user_id",
+      "AuditExport.requested_by_platform_admin_id",
+      "AuditExport.filters"
+    ],
+    "confidential": [
+      "Audit.ip_address",
+      "AuditExport.signed_url",
+      "AuditExport.s3_bucket",
+      "AuditExport.s3_key",
+      "AuditExport.manifest_sha256"
+    ],
+    "restricted": [
+      "Audit.old_values",
+      "Audit.new_values"
+    ],
+    "regulated_minor": [
+      "Audit.old_values (when auditable_type IN minor-affecting types: Athlete, AthleteGuardian, Consent) — treated with COPPA/parental-consent minimization on export",
+      "Audit.new_values (same)"
+    ],
+    "regulated_health": [
+      "Audit.old_values (when auditable_type IN health-adjacent types: HealthNote (planned Wave 7), MedicalRecord (planned Wave 7)) — HIPAA-covered",
+      "Audit.new_values (same)"
+    ],
+    "regulated_financial": [
+      "Audit.old_values (when auditable_type IN finance types: Transaction, Chargeback, Refund, Membership) — SOX + PCI-DSS covered",
+      "Audit.new_values (same)"
+    ],
+    "audit_log": [
+      "AuditRetentionPolicy CRUD writes audit rows via HasAuditable (SELF-audit trail).",
+      "AuditExport row creation writes an audit row.",
+      "PurgeExpiredAuditsJob writes a summary meta-audit ('audit.purged') per tenant per run.",
+      "Raw-diff reveal writes a chain-of-custody audit row ('audit.raw_diff_revealed').",
+      "TenantErased writes an audit row for the erasure event itself + records the migration to compliance archive.",
+      "UserErased writes an audit row for the erasure + records the redaction cascade."
+    ]
+  },
+  "notes": [
+    "Audit.old_values + Audit.new_values are RESTRICTED — they may contain raw PII per regulator requirement. Encrypted at rest via Postgres TDE. Hidden on the tenant wire by default; the audit.audits.reveal_raw_diff permission gates reveal + writes a chain-of-custody audit row on every reveal.",
+    "Audit.ip_address is CONFIDENTIAL — helpful for compliance investigations (source-IP reconstruction) but not PII-safe to broadcast. Hidden on the tenant wire; revealed only under audit.audits.reveal_raw_diff.",
+    "AuditExport.signed_url is CONFIDENTIAL — the URL is bearer-authorization for the export payload (24h expiry). Never broadcast; delivered exactly once via AuditExportReadyNotification to the requester.",
+    "AuditExport.manifest_sha256 is CONFIDENTIAL — used for chain-of-custody verification. Included in the notification payload so the requester can verify integrity of the downloaded file.",
+    "AuditRetentionPolicy.override_reason is INTERNAL — describes the compliance justification for the retention extension (e.g. 'SEC investigation 2026-Q3'). Not PII, but sensitive from a corporate-signaling perspective. Hidden on the platform-admin cross-tenant view; revealed on the tenant's own view for compliance-officer role.",
+    "Audit.user_agent + Audit.url are INTERNAL — helpful for forensic reconstruction but not for public consumption. Revealed on the tenant wire to compliance-officer role.",
+    "Audit.event carries the auditable transition name (e.g. 'created', 'updated', 'auth.login', 'transaction.approved'). It is public-safe."
+  ]
+}

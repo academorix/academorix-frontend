@@ -1,0 +1,204 @@
+{
+  "id": "activity.screens.by-user",
+  "title": "User activity",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/activity/by-user/{user}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "activity",
+    "entity": "activity",
+    "action": "by-user"
+  },
+  "requiresPermission": "activity.viewAny",
+  "dataSources": [
+    {
+      "name": "user",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/users/{user}",
+      "params": ["user"],
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    },
+    {
+      "name": "activities",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/activities/by-user/{user}",
+      "params": ["user"],
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[log_name]",
+        "filter[event]",
+        "filter[from]",
+        "filter[to]",
+        "page",
+        "per_page"
+      ],
+      "cache": { "ttlSeconds": 30, "staleWhileRevalidate": true }
+    },
+    {
+      "name": "logNameCatalog",
+      "kind": "http.get",
+      "url": "/api/v1/activity/log-names",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    },
+    {
+      "name": "identity",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "user.{userId}.activity",
+      "kind": "private",
+      "bindings": { "userId": { "$ref": "params.user" } },
+      "onEvent": {
+        "kind": "data.prependItem",
+        "source": "activities",
+        "expr": "event.data",
+        "dedupeBy": "id"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "id": "breadcrumbs",
+          "kind": "Breadcrumbs",
+          "props": {
+            "items": [
+              { "label": "Activity feed", "route": "/tenant/activities" },
+              {
+                "label": { "$expr": "user?.display_name || 'User activity'" }
+              }
+            ]
+          }
+        },
+        {
+          "id": "header",
+          "kind": "View",
+          "props": { "className": "flex items-center gap-4" },
+          "children": [
+            {
+              "kind": "Avatar",
+              "props": { "size": "lg" },
+              "bindings": {
+                "src": { "$ref": "user.avatar_url" },
+                "label": { "$ref": "user.display_name" }
+              }
+            },
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": {
+                    "children": {
+                      "$expr": "user?.display_name + \"'s activity\""
+                    }
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "p",
+                    "className": "text-muted text-sm"
+                  },
+                  "bindings": {
+                    "children": {
+                      "$expr": "params.user === identity.id ? 'Everything you have done in this tenant.' : 'Every recorded action by this user.'"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "audit-notice",
+          "kind": "Alert",
+          "props": { "variant": "info", "leadingIcon": "information-circle" },
+          "bindings": {
+            "hidden": {
+              "$expr": "params.user === identity.id || !identity.permissions.includes('activity.audit_any')"
+            }
+          },
+          "children": [
+            {
+              "kind": "AlertTitle",
+              "props": {
+                "children": "You are viewing another user's activity"
+              }
+            },
+            {
+              "kind": "AlertDescription",
+              "props": {
+                "children": "This access is captured on the platform audit stream. Ensure you have a documented business reason for this review."
+              }
+            }
+          ]
+        },
+        {
+          "id": "filters",
+          "kind": "View",
+          "props": { "className": "flex flex-wrap items-end gap-3" },
+          "children": [
+            {
+              "kind": "Select",
+              "props": {
+                "label": "Feed",
+                "name": "filter[log_name]",
+                "placeholder": "All feeds",
+                "className": "min-w-40"
+              },
+              "optionsSource": { "$ref": "logNameCatalog" },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "activities" } }
+            },
+            {
+              "kind": "DateRange",
+              "props": {
+                "label": "When",
+                "nameFrom": "filter[from]",
+                "nameTo": "filter[to]"
+              },
+              "actions": { "onChange": { "kind": "data.applyFilter", "source": "activities" } }
+            }
+          ]
+        },
+        {
+          "id": "timeline",
+          "kind": "Widget",
+          "widget": "activity.timeline",
+          "bindings": {
+            "items": { "$ref": "activities" },
+            "isLoading": { "$ref": "activities.isLoading" },
+            "hasMore": { "$ref": "activities.pagination.has_more" }
+          },
+          "props": {
+            "groupBy": "day",
+            "collapseBatches": true,
+            "hideCauser": true,
+            "emptyState": {
+              "title": "No activity yet",
+              "description": "This user has no recorded activity in the retention window."
+            }
+          },
+          "actions": {
+            "onLoadMore": { "kind": "data.loadNextPage", "source": "activities" }
+          }
+        }
+      ]
+    }
+  ]
+}

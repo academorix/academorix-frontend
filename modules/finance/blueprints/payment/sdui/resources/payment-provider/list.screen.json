@@ -1,0 +1,79 @@
+{
+  "id": "payment.resources.payment-provider.list",
+  "title": "Payment providers",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/payment-providers",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "payment", "entity": "payment-provider", "action": "list" },
+  "requiresPermission": "payment.providers.viewAny",
+  "requiresEntitlement": "payment_capture",
+  "dataSources": [
+    {
+      "name": "providers",
+      "kind": "http.get",
+      "url": "/api/v1/payment-providers",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-6xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Payment providers" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Configure Stripe, Paddle, Adyen, Square, PayPal, or a custom gateway." } }
+              ]
+            },
+            {
+              "kind": "Button",
+              "props": { "variant": "primary", "children": "Add provider" },
+              "actions": {
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-providers/new'" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": {
+            "items": { "$ref": "providers" },
+            "isLoading": { "$ref": "providers.isLoading" }
+          },
+          "props": {
+            "className": "w-full",
+            "columns": [
+              { "field": "provider", "label": "Provider", "width": 140, "renderer": { "kind": "Text", "formatter": "titlecase" } },
+              { "field": "is_active", "label": "Status", "width": 100, "renderer": { "widget": "payment.payment-status-chip" } },
+              { "field": "circuit_breaker_open_until", "label": "Circuit", "width": 120, "renderer": { "widget": "payment.circuit-breaker-badge" } },
+              { "field": "last_success_at", "label": "Last success", "width": 160, "formatter": "datetime-relative" }
+            ],
+            "onRowPress": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/payment-providers/' + row.provider + '/edit'"
+            },
+            "rowActions": [
+              {
+                "label": "Test",
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-providers/' + row.provider + '/test'" }
+              },
+              {
+                "label": "Reconcile",
+                "onPress": { "kind": "navigate", "toExpr": "'/tenant/payment-providers/' + row.provider + '/reconcile'" }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

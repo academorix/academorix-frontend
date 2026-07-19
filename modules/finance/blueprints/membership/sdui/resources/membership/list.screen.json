@@ -1,0 +1,181 @@
+{
+  "id": "membership.resources.membership.list",
+  "title": "Memberships",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/memberships",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "membership", "entity": "membership", "action": "list" },
+  "requiresPermission": "memberships.viewAny",
+  "dataSources": [
+    { "name": "memberships", "kind": "http.get", "url": "/api/v1/memberships", "unwrap": "data", "queryFromFilters": true },
+    { "name": "branches", "kind": "http.get", "url": "/api/v1/branches?filter[is_active]=true", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
+    { "name": "plans", "kind": "http.get", "url": "/api/v1/membership-plans?filter[is_active]=true", "unwrap": "data", "cache": { "ttlSeconds": 300 } },
+    { "name": "slot_entitlement", "kind": "http.get", "url": "/api/v1/entitlements/membership_slot", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Memberships" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Customer subscriptions to your academy — active families, dunning, and terminal history." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-3" },
+              "children": [
+                {
+                  "kind": "Widget",
+                  "widget": "entitlements.entitlement-usage-bar",
+                  "props": { "cap": { "$ref": "slot_entitlement.value_cap" }, "used": { "$ref": "slot_entitlement.value_used" }, "size": "sm", "label": "Active memberships" }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "secondary", "leadingIcon": "chart-bar", "children": "Report" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/memberships/report" } },
+                  "requiresPermission": "memberships.report"
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "plus", "children": "New membership" },
+                  "actions": { "onPress": { "kind": "navigate", "to": "/tenant/memberships/create" } },
+                  "bindings": { "disabled": { "$ref": "slot_entitlement.is_exceeded" } },
+                  "requiresPermission": "memberships.create"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Branch", "menuTrigger": "focus", "className": "min-w-56" },
+              "bindings": { "items": { "$ref": "branches" } },
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "branch_id", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Plan", "menuTrigger": "focus", "className": "min-w-56" },
+              "bindings": { "items": { "$ref": "plans" } },
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "membership_plan_id", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Status", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "pending", "label": "Pending" },
+                { "id": "active", "label": "Active" },
+                { "id": "paused", "label": "Paused" },
+                { "id": "cancelled", "label": "Cancelled" },
+                { "id": "lapsed", "label": "Lapsed" },
+                { "id": "refunded", "label": "Refunded" },
+                { "id": "expired", "label": "Expired" }
+              ],
+              "actions": { "onSelectionChange": { "kind": "filter.set", "field": "status", "valueExpr": "$selectedKey" } }
+            },
+            {
+              "kind": "Switch",
+              "props": { "label": "In dunning only" },
+              "actions": { "onChange": { "kind": "filter.set", "field": "has_open_dunning", "valueExpr": "$value ? true : null" } }
+            }
+          ]
+        },
+        {
+          "kind": "Table",
+          "props": { "aria-label": "Memberships table" },
+          "bindings": { "rows": { "$ref": "memberships" }, "isLoading": { "$ref": "memberships.isLoading" } },
+          "emptyState": {
+            "kind": "View",
+            "props": { "className": "text-center py-12" },
+            "children": [
+              { "kind": "Icon", "props": { "name": "credit-card", "className": "size-12 mx-auto text-muted" } },
+              { "kind": "Text", "props": { "className": "mt-4 text-lg font-medium", "children": "No memberships" } },
+              { "kind": "Text", "props": { "className": "mt-1 text-sm text-muted", "children": "Membership signups appear here once families subscribe." } }
+            ]
+          },
+          "columns": [
+            {
+              "key": "athlete",
+              "label": "Athlete",
+              "renderer": {
+                "kind": "View",
+                "props": { "className": "flex items-center gap-2" },
+                "children": [
+                  { "kind": "Text", "props": { "className": "font-medium" }, "bindings": { "children": { "$ref": "row.athlete_display_name" } } },
+                  { "kind": "Widget", "widget": "athlete.minor-badge", "bindings": { "hidden": { "$expr": "!row.athlete.is_minor" } } }
+                ]
+              }
+            },
+            { "key": "plan", "label": "Plan", "renderer": { "kind": "Text", "bindings": { "children": { "$ref": "row.plan_display_name" } } } },
+            {
+              "key": "status",
+              "label": "Status",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "membership.membership-status-chip",
+                "bindings": {
+                  "status": { "$ref": "row.status" },
+                  "show_dunning_indicator": true,
+                  "consecutive_failed_renewal_count": { "$ref": "row.consecutive_failed_renewal_count" }
+                }
+              }
+            },
+            {
+              "key": "next_renewal_at",
+              "label": "Next renewal",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "tabular-nums text-sm" },
+                "bindings": {
+                  "childrenExpr": "row.next_renewal_at ? $formatDate(row.next_renewal_at, 'D MMM YYYY') + ' (' + $daysUntil(row.next_renewal_at) + 'd)' : '—'"
+                }
+              }
+            },
+            {
+              "key": "passes",
+              "label": "Passes",
+              "renderer": {
+                "kind": "Widget",
+                "widget": "membership.pass-badge",
+                "bindings": { "membership_id": { "$ref": "row.id" }, "size": "xs" }
+              }
+            },
+            {
+              "key": "lifetime_value_cents",
+              "label": "LTV",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "tabular-nums text-sm" },
+                "bindings": { "childrenExpr": "$formatCurrency(row.lifetime_value_cents, row.currency)" }
+              }
+            },
+            {
+              "key": "primary_guardian",
+              "label": "Guardian",
+              "renderer": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "childrenExpr": "row.primary_guardian_display_name || '—'" }
+              }
+            }
+          ],
+          "rowActions": { "onPress": { "kind": "navigate", "toExpr": "'/tenant/memberships/' + row.id" } }
+        }
+      ]
+    }
+  ]
+}

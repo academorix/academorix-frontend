@@ -1,0 +1,86 @@
+{
+  "id": "academorix://modules/chargeback/caches",
+  "$version": 1,
+  "title": "chargeback — cache keys + tags",
+  "driver": "redis",
+  "ownedTags": ["chargebacks", "chargebacks.pending_evidence", "chargebacks.rate_reports"],
+  "keys": [
+    {
+      "pattern": "cbk:list:{tenant_id}:{filter_hash}",
+      "description": "Per-tenant chargeback list results with a filter hash suffix. Read hot on admin dashboards. Invalidated on any chargeback state transition.",
+      "ttlSeconds": 60,
+      "tags": ["chargebacks"],
+      "invalidatedBy": ["ChargebackObserver.*"]
+    },
+    {
+      "pattern": "cbk:chargeback:{chargeback_id}",
+      "description": "Single chargeback full row + parent payment/invoice/dispute/transaction/fee_transaction/refund/latest_evidence. Read by admin UI + defenders' detail view.",
+      "ttlSeconds": 120,
+      "tags": ["chargebacks"],
+      "invalidatedBy": ["ChargebackObserver.updated"]
+    },
+    {
+      "pattern": "cbk:evidence-draft:{chargeback_id}",
+      "description": "Auto-collected evidence bundle from CollectChargebackEvidenceJob. NOT persisted to chargeback_evidence table — admin reviews the draft + submits via POST /chargebacks/{chargeback}/evidence (which persists a new row). 30d TTL because chargeback evidence deadlines are up to 45 days (Mastercard MDMP).",
+      "ttlSeconds": 2592000,
+      "tags": ["chargebacks"],
+      "invalidatedBy": ["ChargebackEvidenceObserver.created (final submission — invalidates draft)"]
+    },
+    {
+      "pattern": "cbk:pending-evidence:{tenant_id}",
+      "description": "Pending-evidence queue for a tenant. Feeds the SDUI pending-evidence screen + the tenant.{id}.chargebacks.pending-evidence broadcast channel's initial payload.",
+      "ttlSeconds": 30,
+      "tags": ["chargebacks", "chargebacks.pending_evidence"],
+      "invalidatedBy": ["ChargebackObserver.created (pending_evidence)", "ChargebackObserver.updated (leaving pending_evidence)"]
+    },
+    {
+      "pattern": "cbk:defenders:{tenant_id}",
+      "description": "List of user_ids holding chargebacks.submit-evidence permission for a tenant. Read by NotifyChargebackEvidenceOverdueJob to seed reminder notifications. Invalidated on permission changes.",
+      "ttlSeconds": 600,
+      "tags": ["chargebacks"],
+      "invalidatedBy": ["user::RolePermissionChanged", "user::UserRoleAssigned", "user::UserRoleRevoked"]
+    },
+    {
+      "pattern": "cbk:evidence:{chargeback_id}",
+      "description": "All ChargebackEvidence rows for a specific chargeback (all submission attempts). Read by SDUI evidence viewer + chargeback detail.",
+      "ttlSeconds": 300,
+      "tags": ["chargebacks"],
+      "invalidatedBy": ["ChargebackEvidenceObserver.created"]
+    },
+    {
+      "pattern": "cbk:sequence:{tenant_id}:{year}",
+      "description": "Current sequence number for ChargebackNumberGenerator per-tenant per-year. Auto-incremented on chargeback_number allocation. NEVER expires — persists across process restarts.",
+      "ttlSeconds": null,
+      "tags": ["chargebacks"],
+      "invalidatedBy": ["yearly boundary (natural rollover — new sequence per year)"]
+    },
+    {
+      "pattern": "cbk:rate:{tenant_id}:{network}",
+      "description": "Rolling 60-day chargeback rate per tenant per network. Computed by MonitorChargebackRateJob nightly. Read by chargeback-rate report + rate-alert dashboard. Invalidated when the rate re-computes.",
+      "ttlSeconds": 86400,
+      "tags": ["chargebacks", "chargebacks.rate_reports"],
+      "invalidatedBy": ["MonitorChargebackRateJob completed"]
+    },
+    {
+      "pattern": "cbk:report:{tenant_id}:{period_key}",
+      "description": "Cached chargeback-rate report response. period_key = period_start-period_end in ISO 8601. Powers the /reports/chargeback-rate endpoint's non-hot path.",
+      "ttlSeconds": 3600,
+      "tags": ["chargebacks", "chargebacks.rate_reports"],
+      "invalidatedBy": ["hourly boundary (natural expiry)", "manual purge by admin (ChargebackRateReportController@invalidate)"]
+    },
+    {
+      "pattern": "cbk:reason-catalog",
+      "description": "The reason-code catalogue loaded from data/reason-code-catalog.json. Read on every chargeback create to validate reason_code + derive reason_category + reason_description. Refreshed on config publish.",
+      "ttlSeconds": 3600,
+      "tags": ["chargebacks"],
+      "invalidatedBy": ["config publish (manual admin action — new reason codes rare)"]
+    },
+    {
+      "pattern": "cbk:reconcile:{provider}:{run_key}",
+      "description": "In-progress CheckChargebackStatusJob run state per provider. Prevents concurrent runs. run_key = timestamp bucket.",
+      "ttlSeconds": 3600,
+      "tags": ["chargebacks"],
+      "invalidatedBy": ["CheckChargebackStatusJob completed"]
+    }
+  ]
+}

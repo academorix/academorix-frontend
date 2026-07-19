@@ -1,0 +1,13 @@
+{
+  "id": "academorix://modules/invoice/macros",
+  "$version": 1,
+  "title": "invoice — published macros",
+  "description": "The invoice module publishes ZERO framework macros. Every consumer touches the invoice surface via injected services (InvoiceCreator, InvoiceFinalizer, CreditNoteIssuer) or the domain-event listener path (CreateInvoiceOnMembershipCreated, MarkPaidOnPaymentIntentConfirmed). Middleware attaches the current customer scope (invoice.enforce_customer_scope) — invoice consumes it via request injection.",
+  "namespace_note": "No macros published.",
+  "macros": [],
+  "rationale": [
+    "Invoicing is a WRITE-HEAVY DOMAIN. The consumer contract is: fire a domain event → the appropriate listener creates or transitions the invoice → the observer enforces invariants. There is no request-level state that needs to be surfaced as a Request macro (contrast with facility::activeFacility which caches a per-request model).",
+    "The customer scope IS request-scoped — but it's owned by the invoice.enforce_customer_scope middleware (via Request::currentCustomerScope() implicitly). Invoice reads via injection into the InvoiceController, not via its own macros.",
+    "Adding an invoice-specific macro (e.g. Request::currentInvoice) would signal a design smell — invoices are entities the caller works with, not per-request state that the framework should hoist."
+  ]
+}

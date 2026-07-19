@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/payment/data/providers/adyen-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Adyen provider config",
+  "description": "Configuration shape for an Adyen Checkout + Marketplace integration. All credentials encrypted at rest.",
+  "type": "object",
+  "required": ["api_key", "merchant_account", "client_key", "hmac_key"],
+  "additionalProperties": false,
+  "properties": {
+    "api_key": {
+      "type": "string",
+      "minLength": 40,
+      "description": "Adyen API key. Passed via X-API-Key header. Encrypted at rest."
+    },
+    "merchant_account": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_-]{4,80}$",
+      "description": "Adyen merchant account identifier. 4-80 chars, alphanumeric + underscore + dash."
+    },
+    "client_key": {
+      "type": "string",
+      "pattern": "^(test|live)_[A-Z0-9]{32,}$",
+      "description": "Adyen client key. Sent to the customer's client-side SDK for tokenization. Format: test_... or live_..."
+    },
+    "hmac_key": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Adyen webhook HMAC signing key. Used to verify HmacSignature header on inbound notifications. Encrypted at rest."
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["live", "test"],
+      "default": "live",
+      "description": "Adyen environment. live = checkout-live.adyen.com; test = checkout-test.adyen.com."
+    },
+    "live_url_prefix": {
+      "type": ["string", "null"],
+      "pattern": "^[a-z0-9-]{6,}$",
+      "description": "Adyen live URL prefix (assigned by Adyen at account setup). Required for live environment. Endpoint becomes: https://{prefix}-checkout-live.adyenpayments.com/checkout/v71/*."
+    },
+    "marketplace_flags": {
+      "type": ["object", "null"],
+      "description": "Adyen Marketplace configuration. Only for tenants using multi-party splits.",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "platform_service_account_id": { "type": ["string", "null"] }
+      }
+    },
+    "risk_data_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to enable Adyen RiskV3 fraud detection. Recommended: true."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

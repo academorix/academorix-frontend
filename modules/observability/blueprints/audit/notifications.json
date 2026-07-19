@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/audit/notifications",
+  "$version": 1,
+  "title": "audit — notifications",
+  "description": "Four notifications: compliance-officer alerts on retention-policy extension, 30-day expiry warning, weekly purge digest, and export-ready notice. Wired via the `notifications` core module. Category slugs live under the `audit.*` namespace.",
+  "seeder": "Academorix\\Observability\\Audit\\Database\\Seeders\\AuditNotificationCategorySeeder",
+  "categories": [
+    {
+      "slug": "audit.retention-policy",
+      "displayName": "Audit retention policy",
+      "description": "Alerts tenant compliance officers when a retention-policy override is created, updated, or approaches its expiry.",
+      "priority": "high",
+      "defaultChannels": ["mail", "in_app"],
+      "userConfigurable": false,
+      "seed_default_preference": true
+    },
+    {
+      "slug": "audit.purge",
+      "displayName": "Audit purge digest",
+      "description": "Weekly digest — how many audit rows were purged per tenant.",
+      "priority": "normal",
+      "defaultChannels": ["mail"],
+      "userConfigurable": true,
+      "seed_default_preference": true
+    },
+    {
+      "slug": "audit.export",
+      "displayName": "Audit export ready",
+      "description": "Informs the requester (DPO / compliance officer / platform admin) that an audit export finished processing.",
+      "priority": "high",
+      "defaultChannels": ["mail", "in_app"],
+      "userConfigurable": false,
+      "seed_default_preference": true
+    }
+  ],
+  "notifications": [
+    {
+      "class": "Academorix\\Observability\\Audit\\Notifications\\AuditRetentionPolicyExtendedNotification",
+      "category": "audit.retention-policy",
+      "channels": ["mail", "in_app"],
+      "audience": ["tenant.compliance_officer", "tenant.owner"],
+      "template_key": "audit.retention-policy.extended",
+      "trigger": "AuditRetentionPolicyCreated event (or Updated when retention_years increased)",
+      "payload_fields": ["retention_years", "override_reason", "override_ends_at"]
+    },
+    {
+      "class": "Academorix\\Observability\\Audit\\Notifications\\AuditRetentionExtensionExpiringSoonNotification",
+      "category": "audit.retention-policy",
+      "channels": ["mail", "in_app"],
+      "audience": ["tenant.compliance_officer", "tenant.owner"],
+      "template_key": "audit.retention-policy.expiring-soon",
+      "trigger": "ExpireRetentionOverridesJob detected override_ends_at within config.audit.retention.expiring_soon_warning_days (30 by default)",
+      "payload_fields": ["retention_years", "override_reason", "days_until_expiry"],
+      "notes": "Fired once per policy (idempotent via the `expiring_soon_notified_at` column on the policy). Advance-warning window is tenant-tunable via settings."
+    },
+    {
+      "class": "Academorix\\Observability\\Audit\\Notifications\\AuditPurgeCompletedNotification",
+      "category": "audit.purge",
+      "channels": ["mail"],
+      "audience": ["tenant.compliance_officer"],
+      "template_key": "audit.purge.completed",
+      "trigger": "Weekly digest — accumulated AuditPurgeExecuted events fire this on Sunday 06:00 UTC with a rollup",
+      "payload_fields": ["total_row_count_purged_week", "per_day_counts", "cutoff_at"]
+    },
+    {
+      "class": "Academorix\\Observability\\Audit\\Notifications\\AuditExportReadyNotification",
+      "category": "audit.export",
+      "channels": ["mail", "in_app"],
+      "audience": ["export.requester"],
+      "template_key": "audit.export.ready",
+      "trigger": "GenerateComplianceReportJob OR the DSAR export job completed successfully. Payload includes the signed S3 download URL (24h expiry).",
+      "payload_fields": ["audit_export_id", "signed_url", "signed_url_expires_at", "row_count", "manifest_sha256"]
+    }
+  ]
+}

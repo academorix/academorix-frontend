@@ -1,0 +1,151 @@
+{
+  "id": "audit.resources.audit.by-user",
+  "title": "Audit trail — by user",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/audits/by-user/:user_id",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit", "action": "byUser" },
+  "requiresPermission": "audit.audits.viewAny",
+  "dataSources": [
+    {
+      "name": "audits",
+      "kind": "http.get",
+      "url": "/api/v1/audits/by-user/{route.user_id}",
+      "unwrap": "data",
+      "paginated": true,
+      "queryParamsFromState": [
+        "filter[auditable_type]",
+        "filter[event]",
+        "filter[since]",
+        "filter[until]",
+        "sort",
+        "page",
+        "per_page"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "leadingIcon": "arrow-left", "children": "Back" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/audit/audits" } }
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex flex-col" },
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": { "as": "h1", "className": "text-2xl font-semibold" },
+                  "bindings": { "children": { "$expr": "'Actor audit trail — ' + route.user_id" } }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "className": "text-sm text-muted",
+                    "children": "Every mutation this actor performed. Compliance-investigation surface for reconstructing who-did-what across the tenant."
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "props": {
+            "emptyState": {
+              "title": "No mutations by this actor",
+              "description": "This actor performed no recorded mutations in the window. System-fired mutations (queue jobs without a user context) do not appear on the actor trail — they appear on the entity trail with actor=system.",
+              "icon": "user"
+            }
+          },
+          "bindings": {
+            "items": { "$ref": "audits" },
+            "isLoading": { "$ref": "audits.isLoading" }
+          },
+          "columns": [
+            {
+              "id": "when",
+              "header": "When",
+              "cell": {
+                "kind": "Text",
+                "props": { "className": "text-sm" },
+                "bindings": { "children": { "$expr": "formatDateTime(row.created_at)" } }
+              }
+            },
+            {
+              "id": "event",
+              "header": "Event",
+              "cell": {
+                "kind": "Widget",
+                "widget": "audit.audit-event-chip",
+                "props": {
+                  "event": { "$ref": "row.event" },
+                  "size": "sm",
+                  "showIcon": true,
+                  "showLabel": true
+                }
+              }
+            },
+            {
+              "id": "subject",
+              "header": "Subject",
+              "cell": {
+                "kind": "View",
+                "children": [
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-sm" },
+                    "bindings": { "children": { "$ref": "row.auditable_short_type" } }
+                  },
+                  {
+                    "kind": "Text",
+                    "props": { "className": "font-mono text-xs text-muted" },
+                    "bindings": { "children": { "$ref": "row.auditable_id" } }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "changes",
+              "header": "Changes",
+              "cell": {
+                "kind": "Widget",
+                "widget": "audit.audit-diff-summary",
+                "props": { "diff_summary": { "$ref": "row.diff_summary" }, "size": "sm" }
+              }
+            },
+            {
+              "id": "actions",
+              "header": "",
+              "align": "end",
+              "cell": {
+                "kind": "Button",
+                "props": {
+                  "variant": "ghost",
+                  "isIconOnly": true,
+                  "leadingIcon": "chevron-right",
+                  "ariaLabel": "View audit row"
+                },
+                "actions": {
+                  "onPress": { "kind": "navigate", "toExpr": "'/tenant/audit/audits/' + row.id" }
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

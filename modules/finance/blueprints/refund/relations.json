@@ -1,0 +1,126 @@
+{
+  "id": "academorix://modules/refund/relations",
+  "$version": 1,
+  "title": "refund — model relationships",
+  "description": "Two owned entities. Every row is tenant-scoped (cascades on tenant delete). Refund is the aggregate root; RefundLine belongs to a Refund. Every outbound FK stays same-tenant per tenancy-columns.md §5. NO application_id / organization_id / region_id / branch_id / scope_node_id on any owned row — all cascade through tenant_id. Refund references Payment + Invoice + CreditNote + Transaction with RESTRICT semantics — financial records cannot orphan reversal records.",
+  "internal": [
+    {
+      "from": "Refund",
+      "kind": "hasMany",
+      "to": "RefundLine",
+      "foreignKey": "refund_id",
+      "description": "A refund can have zero (full refund of whole payment) or many (partial / prorated) refund_lines. Sum of refund_lines.amount_cents must equal refund.amount_cents (observer-enforced)."
+    },
+    {
+      "from": "RefundLine",
+      "kind": "belongsTo",
+      "to": "Refund",
+      "foreignKey": "refund_id",
+      "onDelete": "cascade",
+      "description": "CASCADE on delete. Refund lines are pivot rows co-terminous with the parent refund."
+    }
+  ],
+  "outbound": [
+    {
+      "from": "Refund",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade",
+      "description": "Every refund is tenant-scoped per tenancy-columns.md §3."
+    },
+    {
+      "from": "RefundLine",
+      "kind": "belongsTo",
+      "to": "tenancy::Tenant",
+      "foreignKey": "tenant_id",
+      "onDelete": "cascade"
+    },
+    {
+      "from": "Refund",
+      "kind": "belongsTo",
+      "to": "payment::Payment",
+      "foreignKey": "payment_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT on delete. Payment cannot be deleted while any refund references it — financial records are 7y-retained + cannot orphan reversal records."
+    },
+    {
+      "from": "Refund",
+      "kind": "belongsTo",
+      "to": "invoice::Invoice",
+      "foreignKey": "invoice_id",
+      "onDelete": "restrict",
+      "description": "RESTRICT. Invoice + refund retain co-terminously."
+    },
+    {
+      "from": "Refund",
+      "kind": "belongsTo",
+      "to": "invoice::CreditNote",
+      "foreignKey": "credit_note_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Populated when FinalizeRefundJob step 2 completes CreditNoteIssuer::createFromRefund. NULL until then. RESTRICT prevents orphan credit notes."
+    },
+    {
+      "from": "Refund",
+      "kind": "belongsTo",
+      "to": "transaction::Transaction",
+      "foreignKey": "transaction_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "Populated when FinalizeRefundJob step 1 completes TransactionRecorder::recordOffset. NULL until then. RESTRICT prevents orphan ledger entries."
+    },
+    {
+      "from": "Refund",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "initiated_by_user_id",
+      "onDelete": "restrict",
+      "description": "The auth actor who initiated the refund. RESTRICT — audit trail cannot orphan. User erasure triggers RedactCustomerFromRefundsOnUserErased hook 90d post-erasure."
+    },
+    {
+      "from": "Refund",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "approved_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The approver. NULL when refund auto-approved (no human approver). RESTRICT."
+    },
+    {
+      "from": "Refund",
+      "kind": "belongsTo",
+      "to": "user::User",
+      "foreignKey": "rejected_by_user_id",
+      "onDelete": "restrict",
+      "nullable": true,
+      "description": "The rejector. NULL unless refund transitioned to rejected. RESTRICT."
+    },
+    {
+      "from": "RefundLine",
+      "kind": "belongsTo",
+      "to": "invoice::InvoiceLine",
+      "foreignKey": "invoice_line_id",
+      "onDelete": "restrict",
+      "description": "The invoice line being refunded. RESTRICT — invoice line cannot be deleted while refund_lines reference it."
+    }
+  ],
+  "inbound": {
+    "description": "Downstream modules attach in later waves:",
+    "examples": [
+      "chargeback (Wave 4 sibling) — a chargeback resolution decision to accept via refund creates a Refund with reason='chargeback_prevention'. The chargeback row references the resulting refund_id for cross-lookup.",
+      "growth::marketing::MarketingEvent (Wave 5) — RefundSucceeded fires a negative-value marketing event; the marketing_event row carries refund_id for revenue attribution reversal.",
+      "growth::referrals::ReferralReward (Wave 5) — RefundClawbackReferral cascades to referrals; the reversed reward references refund_id via metadata.clawback_refund_id.",
+      "finance::coupon::CouponRedemption — RefundClawbackCoupon cascades to coupon; the reversed redemption's clawback_reason='refund' is set + coupon.usage_count decremented."
+    ],
+    "note": "No inbound relations in Wave 4 beyond chargeback bridge — this module is a finance-tier terminal aggregate (initiated by customers OR admins directly OR by chargeback module on dispute-accept)."
+  },
+  "morphs": [],
+  "notes": [
+    "Refund does NOT carry `application_id`. Refunds cascade through the tenant's application per tenancy-columns.md §2. Cross-application refunds are non-goals — a Sports-app refund cannot reference a Marketplace-app payment.",
+    "RefundLine composite unique on (tenant_id, refund_id, invoice_line_id) prevents double-refunding a single invoice line within one refund.",
+    "Cross-refund invariant enforced at observer level (not via a DB constraint — the check would require a subquery that's hard to express as a table constraint): sum of amount_cents across all NON-cancelled + NON-rejected + NON-failed refunds for a given payment_id must not exceed payment.amount_cents.",
+    "credit_note_id + transaction_id are nullable during pending states. Once refund transitions to succeeded, both MUST be set (FinalizeRefundJob populates them). If FinalizeRefundJob fails, the refund transitions to provider_error + credit_note_id / transaction_id stay NULL until admin runs refund:generate-credit-note.",
+    "user_id references (initiated_by / approved_by / rejected_by / reversed_by / cancelled_by) are RESTRICT — user cannot be hard-deleted while refunds reference them. UserErased triggers the redaction hook (90d post-erasure) to replace user_ids with a hashed placeholder while retaining the audit trail."
+  ]
+}

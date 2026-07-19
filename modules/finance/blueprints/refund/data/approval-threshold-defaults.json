@@ -1,0 +1,127 @@
+{
+  "$version": 1,
+  "title": "Approval threshold defaults + business-type profiles",
+  "description": "Default approval thresholds per business-type. RefundApprovalManager reads this catalogue at tenant provisioning to seed the initial refund.approval.threshold_amount_cents + refund.approval.threshold_days_since_payment settings. Tenants may override per-tenant via settings once provisioned.",
+  "default_thresholds": {
+    "threshold_amount_cents": 10000,
+    "threshold_days_since_payment": 30,
+    "approval_sla_hours": 24,
+    "note": "Default profile. Applies when the tenant's business_type does not match any specific profile below."
+  },
+  "profiles_by_business_type": [
+    {
+      "business_type": "gym",
+      "display_name": "Gym / Fitness Studio",
+      "threshold_amount_cents": 5000,
+      "threshold_days_since_payment": 14,
+      "approval_sla_hours": 12,
+      "notes": "Gyms handle high-volume small-value transactions. Lower amount threshold ($50) + shorter days threshold (14d) reflects the smaller typical purchase size + faster refund expectations."
+    },
+    {
+      "business_type": "sports_club",
+      "display_name": "Sports Club",
+      "threshold_amount_cents": 15000,
+      "threshold_days_since_payment": 30,
+      "approval_sla_hours": 24,
+      "notes": "Sports clubs handle season-based memberships with larger transaction values ($150+ typical). Higher amount threshold matches. Standard 30-day staleness threshold."
+    },
+    {
+      "business_type": "academy",
+      "display_name": "Academy / Training Center",
+      "threshold_amount_cents": 20000,
+      "threshold_days_since_payment": 60,
+      "approval_sla_hours": 24,
+      "notes": "Academies typically sell semester-based enrolments ($200+ typical). Higher amount + staleness threshold reflects the longer-term commitment + review timelines."
+    },
+    {
+      "business_type": "sports_center",
+      "display_name": "Sports Center",
+      "threshold_amount_cents": 10000,
+      "threshold_days_since_payment": 30,
+      "approval_sla_hours": 24,
+      "notes": "Multi-facility sports centers. Standard defaults apply."
+    },
+    {
+      "business_type": "school",
+      "display_name": "School",
+      "threshold_amount_cents": 50000,
+      "threshold_days_since_payment": 90,
+      "approval_sla_hours": 48,
+      "notes": "Schools handle high-value annual tuition + activity fees. Higher amount threshold ($500) + longer staleness threshold (90d) reflects the school-year cadence. Longer SLA (48h) matches slower school administrative pace."
+    },
+    {
+      "business_type": "federation",
+      "display_name": "Federation",
+      "threshold_amount_cents": 25000,
+      "threshold_days_since_payment": 60,
+      "approval_sla_hours": 24,
+      "notes": "Federations manage multi-club affiliations + tournament fees. Higher amount threshold reflects the pooled-tenant nature of federation-level transactions."
+    }
+  ],
+  "always_require_approval_reasons": {
+    "reasons": [
+      "fraud_confirmed",
+      "admin_correction",
+      "chargeback_prevention",
+      "regulator_required",
+      "accounting_correction"
+    ],
+    "description": "These reasons force requires_approval=true regardless of amount / staleness thresholds. Sensitive-reason set — requires human-in-the-loop for the audit trail (SOX §404 + regulatory review)."
+  },
+  "auto_approve_reasons": {
+    "reasons": [
+      "duplicate_charge"
+    ],
+    "description": "These reasons force requires_approval=false regardless of thresholds. System-initiated path (finance ops caught the duplicate; refund is 100% automated)."
+  },
+  "customer_allowed_reasons": {
+    "reasons": [
+      "customer_requested",
+      "product_not_received",
+      "product_unacceptable",
+      "subscription_cancelled"
+    ],
+    "description": "Reasons customer can specify via POST /refunds/mine. Admin-only reasons refused with REFUND_ADMIN_REASON_FROM_CUSTOMER 403 on customer path.",
+    "note": "Tenant may narrow this list via settings.customer_allowed_reasons — but cannot widen it (admin-only reasons stay admin-only)."
+  },
+  "consumer_protection_baseline": {
+    "jurisdictions": [
+      {
+        "region": "california_usa",
+        "regulator": "CCPA §1798.100 + California Business Code",
+        "baseline_sla_days": 14,
+        "notes": "Most consumer purchases must be refundable within 14 days. Tenant approval SLA must be well under this window (24h default gives 13-day headroom)."
+      },
+      {
+        "region": "eu",
+        "regulator": "EU Consumer Rights Directive 2011/83/EU",
+        "baseline_sla_days": 14,
+        "notes": "14-day cooling-off period. Refund SLA must give tenants time to process within the window."
+      },
+      {
+        "region": "uk",
+        "regulator": "UK Consumer Rights Act 2015",
+        "baseline_sla_days": 14,
+        "notes": "Reasonable time refund windows. 14-day baseline is a safe default."
+      },
+      {
+        "region": "australia",
+        "regulator": "Australian Consumer Law (ACL) 2010",
+        "baseline_sla_days": 30,
+        "notes": "Reasonable time — typically 30 days for change-of-mind refunds."
+      },
+      {
+        "region": "canada",
+        "regulator": "Canadian Consumer Protection Act (varies by province)",
+        "baseline_sla_days": 10,
+        "notes": "Varies by province — most require 10-day cooling-off for services. Ontario CPO 2002 specifies 10 days."
+      }
+    ]
+  },
+  "notes": [
+    "Tenants can override every threshold via /api/v1/settings/refund at any time — the defaults here seed provisioning only.",
+    "Consumer-protection-law baselines are informational for tenants — the module does NOT enforce jurisdiction-specific SLAs (tenants configure their own thresholds).",
+    "always_require_approval_reasons cannot be shortened by tenants — those are hard-coded in the module. Tenants may add reasons via config refund.reason.always_require_approval.",
+    "auto_approve_reasons cannot be lengthened by tenants — only duplicate_charge auto-approves in v1. Adding more auto-approve reasons is a security review decision."
+  ]
+}

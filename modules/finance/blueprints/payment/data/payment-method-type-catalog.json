@@ -1,0 +1,93 @@
+{
+  "$version": 1,
+  "title": "Payment method type catalogue",
+  "description": "The 8 payment method types the module supports. Each type documents which providers accept it, whether saved tokens apply, and typical PCI-DSS scope. Read by PaymentMethodObserver + PaymentIntentOrchestrator when routing payments.",
+  "method_types": [
+    {
+      "method_type": "card",
+      "display_name": "Card",
+      "description": "Credit / debit / prepaid card. Includes major networks (Visa, Mastercard, Amex, Discover, JCB, UnionPay). Requires 3DS2 for card transactions above the PSD2 threshold in EU regions.",
+      "saved_token_supported": true,
+      "requires_customer_side_tokenization": true,
+      "supported_by_providers": ["stripe", "paddle", "adyen", "square", "paypal", "custom_webhook"],
+      "typical_pci_scope": "SAQ A (Academorix scope): customer confirms via provider SDK; we never see PAN. Would be SAQ D if we accepted raw card fields — deliberately avoided.",
+      "typical_brands": ["visa", "mastercard", "amex", "discover", "jcb", "unionpay"]
+    },
+    {
+      "method_type": "bank_debit",
+      "display_name": "Bank debit (ACH / SEPA)",
+      "description": "Direct debit from a bank account. Includes US ACH, EU SEPA Direct Debit, UK Bacs. Requires micro-deposit verification before first debit for US ACH.",
+      "saved_token_supported": true,
+      "requires_customer_side_tokenization": true,
+      "supported_by_providers": ["stripe", "paddle", "adyen"],
+      "typical_pci_scope": "Not PCI-DSS — bank details, not card details.",
+      "typical_brands": ["ach", "sepa", "bacs"]
+    },
+    {
+      "method_type": "bank_transfer",
+      "display_name": "Bank transfer",
+      "description": "One-time bank transfer (wire transfer, SEPA transfer). Customer initiates the transfer; provider confirms receipt. NO saved token — every transfer is a new one-time flow.",
+      "saved_token_supported": false,
+      "requires_customer_side_tokenization": false,
+      "supported_by_providers": ["stripe", "adyen"],
+      "typical_pci_scope": "Not PCI-DSS.",
+      "typical_brands": []
+    },
+    {
+      "method_type": "wallet",
+      "display_name": "Digital wallet",
+      "description": "Apple Pay / Google Pay / PayPal / Venmo / Cash App. Wallet tokenizes the underlying method (card / bank / balance). Saved token stored per provider.",
+      "saved_token_supported": true,
+      "requires_customer_side_tokenization": true,
+      "supported_by_providers": ["stripe", "adyen", "square", "paypal"],
+      "typical_pci_scope": "Not PCI-DSS at Academorix layer — wallet handles PCI on its side.",
+      "typical_brands": ["apple_pay", "google_pay", "paypal", "venmo", "cash_app"]
+    },
+    {
+      "method_type": "installment",
+      "display_name": "Buy Now Pay Later",
+      "description": "Klarna / Afterpay / Affirm / Zip. Provider handles the installment agreement; Academorix sees a single capture as if it were a full-amount card payment. Provider bears default risk.",
+      "saved_token_supported": true,
+      "requires_customer_side_tokenization": true,
+      "supported_by_providers": ["stripe", "adyen", "paypal"],
+      "typical_pci_scope": "Not PCI-DSS at Academorix layer.",
+      "typical_brands": []
+    },
+    {
+      "method_type": "crypto",
+      "display_name": "Cryptocurrency",
+      "description": "Bitcoin, Ethereum, USDC, etc. NOT supported day-1. Reserved enum for future integration via specialized providers (BitPay, Coinbase Commerce) through the CustomWebhook driver.",
+      "saved_token_supported": false,
+      "requires_customer_side_tokenization": true,
+      "supported_by_providers": [],
+      "typical_pci_scope": "Not PCI-DSS.",
+      "typical_brands": []
+    },
+    {
+      "method_type": "cash",
+      "display_name": "Cash",
+      "description": "Cash-at-counter payment. Captured offline; recorded in the system after the fact by admin. No provider involvement — captures via CustomWebhook or direct admin entry (out-of-band from the provider intent flow).",
+      "saved_token_supported": false,
+      "requires_customer_side_tokenization": false,
+      "supported_by_providers": ["custom_webhook"],
+      "typical_pci_scope": "Not PCI-DSS.",
+      "typical_brands": []
+    },
+    {
+      "method_type": "check",
+      "display_name": "Check / Cheque",
+      "description": "Paper check received by mail. Similar offline flow to cash — captured via CustomWebhook or direct admin entry.",
+      "saved_token_supported": false,
+      "requires_customer_side_tokenization": false,
+      "supported_by_providers": ["custom_webhook"],
+      "typical_pci_scope": "Not PCI-DSS.",
+      "typical_brands": []
+    }
+  ],
+  "notes": [
+    "The method_type enum is the authoritative list. Adding a new type = updating this catalogue + updating the PaymentMethodType enum + updating provider-capability-matrix.json.",
+    "The supported_by_providers list for each method_type is the source of truth for the PaymentMethodObserver's cross-check when creating a new saved method.",
+    "requires_customer_side_tokenization=true means the customer's SDK MUST tokenize the underlying method before hitting our API. Direct submission of raw method details is refused (PCI-DSS scope reduction).",
+    "saved_token_supported=false means the method is one-time — Payment rows may have payment_method_id=NULL for these methods, and no PaymentMethod row is stored."
+  ]
+}

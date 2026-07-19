@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/payment/data/providers/stripe-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Stripe provider config",
+  "description": "Configuration shape for a Stripe Payments + Billing + Radar integration. Validated by PaymentProviderConfigObserver on create + update. All credentials encrypted at rest via TokenEncryptor.",
+  "type": "object",
+  "required": ["publishable_key", "secret_key", "webhook_secret"],
+  "additionalProperties": false,
+  "properties": {
+    "publishable_key": {
+      "type": "string",
+      "pattern": "^pk_(test|live)_[A-Za-z0-9]{16,}$",
+      "description": "Stripe publishable key. Sent to the customer's client-side SDK. Format: pk_test_... or pk_live_..."
+    },
+    "secret_key": {
+      "type": "string",
+      "pattern": "^(sk|rk)_(test|live)_[A-Za-z0-9]{16,}$",
+      "description": "Stripe secret key or restricted key. Used server-side for API calls. Format: sk_test_... / sk_live_... / rk_test_... / rk_live_... Encrypted at rest."
+    },
+    "webhook_secret": {
+      "type": "string",
+      "pattern": "^whsec_[A-Za-z0-9]{16,}$",
+      "description": "Stripe webhook signing secret. Used to verify inbound webhook signatures. Format: whsec_..."
+    },
+    "api_version": {
+      "type": ["string", "null"],
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}(;.*)?$",
+      "description": "Optional Stripe API version override (e.g. '2024-06-20'). Falls back to config('payment.providers.stripe.api_version') when unset."
+    },
+    "connect_account_id": {
+      "type": ["string", "null"],
+      "pattern": "^acct_[A-Za-z0-9]{16,}$",
+      "description": "Optional Stripe Connect account ID (for marketplace flows). Payments dispatched via Stripe-Account header. Only for tenants using Stripe Connect."
+    },
+    "radar_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether to use Stripe Radar for fraud detection. Recommended: true. Increases costs slightly but reduces fraud loss."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15,
+      "description": "Per-request HTTP timeout. Overrides config('payment.dispatch.timeout_seconds')."
+    }
+  }
+}

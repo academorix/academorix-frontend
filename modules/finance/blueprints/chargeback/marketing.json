@@ -1,0 +1,97 @@
+{
+  "id": "academorix://modules/chargeback/marketing",
+  "$version": 1,
+  "title": "chargeback — marketing events (negative-value + fraud signal)",
+  "lane": "marketing",
+  "consentTiers": ["essential", "functional", "advertising"],
+  "description": "Marketing-lane events fired by the chargeback module — every ChargebackLost fires a downstream marketing::ChargebackFiled NEGATIVE-VALUE CONVERSION + FRAUD SIGNAL event. Ad networks subtract the disputed amount from the ad campaign's revenue attribution (ROAS adjustment) + retrain fraud models MORE HEAVILY than on refunds (chargebacks are a stronger fraud correlation signal) + adjust bidding on customer segments with high chargeback rates. Payload includes the original conversion's ad_network + campaign_id (looked up via the payment's linked marketing_event) + the reason_category so the ad network can distinguish fraud-labeled chargebacks (aggressive fraud model retraining) from consumer_disputes-labeled chargebacks (product-quality signal, adjust bidding gently). Consent tier is `advertising` — customers who have withdrawn advertising consent have their chargeback reversals suppressed at dispatch. Chargeback still lands internally; only the marketing lane skips.",
+  "events": [
+    {
+      "name": "Chargeback Filed",
+      "kind": "reversal_with_fraud_signal",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "payment_id",
+        "invoice_id",
+        "original_conversion_event_id (via payment.metadata.marketing_conversion_event_id)",
+        "click_id (from linked marketing::MarketingEvent.attribution_snapshot)",
+        "click_id_provider",
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "amount_cents (positive integer — the disputed amount)",
+        "reversed_amount_cents (same as amount_cents; explicit for provider APIs that require this shape)",
+        "currency",
+        "customer_type",
+        "customer_id",
+        "network (card network — visa / mastercard / amex / etc.)",
+        "reason_category (fraud / authorization / processing_errors / consumer_disputes / card_recovery)",
+        "reason_code (network-native code — for provider APIs that consume specific codes)",
+        "fraud_signal (boolean — true when reason_category='fraud'; drives ad-network fraud model retraining aggression)",
+        "decision_at"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase", "reversal": true, "fraud_flagged": "when_reason_category_is_fraud" },
+        { "provider": "google_ads_ec", "event_name": "purchase", "reversal": true, "fraud_flagged": "when_reason_category_is_fraud" },
+        { "provider": "tiktok_events_api", "event_name": "CompletePayment", "reversal": true },
+        { "provider": "microsoft_uet", "event_name": "purchase", "reversal": true },
+        { "provider": "snapchat_capi", "event_name": "PURCHASE", "reversal": true }
+      ],
+      "description": "Fires on ChargebackLost. Distinct from the refund module's 'Refund Issued' event — refunds are merchant-initiated; chargebacks are bank-forced. Ad networks correlate chargebacks with click IDs to identify fraud-prone traffic sources + retrain fraud models. Fraud model retraining is MORE aggressive for chargebacks than for refunds because chargebacks are a stronger fraud signal (customer disputed unauthorized use; refund can be a genuine dissatisfaction). The reason_category field distinguishes fraud-labeled chargebacks (aggressive fraud model retraining) from consumer_disputes-labeled chargebacks (product-quality signal, adjust bidding gently but do not aggressively re-train fraud models)."
+    },
+    {
+      "name": "Chargeback Expired",
+      "kind": "reversal_with_fraud_signal",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "chargeback_id",
+        "payment_id",
+        "invoice_id",
+        "original_conversion_event_id",
+        "click_id",
+        "click_id_provider",
+        "amount_cents (positive — the disputed amount)",
+        "reversed_amount_cents (same)",
+        "currency",
+        "network",
+        "reason_category",
+        "reason_code",
+        "fraud_signal",
+        "was_expired (true — distinguishes auto-loss from bank-decided loss)",
+        "expired_at"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase", "reversal": true },
+        { "provider": "google_ads_ec", "event_name": "purchase", "reversal": true },
+        { "provider": "tiktok_events_api", "event_name": "CompletePayment", "reversal": true }
+      ],
+      "description": "Distinct from 'Chargeback Filed' — this fires on ChargebackExpired (auto-loss via missed evidence deadline). was_expired=true property distinguishes for the ad-network's downstream analysis. Some networks weight was_expired losses less heavily in fraud model retraining (auto-loss may not indicate fraud — could be operational failure)."
+    }
+  ],
+  "delivery_semantics": {
+    "loss_tolerance": "zero",
+    "retry_policy": "exponential backoff (10s / 60s / 5m / 30m / 3h / 24h) up to 6 attempts; then dead-letter queue for manual replay",
+    "circuit_breaker": "per-provider circuit breaker in the marketing module; if one provider is down, the others still receive events",
+    "ledger": "growth::marketing owns the two-table ledger: marketing_events (canonical) + marketing_deliveries (per-provider-per-attempt log)"
+  },
+  "pii_hashing": {
+    "email": "SHA-256 hex lowercased-trimmed",
+    "phone": "SHA-256 hex E.164-normalised",
+    "click_id": "raw (ad-network needs original click ID)",
+    "user_id": "sent as external_id (unhashed) — matches ad-network's advanced-matching contract"
+  },
+  "notes": [
+    "This is the MARKETING lane per growth-and-observability.md — different consent tier (`advertising`, subset of marketing) than the analytics lane (`essential` for ChargebackLost).",
+    "Ad networks require SHA-256 hashing of PII per their contracts — the growth::marketing module handles hashing, this module just declares which properties are PII.",
+    "Reversal events with fraud signals are LOAD-BEARING for ad-network fraud model quality — chargebacks are the strongest correlation signal ad networks use to identify fraudulent traffic sources. Without this feed, ad networks continue bidding on fraud-prone segments.",
+    "The marketing event lookup uses payment.metadata.marketing_conversion_event_id (populated when the parent payment fired a conversion event at capture time). Payments without a linked marketing conversion event do NOT fire the marketing lane — the chargeback still lands internally.",
+    "Consent-gate: `advertising` tier. Customers who have withdrawn advertising consent have their chargeback marketing events suppressed at dispatch. The chargeback itself still lands + finalization chain fires; only the marketing lane skips.",
+    "For coupon-cascaded reversals, the coupon module fires its OWN marketing reversal event with clawback_reason='chargeback' — the two events are distinct + additive at the ad-network side. Meta's dedup is via event_id in the payload; the marketing module ensures unique event_ids per module + chargeback + coupon.",
+    "Fraud model retraining aggression is provider-specific + configured in growth::marketing. Meta CAPI accepts a fraud_flagged flag on Purchase events; Google Ads EC uses a custom parameter; TikTok/Microsoft/Snapchat do not accept a fraud flag but still consume the reversal for ROAS adjustment."
+  ]
+}

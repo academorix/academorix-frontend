@@ -1,0 +1,254 @@
+{
+  "id": "activity.resources.activity-retention-policy.show",
+  "title": "Retention override detail",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings/activity-retention/{policy}",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "activity",
+    "entity": "activity-retention-policy",
+    "action": "show"
+  },
+  "requiresPermission": "activity.retention.manage",
+  "dataSources": [
+    {
+      "name": "policy",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/activity-retention-policies/{policy}",
+      "params": ["policy"],
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    },
+    {
+      "name": "audits",
+      "kind": "http.get",
+      "urlTemplate": "/api/v1/activity-retention-policies/{policy}/audits",
+      "params": ["policy"],
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "id": "breadcrumbs",
+          "kind": "Breadcrumbs",
+          "props": {
+            "items": [
+              { "label": "Activity retention", "route": "/tenant/settings/activity-retention" },
+              { "label": "Override" }
+            ]
+          }
+        },
+        {
+          "id": "header",
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "CardHeader",
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex items-start justify-between gap-4" },
+                  "children": [
+                    {
+                      "kind": "View",
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "props": { "as": "h1", "className": "text-xl font-semibold" },
+                          "bindings": {
+                            "children": {
+                              "$expr": "policy.log_name ? 'Override for ' + policy.log_name : 'Override for all feeds'"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "Text",
+                          "props": { "as": "p", "className": "text-muted text-sm" },
+                          "bindings": {
+                            "children": {
+                              "$expr": "policy.retention_days + ' days retention • Created ' + formatRelative(policy.created_at)"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "View",
+                      "props": { "className": "flex items-center gap-2" },
+                      "children": [
+                        {
+                          "kind": "Chip",
+                          "props": { "variant": "warning", "children": "Regulator hold" },
+                          "bindings": {
+                            "hidden": { "$expr": "!policy.is_regulator_hold" }
+                          }
+                        },
+                        {
+                          "kind": "Chip",
+                          "props": { "variant": "info", "children": "Extended" },
+                          "bindings": {
+                            "hidden": {
+                              "$expr": "policy.is_regulator_hold || !policy.is_extended"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "CardBody",
+              "children": [
+                {
+                  "kind": "DescriptionList",
+                  "children": [
+                    {
+                      "kind": "DescriptionListItem",
+                      "props": { "label": "Feed" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "bindings": {
+                            "children": { "$expr": "policy.log_name || 'All feeds (default)'" }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "DescriptionListItem",
+                      "props": { "label": "Retention window" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "bindings": {
+                            "children": { "$expr": "policy.retention_days + ' days'" }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "DescriptionListItem",
+                      "props": { "label": "Expires at" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "bindings": {
+                            "children": {
+                              "$expr": "policy.expires_at ? formatDate(policy.expires_at) : 'Never'"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "DescriptionListItem",
+                      "props": { "label": "Reason" },
+                      "children": [
+                        {
+                          "kind": "Text",
+                          "props": { "className": "whitespace-pre-wrap" },
+                          "bindings": {
+                            "children": { "$ref": "policy.override_reason" }
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "kind": "CardFooter",
+              "props": { "className": "flex justify-end gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "danger", "leadingIcon": "arrow-uturn-left", "children": "Revert to default" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.delete",
+                      "urlExpr": "'/api/v1/activity-retention-policies/' + policy.id",
+                      "confirm": {
+                        "title": "Revert this override?",
+                        "description": "The feed will fall back to the default retention (90 days). Rows past the default will be purged on the next daily sweep."
+                      },
+                      "onSuccess": {
+                        "kind": "navigate",
+                        "to": "/tenant/settings/activity-retention"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "history",
+          "kind": "Card",
+          "children": [
+            {
+              "kind": "CardHeader",
+              "props": {
+                "title": "History",
+                "description": "Every change to this override, retained indefinitely on the audit stream."
+              }
+            },
+            {
+              "kind": "CardBody",
+              "children": [
+                {
+                  "kind": "List",
+                  "bindings": { "items": { "$ref": "audits" } },
+                  "itemRenderer": {
+                    "kind": "View",
+                    "props": { "className": "flex flex-col gap-1 py-2 border-b last:border-b-0" },
+                    "children": [
+                      {
+                        "kind": "View",
+                        "props": { "className": "flex items-center gap-2" },
+                        "children": [
+                          {
+                            "kind": "Chip",
+                            "props": { "variant": "neutral", "size": "xs" },
+                            "bindings": { "children": { "$ref": "item.event" } }
+                          },
+                          {
+                            "kind": "Text",
+                            "props": { "className": "text-sm text-muted" },
+                            "bindings": {
+                              "children": {
+                                "$expr": "formatRelative(item.created_at) + ' • ' + (item.user?.display_name || 'System')"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "kind": "KeyValueList",
+                        "props": { "className": "text-xs mt-1" },
+                        "bindings": {
+                          "items": { "$ref": "item.diff_summary" }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

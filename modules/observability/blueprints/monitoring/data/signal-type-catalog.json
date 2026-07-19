@@ -1,0 +1,108 @@
+{
+  "$version": 1,
+  "title": "Monitoring signal type catalogue",
+  "description": "The 7 signal types the module supports day-1. Each type documents its semantics, signal_source shape, valid threshold_units, valid threshold_operators, aggregation semantics, and window semantics. MonitoringAlertPolicyObserver reads this catalogue to validate the (signal_type, signal_source, threshold_operator, threshold_value, threshold_unit) tuple.",
+  "signal_types": [
+    {
+      "signal_type": "health_check_status",
+      "display_name": "Health check status",
+      "description": "Evaluates the status of a specific health check over the trailing window. signal_source is the health_check.slug. Threshold semantic: count of unhealthy/degraded runs vs total runs.",
+      "signal_source_kind": "health_check.slug",
+      "signal_source_example": "primary-db",
+      "valid_threshold_units": ["percent", "count"],
+      "valid_threshold_operators": ["greater_than", "less_than", "equals"],
+      "aggregation": "COUNT(status IN ('unhealthy', 'timeout', 'error')) OVER window",
+      "typical_window_seconds": 300,
+      "typical_thresholds": [
+        { "description": "1 unhealthy run in 5 min = P2", "value": 1, "unit": "count", "operator": "greater_than" },
+        { "description": "3 unhealthy runs in 5 min = P1", "value": 3, "unit": "count", "operator": "greater_than" }
+      ]
+    },
+    {
+      "signal_type": "error_rate",
+      "display_name": "Error rate",
+      "description": "Evaluates HTTP 5xx rate as a percentage over the trailing window. signal_source is the metric name pattern (typically 'http.requests.5xx.rate' aggregated by service).",
+      "signal_source_kind": "metric_name",
+      "signal_source_example": "http.requests.5xx.rate:service=api",
+      "valid_threshold_units": ["percent"],
+      "valid_threshold_operators": ["greater_than", "less_than"],
+      "aggregation": "SUM(5xx) / SUM(total) OVER window",
+      "typical_window_seconds": 300,
+      "typical_thresholds": [
+        { "description": "5xx > 1% over 5min = P2", "value": 1, "unit": "percent", "operator": "greater_than" },
+        { "description": "5xx > 5% over 5min = P1", "value": 5, "unit": "percent", "operator": "greater_than" }
+      ]
+    },
+    {
+      "signal_type": "latency_p95",
+      "display_name": "Latency P95",
+      "description": "Evaluates the 95th-percentile latency in ms over the trailing window. signal_source is the metric name pattern.",
+      "signal_source_kind": "metric_name",
+      "signal_source_example": "http.request.duration_ms:service=api",
+      "valid_threshold_units": ["ms"],
+      "valid_threshold_operators": ["greater_than"],
+      "aggregation": "PERCENTILE_CONT(0.95) OVER window",
+      "typical_window_seconds": 300,
+      "typical_thresholds": [
+        { "description": "P95 > 500ms over 5min = P3", "value": 500, "unit": "ms", "operator": "greater_than" },
+        { "description": "P95 > 2000ms over 5min = P2", "value": 2000, "unit": "ms", "operator": "greater_than" }
+      ]
+    },
+    {
+      "signal_type": "latency_p99",
+      "display_name": "Latency P99",
+      "description": "Evaluates the 99th-percentile latency in ms over the trailing window. Higher sensitivity than P95 — catches long-tail latency.",
+      "signal_source_kind": "metric_name",
+      "signal_source_example": "http.request.duration_ms:service=api",
+      "valid_threshold_units": ["ms"],
+      "valid_threshold_operators": ["greater_than"],
+      "aggregation": "PERCENTILE_CONT(0.99) OVER window",
+      "typical_window_seconds": 300,
+      "typical_thresholds": [
+        { "description": "P99 > 1000ms over 3min = P2", "value": 1000, "unit": "ms", "operator": "greater_than" },
+        { "description": "P99 > 5000ms over 3min = P1", "value": 5000, "unit": "ms", "operator": "greater_than" }
+      ]
+    },
+    {
+      "signal_type": "queue_depth",
+      "display_name": "Queue depth",
+      "description": "Evaluates the pending job count on a named queue. signal_source is the queue name.",
+      "signal_source_kind": "queue_name",
+      "signal_source_example": "high-priority",
+      "valid_threshold_units": ["count"],
+      "valid_threshold_operators": ["greater_than"],
+      "aggregation": "MAX(depth) OVER window",
+      "typical_window_seconds": 60,
+      "typical_thresholds": [
+        { "description": "Queue > 1000 jobs = P3", "value": 1000, "unit": "count", "operator": "greater_than" },
+        { "description": "Queue > 10000 jobs = P2", "value": 10000, "unit": "count", "operator": "greater_than" }
+      ]
+    },
+    {
+      "signal_type": "worker_health",
+      "display_name": "Worker health",
+      "description": "Evaluates the count of healthy workers on a tag. signal_source is the worker tag (e.g. 'high-priority-worker'). Threshold: minimum healthy worker count.",
+      "signal_source_kind": "worker_tag",
+      "signal_source_example": "high-priority-worker",
+      "valid_threshold_units": ["count"],
+      "valid_threshold_operators": ["less_than"],
+      "aggregation": "COUNT(status='healthy') OVER window",
+      "typical_window_seconds": 60,
+      "typical_thresholds": [
+        { "description": "< 2 healthy workers = P1", "value": 2, "unit": "count", "operator": "less_than" }
+      ]
+    },
+    {
+      "signal_type": "custom_metric",
+      "display_name": "Custom metric",
+      "description": "Enterprise-only via monitoring_custom_metrics entitlement. Evaluates a tenant-registered custom metric. signal_source is the registered custom metric name.",
+      "signal_source_kind": "custom_metric_name",
+      "signal_source_example": "cache.hit_rate",
+      "valid_threshold_units": ["percent", "ms", "count", "bytes"],
+      "valid_threshold_operators": ["greater_than", "less_than", "equals", "not_equals"],
+      "aggregation": "caller-configured (default: AVG over window)",
+      "typical_window_seconds": 300,
+      "requires_entitlement": "monitoring_custom_metrics"
+    }
+  ]
+}

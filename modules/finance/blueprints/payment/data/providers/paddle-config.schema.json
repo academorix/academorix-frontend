@@ -1,0 +1,47 @@
+{
+  "id": "academorix://modules/payment/data/providers/paddle-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Paddle provider config",
+  "description": "Configuration shape for a Paddle Classic + Paddle Billing integration. Paddle is a Merchant of Record — Paddle handles taxes + chargebacks + VAT remittance. All credentials encrypted at rest.",
+  "type": "object",
+  "required": ["api_key", "vendor_id", "webhook_secret"],
+  "additionalProperties": false,
+  "properties": {
+    "api_key": {
+      "type": "string",
+      "minLength": 40,
+      "description": "Paddle Billing v2 API key. Encrypted at rest."
+    },
+    "vendor_id": {
+      "type": "string",
+      "pattern": "^[0-9]{4,10}$",
+      "description": "Paddle vendor ID. 4-10 numeric characters."
+    },
+    "webhook_secret": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Paddle Notification webhook signing secret. Used to verify inbound webhook signatures (Paddle-Signature header)."
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["production", "sandbox"],
+      "default": "production",
+      "description": "Paddle environment. production = api.paddle.com; sandbox = sandbox-api.paddle.com."
+    },
+    "public_key": {
+      "type": ["string", "null"],
+      "description": "Optional Paddle Classic public key (RSA — for legacy Classic webhook verification). Only required for tenants using Paddle Classic. Encrypted at rest."
+    },
+    "notification_id": {
+      "type": ["string", "null"],
+      "description": "Paddle Notification setting ID that binds to this tenant's webhook endpoint. Populated automatically after first webhook setup."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

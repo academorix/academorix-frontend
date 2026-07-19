@@ -1,0 +1,165 @@
+{
+  "id": "academorix://modules/payment/compliance",
+  "$version": 1,
+  "title": "payment — compliance evidence",
+  "description": "Payment is financial-record + PCI-DSS Level 1 concerned + PSD2 SCA-regulated. Every dispatched payment carries customer identifiers (name / email / phone / billing address / hashed PII) + amounts (revenue-sensitive) + tokenized card references (provider-scoped). NO card PAN / CVV / magnetic-stripe / PIN storage anywhere (PCI-DSS scope reduction via customer-side SDK confirmation). GDPR Art. 6(1)(b) contractual basis (no consent required). AML retention 7-year baseline (10y Enterprise). SOX §404 audit trail. SOC 2 CC7.2 monitoring on captures + disputes.",
+  "regimes": {
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 6(1)(b)",
+          "principle": "lawful basis: contract performance",
+          "evidence": "Payments are processed as necessary for performing the customer's contract with the tenant. NO consent required — customers cannot opt out of a bill they owe. The two-phase consent gate does NOT apply to payment records (unlike marketing signals which are consent-based). Payment rows persist regardless of subsequent consent revocation."
+        },
+        {
+          "article": "Art. 5(1)(c)",
+          "principle": "data minimisation",
+          "evidence": "NO card PAN, CVV, magnetic stripe, or PIN storage anywhere. Only provider-scoped tokens (Stripe pm_..., Paddle payment_method_id, etc.). last4 is exactly 4 digits. Device fingerprint hashed (SHA-256), never raw. Billing details snapshot frozen at capture time — no continuous PII synchronization."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Customers request their payment history via the compliance/data-subject-rights surface. Export includes: payment list (payment_number, provider, amount, currency, captured_at, invoice reference), payment method summaries (brand + last4 + exp), dispute status (own disputes only), and billing_details_snapshots. Encrypted fields (provider_reference_id, client_secret) NEVER included in exports."
+        },
+        {
+          "article": "Art. 17",
+          "principle": "right to erasure",
+          "evidence": "TenantErased cascades hard-delete of every payment row via FK CASCADE, subject to financial-record archival (Art. 17 §3 exception — legal obligation to retain financial records supersedes erasure right). UserErased triggers RedactUserFromPaymentsJob (compliance module) which nulls the subject-identifying fields on billing_details_snapshot + deactivates PaymentMethods + fires provider-side deletion requests (Stripe Customer.delete, Adyen shopper deletion, etc.). Audit trail rows survive per financial retention (Art. 17 §3)."
+        },
+        {
+          "article": "Art. 25",
+          "principle": "data protection by design",
+          "evidence": "PCI-DSS scope reduction: customer confirms via provider SDK client-side; the API NEVER accepts raw card fields. provider_reference_id + client_secret + provider_metadata + evidence encrypted at rest (AES-256-GCM). TLS 1.2+ enforced on egress. Distinct encryption keys per field family (defense-in-depth). Device fingerprint hashed, never raw. Fraud check delegated to provider Radar-equivalent (never build in-house fraud ML that would require PII correlation)."
+        },
+        {
+          "article": "Art. 28",
+          "principle": "processor contracts",
+          "evidence": "Each of the 6 provider integrations is a Data Processor under Art. 28 — tenant admin acknowledges the DPA reference before configuring the provider. The tenant-facing subprocessor list (compliance/subprocessors surface) enumerates all 6. Sub-processing locations documented per provider (see subprocessors.json)."
+        },
+        {
+          "article": "Art. 32",
+          "principle": "security of processing",
+          "evidence": "Multiple layers: HMAC webhook verification, at-rest encryption of tokens + client_secret + provider_metadata + evidence, TLS-enforced egress, distinct encryption keys per field family, key rotation via compliance/encryption service, audit trail on every state transition, role-based access control (support role sees redacted view; platform_ops requires explicit compliance approval to view PII)."
+        }
+      ]
+    },
+    "ccpa": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "§1798.100",
+          "principle": "right to know",
+          "evidence": "Same as GDPR Art. 15 access. Customers can request the full payment history + saved payment method summaries via the compliance surface."
+        },
+        {
+          "section": "§1798.105",
+          "principle": "right to deletion",
+          "evidence": "CCPA §1798.145(a)(1) exception: financial records retention is a legally-required activity. Payment rows survive deletion requests per Art. 17 §3 equivalent."
+        },
+        {
+          "section": "§1798.135",
+          "principle": "Do Not Sell My Personal Information",
+          "evidence": "Payment records themselves are NOT sold. Marketing signals derived from payments ARE regulated by CCPA — the growth::marketing module reads the customer's consent snapshot before dispatching, honouring Do Not Sell."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC6.1",
+          "principle": "logical + physical access",
+          "evidence": "PaymentMethod.provider_reference_id + PaymentIntent.provider_reference_id + PaymentIntent.client_secret + Payment.provider_metadata + PaymentDispute.evidence + PaymentDispute.provider_reference_id encrypted at rest. Access to view unredacted fields restricted to owner + admin roles + platform_ops with explicit compliance-approval workflow. Support role sees redacted view (never encrypted values). Every provider config change writes to audits with 7-year retention."
+        },
+        {
+          "criterion": "CC6.7",
+          "principle": "restrict data transmission",
+          "evidence": "All 6 providers use TLS 1.2+ endpoints. Guzzle enforces TLS + certificate validation. HMAC-signed webhooks verified via provider signing schemes. client_secret transmitted over TLS-terminated egress only."
+        },
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "PaymentProviderCircuitBreakerOpened + PaymentDisputeOpened (high-value) + PaymentDisputeLost + PaymentReconcileDrift are P1 signals. Every fire pages the on-call. Nightly ReconcilePaymentIntentsJob detects drift + fires PaymentReconcileDriftNotification."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "Multi-layer defense: per-provider circuit breaker + retry with backoff + webhook verification + at-rest encryption + PCI-DSS scope reduction (no card storage) + 3DS2 for card SCA + fraud check delegation. Payment intent state machine one-way enforced by observer."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "3.4",
+          "principle": "no PAN storage",
+          "evidence": "PCI-DSS Level 1 compliant via scope reduction. NO PAN, CVV, magnetic-stripe, or PIN stored anywhere in the module. Only provider-scoped tokens (pm_..., payment_method_id, storedPaymentMethodId, CARD_NONCE, payment_method). last4 is exactly 4 digits (enforced by valid_last4 rule + observer check). Card brand + expiry stored openly (not PCI-DSS scope)."
+        },
+        {
+          "requirement": "3.5",
+          "principle": "cryptographic protection",
+          "evidence": "provider_reference_id + client_secret + provider_metadata + evidence encrypted at rest via TokenEncryptor (AES-256-GCM). Distinct encryption keys per field family (defense-in-depth). Encryption keys managed by compliance/encryption service; rotation via compliance::EncryptionKeyRotated event. Historical rows retain key_version for backward-compat decryption."
+        },
+        {
+          "requirement": "4.1",
+          "principle": "encrypt transmission",
+          "evidence": "TLS 1.2+ enforced on all provider egress. TLS termination on our public webhook endpoints. client_secret transmitted only over TLS."
+        },
+        {
+          "requirement": "6.5",
+          "principle": "secure development",
+          "evidence": "Customer-side SDK confirmation is the primary PCI-DSS scope reduction — the API NEVER accepts raw card fields. Stripe Elements, Adyen Drop-in, Square Payment Form, PayPal Smart Buttons, etc. tokenize on the client BEFORE hitting our servers. Custom webhook flow requires tenant admin acknowledgment + JSON schema validation."
+        },
+        {
+          "requirement": "10.2",
+          "principle": "audit trail",
+          "evidence": "Every write to payments / payment_methods / payment_intents / payment_disputes emits an audit row (Auditable trait). Financial-record retention: 7 years (10 for Enterprise with payment_extended_retention). Every state transition on an intent / dispute is audit-captured. PaymentWebhookReceived event fires for every inbound webhook regardless of signature validity — feeds security incident investigations."
+        },
+        {
+          "requirement": "10.7",
+          "principle": "audit trail retention",
+          "evidence": "1 year hot + 6 years archive minimum (PCI-DSS baseline). Our default is 7-year hot retention (exceeds baseline)."
+        }
+      ]
+    },
+    "psd2": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 78 (SCA — Strong Customer Authentication)",
+          "principle": "Two-factor authentication for card transactions",
+          "evidence": "3DS2 gate on card transactions above the SCA threshold (default €30, configurable per tenant). ThreeDsGate inspects amount + currency + card brand + issuing country. When required, PaymentIntent enters 'requires_action' status with next_action_type='three_d_secure_redirect'. three_ds_result on the resulting Payment captures the outcome (authenticated / rejected / not_supported / bypassed). SCA authentication records retained 5 years (encoded in payment.three_ds_result + three_ds_version fields)."
+        },
+        {
+          "article": "Art. 74",
+          "principle": "unauthorised transactions liability",
+          "evidence": "3DS2 authentication shifts liability from merchant to issuer. Every card transaction over threshold requires authenticated 3DS2 result — three_ds_result='authenticated' shifts liability. Merchant-exempted flows (three_ds_result='bypassed') retain merchant liability but only permitted under specific exemptions (low-value, whitelisted merchant, low-risk merchant)."
+        }
+      ]
+    },
+    "aml": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "Suspicious Activity Reporting",
+          "evidence": "Payments retained 7 years (10y Enterprise) as required by EU 5AMLD + US Bank Secrecy Act. High-risk-score payments (risk_score >= 75) flagged for review — routed to fraud queue delegated to provider. Regulator can request the full transaction history for a customer via the compliance/data-subject-rights surface."
+        }
+      ]
+    },
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "financial audit trail",
+          "evidence": "Every payment is a financial record — audit trail retention 7 years. Sequential payment_number per tenant (accounting compliance). Double-entry transaction recording via TransactionRecorder (debit cash, credit accounts_receivable) atomic with Payment insert. Immutable after create — refund + dispute lifecycle carry the compensating entries."
+        }
+      ]
+    },
+    "state_laws": {
+      "applicable": true,
+      "notes": "Some US states require in-state payment processing routing (e.g. some New York regulations require merchants to use in-state acquirers for certain transaction types). Tenants configure per-region provider preferences via payment_providers table (Stripe US + Adyen EU + etc.). Not enforced by this module directly — the module honours the tenant's routing configuration."
+    }
+  }
+}

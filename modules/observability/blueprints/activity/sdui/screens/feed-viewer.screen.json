@@ -1,0 +1,134 @@
+{
+  "id": "activity.screens.feed-viewer",
+  "title": "Recent activity",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": null,
+  "embeddable": true,
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "activity",
+    "entity": "activity",
+    "action": "feed"
+  },
+  "description": "Compact dashboard-widget viewer for the 'Recent activity' panel. Meant to be embedded on the tenant dashboard alongside other summary widgets. Streams live via WebSocket when entitled; polls otherwise. Renders at most 10 items; click-through to /tenant/activities for the full feed.",
+  "requiresPermission": "activity.viewAny",
+  "dataSources": [
+    {
+      "name": "activities",
+      "kind": "http.get",
+      "url": "/api/v1/activities",
+      "unwrap": "data",
+      "queryParams": { "per_page": 10, "sort": "-created_at" },
+      "cache": { "ttlSeconds": 30, "staleWhileRevalidate": true }
+    },
+    {
+      "name": "activityFeedInfo",
+      "kind": "http.get",
+      "url": "/api/v1/activities/feed",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 300 }
+    }
+  ],
+  "subscriptions": [
+    {
+      "channel": "tenant.{tenantId}.activity",
+      "kind": "private",
+      "enabledExpr": "activityFeedInfo.entitled === true",
+      "onEvent": {
+        "kind": "data.prependItem",
+        "source": "activities",
+        "expr": "event.data",
+        "dedupeBy": "id",
+        "maxItems": 10
+      }
+    }
+  ],
+  "polling": {
+    "enabledExpr": "activityFeedInfo.entitled === false",
+    "intervalMsExpr": "activityFeedInfo.poll_interval_ms",
+    "source": "activities"
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Card",
+      "props": { "className": "flex flex-col" },
+      "children": [
+        {
+          "kind": "CardHeader",
+          "props": { "className": "flex items-center justify-between" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "h2",
+                    "className": "text-lg font-semibold",
+                    "children": "Recent activity"
+                  }
+                },
+                {
+                  "kind": "Text",
+                  "props": {
+                    "as": "p",
+                    "className": "text-muted text-xs",
+                    "children": "Last 10 events across your tenant."
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "LiveBadge",
+                  "props": { "size": "xs" },
+                  "bindings": {
+                    "isLive": { "$ref": "activityFeedInfo.entitled" }
+                  }
+                },
+                {
+                  "kind": "Link",
+                  "props": {
+                    "to": "/tenant/activities",
+                    "className": "text-sm text-accent",
+                    "children": "View all"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "CardBody",
+          "props": { "className": "flex flex-col gap-0" },
+          "children": [
+            {
+              "kind": "Widget",
+              "widget": "activity.timeline",
+              "bindings": {
+                "items": { "$ref": "activities" },
+                "isLoading": { "$ref": "activities.isLoading" }
+              },
+              "props": {
+                "groupBy": "none",
+                "collapseBatches": true,
+                "compact": true,
+                "showFilters": false,
+                "emptyState": {
+                  "title": "Nothing yet",
+                  "description": "Activity from your tenant will appear here."
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

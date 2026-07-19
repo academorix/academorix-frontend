@@ -1,0 +1,189 @@
+{
+  "id": "activity.resources.activity-retention-policy.create",
+  "title": "New retention override",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/settings/activity-retention/new",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": {
+    "module": "activity",
+    "entity": "activity-retention-policy",
+    "action": "create"
+  },
+  "requiresPermission": "activity.retention.manage",
+  "requiresFeature": "activity.retention_control",
+  "requiresEntitlement": "activity_retention_extended",
+  "dataSources": [
+    {
+      "name": "logNameCatalog",
+      "kind": "http.get",
+      "url": "/api/v1/activity/log-names",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 3600 }
+    },
+    {
+      "name": "identity",
+      "kind": "http.get",
+      "url": "/api/auth/me",
+      "unwrap": "data",
+      "cache": { "ttlSeconds": 60 }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "id": "breadcrumbs",
+          "kind": "Breadcrumbs",
+          "props": {
+            "items": [
+              { "label": "Activity retention", "route": "/tenant/settings/activity-retention" },
+              { "label": "New override" }
+            ]
+          }
+        },
+        {
+          "id": "form",
+          "kind": "Form",
+          "props": {
+            "submitUrl": "/api/v1/activity-retention-policies",
+            "method": "POST",
+            "onSuccess": {
+              "kind": "navigate",
+              "toExpr": "'/tenant/settings/activity-retention/' + response.data.id"
+            }
+          },
+          "children": [
+            {
+              "kind": "Card",
+              "children": [
+                {
+                  "kind": "CardHeader",
+                  "props": {
+                    "title": "Retention override",
+                    "description": "Configure a per-feed retention window that overrides the 90-day default."
+                  }
+                },
+                {
+                  "kind": "CardBody",
+                  "props": { "className": "flex flex-col gap-4" },
+                  "children": [
+                    {
+                      "kind": "Select",
+                      "props": {
+                        "label": "Which feed?",
+                        "description": "Leave empty to apply to every feed in this tenant.",
+                        "name": "log_name",
+                        "placeholder": "All feeds",
+                        "isNullable": true
+                      },
+                      "optionsSource": { "$ref": "logNameCatalog" }
+                    },
+                    {
+                      "kind": "NumberField",
+                      "props": {
+                        "label": "Retention (days)",
+                        "description": "Between 30 (minimum forensic memory) and 730 (regulator-hold ceiling). Default is 90.",
+                        "name": "retention_days",
+                        "min": 30,
+                        "max": 730,
+                        "step": 1,
+                        "defaultValue": 90,
+                        "isRequired": true
+                      }
+                    },
+                    {
+                      "kind": "Slider",
+                      "props": {
+                        "label": "Preset",
+                        "name": "retention_days",
+                        "min": 30,
+                        "max": 730,
+                        "step": 30,
+                        "marks": [
+                          { "value": 30, "label": "30d" },
+                          { "value": 90, "label": "90d (default)" },
+                          { "value": 180, "label": "6m" },
+                          { "value": 365, "label": "1y" },
+                          { "value": 730, "label": "2y (max)" }
+                        ]
+                      }
+                    },
+                    {
+                      "kind": "Alert",
+                      "props": { "variant": "warning", "leadingIcon": "exclamation-triangle" },
+                      "bindings": {
+                        "hidden": { "$expr": "state.form.retention_days <= 365" }
+                      },
+                      "children": [
+                        {
+                          "kind": "AlertTitle",
+                          "props": { "children": "Regulator-hold retention" }
+                        },
+                        {
+                          "kind": "AlertDescription",
+                          "props": {
+                            "children": "You are setting retention above 365 days. This creates a regulator-hold override. Set an 'Expires at' date below so the override doesn't drift to permanent."
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "kind": "TextArea",
+                      "props": {
+                        "label": "Reason (required)",
+                        "description": "Explain the business or compliance rationale for this override. Minimum 20 characters. Retained on the audit stream indefinitely.",
+                        "name": "override_reason",
+                        "minLength": 20,
+                        "maxLength": 2000,
+                        "isRequired": true,
+                        "rows": 3
+                      }
+                    },
+                    {
+                      "kind": "DateField",
+                      "props": {
+                        "label": "Expires at (optional)",
+                        "description": "Optional wall-clock at which the override reverts to the default. Recommended for regulator holds.",
+                        "name": "expires_at",
+                        "granularity": "day"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "CardFooter",
+                  "props": { "className": "flex justify-end gap-2" },
+                  "children": [
+                    {
+                      "kind": "Button",
+                      "props": { "variant": "ghost", "children": "Cancel" },
+                      "actions": {
+                        "onPress": {
+                          "kind": "navigate",
+                          "to": "/tenant/settings/activity-retention"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Button",
+                      "props": {
+                        "variant": "primary",
+                        "type": "submit",
+                        "children": "Save override"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

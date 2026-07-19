@@ -1,0 +1,238 @@
+{
+  "id": "academorix://modules/chargeback/config",
+  "$version": 1,
+  "title": "chargeback — developer configuration",
+  "configFile": "config/chargeback.php",
+  "envPrefix": "CHARGEBACK_",
+  "sections": {
+    "providers": {
+      "keys": [
+        {
+          "path": "chargeback.providers.stripe.polling_interval_seconds",
+          "type": "int",
+          "env": "CHARGEBACK_PROVIDERS_STRIPE_POLLING_INTERVAL_SECONDS",
+          "default": 3600,
+          "description": "How often CheckChargebackStatusJob polls Stripe for chargebacks in non-terminal states. Default hourly. Stripe disputes typically resolve in 30-45 days; hourly polling balances timeliness vs API rate limits."
+        },
+        {
+          "path": "chargeback.providers.paddle.polling_interval_seconds",
+          "type": "int",
+          "default": 14400,
+          "description": "Paddle polling cadence. Default 4h."
+        },
+        {
+          "path": "chargeback.providers.adyen.polling_interval_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "Adyen polling cadence. Default hourly. Adyen's dispute state changes are webhook-driven — polling is a safety net."
+        },
+        {
+          "path": "chargeback.providers.square.polling_interval_seconds",
+          "type": "int",
+          "default": 14400,
+          "description": "Square polling cadence. Default 4h."
+        },
+        {
+          "path": "chargeback.providers.paypal.polling_interval_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "PayPal polling cadence. Default hourly."
+        },
+        {
+          "path": "chargeback.providers.custom_webhook.polling_interval_seconds",
+          "type": "int",
+          "default": null,
+          "description": "CustomWebhook polling cadence. Null = do not poll (rely entirely on webhook callback)."
+        }
+      ]
+    },
+    "evidence": {
+      "keys": [
+        {
+          "path": "chargeback.evidence.deadline_days_by_network",
+          "type": "object",
+          "default": {
+            "visa": 30,
+            "mastercard": 45,
+            "amex": 20,
+            "discover": 30,
+            "jcb": 30,
+            "unionpay": 30,
+            "diners": 30,
+            "other": 30
+          },
+          "description": "Default evidence deadline per network in days from filed_at. Provider-communicated deadline overrides when available (some providers push tighter deadlines during heavy dispute volume)."
+        },
+        {
+          "path": "chargeback.evidence.auto_collect_on_create",
+          "type": "bool",
+          "default": true,
+          "description": "Auto-collect evidence via CollectChargebackEvidenceJob immediately on chargeback creation. Default on — pre-populates the evidence bundle for admin review. Off means admin must manually enter every piece."
+        },
+        {
+          "path": "chargeback.evidence.deadline_reminder_cadence_days",
+          "type": "array<int>",
+          "default": [7, 3, 1],
+          "description": "Days-before-deadline at which ChargebackEvidenceOverdueNotification fires. Default 7 / 3 / 1 escalating cadence."
+        },
+        {
+          "path": "chargeback.evidence.pci_scan_enabled",
+          "type": "bool",
+          "default": true,
+          "description": "Scan every submitted evidence body for PAN patterns (13-19 digit strings matching card BIN prefixes). Default on. PCI-DSS Req 3.4 — refuse evidence containing card numbers. Off is emergency-only."
+        }
+      ]
+    },
+    "rate_monitoring": {
+      "keys": [
+        {
+          "path": "chargeback.rate_monitoring.rolling_window_days",
+          "type": "int",
+          "default": 60,
+          "description": "Rolling window for chargeback rate computation. Default 60 days — matches Visa VDMP + Mastercard MDMP measurement windows."
+        },
+        {
+          "path": "chargeback.rate_monitoring.threshold_visa_percent",
+          "type": "float",
+          "default": 0.009,
+          "description": "Visa VDMP threshold. 0.009 = 0.9%. Rate above this fires ChargebackRateThresholdExceeded (P1). Enrollment in VDMP triggers additional fees + monitoring; sustained breaches lead to merchant-account termination."
+        },
+        {
+          "path": "chargeback.rate_monitoring.threshold_mastercard_percent",
+          "type": "float",
+          "default": 0.015,
+          "description": "Mastercard MDMP threshold. 0.015 = 1.5%."
+        },
+        {
+          "path": "chargeback.rate_monitoring.threshold_amex_percent",
+          "type": "float",
+          "default": 0.01,
+          "description": "Amex Enhanced Dispute threshold. 0.01 = 1.0%."
+        },
+        {
+          "path": "chargeback.rate_monitoring.threshold_discover_percent",
+          "type": "float",
+          "default": 0.01,
+          "description": "Discover Merchant Dispute Program threshold. 0.01 = 1.0%."
+        },
+        {
+          "path": "chargeback.rate_monitoring.early_warning_multiplier",
+          "type": "float",
+          "default": 0.75,
+          "description": "Multiplier on the threshold for early-warning alerts. 0.75 = fires early warning at 75% of the network threshold (e.g. Visa early warning at 0.675% of the 0.9% threshold). Actionable for ops before crossing the network's official threshold."
+        },
+        {
+          "path": "chargeback.rate_monitoring.cron",
+          "type": "string",
+          "default": "0 4 * * *",
+          "description": "Cron for MonitorChargebackRateJob. Default nightly 04:00 UTC."
+        }
+      ]
+    },
+    "rdr": {
+      "keys": [
+        {
+          "path": "chargeback.rdr.auto_refund_threshold_cents",
+          "type": "int",
+          "default": 5000,
+          "description": "Rapid Dispute Resolution auto-refund threshold. Chargebacks below this amount (in cents) are RDR-eligible for auto-refund. Default 5000 = $50. Tenant may override per-tenant via settings."
+        },
+        {
+          "path": "chargeback.rdr.enabled_networks",
+          "type": "array<string>",
+          "default": ["visa"],
+          "description": "Networks that support RDR. Visa-only currently — Mastercard's equivalent (Dispute Resolution 2.0) has different mechanics. Extend when Mastercard DR2 is supported."
+        },
+        {
+          "path": "chargeback.rdr.min_customer_purchase_history_days",
+          "type": "int",
+          "default": 30,
+          "description": "Minimum days of customer purchase history before RDR is offered. Default 30 — new customers are higher fraud risk, less likely to be a genuine dispute worth auto-refunding."
+        }
+      ]
+    },
+    "fees": {
+      "keys": [
+        {
+          "path": "chargeback.fees.default_by_network",
+          "type": "object",
+          "default": {
+            "visa": 1500,
+            "mastercard": 1500,
+            "amex": 2500,
+            "discover": 1500,
+            "jcb": 2000,
+            "unionpay": 2000,
+            "diners": 2500,
+            "other": 2000
+          },
+          "description": "Default network chargeback fee in cents per network. Provider-communicated fee overrides when available (some providers pass the exact fee in webhook payload). $15-25 range typical."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "chargeback.retention.window_years",
+          "type": "int",
+          "default": 7,
+          "description": "Default retention window in years for chargebacks + chargeback_evidence post-decision_at (or filed_at when never terminal). Enterprise `chargeback_extended_retention` uses 10y."
+        },
+        {
+          "path": "chargeback.retention.extended_window_years",
+          "type": "int",
+          "default": 10,
+          "description": "Extended retention window when Enterprise entitlement is on."
+        },
+        {
+          "path": "chargeback.retention.purge_frequency_cron",
+          "type": "string",
+          "default": "0 5 * * 0",
+          "description": "Cron for PurgeExpiredChargebackDataJob. Default weekly Sunday 05:00 UTC."
+        }
+      ]
+    },
+    "report": {
+      "keys": [
+        {
+          "path": "chargeback.report.monthly_rate_report_enabled",
+          "type": "bool",
+          "default": true,
+          "description": "Auto-generate + email monthly chargeback rate report to admins. Default on — actionable for merchant-account risk awareness."
+        },
+        {
+          "path": "chargeback.report.monthly_report_cron",
+          "type": "string",
+          "default": "0 8 1 * *",
+          "description": "Cron for monthly rate report. Default 1st of each month 08:00 UTC."
+        }
+      ]
+    },
+    "notifications": {
+      "keys": [
+        {
+          "path": "chargeback.notifications.filed_channels",
+          "type": "array<string>",
+          "default": ["mail", "in_app", "push", "sms"],
+          "description": "Channels for ChargebackFiledNotification. P0 — SMS included by default for immediate awareness. Tenant may drop SMS via override."
+        },
+        {
+          "path": "chargeback.notifications.evidence_overdue_channels_by_priority",
+          "type": "object",
+          "default": {
+            "7_days": ["mail", "in_app"],
+            "3_days": ["mail", "in_app", "push"],
+            "1_day": ["mail", "in_app", "push", "sms"]
+          },
+          "description": "Escalating channel cadence for ChargebackEvidenceOverdueNotification per days-remaining bucket. Push added at 3 days; SMS added at 1 day."
+        },
+        {
+          "path": "chargeback.notifications.rate_threshold_channels",
+          "type": "array<string>",
+          "default": ["mail", "in_app", "push"],
+          "description": "Channels for ChargebackRateThresholdExceededNotification. P1 — push included for admin awareness (merchant-account termination is a business-critical event)."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "id": "academorix://modules/activity/settings",
+  "$version": 1,
+  "title": "activity — settings",
+  "description": "Tenant-editable settings. Two groups: `activity` (tenant-wide feed preferences + broadcast toggles; owner + admin) and `activity_digest_prefs` (per-user opt-in for digest emails; user-scoped).",
+  "storedIn": "settings",
+  "sduiScreen": "sdui/screens/settings-activity.screen.json",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "activity",
+      "class": "Academorix\\Observability\\Activity\\Settings\\ActivitySettings",
+      "label": "Activity feed",
+      "description": "Tenant-wide preferences for the activity feed feature. Owner + admin only.",
+      "icon": "clock",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 40,
+      "permission": "activity.retention.manage",
+      "sections": [
+        {
+          "label": "Broadcast",
+          "description": "Real-time feed streaming preferences.",
+          "icon": "signal",
+          "sortOrder": 1,
+          "requiresEntitlement": "activity_broadcast",
+          "fields": [
+            {
+              "name": "broadcast_enabled",
+              "controlType": "toggle",
+              "label": "Enable live activity streaming",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "When on, tenant.{id}.activity + user.{id}.activity broadcast to subscribed clients. When off, the feed polls every 15s."
+            },
+            {
+              "name": "broadcast_disabled_log_names",
+              "controlType": "multiselect",
+              "label": "Skip broadcast for these feeds",
+              "defaultValue": [],
+              "validation": ["array"],
+              "optionsSource": "activity.log_name_catalog",
+              "sortOrder": 2,
+              "helpText": "Selected feeds are recorded to the DB but do not broadcast. Useful for high-volume feeds like 'attendance' on large tenants."
+            }
+          ]
+        },
+        {
+          "label": "Feed collapsing",
+          "description": "How the feed groups related activities.",
+          "icon": "queue-list",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "batch_collapse_threshold",
+              "controlType": "number",
+              "label": "Collapse threshold (activities per batch)",
+              "defaultValue": 3,
+              "validation": ["required", "integer", "min:2", "max:20"],
+              "min": 2,
+              "max": 20,
+              "sortOrder": 1,
+              "helpText": "How many same-batch activities before the feed collapses to 'X made N changes'. Below this, each activity surfaces individually."
+            }
+          ]
+        },
+        {
+          "label": "Retention transparency",
+          "description": "How the tenant sees purge activity.",
+          "icon": "shield-check",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "notify_admins_on_purge",
+              "controlType": "toggle",
+              "label": "Send weekly purge summary to admins",
+              "defaultValue": true,
+              "validation": ["boolean"],
+              "sortOrder": 1,
+              "helpText": "Every Monday, admins receive a summary of activity rows deleted / archived in the past 7 days. Retention transparency requirement — recommended on."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "activity_digest_prefs",
+      "class": "Academorix\\Observability\\Activity\\Settings\\ActivityDigestPreferences",
+      "label": "Activity digest emails",
+      "description": "Per-user preferences for activity digest emails. Every user can configure their own.",
+      "icon": "envelope",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 41,
+      "permission": null,
+      "requiresFeature": "activity.digest_email",
+      "requiresEntitlement": "activity_digest_email",
+      "sections": [
+        {
+          "label": "Subscription",
+          "icon": "bell",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "digest_cadence",
+              "controlType": "select",
+              "label": "Digest frequency",
+              "defaultValue": "none",
+              "options": {
+                "none": "Do not send",
+                "daily": "Daily (every morning)",
+                "weekly": "Weekly (Monday morning)"
+              },
+              "sortOrder": 1,
+              "helpText": "Daily digests summarise the last 24h; weekly summarises the last 7 days."
+            },
+            {
+              "name": "digest_log_names",
+              "controlType": "multiselect",
+              "label": "Which feeds to include",
+              "defaultValue": [],
+              "validation": ["array"],
+              "optionsSource": "activity.log_name_catalog",
+              "sortOrder": 2,
+              "helpText": "Selected feeds appear in the digest. Empty = every feed you can access."
+            },
+            {
+              "name": "digest_include_own_activity",
+              "controlType": "toggle",
+              "label": "Include activities I caused",
+              "defaultValue": false,
+              "validation": ["boolean"],
+              "sortOrder": 3,
+              "helpText": "By default the digest shows only activities other people caused (things happening TO your entities). Turn on to include your own actions too."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

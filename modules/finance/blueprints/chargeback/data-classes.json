@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/chargeback/data-classes",
+  "$version": 1,
+  "title": "chargeback — field classification",
+  "description": "Chargeback data is a mix of operational identifiers (chargeback_id, chargeback_number), financial records (amount_cents, currency, fee_cents — 7y financial retention), workflow-state metadata (status, submitted_by, decision_at), provider-audit metadata (provider_reference_id, provider_metadata, network reason_code), and evidence bundles (customer PII — IP, device fingerprint hash, service attendance, communication logs). No health / medical / minor-specific data on any row; card PAN / CVV NEVER stored anywhere.",
+  "reference": "foundation::data-classes.json.tiers",
+  "classes": {
+    "public": [
+      "Chargeback.id",
+      "Chargeback.tenant_id",
+      "Chargeback.chargeback_number (admin-visible)",
+      "Chargeback.status (derived from state machine — safe to expose to admin)",
+      "Chargeback.network",
+      "Chargeback.reason_category",
+      "Chargeback.reason_description (admin-visible; human-readable)",
+      "Chargeback.filed_at",
+      "Chargeback.evidence_due_by",
+      "Chargeback.decision_at",
+      "Chargeback.provider (admin-visible — helps admin understand which provider handled the dispute)",
+      "Chargeback.rdr_eligible",
+      "Chargeback.ce3_eligible",
+      "ChargebackEvidence.id",
+      "ChargebackEvidence.submission_attempt_number",
+      "ChargebackEvidence.submitted_at"
+    ],
+    "internal": [
+      "Chargeback.payment_id",
+      "Chargeback.invoice_id",
+      "Chargeback.payment_dispute_id",
+      "Chargeback.transaction_id",
+      "Chargeback.fee_transaction_id",
+      "Chargeback.refund_id",
+      "Chargeback.reason_code",
+      "Chargeback.evidence_submitted_at",
+      "Chargeback.decision_reason",
+      "Chargeback.outcome_reason",
+      "Chargeback.customer_notified",
+      "Chargeback.rdr_auto_refunded",
+      "Chargeback.rdr_deadline",
+      "Chargeback.created_by",
+      "Chargeback.updated_by",
+      "Chargeback.deleted_by",
+      "Chargeback.created_at",
+      "Chargeback.updated_at",
+      "Chargeback.deleted_at",
+      "ChargebackEvidence.tenant_id",
+      "ChargebackEvidence.chargeback_id",
+      "ChargebackEvidence.submitted_by_user_id",
+      "ChargebackEvidence.created_at",
+      "ChargebackEvidence.updated_at"
+    ],
+    "confidential": [
+      "Chargeback.amount_cents (financial-competitive — reveals disputed revenue)",
+      "Chargeback.currency",
+      "Chargeback.fee_cents (financial-competitive — reveals per-network fee terms + total loss cost)",
+      "Chargeback.provider_reference_id (encrypted at rest — provider-native identifier)",
+      "Chargeback.provider_metadata (encrypted at rest — provider-side details)",
+      "ChargebackEvidence.invoice_evidence (contains parent invoice detail — line items may include product/service pricing)",
+      "ChargebackEvidence.receipt_evidence (contains receipt URL — may embed pricing)",
+      "ChargebackEvidence.communication_log (may contain internal ops notes)",
+      "ChargebackEvidence.provider_response (encrypted at rest — provider submission result)"
+    ],
+    "restricted": [
+      "ChargebackEvidence.service_documentation (contains attendance records + coach signatures — coach/customer PII linkage)",
+      "ChargebackEvidence.customer_signature_evidence.ip_address (customer PII)",
+      "ChargebackEvidence.customer_signature_evidence.device_fingerprint_hash (SHA-256 hash of device fingerprint — not raw fingerprint content)",
+      "ChargebackEvidence.customer_signature_evidence.signature_url (customer's authenticated signature)",
+      "ChargebackEvidence.shipping_docs (when physical goods — tracking + delivery confirmation includes recipient PII)",
+      "ChargebackEvidence.uncategorized_text (may contain any admin-authored freeform notes — potentially PII)",
+      "Chargeback.metadata.approval_notes (admin-authored acceptance / mark-lost reasoning — admin-only)"
+    ],
+    "regulated_minor": [],
+    "regulated_health": [],
+    "regulated_financial": [
+      "Chargeback.amount_cents + currency + fee_cents (financial-audit alignment — 7 year retention)",
+      "Chargeback.transaction_id + fee_transaction_id (links to double-entry ledger movements — 7y retention)",
+      "Chargeback.refund_id (RDR path — links to refund module's ledger)",
+      "Chargeback.status (state machine record — every transition audit-logged 7y)",
+      "Chargeback.submitted_by_user_id (via ChargebackEvidence — SOX §404 evidence-submission audit)",
+      "Chargeback.provider_reference_id + provider_metadata (regulator + audit reconstruction — 7y)",
+      "Chargeback.network + reason_code + reason_category (card network audit trail — 7y)",
+      "ChargebackEvidence (audit trail — 7y financial + card network audit)"
+    ],
+    "audit_log": [
+      "Chargeback.status (every state transition recorded)",
+      "Chargeback.amount_cents + fee_cents (frozen post-terminal)",
+      "Chargeback.evidence_due_by (every extension recorded)",
+      "Chargeback.decision_at + decision_reason (bank decision audit)",
+      "Chargeback.transaction_id + fee_transaction_id (finalization chain audit)",
+      "ChargebackEvidence.submission_attempt_number + submitted_by_user_id + submitted_at (evidence-submission audit)",
+      "ChargebackEvidence.provider_response (provider outcome per attempt)"
+    ]
+  },
+  "notes": [
+    "Chargeback.chargeback_number is admin-visible but NOT customer-visible — chargebacks are admin-only surface. The number is used in internal ops + finance reconciliation, never in customer communications.",
+    "No PII on the Chargeback row directly. Customer linkage flows through payment_id → payment.customer_id, redacted via the payment module's PII gate.",
+    "Chargeback.reason_note field does NOT exist (distinct from refund.reason_note which does). Chargebacks have reason_description (human-readable derived from reason_code) + decision_reason (bank's rationale) + outcome_reason (internal ops summary) — three distinct fields for three distinct sources.",
+    "regulated_financial fields align with 7-year retention. Extended to 10y with Enterprise `chargeback_extended_retention`.",
+    "PCI-DSS: NO card PAN / CVV / magnetic stripe on any owned row. Chargeback uses payment_id -> payment.provider_reference_id (which is itself a token, never PAN). Evidence submission observer SCANS evidence bodies for PAN patterns + refuses.",
+    "provider_metadata + provider_response are CONFIDENTIAL because they may reveal provider-side internals + business relationships. Only finance/admin/owner + support reads them (via chargebacks.view-financials permission).",
+    "ChargebackEvidence.customer_signature_evidence.device_fingerprint_hash is stored as SHA-256 hex NEVER as raw fingerprint content — that would leak device-tracking identifiers across sessions."
+  ]
+}

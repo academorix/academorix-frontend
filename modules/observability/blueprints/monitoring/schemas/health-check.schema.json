@@ -1,0 +1,167 @@
+{
+  "id": "academorix://modules/monitoring/schemas/health-check",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "HealthCheck",
+  "description": "Per-tenant health check configuration. Belongs to Tenant. Carries `tenant_id` only. NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`. target jsonb encrypted at rest (may contain credentials in connection strings + URLs).",
+  "type": "object",
+  "x-module": "monitoring",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "health_checks",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "hck_",
+    "incrementing": false,
+    "model": "Academorix\\Observability\\Monitoring\\Models\\HealthCheck",
+    "interface": "Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckInterface",
+    "implements": ["Academorix\\Observability\\Monitoring\\Contracts\\Data\\HealthCheckInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "HasHealthCheckRuns",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "check_type": "HealthCheckType",
+      "target": "encrypted:array",
+      "interval_seconds": "integer",
+      "timeout_seconds": "integer",
+      "is_enabled": "boolean",
+      "last_run_status": "HealthCheckStatus",
+      "consecutive_failure_count": "integer",
+      "last_run_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["HealthCheckObserver"],
+    "appends": ["is_healthy", "runs_url"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `hck_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "name": {
+        "type": "string",
+        "length": 128,
+        "nullable": false,
+        "description": "Display name (e.g. 'Primary DB', 'External API: Stripe')."
+      },
+      "slug": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "URL-safe unique-per-tenant identifier. Used as signal_source for health_check_status policies."
+      },
+      "check_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: db_ping / redis_ping / queue_depth / memory_usage / cpu_usage / disk_usage / http_endpoint / dns_lookup / tls_expiry / custom_script."
+      },
+      "target": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "ENCRYPTED AT REST. Per-check-type target shape (see data/check-type-catalog.json)."
+      },
+      "interval_seconds": {
+        "type": "integer",
+        "nullable": false,
+        "default": 60,
+        "description": "How often the check runs. Min 15."
+      },
+      "timeout_seconds": {
+        "type": "integer",
+        "nullable": false,
+        "default": 30,
+        "description": "Abort threshold per run. Must be < interval_seconds."
+      },
+      "is_enabled": {
+        "type": "boolean",
+        "nullable": false,
+        "default": true
+      },
+      "last_run_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Denormalized. Last time RunHealthCheckJob completed."
+      },
+      "last_run_status": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "default": "'unknown'",
+        "description": "Denormalized. Enum: healthy / degraded / unhealthy / timeout / error / unknown."
+      },
+      "consecutive_failure_count": {
+        "type": "integer",
+        "nullable": false,
+        "default": 0,
+        "description": "Denormalized. Count of consecutive non-healthy runs. Reset to 0 on any healthy run."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "slug"],
+        "unique": true,
+        "name": "health_checks_tenant_slug_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["tenant_id", "is_enabled", "last_run_status"], "name": "health_checks_status_idx" },
+      { "columns": ["tenant_id", "check_type"], "name": "health_checks_type_idx" }
+    ]
+  },
+  "required": ["id", "tenant_id", "name", "slug", "check_type", "target", "interval_seconds", "timeout_seconds", "is_enabled", "consecutive_failure_count", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^hck_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "slug": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "check_type": {
+      "type": "string",
+      "enum": ["db_ping", "redis_ping", "queue_depth", "memory_usage", "cpu_usage", "disk_usage", "http_endpoint", "dns_lookup", "tls_expiry", "custom_script"]
+    },
+    "target": { "type": "object", "additionalProperties": true },
+    "interval_seconds": { "type": "integer", "minimum": 15, "maximum": 86400 },
+    "timeout_seconds": { "type": "integer", "minimum": 1 },
+    "is_enabled": { "type": "boolean" },
+    "last_run_at": { "type": ["string", "null"], "format": "date-time" },
+    "last_run_status": { "type": ["string", "null"], "enum": ["healthy", "degraded", "unhealthy", "timeout", "error", "unknown", null] },
+    "consecutive_failure_count": { "type": "integer", "minimum": 0 },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "interval_seconds >= 15 (rate-limit floor)",
+    "timeout_seconds < interval_seconds (prevents overlapping runs)",
+    "unique (tenant_id, slug) WHERE deleted_at IS NULL",
+    "target validates against per-check-type schema in data/check-type-catalog.json",
+    "target encrypted at rest",
+    "check_type is immutable after create",
+    "consecutive_failure_count reset to 0 on any healthy run"
+  ]
+}

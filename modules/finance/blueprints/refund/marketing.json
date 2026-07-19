@@ -1,0 +1,89 @@
+{
+  "id": "academorix://modules/refund/marketing",
+  "$version": 1,
+  "title": "refund — marketing events (negative-value conversions)",
+  "lane": "marketing",
+  "consentTiers": ["essential", "functional", "advertising"],
+  "description": "Marketing-lane events fired by the refund module — every RefundSucceeded fires a downstream marketing::RefundIssued NEGATIVE-VALUE CONVERSION event. Ad networks subtract the refund_amount from the ad campaign's revenue attribution (ROAS adjustment) + retrain fraud models on refunds correlated with specific ad clicks + adjust bidding on customer segments with high refund rates. Payload includes the original conversion's ad_network + campaign_id (looked up via the payment's linked marketing_event) so the ad network can attribute the reversal to the correct conversion. Consent tier is `advertising` — customers who have withdrawn advertising consent have their refund reversals suppressed at dispatch. Refund still succeeds; only the marketing lane skips.",
+  "events": [
+    {
+      "name": "Refund Issued",
+      "kind": "reversal",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "refund_id",
+        "payment_id",
+        "invoice_id",
+        "original_conversion_event_id (via payment.metadata.marketing_conversion_event_id)",
+        "click_id (from linked marketing::MarketingEvent.attribution_snapshot)",
+        "click_id_provider",
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "amount_cents (positive integer — the refunded amount)",
+        "reversed_amount_cents (same as amount_cents; explicit for provider APIs that require this shape)",
+        "currency",
+        "customer_type",
+        "customer_id",
+        "reason",
+        "processed_at"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase", "reversal": true },
+        { "provider": "google_ads_ec", "event_name": "purchase", "reversal": true },
+        { "provider": "tiktok_events_api", "event_name": "CompletePayment", "reversal": true },
+        { "provider": "microsoft_uet", "event_name": "purchase", "reversal": true },
+        { "provider": "snapchat_capi", "event_name": "PURCHASE", "reversal": true }
+      ],
+      "description": "Fires on RefundSucceeded. Distinct from the coupon module's 'Referral Coupon Redemption Reversed' event — that fires on coupon-redemption reversal (clawback of a discount); this fires on payment reversal (clawback of the whole purchase). Both may fire for the same refund when the refunded invoice both used a coupon AND was linked to an ad-network conversion event."
+    },
+    {
+      "name": "Refund Issued Partial",
+      "kind": "reversal",
+      "consent_required": "advertising",
+      "provider_filter": null,
+      "properties": [
+        "tenant_id",
+        "refund_id",
+        "payment_id",
+        "invoice_id",
+        "original_conversion_event_id",
+        "click_id",
+        "click_id_provider",
+        "amount_cents (positive — the refunded portion, NOT the full purchase)",
+        "reversed_amount_cents (same)",
+        "original_conversion_amount_cents (payment.amount_cents — for provider APIs that reason about proportional reversal)",
+        "currency",
+        "reason",
+        "processed_at"
+      ],
+      "provider_events": [
+        { "provider": "meta_capi", "event_name": "Purchase", "reversal": true, "partial": true },
+        { "provider": "google_ads_ec", "event_name": "purchase", "reversal": true, "partial": true }
+      ],
+      "description": "Distinct from 'Refund Issued' for the partial-refund case. Some ad networks (Meta CAPI, Google Ads EC) accept partial-reversal payloads with the original conversion amount + the reversal amount; other networks (TikTok, Microsoft, Snapchat) only accept full reversals — for those, the refund module dispatches nothing on partial refunds (accepting the ROAS overcounting) UNLESS the partial amount >= 50% of the original (then dispatches as full reversal). Configured per-provider in marketing module."
+    }
+  ],
+  "delivery_semantics": {
+    "loss_tolerance": "zero",
+    "retry_policy": "exponential backoff (10s / 60s / 5m / 30m / 3h / 24h) up to 6 attempts; then dead-letter queue for manual replay",
+    "circuit_breaker": "per-provider circuit breaker in the marketing module; if one provider is down, the others still receive events",
+    "ledger": "growth::marketing owns the two-table ledger: marketing_events (canonical) + marketing_deliveries (per-provider-per-attempt log)"
+  },
+  "pii_hashing": {
+    "email": "SHA-256 hex lowercased-trimmed",
+    "phone": "SHA-256 hex E.164-normalised",
+    "click_id": "raw (ad-network needs original click ID)",
+    "user_id": "sent as external_id (unhashed) — matches ad-network's advanced-matching contract"
+  },
+  "notes": [
+    "This is the MARKETING lane per growth-and-observability.md — different consent tier (`advertising`, subset of marketing) than the analytics lane (`essential` for RefundSucceeded).",
+    "Ad networks require SHA-256 hashing of PII per their contracts — the growth::marketing module handles hashing, this module just declares which properties are PII.",
+    "Reversal events are load-bearing — without them, ROAS calculations inflate + the ad network keeps bidding on false conversions + retrains fraud models on non-existent purchases.",
+    "The marketing event lookup uses payment.metadata.marketing_conversion_event_id (populated when the parent payment fired a conversion event at capture time). Payments without a linked marketing conversion event do NOT fire the marketing lane — the refund still succeeds internally.",
+    "Consent-gate: `advertising` tier. Customers who have withdrawn advertising consent (via consent module) have their refund marketing events suppressed at dispatch. The refund itself still succeeds; only the marketing lane skips.",
+    "For coupon-cascaded reversals, the coupon module fires its OWN marketing reversal event ('Referral Coupon Redemption Reversed') — the two events are distinct + additive at the ad-network side. Meta's dedup is via event_id in the payload; the marketing module ensures unique event_ids per module + refund + coupon."
+  ]
+}

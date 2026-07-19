@@ -1,0 +1,56 @@
+{
+  "id": "tax.rate-badge",
+  "title": "Tax rate badge",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for a tax rate percentage. Displays the percentage rounded to 2 decimal places with an active/expired indicator when effective_from/effective_to are provided. Bounded cardinality on colour: 0-5% (green), 5-10% (blue), 10-20% (yellow), 20-30% (orange), 30%+ (red).",
+  "props": {
+    "percentage": {
+      "type": "number",
+      "required": true
+    },
+    "effective_from": {
+      "type": "string",
+      "required": false
+    },
+    "effective_to": {
+      "type": "string",
+      "required": false
+    },
+    "size": {
+      "type": "string",
+      "default": "sm",
+      "enum": ["xs", "sm", "md", "lg"]
+    }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.percentage < 0.05 ? 'success' : (props.percentage < 0.10 ? 'info' : (props.percentage < 0.20 ? 'warning' : (props.percentage < 0.30 ? 'orange' : 'danger')))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "(props.percentage * 100).toFixed(2) + '%'"
+            }
+          }
+        },
+        {
+          "kind": "Icon",
+          "props": { "name": "clock", "className": "size-3 ml-1" },
+          "bindings": {
+            "hidden": { "$expr": "!props.effective_to || props.effective_to > $today" },
+            "title": "Expired"
+          }
+        }
+      ]
+    }
+  ]
+}

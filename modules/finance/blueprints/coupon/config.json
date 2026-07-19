@@ -1,0 +1,141 @@
+{
+  "id": "academorix://modules/coupon/config",
+  "$version": 1,
+  "title": "coupon — developer configuration",
+  "configFile": "config/coupon.php",
+  "envPrefix": "COUPON_",
+  "sections": {
+    "generation": {
+      "keys": [
+        {
+          "path": "coupon.generation.default_code_template",
+          "type": "string",
+          "env": "COUPON_DEFAULT_CODE_TEMPLATE",
+          "default": "CAMPAIGN_{RAND8}",
+          "description": "Default code template for bulk-issue when the caller doesn't provide one. Substitutions: {RAND8} (8-char Crockford), {RAND4}, {SEQ} (1..N zero-padded), {CAMPAIGN} (kebab of campaign_name), literal characters."
+        },
+        {
+          "path": "coupon.generation.entropy_bits",
+          "type": "int",
+          "default": 40,
+          "description": "Random-suffix entropy for {RAND8} template substitution. Default 40 bits = ~1 in 1T collision rate for the 8-char Crockford suffix per tenant scope."
+        },
+        {
+          "path": "coupon.generation.collision_retry_max",
+          "type": "int",
+          "default": 5,
+          "description": "How many times to retry code generation on unique-constraint collision before giving up. Rare — 8-char + 40-bit entropy on a per-tenant scope."
+        },
+        {
+          "path": "coupon.generation.bulk_issue_max_count",
+          "type": "int",
+          "env": "COUPON_BULK_ISSUE_MAX_COUNT",
+          "default": 10000,
+          "description": "Hard cap on the count parameter of POST /coupons/bulk-issue. Prevents accidental huge bulk operations."
+        }
+      ]
+    },
+    "validation": {
+      "keys": [
+        {
+          "path": "coupon.validation.retry_buffer_ms",
+          "type": "int",
+          "env": "COUPON_VALIDATION_RETRY_BUFFER_MS",
+          "default": 50,
+          "description": "Retry delay for concurrent redemption attempts that lose the SELECT ... FOR UPDATE race. The transaction that lost retries once after this delay before returning COUPON_USAGE_CAP_REACHED / COUPON_CUSTOMER_LIMIT_REACHED."
+        },
+        {
+          "path": "coupon.validation.default_per_customer_limit",
+          "type": "int",
+          "default": 1,
+          "description": "Default per_customer_limit when the caller doesn't provide one. 1 = each customer can redeem at most once per coupon."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "coupon.reconciliation.usage_count_cron",
+          "type": "string",
+          "default": "0 3 * * *",
+          "description": "Cron for ReconcileUsageCountJob. Default nightly 03:00 UTC."
+        },
+        {
+          "path": "coupon.reconciliation.expire_cron",
+          "type": "string",
+          "default": "0 4 * * *",
+          "description": "Cron for ExpireCouponsJob. Default nightly 04:00 UTC."
+        },
+        {
+          "path": "coupon.reconciliation.drift_alert_threshold",
+          "type": "int",
+          "default": 1,
+          "description": "Any usage_count drift >= this threshold fires a P2 signal to observability. Default 1 (zero tolerance)."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "coupon.retention.window_years",
+          "type": "int",
+          "default": 7,
+          "description": "Default retention window in years for coupons + coupon_redemptions post-expiry/reversal. Enterprise `coupon_extended_retention` uses 10y."
+        },
+        {
+          "path": "coupon.retention.extended_window_years",
+          "type": "int",
+          "default": 10,
+          "description": "Extended retention window when Enterprise entitlement is on."
+        },
+        {
+          "path": "coupon.retention.purge_frequency_cron",
+          "type": "string",
+          "default": "0 5 * * 0",
+          "description": "Cron for PurgeExpiredCouponsJob. Default weekly Sunday 05:00 UTC."
+        }
+      ]
+    },
+    "fraud": {
+      "keys": [
+        {
+          "path": "coupon.fraud.max_redemptions_per_ip_per_hour",
+          "type": "int",
+          "env": "COUPON_MAX_REDEMPTIONS_PER_IP_PER_HOUR",
+          "default": 20,
+          "description": "Rate limit for redemption attempts (indirect — measured by preview + validate call counts, since redemption itself is only reachable through the invoice module). Applied via coupon.rate_limit middleware."
+        },
+        {
+          "path": "coupon.fraud.max_redemption_attempts_per_ip_per_day",
+          "type": "int",
+          "env": "COUPON_MAX_REDEMPTION_ATTEMPTS_PER_IP_PER_DAY",
+          "default": 200,
+          "description": "Daily ceiling on preview + validate call count per IP. Escalates rate-limit response from 429 to 403 after this threshold."
+        },
+        {
+          "path": "coupon.fraud.delegate_to_referrals_fraud_detector",
+          "type": "bool",
+          "default": true,
+          "description": "When true (default), coupons with issuance_source='referral' additionally run through growth::referrals::FraudDetector at redemption time. When false, only usage_cap + per_customer_limit + rate_limit are enforced."
+        }
+      ]
+    },
+    "marketing_bridge": {
+      "keys": [
+        {
+          "path": "coupon.marketing.fire_marketing_events",
+          "type": "bool",
+          "env": "COUPON_FIRE_MARKETING_EVENTS",
+          "default": true,
+          "description": "Master toggle for the marketing lane. Off = CouponRedeemed does NOT fire downstream marketing events. Used when growth::marketing is unstable."
+        },
+        {
+          "path": "coupon.marketing.attribution_snapshot_shape_version",
+          "type": "int",
+          "default": 1,
+          "description": "Schema version of the discount_snapshot JSONB blob. Downstream consumers (marketing, finance) branch on this to handle evolution."
+        }
+      ]
+    }
+  }
+}

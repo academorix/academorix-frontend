@@ -1,0 +1,129 @@
+{
+  "id": "academorix://modules/activity/analytics",
+  "$version": 1,
+  "title": "activity — product analytics events",
+  "description": "Product analytics events (Segment / Mixpanel / PostHog). Distinct from `events.json` (server-side pub/sub) and `metrics.json` (ops telemetry). Every event carries a `consent_tier` that gates delivery through the analytics pipeline against the caller's consent state. Activity events are primarily `functional` (help us understand feed usage) with two `essential` events (feed adoption baseline).",
+  "sink": "segment",
+  "consentTiers": ["essential", "functional", "analytics", "marketing"],
+  "events": [
+    {
+      "name": "activity_recorded",
+      "consent_tier": "functional",
+      "firesAt": "ActivityRecorded listener",
+      "properties": {
+        "tenant_id": "string",
+        "log_name": "string",
+        "subject_type": "string",
+        "event": "string",
+        "is_batched": "boolean",
+        "batch_size_at_record": "integer"
+      },
+      "description": "Sampled at 5% — activity capture is high-volume. Feeds capacity + usage-pattern analysis."
+    },
+    {
+      "name": "activity_feed_opened",
+      "consent_tier": "essential",
+      "firesAt": "SDUI ActivityFeedList screen mount",
+      "properties": {
+        "tenant_id": "string",
+        "log_names_filtered": "array<string>",
+        "entry_point": "string (dashboard_widget | sidebar | direct_url)"
+      },
+      "description": "Adoption baseline — how often do users open the feed? Essential tier because it's necessary product-usage signal."
+    },
+    {
+      "name": "activity_feed_subscribed",
+      "consent_tier": "functional",
+      "firesAt": "ActivityFeedSubscribed event listener",
+      "properties": {
+        "tenant_id": "string",
+        "channel_subscribed": "string",
+        "log_names_filtered": "array<string>",
+        "entitled_for_broadcast": "boolean"
+      },
+      "description": "Sampled at 10% — feed subscribes happen at every page load."
+    },
+    {
+      "name": "activity_row_clicked",
+      "consent_tier": "functional",
+      "firesAt": "SDUI feed row click",
+      "properties": {
+        "tenant_id": "string",
+        "log_name": "string",
+        "subject_type": "string",
+        "click_target": "string (subject_link | causer_link | expand_batch | show_detail)",
+        "row_age_seconds": "integer"
+      },
+      "description": "Engagement funnel — which activity rows get clicked, which are ignored. Powers 'the feed is noisy on log_name X' insights."
+    },
+    {
+      "name": "activity_feed_filter_applied",
+      "consent_tier": "functional",
+      "firesAt": "SDUI feed filter panel change",
+      "properties": {
+        "tenant_id": "string",
+        "filter_kind": "string (log_name | subject_type | causer | date_range)",
+        "filter_count": "integer"
+      },
+      "description": "Which filters do users apply? Informs which filter surfaces to prioritise."
+    },
+    {
+      "name": "activity_export_requested",
+      "consent_tier": "essential",
+      "firesAt": "POST /api/v1/activities/export",
+      "properties": {
+        "tenant_id": "string",
+        "date_range_days": "integer",
+        "log_names_included": "array<string>",
+        "estimated_row_count": "integer"
+      },
+      "description": "Adoption of the export feature. Essential tier because it's a paid entitlement — track conversion to inform Medium+ upsell."
+    },
+    {
+      "name": "activity_digest_opened",
+      "consent_tier": "functional",
+      "firesAt": "Digest email link click (tracked via UTM)",
+      "properties": {
+        "tenant_id": "string",
+        "cadence": "string (daily | weekly)",
+        "activities_in_digest": "integer",
+        "cta_clicked": "string|null"
+      },
+      "description": "How often are recipients engaging with digest emails? Informs whether the digest is delivering value."
+    },
+    {
+      "name": "activity_digest_opted_in",
+      "consent_tier": "essential",
+      "firesAt": "PATCH /api/v1/settings/activity_digest_prefs (digest_cadence changed from 'none' to 'daily'|'weekly')",
+      "properties": {
+        "tenant_id": "string",
+        "cadence": "string",
+        "log_names_selected_count": "integer"
+      },
+      "description": "Digest adoption. Essential — paid entitlement conversion."
+    },
+    {
+      "name": "activity_retention_policy_created",
+      "consent_tier": "functional",
+      "firesAt": "ActivityRetentionPolicyCreated listener",
+      "properties": {
+        "tenant_id": "string",
+        "retention_days": "integer",
+        "log_name_scoped": "boolean",
+        "is_regulator_hold": "boolean"
+      }
+    },
+    {
+      "name": "activity_purge_completed",
+      "consent_tier": "functional",
+      "firesAt": "ActivityPurgeExecuted listener",
+      "properties": {
+        "tenant_id": "string",
+        "rows_deleted": "integer",
+        "rows_archived": "integer",
+        "duration_ms": "integer"
+      },
+      "description": "Fed to operational analytics (not customer-facing). Aggregated at the platform level."
+    }
+  ]
+}

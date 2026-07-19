@@ -1,0 +1,70 @@
+{
+  "id": "academorix://modules/chargeback/retention",
+  "$version": 1,
+  "title": "chargeback — retention windows",
+  "description": "Chargeback data is financial-audit critical + card-network-audit critical. Every chargeback is a compliance-relevant financial event — a bank-forced reversal of previously-recognised revenue. Default retention 7 years (SOX + SOC 2 CC6.3 + national tax law baselines: US, EU, UK, CA + card network audit windows). Enterprise tier extends to 10y via `chargeback_extended_retention`. TenantErased cascades FK CASCADE hard-delete of every owned row EXCEPT invoice-linked chargebacks — those migrate to a compliance archive for legal-obligation retention. Card network audit windows (Visa VDMP evidence retention up to 5 years) do NOT extend beyond financial retention.",
+  "compliance_regimes_referenced": [
+    "gdpr Art. 5(1)(e) — storage limitation (retention windows justified by tax + card network audit)",
+    "gdpr Art. 17 — right to erasure (with financial-retention carve-out per Art. 17 §3(b))",
+    "gdpr Art. 6(1)(b) — lawful basis: contract (chargeback = bank-forced contractual reversal)",
+    "us tax law — 7-year financial-record retention (reversal accounting for revenue-recognition audit)",
+    "sox 404 — internal controls over financial reporting (chargeback + evidence trail retained)",
+    "soc2 CC6.3 — audit trail retention",
+    "iso 27001 Annex A.12.3 — audit log retention",
+    "ccpa 1798.100 — right to know + right to delete (with retention carve-out)",
+    "cfpb Fair Credit Billing Act — consumer chargeback rights + merchant records",
+    "psd2 (EU) — SCA + dispute records retained per member-state law",
+    "pci-dss Req 10.5.3 — transaction reversal audit trail retention 1 year online + 3 years total minimum",
+    "card network rules (Visa / Mastercard / Amex / Discover) — chargeback + evidence retention 2-5 years for network audits + VDMP/MDMP monitoring"
+  ],
+  "retention": [
+    {
+      "entity": "Chargeback",
+      "hot": { "days": 730, "description": "Active + first 2 years — card network audit + regulator inquiry response window. Note: cards networks (Visa/MC/Amex/Discover) may audit chargeback records for up to 2-5 years for VDMP/MDMP monitoring." },
+      "cold": { "days": "2555 (7 years) post-decision_at (or filed_at if never terminal — rare); 3650 (10 years) with `chargeback_extended_retention` (Enterprise)" },
+      "purge": {
+        "trigger": "> 7 (or 10) years past decision_at",
+        "action": "hard delete via PurgeExpiredChargebackDataJob; invoice-linked chargebacks migrate to compliance_archive.chargebacks",
+        "notes": "Every chargeback traces back to a payment + invoice. Retention aligns with the longest-lived downstream — invoice/payment retention is 7y+, so chargebacks retention is at least 7y."
+      }
+    },
+    {
+      "entity": "ChargebackEvidence",
+      "hot": { "days": 730, "description": "Active + first 2 years — card network audit + regulator inquiry." },
+      "cold": { "days": "2555 (7 years) post-parent-chargeback.decision_at; 3650 (10 years) with `chargeback_extended_retention`" },
+      "purge": {
+        "trigger": "co-terminous with parent chargeback purge (FK CASCADE)",
+        "action": "hard delete when parent chargeback purges; migrate to compliance_archive.chargeback_evidence when parent migrates",
+        "notes": "Evidence rows are append-only audit — retention follows the parent chargeback exactly."
+      }
+    }
+  ],
+  "special_paths": [
+    {
+      "trigger": "TenantErasing (fires BEFORE TenantErased)",
+      "action": "ArchiveChargebackFinancialRecordsOnTenantErasure hook migrates invoice-linked chargebacks (chargebacks where the parent invoice still exists in compliance_archive after tenant erasure) to compliance_archive.chargebacks + compliance_archive.chargeback_evidence. Financial-obligation retention overrides GDPR Art. 17 §3(b) exception. Non-invoice-linked chargebacks skip archive."
+    },
+    {
+      "trigger": "TenantErased",
+      "action": "PurgeChargebackDataForErasedTenant hook FK CASCADE hard-deletes every chargeback + chargeback_evidence row EXCEPT the already-archived ones (from ArchiveChargebackFinancialRecordsOnTenantErasure). Audit trail rows survive per audit module design (outlives-source)."
+    },
+    {
+      "trigger": "UserErased (as submitter of evidence via submitted_by_user_id)",
+      "action": "RedactCustomerFromChargebacksOnUserErased hook: schedule a 90-day-post-erasure redaction of user_id references on chargeback_evidence rows where the user submitted evidence. Row survives for the 7-year audit trail; the user identity is redacted to a hashed placeholder.",
+      "carve_out": "Retention windows on the chargeback + chargeback_evidence rows unchanged — financial retention overrides erasure per legal-obligation carve-out per GDPR Art. 17 §3(b) + US tax law."
+    },
+    {
+      "trigger": "ChargebackLost / ChargebackWon / ChargebackExpired / ChargebackAcceptedRefund",
+      "action": "Retention window BEGINS at decision_at (or expired_at / accepted_at for those transitions). Prior chargeback states (pending_evidence / evidence_submitted / under_bank_review) do NOT count toward the 7y window — a chargeback under review for 90 days then lost has 7y+90d total lifetime."
+    }
+  ],
+  "cross_reference": [
+    "audit::retention.json — audit rows outlive their source rows regardless (financial audit + tax audit trail + card network audit).",
+    "activity::retention.json — activity rows follow their own tier-based retention.",
+    "finance::invoice retention — invoice-linked chargebacks align with invoice retention windows.",
+    "finance::payment retention — payment records must survive at least as long as their chargebacks.",
+    "finance::refund retention — RDR-path refunds align with parent chargeback retention (co-terminous).",
+    "finance::credit-note retention — credit notes issued by CreditNoteIssuer on chargeback lost align with parent invoice retention.",
+    "finance::transaction retention — the TWO offsetting transactions (loss + fee) align with parent chargeback retention (co-terminous)."
+  ]
+}

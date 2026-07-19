@@ -1,0 +1,103 @@
+{
+  "id": "academorix://modules/monitoring/entitlements",
+  "$version": 1,
+  "title": "monitoring — declared entitlements",
+  "description": "Nine entitlement keys. `monitoring_capture` is the boolean master gate. `monitoring_health_check_slot` / `monitoring_provider_slot` / `monitoring_alert_policy_slot` are integer capacity gates. `monitoring_paging` unlocks PagerDuty + Opsgenie on Medium+. `monitoring_apm` unlocks Datadog on Medium+. `monitoring_extended_retention` extends hot/cold windows on Enterprise. `monitoring_custom_metrics` unlocks custom_script + custom_metric signals on Enterprise. `monitoring_prometheus` unlocks the Prometheus pushgateway + AlertManager webhook on Enterprise.",
+  "reference": { "publishedBy": "entitlements", "seededFrom": "Plan.default_entitlements" },
+  "kinds": [{ "kind": "slot" }, { "kind": "boolean" }],
+  "entitlements": [
+    {
+      "key": "monitoring_capture",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 1, "medium": 1, "enterprise": 1 },
+      "description": "Master feature gate. Off = the whole module is invisible: no health checks, no alerts, no incidents, no provider CRUD. All tiers get this on — Small tenants get a reduced provider set via `monitoring_paging` = 0 + `monitoring_apm` = 0 + `monitoring_prometheus` = 0.",
+      "enforcedBy": [
+        "entitlement.enforce:monitoring_capture middleware on every /api/v1/monitoring/* route",
+        "HealthCheckObserver refuses creates when the gate is closed",
+        "MonitoringAlertPolicyObserver refuses creates when the gate is closed",
+        "SDUI monitoring surfaces hidden when features array does not include 'monitoring.core'"
+      ]
+    },
+    {
+      "key": "monitoring_health_check_slot",
+      "kind": "slot",
+      "unit": "health_checks",
+      "defaultsByPlan": { "small": 5, "medium": 25, "enterprise": null },
+      "description": "How many health checks a tenant can configure. Small: 5 (typical: DB + Redis + queue depth + 1 HTTP endpoint + 1 disk). Medium: 25. Enterprise: unlimited. Consumed on health_check create; released on soft-delete.",
+      "enforcedBy": [
+        "HealthCheckObserver.creating consumes 1 unit via EntitlementGate::consume('monitoring_health_check_slot')",
+        "HealthCheckObserver.deleted (soft-delete) releases 1 unit"
+      ]
+    },
+    {
+      "key": "monitoring_provider_slot",
+      "kind": "slot",
+      "unit": "providers",
+      "defaultsByPlan": { "small": 1, "medium": 3, "enterprise": null },
+      "description": "How many provider configs a tenant can have. Small: 1 (typically Sentry OR Custom Webhook). Medium: 3. Enterprise: unlimited. Consumed on provider_config create; released on soft-delete.",
+      "enforcedBy": [
+        "MonitoringProviderConfigObserver.creating consumes 1 unit via EntitlementGate::consume('monitoring_provider_slot')",
+        "MonitoringProviderConfigObserver.deleted releases 1 unit"
+      ]
+    },
+    {
+      "key": "monitoring_alert_policy_slot",
+      "kind": "slot",
+      "unit": "policies",
+      "defaultsByPlan": { "small": 10, "medium": 50, "enterprise": null },
+      "description": "How many alert policies a tenant may define. Small: 10. Medium: 50. Enterprise: unlimited.",
+      "enforcedBy": [
+        "MonitoringAlertPolicyObserver.creating consumes 1 unit",
+        "MonitoringAlertPolicyObserver.deleted releases 1 unit"
+      ]
+    },
+    {
+      "key": "monitoring_paging",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the PagerDuty + Opsgenie provider drivers. Small tenants can only use Sentry / Custom Webhook (dashboard-only notification path). Medium + Enterprise get true on-call paging.",
+      "enforcedBy": [
+        "MonitoringProviderConfigObserver.creating refuses when provider IN ('pagerduty', 'opsgenie') AND gate is closed",
+        "SDUI provider picker filters the provider list per this gate"
+      ]
+    },
+    {
+      "key": "monitoring_apm",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 1, "enterprise": 1 },
+      "description": "Enables the Datadog provider driver. Medium + Enterprise. Small tenants can't push to Datadog (they can still use Sentry for error tracking).",
+      "enforcedBy": [
+        "MonitoringProviderConfigObserver.creating refuses when provider = 'datadog' AND gate is closed"
+      ]
+    },
+    {
+      "key": "monitoring_extended_retention",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Extends health_check_runs retention from 7-day hot / 30-day cold to 30-day hot / 90-day cold. Extends monitoring_alerts retention from 30d / 90d to 90d / 1-year. Extends monitoring_incidents to indefinite retention (P1 incidents never auto-purged for postmortem archive).",
+      "enforcedBy": [
+        "PurgeExpiredHealthCheckRunsJob checks this gate + applies extended retention when set",
+        "PurgeResolvedIncidentsJob checks this gate + applies extended retention + skips P1 incidents when set"
+      ]
+    },
+    {
+      "key": "monitoring_custom_metrics",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Unlocks the `custom_script` health_check_type + the `custom_metric` signal_type. Small + Medium tenants use only the built-in check types + signal types (db_ping / redis_ping / http_endpoint / … + error_rate / latency_p95 / …).",
+      "enforcedBy": [
+        "HealthCheckObserver.creating refuses when check_type = 'custom_script' AND gate is closed",
+        "MonitoringAlertPolicyObserver.creating refuses when signal_type = 'custom_metric' AND gate is closed"
+      ]
+    },
+    {
+      "key": "monitoring_prometheus",
+      "kind": "boolean",
+      "defaultsByPlan": { "small": 0, "medium": 0, "enterprise": 1 },
+      "description": "Enterprise-only. Unlocks the Prometheus provider driver — both the pushgateway (outbound metrics) and the AlertManager webhook receiver (inbound alerts from tenant's own Prometheus).",
+      "enforcedBy": [
+        "MonitoringProviderConfigObserver.creating refuses when provider = 'prometheus' AND gate is closed"
+      ]
+    }
+  ]
+}

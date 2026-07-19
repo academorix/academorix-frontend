@@ -1,0 +1,160 @@
+{
+  "id": "academorix://modules/tax/schemas/tax-jurisdiction",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "TaxJurisdiction",
+  "description": "Country/state/city rule catalog. Carries `tenant_id` (NULLABLE — null = platform reference). Supports VAT / GST / Sales Tax / Consumption Tax / Digital Services Tax jurisdictions with ISO 3166-1/3166-2 codes + postal_code_pattern regex for US zip-based nexus. NEVER carries `application_id`, `region_id`, `organization_id`, or `scope_node_id`.",
+  "type": "object",
+  "x-module": "tax",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "tax_jurisdictions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "txj_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Tax\\Models\\TaxJurisdiction",
+    "interface": "Academorix\\Finance\\Tax\\Contracts\\Data\\TaxJurisdictionInterface",
+    "implements": ["Academorix\\Finance\\Tax\\Contracts\\Data\\TaxJurisdictionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenantOptional",
+      "HasTaxRates",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable",
+      "Searchable",
+      "SoftDeletes"
+    ],
+    "casts": {
+      "tax_type": "TaxJurisdictionType",
+      "nexus_type": "TaxJurisdictionNexusType",
+      "effective_from": "date",
+      "effective_to": "date",
+      "metadata": "array"
+    },
+    "observers": ["TaxJurisdictionObserver"],
+    "appends": ["is_platform_reference", "is_active"]
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": {
+        "type": "string",
+        "length": 64,
+        "primary": true,
+        "description": "Prefixed ULID: `txj_<26>`."
+      },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" },
+        "description": "NULLABLE. Null = platform-wide reference data (ISO countries, US states). Not-null = tenant-scoped custom jurisdiction."
+      },
+      "country_code": {
+        "type": "string",
+        "length": 2,
+        "nullable": false,
+        "description": "ISO 3166-1 alpha-2. Uppercase."
+      },
+      "state_code": {
+        "type": "string",
+        "length": 6,
+        "nullable": true,
+        "description": "ISO 3166-2 subdivision code (e.g. 'US-CA', 'GB-ENG'). Length allows for hyphenated format."
+      },
+      "city": {
+        "type": "string",
+        "length": 128,
+        "nullable": true
+      },
+      "postal_code_pattern": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Regex for zip-based jurisdictions (e.g. '^902\\d{2}$' for LA county zips). Must be a valid PCRE."
+      },
+      "name": {
+        "type": "string",
+        "length": 256,
+        "nullable": false,
+        "description": "Human-readable label (e.g. 'United Kingdom VAT', 'California Sales Tax', 'Ontario HST')."
+      },
+      "tax_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Enum: vat / gst / sales_tax / consumption_tax / digital_services_tax."
+      },
+      "registration_number": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "description": "The TENANT's own VAT/GST/EIN number registered in this jurisdiction. Confidential — competitor intel."
+      },
+      "nexus_type": {
+        "type": "string",
+        "length": 16,
+        "nullable": true,
+        "description": "Enum: physical / economic / marketplace. Used for US Wayfair nexus tracking."
+      },
+      "effective_from": {
+        "type": "date",
+        "nullable": true,
+        "description": "When this jurisdiction became active for the tenant. Null = platform-reference or from inception."
+      },
+      "effective_to": {
+        "type": "date",
+        "nullable": true,
+        "description": "When this jurisdiction stops applying. Null = still active."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_by": { "type": "string", "length": 64, "nullable": true },
+      "deleted_at": { "type": "timestamptz", "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "country_code", "state_code", "city", "postal_code_pattern", "tax_type"],
+        "unique": true,
+        "name": "tax_jurisdictions_tuple_unique",
+        "predicate": "deleted_at IS NULL"
+      },
+      { "columns": ["country_code", "state_code"], "name": "tax_jurisdictions_geo_idx" },
+      { "columns": ["tenant_id", "tax_type"], "name": "tax_jurisdictions_type_idx" }
+    ]
+  },
+  "required": ["id", "country_code", "name", "tax_type", "created_at", "updated_at"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^txj_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": ["string", "null"], "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "state_code": { "type": ["string", "null"], "maxLength": 6 },
+    "city": { "type": ["string", "null"], "maxLength": 128 },
+    "postal_code_pattern": { "type": ["string", "null"], "maxLength": 32 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "tax_type": { "type": "string", "enum": ["vat", "gst", "sales_tax", "consumption_tax", "digital_services_tax"] },
+    "registration_number": { "type": ["string", "null"], "maxLength": 64 },
+    "nexus_type": { "type": ["string", "null"], "enum": ["physical", "economic", "marketplace", null] },
+    "effective_from": { "type": ["string", "null"], "format": "date" },
+    "effective_to": { "type": ["string", "null"], "format": "date" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "country_code is a valid ISO 3166-1 alpha-2",
+    "state_code (when set) is a valid ISO 3166-2 subdivision for country_code",
+    "postal_code_pattern (when set) is a valid PCRE regex",
+    "unique (tenant_id, country_code, state_code, city, postal_code_pattern, tax_type) WHERE deleted_at IS NULL",
+    "tenant_id IS NULL requires the actor to hold super_admin role (platform-reference jurisdictions)",
+    "tenant_id IS NOT NULL requires the tenant to hold tax_jurisdiction_custom entitlement (Enterprise)",
+    "effective_from < effective_to when both set"
+  ]
+}

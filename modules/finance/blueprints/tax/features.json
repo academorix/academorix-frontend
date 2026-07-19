@@ -1,0 +1,67 @@
+{
+  "id": "academorix://modules/tax/features",
+  "$version": 1,
+  "title": "tax — feature keys",
+  "reference": {
+    "publishedBy": "feature-flag",
+    "resolvedBy": "GET /api/auth/me → data.features"
+  },
+  "features": [
+    {
+      "key": "tax.core",
+      "displayName": "Tax computation engine",
+      "description": "Server-side tax rate + jurisdiction + exemption + calculation engine. All tiers.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "tax.advanced_providers",
+      "displayName": "TaxJar, Avalara, Stripe Tax",
+      "description": "Advanced tax provider set. Small tenants use the built-in NativeCalculator only. Medium+ unlocks TaxJar (US + international VAT), Avalara AvaTax (enterprise-grade global tax), Stripe Tax (integrated with Stripe billing).",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "tax.custom_webhook",
+      "displayName": "Custom tax provider webhook",
+      "description": "HMAC-signed JSON webhook to a tenant-hosted tax engine. Escape hatch for tenants running their own tax computation infrastructure.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "tax.jurisdiction_custom",
+      "displayName": "Custom jurisdictions",
+      "description": "Add tenant-scoped custom jurisdictions beyond the platform reference set. Useful for niche subnational zones (free-trade zones, special economic zones, regional tourism taxes).",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    },
+    {
+      "key": "tax.exemption_management",
+      "displayName": "Exemption certificate workflow",
+      "description": "Manage reseller / non-profit / diplomatic / educational exemption certificates. Certificate upload + verification queue + expiry warnings.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "tax.multi_currency",
+      "displayName": "Multi-currency tax calculation",
+      "description": "Compute tax on transactions with source_currency values other than the tenant's default_region.currency. Medium+ tier.",
+      "defaultEnabled": false,
+      "planTiers": ["medium", "enterprise"]
+    },
+    {
+      "key": "tax.annual_report",
+      "displayName": "Annual tax summary export",
+      "description": "End-of-year aggregated tax summary export per jurisdiction for regulator filing. All tiers.",
+      "defaultEnabled": true,
+      "planTiers": ["small", "medium", "enterprise"]
+    },
+    {
+      "key": "tax.extended_retention",
+      "displayName": "10-year calculation retention",
+      "description": "Extends tax_calculations retention from 7 years (default) to 10 years. For finance regimes that require longer audit trails.",
+      "defaultEnabled": false,
+      "planTiers": ["enterprise"]
+    }
+  ]
+}

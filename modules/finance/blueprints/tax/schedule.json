@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/tax/schedule",
+  "$version": 1,
+  "title": "tax — scheduled tasks",
+  "entries": [
+    {
+      "name": "tax-sync-rates-taxjar",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Tax\\Jobs\\SyncTaxRatesFromProviderJob --provider=taxjar",
+      "cron": "0 3 * * 1",
+      "timezone": "UTC",
+      "purpose": "Weekly Monday 03:00 UTC: pull TaxJar's rate catalog + upsert into tax_rates. New rates get effective_from = today; changed rates split into old (effective_to = today) + new."
+    },
+    {
+      "name": "tax-sync-rates-avalara",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Tax\\Jobs\\SyncTaxRatesFromProviderJob --provider=avalara",
+      "cron": "0 3 * * 2",
+      "timezone": "UTC",
+      "purpose": "Weekly Tuesday 03:00 UTC: pull Avalara's rate catalog. Spread from TaxJar to avoid concurrent API pressure."
+    },
+    {
+      "name": "tax-sync-rates-stripe-tax",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Tax\\Jobs\\SyncTaxRatesFromProviderJob --provider=stripe_tax",
+      "cron": "0 3 * * 3",
+      "timezone": "UTC",
+      "purpose": "Weekly Wednesday 03:00 UTC: pull Stripe Tax's rate registry. Stripe Tax manages rates internally, but we snapshot for our own audit trail."
+    },
+    {
+      "name": "tax-expire-exemptions",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Tax\\Jobs\\ExpireExemptionsJob",
+      "cron": "0 1 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 01:00 UTC: find verified exemptions with valid_until <= today + transition to verification_status='expired'."
+    },
+    {
+      "name": "tax-notify-expiring",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Tax\\Jobs\\NotifyExemptionExpiringJob",
+      "cron": "0 8 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 08:00 UTC: find exemptions expiring in 60/30/7 days + fire TaxExemptionExpiringNotification cadence. Customer + tenant admin receive."
+    },
+    {
+      "name": "tax-purge-calculations",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Tax\\Jobs\\PurgeExpiredCalculationsJob",
+      "cron": "0 4 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 04:00 UTC: migrate calculations > 7 years old (10 for Enterprise) to tax_calculations_archive linked to invoice_lines_archive. NEVER hard-deletes inside the module."
+    },
+    {
+      "name": "tax-reconcile-calculations",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Tax\\Jobs\\ReconcileProviderCalculationsJob",
+      "cron": "0 5 * * 0",
+      "timezone": "UTC",
+      "purpose": "Weekly Sunday 05:00 UTC: spot-check 1% of the past week's calculations against provider re-computation. Divergence triggers TaxCalculationDriftDetectedNotification."
+    },
+    {
+      "name": "tax-open-circuit-breaker-half-open",
+      "command": "tax:sweep-half-open-circuit-breakers",
+      "cron": "*/10 * * * *",
+      "timezone": "UTC",
+      "purpose": "Every 10 min: sweep tax_provider_configs where circuit_breaker_open_until <= now() AND still marked open. Transition to HALF_OPEN + dispatch a probe. NOTE: the primary trigger for closing a breaker is a successful CalculateTaxForInvoiceLineJob; this sweep is a safety net for cases where the delayed enqueue was lost."
+    }
+  ]
+}

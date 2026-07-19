@@ -1,0 +1,184 @@
+{
+  "id": "coupon.resources.coupon.edit",
+  "title": "Edit coupon",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/coupons/{coupon}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "coupon", "entity": "coupon", "action": "edit" },
+  "requiresPermission": "coupons.update",
+  "requiresEntitlement": "coupon_capture",
+  "dataSources": [
+    {
+      "name": "coupon",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/coupons/' + params.coupon",
+      "unwrap": "data"
+    },
+    {
+      "name": "redemption_count",
+      "kind": "http.get",
+      "urlExpr": "'/api/v1/coupons/' + params.coupon + '/redemptions?limit=1&include_count=true'",
+      "unwrap": "meta.count"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-4xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + coupon.code" } } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Discount config becomes locked once redemptions commit." } }
+              ]
+            },
+            {
+              "kind": "Chip",
+              "bindings": {
+                "variant": { "$expr": "redemption_count > 0 ? 'warning' : 'success'" },
+                "children": {
+                  "$expr": "redemption_count > 0 ? (redemption_count + ' redemptions — discount config locked') : 'No redemptions yet — fully editable'"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "id": "coupon-edit-form",
+            "onSubmit": {
+              "kind": "http.patch",
+              "urlExpr": "'/api/v1/coupons/' + params.coupon",
+              "onSuccessNavigate": "/tenant/coupons"
+            }
+          },
+          "children": [
+            {
+              "kind": "FieldSet",
+              "props": { "legend": "Basics (always editable)" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "code",
+                    "label": "Code",
+                    "isReadOnly": true,
+                    "helpText": "Coupon codes are immutable. Deactivate + create a fresh code to change the string."
+                  },
+                  "bindings": { "value": { "$ref": "coupon.code" } }
+                },
+                {
+                  "kind": "TextField",
+                  "props": { "name": "name", "label": "Display name", "isRequired": true, "maxLength": 128 },
+                  "bindings": { "defaultValue": { "$ref": "coupon.name" } }
+                },
+                {
+                  "kind": "TextArea",
+                  "props": { "name": "description", "label": "Description" },
+                  "bindings": { "defaultValue": { "$ref": "coupon.description" } }
+                }
+              ]
+            },
+            {
+              "kind": "FieldSet",
+              "props": { "legend": "Discount config (locked after first redemption)" },
+              "children": [
+                {
+                  "kind": "TextField",
+                  "props": {
+                    "name": "discount_type",
+                    "label": "Discount type",
+                    "isReadOnly": true,
+                    "leadingIcon": "lock-closed"
+                  },
+                  "bindings": {
+                    "value": { "$ref": "coupon.discount_type" },
+                    "isReadOnly": { "$expr": "redemption_count > 0" }
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "discount_amount", "label": "Amount", "leadingIcon": "lock-closed" },
+                  "bindings": {
+                    "value": { "$ref": "coupon.discount_amount" },
+                    "isReadOnly": { "$expr": "redemption_count > 0" }
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "FieldSet",
+              "props": { "legend": "Caps + validity (always editable)" },
+              "children": [
+                {
+                  "kind": "NumberField",
+                  "props": {
+                    "name": "usage_cap",
+                    "label": "Total usage cap",
+                    "helpText": "Reducing below current usage_count refuses.",
+                    "minValue": 1
+                  },
+                  "bindings": {
+                    "defaultValue": { "$ref": "coupon.usage_cap" },
+                    "minValue": { "$expr": "coupon.usage_count || 1" }
+                  }
+                },
+                {
+                  "kind": "NumberField",
+                  "props": { "name": "per_customer_limit", "label": "Per-customer limit", "minValue": 1 },
+                  "bindings": { "defaultValue": { "$ref": "coupon.per_customer_limit" } }
+                },
+                {
+                  "kind": "DatePicker",
+                  "props": { "name": "valid_until", "label": "Valid until", "helpText": "Cannot be moved earlier than NOW()." },
+                  "bindings": { "defaultValue": { "$ref": "coupon.valid_until" } }
+                }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center justify-between gap-2 pt-4" },
+              "children": [
+                {
+                  "kind": "View",
+                  "props": { "className": "flex gap-2" },
+                  "children": [
+                    {
+                      "kind": "Widget",
+                      "widget": "coupon.buttons.deactivate",
+                      "bindings": {
+                        "couponId": { "$ref": "coupon.id" },
+                        "hidden": { "$expr": "!coupon.is_active" }
+                      }
+                    },
+                    {
+                      "kind": "Widget",
+                      "widget": "coupon.buttons.extend",
+                      "bindings": {
+                        "couponId": { "$ref": "coupon.id" },
+                        "hidden": { "$expr": "!coupon.is_active" }
+                      }
+                    }
+                  ]
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "children": "Save changes", "type": "submit" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

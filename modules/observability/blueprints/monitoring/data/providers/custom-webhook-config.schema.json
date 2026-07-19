@@ -1,0 +1,75 @@
+{
+  "id": "academorix://modules/monitoring/data/providers/custom-webhook-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Custom Webhook provider config",
+  "description": "Configuration shape for the generic HMAC-signed JSON webhook provider. Escape hatch for tenants using Grafana / Grafana Cloud / New Relic / Slack directly / etc.",
+  "type": "object",
+  "required": ["webhook_url", "hmac_secret"],
+  "additionalProperties": false,
+  "properties": {
+    "webhook_url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://",
+      "description": "HTTPS endpoint. HTTP is refused (TLS required)."
+    },
+    "hmac_secret": {
+      "type": "string",
+      "minLength": 32,
+      "description": "Shared secret for HMAC-SHA256 signing. 32 chars minimum. Encrypted at rest."
+    },
+    "signature_header": {
+      "type": "string",
+      "default": "X-Monitoring-Signature",
+      "description": "HTTP header carrying the HMAC signature."
+    },
+    "timestamp_header": {
+      "type": "string",
+      "default": "X-Monitoring-Timestamp",
+      "description": "HTTP header carrying the signature timestamp (Unix seconds)."
+    },
+    "signature_tolerance_seconds": {
+      "type": "integer",
+      "minimum": 60,
+      "maximum": 3600,
+      "default": 300,
+      "description": "Signature timestamp tolerance window on the receiver side. Prevents replay attacks."
+    },
+    "custom_headers": {
+      "type": ["object", "null"],
+      "description": "Optional additional headers on every dispatch. Useful for auth (Bearer token, API key). Values encrypted at rest.",
+      "patternProperties": {
+        "^X-[A-Za-z0-9-]+$": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "payload_shape": {
+      "type": "string",
+      "enum": ["canonical", "slack_incoming_webhook", "grafana_webhook_v1", "new_relic_events_api", "custom"],
+      "default": "canonical",
+      "description": "Payload shape. 'canonical' = the full alert / incident JSON. 'slack_incoming_webhook' = Slack blocks format. 'grafana_webhook_v1' = Grafana Alerting webhook format. 'new_relic_events_api' = New Relic Custom Event format. 'custom' = tenant provides transform_expression."
+    },
+    "transform_expression": {
+      "type": ["string", "null"],
+      "description": "Optional JSONata expression to transform the canonical payload before dispatch. Only used when payload_shape='custom'."
+    },
+    "dispatch_on": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["alert_fired", "alert_resolved", "incident_opened", "incident_acknowledged", "incident_resolved", "provider_circuit_breaker_opened"]
+      },
+      "default": ["alert_fired", "alert_resolved", "incident_opened", "incident_resolved"],
+      "description": "Which events fire this webhook. Enables tenant to route specific events to specific webhooks (Slack for opens, PagerDuty for critical, ...)."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

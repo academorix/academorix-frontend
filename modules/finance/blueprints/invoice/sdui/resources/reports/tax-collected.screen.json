@@ -1,0 +1,107 @@
+{
+  "id": "invoice.resources.reports.tax-collected",
+  "title": "Tax collected",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/reports/tax-collected",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "invoice", "entity": "reports", "action": "tax-collected" },
+  "requiresPermission": "invoice.reports.tax-collected.view",
+  "requiresEntitlement": "invoice_capture",
+  "dataSources": [
+    {
+      "name": "tax",
+      "kind": "http.get",
+      "url": "/api/v1/reports/tax-collected",
+      "unwrap": "data",
+      "queryFromFilters": true
+    }
+  ],
+  "state": {
+    "from": { "type": "date", "defaultFromToday": { "monthsAgo": 3 } },
+    "to": { "type": "date", "defaultFromToday": true },
+    "group_by": { "type": "string", "default": "jurisdiction" }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Tax collected" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Tax collected per jurisdiction. Feeds VAT / GST / sales-tax return preparation. Use --format=csv from the CLI for Excel-ready export." } }
+              ]
+            },
+            {
+              "kind": "DateRangePicker",
+              "props": { "label": "Range" },
+              "bindings": { "value": { "start": { "$state": "from" }, "end": { "$state": "to" } } },
+              "actions": {
+                "onChange": {
+                  "kind": "state.setMany",
+                  "fields": { "from": "$value.start", "to": "$value.end" }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "grid grid-cols-3 gap-4" },
+          "children": [
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "tax.summary.total_tax_cents" } },
+              "props": { "label": "Total tax collected", "formatter": "currency", "variant": "primary" }
+            },
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "tax.summary.jurisdiction_count" } },
+              "props": { "label": "Jurisdictions", "variant": "info" }
+            },
+            {
+              "kind": "StatCard",
+              "bindings": { "value": { "$ref": "tax.summary.invoice_count" } },
+              "props": { "label": "Invoices covered", "variant": "info" }
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "title": "Per jurisdiction" },
+          "children": [
+            {
+              "kind": "DataGrid",
+              "bindings": { "items": { "$ref": "tax.rows" } },
+              "props": {
+                "columns": [
+                  { "field": "jurisdiction", "label": "Jurisdiction", "width": 200 },
+                  { "field": "tax_type", "label": "Tax type", "width": 140, "description": "VAT / GST / Sales tax / etc." },
+                  { "field": "invoice_count", "label": "Invoices", "width": 100, "align": "right" },
+                  { "field": "taxable_amount_cents", "label": "Taxable base", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "tax_amount_cents", "label": "Tax", "width": 160, "renderer": { "kind": "Text", "formatter": "currency", "align": "right" } },
+                  { "field": "effective_rate", "label": "Effective %", "width": 120, "align": "right", "formatter": "percent-2dp" }
+                ]
+              },
+              "emptyState": {
+                "kind": "View",
+                "props": { "className": "text-center py-8" },
+                "children": [
+                  { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "No tax collected in the selected range." } }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "id": "monitoring.resources.monitoring-incident.list",
+  "title": "Monitoring incidents",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/incidents",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "monitoring-incident", "action": "list" },
+  "requiresPermission": "monitoring.incidents.viewAny",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    { "name": "incidents", "kind": "http.get", "url": "/api/v1/monitoring/incidents?filter[unresolved]=1", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-4 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "children": [
+            { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Monitoring incidents" } },
+            { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Grouped alert timelines requiring incident response." } }
+          ]
+        },
+        {
+          "kind": "DataGrid",
+          "bindings": { "items": { "$ref": "incidents" } },
+          "props": {
+            "columns": [
+              {
+                "field": "severity",
+                "header": "Severity",
+                "cellRenderer": { "kind": "Widget", "widget": "monitoring.severity-chip", "bindings": { "severity": { "$ref": "row.severity" } } }
+              },
+              { "field": "title", "header": "Title", "sortable": true },
+              {
+                "field": "status",
+                "header": "Status",
+                "cellRenderer": { "kind": "Widget", "widget": "monitoring.status-badge", "bindings": { "status": { "$ref": "row.status" } } }
+              },
+              { "field": "opened_at", "header": "Opened", "sortable": true },
+              { "field": "alert_count", "header": "Alerts" },
+              { "field": "escalation_count", "header": "Escalations" }
+            ]
+          },
+          "actions": { "onRowPress": { "kind": "navigate", "toExpr": "'/tenant/monitoring/incidents/' + row.id" } }
+        }
+      ]
+    }
+  ]
+}

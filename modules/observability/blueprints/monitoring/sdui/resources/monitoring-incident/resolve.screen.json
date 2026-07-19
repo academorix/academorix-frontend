@@ -1,0 +1,52 @@
+{
+  "id": "monitoring.resources.monitoring-incident.resolve",
+  "title": "Resolve incident",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/incidents/{incident}/resolve",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "monitoring-incident", "action": "resolve" },
+  "requiresPermission": "monitoring.incidents.resolve",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    { "name": "incident", "kind": "http.get", "url": "/api/v1/monitoring/incidents/{incident}", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-4" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Resolve incident" } },
+        {
+          "kind": "Alert",
+          "props": { "variant": "info", "title": "P1 postmortem required" },
+          "bindings": { "hidden": { "$expr": "incident.severity !== 'p1'" }, "description": { "$expr": "'This is a P1 incident. A postmortem doc is required within 5 business days. Provide the URL now or MonitoringPostmortemRequiredNotification will schedule the task.'" } }
+        },
+        {
+          "kind": "TextArea",
+          "props": { "label": "Resolution note (required)", "placeholder": "Root cause: expired TLS cert. Mitigation: renewed via Let's Encrypt. Follow-up: automate cert renewal." },
+          "actions": { "onChange": { "kind": "form.set", "field": "note", "valueExpr": "$value" } }
+        },
+        {
+          "kind": "Input",
+          "props": { "label": "Postmortem URL (optional; required for P1)", "placeholder": "https://docs.example.com/postmortems/2026-07-15-tls-expiry" },
+          "actions": { "onChange": { "kind": "form.set", "field": "postmortem_url", "valueExpr": "$value" } }
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "primary", "children": "Resolve" },
+          "actions": {
+            "onPress": {
+              "kind": "http.post",
+              "url": "/api/v1/monitoring/incidents/{incident}/resolve",
+              "body": "{{form}}",
+              "onSuccess": { "kind": "navigate", "toExpr": "'/tenant/monitoring/incidents/' + $routeParams.incident" }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

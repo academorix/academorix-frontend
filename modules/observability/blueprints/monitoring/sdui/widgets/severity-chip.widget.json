@@ -1,0 +1,39 @@
+{
+  "id": "monitoring.severity-chip",
+  "title": "Monitoring severity chip",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "Colour-coded chip for MonitoringSeverity. p1 danger + fire icon; p2 warning + exclamation-triangle icon; p3 info + info-circle icon; p4 neutral + info icon.",
+  "props": {
+    "severity": { "type": "string", "required": true },
+    "size": { "type": "string", "default": "sm", "enum": ["xs", "sm", "md", "lg"] },
+    "showIcon": { "type": "boolean", "default": true }
+  },
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Chip",
+      "bindings": {
+        "variant": {
+          "$expr": "props.severity === 'p1' ? 'danger' : (props.severity === 'p2' ? 'warning' : (props.severity === 'p3' ? 'info' : 'neutral'))"
+        },
+        "size": { "$ref": "props.size" }
+      },
+      "props": {
+        "leadingIcon": {
+          "$expr": "props.showIcon ? (props.severity === 'p1' ? 'fire' : (props.severity === 'p2' ? 'exclamation-triangle' : (props.severity === 'p3' ? 'information-circle' : 'information-circle'))) : null"
+        }
+      },
+      "children": [
+        {
+          "kind": "Text",
+          "bindings": {
+            "children": {
+              "$expr": "props.severity === 'p1' ? 'P1 Critical' : (props.severity === 'p2' ? 'P2 High' : (props.severity === 'p3' ? 'P3 Medium' : (props.severity === 'p4' ? 'P4 Info' : props.severity)))"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

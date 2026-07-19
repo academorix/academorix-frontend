@@ -1,0 +1,70 @@
+{
+  "id": "refund.reason-picker",
+  "title": "Refund reason picker",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "ComboBox for selecting refund reason with audience-based filtering — customer path shows customer-allowed set only (4 reasons); admin shows the full set (10 reasons). Displays reason display_name + tooltip with regulator relevance. Loads options from data/reason-catalog.json at build time.",
+  "props": {
+    "audience": { "type": "string", "required": true, "enum": ["customer", "admin"], "description": "Filters which reasons appear. customer = customer-allowed set (4); admin = full set (10)." },
+    "value": { "type": ["string", "null"], "description": "Selected reason. Bound by the parent form." },
+    "label": { "type": "string", "default": "Reason" },
+    "placeholder": { "type": "string", "default": "Choose why you're requesting a refund..." },
+    "menuTrigger": { "type": "string", "default": "focus" }
+  },
+  "dataSources": [
+    {
+      "name": "reason_catalog",
+      "kind": "static",
+      "source": "/data/reason-catalog.json",
+      "unwrap": "reasons"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "ComboBox",
+      "props": {
+        "label": { "$ref": "props.label" },
+        "placeholder": { "$ref": "props.placeholder" },
+        "menuTrigger": { "$ref": "props.menuTrigger" }
+      },
+      "bindings": {
+        "selectedKey": { "$ref": "props.value" },
+        "items": {
+          "$expr": "reason_catalog.filter(r => (props.audience === 'customer' && r.customer_allowed) || (props.audience === 'admin' && r.admin_allowed))"
+        }
+      },
+      "itemRenderer": {
+        "kind": "View",
+        "props": { "className": "flex flex-col gap-0.5 py-1" },
+        "children": [
+          {
+            "kind": "Text",
+            "props": { "className": "font-medium" },
+            "bindings": { "children": { "$ref": "item.display_name" } }
+          },
+          {
+            "kind": "Text",
+            "props": { "className": "text-xs text-muted" },
+            "bindings": { "children": { "$ref": "item.description" } }
+          },
+          {
+            "kind": "Chip",
+            "props": { "size": "xs", "variant": "warning" },
+            "bindings": {
+              "hidden": { "$expr": "!item.always_require_approval" },
+              "children": "Requires approval"
+            }
+          }
+        ]
+      },
+      "actions": {
+        "onSelectionChange": {
+          "kind": "emit",
+          "eventName": "selectionChange",
+          "valueExpr": "$selectedKey"
+        }
+      }
+    }
+  ]
+}

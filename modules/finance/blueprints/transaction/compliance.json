@@ -1,0 +1,150 @@
+{
+  "id": "academorix://modules/transaction/compliance",
+  "$version": 1,
+  "title": "transaction — compliance evidence",
+  "description": "Transaction is the load-bearing financial-record module of the entire platform. SOX Section 404 (internal control over financial reporting) + Sarbanes-Oxley Section 802 (retention of audit records) + GAAP + IFRS (double-entry principle) + AML (anti-money-laundering record retention) + VAT reporting (tax_payable account export shape) all trace back to this module's guarantees. PCI-DSS scope is strictly excluded — no card data ever touches transaction rows.",
+  "regimes": {
+    "sox_404": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "Section 404",
+          "principle": "internal control over financial reporting (ICFR)",
+          "evidence": "The double-entry ledger enforces SUM(debit_cents) == SUM(credit_cents) per transaction via TransactionObserver (write-time) + LedgerReconciler (nightly). Every posted transaction is IMMUTABLE — the model observer refuses ALL updates + deletes. Corrections happen via new reversal transactions (source_transaction_id + reversal_reason), preserving the full audit trail. Every state transition writes an audit row with 7-year retention."
+        },
+        {
+          "section": "Section 302",
+          "principle": "management certification of financial reporting",
+          "evidence": "The monthly General Ledger report (GenerateGeneralLedgerReportJob) delivers per-account opening balance + all posted transactions + closing balance + total debits + total credits — the exact shape a financial officer signs off on. Delivered as accountant-shaped CSV + JSONL to compliance-storage with 7-year retention."
+        },
+        {
+          "section": "Section 802",
+          "principle": "retention of audit records",
+          "evidence": "transactions + transaction_ledger_entries retain 7 years (10 for Enterprise via transaction_extended_retention). Hard-purge ONLY via PurgeExpiredTransactionDataJob after archiving to compliance-storage — the archive lives at least the tenant's lifetime. TenantErased fires ArchiveTransactionsToComplianceOnTenantErased BEFORE the FK CASCADE."
+        }
+      ]
+    },
+    "gaap": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "double-entry bookkeeping",
+          "evidence": "Every transaction has AT LEAST TWO ledger entries. Each entry populates exactly one of debit_cents / credit_cents (never both, never neither — enforced by the debit_xor_credit rule + observer). SUM(debit_cents) == SUM(credit_cents) per transaction (enforced by TransactionObserver + LedgerReconciler + sum_debits_equals_sum_credits_per_transaction rule)."
+        },
+        {
+          "principle": "consistency principle",
+          "evidence": "Once posted, transactions are IMMUTABLE. Currency, amount, exchange rate, and ledger entries are all frozen. Corrections happen via NEW offsetting transactions — the historical record stays exactly as it was reported at the time."
+        },
+        {
+          "principle": "matching principle (revenue vs expense timing)",
+          "evidence": "Revenue events (kind='invoice_payment') credit revenue AND debit accounts_receivable → cash conversion. Refund events credit revenue reversal (refunds_expense) AND debit cash reduction. The double-entry ensures every revenue recognition has a matching expense/reversal counterpart."
+        }
+      ]
+    },
+    "ifrs": {
+      "applicable": true,
+      "controls": [
+        {
+          "standard": "IAS 1 — presentation of financial statements",
+          "evidence": "Same double-entry + immutability guarantees. Multi-currency handled via IFRS-conformant exchange rate at transaction date (frozen at commit) + base_amount_cents for reporting-currency aggregation. IAS 21 (effects of changes in foreign exchange rates) compliance."
+        },
+        {
+          "standard": "IAS 21 — foreign exchange rates",
+          "evidence": "Cross-currency transactions capture exchange_rate_to_base + base_amount_cents atomically at commit. The rate is IMMUTABLE — historical reports use the frozen rate, not the current market rate. rate_provider field records the source (openexchangerates / fixer_io / ecb_daily / manual) for auditor traceability."
+        }
+      ]
+    },
+    "sarbanes_oxley": {
+      "applicable": true,
+      "controls": [
+        {
+          "section": "Section 802",
+          "principle": "criminal penalties for altering documents",
+          "evidence": "TransactionObserver.updating REFUSES ALL — attempts to mutate a posted transaction raise TRANSACTION_IMMUTABLE at the model layer BEFORE the write reaches the DB. Reversal via new offsetting transaction is the ONLY correction mechanism. Every reversal writes a critical audit row (retention 7 years)."
+        },
+        {
+          "section": "Section 906",
+          "principle": "corporate responsibility for financial reports",
+          "evidence": "The nightly LedgerReconciler + on-demand reconciliation API give financial officers programmatic verification that the ledger is balanced. LedgerImbalanceDetected is a P0 signal that pages on-call + halts new transactions until resolved — a broken ledger cannot silently persist."
+        }
+      ]
+    },
+    "aml": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "anti-money-laundering record retention",
+          "evidence": "Transactions retain 7 years post-effective_date (10 for Enterprise). The retention window survives tenant deletion — TenantErased archives transactions to compliance-storage BEFORE the FK CASCADE, so a regulator audit years later can still trace the money flow."
+        },
+        {
+          "principle": "know-your-transaction (KYT) trail",
+          "evidence": "Every transaction carries reference_type + reference_id linking it back to the originating business entity (Invoice / Payment / Refund / Chargeback / CouponRedemption). The full audit trail from tenant + user context to the money movement is preserved."
+        }
+      ]
+    },
+    "pci_dss": {
+      "applicable": true,
+      "controls": [
+        {
+          "requirement": "3.4",
+          "principle": "no PAN storage",
+          "evidence": "NO card / PAN / CVV / expiry / cardholder name on any transaction row. transactions.amount_cents is a currency amount only. Card data lives in the payment module which uses a PCI-DSS-compliant tokenization service — the payment module records only tokens on transactions.metadata (never raw card data)."
+        },
+        {
+          "requirement": "10.2",
+          "principle": "audit trail",
+          "evidence": "Every write to transactions + transaction_ledger_entries emits an audit row (Auditable trait) with 7-year retention. Every state transition on a transaction — creating, posting, reversing — writes a separate audit row."
+        },
+        {
+          "requirement": "10.7",
+          "principle": "audit trail retention",
+          "evidence": "1-year hot + 6-year archive — implemented via the audit module's default retention (7 years). transactions themselves retain 7-year default (10 for Enterprise) — every transaction has a corresponding audit row that outlives it in the compliance archive."
+        }
+      ]
+    },
+    "vat_reporting": {
+      "applicable": true,
+      "controls": [
+        {
+          "principle": "regulator-facing VAT export",
+          "evidence": "The tax_payable account in the chart-of-accounts aggregates every tax_remittance transaction. GenerateGeneralLedgerReportJob's tax_payable slice produces the regulator-shaped VAT export. Every taxable transaction (invoice_payment where invoice carries a tax_calculation_id) produces both a revenue credit AND a tax_payable credit in the same ledger transaction — the export can trace every dollar of collected tax to its source invoice."
+        }
+      ]
+    },
+    "gdpr": {
+      "applicable": true,
+      "controls": [
+        {
+          "article": "Art. 17 §3",
+          "principle": "erasure right — carve-out for legal obligation",
+          "evidence": "TenantErased triggers ArchiveTransactionsToComplianceOnTenantErased hook. Transactions are exported to compliance-storage BEFORE the FK CASCADE — the tenant's transactional data is deleted from the operational store, but the compliance archive lives on per SOX 404 + AML retention. The tenant is informed of this carve-out at signup (in the tenant terms)."
+        },
+        {
+          "article": "Art. 15",
+          "principle": "right of access",
+          "evidence": "Users request their financial history via the compliance/data-subject-rights surface. The export includes every transaction referencing the user (via reference_id chains: user → invoice → invoice_payment transaction; user → payment → invoice_payment transaction; etc.). Provider-side data for the user's card is out of scope — that lives in the payment tokenization service, not in this module."
+        }
+      ]
+    },
+    "soc2_type2": {
+      "applicable": true,
+      "controls": [
+        {
+          "criterion": "CC7.2",
+          "principle": "system monitoring",
+          "evidence": "LedgerImbalanceDetected is a P0 signal — every fire pages the on-call, halts new transactions, and writes a critical audit row. AccountBalanceThresholdCrossed is an ops signal (accounts_receivable > $X, cash < $Y). The nightly ReconcileLedgerBalancesJob provides continuous ledger-integrity verification."
+        },
+        {
+          "criterion": "CC9.1",
+          "principle": "risk mitigation",
+          "evidence": "Double-entry + immutability + reversal-via-offset + nightly reconciliation + threshold alerts = defense-in-depth against every ledger-integrity failure mode (silent corruption, race conditions, incorrect user input, provider bugs)."
+        },
+        {
+          "criterion": "CC6.1",
+          "principle": "logical access",
+          "evidence": "Read access to transactions is admin + finance role only (never support role directly). Reversal is admin-only (finance role does NOT hold reverse — regulator-critical action). Cross-tenant support access via the platform plane is separately gated + writes cross-tenant audit rows."
+        }
+      ]
+    }
+  }
+}

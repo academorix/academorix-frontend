@@ -1,0 +1,36 @@
+{
+  "id": "academorix://modules/tax/hooks",
+  "$version": 1,
+  "title": "tax — TenancyHook + lifecycle hooks",
+  "description": "Cross-module hook implementations. TenancyHooks are the tenancy module's contract for reacting to tenant-lifecycle events (provision / suspend / erase). Tax registers three hooks: tenant erasure calculation migration, jurisdiction deactivation cascade, and tenant-erasure hard-purge of the other three tables.",
+  "namespace": "Academorix\\Finance\\Tax\\Hooks",
+  "hooks": [
+    {
+      "name": "PurgeTaxDataForErasedTenant",
+      "class": "Academorix\\Finance\\Tax\\Hooks\\PurgeTaxDataForErasedTenant",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "purpose": "Cascade delete via FK CASCADE across tax_rates + tax_jurisdictions (tenant-scoped only — NULL tenant_id platform reference rows survive) + tax_exemptions. This hook writes the compliance audit trail entry + emits count metrics per entity family (tax_rates / tax_jurisdictions / tax_exemptions purged). Deliberately EXCLUDES tax_calculations — those migrate to compliance archive via MigrateCalculationsToArchiveOnTenantErased.",
+      "compliance": "GDPR Art. 17 (right to erasure) with Art. 17(3)(b) financial-obligation carve-out for the calculation ledger. Emitted metrics feed the compliance dashboard for retention proof."
+    },
+    {
+      "name": "MigrateCalculationsToArchiveOnTenantErased",
+      "class": "Academorix\\Finance\\Tax\\Hooks\\MigrateCalculationsToArchiveOnTenantErased",
+      "kind": "tenant_erasure",
+      "listens_to": "tenancy::TenantErased",
+      "priority": 20,
+      "purpose": "Migrates tax_calculations rows to the compliance archive schema (tax_calculations_archive) linked to invoice_lines_archive per the finance module's TenantErased contract. The archive preserves the full row including tax_rate_snapshot + exemption_applied — regulator audit may need to reconstruct erased-tenant filings years later. Retention on archive: 10 years from calculation date (matches the most-restrictive regulator regime).",
+      "note": "This hook runs at priority 20 (before PurgeTaxDataForErasedTenant at priority 100) to ensure the archive migration completes before the FK CASCADE would fire on tax_calculations. The FK CASCADE on tax_calculations.tenant_id is a defensive fallback — the migration should always run first."
+    },
+    {
+      "name": "CascadeExemptionExpiryOnJurisdictionDeactivated",
+      "class": "Academorix\\Finance\\Tax\\Hooks\\CascadeExemptionExpiryOnJurisdictionDeactivated",
+      "kind": "cascade",
+      "listens_to": "tax::TaxJurisdictionDeactivated (internal event when effective_to is set to a past date)",
+      "purpose": "When a jurisdiction is deactivated (effective_to <= now()), any exemptions issued by that jurisdiction transition to verification_status='expired'. Fires TaxExemptionExpired per exemption + fires notifications via the 60/30/7-day cadence (compressed to immediate when the jurisdiction change is post-hoc)."
+    }
+  ],
+  "no_bootstrapper": {
+    "reason": "Tax does not need a tenant-boot hydration path — every operation is on-demand load from the DB. Contrast with modules like `tenancy` (bootstraps request-context) or `settings` (bootstraps config cache) that need per-request tenant hydration."
+  }
+}

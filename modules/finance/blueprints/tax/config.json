@@ -1,0 +1,209 @@
+{
+  "id": "academorix://modules/tax/config",
+  "$version": 1,
+  "title": "tax — developer configuration",
+  "configFile": "config/tax.php",
+  "envPrefix": "TAX_",
+  "sections": {
+    "providers": {
+      "keys": [
+        {
+          "path": "tax.providers.default",
+          "type": "string",
+          "env": "TAX_DEFAULT_PROVIDER",
+          "default": "native_calculator",
+          "description": "Fallback provider when a tenant has no provider config for the resolved jurisdiction. NEVER used silently on failure — the fallback is a per-tenant default, not an outage-recovery path."
+        },
+        {
+          "path": "tax.providers.taxjar.endpoint",
+          "type": "string",
+          "default": "https://api.taxjar.com/v2",
+          "description": "TaxJar production endpoint. Sandbox: https://api.sandbox.taxjar.com/v2."
+        },
+        {
+          "path": "tax.providers.taxjar.api_version",
+          "type": "string",
+          "default": "2022-01-24",
+          "description": "TaxJar API version header."
+        },
+        {
+          "path": "tax.providers.avalara.endpoint",
+          "type": "string",
+          "default": "https://rest.avatax.com/api/v2",
+          "description": "Avalara production. Sandbox: https://sandbox-rest.avatax.com/api/v2."
+        },
+        {
+          "path": "tax.providers.stripe_tax.api_version",
+          "type": "string",
+          "default": "2023-10-16",
+          "description": "Stripe API version pinned for tax calculations."
+        }
+      ]
+    },
+    "sync": {
+      "keys": [
+        {
+          "path": "tax.sync.enabled",
+          "type": "bool",
+          "env": "TAX_SYNC_ENABLED",
+          "default": true,
+          "description": "Master toggle for SyncTaxRatesFromProviderJob. Off = no scheduled sync (rates managed manually)."
+        },
+        {
+          "path": "tax.sync.schedule.taxjar",
+          "type": "string",
+          "default": "0 3 * * 1",
+          "description": "TaxJar rate sync cron. Weekly Monday 03:00 UTC."
+        },
+        {
+          "path": "tax.sync.schedule.avalara",
+          "type": "string",
+          "default": "0 3 * * 2",
+          "description": "Avalara rate sync cron. Weekly Tuesday 03:00 UTC (spread from TaxJar)."
+        },
+        {
+          "path": "tax.sync.schedule.stripe_tax",
+          "type": "string",
+          "default": "0 3 * * 3",
+          "description": "Stripe Tax rate sync cron. Weekly Wednesday 03:00 UTC."
+        }
+      ]
+    },
+    "calculation": {
+      "keys": [
+        {
+          "path": "tax.calculation.timeout_seconds",
+          "type": "int",
+          "env": "TAX_CALCULATION_TIMEOUT",
+          "default": 10,
+          "description": "Per-provider HTTP timeout. Shorter than marketing's 15s because tax calculations block invoice line creation."
+        },
+        {
+          "path": "tax.calculation.connect_timeout_seconds",
+          "type": "int",
+          "default": 3,
+          "description": "Guzzle connect timeout."
+        },
+        {
+          "path": "tax.calculation.max_retry_attempts",
+          "type": "int",
+          "default": 3,
+          "description": "Max retry attempts on transient failure. NOTE: unlike marketing's 6-attempt exponential, tax is aggressive — 3 attempts then dead-block (fail-safe against under-charging)."
+        },
+        {
+          "path": "tax.calculation.retry_backoff_seconds",
+          "type": "array",
+          "default": [1, 5, 15],
+          "description": "Exponential backoff for the 3 retry attempts. Fast — total window ~21s before dead-blocking."
+        },
+        {
+          "path": "tax.calculation.default_provider_by_jurisdiction",
+          "type": "array",
+          "default": {
+            "US": "taxjar",
+            "CA": "taxjar",
+            "AU": "taxjar",
+            "GB": "taxjar",
+            "EU": "avalara",
+            "OTHER": "native_calculator"
+          },
+          "description": "Per-jurisdiction default provider selection when the tenant has multiple configured. Tenants override per-provider-config.enabled_jurisdictions."
+        }
+      ]
+    },
+    "circuit_breaker": {
+      "keys": [
+        {
+          "path": "tax.circuit_breaker.failure_threshold",
+          "type": "int",
+          "default": 5,
+          "description": "Consecutive failures before the breaker opens."
+        },
+        {
+          "path": "tax.circuit_breaker.open_duration_seconds",
+          "type": "int",
+          "default": 3600,
+          "description": "1h open duration."
+        }
+      ]
+    },
+    "exemption": {
+      "keys": [
+        {
+          "path": "tax.exemption.auto_verify_when_registry_available",
+          "type": "bool",
+          "default": true,
+          "description": "true = VerifyTaxExemptionJob auto-verifies when the issuing jurisdiction has a public registry cross-check. false = every exemption requires manual review."
+        },
+        {
+          "path": "tax.exemption.warning_days",
+          "type": "array",
+          "default": [60, 30, 7],
+          "description": "Days before valid_until at which TaxExemptionExpiringNotification fires. Three-stage warning cadence."
+        },
+        {
+          "path": "tax.exemption.certificate_url_max_age_seconds",
+          "type": "int",
+          "default": 900,
+          "description": "S3 signed URL max lifetime for certificate_document_url. 15 min default. Longer than needed to protect against clock drift."
+        },
+        {
+          "path": "tax.exemption.certificate_url_view_lifetime_seconds",
+          "type": "int",
+          "default": 14400,
+          "description": "S3 signed URL lifetime for certificate view flow (admin reviewing an exemption). 4h default."
+        }
+      ]
+    },
+    "retention": {
+      "keys": [
+        {
+          "path": "tax.retention.calculation_years",
+          "type": "int",
+          "default": 7,
+          "description": "tax_calculations retention. 10 years for Enterprise with tax_extended_retention entitlement."
+        },
+        {
+          "path": "tax.retention.exemption_years_post_expiry",
+          "type": "int",
+          "default": 7,
+          "description": "tax_exemptions retained this many years past valid_until (regulator audit window)."
+        },
+        {
+          "path": "tax.retention.rate_indefinite",
+          "type": "bool",
+          "default": true,
+          "description": "true = tax_rates never auto-purged. false = purge after 20 years (extreme old rates lose regulator relevance)."
+        }
+      ]
+    },
+    "reconciliation": {
+      "keys": [
+        {
+          "path": "tax.reconciliation.enabled",
+          "type": "bool",
+          "default": true,
+          "description": "true = ReconcileProviderCalculationsJob runs weekly + spot-checks 1% of calculations."
+        },
+        {
+          "path": "tax.reconciliation.sample_ratio",
+          "type": "float",
+          "default": 0.01,
+          "description": "Fraction of calculations spot-checked. 0.01 = 1%. Higher ratios burn API quota."
+        },
+        {
+          "path": "tax.reconciliation.drift_threshold_cents",
+          "type": "int",
+          "default": 100,
+          "description": "Absolute-difference threshold in cents. Any drift over this triggers TaxCalculationDriftDetected."
+        },
+        {
+          "path": "tax.reconciliation.drift_threshold_percent",
+          "type": "float",
+          "default": 0.01,
+          "description": "Percentage-difference threshold. Any drift over this triggers TaxCalculationDriftDetected."
+        }
+      ]
+    }
+  }
+}

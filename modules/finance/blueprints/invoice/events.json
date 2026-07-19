@@ -1,0 +1,479 @@
+{
+  "id": "academorix://modules/invoice/events",
+  "$version": 1,
+  "title": "invoice — published events",
+  "namespace": "Academorix\\Finance\\Invoice\\Events",
+  "dispatchMode": "afterCommit",
+  "description": "Every event implements `ShouldDispatchAfterCommit` so listeners never fire against a rolled-back write. InvoicePaid is the LOAD-BEARING event of the module — it triggers the marketing::MembershipPurchased signal AND transitions the parent Membership to status='active'. InvoiceUncollectible + InvoiceSentToCollections are compliance-critical signals (bad-debt write-off + collections-agency handoff both feed the finance ledger). InvoiceLineAdded/Updated/Removed only fire while status='draft' — once the invoice is finalized, lines are immutable + credit notes replace them. Every state transition is audit-logged (7-year retention).",
+  "events": [
+    {
+      "name": "InvoiceCreated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceCreated",
+      "trigger": "InvoiceObserver.creating committed a new invoices row. Fires exactly once per invoice. Precedes any InvoiceLineAdded events.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial record per SOX §404)",
+        "activity::WriteToActivityLog (staff-visible feed)",
+        "monitoring::MetricsCollector (increments academorix.invoice.created_total)",
+        "notifications::DispatchInvoiceCreatedNotification (customer receipt-style when auto_send=true, else silent)"
+      ],
+      "payload": {
+        "invoice_id": "ULID (ivc_*)",
+        "tenant_id": "ULID (ten_*)",
+        "invoice_number": "string (2026-000001 shape)",
+        "customer_type": "string (User / Athlete / Organization)",
+        "customer_id": "ULID (polymorphic)",
+        "membership_id": "ULID (mbr_*) | null",
+        "membership_renewal_id": "ULID (mrn_*) | null",
+        "currency": "string (ISO 4217)",
+        "issue_date": "ISO 8601 date",
+        "due_date": "ISO 8601 date",
+        "status": "'draft'",
+        "created_by_user_id": "ULID | null",
+        "created_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceFinalized",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceFinalized",
+      "trigger": "InvoiceObserver.updating detected status transition draft → open. All lines have tax_calculation_id + totals frozen. Precedes InvoiceSent (dispatched separately by SendInvoiceEmailJob).",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector (increments academorix.invoice.finalized_total)",
+        "invoice::EnqueueGenerateInvoicePDFJob (generates PDF + uploads to S3)",
+        "invoice::EnqueueSendInvoiceEmailJob (delivers to customer.email)"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "customer_type": "string",
+        "customer_id": "ULID",
+        "line_count": "integer",
+        "subtotal_cents": "integer",
+        "discount_amount_cents": "integer",
+        "tax_amount_cents": "integer",
+        "total_cents": "integer",
+        "currency": "string",
+        "issue_date": "ISO 8601 date",
+        "due_date": "ISO 8601 date",
+        "finalized_by_user_id": "ULID | null",
+        "finalized_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceSent",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceSent",
+      "trigger": "SendInvoiceEmailJob successfully delivered the invoice email. Sets invoices.sent_at.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector (increments academorix.invoice.sent_total)"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "customer_type": "string",
+        "customer_id": "ULID",
+        "email_channel": "'mail' | 'in_app'",
+        "sent_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceViewed",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceViewed",
+      "trigger": "POST /invoices/{invoice}/mark-viewed OR the email-tracking pixel fired. Sets invoices.viewed_by_customer_at on FIRST view; subsequent views are idempotent (no re-fire).",
+      "queue": "invoice",
+      "consumers": [
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "customer_type": "string",
+        "customer_id": "ULID",
+        "viewed_via": "'email_pixel' | 'portal' | 'api'",
+        "viewed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoicePaid",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoicePaid",
+      "trigger": "LOAD-BEARING. InvoiceObserver.updating detected status transition any → paid. Requires amount_paid_cents == total_cents. Fires the marketing::CaptureMembershipPurchasedMarketingEvent when membership_id is set (the marketing lane's revenue signal).",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — critical financial event)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchInvoicePaidNotification (customer receipt + admin confirmation)",
+        "monitoring::MetricsCollector (increments academorix.invoice.paid_total; buckets on total_cents)",
+        "growth::marketing::CaptureMembershipPurchasedMarketingEvent (when membership_id present — the load-bearing marketing signal)",
+        "membership::ActivateMembershipOnInvoicePaid (when membership_id present — transitions Membership status=active + generates Passes)"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "customer_type": "string",
+        "customer_id": "ULID",
+        "membership_id": "ULID | null",
+        "membership_renewal_id": "ULID | null",
+        "total_cents": "integer",
+        "currency": "string",
+        "paid_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoicePartiallyPaid",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoicePartiallyPaid",
+      "trigger": "InvoiceObserver.updating detected 0 < amount_paid_cents < total_cents. Status transitions to 'partially_paid'. Non-terminal — the invoice can still reach 'paid' with future payments.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "amount_paid_cents": "integer",
+        "amount_due_cents": "integer",
+        "total_cents": "integer",
+        "currency": "string",
+        "at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceVoided",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceVoided",
+      "trigger": "InvoiceObserver.updating detected status transition draft/open → void. REFUSED when status IN ('paid', 'partially_paid') — those must go through credit-note issuance. Requires void_reason + admin+finance role.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — compliance-relevant)",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "void_reason": "string",
+        "voided_by_user_id": "ULID",
+        "voided_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceUncollectible",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceUncollectible",
+      "trigger": "Compliance-critical. InvoiceObserver.updating detected status transition past_due → uncollectible. Signals bad-debt write-off. Only allowed after N days past due AND admin+finance role. Feeds the accounting write-off ledger.",
+      "queue": "invoice-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchInvoiceUncollectibleNotification (admin — bad-debt review)",
+        "monitoring::MetricsCollector (increments academorix.invoice.uncollectible_total — every fire is a bad-debt loss signal)"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "amount_due_cents": "integer",
+        "currency": "string",
+        "days_past_due": "integer",
+        "marked_by_user_id": "ULID",
+        "marked_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoicePastDue",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoicePastDue",
+      "trigger": "MarkOverdueInvoicesJob detected due_date < now() AND status IN ('open', 'partially_paid'). Transitions status to 'past_due'. Kicks off the dunning schedule.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "invoice::EnqueueDispatchDunningRemindersJob",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "customer_type": "string",
+        "customer_id": "ULID",
+        "amount_due_cents": "integer",
+        "currency": "string",
+        "days_past_due": "integer",
+        "past_due_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceRefunded",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceRefunded",
+      "trigger": "Refund module fired refund.issued for an invoice's payment. InvoiceObserver reflects the state change: status transitions paid → refunded (full refund) OR stays 'paid' (partial refund). A CreditNote is issued in parallel via GenerateCreditNoteJob.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchInvoiceRefundedNotification (customer)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "refund_amount_cents": "integer",
+        "is_full_refund": "boolean",
+        "currency": "string",
+        "credit_note_id": "ULID (crn_*)",
+        "refunded_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceDisputed",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceDisputed",
+      "trigger": "Chargeback module fired chargeback.filed for the invoice's payment. Status transitions paid → disputed. Admin intervention required.",
+      "queue": "invoice-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "amount_disputed_cents": "integer",
+        "currency": "string",
+        "disputed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceDunningStarted",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceDunningStarted",
+      "trigger": "First DispatchDunningRemindersJob run after InvoicePastDue. Sets invoices.collection_status = 'in_dunning'. Precedes the ladder of reminder notifications.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "started_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceDunningEscalated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceDunningEscalated",
+      "trigger": "DispatchDunningRemindersJob progressed to a later stage of the dunning cadence (day+3 → day+7 → day+14 → day+30 → day+60). Each escalation fires once.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "escalation_stage": "'day_3' | 'day_7' | 'day_14' | 'day_30' | 'day_60'",
+        "days_past_due": "integer",
+        "escalated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceSentToCollections",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceSentToCollections",
+      "trigger": "Enterprise-only. EscalateDunningToCollectionsJob handed off to a third-party collections agency after N days past due (default 60). Sets invoices.collection_status = 'with_collections'.",
+      "queue": "invoice-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchInvoiceSentToCollectionsNotification (customer + admin)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "amount_due_cents": "integer",
+        "currency": "string",
+        "days_past_due": "integer",
+        "collections_agency": "string (agency slug)",
+        "sent_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceWrittenOff",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceWrittenOff",
+      "trigger": "Compliance-critical. Terminal write-off after collections gives up (typically 180 days past due). Sets invoices.collection_status = 'written_off'. Feeds bad-debt expense line on the accounting ledger.",
+      "queue": "invoice-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchInvoiceWrittenOffNotification (admin — quarterly digest)",
+        "monitoring::MetricsCollector (every fire is a bad-debt loss)"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "invoice_number": "string",
+        "amount_written_off_cents": "integer",
+        "currency": "string",
+        "written_off_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceReactivated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceReactivated",
+      "trigger": "Rare. Admin manually revives a written-off invoice (e.g. the customer paid after all). Status transitions written_off → paid + records the recovery.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "reactivated_by_user_id": "ULID",
+        "reactivated_at": "ISO 8601",
+        "recovery_note": "string"
+      }
+    },
+    {
+      "name": "InvoiceLineAdded",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceLineAdded",
+      "trigger": "InvoiceLineObserver.creating committed a new invoice_lines row. Only fires while parent invoice.status='draft' — post-finalize additions are refused.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog",
+        "invoice::EnqueueCalculateInvoiceTaxJob (when tax_calculation_id null)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "invoice_line_id": "ULID (ivl_*)",
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "line_number": "integer",
+        "item_type": "string (membership_charge / addon / setup_fee / late_fee / adjustment / one_time_service)",
+        "quantity": "decimal",
+        "unit_price_cents": "integer",
+        "total_cents": "integer",
+        "currency": "string",
+        "added_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceLineUpdated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceLineUpdated",
+      "trigger": "InvoiceLineObserver.updating detected mutation while parent invoice.status='draft'. Refused post-finalize.",
+      "queue": "invoice",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "invoice_line_id": "ULID",
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "changed_fields": "string[]",
+        "updated_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "InvoiceLineRemoved",
+      "class": "Academorix\\Finance\\Invoice\\Events\\InvoiceLineRemoved",
+      "trigger": "InvoiceLineObserver.deleting committed. Only allowed while parent invoice.status='draft'. Recomputes invoice totals + re-assigns line_numbers.",
+      "queue": "invoice",
+      "consumers": ["audit::WriteToAuditLog"],
+      "payload": {
+        "invoice_line_id": "ULID",
+        "invoice_id": "ULID",
+        "tenant_id": "ULID",
+        "removed_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CreditNoteCreated",
+      "class": "Academorix\\Finance\\Invoice\\Events\\CreditNoteCreated",
+      "trigger": "CreditNoteObserver.creating committed a new credit_notes row. Reason + amount + original_invoice reference all set. Precedes CreditNoteIssued after PDF generation.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — financial audit)",
+        "activity::WriteToActivityLog",
+        "invoice::EnqueueGenerateCreditNotePDFJob",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "credit_note_id": "ULID (crn_*)",
+        "credit_note_number": "string (CN-2026-000001)",
+        "tenant_id": "ULID",
+        "original_invoice_id": "ULID (ivc_*)",
+        "reason": "string (refund / adjustment / write_off / duplicate / customer_dispute_resolved / accounting_correction)",
+        "amount_cents": "integer",
+        "currency": "string",
+        "issued_by_user_id": "ULID",
+        "created_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CreditNoteIssued",
+      "class": "Academorix\\Finance\\Invoice\\Events\\CreditNoteIssued",
+      "trigger": "CreditNoteObserver.updating detected status transition draft → issued. PDF ready + delivered. Sets credit_notes.status='issued'.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "notifications::DispatchCreditNoteIssuedNotification (customer)",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "credit_note_id": "ULID",
+        "credit_note_number": "string",
+        "tenant_id": "ULID",
+        "original_invoice_id": "ULID",
+        "amount_cents": "integer",
+        "currency": "string",
+        "issued_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CreditNoteApplied",
+      "class": "Academorix\\Finance\\Invoice\\Events\\CreditNoteApplied",
+      "trigger": "CreditNoteObserver.updating detected status transition issued → applied. The credit was consumed — either applied to a refund, offset against a future invoice, or added to the customer's account balance. Sets applied_to_type + applied_to_id.",
+      "queue": "invoice",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years)",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "credit_note_id": "ULID",
+        "tenant_id": "ULID",
+        "applied_to_type": "'refund' | 'next_invoice' | 'customer_balance'",
+        "applied_to_id": "ULID (polymorphic)",
+        "applied_at": "ISO 8601"
+      }
+    },
+    {
+      "name": "CreditNoteVoided",
+      "class": "Academorix\\Finance\\Invoice\\Events\\CreditNoteVoided",
+      "trigger": "Rare + audit-heavy. Draft credit notes may be voided by admin before issuance (typo/mistake). Issued/applied credit notes CANNOT be voided — they're immutable financial records.",
+      "queue": "invoice-critical",
+      "consumers": [
+        "audit::WriteToAuditLog (retention: 7 years — every void of a financial record is compliance-critical)",
+        "activity::WriteToActivityLog",
+        "monitoring::MetricsCollector"
+      ],
+      "payload": {
+        "credit_note_id": "ULID",
+        "tenant_id": "ULID",
+        "void_reason": "string",
+        "voided_by_user_id": "ULID",
+        "voided_at": "ISO 8601"
+      }
+    }
+  ]
+}

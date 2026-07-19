@@ -1,0 +1,78 @@
+{
+  "id": "monitoring.resources.monitoring-alert-policy.edit",
+  "title": "Edit alert policy",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/monitoring/alert-policies/{policy}/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "monitoring", "entity": "monitoring-alert-policy", "action": "edit" },
+  "requiresPermission": "monitoring.alert_policies.update",
+  "requiresEntitlement": "monitoring_capture",
+  "dataSources": [
+    { "name": "policy", "kind": "http.get", "url": "/api/v1/monitoring/alert-policies/{policy}", "unwrap": "data" }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "Form",
+      "props": { "className": "max-w-3xl mx-auto p-6 flex flex-col gap-4" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Edit alert policy" } },
+        {
+          "kind": "Input",
+          "props": { "label": "Name" },
+          "bindings": { "defaultValue": { "$ref": "policy.name" } },
+          "actions": { "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" } }
+        },
+        {
+          "kind": "Input",
+          "props": { "label": "Threshold value", "type": "number" },
+          "bindings": { "defaultValue": { "$ref": "policy.threshold_value" } },
+          "actions": { "onChange": { "kind": "form.set", "field": "threshold_value", "valueExpr": "$value" } }
+        },
+        {
+          "kind": "Switch",
+          "props": { "label": "Enabled" },
+          "bindings": { "defaultValue": { "$ref": "policy.is_enabled" } },
+          "actions": { "onChange": { "kind": "form.set", "field": "is_enabled", "valueExpr": "$value" } }
+        },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "Severity change is restricted",
+            "description": "Severity cannot change while firing alerts exist against this policy. Resolve those alerts first."
+          }
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "primary", "children": "Save" },
+          "actions": {
+            "onPress": {
+              "kind": "http.patch",
+              "url": "/api/v1/monitoring/alert-policies/{policy}",
+              "body": "{{form}}",
+              "onSuccess": { "kind": "navigate", "to": "/tenant/monitoring/alert-policies" }
+            }
+          }
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "danger", "children": "Delete policy" },
+          "actions": {
+            "onPress": {
+              "kind": "confirm",
+              "message": "Delete this alert policy? Firing alerts against it must be resolved first.",
+              "onConfirm": {
+                "kind": "http.delete",
+                "url": "/api/v1/monitoring/alert-policies/{policy}",
+                "onSuccess": { "kind": "navigate", "to": "/tenant/monitoring/alert-policies" }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

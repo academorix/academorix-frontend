@@ -1,0 +1,52 @@
+{
+  "id": "academorix://modules/monitoring/data/providers/sentry-config",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "Sentry provider config",
+  "description": "Configuration shape for a Sentry error-tracking integration. Validated by MonitoringProviderConfigObserver on create + update.",
+  "type": "object",
+  "required": ["sentry_dsn"],
+  "additionalProperties": false,
+  "properties": {
+    "sentry_dsn": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^@]+@[^/]+/[0-9]+$",
+      "description": "Sentry DSN. Format: https://<key>@<host>/<project_id>. Extracted at dispatch time to build the envelope endpoint. Encrypted at rest."
+    },
+    "environment": {
+      "type": ["string", "null"],
+      "description": "Optional environment tag (production, staging, dev). Included in every event to enable environment-scoped filtering in Sentry.",
+      "default": "production"
+    },
+    "release": {
+      "type": ["string", "null"],
+      "description": "Optional release identifier (git sha, semver tag). Sentry uses this for release-health tracking."
+    },
+    "sample_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 1.0,
+      "description": "Sample rate for error events. 1.0 = every event; 0.1 = 10% sampled. Defaults to 1.0 (no sampling)."
+    },
+    "traces_sample_rate": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0,
+      "description": "Sample rate for performance/tracing events. Defaults to 0 (disabled) — monitoring events are already high-signal + don't need tracing."
+    },
+    "attach_signal_context_as_tags": {
+      "type": "boolean",
+      "default": true,
+      "description": "true = alert.signal_context jsonb keys become Sentry event tags for filtering. false = signal_context serialized into event body only."
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 60,
+      "default": 15
+    }
+  }
+}

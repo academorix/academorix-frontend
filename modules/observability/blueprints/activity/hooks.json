@@ -1,0 +1,23 @@
+{
+  "id": "academorix://modules/activity/hooks",
+  "$version": 1,
+  "title": "activity — tenancy hooks",
+  "description": "Per-tenant lifecycle callbacks (#[AsTenancyHook]) this module contributes. One hook: `ActivityBatchFinalizerHook` — closes any open activity batch when the tenant context tears down (typically on Octane worker request-end), so orphan batches from crashed requests are much rarer.",
+  "contract": "Academorix\\ServiceProvider\\Contracts\\TenancyHookInterface",
+  "dispatcher": "Academorix\\ServiceProvider\\Dispatchers\\TenancyHookDispatcher",
+  "registry": "Academorix\\ServiceProvider\\Registry\\TenancyHookRegistry",
+  "hooks": [
+    {
+      "name": "ActivityBatchFinalizerHook",
+      "class": "Academorix\\Observability\\Activity\\Hooks\\ActivityBatchFinalizerHook",
+      "when": "tenant.terminating",
+      "purpose": "Fires when the tenant context tears down (typically end of an Octane request cycle OR the end of a queued job that ran inside a tenant context). If an activity batch is still open (ActivityBatchStarted fired but ActivityBatchCompleted did not), close it now and emit ActivityBatchCompleted. This significantly reduces orphan-batch volume — the nightly ReconcileActivityBatchesJob only picks up genuinely crashed requests, not clean tear-downs.",
+      "priority": 30,
+      "enabledWhen": "featureFlag('activity.batch-collapse') === 'on'"
+    }
+  ],
+  "notes": [
+    "The hook fires on tenant tear-down, NOT on Octane request tear-down directly. Reason: a single Octane request may swap tenant context multiple times (impersonation flows, cross-tenant support tools). Firing per-tenant instead of per-request means each tenant gets a clean batch close.",
+    "Feature-flag gated (`activity.batch-collapse`) so ops can disable batch collapsing during incidents. When off, every activity row surfaces individually on the feed (no batch collapse rendering)."
+  ]
+}

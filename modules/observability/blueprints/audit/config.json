@@ -1,0 +1,229 @@
+{
+  "id": "academorix://modules/audit/config",
+  "$version": 1,
+  "title": "audit — developer configuration",
+  "description": "Deploy-static configuration. Mirrors `config/audit.php`. Governs storage adaptation (table name), retention windows (default + max years, hot-tier days), backfill batch tuning, export format + archive bucket, and per-tenant PII-redaction opt-in. Wraps + extends the vendor `owen-it/laravel-auditing` config; keys that overlap are intentionally repeated at our namespace so a change here does not require touching the vendor's `config/audit.php`.",
+  "configFile": "config/audit.php",
+  "envPrefix": "AUDIT_",
+  "sections": {
+    "storage": {
+      "description": "Where the vendor-adapted `audits` table lives.",
+      "keys": [
+        {
+          "path": "audit.storage.table_name",
+          "type": "string",
+          "default": "audits",
+          "env": "AUDIT_TABLE_NAME",
+          "description": "Must match `owen-it.laravel-auditing.audits_table_name`. Kept in sync at boot; drift throws AuditConfigDrift at bootstrap."
+        },
+        {
+          "path": "audit.storage.retention_policy_table_name",
+          "type": "string",
+          "default": "audit_retention_policies",
+          "description": "Owned table for tenant-scoped retention overrides."
+        }
+      ]
+    },
+    "retention": {
+      "description": "Retention windows for the vendor-adapted `audits` table.",
+      "keys": [
+        {
+          "path": "audit.retention.default_years",
+          "type": "int",
+          "default": 7,
+          "env": "AUDIT_RETENTION_DEFAULT_YEARS",
+          "description": "Baseline retention for every tenant. SOX §404 + IRS + HIPAA §164.316(b)(2)(i) alignment."
+        },
+        {
+          "path": "audit.retention.max_years",
+          "type": "int",
+          "default": 10,
+          "env": "AUDIT_RETENTION_MAX_YEARS",
+          "description": "Cap for `AuditRetentionPolicy.retention_years`. Enterprise-only via `audit_retention_extended` entitlement."
+        },
+        {
+          "path": "audit.retention.hot_days",
+          "type": "int",
+          "default": 90,
+          "env": "AUDIT_RETENTION_HOT_DAYS",
+          "description": "Number of days rows stay in the primary Postgres `audits` table before ExportAuditsToArchiveJob moves them to cold storage (Enterprise + tenant-scoped)."
+        },
+        {
+          "path": "audit.retention.cold_after_days",
+          "type": "int",
+          "default": 90,
+          "description": "Same as hot_days by default. Separate key so config can tune the two independently later."
+        },
+        {
+          "path": "audit.retention.expiring_soon_warning_days",
+          "type": "int",
+          "default": 30,
+          "description": "Emit AuditRetentionExtensionExpiringSoonNotification when `override_ends_at - now() <= this many days`."
+        }
+      ]
+    },
+    "backfill": {
+      "description": "TenantIdBackfiller tuning.",
+      "keys": [
+        {
+          "path": "audit.backfill.batch_size",
+          "type": "int",
+          "default": 10000,
+          "description": "Row count per backfill batch. Larger = faster wall-clock but more lock contention on the `audits` heap."
+        },
+        {
+          "path": "audit.backfill.target_column",
+          "type": "string",
+          "default": "tenant_id",
+          "description": "Destination column receiving the backfilled value."
+        },
+        {
+          "path": "audit.backfill.source_jsonb_path",
+          "type": "string",
+          "default": "new_values.tenant_id",
+          "description": "Primary JSONB path to read the tenant id from. Fallback path applies for deletion rows where new_values is empty."
+        },
+        {
+          "path": "audit.backfill.fallback_source_jsonb_path",
+          "type": "string",
+          "default": "old_values.tenant_id",
+          "description": "Fallback path when new_values.tenant_id is missing (typical for delete events)."
+        },
+        {
+          "path": "audit.backfill.pause_ms_between_batches",
+          "type": "int",
+          "default": 200,
+          "description": "Pause between batches to keep the backfill kind to hot-path reads."
+        }
+      ]
+    },
+    "export": {
+      "description": "Regulator + DSAR export configuration.",
+      "keys": [
+        {
+          "path": "audit.export.format",
+          "type": "string",
+          "default": "jsonl",
+          "enum": ["jsonl", "csv", "ndjson"],
+          "description": "Export payload format. jsonl is the default — one JSON object per line, gzip-compressed."
+        },
+        {
+          "path": "audit.export.archive_bucket_env",
+          "type": "string",
+          "default": "AUDIT_ARCHIVE_S3_BUCKET",
+          "description": "Environment variable naming the destination S3 bucket. Configured per-environment (Doppler) — the bucket is regulator-controlled + separate from application storage."
+        },
+        {
+          "path": "audit.export.signed_url_ttl_hours",
+          "type": "int",
+          "default": 24,
+          "description": "Signed-URL expiry on the export's download link. 24h balances 'DPO has time to grab it' with 'link doesn't stay live indefinitely'."
+        },
+        {
+          "path": "audit.export.max_rows_per_export",
+          "type": "int",
+          "default": 5000000,
+          "description": "Cap per export request. Exports exceeding this are chunked."
+        }
+      ]
+    },
+    "compliance": {
+      "description": "Compliance-shaping toggles.",
+      "keys": [
+        {
+          "path": "audit.compliance.include_ip_address",
+          "type": "bool",
+          "default": true,
+          "description": "Include the request IP on each audit row. Regulators typically require this; disabled only under a legal-privacy exception."
+        },
+        {
+          "path": "audit.compliance.include_user_agent",
+          "type": "bool",
+          "default": true,
+          "description": "Include the request User-Agent on each audit row."
+        },
+        {
+          "path": "audit.compliance.redact_pii_in_old_new_values",
+          "type": "bool",
+          "default": false,
+          "description": "Off by default — regulators need full diff context to reconstruct the mutation. Tenants may opt in via settings.audit_redact_pii; when on, a registered PiiRedactor runs against old_values + new_values at save time before persistence."
+        },
+        {
+          "path": "audit.compliance.write_purge_meta_audit",
+          "type": "bool",
+          "default": true,
+          "description": "When true, PurgeExpiredAuditsJob writes a summary `audit.purged { tenant_id, cutoff_at, row_count }` audit row. Off only in test environments."
+        }
+      ]
+    },
+    "immutability": {
+      "description": "Immutability-enforcement toggles. All defaults ON in every environment except unit-test overrides.",
+      "keys": [
+        {
+          "path": "audit.immutability.forbid_update",
+          "type": "bool",
+          "default": true,
+          "description": "AuditObserver::updating throws NOTIFICATIONS_AUDIT_ROW_IMMUTABLE when true."
+        },
+        {
+          "path": "audit.immutability.forbid_delete_outside_purge",
+          "type": "bool",
+          "default": true,
+          "description": "AuditObserver::deleting refuses unless caller is the PurgeExpiredAuditsJob service account."
+        },
+        {
+          "path": "audit.immutability.enforce_read_only_middleware",
+          "type": "bool",
+          "default": true,
+          "description": "audit.enforce_read_only middleware refuses non-GET methods on every /audits* route."
+        }
+      ]
+    },
+    "vendor": {
+      "description": "Vendor `owen-it/laravel-auditing` alignment. These keys mirror vendor config so the two stay in sync at boot.",
+      "keys": [
+        {
+          "path": "audit.vendor.enabled",
+          "type": "bool",
+          "default": true,
+          "description": "Mirrors vendor `audit.enabled`. Disabling turns off capture globally (emergency kill switch — pair with the `audit.capture` feature flag)."
+        },
+        {
+          "path": "audit.vendor.events",
+          "type": "array<string>",
+          "default": ["created", "updated", "deleted", "restored"],
+          "description": "Vendor-recognized event names captured by default. Custom events register at boot via the vendor `Auditable::registerAuditableTransition` seam."
+        },
+        {
+          "path": "audit.vendor.threshold",
+          "type": "int",
+          "default": 0,
+          "description": "Vendor `audit.threshold` — max audit rows retained PER auditable model instance (0 = unlimited). We keep 0 because retention is time-based, not per-instance-count-based."
+        },
+        {
+          "path": "audit.vendor.strict",
+          "type": "bool",
+          "default": true,
+          "description": "Vendor `audit.strict` — restrict which model attributes are auditable to only the model's $auditInclude list (safer default)."
+        }
+      ]
+    },
+    "test_mode": {
+      "description": "Test-env overrides.",
+      "keys": [
+        {
+          "path": "audit.test.stub_purge",
+          "type": "bool",
+          "default": false,
+          "description": "When true, PurgeExpiredAuditsJob logs the intended cutoff but does not delete. Test envs only."
+        },
+        {
+          "path": "audit.test.forbid_update_relaxed",
+          "type": "bool",
+          "default": false,
+          "description": "Relax the update-forbid guard for tests that must fabricate audit rows in a specific state. Never in production."
+        }
+      ]
+    }
+  }
+}

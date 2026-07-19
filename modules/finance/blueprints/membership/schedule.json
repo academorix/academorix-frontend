@@ -1,0 +1,49 @@
+{
+  "id": "academorix://modules/membership/schedule",
+  "$version": 1,
+  "title": "membership — scheduled tasks",
+  "entries": [
+    {
+      "name": "membership-process-renewals",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Membership\\Jobs\\ProcessMembershipRenewalJob",
+      "cron": "0 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly on the hour: create MembershipRenewal rows for memberships whose next_renewal_at has arrived + dispatch charge attempts."
+    },
+    {
+      "name": "membership-retry-failed-renewals",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Membership\\Jobs\\RetryFailedRenewalJob",
+      "cron": "15 * * * *",
+      "timezone": "UTC",
+      "purpose": "Hourly at :15: retry failed renewals whose next_attempt_at has arrived. Day+3 / +7 / +14 retry ladder."
+    },
+    {
+      "name": "membership-expire",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Membership\\Jobs\\ExpireMembershipJob",
+      "cron": "0 3 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 03:00 UTC: transition soft-cancelled memberships past their period end to expired."
+    },
+    {
+      "name": "membership-expire-stale-passes",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Membership\\Jobs\\ExpireStalePassesJob",
+      "cron": "0 4 * * *",
+      "timezone": "UTC",
+      "purpose": "Nightly 04:00 UTC: expire unconsumed passes past valid_until."
+    },
+    {
+      "name": "membership-notify-renewal-upcoming",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Membership\\Jobs\\NotifyRenewalUpcomingJob",
+      "cron": "0 9 * * *",
+      "timezone": "UTC",
+      "purpose": "Daily 09:00 UTC: send 7-day renewal-upcoming notifications."
+    },
+    {
+      "name": "membership-generate-monthly-statements",
+      "command": "queue:dispatch --job=Academorix\\Finance\\Membership\\Jobs\\GenerateMembershipStatementsJob",
+      "cron": "0 6 1 * *",
+      "timezone": "UTC",
+      "purpose": "Monthly on the 1st at 06:00 UTC: produce per-tenant membership statement PDFs for the previous month."
+    }
+  ]
+}

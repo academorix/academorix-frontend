@@ -1,0 +1,91 @@
+{
+  "id": "tax.resources.tax-jurisdiction.edit",
+  "title": "Edit tax jurisdiction",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/jurisdictions/:jurisdictionId/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-jurisdiction", "action": "edit" },
+  "requiresPermission": "tax.jurisdictions.update",
+  "requiresEntitlement": "tax_capture",
+  "dataSources": [
+    {
+      "name": "jurisdiction",
+      "kind": "http.get",
+      "url": "/api/v1/tax/jurisdictions/{{routeParams.jurisdictionId}}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "max-w-2xl mx-auto p-6 flex flex-col gap-6" },
+      "children": [
+        { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold" }, "bindings": { "children": { "$expr": "'Edit ' + jurisdiction.name" } } },
+        {
+          "kind": "Alert",
+          "props": {
+            "variant": "warning",
+            "title": "Platform-reference jurisdiction",
+            "description": "Editing platform-reference jurisdictions (tenant_id IS NULL) is refused unless caller is super_admin. Tenant-scoped custom jurisdictions can be freely edited."
+          },
+          "bindings": { "hidden": { "$expr": "!!jurisdiction.tenant_id" } }
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6 flex flex-col gap-4" },
+          "children": [
+            {
+              "kind": "Input",
+              "props": { "label": "Name", "required": true },
+              "bindings": { "initialValue": { "$ref": "jurisdiction.name" } },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "name", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "Input",
+              "props": {
+                "label": "Registration number",
+                "helpText": "Your VAT/GST/EIN registered in this jurisdiction."
+              },
+              "bindings": { "initialValue": { "$ref": "jurisdiction.registration_number" } },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "registration_number", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "DateField",
+              "props": { "label": "Effective to (deactivate)", "helpText": "Set to close out this jurisdiction. Cascades exemption expiry via CascadeExemptionExpiryOnJurisdictionDeactivated." },
+              "bindings": { "initialValue": { "$ref": "jurisdiction.effective_to" } },
+              "actions": {
+                "onChange": { "kind": "form.set", "field": "effective_to", "valueExpr": "$value" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Button",
+          "props": { "variant": "primary", "size": "lg", "children": "Save changes" },
+          "actions": {
+            "onPress": {
+              "kind": "http.patch",
+              "url": "/api/v1/tax/jurisdictions/{{jurisdiction.id}}",
+              "body": {
+                "name": "{{form.name}}",
+                "registration_number": "{{form.registration_number}}",
+                "effective_to": "{{form.effective_to}}"
+              },
+              "onSuccess": {
+                "kind": "navigate",
+                "toExpr": "'/tenant/tax/jurisdictions/' + jurisdiction.id"
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

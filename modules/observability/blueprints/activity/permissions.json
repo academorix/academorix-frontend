@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/activity/permissions",
+  "$version": 1,
+  "title": "activity — permissions",
+  "description": "Permission strings this module publishes. Split by guard: `sanctum` for tenant admins + tenant users reading the feed; `platform_admin` for Academorix ops with cross-tenant read authority. Seeded by ActivityPermissionSeeder with is_system=true.",
+  "seeder": "Academorix\\Observability\\Activity\\Database\\Seeders\\ActivityPermissionSeeder",
+  "isSystem": true,
+  "permissions": [
+    {
+      "name": "activity.viewAny",
+      "guard": "sanctum",
+      "description": "List + show activities in the caller's tenant. RBAC-narrowed by `activity.enforce_scope` middleware — the caller sees only activities on entities they hold viewing permissions for. Every authenticated tenant user gets this by default (baseline read).",
+      "grantsPolicies": ["ActivityPolicy@viewAny", "ActivityPolicy@view", "ActivityPolicy@subscribeFeed"],
+      "seededOn": ["owner", "admin", "member", "coach", "staff"]
+    },
+    {
+      "name": "activity.audit_any",
+      "guard": "sanctum",
+      "description": "Enumerate activities across the tenant — call `/api/v1/activities/by-user/{user}` for any actor, or bypass the RBAC-narrowed default on the tenant list. Admin-level compliance surface.",
+      "grantsPolicies": ["ActivityPolicy@viewByUser (unbounded)"],
+      "seededOn": ["owner", "admin", "compliance_officer"]
+    },
+    {
+      "name": "activity.retention.manage",
+      "guard": "sanctum",
+      "description": "CRUD on retention policies. Gated by `activity_retention_extended` entitlement (Enterprise) for retention_days > 90.",
+      "grantsPolicies": [
+        "ActivityRetentionPolicyPolicy@viewAny",
+        "ActivityRetentionPolicyPolicy@view",
+        "ActivityRetentionPolicyPolicy@create",
+        "ActivityRetentionPolicyPolicy@update",
+        "ActivityRetentionPolicyPolicy@delete"
+      ],
+      "seededOn": ["owner", "admin", "compliance_officer"]
+    },
+    {
+      "name": "activity.export",
+      "guard": "sanctum",
+      "description": "Trigger an asynchronous CSV export. Gated by `activity_export` entitlement (Medium+) AND this permission.",
+      "grantsPolicies": ["ActivityPolicy@export"],
+      "seededOn": ["owner", "admin", "compliance_officer"]
+    },
+    {
+      "name": "platform.activity.viewAny",
+      "guard": "platform_admin",
+      "description": "Cross-tenant list. Every read captured in audit context (SOC 2 CC6.1).",
+      "grantsPolicies": ["ActivityPolicy@viewAnyPlatform"],
+      "seededOn": ["super_admin", "ops", "compliance"]
+    },
+    {
+      "name": "platform.activity.view",
+      "guard": "platform_admin",
+      "description": "Cross-tenant detail read.",
+      "grantsPolicies": ["ActivityPolicy@viewPlatform"],
+      "seededOn": ["super_admin", "ops", "compliance"]
+    }
+  ],
+  "notes": [
+    "`activity.viewAny` is seeded on EVERY tenant-user role — activity is a baseline feature. The RBAC filter in the middleware narrows the actual result set to permitted subjects; the permission just says 'you can read the feed at all'.",
+    "`activity.audit_any` is the compliance-officer permission — it BYPASSES the RBAC-narrowing filter, letting the caller see every activity across the tenant regardless of subject-level permissions. Split from viewAny because bypassing RBAC is a serious authority.",
+    "There is no `activity.write` permission — writes happen exclusively via the vendor `LogsActivity` trait on domain models. The permission surface exists only for READ authorities."
+  ]
+}

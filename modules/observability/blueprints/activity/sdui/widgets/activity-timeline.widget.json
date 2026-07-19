@@ -1,0 +1,283 @@
+{
+  "id": "activity.timeline",
+  "title": "Activity timeline",
+  "version": 1,
+  "kind": "SduiWidget",
+  "description": "The canonical timeline renderer — a vertical list of activity rows with grouped date headers, batch-collapsed items, subject/causer chips, action links. Consumed by every activity list + entity + user + feed screen. Downstream modules embed it on their own resource-show screens (Booking / Athlete / Team / Branch) to render 'What happened on this thing' inline.",
+  "props": {
+    "items": {
+      "type": "array",
+      "required": true,
+      "description": "Activity rows to render. Each row conforms to Activity.schema.json."
+    },
+    "isLoading": {
+      "type": "boolean",
+      "default": false
+    },
+    "hasMore": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether there's more data available. Powers the 'Load more' affordance at the bottom."
+    },
+    "groupBy": {
+      "type": "string",
+      "default": "day",
+      "enum": ["none", "hour", "day", "week"],
+      "description": "How to group rows visually. 'day' renders 'Today' / 'Yesterday' / 'Monday, October 12' headers. 'none' renders a flat list."
+    },
+    "collapseBatches": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether same-batch rows collapse into 'X made N changes' with an expand affordance. Off = every row surfaces individually."
+    },
+    "hideSubject": {
+      "type": "boolean",
+      "default": false,
+      "description": "Hide the subject chip on each row. Set true when the timeline is embedded on a resource-show screen where the subject is redundant."
+    },
+    "hideCauser": {
+      "type": "boolean",
+      "default": false,
+      "description": "Hide the causer chip. Set true when the timeline is on a per-user view where the causer is redundant."
+    },
+    "compact": {
+      "type": "boolean",
+      "default": false,
+      "description": "Reduce spacing between rows. Suitable for dashboard-widget contexts."
+    },
+    "showFilters": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to render inline log_name + date-range filters above the list. False = filters come from a parent screen."
+    },
+    "emptyState": {
+      "type": "object",
+      "shape": {
+        "title": "string",
+        "description": "string"
+      },
+      "description": "Rendered when items is empty (and not loading)."
+    }
+  },
+  "dataSources": [],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col" },
+      "children": [
+        {
+          "id": "loading-shimmer",
+          "kind": "Skeleton",
+          "bindings": {
+            "hidden": {
+              "$expr": "!props.isLoading || (props.items && props.items.length > 0)"
+            }
+          },
+          "props": { "rows": 6 }
+        },
+        {
+          "id": "empty",
+          "kind": "EmptyState",
+          "bindings": {
+            "hidden": {
+              "$expr": "props.isLoading || (props.items && props.items.length > 0)"
+            }
+          },
+          "props": {
+            "leadingIcon": "clock",
+            "title": { "$ref": "props.emptyState.title" },
+            "description": { "$ref": "props.emptyState.description" }
+          }
+        },
+        {
+          "id": "list",
+          "kind": "List",
+          "bindings": {
+            "hidden": { "$expr": "!props.items || props.items.length === 0" },
+            "items": {
+              "$expr": "props.groupBy === 'none' ? props.items : groupActivitiesByDay(props.items, props.collapseBatches)"
+            }
+          },
+          "itemRenderer": {
+            "kind": "View",
+            "children": [
+              {
+                "id": "group-header",
+                "kind": "Text",
+                "props": {
+                  "as": "h3",
+                  "className": "text-xs uppercase tracking-wide text-muted mt-4 mb-2"
+                },
+                "bindings": {
+                  "hidden": {
+                    "$expr": "props.groupBy === 'none' || !item.isGroupHeader"
+                  },
+                  "children": { "$ref": "item.groupLabel" }
+                }
+              },
+              {
+                "id": "row",
+                "kind": "View",
+                "bindings": {
+                  "hidden": { "$expr": "item.isGroupHeader" }
+                },
+                "props": {
+                  "className": "flex items-start gap-3 py-3 border-b last:border-b-0"
+                },
+                "children": [
+                  {
+                    "kind": "Avatar",
+                    "props": { "size": "sm" },
+                    "bindings": {
+                      "hidden": {
+                        "$expr": "props.hideCauser || !item.causer"
+                      },
+                      "src": { "$ref": "item.causer.avatar_url" },
+                      "label": { "$ref": "item.causer.display_name" }
+                    }
+                  },
+                  {
+                    "kind": "View",
+                    "props": { "className": "flex-1 flex flex-col gap-1" },
+                    "children": [
+                      {
+                        "id": "description",
+                        "kind": "Text",
+                        "props": { "className": "text-sm" },
+                        "bindings": {
+                          "children": {
+                            "$expr": "item.is_batch_collapsed ? (item.causer?.display_name || 'Someone') + ' made ' + item.batchSize + ' changes' : item.description"
+                          }
+                        }
+                      },
+                      {
+                        "id": "meta",
+                        "kind": "View",
+                        "props": {
+                          "className": "flex items-center gap-2 text-xs text-muted"
+                        },
+                        "children": [
+                          {
+                            "kind": "Text",
+                            "bindings": {
+                              "children": { "$ref": "item.human_time" }
+                            }
+                          },
+                          {
+                            "kind": "Chip",
+                            "props": { "size": "xs", "variant": "neutral" },
+                            "bindings": {
+                              "hidden": { "$expr": "props.hideCauser" },
+                              "children": { "$ref": "item.log_name" }
+                            }
+                          },
+                          {
+                            "kind": "Link",
+                            "props": { "className": "text-xs" },
+                            "bindings": {
+                              "hidden": {
+                                "$expr": "props.hideSubject || !item.subject"
+                              },
+                              "children": {
+                                "$expr": "item.subject?.display_label || item.subject_id"
+                              },
+                              "toExpr": "'/tenant/' + item.subject_type + 's/' + item.subject_id"
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "id": "detail-link",
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "size": "xs",
+                      "isIconOnly": true,
+                      "leadingIcon": "chevron-right",
+                      "ariaLabel": "Open activity detail"
+                    },
+                    "bindings": {
+                      "hidden": { "$expr": "props.compact" }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "navigate",
+                        "toExpr": "'/tenant/activities/' + item.id"
+                      }
+                    }
+                  },
+                  {
+                    "id": "expand-batch",
+                    "kind": "Button",
+                    "props": {
+                      "variant": "ghost",
+                      "size": "xs",
+                      "leadingIcon": "chevron-down",
+                      "children": "Expand"
+                    },
+                    "bindings": {
+                      "hidden": {
+                        "$expr": "!item.is_batch_collapsed || item.batch_expanded === true"
+                      }
+                    },
+                    "actions": {
+                      "onPress": {
+                        "kind": "widget.setLocalState",
+                        "key": "batch_expanded",
+                        "valueExpr": "true",
+                        "targetItemBy": "batch_uuid",
+                        "targetItemValue": { "$ref": "item.batch_uuid" }
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "batch-children",
+                "kind": "View",
+                "bindings": {
+                  "hidden": {
+                    "$expr": "!item.is_batch_collapsed || item.batch_expanded !== true"
+                  }
+                },
+                "props": { "className": "pl-11 flex flex-col gap-1" },
+                "children": [
+                  {
+                    "kind": "List",
+                    "bindings": { "items": { "$ref": "item.batchChildren" } },
+                    "itemRenderer": {
+                      "kind": "Text",
+                      "props": { "className": "text-xs text-muted py-1" },
+                      "bindings": {
+                        "children": { "$ref": "item.description" }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "id": "load-more",
+          "kind": "Button",
+          "bindings": {
+            "hidden": { "$expr": "!props.hasMore" }
+          },
+          "props": {
+            "variant": "ghost",
+            "size": "sm",
+            "className": "self-center mt-4",
+            "children": "Load more"
+          },
+          "actions": {
+            "onPress": { "kind": "widget.emit", "event": "onLoadMore" }
+          }
+        }
+      ]
+    }
+  ]
+}

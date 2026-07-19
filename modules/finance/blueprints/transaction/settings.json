@@ -1,0 +1,245 @@
+{
+  "id": "academorix://modules/transaction/settings",
+  "$version": 1,
+  "title": "transaction — settings",
+  "description": "Tenant-facing transaction + ledger configuration. Two groups: `transaction` for tenant-wide ledger config (base currency, enabled accounts, reconciliation schedule, alerts routing) + `transaction_user` for per-user preferences (monthly-report subscription, imbalance-alert opt-in).",
+  "storedIn": "settings",
+  "reference": { "contract": "academorix://modules/settings/attributes" },
+  "groups": [
+    {
+      "key": "transaction",
+      "class": "Academorix\\Finance\\Transaction\\Settings\\TransactionSettings",
+      "label": "Ledger + transactions",
+      "description": "Tenant-wide configuration for the money-movement ledger. Regulator-critical — changes to base_currency + enabled_accounts + threshold configs write audit rows with 7-year retention.",
+      "icon": "banknotes",
+      "scope": "tenant",
+      "public": false,
+      "sortOrder": 45,
+      "permission": "transaction.viewAny",
+      "requiresEntitlement": "transaction_capture",
+      "sections": [
+        {
+          "label": "Base currency + multi-currency",
+          "description": "The tenant's base currency + multi-currency policy. base_currency is set at provisioning + should rarely change — every historical transaction is measured against the base at commit time.",
+          "icon": "currency-dollar",
+          "sortOrder": 1,
+          "fields": [
+            {
+              "name": "base_currency",
+              "controlType": "combobox",
+              "label": "Tenant base currency",
+              "helpText": "Every transaction is reported in this currency (via base_amount_cents on cross-currency transactions). Changing this AFTER historical transactions exist is a regulator-critical event — writes an audit row + notifies finance role + requires admin approval.",
+              "defaultValue": "USD",
+              "requiresPermission": "transaction.reverse",
+              "sortOrder": 1
+            },
+            {
+              "name": "cross_currency_rate_provider",
+              "controlType": "combobox",
+              "label": "Exchange rate provider",
+              "options": {
+                "openexchangerates": "Open Exchange Rates",
+                "fixer_io": "Fixer.io",
+                "ecb_daily": "ECB Daily (official)",
+                "manual": "Manual entry only"
+              },
+              "defaultValue": "openexchangerates",
+              "requiresEntitlement": "transaction_multi_currency",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Enabled accounts",
+          "description": "Chart-of-accounts entries active for the tenant. Disabling an account refuses new ledger entries against it (existing entries stay).",
+          "icon": "table-cells",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "enabled_accounts",
+              "controlType": "multi-select",
+              "label": "Enabled ledger accounts",
+              "options": {
+                "revenue": "Revenue",
+                "accounts_receivable": "Accounts Receivable",
+                "cash": "Cash",
+                "refunds_owed": "Refunds Owed",
+                "refunds_expense": "Refunds Expense",
+                "tax_payable": "Tax Payable",
+                "gateway_fees": "Gateway Fees",
+                "bank_deposits": "Bank Deposits",
+                "write_offs": "Write-offs",
+                "coupons_expense": "Coupons Expense",
+                "chargebacks_expense": "Chargebacks Expense",
+                "accounts_payable": "Accounts Payable",
+                "prepayments": "Prepayments",
+                "deferred_revenue": "Deferred Revenue"
+              },
+              "defaultValue": ["revenue", "accounts_receivable", "cash", "refunds_owed", "refunds_expense", "tax_payable", "gateway_fees", "bank_deposits", "write_offs", "coupons_expense", "chargebacks_expense", "accounts_payable", "prepayments", "deferred_revenue"],
+              "helpText": "Disabling an account after use will preserve historical ledger entries but refuse new writes against it. Regulator audit trail preserved.",
+              "sortOrder": 1
+            }
+          ]
+        },
+        {
+          "label": "Account balance thresholds",
+          "description": "Watermark thresholds that fire AccountBalanceThresholdCrossed alerts. Cents.",
+          "icon": "chart-bar",
+          "sortOrder": 3,
+          "fields": [
+            {
+              "name": "high_watermark_accounts_receivable_cents",
+              "controlType": "number",
+              "label": "Accounts receivable high watermark (cents)",
+              "defaultValue": 5000000,
+              "helpText": "Alert fires when accounts_receivable balance exceeds this value. $50,000 default.",
+              "sortOrder": 1
+            },
+            {
+              "name": "high_watermark_refunds_owed_cents",
+              "controlType": "number",
+              "label": "Refunds owed high watermark (cents)",
+              "defaultValue": 1000000,
+              "sortOrder": 2
+            },
+            {
+              "name": "high_watermark_tax_payable_cents",
+              "controlType": "number",
+              "label": "Tax payable high watermark (cents)",
+              "defaultValue": 500000,
+              "helpText": "Signal for filing due.",
+              "sortOrder": 3
+            },
+            {
+              "name": "low_watermark_cash_cents",
+              "controlType": "number",
+              "label": "Cash low watermark (cents)",
+              "defaultValue": 100000,
+              "helpText": "Alert fires when cash balance falls below this value. $1,000 default.",
+              "sortOrder": 4
+            }
+          ]
+        },
+        {
+          "label": "Notifications routing",
+          "description": "Where imbalance + threshold + amendment alerts are delivered.",
+          "icon": "bell-alert",
+          "sortOrder": 4,
+          "fields": [
+            {
+              "name": "imbalance_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on ledger imbalance",
+              "defaultValue": [],
+              "helpText": "Every user listed receives LedgerImbalanceDetectedNotification. Tenant owners + admins are always notified regardless.",
+              "sortOrder": 1
+            },
+            {
+              "name": "amendment_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on ledger amendments",
+              "defaultValue": [],
+              "helpText": "Every user listed receives TransactionAmendmentAppliedNotification.",
+              "sortOrder": 2
+            },
+            {
+              "name": "threshold_notify_users",
+              "controlType": "user-multi-select",
+              "label": "Notify these users on account balance thresholds",
+              "defaultValue": [],
+              "sortOrder": 3
+            }
+          ]
+        },
+        {
+          "label": "Retention",
+          "description": "Transaction + ledger-entry retention window.",
+          "icon": "archive-box",
+          "sortOrder": 5,
+          "fields": [
+            {
+              "name": "retention_years",
+              "controlType": "combobox",
+              "label": "Retention window",
+              "options": {
+                "7": "7 years (default)",
+                "10": "10 years (Enterprise only)"
+              },
+              "defaultValue": "7",
+              "requiresEntitlement": "transaction_extended_retention",
+              "sortOrder": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "transaction_user",
+      "class": "Academorix\\Finance\\Transaction\\Settings\\TransactionUserSettings",
+      "label": "My ledger preferences",
+      "description": "Per-user preferences for the ledger surface.",
+      "icon": "user-circle",
+      "scope": "user",
+      "public": true,
+      "sortOrder": 45,
+      "sections": [
+        {
+          "label": "Monthly ledger report subscription",
+          "icon": "chart-bar",
+          "sortOrder": 1,
+          "requiresEntitlement": "transaction_advanced_reporting",
+          "fields": [
+            {
+              "name": "receive_monthly_ledger_report",
+              "controlType": "toggle",
+              "label": "Send me the monthly General Ledger report",
+              "defaultValue": true,
+              "sortOrder": 1
+            },
+            {
+              "name": "monthly_report_format",
+              "controlType": "combobox",
+              "label": "Preferred format",
+              "options": {
+                "csv": "CSV (Excel-friendly)",
+                "jsonl": "JSONL (programmatic)",
+                "both": "Both"
+              },
+              "defaultValue": "csv",
+              "sortOrder": 2
+            }
+          ]
+        },
+        {
+          "label": "Alert subscriptions",
+          "icon": "bell",
+          "sortOrder": 2,
+          "fields": [
+            {
+              "name": "receive_imbalance_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on ledger imbalances",
+              "defaultValue": true,
+              "helpText": "This preference only takes effect if the tenant admin listed you in imbalance_notify_users. Owners + admins always receive.",
+              "sortOrder": 1
+            },
+            {
+              "name": "receive_threshold_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on account balance thresholds",
+              "defaultValue": true,
+              "sortOrder": 2
+            },
+            {
+              "name": "receive_amendment_alerts",
+              "controlType": "toggle",
+              "label": "Notify me on ledger amendments",
+              "defaultValue": true,
+              "sortOrder": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

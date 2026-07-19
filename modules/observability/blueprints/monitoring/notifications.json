@@ -1,0 +1,108 @@
+{
+  "id": "academorix://modules/monitoring/notifications",
+  "$version": 1,
+  "title": "monitoring — notification classes + categories",
+  "namespace": "Academorix\\Observability\\Monitoring\\Notifications",
+  "notifications": [
+    "MonitoringAlertFiredNotification",
+    "MonitoringIncidentOpenedNotification",
+    "MonitoringIncidentEscalatedNotification",
+    "MonitoringHealthCheckPersistentlyFailingNotification",
+    "MonitoringProviderCircuitBreakerOpenedNotification",
+    "MonitoringPostmortemRequiredNotification",
+    "MonitoringWeeklyDigestNotification"
+  ],
+  "categories": [
+    {
+      "slug": "monitoring.alert_fired",
+      "display_name": "Monitoring alert fired",
+      "description": "A monitoring alert fired. P1 pages the primary on-call via PagerDuty/Opsgenie. P2 alerts primary on-call channel. P3 + P4 are dashboard-only (no push).",
+      "default_channels": ["mail", "in_app", "push", "sms"],
+      "channel_matrix_by_severity": {
+        "p1": ["mail", "in_app", "push", "sms"],
+        "p2": ["mail", "in_app", "push"],
+        "p3": ["in_app"],
+        "p4": ["in_app"]
+      },
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "on_call + tenant_admin + platform_ops"
+    },
+    {
+      "slug": "monitoring.incident_opened",
+      "display_name": "Monitoring incident opened",
+      "description": "A new monitoring incident was opened. Includes grouped alert count + affected services + severity. P1 pages backup on-call in addition to primary. Auto-fires MonitoringIncidentEscalatedNotification after the SLA elapses.",
+      "default_channels": ["mail", "in_app", "push", "sms"],
+      "channel_matrix_by_severity": {
+        "p1": ["mail", "in_app", "push", "sms"],
+        "p2": ["mail", "in_app", "push"],
+        "p3": ["in_app"],
+        "p4": ["in_app"]
+      },
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "on_call + tenant_admin + platform_ops"
+    },
+    {
+      "slug": "monitoring.incident_escalated",
+      "display_name": "Monitoring incident escalated",
+      "description": "A monitoring incident has been open past its SLA without acknowledgment. Pages the backup on-call per oncall_page_config.escalation_policy. P1 SLA = 5min; P2 = 15min; P3 = 60min. Every escalation increments the incident's escalation_count.",
+      "default_channels": ["mail", "in_app", "push", "sms"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "backup_on_call + tenant_owner + platform_ops"
+    },
+    {
+      "slug": "monitoring.health_check_persistently_failing",
+      "display_name": "Health check persistently failing",
+      "description": "A health check has been unhealthy for 7+ consecutive runs but has not yet crossed an alert threshold. Leading indicator — the tenant admin should investigate before the check drives an alert. Includes check name, target, last error, consecutive failure count.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_admin + tenant_owner"
+    },
+    {
+      "slug": "monitoring.provider_circuit_breaker_opened",
+      "display_name": "Monitoring provider unreachable",
+      "description": "A monitoring notification provider (Sentry/Datadog/PagerDuty/…) has been marked unreachable after N consecutive delivery failures. Every fire is a P1 signal — the tenant's monitoring is telling them their monitoring is broken. Fires the failover routing (if PagerDuty: fail over to Opsgenie for pending notifications; if Opsgenie: fail over to PagerDuty).",
+      "default_channels": ["mail", "in_app", "push", "sms"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + platform_ops"
+    },
+    {
+      "slug": "monitoring.postmortem_required",
+      "display_name": "P1 postmortem required",
+      "description": "A P1 incident resolved. Postmortem doc is required per the tenant's incident-response policy. Auto-creates a postmortem template + assigns to the incident's acknowledger. Due within 5 business days.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + incident_acknowledger"
+    },
+    {
+      "slug": "monitoring.weekly_digest",
+      "display_name": "Weekly SLO digest",
+      "description": "Opt-in weekly summary of tenant SLO health: alert counts by severity, incident counts, MTTR, top 5 firing policies, top 5 unhealthy checks. Every Monday 09:00 tenant-local.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": false,
+      "is_system": true,
+      "audience": "tenant_admin + tenant_owner + on_call"
+    }
+  ]
+}

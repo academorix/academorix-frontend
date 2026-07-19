@@ -1,0 +1,60 @@
+{
+  "id": "academorix://modules/transaction/notifications",
+  "$version": 1,
+  "title": "transaction — notification classes + categories",
+  "namespace": "Academorix\\Finance\\Transaction\\Notifications",
+  "notifications": [
+    "LedgerImbalanceDetectedNotification",
+    "TransactionAmendmentAppliedNotification",
+    "AccountBalanceAlertNotification",
+    "MonthlyLedgerReportNotification"
+  ],
+  "categories": [
+    {
+      "slug": "transaction.ledger_imbalance",
+      "display_name": "Ledger imbalance detected",
+      "description": "CRITICAL P0. The double-entry ledger is unbalanced — a transaction or a global tenant-account sum shows SUM(debits) != SUM(credits). New transactions are halted until an ops-authored fix lands. Includes scope (per-transaction / per-account-daily / global-tenant), affected account or transaction, imbalance amount, and the reconciler run that detected it.",
+      "default_channels": ["mail", "in_app", "push", "sms"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role + platform_ops + on_call"
+    },
+    {
+      "slug": "transaction.amendment_applied",
+      "display_name": "Ledger amendment applied",
+      "description": "A manual ledger correction was applied — an admin invoked the transaction reversal endpoint with reversal_reason='accounting_adjustment'. Every fire is a regulator-visible signal. Includes the original transaction, the offsetting reversal transaction, the actor, and the required justification note.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "transactional",
+      "consent_tier": "transactional_required",
+      "opt_out_allowed": false,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role"
+    },
+    {
+      "slug": "transaction.account_balance_alert",
+      "display_name": "Account balance threshold crossed",
+      "description": "A ledger account balance crossed a configured threshold — e.g. accounts_receivable > $50k (collection risk); cash < $1k (liquidity risk); refunds_owed > $10k (needs disbursement). Includes the account, current balance, threshold kind (high/low watermark), and the transaction that caused the crossing.",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role"
+    },
+    {
+      "slug": "transaction.monthly_ledger_report",
+      "display_name": "Monthly General Ledger report ready",
+      "description": "The tenant's monthly General Ledger (GL) report is ready — per-account opening balance + all posted transactions + closing balance + total debits + total credits for the closed month. Delivered as accountant-shaped CSV + JSONL. Medium+ tier (requires transaction_advanced_reporting entitlement).",
+      "default_channels": ["mail", "in_app"],
+      "priority": "informational",
+      "consent_tier": "functional_optional",
+      "opt_out_allowed": true,
+      "default_opt_in": true,
+      "is_system": true,
+      "audience": "tenant_owner + tenant_admin + finance_role"
+    }
+  ]
+}

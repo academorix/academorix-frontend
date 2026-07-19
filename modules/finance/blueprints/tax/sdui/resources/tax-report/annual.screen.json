@@ -1,0 +1,150 @@
+{
+  "id": "tax.resources.tax-report.annual",
+  "title": "Annual tax report",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/tax/reports/annual",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "tax", "entity": "tax-report", "action": "annual" },
+  "requiresPermission": "tax.reports.annual.view",
+  "requiresEntitlement": "tax_annual_report",
+  "dataSources": [
+    {
+      "name": "report",
+      "kind": "http.get",
+      "url": "/api/v1/tax/reports/annual",
+      "unwrap": "data",
+      "queryFromFilters": true,
+      "initialFilters": { "year": "$currentYear" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-7xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-start justify-between gap-4" },
+          "children": [
+            {
+              "kind": "View",
+              "children": [
+                { "kind": "Text", "props": { "as": "h1", "className": "text-2xl font-semibold", "children": "Annual tax report" } },
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Aggregated tax_calculations per jurisdiction for regulator filing." } }
+              ]
+            },
+            {
+              "kind": "View",
+              "props": { "className": "flex items-center gap-2" },
+              "children": [
+                {
+                  "kind": "Button",
+                  "props": { "variant": "secondary", "leadingIcon": "arrow-down-tray", "children": "Export CSV" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.download",
+                      "url": "/api/v1/tax/reports/annual?year={{filters.year}}&format=csv",
+                      "filename": "tax-report-{{filters.year}}.csv"
+                    }
+                  }
+                },
+                {
+                  "kind": "Button",
+                  "props": { "variant": "primary", "leadingIcon": "document-arrow-down", "children": "Export PDF" },
+                  "actions": {
+                    "onPress": {
+                      "kind": "http.download",
+                      "url": "/api/v1/tax/reports/annual?year={{filters.year}}&format=pdf",
+                      "filename": "tax-report-{{filters.year}}.pdf"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-2 py-2 flex-wrap" },
+          "children": [
+            {
+              "kind": "NumberField",
+              "props": { "label": "Year", "min": 2020, "max": 2035, "className": "min-w-32" },
+              "actions": {
+                "onChange": { "kind": "filter.set", "field": "year", "valueExpr": "$value" }
+              }
+            },
+            {
+              "kind": "ComboBox",
+              "props": { "label": "Provider", "menuTrigger": "focus", "className": "min-w-48" },
+              "props_items": [
+                { "id": "taxjar", "label": "TaxJar" },
+                { "id": "avalara", "label": "Avalara AvaTax" },
+                { "id": "stripe_tax", "label": "Stripe Tax" },
+                { "id": "native_calculator", "label": "Native Calculator" },
+                { "id": "custom_webhook", "label": "Custom Webhook" }
+              ],
+              "actions": {
+                "onSelectionChange": { "kind": "filter.set", "field": "provider", "valueExpr": "$selectedKey" }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Grid",
+          "props": { "className": "grid grid-cols-1 md:grid-cols-3 gap-4" },
+          "children": [
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total taxable revenue" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "report.totals.source_amount", "formatter": "currency" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Total tax collected" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "report.totals.tax_amount", "formatter": "currency" } } }
+              ]
+            },
+            {
+              "kind": "Card",
+              "props": { "className": "p-6" },
+              "children": [
+                { "kind": "Text", "props": { "className": "text-sm text-muted", "children": "Calculations" } },
+                { "kind": "Text", "props": { "className": "text-3xl font-bold mt-1" }, "bindings": { "children": { "$ref": "report.totals.calculation_count" } } }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "Card",
+          "props": { "className": "p-6" },
+          "children": [
+            { "kind": "Text", "props": { "as": "h2", "className": "text-lg font-semibold mb-4", "children": "Per-jurisdiction breakdown" } },
+            {
+              "kind": "DataGrid",
+              "bindings": { "items": { "$ref": "report.by_jurisdiction" } },
+              "props": {
+                "columns": [
+                  { "field": "jurisdiction.name", "label": "Jurisdiction", "sortable": true, "width": 260 },
+                  { "field": "jurisdiction.tax_type", "label": "Tax type", "width": 140 },
+                  { "field": "calculation_count", "label": "Calculations", "sortable": true, "width": 130 },
+                  { "field": "source_amount", "label": "Revenue", "sortable": true, "width": 160, "formatter": "currency" },
+                  { "field": "tax_amount", "label": "Tax", "sortable": true, "defaultSort": "desc", "width": 160, "formatter": "currency" },
+                  { "field": "effective_rate", "label": "Effective rate", "width": 130, "formatter": "percent" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

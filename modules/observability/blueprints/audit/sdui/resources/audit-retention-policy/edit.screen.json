@@ -1,0 +1,97 @@
+{
+  "id": "audit.resources.audit-retention-policy.edit",
+  "title": "Edit audit retention override",
+  "version": 1,
+  "kind": "SduiScreen",
+  "route": "/tenant/audit/retention-policies/:policy_id/edit",
+  "host": "tenant",
+  "audience": "authenticated",
+  "resource": { "module": "audit", "entity": "audit-retention-policy", "action": "edit" },
+  "requiresPermission": "audit.retention-policies.update",
+  "requiresEntitlement": "audit_retention_extended",
+  "dataSources": [
+    {
+      "name": "policy",
+      "kind": "http.get",
+      "url": "/api/v1/audit-retention-policies/{route.policy_id}",
+      "unwrap": "data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "root",
+      "kind": "View",
+      "props": { "className": "flex flex-col gap-6 p-6 max-w-2xl mx-auto" },
+      "children": [
+        {
+          "kind": "View",
+          "props": { "className": "flex items-center gap-3" },
+          "children": [
+            {
+              "kind": "Button",
+              "props": { "variant": "ghost", "leadingIcon": "arrow-left", "children": "Back" },
+              "actions": { "onPress": { "kind": "navigate", "to": "/tenant/audit/retention-policies" } }
+            },
+            {
+              "kind": "Text",
+              "props": {
+                "as": "h1",
+                "className": "text-2xl font-semibold",
+                "children": "Edit audit retention override"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "Form",
+          "props": {
+            "initialValuesFrom": "policy",
+            "onSubmit": {
+              "kind": "http.patch",
+              "urlExpr": "'/api/v1/audit-retention-policies/' + policy.id",
+              "onSuccess": {
+                "kind": "navigate",
+                "to": "/tenant/audit/retention-policies"
+              }
+            }
+          },
+          "fields": [
+            {
+              "kind": "NumberSlider",
+              "props": {
+                "label": "Retention years",
+                "name": "retention_years",
+                "min": 1,
+                "max": 10,
+                "step": 1
+              }
+            },
+            {
+              "kind": "TextArea",
+              "props": {
+                "label": "Override reason",
+                "name": "override_reason",
+                "required": true,
+                "minLength": 10,
+                "maxLength": 500
+              }
+            },
+            {
+              "kind": "DateField",
+              "props": {
+                "label": "Override ends at",
+                "name": "override_ends_at",
+                "required": false,
+                "helpText": "Leave blank for indefinite."
+              }
+            }
+          ],
+          "submitButton": {
+            "variant": "primary",
+            "children": "Save changes"
+          }
+        }
+      ]
+    }
+  ]
+}

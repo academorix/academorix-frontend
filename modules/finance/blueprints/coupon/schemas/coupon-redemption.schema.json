@@ -1,0 +1,233 @@
+{
+  "id": "academorix://modules/coupon/schemas/coupon-redemption",
+  "draft": "https://json-schema.org/draft/2020-12/schema",
+  "$version": 1,
+  "title": "CouponRedemption",
+  "description": "Per-use pivot connecting a Coupon to a specific target (Membership / Invoice / Transaction) via a specific customer (User / Athlete). Immutable ledger row — reversal sets reversed_at + clawback_reason but never mutates the redemption facts. Carries `tenant_id` — cascades application through tenant per hierarchy.md §2. NEVER carries `application_id`, `region_id`, `organization_id`, `branch_id`, `scope_node_id`.",
+  "type": "object",
+  "x-module": "coupon",
+  "x-eloquent": {
+    "baseClass": "Illuminate\\Database\\Eloquent\\Model",
+    "table": "coupon_redemptions",
+    "primaryKey": "id",
+    "keyType": "string",
+    "keyPrefix": "crd_",
+    "incrementing": false,
+    "model": "Academorix\\Finance\\Coupon\\Models\\CouponRedemption",
+    "interface": "Academorix\\Finance\\Coupon\\Contracts\\Data\\CouponRedemptionInterface",
+    "implements": ["Academorix\\Finance\\Coupon\\Contracts\\Data\\CouponRedemptionInterface"],
+    "traits": [
+      "HasFactory",
+      "HasUlids",
+      "BelongsToTenant",
+      "BelongsToCoupon",
+      "HasMetadata",
+      "HasUserstamps",
+      "Auditable",
+      "Filterable"
+    ],
+    "casts": {
+      "customer_type": "CouponRedemptionCustomerType",
+      "applied_to_type": "CouponRedemptionAppliedToType",
+      "clawback_reason": "CouponClawbackReason",
+      "source_amount_cents": "integer",
+      "discount_amount_cents": "integer",
+      "final_amount_cents": "integer",
+      "discount_snapshot": "array",
+      "redeemed_at": "datetime",
+      "reversed_at": "datetime",
+      "metadata": "array"
+    },
+    "observers": ["CouponRedemptionObserver"],
+    "appends": ["is_reversed"],
+    "no_soft_deletes": "true - CouponRedemption is 7y-retained HARD as a financial-audit record. Reversal is a soft-reversal (reversed_at set)."
+  },
+  "x-database": {
+    "engine": "postgres",
+    "columns": {
+      "id": { "type": "string", "length": 64, "primary": true, "description": "Prefixed ULID: `crd_<26>`. Distinct from `rcd_` (referrals::ReferralCode) — see readme.md §14." },
+      "tenant_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "tenants", "column": "id", "onDelete": "cascade" }
+      },
+      "coupon_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "coupons", "column": "id", "onDelete": "restrict" }
+      },
+      "customer_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Polymorphic type. Enum: user / athlete."
+      },
+      "customer_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic ID. FK enforced at application level (polymorphic constraint). Redacted 90d post user-erasure."
+      },
+      "redeemed_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The auth actor who performed the redemption. May differ from customer_id when a staff member redeems on the customer's behalf."
+      },
+      "applied_to_type": {
+        "type": "string",
+        "length": 32,
+        "nullable": false,
+        "description": "Polymorphic type. Enum: membership / invoice / transaction."
+      },
+      "applied_to_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": false,
+        "description": "Polymorphic ID of the invoice line / membership / transaction the discount applied to."
+      },
+      "source_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Pre-discount amount at redemption time. Frozen — not adjusted by later invoice mutations."
+      },
+      "source_currency": {
+        "type": "string",
+        "length": 3,
+        "nullable": false,
+        "description": "ISO 4217. Matches the target's currency at redemption time."
+      },
+      "discount_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "Computed discount at redemption time. Frozen. Interpretation depends on discount_snapshot.discount_type."
+      },
+      "final_amount_cents": {
+        "type": "bigint",
+        "nullable": false,
+        "description": "source_amount_cents - discount_amount_cents (clamped to >= 0). Frozen. Feeds finance::invoice line total + finance::tax calculation."
+      },
+      "discount_snapshot": {
+        "type": "jsonb",
+        "nullable": false,
+        "description": "Frozen coupon config at redemption time: { discount_type, discount_amount, discount_currency, applicability, applicable_plan_ids, minimum_order_amount, minimum_order_currency, is_stackable, issuance_source, issuance_context, schema_version }. IMMUTABLE after create."
+      },
+      "redeemed_at": { "type": "timestamptz", "nullable": false },
+      "reversed_at": {
+        "type": "timestamptz",
+        "nullable": true,
+        "description": "Set by ProcessCouponClawbackJob (refund/chargeback cascade) OR admin reverse endpoint. Once set, the redemption is soft-reversed — the row remains for audit."
+      },
+      "clawback_reason": {
+        "type": "string",
+        "length": 32,
+        "nullable": true,
+        "description": "Enum: refund / chargeback / fraud / manual_admin. Populated when reversed_at is set."
+      },
+      "reversed_by_user_id": {
+        "type": "string",
+        "length": 64,
+        "nullable": true,
+        "foreign": { "table": "users", "column": "id", "onDelete": "restrict" },
+        "description": "The admin who manually reversed. NULL for automatic refund/chargeback cascades (system-initiated)."
+      },
+      "metadata": { "type": "jsonb", "nullable": true },
+      "created_by": { "type": "string", "length": 64, "nullable": true },
+      "updated_by": { "type": "string", "length": 64, "nullable": true },
+      "created_at": { "type": "timestamptz", "nullable": false },
+      "updated_at": { "type": "timestamptz", "nullable": false }
+    },
+    "indexes": [
+      {
+        "columns": ["tenant_id", "coupon_id", "customer_type", "customer_id", "applied_to_type", "applied_to_id"],
+        "unique": true,
+        "name": "coupon_redemptions_target_unique",
+        "predicate": "reversed_at IS NULL"
+      },
+      { "columns": ["tenant_id", "coupon_id"], "name": "coupon_redemptions_coupon_idx" },
+      { "columns": ["tenant_id", "customer_type", "customer_id"], "name": "coupon_redemptions_customer_idx" },
+      { "columns": ["tenant_id", "applied_to_type", "applied_to_id"], "name": "coupon_redemptions_target_lookup_idx" },
+      { "columns": ["tenant_id", "redeemed_at"], "name": "coupon_redemptions_redeemed_at_idx" },
+      { "columns": ["tenant_id", "reversed_at"], "name": "coupon_redemptions_reversed_at_idx", "predicate": "reversed_at IS NOT NULL" }
+    ]
+  },
+  "required": [
+    "id",
+    "tenant_id",
+    "coupon_id",
+    "customer_type",
+    "customer_id",
+    "redeemed_by_user_id",
+    "applied_to_type",
+    "applied_to_id",
+    "source_amount_cents",
+    "source_currency",
+    "discount_amount_cents",
+    "final_amount_cents",
+    "discount_snapshot",
+    "redeemed_at",
+    "created_at",
+    "updated_at"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^crd_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "tenant_id": { "type": "string", "pattern": "^ten_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "coupon_id": { "type": "string", "pattern": "^cpn_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "customer_type": { "type": "string", "enum": ["user", "athlete"] },
+    "customer_id": { "type": "string" },
+    "redeemed_by_user_id": { "type": "string", "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "applied_to_type": { "type": "string", "enum": ["membership", "invoice", "transaction"] },
+    "applied_to_id": { "type": "string" },
+    "source_amount_cents": { "type": "integer", "minimum": 0 },
+    "source_currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "discount_amount_cents": { "type": "integer", "minimum": 0 },
+    "final_amount_cents": { "type": "integer", "minimum": 0 },
+    "discount_snapshot": {
+      "type": "object",
+      "required": ["discount_type", "schema_version"],
+      "properties": {
+        "discount_type": {
+          "type": "string",
+          "enum": ["percent", "fixed_amount", "free_period", "first_month_free", "bogo", "free_shipping"]
+        },
+        "discount_amount": { "type": ["number", "null"] },
+        "discount_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+        "applicability": {
+          "type": "string",
+          "enum": ["any", "membership_only", "specific_membership_plans", "minimum_order_value"]
+        },
+        "applicable_plan_ids": { "type": ["array", "null"], "items": { "type": "string" } },
+        "minimum_order_amount": { "type": ["integer", "null"] },
+        "minimum_order_currency": { "type": ["string", "null"], "pattern": "^[A-Z]{3}$" },
+        "is_stackable": { "type": "boolean" },
+        "issuance_source": { "type": "string" },
+        "issuance_context": { "type": ["object", "null"] },
+        "schema_version": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "redeemed_at": { "type": "string", "format": "date-time" },
+    "reversed_at": { "type": ["string", "null"], "format": "date-time" },
+    "clawback_reason": {
+      "type": ["string", "null"],
+      "enum": [null, "refund", "chargeback", "fraud", "manual_admin"]
+    },
+    "reversed_by_user_id": { "type": ["string", "null"], "pattern": "^usr_[0-9A-HJKMNP-TV-Z]{26}$" },
+    "metadata": { "type": ["object", "null"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  },
+  "x-invariants": [
+    "final_amount_cents == source_amount_cents - discount_amount_cents (clamped to >= 0)",
+    "reversed_at IS NULL <=> clawback_reason IS NULL",
+    "reversed_at IS NULL <=> reversed_by_user_id may be null or set based on caller (nullable in both cases)",
+    "discount_snapshot is IMMUTABLE — CouponRedemptionObserver refuses mutation post-create",
+    "source_amount_cents / discount_amount_cents / final_amount_cents / source_currency / discount_snapshot are IMMUTABLE post-create",
+    "coupon_id + customer_type + customer_id + applied_to_type + applied_to_id + tenant_id is unique WHERE reversed_at IS NULL (composite unique index)",
+    "customer_type='athlete' allows redeemed_by_user_id to differ from customer_id (a parent User redeems on behalf of their Athlete child)",
+    "MUST be created inside a CouponRedeemer transaction that acquired SELECT ... FOR UPDATE on the parent Coupon (observer defensive-checks this)"
+  ]
+}

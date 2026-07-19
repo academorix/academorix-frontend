@@ -1,0 +1,73 @@
+{
+  "id": "academorix://modules/tax/attributes",
+  "$version": 1,
+  "title": "tax — PHP attribute contracts",
+  "description": "Two class-level attributes. `#[AsTaxProvider]` marks a class as a provider driver — the TaxProviderManager discovers these at boot and registers them via createXxxDriver factories. `#[AsExemptionVerifier]` marks a class as a per-jurisdiction exemption verifier (public-registry cross-check for certificate validity).",
+  "namespace": "Academorix\\Finance\\Tax\\Attributes",
+  "attributes": [
+    {
+      "name": "AsTaxProvider",
+      "class": "Academorix\\Finance\\Tax\\Attributes\\AsTaxProvider",
+      "targets": ["class"],
+      "isRepeatable": false,
+      "description": "Marks a class as a tax provider driver. The TaxProviderManager discovers these at boot and registers a createXxxDriver factory keyed on the slug. Every driver MUST implement the ITaxProvider contract (name(), supports(TaxJurisdiction), calculate(source_amount_cents, source_currency, jurisdiction, exemptions, applies_to), syncRates()) + ship a JSON Schema under data/providers/<slug>-config.schema.json for config validation.",
+      "params": [
+        {
+          "name": "slug",
+          "type": "string",
+          "description": "Provider slug matching the TaxProvider enum (taxjar, avalara, stripe_tax, native_calculator, custom_webhook). One driver class per slug."
+        },
+        {
+          "name": "supports_jurisdictions",
+          "type": "array<string>",
+          "description": "Country codes (ISO 3166-1 alpha-2) or 'ANY' the driver can calculate for. TaxJar: ['US', 'CA', 'AU', 'EU_ALL']. Avalara: ['ANY']. Stripe Tax: ['ANY']. NativeCalculator: ['ANY'] (works for any jurisdiction with rates in tax_rates). CustomWebhook: ['ANY'] (tenant-defined)."
+        },
+        {
+          "name": "supports_exemptions",
+          "type": "bool",
+          "default": true,
+          "description": "true = the driver honors exemption certificates in its calculation logic. NativeCalculator: true. Stripe Tax: false (Stripe manages exemptions internally via tax_exempt customer flag). TaxJar / Avalara / CustomWebhook: true."
+        },
+        {
+          "name": "supports_negative_amounts",
+          "type": "bool",
+          "default": true,
+          "description": "true = the driver handles negative source_amount_cents (refund tax reversal). Every driver day-1 supports this."
+        },
+        {
+          "name": "requires_network",
+          "type": "bool",
+          "default": true,
+          "description": "true = the driver dispatches HTTP requests + is subject to circuit-breaker + retry. false = NativeCalculator (local computation only, no network dependency)."
+        }
+      ],
+      "example": "#[AsTaxProvider(slug: 'taxjar', supports_jurisdictions: ['US', 'CA', 'AU', 'GB', 'EU_ALL'], supports_exemptions: true, supports_negative_amounts: true, requires_network: true)]\nfinal class TaxJarProvider implements ITaxProvider\n{\n    public function calculate(int $sourceAmountCents, string $sourceCurrency, TaxJurisdiction $jurisdiction, Collection $exemptions, TaxRateAppliesTo $appliesTo): TaxCalculationResult { ... }\n}"
+    },
+    {
+      "name": "AsExemptionVerifier",
+      "class": "Academorix\\Finance\\Tax\\Attributes\\AsExemptionVerifier",
+      "targets": ["class"],
+      "isRepeatable": true,
+      "description": "Marks a class as an exemption verifier for a specific (issuing_jurisdiction, exemption_type) pair. Every verifier cross-checks the certificate_number against the issuing jurisdiction's public registry (when one exists). VerifyTaxExemptionJob invokes these at exemption create.",
+      "params": [
+        {
+          "name": "country_code",
+          "type": "string",
+          "description": "ISO 3166-1 alpha-2 country code the verifier handles (e.g. 'US', 'GB', 'DE')."
+        },
+        {
+          "name": "exemption_type",
+          "type": "string",
+          "description": "TaxExemptionType value this verifier handles (reseller, non_profit, diplomatic, ...)."
+        },
+        {
+          "name": "registry_endpoint",
+          "type": "string | null",
+          "default": null,
+          "description": "Public registry URL for cross-check. null = no public registry (verifier falls back to manual review by a tenant admin)."
+        }
+      ],
+      "example": "#[AsExemptionVerifier(country_code: 'US', exemption_type: 'reseller', registry_endpoint: 'https://mtc.gov/registry/lookup')]\nfinal class UsResellerCertificateVerifier implements IExemptionVerifier\n{\n    public function verify(TaxExemption $exemption): VerifierResult { ... }\n}"
+    }
+  ]
+}

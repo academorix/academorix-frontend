@@ -1,0 +1,63 @@
+{
+  "id": "academorix://modules/payment/policies",
+  "$version": 1,
+  "title": "payment — authorization policies",
+  "description": "Four policies, one per owned model. Every ability resolves through spatie/laravel-permission, then narrows by tenant scope. PaymentPolicy customer-side abilities auto-scope to the caller's own payments; admin abilities see tenant-wide. Write on Payment is NEVER allowed via customer HTTP — captures happen server-side via the payment intent lifecycle. Support-tool re-dispatch is admin+support only.",
+  "policies": [
+    {
+      "model": "Payment",
+      "class": "Academorix\\Finance\\Payment\\Policies\\PaymentPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "payment.payments.viewAny", "scope": "admin + owner + finance role sees tenant-wide; customer sees own only (auto-scoped by invoice.customer_id)" },
+        { "action": "view", "permission": "payment.payments.view", "scope": "same as viewAny; customer sees only where invoice.customer_id = auth.user.id" },
+        { "action": "create", "permission": "NEVER", "scope": "Payment rows are created by PaymentIntent.succeeded transition only — no direct API create. Attempted creates return 403 PAYMENT_MANUAL_CREATE_FORBIDDEN." },
+        { "action": "update", "permission": "NEVER", "scope": "payments are IMMUTABLE after create — refunds accumulate via the refund module (which updates amount_refunded_cents), disputes via the dispute lifecycle (which updates amount_disputed_cents)" },
+        { "action": "delete", "permission": "NEVER", "scope": "financial retention; purged by PurgeExpiredPaymentDataJob only" },
+        { "action": "capture", "permission": "payment.payments.capture", "scope": "admin + owner + finance only — manual capture flow for authorization-hold payments (POST /payments/{payment}/capture). Requires `payment_manual_capture` entitlement." },
+        { "action": "viewReceipt", "permission": "payment.payments.view", "scope": "same as view; returns the receipt_url provider link" },
+        { "action": "platformViewAny", "permission": "platform.payment.payments.viewAny", "scope": "cross-tenant support for ops + support role" },
+        { "action": "platformView", "permission": "platform.payment.payments.view" }
+      ]
+    },
+    {
+      "model": "PaymentMethod",
+      "class": "Academorix\\Finance\\Payment\\Policies\\PaymentMethodPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "payment.methods.viewAny", "scope": "customer sees own; admin sees tenant-wide (limited to method summary — no decrypted provider_reference)" },
+        { "action": "view", "permission": "payment.methods.view", "scope": "customer sees own; admin sees redacted view; support sees redacted view (never decrypted provider_reference or fingerprint)" },
+        { "action": "create", "permission": "payment.methods.create", "scope": "customer creates own via SetupIntent flow (POST /payment-methods)" },
+        { "action": "update", "permission": "payment.methods.update", "scope": "customer can flip is_default; admin can flip is_active. Immutable fields (provider, provider_reference, method_type, fingerprint_hash, customer) refused by observer." },
+        { "action": "setDefault", "permission": "payment.methods.set-default", "scope": "customer only — atomic lock-and-swap for is_default flag" },
+        { "action": "delete", "permission": "payment.methods.delete", "scope": "customer soft-deletes own via DELETE /payment-methods/{method}; admin can soft-delete any method for the tenant with a reason" },
+        { "action": "platformViewAny", "permission": "platform.payment.methods.viewAny", "scope": "cross-tenant support — encrypted fields never decrypted" }
+      ]
+    },
+    {
+      "model": "PaymentIntent",
+      "class": "Academorix\\Finance\\Payment\\Policies\\PaymentIntentPolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "payment.intents.viewAny", "scope": "admin sees tenant-wide; customer sees own in-flight only" },
+        { "action": "view", "permission": "payment.intents.view", "scope": "customer sees own; admin sees all" },
+        { "action": "create", "permission": "payment.intents.create", "scope": "customer creates for their own invoices; admin creates for any customer's invoice" },
+        { "action": "confirm", "permission": "payment.intents.confirm", "scope": "customer confirms own (POST /payments/intents/{intent}/confirm) — this is the primary customer action. Admin can confirm on behalf of the customer as a support tool." },
+        { "action": "cancel", "permission": "payment.intents.cancel", "scope": "customer cancels own; admin cancels tenant-wide" },
+        { "action": "update", "permission": "NEVER", "scope": "intent state transitions are one-way via observer only — no direct PATCH" },
+        { "action": "platformViewAny", "permission": "platform.payment.intents.viewAny", "scope": "cross-tenant support" }
+      ]
+    },
+    {
+      "model": "PaymentDispute",
+      "class": "Academorix\\Finance\\Payment\\Policies\\PaymentDisputePolicy",
+      "abilities": [
+        { "action": "viewAny", "permission": "payment.disputes.viewAny", "scope": "admin + owner + finance role sees tenant-wide; customer sees own dispute status only (limited fields)" },
+        { "action": "view", "permission": "payment.disputes.view", "scope": "same as viewAny" },
+        { "action": "submitEvidence", "permission": "payment.disputes.submit-evidence", "scope": "admin + owner + finance role only — POST /disputes/{dispute}/submit-evidence dispatches SubmitDisputeEvidenceJob" },
+        { "action": "accept", "permission": "payment.disputes.accept", "scope": "admin + owner + finance role only — concedes without fighting. Creates a refund via the refund module + transitions dispute → charge_refunded." },
+        { "action": "create", "permission": "NEVER", "scope": "disputes are opened by provider webhook only — no direct API create" },
+        { "action": "update", "permission": "NEVER", "scope": "state transitions one-way via observer" },
+        { "action": "platformViewAny", "permission": "platform.payment.disputes.viewAny", "scope": "cross-tenant support" },
+        { "action": "platformAccept", "permission": "platform.payment.disputes.accept", "scope": "platform_ops cross-tenant intervention" }
+      ]
+    }
+  ]
+}
