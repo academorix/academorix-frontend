@@ -6,6 +6,9 @@ declare(strict_types=1);
 
 namespace Academorix\Staff\Actions\Tenant;
 
+use Academorix\Staff\Contracts\Repositories\CoachRepositoryInterface;
+use Academorix\Staff\Data\CoachData;
+use Academorix\Staff\Data\Requests\UpdateCoachRequestData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
@@ -29,14 +32,23 @@ final class UpdateCoacheAction
 {
     use AsController;
 
+    public function __construct(
+        private readonly CoachRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Update one `coache` and return the wire DTO.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     * @param  UpdateCoachRequestData  $data  Validated payload.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id, UpdateCoachRequestData $data): CoachData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->update($id, $data->toArray());
+
+        return CoachData::from($model);
     }
 }

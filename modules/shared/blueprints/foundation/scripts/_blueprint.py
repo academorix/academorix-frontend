@@ -398,12 +398,32 @@ def _pluralize(name: str) -> str:
         "tenant-contact": "tenant-contacts",
         "tenant-integration": "tenant-integrations",
         "domain-record": "domain-records",
+        # Latin-plural fragment — `index` → `indexes` (not `indexs`, the
+        # naive `-s` fallback yields), `matrix` → `matrices`, `vertex` →
+        # `vertices`. Add cases as new blueprints surface them; keep the
+        # list explicit rather than growing a general -ex/-ix inflector
+        # that will surprise future readers.
+        "index": "indexes",
+        "matrix": "matrices",
+        "vertex": "vertices",
+        "appendix": "appendices",
+        "analysis": "analyses",
+        "axis": "axes",
+        "crisis": "crises",
+        "diagnosis": "diagnoses",
+        "thesis": "theses",
+        "child": "children",
+        "person": "people",
+        "criterion": "criteria",
+        "phenomenon": "phenomena",
+        "datum": "data",
+        "medium": "media",
     }
     if kebab_name in special:
         return special[kebab_name]
-    if kebab_name.endswith("y"):
+    if kebab_name.endswith("y") and not kebab_name.endswith(("ay", "ey", "iy", "oy", "uy")):
         return kebab_name[:-1] + "ies"
-    if kebab_name.endswith("s"):
+    if kebab_name.endswith(("s", "x", "z", "ch", "sh")):
         return kebab_name + "es"
     return kebab_name + "s"
 

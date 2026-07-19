@@ -6,10 +6,14 @@ declare(strict_types=1);
 
 namespace Academorix\Development\Actions\Tenant;
 
+use Academorix\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
+use Academorix\Development\Data\DevelopmentPathwayData;
+use Academorix\Development\Data\Requests\CreateDevelopmentPathwayRequestData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
 use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/development-pathways` — create action (tenant audience).
@@ -29,14 +33,22 @@ final class CreateDevelopmentPathwayAction
 {
     use AsController;
 
+    public function __construct(
+        private readonly DevelopmentPathwayRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `development-pathway` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateDevelopmentPathwayRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateDevelopmentPathwayRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(DevelopmentPathwayData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

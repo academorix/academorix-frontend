@@ -10,7 +10,7 @@ use Illuminate\Container\Attributes\Bind;
 use Academorix\Development\Models\DevelopmentPathway;
 
 /**
- * Table shape for the `development_pathwaies` table.
+ * Table shape for the `development_pathways` table.
  *
  *
  *
@@ -24,7 +24,7 @@ interface DevelopmentPathwayInterface
     /**
      * Table name.
      */
-    public const string TABLE = 'development_pathwaies';
+    public const string TABLE = 'development_pathways';
 
     /**
      * Primary key column.

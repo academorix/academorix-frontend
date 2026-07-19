@@ -6,10 +6,15 @@ declare(strict_types=1);
 
 namespace Academorix\Branch\Actions\Platform;
 
+use Academorix\Branch\Contracts\Repositories\BranchRepositoryInterface;
+use Academorix\Branch\Data\BranchData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
 use Academorix\Routing\Attributes\Get;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\LaravelData\PaginatedDataCollection;
 
 /**
  * `GET /api/v1/platform/branches` — list action (platform-admin audience).
@@ -29,14 +34,27 @@ final class ListBrancheAction
 {
     use AsController;
 
+    public function __construct(
+        private readonly BranchRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * List `branches` for the current caller.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * The `Repository` base picks up `filter[...]` / `sort=...` /
+     * `include=...` query parameters via the `#[Filterable]` attribute
+     * on the concrete repository — no per-Action wiring needed.
+     *
+     * @return PaginatedDataCollection<int, BranchData>  Paginated wire-visible DTOs.
      */
-    public function __invoke(): mixed
+    public function __invoke(Request $request): PaginatedDataCollection
     {
-        // Hand-implement the domain logic here.
-        return null;
+        /** @var LengthAwarePaginator<int, \Academorix\Branch\Models\Branch> $page */
+        $page = $this->repository->paginate(
+            perPage: (int) $request->integer('per_page', 15),
+        );
+
+        return BranchData::collect($page, PaginatedDataCollection::class);
     }
 }

@@ -6,10 +6,14 @@ declare(strict_types=1);
 
 namespace Academorix\Staff\Actions\Tenant;
 
+use Academorix\Staff\Contracts\Repositories\CoachRepositoryInterface;
+use Academorix\Staff\Data\CoachData;
+use Academorix\Staff\Data\Requests\CreateCoachRequestData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
 use Academorix\Routing\Attributes\Post;
+use Illuminate\Http\JsonResponse;
 
 /**
  * `POST /api/v1/coaches` — create action (tenant audience).
@@ -29,14 +33,22 @@ final class CreateCoacheAction
 {
     use AsController;
 
+    public function __construct(
+        private readonly CoachRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Create a `coache` from the validated request payload.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  CreateCoachRequestData  $data  Validated payload (Spatie Data DTO).
+     *
+     * @return JsonResponse  201 Created with the newly-persisted DTO.
      */
-    public function __invoke(): mixed
+    public function __invoke(CreateCoachRequestData $data): JsonResponse
     {
-        // Hand-implement the domain logic here.
-        return null;
+        $model = $this->repository->create($data->toArray());
+
+        return response()->json(CoachData::from($model), JsonResponse::HTTP_CREATED);
     }
 }

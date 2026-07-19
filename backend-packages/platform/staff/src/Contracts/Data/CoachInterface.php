@@ -10,7 +10,7 @@ use Illuminate\Container\Attributes\Bind;
 use Academorix\Staff\Models\Coach;
 
 /**
- * Table shape for the `coachs` table.
+ * Table shape for the `coaches` table.
  *
  * Staff-satellite adding a per-sport coaching profile.
  *
@@ -24,7 +24,7 @@ interface CoachInterface
     /**
      * Table name.
      */
-    public const string TABLE = 'coachs';
+    public const string TABLE = 'coaches';
 
     /**
      * Primary key column.

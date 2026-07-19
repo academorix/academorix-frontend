@@ -10,7 +10,7 @@ use Illuminate\Container\Attributes\Bind;
 use Academorix\Branch\Models\Branch;
 
 /**
- * Table shape for the `branchs` table.
+ * Table shape for the `branches` table.
  *
  * Physical venue — the concrete place where a Tenant's activities happen.
  *
@@ -24,7 +24,7 @@ interface BranchInterface
     /**
      * Table name.
      */
-    public const string TABLE = 'branchs';
+    public const string TABLE = 'branches';
 
     /**
      * Primary key column.

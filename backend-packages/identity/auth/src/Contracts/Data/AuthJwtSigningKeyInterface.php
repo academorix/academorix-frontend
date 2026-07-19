@@ -10,7 +10,7 @@ use Illuminate\Container\Attributes\Bind;
 use Academorix\Auth\Models\AuthJwtSigningKey;
 
 /**
- * Table shape for the `auth_jwt_signing_keies` table.
+ * Table shape for the `auth_jwt_signing_keys` table.
  *
  * HS256 signing key with per-Application binding + rotation.
  *
@@ -24,7 +24,7 @@ interface AuthJwtSigningKeyInterface
     /**
      * Table name.
      */
-    public const string TABLE = 'auth_jwt_signing_keies';
+    public const string TABLE = 'auth_jwt_signing_keys';
 
     /**
      * Primary key column.

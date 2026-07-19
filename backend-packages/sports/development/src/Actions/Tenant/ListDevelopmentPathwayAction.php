@@ -6,10 +6,15 @@ declare(strict_types=1);
 
 namespace Academorix\Development\Actions\Tenant;
 
+use Academorix\Development\Contracts\Repositories\DevelopmentPathwayRepositoryInterface;
+use Academorix\Development\Data\DevelopmentPathwayData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
 use Academorix\Routing\Attributes\Get;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Spatie\LaravelData\PaginatedDataCollection;
 
 /**
  * `GET /api/v1/development-pathways` — list action (tenant audience).
@@ -29,14 +34,27 @@ final class ListDevelopmentPathwayAction
 {
     use AsController;
 
+    public function __construct(
+        private readonly DevelopmentPathwayRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * List `development-pathways` for the current caller.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * The `Repository` base picks up `filter[...]` / `sort=...` /
+     * `include=...` query parameters via the `#[Filterable]` attribute
+     * on the concrete repository — no per-Action wiring needed.
+     *
+     * @return PaginatedDataCollection<int, DevelopmentPathwayData>  Paginated wire-visible DTOs.
      */
-    public function __invoke(): mixed
+    public function __invoke(Request $request): PaginatedDataCollection
     {
-        // Hand-implement the domain logic here.
-        return null;
+        /** @var LengthAwarePaginator<int, \Academorix\Development\Models\DevelopmentPathway> $page */
+        $page = $this->repository->paginate(
+            perPage: (int) $request->integer('per_page', 15),
+        );
+
+        return DevelopmentPathwayData::collect($page, PaginatedDataCollection::class);
     }
 }

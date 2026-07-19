@@ -6,6 +6,8 @@ declare(strict_types=1);
 
 namespace Academorix\Staff\Actions\Tenant;
 
+use Academorix\Staff\Contracts\Repositories\CoachRepositoryInterface;
+use Academorix\Staff\Data\CoachData;
 use Academorix\Routing\Attributes\AsAction;
 use Academorix\Routing\Attributes\Middleware;
 use Academorix\Routing\Concerns\AsController;
@@ -29,14 +31,20 @@ final class ShowCoacheAction
 {
     use AsController;
 
+    public function __construct(
+        private readonly CoachRepositoryInterface $repository,
+    ) {
+    }
+
     /**
-     * Execute the action.
+     * Fetch one `coache` by id.
      *
-     * TODO(gen): wire the required services + implement the handler body.
+     * @param  string  $id  Primary key.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException  When the row is absent or hidden by scoping.
      */
-    public function __invoke(): mixed
+    public function __invoke(string $id): CoachData
     {
-        // Hand-implement the domain logic here.
-        return null;
+        return CoachData::from($this->repository->findOrFail($id));
     }
 }
