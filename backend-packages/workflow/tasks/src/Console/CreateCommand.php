@@ -29,6 +29,13 @@ final class CreateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Create a new task', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Create a new task completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

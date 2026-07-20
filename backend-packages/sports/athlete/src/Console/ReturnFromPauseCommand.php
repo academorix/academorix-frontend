@@ -29,6 +29,13 @@ final class ReturnFromPauseCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Return from pause — athlete command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Return from pause — athlete command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

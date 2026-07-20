@@ -29,6 +29,13 @@ final class AdvanceDunningCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Advance dunning — subscription command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Advance dunning — subscription command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

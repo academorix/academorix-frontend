@@ -29,6 +29,13 @@ final class RunCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Run — payroll command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Run — payroll command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

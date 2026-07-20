@@ -29,6 +29,13 @@ final class VerifyCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Verify the guardian data', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Verify the guardian data completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

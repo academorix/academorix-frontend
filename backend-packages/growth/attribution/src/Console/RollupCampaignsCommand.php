@@ -29,6 +29,13 @@ final class RollupCampaignsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Rollup campaigns — attribution command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Rollup campaigns — attribution command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

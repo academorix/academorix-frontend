@@ -29,6 +29,13 @@ final class PruneCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Prune stale transfer data', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Prune stale transfer data completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

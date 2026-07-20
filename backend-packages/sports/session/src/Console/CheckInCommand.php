@@ -29,6 +29,13 @@ final class CheckInCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Check in — session command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Check in — session command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

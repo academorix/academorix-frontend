@@ -29,6 +29,13 @@ final class SeedSubprocessorsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed subprocessors — compliance command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed subprocessors — compliance command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

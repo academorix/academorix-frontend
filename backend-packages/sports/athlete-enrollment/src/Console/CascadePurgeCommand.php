@@ -29,6 +29,13 @@ final class CascadePurgeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Cascade purge — enrollment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Cascade purge — enrollment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

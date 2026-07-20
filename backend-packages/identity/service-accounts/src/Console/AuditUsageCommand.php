@@ -29,6 +29,13 @@ final class AuditUsageCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit usage — service account command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit usage — service account command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

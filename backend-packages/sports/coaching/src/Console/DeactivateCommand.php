@@ -29,6 +29,13 @@ final class DeactivateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Deactivate a coaching profile', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Deactivate a coaching profile completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

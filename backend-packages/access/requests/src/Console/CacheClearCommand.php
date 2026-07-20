@@ -29,6 +29,13 @@ final class CacheClearCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Cache clear — access requests command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Cache clear — access requests command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

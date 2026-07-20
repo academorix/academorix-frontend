@@ -29,6 +29,13 @@ final class ResolveIncidentCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Resolve incident — monitoring command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Resolve incident — monitoring command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

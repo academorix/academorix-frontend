@@ -29,6 +29,13 @@ final class DescribeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Describe the geofencing surface', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Describe the geofencing surface completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

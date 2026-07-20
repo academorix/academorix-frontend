@@ -29,6 +29,13 @@ final class StartCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Start — session command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Start — session command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

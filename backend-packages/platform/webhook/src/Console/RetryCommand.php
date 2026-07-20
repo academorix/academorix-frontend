@@ -29,6 +29,13 @@ final class RetryCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Retry — webhook command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Retry — webhook command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

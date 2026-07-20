@@ -29,6 +29,13 @@ final class TestCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test — gateway command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test — gateway command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class CheckCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Check — health command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Check — health command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

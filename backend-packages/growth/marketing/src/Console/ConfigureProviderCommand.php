@@ -29,6 +29,13 @@ final class ConfigureProviderCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Configure provider — marketing command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Configure provider — marketing command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

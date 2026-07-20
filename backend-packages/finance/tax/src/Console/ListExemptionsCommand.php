@@ -29,6 +29,13 @@ final class ListExemptionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List exemptions — tax command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List exemptions — tax command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

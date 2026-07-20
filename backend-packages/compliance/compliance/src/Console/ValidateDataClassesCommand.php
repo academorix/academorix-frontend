@@ -29,6 +29,13 @@ final class ValidateDataClassesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Validate data classes — compliance command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Validate data classes — compliance command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

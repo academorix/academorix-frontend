@@ -29,6 +29,13 @@ final class OpenRegistrationCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Open registration — season command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Open registration — season command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

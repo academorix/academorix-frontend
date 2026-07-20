@@ -29,6 +29,13 @@ final class TestProviderCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test provider — tax command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test provider — tax command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

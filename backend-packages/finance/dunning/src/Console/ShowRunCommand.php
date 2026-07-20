@@ -29,6 +29,13 @@ final class ShowRunCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Show run — dunning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Show run — dunning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class RegisterCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Register — event team command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Register — event team command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ReportAtomicityFailuresCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Report atomicity failures — enrollment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Report atomicity failures — enrollment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

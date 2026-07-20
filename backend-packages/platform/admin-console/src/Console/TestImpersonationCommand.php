@@ -29,6 +29,13 @@ final class TestImpersonationCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test impersonation — admin command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test impersonation — admin command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

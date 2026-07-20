@@ -29,6 +29,13 @@ final class DestinationsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Destinations — webhook command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Destinations — webhook command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

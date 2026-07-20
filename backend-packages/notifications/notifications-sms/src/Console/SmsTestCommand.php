@@ -29,6 +29,13 @@ final class SmsTestCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Sms:test — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Sms:test — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

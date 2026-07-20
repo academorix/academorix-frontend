@@ -29,6 +29,13 @@ final class TestBroadcastCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test broadcast — realtime command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test broadcast — realtime command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class GenerateCampaignCodeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Generate campaign code — referral code command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Generate campaign code — referral code command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

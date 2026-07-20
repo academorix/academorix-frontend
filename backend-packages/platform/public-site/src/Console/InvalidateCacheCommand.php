@@ -29,6 +29,13 @@ final class InvalidateCacheCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Invalidate cache — public site command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Invalidate cache — public site command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class RegenerateRecoveryCodesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Regenerate recovery codes — mfa command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Regenerate recovery codes — mfa command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

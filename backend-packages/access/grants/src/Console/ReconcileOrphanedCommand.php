@@ -29,6 +29,13 @@ final class ReconcileOrphanedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile orphaned — grants command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile orphaned — grants command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

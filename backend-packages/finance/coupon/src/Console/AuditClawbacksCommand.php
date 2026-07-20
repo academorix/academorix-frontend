@@ -29,6 +29,13 @@ final class AuditClawbacksCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit clawbacks — coupon command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit clawbacks — coupon command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

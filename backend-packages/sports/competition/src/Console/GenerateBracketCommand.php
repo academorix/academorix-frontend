@@ -29,6 +29,13 @@ final class GenerateBracketCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Generate bracket — competition command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Generate bracket — competition command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

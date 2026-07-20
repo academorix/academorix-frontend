@@ -29,6 +29,13 @@ final class MarkLostManuallyCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Mark lost manually — chargeback command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Mark lost manually — chargeback command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

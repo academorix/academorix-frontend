@@ -29,6 +29,13 @@ final class DisableCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Disable — service account command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Disable — service account command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

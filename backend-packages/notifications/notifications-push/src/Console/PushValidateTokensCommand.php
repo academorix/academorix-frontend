@@ -29,6 +29,13 @@ final class PushValidateTokensCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Push:validate tokens — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Push:validate tokens — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

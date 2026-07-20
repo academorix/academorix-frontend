@@ -29,6 +29,13 @@ final class ListJwtKeysCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List jwt keys — auth command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List jwt keys — auth command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

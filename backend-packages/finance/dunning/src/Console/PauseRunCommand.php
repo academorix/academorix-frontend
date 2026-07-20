@@ -29,6 +29,13 @@ final class PauseRunCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Pause run — dunning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Pause run — dunning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

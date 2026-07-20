@@ -29,6 +29,13 @@ final class ListDeadLettersCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List dead letters — marketing command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List dead letters — marketing command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

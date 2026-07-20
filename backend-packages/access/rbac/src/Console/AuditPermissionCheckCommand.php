@@ -29,6 +29,13 @@ final class AuditPermissionCheckCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit permission check — rbac command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit permission check — rbac command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

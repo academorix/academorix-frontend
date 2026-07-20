@@ -29,6 +29,13 @@ final class MarkGraduatedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Mark graduated — team member command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Mark graduated — team member command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

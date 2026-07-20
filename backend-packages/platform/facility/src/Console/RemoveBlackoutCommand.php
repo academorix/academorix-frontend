@@ -29,6 +29,13 @@ final class RemoveBlackoutCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Remove blackout — facility command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Remove blackout — facility command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

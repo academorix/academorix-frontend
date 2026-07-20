@@ -29,6 +29,13 @@ final class SetPrimaryCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Set primary — guardian command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Set primary — guardian command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class TransformersCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Transformers — versioning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Transformers — versioning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

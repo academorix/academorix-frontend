@@ -29,6 +29,13 @@ final class RegenerateAllCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Regenerate all — passes command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Regenerate all — passes command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

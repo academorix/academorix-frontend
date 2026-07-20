@@ -29,6 +29,13 @@ final class ListApplicationsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List applications — marketplace fee command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List applications — marketplace fee command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

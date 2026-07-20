@@ -29,6 +29,13 @@ final class AssignRoleCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Assign role — rbac command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Assign role — rbac command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

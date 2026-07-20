@@ -29,6 +29,13 @@ final class ReconcileQuotaCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile quota — storage command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile quota — storage command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

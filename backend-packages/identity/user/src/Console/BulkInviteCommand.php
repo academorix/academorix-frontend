@@ -29,6 +29,13 @@ final class BulkInviteCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Bulk invite — user command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Bulk invite — user command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ConfigureCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Configure — gateway command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Configure — gateway command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

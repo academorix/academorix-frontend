@@ -29,6 +29,13 @@ final class UpdateCurriculumCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Update curriculum — session command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Update curriculum — session command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

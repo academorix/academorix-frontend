@@ -29,6 +29,13 @@ final class ListPlansCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List plans — dunning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List plans — dunning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class SubmitEvidenceCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Submit evidence — payment dispute command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Submit evidence — payment dispute command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

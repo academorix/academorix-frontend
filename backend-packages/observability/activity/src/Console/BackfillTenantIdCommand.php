@@ -29,6 +29,13 @@ final class BackfillTenantIdCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Backfill tenant id — activity command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Backfill tenant id — activity command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ArchiveCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Archive — athlete command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Archive — athlete command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

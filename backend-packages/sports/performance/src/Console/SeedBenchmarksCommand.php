@@ -29,6 +29,13 @@ final class SeedBenchmarksCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed benchmarks — performance command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed benchmarks — performance command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

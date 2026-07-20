@@ -29,6 +29,13 @@ final class PurgeUnconfirmedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Purge unconfirmed — mfa command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Purge unconfirmed — mfa command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

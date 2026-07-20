@@ -29,6 +29,13 @@ final class HardDeleteArchivedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Hard delete archived — tenancy command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Hard delete archived — tenancy command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

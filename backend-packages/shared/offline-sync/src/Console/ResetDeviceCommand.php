@@ -29,6 +29,13 @@ final class ResetDeviceCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reset device — offline sync command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reset device — offline sync command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

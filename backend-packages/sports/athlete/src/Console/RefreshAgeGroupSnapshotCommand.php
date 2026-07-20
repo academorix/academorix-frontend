@@ -29,6 +29,13 @@ final class RefreshAgeGroupSnapshotCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Refresh age group snapshot — athlete command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Refresh age group snapshot — athlete command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

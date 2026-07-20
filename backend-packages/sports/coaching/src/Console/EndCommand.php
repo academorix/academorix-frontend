@@ -29,6 +29,13 @@ final class EndCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('End — coach assignment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('End — coach assignment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

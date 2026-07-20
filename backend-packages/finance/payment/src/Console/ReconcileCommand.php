@@ -29,6 +29,13 @@ final class ReconcileCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile the payment data', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile the payment data completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

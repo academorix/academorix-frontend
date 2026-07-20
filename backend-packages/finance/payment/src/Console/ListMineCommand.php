@@ -29,6 +29,13 @@ final class ListMineCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List mine — payment method command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List mine — payment method command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

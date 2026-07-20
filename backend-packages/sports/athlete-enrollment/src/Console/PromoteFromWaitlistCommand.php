@@ -29,6 +29,13 @@ final class PromoteFromWaitlistCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Promote from waitlist — enrollment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Promote from waitlist — enrollment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

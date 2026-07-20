@@ -29,6 +29,13 @@ final class BeginPlayoffsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Begin playoffs — season command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Begin playoffs — season command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

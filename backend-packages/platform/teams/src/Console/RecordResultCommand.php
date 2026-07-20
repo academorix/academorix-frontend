@@ -29,6 +29,13 @@ final class RecordResultCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Record result — event team command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Record result — event team command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class PauseCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Pause — organization command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Pause — organization command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

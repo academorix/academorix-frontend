@@ -29,6 +29,13 @@ final class SmsOptOutAddCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Sms:opt out add — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Sms:opt out add — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class CreateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Create a new season', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Create a new season completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

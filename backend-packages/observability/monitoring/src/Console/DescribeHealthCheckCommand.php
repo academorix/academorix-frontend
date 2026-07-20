@@ -29,6 +29,13 @@ final class DescribeHealthCheckCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Describe health check — monitoring command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Describe health check — monitoring command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

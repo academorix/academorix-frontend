@@ -29,6 +29,13 @@ final class ReconcileLedgerCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile ledger — private sessions command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile ledger — private sessions command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

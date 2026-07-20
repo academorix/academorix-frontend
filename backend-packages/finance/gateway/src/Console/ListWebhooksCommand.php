@@ -29,6 +29,13 @@ final class ListWebhooksCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List webhooks — gateway command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List webhooks — gateway command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

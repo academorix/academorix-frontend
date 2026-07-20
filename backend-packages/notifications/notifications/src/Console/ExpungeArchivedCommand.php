@@ -29,6 +29,13 @@ final class ExpungeArchivedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Expunge archived — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Expunge archived — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

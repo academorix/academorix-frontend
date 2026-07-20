@@ -29,6 +29,13 @@ final class ActivateTemplateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Activate template — approvals command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Activate template — approvals command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

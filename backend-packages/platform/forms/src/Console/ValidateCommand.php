@@ -29,6 +29,13 @@ final class ValidateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Validate — forms command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Validate — forms command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

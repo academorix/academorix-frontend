@@ -29,6 +29,13 @@ final class FunnelReportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Funnel report — leads command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Funnel report — leads command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class DispatchRemindersCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Dispatch reminders — approvals command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Dispatch reminders — approvals command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

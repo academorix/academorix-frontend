@@ -29,6 +29,13 @@ final class GenerateSitemapCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Generate sitemap — public site command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Generate sitemap — public site command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

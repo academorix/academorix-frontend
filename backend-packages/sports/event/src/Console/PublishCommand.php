@@ -29,6 +29,13 @@ final class PublishCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Publish a event', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Publish a event completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

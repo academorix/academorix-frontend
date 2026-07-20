@@ -29,6 +29,13 @@ final class HeartbeatCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Heartbeat — gates command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Heartbeat — gates command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class PushPruneExpiredCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Push:prune expired — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Push:prune expired — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

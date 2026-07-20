@@ -29,6 +29,13 @@ final class ExpireOffersCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Expire offers — registrations command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Expire offers — registrations command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class AcknowledgeAlertCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Acknowledge alert — monitoring command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Acknowledge alert — monitoring command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

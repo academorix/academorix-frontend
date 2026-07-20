@@ -29,6 +29,13 @@ final class BulkIssueCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Bulk issue — coupon command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Bulk issue — coupon command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

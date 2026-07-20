@@ -29,6 +29,13 @@ final class WithdrawCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Withdraw — enrollment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Withdraw — enrollment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

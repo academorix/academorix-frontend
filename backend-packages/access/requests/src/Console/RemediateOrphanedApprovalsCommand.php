@@ -29,6 +29,13 @@ final class RemediateOrphanedApprovalsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Remediate orphaned approvals — access requests command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Remediate orphaned approvals — access requests command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

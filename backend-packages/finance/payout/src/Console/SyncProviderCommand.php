@@ -29,6 +29,13 @@ final class SyncProviderCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Sync provider — payout command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Sync provider — payout command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

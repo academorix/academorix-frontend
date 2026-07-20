@@ -29,6 +29,13 @@ final class PruneCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Prune stale webhook data', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Prune stale webhook data completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

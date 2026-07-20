@@ -29,6 +29,13 @@ final class ForcePasswordResetCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Force password reset — identity command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Force password reset — identity command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

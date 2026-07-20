@@ -29,6 +29,13 @@ final class TestExportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test export — telemetry command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test export — telemetry command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

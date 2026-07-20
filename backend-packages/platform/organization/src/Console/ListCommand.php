@@ -29,6 +29,13 @@ final class ListCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List every organization row', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List every organization row completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

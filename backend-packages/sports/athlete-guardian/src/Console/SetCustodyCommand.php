@@ -29,6 +29,13 @@ final class SetCustodyCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Set custody — guardian command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Set custody — guardian command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

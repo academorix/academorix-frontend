@@ -29,6 +29,13 @@ final class MarkUncollectibleCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Mark uncollectible — invoice command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Mark uncollectible — invoice command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class TestExpressionCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test expression — approvals command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test expression — approvals command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

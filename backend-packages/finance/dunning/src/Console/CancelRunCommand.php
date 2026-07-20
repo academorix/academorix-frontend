@@ -29,6 +29,13 @@ final class CancelRunCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Cancel run — dunning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Cancel run — dunning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

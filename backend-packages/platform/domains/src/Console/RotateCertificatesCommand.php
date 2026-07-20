@@ -29,6 +29,13 @@ final class RotateCertificatesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Rotate certificates — domains command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Rotate certificates — domains command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ReconcilePrimaryCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile primary — guardian command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile primary — guardian command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

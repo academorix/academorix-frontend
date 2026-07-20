@@ -29,6 +29,13 @@ final class ReconcileTemplateVersionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile template versions — approvals command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile template versions — approvals command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

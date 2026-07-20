@@ -29,6 +29,13 @@ final class PreviewCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Preview a theme', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Preview a theme completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

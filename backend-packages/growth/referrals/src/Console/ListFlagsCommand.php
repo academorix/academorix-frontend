@@ -29,6 +29,13 @@ final class ListFlagsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List flags — referral fraud command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List flags — referral fraud command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

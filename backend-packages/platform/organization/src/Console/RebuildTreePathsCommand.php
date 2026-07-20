@@ -29,6 +29,13 @@ final class RebuildTreePathsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Rebuild tree paths — organization command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Rebuild tree paths — organization command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

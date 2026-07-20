@@ -29,6 +29,13 @@ final class SeedLookupFixturesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed lookup fixtures — people command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed lookup fixtures — people command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ResetCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reset the entitlements data', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reset the entitlements data completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

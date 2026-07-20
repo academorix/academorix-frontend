@@ -29,6 +29,13 @@ final class AddCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Add — guardian command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Add — guardian command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class SeedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed the entitlements catalogue', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed the entitlements catalogue completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class TagsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Tags — cache command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Tags — cache command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

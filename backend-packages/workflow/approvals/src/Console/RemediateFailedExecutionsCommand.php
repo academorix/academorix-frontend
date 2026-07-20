@@ -29,6 +29,13 @@ final class RemediateFailedExecutionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Remediate failed executions — approvals command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Remediate failed executions — approvals command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

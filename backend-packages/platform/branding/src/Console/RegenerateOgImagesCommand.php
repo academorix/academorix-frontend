@@ -29,6 +29,13 @@ final class RegenerateOgImagesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Regenerate og images — branding command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Regenerate og images — branding command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

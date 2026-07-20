@@ -29,6 +29,13 @@ final class RollStatusCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Roll status — event command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Roll status — event command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

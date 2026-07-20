@@ -29,6 +29,13 @@ final class ListTemplatesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List templates — approvals command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List templates — approvals command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

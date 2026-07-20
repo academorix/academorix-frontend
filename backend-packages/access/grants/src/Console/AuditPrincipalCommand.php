@@ -29,6 +29,13 @@ final class AuditPrincipalCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit principal — grants command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit principal — grants command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

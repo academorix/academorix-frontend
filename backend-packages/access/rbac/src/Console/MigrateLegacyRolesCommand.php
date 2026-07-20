@@ -29,6 +29,13 @@ final class MigrateLegacyRolesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Migrate legacy roles — rbac command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Migrate legacy roles — rbac command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

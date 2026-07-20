@@ -29,6 +29,13 @@ final class AddBlackoutCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Add blackout — facility command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Add blackout — facility command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

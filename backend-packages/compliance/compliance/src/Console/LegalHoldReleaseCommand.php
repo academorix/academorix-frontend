@@ -29,6 +29,13 @@ final class LegalHoldReleaseCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Legal hold release — compliance command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Legal hold release — compliance command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

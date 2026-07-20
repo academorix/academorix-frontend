@@ -29,6 +29,13 @@ final class RemoveFacilityCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Remove facility — event command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Remove facility — event command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ResendFailedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Resend failed — invitations command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Resend failed — invitations command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

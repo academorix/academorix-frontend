@@ -29,6 +29,13 @@ final class RescanVirusCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Rescan virus — storage command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Rescan virus — storage command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

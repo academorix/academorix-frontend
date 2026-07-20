@@ -29,6 +29,13 @@ final class AcceptCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Accept — payment dispute command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Accept — payment dispute command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

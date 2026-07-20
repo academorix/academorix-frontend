@@ -29,6 +29,13 @@ final class RefreshMaxmindCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Refresh maxmind — geography command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Refresh maxmind — geography command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

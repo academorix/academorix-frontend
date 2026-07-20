@@ -29,6 +29,13 @@ final class SeedDefaultsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed defaults — admin command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed defaults — admin command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

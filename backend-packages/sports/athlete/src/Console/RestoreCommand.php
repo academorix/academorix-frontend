@@ -29,6 +29,13 @@ final class RestoreCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Restore — athlete command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Restore — athlete command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

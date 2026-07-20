@@ -29,6 +29,13 @@ final class SyncCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Synchronise the integration', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Synchronise the integration completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

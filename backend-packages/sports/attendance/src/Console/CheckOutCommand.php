@@ -29,6 +29,13 @@ final class CheckOutCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Check out — attendance command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Check out — attendance command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

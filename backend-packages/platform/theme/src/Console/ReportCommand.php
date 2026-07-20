@@ -29,6 +29,13 @@ final class ReportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Report on the theme token override data', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Report on the theme token override data completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

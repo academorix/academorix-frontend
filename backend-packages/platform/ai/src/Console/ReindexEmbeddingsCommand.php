@@ -29,6 +29,13 @@ final class ReindexEmbeddingsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reindex embeddings — ai command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reindex embeddings — ai command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class RoasReportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Roas report — marketing command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Roas report — marketing command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

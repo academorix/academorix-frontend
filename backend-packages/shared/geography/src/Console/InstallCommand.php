@@ -29,6 +29,13 @@ final class InstallCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Install — geography command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Install — geography command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

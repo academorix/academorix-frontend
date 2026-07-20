@@ -29,6 +29,13 @@ final class UpdateHoursCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Update hours — branch command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Update hours — branch command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

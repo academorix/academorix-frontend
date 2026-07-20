@@ -29,6 +29,13 @@ final class PurgeAbandonedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Purge abandoned — messaging command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Purge abandoned — messaging command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

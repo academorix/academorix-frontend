@@ -29,6 +29,13 @@ final class PurgeStaleCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Purge stale — offline sync command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Purge stale — offline sync command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

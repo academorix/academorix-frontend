@@ -29,6 +29,13 @@ final class RegistryReconcileReferencesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Registry:reconcile references — sports command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Registry:reconcile references — sports command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

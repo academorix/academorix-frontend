@@ -29,6 +29,13 @@ final class NotifyOverdueCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Notify overdue — chargeback command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Notify overdue — chargeback command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

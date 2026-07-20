@@ -29,6 +29,13 @@ final class ConfirmCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Confirm — enrollment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Confirm — enrollment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

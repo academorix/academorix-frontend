@@ -29,6 +29,13 @@ final class GrantCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Grant — awards command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Grant — awards command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

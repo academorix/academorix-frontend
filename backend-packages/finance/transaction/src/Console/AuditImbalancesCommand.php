@@ -29,6 +29,13 @@ final class AuditImbalancesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit imbalances — ledger command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit imbalances — ledger command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

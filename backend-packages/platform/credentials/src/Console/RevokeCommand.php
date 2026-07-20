@@ -29,6 +29,13 @@ final class RevokeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Revoke — credentials command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Revoke — credentials command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

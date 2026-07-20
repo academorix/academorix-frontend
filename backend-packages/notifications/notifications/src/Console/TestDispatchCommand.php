@@ -29,6 +29,13 @@ final class TestDispatchCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test dispatch — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test dispatch — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ReassignManagerCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reassign manager — platform user command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reassign manager — platform user command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

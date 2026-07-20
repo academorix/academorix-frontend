@@ -29,6 +29,13 @@ final class ReinstateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reinstate — staff command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reinstate — staff command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

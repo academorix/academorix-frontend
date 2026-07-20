@@ -29,6 +29,13 @@ final class RegistryDescribeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Registry:describe — sports command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Registry:describe — sports command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

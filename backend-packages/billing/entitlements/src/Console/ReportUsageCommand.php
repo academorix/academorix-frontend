@@ -29,6 +29,13 @@ final class ReportUsageCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Report usage — entitlements command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Report usage — entitlements command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

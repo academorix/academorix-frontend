@@ -29,6 +29,13 @@ final class TreeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Tree — organization command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Tree — organization command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

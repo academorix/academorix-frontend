@@ -29,6 +29,13 @@ final class RejectCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reject — trial command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reject — trial command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

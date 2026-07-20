@@ -29,6 +29,13 @@ final class VerifyCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Verify the coach certification data', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Verify the coach certification data completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

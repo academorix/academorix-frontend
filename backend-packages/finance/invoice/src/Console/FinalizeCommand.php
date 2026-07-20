@@ -29,6 +29,13 @@ final class FinalizeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Finalize — invoice command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Finalize — invoice command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

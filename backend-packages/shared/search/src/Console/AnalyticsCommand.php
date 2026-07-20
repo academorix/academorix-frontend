@@ -29,6 +29,13 @@ final class AnalyticsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Analytics — search command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Analytics — search command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

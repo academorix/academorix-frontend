@@ -29,6 +29,13 @@ final class TailLogsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Tail logs — telemetry command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Tail logs — telemetry command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

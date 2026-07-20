@@ -29,6 +29,13 @@ final class McpServeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Mcp:serve — ai command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Mcp:serve — ai command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

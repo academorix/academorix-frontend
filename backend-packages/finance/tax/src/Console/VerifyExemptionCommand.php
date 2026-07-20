@@ -29,6 +29,13 @@ final class VerifyExemptionCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Verify exemption — tax command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Verify exemption — tax command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

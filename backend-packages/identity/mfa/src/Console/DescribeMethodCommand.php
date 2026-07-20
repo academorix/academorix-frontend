@@ -29,6 +29,13 @@ final class DescribeMethodCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Describe method — mfa command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Describe method — mfa command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

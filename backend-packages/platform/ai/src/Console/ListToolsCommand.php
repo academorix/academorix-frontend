@@ -29,6 +29,13 @@ final class ListToolsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List tools — ai command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List tools — ai command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

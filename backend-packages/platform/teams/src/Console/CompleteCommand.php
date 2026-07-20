@@ -29,6 +29,13 @@ final class CompleteCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Complete — trial command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Complete — trial command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

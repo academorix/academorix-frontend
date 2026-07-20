@@ -29,6 +29,13 @@ final class SeedConsentCategoriesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed consent categories — compliance command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed consent categories — compliance command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

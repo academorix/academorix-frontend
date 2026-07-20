@@ -29,6 +29,13 @@ final class DuplicateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Duplicate a membership plan', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Duplicate a membership plan completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

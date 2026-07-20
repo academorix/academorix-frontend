@@ -29,6 +29,13 @@ final class ReconcileDefaultsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile defaults — organization command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile defaults — organization command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

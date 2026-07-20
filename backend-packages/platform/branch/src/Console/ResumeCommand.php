@@ -29,6 +29,13 @@ final class ResumeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Resume — branch command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Resume — branch command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

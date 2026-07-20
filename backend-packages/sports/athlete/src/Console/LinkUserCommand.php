@@ -29,6 +29,13 @@ final class LinkUserCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Link user — athlete command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Link user — athlete command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

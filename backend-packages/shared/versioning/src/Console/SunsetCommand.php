@@ -29,6 +29,13 @@ final class SunsetCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Sunset — versioning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Sunset — versioning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

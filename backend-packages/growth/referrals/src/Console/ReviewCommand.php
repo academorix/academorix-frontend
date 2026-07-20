@@ -29,6 +29,13 @@ final class ReviewCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Review — referral fraud command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Review — referral fraud command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

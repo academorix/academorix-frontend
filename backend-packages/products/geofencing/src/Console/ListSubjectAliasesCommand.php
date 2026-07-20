@@ -29,6 +29,13 @@ final class ListSubjectAliasesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List subject aliases — geofencing command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List subject aliases — geofencing command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

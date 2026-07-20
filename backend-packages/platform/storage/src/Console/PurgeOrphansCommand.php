@@ -29,6 +29,13 @@ final class PurgeOrphansCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Purge orphans — storage command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Purge orphans — storage command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

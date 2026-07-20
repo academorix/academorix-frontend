@@ -29,6 +29,13 @@ final class OpeningBalanceCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Opening balance — ledger command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Opening balance — ledger command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

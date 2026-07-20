@@ -29,6 +29,13 @@ final class ReconcileFacilityBookingsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile facility bookings — event command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile facility bookings — event command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

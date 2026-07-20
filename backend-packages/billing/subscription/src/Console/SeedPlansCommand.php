@@ -29,6 +29,13 @@ final class SeedPlansCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed plans — subscription command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed plans — subscription command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

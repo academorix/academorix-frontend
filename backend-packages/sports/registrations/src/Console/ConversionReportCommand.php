@@ -29,6 +29,13 @@ final class ConversionReportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Conversion report — registrations command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Conversion report — registrations command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

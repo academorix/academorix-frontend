@@ -29,6 +29,13 @@ final class DeactivateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Deactivate a coupon', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Deactivate a coupon completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

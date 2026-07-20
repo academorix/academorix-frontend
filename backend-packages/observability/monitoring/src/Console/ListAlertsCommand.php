@@ -29,6 +29,13 @@ final class ListAlertsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List alerts — monitoring command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List alerts — monitoring command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

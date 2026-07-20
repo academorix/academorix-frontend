@@ -29,6 +29,13 @@ final class ProvidersListCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Providers:list — integrations command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Providers:list — integrations command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

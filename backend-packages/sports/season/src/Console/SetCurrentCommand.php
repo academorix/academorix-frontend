@@ -29,6 +29,13 @@ final class SetCurrentCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Set current — season command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Set current — season command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

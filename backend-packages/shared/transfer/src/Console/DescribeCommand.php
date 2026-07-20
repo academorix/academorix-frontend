@@ -29,6 +29,13 @@ final class DescribeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Describe the transfer surface', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Describe the transfer surface completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

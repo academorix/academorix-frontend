@@ -29,6 +29,13 @@ final class SeedPathwaysCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed pathways — development command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed pathways — development command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

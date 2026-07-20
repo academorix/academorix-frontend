@@ -29,6 +29,13 @@ final class ReconcileDeliveriesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile deliveries — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile deliveries — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

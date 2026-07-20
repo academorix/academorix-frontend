@@ -29,6 +29,13 @@ final class AuditSuspiciousActivityCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit suspicious activity — mfa command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit suspicious activity — mfa command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

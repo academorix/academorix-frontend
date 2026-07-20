@@ -29,6 +29,13 @@ final class RevokeConsentCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Revoke consent — athlete command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Revoke consent — athlete command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

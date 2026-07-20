@@ -29,6 +29,13 @@ final class TestPushCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test push — passes command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test push — passes command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

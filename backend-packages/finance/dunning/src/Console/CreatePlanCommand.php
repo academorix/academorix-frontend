@@ -29,6 +29,13 @@ final class CreatePlanCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Create plan — dunning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Create plan — dunning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

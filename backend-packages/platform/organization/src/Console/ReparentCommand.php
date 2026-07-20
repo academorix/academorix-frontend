@@ -29,6 +29,13 @@ final class ReparentCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reparent — organization command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reparent — organization command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

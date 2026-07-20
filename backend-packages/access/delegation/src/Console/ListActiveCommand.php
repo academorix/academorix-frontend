@@ -29,6 +29,13 @@ final class ListActiveCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List active — impersonation command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List active — impersonation command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

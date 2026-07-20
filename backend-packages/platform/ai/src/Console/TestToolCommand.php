@@ -29,6 +29,13 @@ final class TestToolCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test tool — ai command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test tool — ai command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

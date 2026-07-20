@@ -29,6 +29,13 @@ final class SynonymsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Synonyms — search command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Synonyms — search command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

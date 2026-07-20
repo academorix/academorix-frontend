@@ -29,6 +29,13 @@ final class ListRolesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List roles — rbac command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List roles — rbac command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

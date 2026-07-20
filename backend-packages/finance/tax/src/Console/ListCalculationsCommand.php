@@ -29,6 +29,13 @@ final class ListCalculationsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List calculations — tax command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List calculations — tax command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

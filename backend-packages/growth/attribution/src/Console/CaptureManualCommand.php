@@ -29,6 +29,13 @@ final class CaptureManualCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Capture manual — attribution command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Capture manual — attribution command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

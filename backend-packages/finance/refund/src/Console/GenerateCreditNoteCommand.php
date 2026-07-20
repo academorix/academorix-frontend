@@ -29,6 +29,13 @@ final class GenerateCreditNoteCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Generate credit note — refund command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Generate credit note — refund command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

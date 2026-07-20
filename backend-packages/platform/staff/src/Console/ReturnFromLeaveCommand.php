@@ -29,6 +29,13 @@ final class ReturnFromLeaveCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Return from leave — staff command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Return from leave — staff command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

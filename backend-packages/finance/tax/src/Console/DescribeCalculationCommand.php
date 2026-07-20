@@ -29,6 +29,13 @@ final class DescribeCalculationCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Describe calculation — tax command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Describe calculation — tax command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class PurgeExpiredCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Purge expired — attribution command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Purge expired — attribution command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

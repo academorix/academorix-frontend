@@ -29,6 +29,13 @@ final class TestEvalCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test eval — geofencing command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test eval — geofencing command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

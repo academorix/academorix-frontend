@@ -29,6 +29,13 @@ final class PreviewEvidenceCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Preview evidence — chargeback command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Preview evidence — chargeback command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

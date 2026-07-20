@@ -29,6 +29,13 @@ final class DescribeEventCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Describe event — marketing command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Describe event — marketing command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

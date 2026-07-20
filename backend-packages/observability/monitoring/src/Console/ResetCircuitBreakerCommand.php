@@ -29,6 +29,13 @@ final class ResetCircuitBreakerCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reset circuit breaker — monitoring command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reset circuit breaker — monitoring command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

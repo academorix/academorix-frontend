@@ -29,6 +29,13 @@ final class AutomateTickCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Automate tick — tasks command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Automate tick — tasks command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class MarkPaidCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Mark paid — invoice command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Mark paid — invoice command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

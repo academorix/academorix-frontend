@@ -29,6 +29,13 @@ final class MergeIdentitiesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Merge identities — analytics command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Merge identities — analytics command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

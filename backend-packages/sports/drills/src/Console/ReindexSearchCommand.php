@@ -29,6 +29,13 @@ final class ReindexSearchCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reindex search — drills command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reindex search — drills command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

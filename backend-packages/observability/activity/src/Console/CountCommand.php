@@ -29,6 +29,13 @@ final class CountCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Count — activity command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Count — activity command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

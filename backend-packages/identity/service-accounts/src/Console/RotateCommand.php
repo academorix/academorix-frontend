@@ -29,6 +29,13 @@ final class RotateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Rotate — service account command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Rotate — service account command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

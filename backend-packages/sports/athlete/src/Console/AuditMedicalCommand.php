@@ -29,6 +29,13 @@ final class AuditMedicalCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit medical — athlete command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit medical — athlete command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ReleaseCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Release — versioning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Release — versioning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

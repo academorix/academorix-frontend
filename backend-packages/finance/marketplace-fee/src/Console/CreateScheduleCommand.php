@@ -29,6 +29,13 @@ final class CreateScheduleCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Create schedule — marketplace fee command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Create schedule — marketplace fee command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

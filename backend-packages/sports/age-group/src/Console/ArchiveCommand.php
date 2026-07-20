@@ -29,6 +29,13 @@ final class ArchiveCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Archive — age group command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Archive — age group command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

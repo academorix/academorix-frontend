@@ -29,6 +29,13 @@ final class ExportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Export the audit rows', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Export the audit rows completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

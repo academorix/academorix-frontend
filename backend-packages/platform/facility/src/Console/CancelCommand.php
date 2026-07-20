@@ -29,6 +29,13 @@ final class CancelCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Cancel — booking command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Cancel — booking command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

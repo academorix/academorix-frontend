@@ -29,6 +29,13 @@ final class ListPayoutsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List payouts — marketplace fee command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List payouts — marketplace fee command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

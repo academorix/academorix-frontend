@@ -29,6 +29,13 @@ final class RecalculateTotalsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Recalculate totals — order command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Recalculate totals — order command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class CleanupAcceptedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Cleanup accepted — invitations command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Cleanup accepted — invitations command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

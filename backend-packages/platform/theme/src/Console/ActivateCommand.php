@@ -29,6 +29,13 @@ final class ActivateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Activate a theme', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Activate a theme completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

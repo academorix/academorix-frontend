@@ -29,6 +29,13 @@ final class RemindDueCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Remind due — tasks command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Remind due — tasks command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

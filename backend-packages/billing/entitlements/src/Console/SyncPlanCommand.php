@@ -29,6 +29,13 @@ final class SyncPlanCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Sync plan — entitlements command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Sync plan — entitlements command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class DiagnoseCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Diagnose — module command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Diagnose — module command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ListEventsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List events — analytics command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List events — analytics command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

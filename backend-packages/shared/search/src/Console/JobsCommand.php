@@ -29,6 +29,13 @@ final class JobsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Jobs — search command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Jobs — search command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

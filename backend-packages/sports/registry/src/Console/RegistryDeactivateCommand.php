@@ -29,6 +29,13 @@ final class RegistryDeactivateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Registry:deactivate — sports command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Registry:deactivate — sports command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

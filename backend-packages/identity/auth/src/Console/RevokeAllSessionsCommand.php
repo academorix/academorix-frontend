@@ -29,6 +29,13 @@ final class RevokeAllSessionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Revoke all sessions — auth command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Revoke all sessions — auth command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

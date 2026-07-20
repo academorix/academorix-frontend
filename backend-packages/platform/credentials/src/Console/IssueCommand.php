@@ -29,6 +29,13 @@ final class IssueCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Issue — credentials command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Issue — credentials command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

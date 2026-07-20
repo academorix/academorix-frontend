@@ -29,6 +29,13 @@ final class ReconcileTeamMembersCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile team members — enrollment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile team members — enrollment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class AssignCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Assign — tasks command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Assign — tasks command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

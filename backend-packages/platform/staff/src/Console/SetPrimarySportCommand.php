@@ -29,6 +29,13 @@ final class SetPrimarySportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Set primary sport — coach command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Set primary sport — coach command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

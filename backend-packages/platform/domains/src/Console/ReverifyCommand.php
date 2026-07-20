@@ -29,6 +29,13 @@ final class ReverifyCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reverify — domains command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reverify — domains command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

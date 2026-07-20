@@ -29,6 +29,13 @@ final class SeedInjuryCatalogCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed injury catalog — medical command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed injury catalog — medical command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

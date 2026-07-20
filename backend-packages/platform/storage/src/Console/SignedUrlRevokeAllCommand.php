@@ -29,6 +29,13 @@ final class SignedUrlRevokeAllCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Signed url revoke all — storage command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Signed url revoke all — storage command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

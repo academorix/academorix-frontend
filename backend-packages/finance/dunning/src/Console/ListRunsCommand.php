@@ -29,6 +29,13 @@ final class ListRunsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List runs — dunning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List runs — dunning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

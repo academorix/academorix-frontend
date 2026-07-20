@@ -29,6 +29,13 @@ final class SyncRoleDefinitionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Sync role definitions — rbac command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Sync role definitions — rbac command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

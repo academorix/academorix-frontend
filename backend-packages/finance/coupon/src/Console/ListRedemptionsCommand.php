@@ -29,6 +29,13 @@ final class ListRedemptionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List redemptions — coupon command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List redemptions — coupon command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ForceFailCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Force fail — refund command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Force fail — refund command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

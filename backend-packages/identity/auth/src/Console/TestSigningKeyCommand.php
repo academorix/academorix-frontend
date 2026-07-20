@@ -29,6 +29,13 @@ final class TestSigningKeyCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Test signing key — auth command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Test signing key — auth command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

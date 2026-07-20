@@ -29,6 +29,13 @@ final class CaptureCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Capture — payment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Capture — payment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

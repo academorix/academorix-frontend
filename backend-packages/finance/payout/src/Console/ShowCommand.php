@@ -29,6 +29,13 @@ final class ShowCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Show one payout', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Show one payout completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

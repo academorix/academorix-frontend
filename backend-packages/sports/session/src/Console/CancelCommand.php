@@ -29,6 +29,13 @@ final class CancelCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Cancel — session command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Cancel — session command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

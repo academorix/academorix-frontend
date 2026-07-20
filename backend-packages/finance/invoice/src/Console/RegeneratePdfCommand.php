@@ -29,6 +29,13 @@ final class RegeneratePdfCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Regenerate pdf — invoice command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Regenerate pdf — invoice command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

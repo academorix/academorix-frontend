@@ -29,6 +29,13 @@ final class FlushCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Flush — search command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Flush — search command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class InAppTestBroadcastCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('In app:test broadcast — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('In app:test broadcast — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

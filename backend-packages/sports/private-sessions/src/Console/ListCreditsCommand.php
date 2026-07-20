@@ -29,6 +29,13 @@ final class ListCreditsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List credits — private sessions command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List credits — private sessions command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

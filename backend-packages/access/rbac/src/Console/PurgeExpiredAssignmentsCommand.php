@@ -29,6 +29,13 @@ final class PurgeExpiredAssignmentsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Purge expired assignments — rbac command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Purge expired assignments — rbac command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

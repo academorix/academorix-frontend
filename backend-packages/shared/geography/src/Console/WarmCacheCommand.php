@@ -29,6 +29,13 @@ final class WarmCacheCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Warm cache — geography command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Warm cache — geography command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

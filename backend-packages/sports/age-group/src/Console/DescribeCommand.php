@@ -29,6 +29,13 @@ final class DescribeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Describe the age group surface', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Describe the age group surface completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

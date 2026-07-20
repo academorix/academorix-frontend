@@ -29,6 +29,13 @@ final class EnableCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Enable — service account command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Enable — service account command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class ChangeRoleCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Change role — team member command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Change role — team member command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

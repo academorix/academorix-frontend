@@ -29,6 +29,13 @@ final class AddToDenyListCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Add to deny list — auth command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Add to deny list — auth command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

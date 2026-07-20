@@ -29,6 +29,13 @@ final class ExpireTrialsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Expire trials — subscription command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Expire trials — subscription command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

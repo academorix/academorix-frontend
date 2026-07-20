@@ -29,6 +29,13 @@ final class ExpireOverdueCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Expire overdue — announcements command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Expire overdue — announcements command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

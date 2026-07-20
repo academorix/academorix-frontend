@@ -29,6 +29,13 @@ final class ReconcileCountsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile counts — attribution command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile counts — attribution command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

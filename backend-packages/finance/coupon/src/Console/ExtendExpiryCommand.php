@@ -29,6 +29,13 @@ final class ExtendExpiryCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Extend expiry — coupon command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Extend expiry — coupon command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

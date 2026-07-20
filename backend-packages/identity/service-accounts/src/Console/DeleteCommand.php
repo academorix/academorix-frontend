@@ -29,6 +29,13 @@ final class DeleteCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Delete an service account', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Delete an service account completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

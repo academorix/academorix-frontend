@@ -29,6 +29,13 @@ final class RejectCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reject — access requests command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reject — access requests command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

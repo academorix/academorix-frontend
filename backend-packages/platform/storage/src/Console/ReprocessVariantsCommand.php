@@ -29,6 +29,13 @@ final class ReprocessVariantsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reprocess variants — storage command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reprocess variants — storage command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

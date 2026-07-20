@@ -29,6 +29,13 @@ final class DeprecateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Deprecate — versioning command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Deprecate — versioning command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

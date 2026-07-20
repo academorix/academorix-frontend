@@ -29,6 +29,13 @@ final class ReconcileCurrentCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile current — season command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile current — season command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

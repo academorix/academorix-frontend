@@ -29,6 +29,13 @@ final class ReleaseStaleHoldsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Release stale holds — wallet command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Release stale holds — wallet command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

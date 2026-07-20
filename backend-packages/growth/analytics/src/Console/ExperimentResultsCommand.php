@@ -29,6 +29,13 @@ final class ExperimentResultsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Experiment results — analytics command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Experiment results — analytics command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

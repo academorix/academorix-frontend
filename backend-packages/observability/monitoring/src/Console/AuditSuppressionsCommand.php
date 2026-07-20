@@ -29,6 +29,13 @@ final class AuditSuppressionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit suppressions — monitoring command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit suppressions — monitoring command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class SetPrimaryFacilityCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Set primary facility — event command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Set primary facility — event command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

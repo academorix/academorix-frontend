@@ -29,6 +29,13 @@ final class SampleTracesCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Sample traces — telemetry command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Sample traces — telemetry command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

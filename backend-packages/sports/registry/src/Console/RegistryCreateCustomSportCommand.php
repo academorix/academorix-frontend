@@ -29,6 +29,13 @@ final class RegistryCreateCustomSportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Registry:create custom sport — sports command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Registry:create custom sport — sports command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

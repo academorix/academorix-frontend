@@ -29,6 +29,13 @@ final class RotateSecretCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Rotate secret — webhook command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Rotate secret — webhook command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

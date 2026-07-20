@@ -29,6 +29,13 @@ final class ApproveCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Approve — apps command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Approve — apps command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

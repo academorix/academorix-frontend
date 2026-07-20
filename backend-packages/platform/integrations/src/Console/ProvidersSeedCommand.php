@@ -29,6 +29,13 @@ final class ProvidersSeedCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Providers:seed — integrations command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Providers:seed — integrations command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

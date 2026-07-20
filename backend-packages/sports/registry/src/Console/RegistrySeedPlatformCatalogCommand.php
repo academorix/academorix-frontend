@@ -29,6 +29,13 @@ final class RegistrySeedPlatformCatalogCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Registry:seed platform catalog — sports command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Registry:seed platform catalog — sports command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class CloseCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Close — branch command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Close — branch command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

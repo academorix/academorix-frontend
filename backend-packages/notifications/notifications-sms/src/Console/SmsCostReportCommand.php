@@ -29,6 +29,13 @@ final class SmsCostReportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Sms:cost report — notifications command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Sms:cost report — notifications command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

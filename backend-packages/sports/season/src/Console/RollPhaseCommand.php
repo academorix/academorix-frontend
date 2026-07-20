@@ -29,6 +29,13 @@ final class RollPhaseCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Roll phase — season command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Roll phase — season command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

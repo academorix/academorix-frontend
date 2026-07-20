@@ -29,6 +29,13 @@ final class ExtendRetentionCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Extend retention — activity command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Extend retention — activity command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

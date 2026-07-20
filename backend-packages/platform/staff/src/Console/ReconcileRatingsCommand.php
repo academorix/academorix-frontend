@@ -29,6 +29,13 @@ final class ReconcileRatingsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reconcile ratings — coach command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reconcile ratings — coach command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

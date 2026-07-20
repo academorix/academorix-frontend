@@ -2634,6 +2634,13 @@ def emit_console_command(m: Module, signature: str) -> tuple[str, str]:
     # `settings:describe`   ->  "Describe the settings surface"
     description = _derive_command_description(group_part, verb_part)
     escaped_description = description.replace("\\", "\\\\").replace("'", "\\'")
+    # Title used for OmniTerm `titleBar()` + `success()` bookends. Same
+    # source as the description but without the trailing sentence period
+    # since it renders as a banner header, not prose. Every command lands
+    # with these bookends so the CLI surface is uniform (per
+    # `.kiro/steering/console-commands.md` §Rules of thumb).
+    title = description.rstrip(".")
+    escaped_title = title.replace("\\", "\\\\").replace("'", "\\'")
     doc = _php_docblock([
         f"`php artisan {signature}` — {description}",
         "",
@@ -2666,6 +2673,13 @@ final class {class_name} extends BaseCommand
      */
     public function handle(): int
     {{
+        $this->omni->titleBar('{escaped_title}', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('{escaped_title} completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }}
 }}
@@ -2808,14 +2822,27 @@ final class {class_name} implements ShouldQueue
 # ---------------------------------------------------------------------------
 
 def emit_service_interface(m: Module, name: str) -> tuple[str, str]:
-    """Emit `src/Contracts/Services/<Name>Interface.php`."""
-    ns = f"{m.ns_module_root}\\Contracts\\Services"
-    concrete_ns = f"{m.ns_module_root}\\Services"
+    """Emit `src/Contracts/Services/<Name>Interface.php` (or
+    `src/Contracts/Registries/<Name>Interface.php` for registries).
+
+    Registry-suffixed classes route to a dedicated folder per
+    `.kiro/steering/folder-conventions.md` §Registry — registries are a
+    first-class primitive with their own home, never a grab-bag under
+    `Services/`.
+    """
     class_name = studly(name)
     iface_name = f"{class_name}Interface"
     if class_name.endswith("Interface"):
         iface_name = class_name
         class_name = class_name[: -len("Interface")]
+
+    is_registry = class_name.endswith("Registry")
+    if is_registry:
+        ns = f"{m.ns_module_root}\\Contracts\\Registries"
+        concrete_ns = f"{m.ns_module_root}\\Registry"
+    else:
+        ns = f"{m.ns_module_root}\\Contracts\\Services"
+        concrete_ns = f"{m.ns_module_root}\\Services"
     doc = _php_docblock([
         f"Service contract for {class_name}.",
         "",
@@ -2844,7 +2871,8 @@ interface {iface_name}
     // TODO(gen): declare the domain methods this service exposes.
 }}
 """
-    return f"src/Contracts/Services/{iface_name}.php", body
+    iface_dir = "Registries" if is_registry else "Services"
+    return f"src/Contracts/{iface_dir}/{iface_name}.php", body
 
 
 def emit_service_concrete(m: Module, name: str) -> tuple[str, str]:
@@ -2859,13 +2887,22 @@ def emit_service_concrete(m: Module, name: str) -> tuple[str, str]:
     services, so the generator can't produce meaningful bodies for
     them.
     """
-    ns = f"{m.ns_module_root}\\Services"
-    iface_ns = f"{m.ns_module_root}\\Contracts\\Services"
     class_name = studly(name)
     iface_name = f"{class_name}Interface"
     if class_name.endswith("Interface"):
         iface_name = class_name
         class_name = class_name[: -len("Interface")]
+
+    # Registry-suffixed classes route to `src/Registry/` per
+    # `.kiro/steering/folder-conventions.md`. Everything else stays in
+    # `src/Services/`.
+    is_registry = class_name.endswith("Registry")
+    if is_registry:
+        ns = f"{m.ns_module_root}\\Registry"
+        iface_ns = f"{m.ns_module_root}\\Contracts\\Registries"
+    else:
+        ns = f"{m.ns_module_root}\\Services"
+        iface_ns = f"{m.ns_module_root}\\Contracts\\Services"
 
     # Pick the module's primary entity to seed the constructor. The
     # first entity in the module is the anchor — every other entity
@@ -2920,7 +2957,8 @@ final class {class_name} implements {iface_name}
 {{
 {ctor_params_block}}}
 """
-    return f"src/Services/{class_name}.php", body
+    concrete_dir = "Registry" if is_registry else "Services"
+    return f"src/{concrete_dir}/{class_name}.php", body
 
 
 # ---------------------------------------------------------------------------

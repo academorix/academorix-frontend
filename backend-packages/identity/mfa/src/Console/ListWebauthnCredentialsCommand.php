@@ -29,6 +29,13 @@ final class ListWebauthnCredentialsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('List webauthn credentials — mfa command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('List webauthn credentials — mfa command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

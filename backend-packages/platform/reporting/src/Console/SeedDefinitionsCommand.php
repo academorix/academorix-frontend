@@ -29,6 +29,13 @@ final class SeedDefinitionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Seed definitions — reporting command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Seed definitions — reporting command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class AssignPositionCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Assign position — enrollment command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Assign position — enrollment command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class UpdateCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Update an existing profile', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Update an existing profile completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

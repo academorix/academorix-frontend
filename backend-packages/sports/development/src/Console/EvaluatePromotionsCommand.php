@@ -29,6 +29,13 @@ final class EvaluatePromotionsCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Evaluate promotions — development command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Evaluate promotions — development command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

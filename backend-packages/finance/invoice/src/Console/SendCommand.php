@@ -29,6 +29,13 @@ final class SendCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Send — invoice command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Send — invoice command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

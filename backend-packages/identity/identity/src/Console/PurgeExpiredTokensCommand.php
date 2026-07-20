@@ -29,6 +29,13 @@ final class PurgeExpiredTokensCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Purge expired tokens — identity command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Purge expired tokens — identity command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

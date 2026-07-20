@@ -29,6 +29,13 @@ final class ApplyCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Apply — credit note command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Apply — credit note command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

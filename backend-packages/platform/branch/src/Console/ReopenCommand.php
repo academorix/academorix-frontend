@@ -29,6 +29,13 @@ final class ReopenCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reopen — branch command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reopen — branch command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

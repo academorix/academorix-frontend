@@ -29,6 +29,13 @@ final class AuditReportCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Audit report — approvals command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Audit report — approvals command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

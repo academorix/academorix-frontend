@@ -29,6 +29,13 @@ final class ReverseRedemptionCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Reverse redemption — coupon command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Reverse redemption — coupon command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

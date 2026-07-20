@@ -29,6 +29,13 @@ final class ResumeCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Resume — membership command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Resume — membership command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

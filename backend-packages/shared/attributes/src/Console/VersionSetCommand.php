@@ -29,6 +29,13 @@ final class VersionSetCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Version set — attributes command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Version set — attributes command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

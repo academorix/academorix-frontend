@@ -29,6 +29,13 @@ final class CheckInCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Check in — event team command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Check in — event team command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }

@@ -29,6 +29,13 @@ final class RefundCommand extends BaseCommand
      */
     public function handle(): int
     {
+        $this->omni->titleBar('Refund — order command', 'sky');
+
+        // TODO(gen): wire the required services + implement the handler body.
+
+        $this->omni->success('Refund — order command completed.');
+        $this->showDuration();
+
         return self::SUCCESS;
     }
 }
