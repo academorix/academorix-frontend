@@ -1,0 +1,30 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/events",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Attribute-based event listener discovery and broadcasting wiring. Ships #[OnEvent], #[ListensFor], #[AfterCommit], and #[Broadcastable] with channel / name / queue helpers.",
+  "capabilities": [
+    "#[OnEvent] class-level listener registration",
+    "#[ListensFor] method-level listener registration",
+    "#[AfterCommit] class-level after-commit marker",
+    "#[Broadcastable] + #[BroadcastOn] channel declaration",
+    "#[BroadcastAs] custom broadcast name",
+    "#[BroadcastQueue] custom broadcast queue",
+    "Discovery via olvlvl/composer-attribute-collector at boot",
+    "Optional manifest cache under bootstrap/cache/events.php"
+  ],
+  "when_to_use": "Any package needs to declare an event listener or broadcast an event without editing EventServiceProvider.",
+  "when_not_to_use": "For queue-worker orchestration or job-lifecycle events, use academorix/scheduling and Laravel Horizon.",
+  "peer_deps": [
+    "academorix/foundation",
+    "academorix/service-provider",
+    "olvlvl/composer-attribute-collector"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/events/README.md"]
+}

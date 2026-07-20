@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/container",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Client-side dependency injection container for browser and React — decorators, modules, lifecycle hooks, and metadata-driven discovery.",
+  "capabilities": [
+    "@Injectable() / @Inject() / @Optional() decorators",
+    "@Module() dynamic module system with forRoot / forFeature",
+    "OnModuleInit + OnApplicationBootstrap lifecycle hooks",
+    "IDiscoveryService for metadata-driven auto-registration",
+    "React bindings: useInject, ContainerProvider",
+    "Testing subpath with createTestingModule helper"
+  ],
+  "when_to_use": "Composing services, providers, and modules across the framework with typed DI and metadata-driven discovery.",
+  "when_not_to_use": "For plain functional composition without DI use @stackra/support helpers; for shared vocabulary use @stackra/contracts.",
+  "peer_deps": [
+    "@stackra/contracts",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/container",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/container/README.md"]
+}

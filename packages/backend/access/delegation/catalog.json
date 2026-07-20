@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/delegation",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Time-bounded delegation of a User's roles to a delegate + PlatformUser impersonation sessions of tenant users for support and debug.",
+  "capabilities": [
+    "RoleDelegation aggregate (dlg_ prefix) with start/end windows",
+    "ImpersonationSession aggregate (imp_ prefix) for staff act-as flows",
+    "Same-tenant delegator-to-delegate role transfer",
+    "Auto-expiry + revocation of delegated grants",
+    "Attribute-first CRUD, Actions, Policies, Events",
+    "Wire SDK companion at academorix-access/delegation-sdk"
+  ],
+  "when_to_use": "A tenant admin needs to temporarily hand off their role to a colleague, or Academorix staff needs to act-as a tenant user for support.",
+  "when_not_to_use": "For permanent role assignment or grant-based access, use academorix/rbac or academorix/grants instead.",
+  "peer_deps": [
+    "academorix-access/delegation-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/access/delegation/README.md"]
+}

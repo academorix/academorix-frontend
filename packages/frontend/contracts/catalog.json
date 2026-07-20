@@ -1,0 +1,24 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/contracts",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Shared interfaces, types, enums, and DI tokens for the Stackra ecosystem — zero runtime implementation, single vocabulary for every package.",
+  "capabilities": [
+    "DI tokens (Symbol()) for every cross-package service",
+    "Interfaces per subsystem (network, cache, http, events, ...)",
+    "Event-name maps per domain (NETWORK_EVENTS, CACHE_EVENTS, ...)",
+    "Enums + shared types",
+    "Zero runtime cost — .d.ts + Symbol() only",
+    "Single source of truth referenced by every framework package"
+  ],
+  "when_to_use": "Any package needs to import a cross-package token, interface, event map, or enum.",
+  "when_not_to_use": "Do not re-export contracts from a feature package — consumers import from @stackra/contracts directly.",
+  "peer_deps": ["react", "react-router"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/contracts/README.md"]
+}

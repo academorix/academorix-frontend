@@ -1,0 +1,25 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/laravel-omniterm",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Terminal UI toolkit — live rendering, async tasks, spinners, browser navigation, and rich HTML-to-ANSI output for Laravel Artisan commands.",
+  "capabilities": [
+    "HTML-to-ANSI rendering with Tailwind class support",
+    "16-million-color truecolor + 256-color fallback",
+    "Gradient backgrounds + per-character interpolation",
+    "Live task with animated spinners + feedback rows",
+    "Progress bars (simple, framed, gradient)",
+    "Interactive browser + prompts",
+    "Status messages + data tables + visual elements"
+  ],
+  "when_to_use": "Building an Artisan command that needs rich terminal output, progress bars, spinners, or interactive prompts.",
+  "when_not_to_use": "For plain single-line status messages, use Laravel's built-in $this->info() / $this->error() helpers.",
+  "peer_deps": ["laravel/prompts"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/omniterm/README.md"]
+}

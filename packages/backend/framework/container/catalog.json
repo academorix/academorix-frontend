@@ -1,0 +1,23 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/container",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "DI container utilities. Ships #[Overrides] class attribute plus HasDiscovery trait to bind concretes over vendor abstracts unreachable to Laravel's #[Bind].",
+  "capabilities": [
+    "#[Overrides] class attribute for Pattern-B binding",
+    "HasDiscovery trait for boot-time attribute scanning",
+    "Repeatable across multiple abstracts on one concrete",
+    "Honours #[Singleton] and #[Scoped] lifetime markers",
+    "Environment-conditional registration"
+  ],
+  "when_to_use": "You need to swap a vendor / third-party class in the container and cannot annotate it with Laravel's #[Bind] attribute.",
+  "when_not_to_use": "When you own the abstract, use Illuminate\\Container\\Attributes\\Bind on the interface directly instead.",
+  "peer_deps": [],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/container/README.md"]
+}

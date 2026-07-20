@@ -1,0 +1,25 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/support",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Support utilities and helpers for Academorix packages — Reflection, Str, Arr, Path, CaseConverter, EmailValidator, Password, plus true-singleton and event-emitter traits.",
+  "capabilities": [
+    "Str / Arr / Path helper facades",
+    "CaseConverter (snake / camel / kebab / studly)",
+    "EmailValidator with syntax + DNS checks",
+    "Password strength scoring helper",
+    "True Singleton trait (never more than one instance)",
+    "Event Emitter trait (bindEvent / fireEvent / unbindEvent)",
+    "input() helper for HTML array names + boolean coercion"
+  ],
+  "when_to_use": "Any package needs a string / array / reflection / validation helper that Laravel's built-ins do not cover.",
+  "when_not_to_use": "For DTOs and structured value objects, use spatie/laravel-data or hand-rolled readonly classes instead.",
+  "peer_deps": [],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/support/README.md"]
+}

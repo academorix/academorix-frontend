@@ -1,0 +1,43 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/notifications-push",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Push notification channel — PushSubscription aggregate (encrypted device tokens) plus FCM / APNs / Expo / OneSignal drivers with COPPA VPC and GDPR Art. 32 controls.",
+  "capabilities": [
+    "PushSubscription aggregate — device tokens encrypted at rest",
+    "Providers: FCM, APNs, Expo, OneSignal",
+    "Token validation + invalid-token cleanup",
+    "COPPA VPC gate refuses marketing pushes to minors",
+    "GDPR Art. 17 hard-delete on user erasure",
+    "Consumes webhook module for provider feedback",
+    "Priority 27"
+  ],
+  "when_to_use": "An app needs mobile or web push notifications with multi-provider transport and minor-consent enforcement.",
+  "when_not_to_use": "For in-app inbox delivery, use academorix/notifications-in-app. For email or SMS, use the matching channel packages.",
+  "peer_deps": [
+    "academorix/application",
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/notifications",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "academorix/tenancy",
+    "academorix/webhook",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/notifications/notifications-push/README.md"]
+}

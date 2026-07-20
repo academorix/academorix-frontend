@@ -1,0 +1,37 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/i18n",
+  "tier": "saas",
+  "surfaces": ["core", "react", "native", "testing"],
+  "kind": "feature",
+  "purpose": "Unified internationalization runtime — translation engine, locale management, RTL/LTR direction, Intl formatting, and a Vite plugin for auto-discovery.",
+  "capabilities": [
+    "Translation engine with ICU-style plurals + interpolation",
+    "Locale management with reactive switch",
+    "RTL/LTR document direction + Intl formatters",
+    "Pluggable message loaders + resolvers",
+    "Vite plugin for build-time catalogue discovery",
+    "React + React Native bindings (t, useLocale, Trans)",
+    "Testing subpath with fixture-catalog helpers"
+  ],
+  "when_to_use": "Rendering user-facing copy in multiple locales with RTL support and per-package catalogue discovery.",
+  "when_not_to_use": "For domain-specific display terms use @stackra/settings terminology overrides; for date/number formatting use @stackra/support Num + Intl.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/storage",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "@vivtel/metadata",
+    "react",
+    "react-native",
+    "reflect-metadata",
+    "vite"
+  ],
+  "backend_pair": "academorix-shared/localization",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/i18n/README.md"]
+}

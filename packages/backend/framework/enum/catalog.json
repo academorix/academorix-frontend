@@ -1,0 +1,24 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/enum",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Modern PHP 8.1+ enum system with metadata attributes, invokable cases, translation helpers, and comparison utilities.",
+  "capabilities": [
+    "Invokable cases: Status::ACTIVE()",
+    "#[Meta] attribute + Property base for custom metadata",
+    "#[Name] / #[Description] built-in enum metadata",
+    "options() / values() / names() helpers",
+    "Comparable helpers: is(), isNot(), in(), notIn()",
+    "Built-in translation support via label() / trans()"
+  ],
+  "when_to_use": "Defining a backed string enum in a package or app — always compose the shipped Enum trait.",
+  "when_not_to_use": "For plain constant classes without lifecycle behaviour, use raw PHP enums without the trait.",
+  "peer_deps": [],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/enum/README.md"]
+}

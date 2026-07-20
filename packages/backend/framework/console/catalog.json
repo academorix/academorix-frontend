@@ -1,0 +1,23 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/console",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Console framework — extended AsCommand attribute plus a BaseCommand class wiring OmniTerm output, AOP hooks, duration tracking, and per-command extension discovery.",
+  "capabilities": [
+    "Extended AsCommand attribute with extension-registry support",
+    "BaseCommand base class every Artisan command extends",
+    "OmniTerm output built in for rich CLI rendering",
+    "AOP before/after hooks + duration tracking",
+    "Per-command extension discovery"
+  ],
+  "when_to_use": "Every Academorix Artisan command extends the shipped BaseCommand for uniform rendering and lifecycle hooks.",
+  "when_not_to_use": "For raw terminal rendering primitives without the BaseCommand contract, use academorix/laravel-omniterm directly.",
+  "peer_deps": ["academorix/laravel-omniterm"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/console/README.md"]
+}

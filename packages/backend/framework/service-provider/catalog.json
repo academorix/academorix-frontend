@@ -1,0 +1,29 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/service-provider",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Attribute-driven module service provider — declarative resource loading (migrations, config, translations, routes), olvlvl-cached discovery, and lifecycle hooks.",
+  "capabilities": [
+    "#[AsModule] class attribute marks a package module",
+    "ServiceProvider base with declarative resource loading",
+    "Migrations, config, translations, routes auto-loaded from convention",
+    "Commands + publishables auto-loaded from convention",
+    "olvlvl-cached discovery — zero per-request reflection",
+    "Lifecycle hooks (register / boot / health-check)"
+  ],
+  "when_to_use": "Every Academorix package's ServiceProvider extends this base to inherit declarative resource loading.",
+  "when_not_to_use": "For a plain Illuminate\\Support\\ServiceProvider without discovery, extend Laravel's base directly.",
+  "peer_deps": [
+    "academorix/console",
+    "academorix/enum",
+    "academorix/foundation",
+    "olvlvl/composer-attribute-collector"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/service-provider/README.md"]
+}

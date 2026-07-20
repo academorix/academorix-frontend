@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/billing-sdk",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "sdk",
+  "purpose": "Typed Saloon SDK for the Billing service — subscriptions, plans, invoices, licenses, usage, entitlements. Umbrella client built on academorix/api-sdk.",
+  "capabilities": [
+    "BillingSdk umbrella client (config sdk.billing.*)",
+    "#[AsSdkResource(service: 'billing')] discovery scope",
+    "TenantSubscription lifecycle DTOs",
+    "EntitlementGate consume/release DTOs",
+    "Invoice + transaction + license fetches",
+    "Coupon + credit + refund DTOs"
+  ],
+  "when_to_use": "A consumer service that needs to check or mutate billing state (entitlements, subscription tier) cross-service.",
+  "when_not_to_use": "For in-process gate checks inside the billing service, use the local EntitlementGate directly.",
+  "peer_deps": [
+    "academorix/api-sdk",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/service-provider",
+    "saloonphp/saloon",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/sdk/billing-sdk/README.md"]
+}

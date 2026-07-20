@@ -1,0 +1,30 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/architecture",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Architectural enforcement — prevents direct Model access outside Repository / Factory / Seeder, plus 33 rules across layering, Octane safety, filesystem, and shape.",
+  "capabilities": [
+    "Layering: Controller, Service/Action, Repository, Model enforcement",
+    "#[Repository] / #[Service] / #[Action] / #[Domain] marker attributes",
+    "#[AllowsDirectModelAccess] escape hatch with required reason",
+    "33 rules across layering, Octane safety, filesystem, model/job/command",
+    "5 PHPStan-native scope-aware rules (auto-registered)",
+    "artisan academorix:architecture:check + composer architecture",
+    "Human + JSON output for CI"
+  ],
+  "when_to_use": "Running architectural checks in CI to catch cross-layer violations, unauthorized static state, or forbidden Laravel APIs.",
+  "when_not_to_use": "For runtime cross-request enforcement, PHPStan already covers most cases; the sibling PHPStan extension auto-registers.",
+  "peer_deps": [
+    "academorix/console",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/service-provider"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/compliance/architecture/README.md"]
+}

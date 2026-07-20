@@ -1,0 +1,39 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/storage",
+  "tier": "saas",
+  "surfaces": ["core", "react", "native", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Unified KV storage — one IStorage contract with pluggable drivers (memory, null, localStorage, sessionStorage, IndexedDB via Dexie, AsyncStorage).",
+  "capabilities": [
+    "Single IStorage contract for every substrate",
+    "Drivers: memory, null, localStorage, sessionStorage, IndexedDB, AsyncStorage, cookie",
+    "MultipleInstanceManager for named instances",
+    "@Storage() decorator for custom driver registration",
+    "get / set / remove / clear / has / keys / size / subscribe",
+    "React binding: useStorage(name)",
+    "Testing subpath with MockStorage"
+  ],
+  "when_to_use": "Any package needs persistent or ephemeral KV storage without touching the browser API directly.",
+  "when_not_to_use": "For cache-aside patterns prefer @stackra/cache on top; for job persistence use @stackra/queue.",
+  "peer_deps": [
+    "@react-native-async-storage/async-storage",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/devtools",
+    "@stackra/logger",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "@vivtel/metadata",
+    "dexie",
+    "react",
+    "react-native",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/storage",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/storage/README.md"]
+}

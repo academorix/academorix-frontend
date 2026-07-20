@@ -1,0 +1,30 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/error",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "feature",
+  "purpose": "Error-boundary system — app/route/component boundaries, default HeroUI fallbacks, imperative escalation, and contract-based FATAL logging.",
+  "capabilities": [
+    "App / route / component-scoped ErrorBoundary primitives",
+    "Default HeroUI fallbacks (DefaultErrorFallback, InlineErrorFallback)",
+    "Imperative escalation from event handlers via useEscalate",
+    "FATAL-level logging contract through @stackra/logger",
+    "React Router v7 router adapter subpath",
+    "Testing subpath with boundary + escalate assertions"
+  ],
+  "when_to_use": "Wrapping any React tree in a typed error boundary with a HeroUI fallback and unified logging.",
+  "when_not_to_use": "For non-React error handling use @stackra/logger with try/catch; for monitoring use @stackra/monitoring.",
+  "peer_deps": [
+    "@stackra/contracts",
+    "@stackra/testing",
+    "@stackra/ui",
+    "react",
+    "react-router-dom"
+  ],
+  "backend_pair": "academorix/exceptions",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/error/README.md"]
+}

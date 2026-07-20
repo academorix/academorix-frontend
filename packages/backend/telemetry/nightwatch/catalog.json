@@ -1,0 +1,24 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/laravel-nightwatch",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Laravel Nightwatch production monitoring with attribute-driven context, filter, redactor, and sampler discovery.",
+  "capabilities": [
+    "#[AsNightwatchContext] auto-registers context providers",
+    "#[AsNightwatchFilter] auto-registers event filters",
+    "#[AsNightwatchRedactor] auto-registers data redactors",
+    "#[AsNightwatchSampler] auto-registers dynamic samplers",
+    "Pure data-provider contract (compiler wraps Context::add)",
+    "Nightwatch facade wrapping the context registry"
+  ],
+  "when_to_use": "Enriching production observability with tenant / user / feature-flag context, filters, or dynamic sampling.",
+  "when_not_to_use": "For error tracking specifically, use academorix/laravel-sentry; for dev-time inspection, use academorix/laravel-debugbar.",
+  "peer_deps": ["academorix/laravel-support", "laravel/nightwatch"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/telemetry/nightwatch/README.md"]
+}

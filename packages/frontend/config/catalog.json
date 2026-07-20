@@ -1,0 +1,33 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/config",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Configuration + DI namespace registry — derived from @nestjs/config, adapted for browser + Vite with dotenv and joi validation.",
+  "capabilities": [
+    "registerAs<T>() typed config factory + ConfigModule.forRoot()",
+    "dotenv + dotenv-expand loading with per-environment layers",
+    "env('VAR', default) + env.number / env.boolean helpers",
+    "Optional joi schema validation",
+    "Nested key-path lookup with defaults",
+    ".asProvider() bridge into forRootAsync consumers"
+  ],
+  "when_to_use": "Any package or app needs typed configuration authoring with env-loading and DI namespace registration.",
+  "when_not_to_use": "For runtime-mutable per-tenant settings use @stackra/settings; for raw env access use @stackra/support's Env façade.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/support",
+    "@stackra/testing",
+    "dotenv",
+    "dotenv-expand",
+    "joi",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/config/README.md"]
+}

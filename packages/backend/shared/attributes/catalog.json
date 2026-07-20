@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/attributes",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Sport-agnostic attribute-set substrate — AttributeSet + AttributeDefinition + AttributeGroup aggregates for server-driven UI on discriminator-varying hosts.",
+  "capabilities": [
+    "AttributeSet (asg_ prefix) — versioned set bound to entity_type + discriminator",
+    "AttributeDefinition (ads_ prefix) — atomic typed attribute",
+    "AttributeGroup (atg_ prefix) — visual grouping",
+    "Widget mapping (select, switch, slider, number, date, input)",
+    "Attribute-first CRUD, Actions, Policies, Events",
+    "Wire SDK companion at academorix-shared/attributes-sdk"
+  ],
+  "when_to_use": "A domain (e.g. athlete enrollment) has sport-variable fields that must be rendered from a set selected by discriminator rather than hardcoded columns.",
+  "when_not_to_use": "For fixed-shape entities where all consumers need the same columns, use plain migrations and Spatie Data DTOs.",
+  "peer_deps": [
+    "academorix-shared/attributes-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/shared/attributes/README.md"]
+}

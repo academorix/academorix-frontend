@@ -1,0 +1,40 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/invitations",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Agnostic invitation substrate — Invitation + InvitationEvent aggregates plus a target registry so any module can add invitable resources.",
+  "capabilities": [
+    "Invitation aggregate with token, target polymorphism, state machine",
+    "InvitationEvent append-only funnel audit trail",
+    "InvitationTargetRegistry — consumer modules register target types at boot",
+    "Delivery, bounce tracking, expiry, resend, rate limits",
+    "HasInvitations / BelongsToInvitation traits",
+    "Not coupled to any specific target or credential provider"
+  ],
+  "when_to_use": "Any module needs to send a token-based invitation with acceptance orchestration, bounce tracking, and full audit funnel.",
+  "when_not_to_use": "For plain transactional notifications with no acceptance flow, use academorix/notifications directly.",
+  "peer_deps": [
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/serializer",
+    "academorix/service-provider",
+    "academorix/support",
+    "academorix/tenancy",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/access/invitations/README.md"]
+}

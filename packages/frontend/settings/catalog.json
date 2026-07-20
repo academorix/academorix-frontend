@@ -1,0 +1,40 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/settings",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "feature",
+  "purpose": "Unified settings framework — registry-based with @Setting/@Field/@Group decorators, sync-cache + async-hydrate, realtime broadcast, and HeroUI admin UI.",
+  "capabilities": [
+    "@Setting() + @Field() + @Group() + @Section() decorators",
+    "Multi-driver persistence over @stackra/storage + @stackra/http",
+    "Sync-cache + async-hydrate + debounced persist",
+    "Realtime broadcast via @stackra/realtime",
+    "HeroUI-driven admin UI (list, edit, group, section)",
+    "@stackra/query integration for cache invalidation",
+    "Testing subpath with in-memory driver"
+  ],
+  "when_to_use": "Rendering a per-tenant / per-user settings admin surface with typed fields and dual persistence.",
+  "when_not_to_use": "For build-time env config use @stackra/config; for compile-time feature flags use @stackra/decorators.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/http",
+    "@stackra/logger",
+    "@stackra/query",
+    "@stackra/realtime",
+    "@stackra/storage",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "@tanstack/react-query",
+    "@vivtel/metadata",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/settings",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/settings/README.md"]
+}

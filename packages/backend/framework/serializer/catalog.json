@@ -1,0 +1,24 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/laravel-serializer",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Data serialization and transformation utilities — PHP-native serialize / unserialize + JSON encode / decode with error handling and Fractal API-transformer integration.",
+  "capabilities": [
+    "PHP-native serialize / unserialize with class allowlist",
+    "JSON encode / decode with typed error reporting",
+    "isSerialized() / isValid() validation helpers",
+    "League/Fractal integration for API transformations",
+    "Configurable depth + option flags",
+    "Sensible defaults for API + config contexts"
+  ],
+  "when_to_use": "Serialising complex data to cache / session or building an API response payload with League/Fractal transformers.",
+  "when_not_to_use": "For structured DTOs and response shaping, prefer spatie/laravel-data via academorix/crud instead.",
+  "peer_deps": ["league/fractal"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/serializer/README.md"]
+}

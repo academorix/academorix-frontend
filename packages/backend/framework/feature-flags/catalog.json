@@ -1,0 +1,40 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/feature-flags",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Multi-tenant feature-flag layer on Laravel Pennant with a KillSwitch, Override, Rollout, PlanGate, and default resolution chain, attributes, admin actions, and a Saloon SDK.",
+  "capabilities": [
+    "#[AsFeatureFlag] flag-catalog attribute",
+    "#[RequireFeature] middleware-driven route gating",
+    "KillSwitch, Override, Rollout, PlanGate, default chain",
+    "Deterministic sha256-bucketed rollouts",
+    "Boot-payload contribution to GET /api/v1/me",
+    "AI tool visibility gating via GatesToolVisibility",
+    "Actions-only admin surface (15 endpoints)"
+  ],
+  "when_to_use": "Gating a feature on a per-tenant / per-user / rollout basis with kill-switch capability.",
+  "when_not_to_use": "For quota-based plan entitlements or subscription state, reach for academorix/entitlements or academorix/subscription.",
+  "peer_deps": [
+    "academorix/authorization",
+    "academorix/caching",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/scope",
+    "academorix/service-provider",
+    "laravel/pennant",
+    "olvlvl/composer-attribute-collector",
+    "owen-it/laravel-auditing",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/feature-flags/README.md"]
+}

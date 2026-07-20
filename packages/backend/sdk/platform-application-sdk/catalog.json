@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix-platform/application-sdk",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "sdk",
+  "purpose": "Wire-visible SDK for the application module of Platform — typed Spatie Data DTOs + Saloon requests + fluent resources for Application + BusinessType, discovered by platform-sdk.",
+  "capabilities": [
+    "ApplicationSdkResource — top-level #[AsSdkResource]",
+    "ApplicationsResource (central) + ApplicationsAdminResource",
+    "BusinessTypesResource with create/update/delete DTOs",
+    "Spatie Data response DTOs + request-body Payloads",
+    "Saloon Request classes per endpoint (11 total)",
+    "BusinessTypeKey wire-visible enum",
+    "Idempotency-Key support on every mutation"
+  ],
+  "when_to_use": "Any peer service that needs to resolve an Application by id or slug, or manage the business-type catalogue.",
+  "when_not_to_use": "In-process Application queries inside the identity service should use the academorix/application module directly.",
+  "peer_deps": [
+    "academorix/api-sdk",
+    "academorix/enum",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "saloonphp/saloon",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/sdk/platform-application-sdk/README.md"]
+}

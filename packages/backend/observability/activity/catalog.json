@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix-observability/activity",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Storage schema + retention module on top of the vendor-wrapped activity log — adds tenant_id + application_id columns, query surface, and retention scheduling.",
+  "capabilities": [
+    "Activity aggregate (act_ prefix) — one row per user-facing event",
+    "ActivityRetentionPolicy (art_ prefix) — per-tenant per-log_name override",
+    "Storage adaptation on top of academorix/activity vendor wrap",
+    "Attribute-first CRUD, Actions, Policies, Events",
+    "Retention scheduling per-tenant per-log_name",
+    "Wire SDK companion at academorix-observability/activity-sdk"
+  ],
+  "when_to_use": "A deployment needs the storage schema + retention scheduling layer on top of the hand-tuned activity wrapper.",
+  "when_not_to_use": "For the vendor spatie/laravel-activitylog wrapper + trait, use the sibling academorix/activity under shared/.",
+  "peer_deps": [
+    "academorix-observability/activity-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/observability/activity/README.md"]
+}

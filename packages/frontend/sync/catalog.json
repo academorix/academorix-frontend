@@ -1,0 +1,42 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/sync",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Offline-first synchronization engine — cursor-based pull, batched push, pluggable conflict resolution, and cross-tab coordination.",
+  "capabilities": [
+    "Cursor-based incremental pull",
+    "Batched push with optimistic writes",
+    "Pluggable conflict resolution strategies",
+    "Cross-tab coordination via @stackra/coordinator",
+    "Offline queue backed by @stackra/storage",
+    "Network-aware pause/resume via @stackra/network",
+    "React binding: useSyncStatus",
+    "Testing subpath with in-memory sync harness"
+  ],
+  "when_to_use": "Any app that must work offline and reconcile local writes with a server when the network returns.",
+  "when_not_to_use": "For simple retriable requests use @stackra/queue; for cache-only reads use @stackra/query.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/coordinator",
+    "@stackra/devtools",
+    "@stackra/http",
+    "@stackra/logger",
+    "@stackra/network",
+    "@stackra/pipeline",
+    "@stackra/storage",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "react",
+    "reflect-metadata",
+    "rxjs"
+  ],
+  "backend_pair": "academorix-shared/offline-sync",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/sync/README.md"]
+}

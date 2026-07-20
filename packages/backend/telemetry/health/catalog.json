@@ -1,0 +1,28 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/health",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Attribute-driven health check discovery + notification routing — bridges spatie/laravel-health with #[AsHealthCheck] auto-registration and a HealthNotificationChannel enum.",
+  "capabilities": [
+    "#[AsHealthCheck] class attribute for auto-registration",
+    "DI-friendly construction via container resolution",
+    "HealthNotificationChannel enum (Slack, PagerDuty, Email, Log)",
+    "Cron schedule + condition gate per check",
+    "Zero-boilerplate bridge to spatie/laravel-health",
+    "Enabled + priority controls per check"
+  ],
+  "when_to_use": "Registering a periodic Spatie Health check that reports to a logical channel (Slack, PagerDuty, Email).",
+  "when_not_to_use": "For low-level uptime pings without a check-class contract, curl Spatie Health's /health endpoint directly.",
+  "peer_deps": [
+    "academorix/foundation",
+    "olvlvl/composer-attribute-collector",
+    "spatie/laravel-health"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/telemetry/health/README.md"]
+}

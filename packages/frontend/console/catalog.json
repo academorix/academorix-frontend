@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/console",
+  "tier": "saas",
+  "surfaces": ["core", "testing"],
+  "kind": "feature",
+  "purpose": "Artisan-style CLI framework for the workspace — @Command()-driven registration, DISCOVERY_SERVICE auto-discovery, styled output, stub scaffolding.",
+  "capabilities": [
+    "@Command() decorator + attribute-driven registration",
+    "DISCOVERY_SERVICE auto-scanning of contributed commands",
+    "Styled terminal output (boxen, picocolors, cli-table3)",
+    "Interactive prompts via @clack/prompts",
+    "Stub-based scaffolding for make:* commands",
+    "Publishing subpath for cross-package stub sharing",
+    "Testing subpath with command-runner harness"
+  ],
+  "when_to_use": "You need a workspace CLI or per-package artisan-style commands for scaffolding, cache clears, or maintenance tasks.",
+  "when_not_to_use": "For app-side runtime scheduling use @stackra/scheduler; for background jobs use @stackra/queue.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/support",
+    "@vivtel/metadata",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/console",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/console/README.md"]
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/kbd",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Keyboard shortcut registry, command palette, catalog, hints, and customization primitives — powered by TanStack Hotkeys and HeroUI Pro Command.",
+  "capabilities": [
+    "@stackra/kbd registry with per-scope shortcuts",
+    "HeroUI Pro command palette integration",
+    "Human-readable catalog (labels, groups, hints)",
+    "Per-user customization via @stackra/storage",
+    "TanStack Hotkeys binding layer",
+    "Kbd hint components for inline shortcut display"
+  ],
+  "when_to_use": "Adding a command palette, global shortcuts, or per-scope keyboard bindings with user customization.",
+  "when_not_to_use": "For plain document-level keydown handlers use useEffect; for router navigation use @stackra/routing.",
+  "peer_deps": [
+    "@heroui-pro/react",
+    "@heroui/react",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/events",
+    "@stackra/i18n",
+    "@stackra/logger",
+    "@stackra/state",
+    "@stackra/storage",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "@tanstack/react-hotkeys",
+    "@tanstack/react-store",
+    "@tanstack/store",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/kbd/README.md"]
+}

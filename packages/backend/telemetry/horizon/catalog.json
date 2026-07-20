@@ -1,0 +1,23 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/laravel-horizon",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Laravel Horizon queue monitoring with attribute-driven supervisor and metric discovery — tag a class with #[AsMetric] or #[HorizonTag] and it registers automatically.",
+  "capabilities": [
+    "#[AsMetric] class attribute for automatic Horizon metric registration",
+    "#[HorizonTag] class attribute for automatic job tagging",
+    "Priority + enabled controls per metric / tag",
+    "Monorepo-wide attribute scan",
+    "Zero-boilerplate integration with laravel/horizon"
+  ],
+  "when_to_use": "Adding a custom Horizon metric or a tagging strategy for queued jobs.",
+  "when_not_to_use": "For scheduling recurring jobs, reach for academorix/scheduling; for error tracking use academorix/laravel-sentry.",
+  "peer_deps": ["academorix/laravel-support", "laravel/horizon"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/telemetry/horizon/README.md"]
+}

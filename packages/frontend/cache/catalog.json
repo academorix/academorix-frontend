@@ -1,0 +1,38 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/cache",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Client-side cache — Laravel-style facade, pluggable stores (memory, null, IndexedDB, localStorage), tag invalidation, TTLs, and React bindings.",
+  "capabilities": [
+    "Cache facade with get / set / remember / forever / forget / flush",
+    "Pluggable stores: memory, null, storage, indexeddb, custom",
+    "Tag-based invalidation (cache.tags([...]).flush())",
+    "Atomic increment/decrement and TTL touch",
+    "@Cacheable + @CacheEvict method decorators",
+    "React hooks: useCache, useCachedQuery",
+    "Testing subpath with createMockCache assertion DSL"
+  ],
+  "when_to_use": "You need cache-aside reads, atomic counters, or tagged invalidation for client-side data.",
+  "when_not_to_use": "For server-driven data fetching prefer @stackra/query; for persistent KV prefer @stackra/storage.",
+  "peer_deps": [
+    "@heroicons/react",
+    "@stackra/config",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/decorators",
+    "@stackra/logger",
+    "@stackra/storage",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/caching",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/cache/README.md"]
+}

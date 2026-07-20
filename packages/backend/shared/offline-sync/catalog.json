@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/offline-sync",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Offline-first sync substrate — SyncCursor aggregate tracks per-device per-entity high-water marks for delta sync from a mobile or offline client.",
+  "capabilities": [
+    "SyncCursor (syc_ prefix) — per-device per-entity high-water mark",
+    "Delta pull + push endpoints",
+    "Conflict-resolution hooks",
+    "Attribute-first CRUD, Actions, Policies, Events",
+    "Wire SDK companion at academorix-shared/offline-sync-sdk"
+  ],
+  "when_to_use": "A mobile or offline client needs delta sync of entities with high-water-mark tracking per device.",
+  "when_not_to_use": "For real-time server-push, use academorix/realtime or Reverb broadcast channels directly.",
+  "peer_deps": [
+    "academorix-shared/offline-sync-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/shared/offline-sync/README.md"]
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/platform-user",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Central-plane platform staff principal — the platform_admin-guarded PlatformUser + PlatformProfile pair consumed by the admin console surface.",
+  "capabilities": [
+    "PlatformUser Eloquent model on the platform_admin guard",
+    "PlatformProfile 1:1 PII satellite",
+    "No tenant_id / application_id — cross-cutting by design",
+    "Consumed by /api/v1/platform/* routes",
+    "Feeds Gate::before super-admin bypass"
+  ],
+  "when_to_use": "Provisioning Academorix internal staff for the central-admin surface (support, ops, engineering).",
+  "when_not_to_use": "For tenant-audience users (per-Application), reach for the sibling academorix/user package.",
+  "peer_deps": [
+    "academorix-identity/platform-user-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/identity/platform-user/README.md"]
+}

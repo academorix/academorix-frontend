@@ -1,0 +1,33 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/dashboard",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "feature",
+  "purpose": "Headless dashboard framework — domain types, storage adapter, widget registry, widget catalogue, React hooks, and DI module.",
+  "capabilities": [
+    "Widget + layout domain types (grid, row, column, tile)",
+    "Storage adapter for user-defined dashboards",
+    "@Widget() registry with catalogue for palette rendering",
+    "React hooks: useDashboard, useWidget",
+    "Persistence via @stackra/storage",
+    "Testing subpath with in-memory registry"
+  ],
+  "when_to_use": "Composing per-user or per-tenant dashboards from a catalogue of pluggable widgets.",
+  "when_not_to_use": "For pure charts use @stackra/ui recharts helpers; for reporting use the backend reporting package.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "react",
+    "react-dom",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/dashboard/README.md"]
+}

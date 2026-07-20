@@ -1,0 +1,43 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/routing",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Client-side routing — guards, middleware, SEO, analytics, breadcrumbs, route modes, advanced matchers, and a defineRoute() builder over React Router v7.",
+  "capabilities": [
+    "defineRoute() builder composed with React Router v7",
+    "Guards + middleware pipelines per route",
+    "SEO subpath: title, description, canonical, structured data",
+    "Analytics subpath: automatic page-view emit",
+    "Advanced matchers: subdomain, query, header, hash",
+    "Route modes: page, dialog, drawer, sheet",
+    "Vite plugin for build-time route discovery",
+    "Console subpath for stackra host + route:list commands"
+  ],
+  "when_to_use": "Wiring routes, guards, and SEO for a React Router v7 SPA with per-package route contributions.",
+  "when_not_to_use": "For the router primitive itself use react-router directly; for API routing use the backend routing package.",
+  "peer_deps": [
+    "@stackra/console",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/decorators",
+    "@stackra/error",
+    "@stackra/events",
+    "@stackra/logger",
+    "@stackra/pipeline",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "@vivtel/metadata",
+    "react",
+    "react-dom",
+    "react-router",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/routing",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/routing/README.md"]
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/tenancy",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Tenancy substrate — Tenant aggregate + TenantContact roster, BelongsToTenant global scope, tenancy hooks, and the tenant-resolver middleware every downstream module composes.",
+  "capabilities": [
+    "Tenant Eloquent model (ten_...) — per-Application customer",
+    "TenantContact GDPR Art. 30 ROPA roster per Tenant",
+    "BelongsToTenant + BelongsToTenantOptional traits",
+    "tenantable() migration macro via #[AsDatabaseBlueprint]",
+    "resolve.tenant / tenant.user / platform.domain middleware",
+    "LogContextTenantHook + CachePrefixTenantHook Octane-safe hooks",
+    "11 tenant lifecycle events (provisioning → archived → erased)",
+    "tenancy:archive + hard-delete-archived commands"
+  ],
+  "when_to_use": "Every tenant-scoped module in the platform depends on it — it defines what a Tenant is.",
+  "when_not_to_use": "For the per-Application product-line aggregate, use the sibling academorix/application package.",
+  "peer_deps": [
+    "academorix/application",
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/platform/tenancy/README.md"]
+}

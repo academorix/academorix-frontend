@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/attribution",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Marketing attribution — AttributionTouchpoint append-only ledger and per-subject rolling Attribution profile across first-touch / last-touch / multi-touch models.",
+  "capabilities": [
+    "AttributionTouchpoint append-only request-scope ledger",
+    "Attribution per-subject rolling profile",
+    "UTM parameter capture at session start",
+    "First-touch + last-touch attribution windows",
+    "Multi-touch position-based credit models",
+    "Feeds reporting for CAC + ROAS dashboards"
+  ],
+  "when_to_use": "Assigning marketing credit for a signup or conversion across referring channels.",
+  "when_not_to_use": "For raw product-usage events, use the sibling academorix/analytics package.",
+  "peer_deps": [
+    "academorix-growth/attribution-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/growth/attribution/README.md"]
+}

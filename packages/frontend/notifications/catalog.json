@@ -1,0 +1,40 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/notifications",
+  "tier": "saas",
+  "surfaces": ["core", "react", "native", "testing"],
+  "kind": "feature",
+  "purpose": "Enterprise multi-channel notification orchestrator — Web Push, in-app centre, Expo push tokens, permission prompts, analytics fan-out, HeroUI components.",
+  "capabilities": [
+    "Web Push subscription + VAPID key management",
+    "In-app notification centre backed by @stackra/storage",
+    "Expo native push token handling",
+    "OS permission prompt + status tracking",
+    "Analytics fan-out via @stackra/analytics",
+    "HeroUI permission prompt + list + badge components",
+    "Testing subpath with in-memory push + centre mocks"
+  ],
+  "when_to_use": "Wiring Web Push, in-app centre, and native push tokens for user-facing notifications with permission UX.",
+  "when_not_to_use": "For system-level toasts use @stackra/ui Toast; for backend fan-out use the notifications backend package.",
+  "peer_deps": [
+    "@heroicons/react",
+    "@stackra/analytics",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/logger",
+    "@stackra/network",
+    "@stackra/storage",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "expo-notifications",
+    "react",
+    "react-native",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/notifications",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/notifications/README.md"]
+}

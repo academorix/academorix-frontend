@@ -1,0 +1,38 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/sdui",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "feature",
+  "purpose": "Server-Driven UI runtime — sandboxed expression evaluator, per-node error boundary, action adapter, and HeroUI-powered renderer.",
+  "capabilities": [
+    "Sandboxed JSON-schema-typed expression evaluator",
+    "Per-node error boundary with fallback",
+    "Action adapter bridging @stackra/actions",
+    "HeroUI-powered widget catalogue (Select, Switch, Slider, ...)",
+    "@stackra/state store binding for reactive reads",
+    "Bilingual (en/ar) label + RTL support",
+    "Testing subpath with node + expression assertions"
+  ],
+  "when_to_use": "Rendering sport-agnostic attribute forms and views from a server-selected attribute set (limited SDUI scope).",
+  "when_not_to_use": "For general UI use @stackra/ui + Refine; for pure forms without server schema use React Hook Form directly.",
+  "peer_deps": [
+    "@stackra/actions",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/logger",
+    "@stackra/state",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "@tanstack/react-store",
+    "@tanstack/store",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/sdui/README.md"]
+}

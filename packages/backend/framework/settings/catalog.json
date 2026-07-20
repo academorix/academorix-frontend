@@ -1,0 +1,39 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/settings",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Attribute-driven settings platform — AsSetting, SettingField, and SettingGroup discovery with hierarchy resolution, dual-write audit, and HTTP admin surface.",
+  "capabilities": [
+    "#[AsSetting] / #[SettingField] / #[SettingGroup] class attributes",
+    "Build-time discovery + SettingsRegistry hydration",
+    "SettingsService with system, tenant, user hierarchy",
+    "Dual-write audit (activity_log + audits tables)",
+    "SettingsChangeEvent for real-time propagation",
+    "13 non-theme system setting classes (Auth, Mail, Storage, ...)",
+    "HTTP surface: List / Show / Update / Schema per group"
+  ],
+  "when_to_use": "Any package needs per-tenant / per-user configurable settings with a schema, admin UI, and audit trail.",
+  "when_not_to_use": "For theme design tokens and UI-specific configuration, use the sibling academorix/theme package.",
+  "peer_deps": [
+    "academorix/activity",
+    "academorix/audit",
+    "academorix/crud",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/scope",
+    "academorix/service-provider",
+    "owen-it/laravel-auditing",
+    "spatie/laravel-activitylog",
+    "spatie/laravel-data",
+    "spatie/laravel-settings"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/settings/README.md"]
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/scheduler",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Client-side task scheduler — interval + cron, decorator-based auto-discovery, lifecycle hooks, and cross-tab leader coordination.",
+  "capabilities": [
+    "@Scheduled({ cron }) + @Scheduled({ interval }) decorators",
+    "Discovery-based task registration",
+    "Cron parser with second-level precision",
+    "Cross-tab leader election via @stackra/coordinator",
+    "Lifecycle hooks (beforeRun, afterRun, onError)",
+    "React hook: useScheduledTask",
+    "Testing subpath with time-controlled runner"
+  ],
+  "when_to_use": "Running periodic client-side tasks (refresh tokens, prune caches, poll queues) with deduplication across tabs.",
+  "when_not_to_use": "For one-shot deferred work use @stackra/queue; for server-side scheduling use the backend scheduling package.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/logger",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/scheduling",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/scheduler/README.md"]
+}

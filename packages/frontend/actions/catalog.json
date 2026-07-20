@@ -1,0 +1,36 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/actions",
+  "tier": "saas",
+  "surfaces": ["core", "react", "native", "testing"],
+  "kind": "feature",
+  "purpose": "Framework action layer — single dispatcher, registry, and middleware pipeline for every side effect (navigate, toast, mutate, upload).",
+  "capabilities": [
+    "Central @Action() registry with typed name-payload contracts",
+    "Middleware + pipeline composition around every side effect",
+    "One audit surface, one authorization boundary, one test seam",
+    "React + React Native bindings for dispatching from components",
+    "DI-managed with @stackra/container discovery",
+    "Testing subpath with mock dispatcher + assertion helpers"
+  ],
+  "when_to_use": "Any UI or service needs to trigger a side effect (navigate, mutate, toast, upload) through a single audited pipeline.",
+  "when_not_to_use": "For pure data reads use @stackra/query; for local state without side effects use @stackra/state directly.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/events",
+    "@stackra/logger",
+    "@stackra/pipeline",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "react",
+    "react-native",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/actions/README.md"]
+}

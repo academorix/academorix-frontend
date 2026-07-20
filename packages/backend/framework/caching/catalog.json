@@ -1,0 +1,28 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/caching",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Attribute-driven cache composition substrate. Ships Cacheable/CacheEvict/CachePut attributes, tag builder, driver-capability guard, and resolver discovery.",
+  "capabilities": [
+    "#[Cacheable] / #[CacheEvict] / #[CachePut] method directives",
+    "#[CacheKey] / #[CacheTag] / #[CacheTtl] declarative helpers",
+    "Deterministic tag composition via CacheTagBuilder",
+    "Driver-capability probe (TaggableCacheGuard) degrades to plain cache",
+    "Boot-time discovery of #[AsCacheTagResolver] classes",
+    "Deterministic cache-key composer with argument bindings"
+  ],
+  "when_to_use": "Any package needs read-through caching, tag-based invalidation, or a deterministic key composer.",
+  "when_not_to_use": "For tenant-aware tag resolution, layer academorix/scope or academorix/database on top.",
+  "peer_deps": [
+    "academorix/foundation",
+    "academorix/service-provider",
+    "olvlvl/composer-attribute-collector"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/caching/README.md"]
+}

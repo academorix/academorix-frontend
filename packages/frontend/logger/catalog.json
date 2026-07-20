@@ -1,0 +1,36 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/logger",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Cross-platform logger — pluggable reporters, enrichers, and formatters, with React bindings and channel switching via Manager.",
+  "capabilities": [
+    "Consola-backed logger with level filtering",
+    "Named channels via Manager (driver(name))",
+    "@Reporter() decorator + discovery-based registration",
+    "Enrichers for adding context (tenant, user, session)",
+    "Formatters for structured / JSON output",
+    "React binding: useLogger",
+    "Testing subpath with in-memory reporter"
+  ],
+  "when_to_use": "Any package needs a structured logger with pluggable transports and level filtering.",
+  "when_not_to_use": "For error reporting to a monitoring service use @stackra/monitoring; for developer console overlays use @stackra/devtools.",
+  "peer_deps": [
+    "@stackra/config",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/decorators",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "consola",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/logger/README.md"]
+}

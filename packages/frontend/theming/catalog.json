@@ -1,0 +1,36 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/theming",
+  "tier": "saas",
+  "surfaces": ["core", "react", "native"],
+  "kind": "feature",
+  "purpose": "Unified theming system — color mode, named presets, design tokens, and runtime switching across web and native.",
+  "capabilities": [
+    "Color mode (light / dark / system) with reactive resolve",
+    "Named theme presets loaded at runtime",
+    "Design token system aligned with HeroUI Pro",
+    "Web binding via @heroui/react useTheme",
+    "React Native binding with Reanimated + AsyncStorage",
+    "i18n subpath for locale-aware theme copy"
+  ],
+  "when_to_use": "Switching color mode + named theme preset on a HeroUI Pro app with cross-platform state.",
+  "when_not_to_use": "For the underlying HeroUI theme tokens use @heroui/react useTheme directly; for tenant branding use the backend theme package.",
+  "peer_deps": [
+    "@heroui/react",
+    "@react-native-async-storage/async-storage",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/support",
+    "@stackra/testing",
+    "react",
+    "react-native",
+    "react-native-reanimated",
+    "reflect-metadata",
+    "zod"
+  ],
+  "backend_pair": "academorix/theme",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/theming/README.md"]
+}

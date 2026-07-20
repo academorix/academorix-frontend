@@ -1,0 +1,34 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/monitoring",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Health-check + alert engine — HealthCheck, HealthCheckRun, MonitoringAlert, MonitoringAlertPolicy, MonitoringIncident, MonitoringProviderConfig aggregates.",
+  "capabilities": [
+    "HealthCheck (hck_ prefix) — per-tenant probe config",
+    "HealthCheckRun (hcr_ prefix) — per-execution result",
+    "MonitoringAlertPolicy (map_ prefix) — threshold rules",
+    "MonitoringAlert (mal_ prefix) — fired alert record",
+    "MonitoringIncident (mci_ prefix) — grouped alert timeline",
+    "MonitoringProviderConfig (mpr_ prefix) — per-tenant per-provider connection",
+    "Attribute-first CRUD, Actions, Policies, Events",
+    "Wire SDK companion at academorix-observability/monitoring-sdk"
+  ],
+  "when_to_use": "A tenant runs synthetic health checks against its own systems and needs alert policies + incident timelines.",
+  "when_not_to_use": "For the audit and activity signals, use academorix-observability/audit and academorix-observability/activity.",
+  "peer_deps": [
+    "academorix-observability/monitoring-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/observability/monitoring/README.md"]
+}

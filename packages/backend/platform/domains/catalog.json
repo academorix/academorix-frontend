@@ -1,0 +1,41 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/domains",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Custom-domain substrate — Domain aggregate per Tenant, DomainRecord expected-DNS diff, and pluggable DomainVerifier + CertificateProvisioner bindings.",
+  "capabilities": [
+    "Domain aggregate (dom_...) — subdomain / custom / alias kinds",
+    "DomainRecord expected DNS diff against real DNS",
+    "DomainVerifierInterface pluggable DNS provider binding",
+    "CertificateProvisionerInterface pluggable ACME/TLS binding",
+    "domains:verify + domains:issue-certificate + rotate commands",
+    "10 lifecycle events: domain, record, and cert",
+    "valid_domain_host RFC 1035 rule"
+  ],
+  "when_to_use": "Letting a tenant point their vanity domain (gym.example.com) at their Academorix workspace with TLS + verification.",
+  "when_not_to_use": "For platform-owned subdomain resolution, the sibling academorix/tenancy package handles it directly.",
+  "peer_deps": [
+    "academorix/application",
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "academorix/tenancy",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/platform/domains/README.md"]
+}

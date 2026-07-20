@@ -1,0 +1,41 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/audit",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Compliance-grade audit trail — thin wrapper around owen-it/laravel-auditing with KMS encryption, tenant scoping, 365d hot + 7y cold retention.",
+  "capabilities": [
+    "HasAudit trait aliasing owen-it's Auditable bundle",
+    "Audit model with BelongsToTenantOptional + ULID prefix aud_",
+    "#[Auditable] attribute for build-time discovery",
+    "KMS-encrypted old/new values for restricted-tier fields",
+    "365d hot + 2555d cold retention (7 years)",
+    "Optional tamper-evident hash chain (enterprise)",
+    "Platform-admin + tenant DPO HTTP surfaces"
+  ],
+  "when_to_use": "A model records compliance-material changes that regulators and DPOs need to prove happened.",
+  "when_not_to_use": "For user-facing who-did-what feeds with tier retention, use academorix/activity.",
+  "peer_deps": [
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "academorix/tenancy",
+    "owen-it/laravel-auditing",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/shared/audit/README.md"]
+}

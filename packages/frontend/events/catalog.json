@@ -1,0 +1,35 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/events",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Cross-platform event bus — typed emitters, discovery-based @OnEvent handlers, React bindings, and package-owned event catalogues.",
+  "capabilities": [
+    "Typed emit(NAME, payload) with per-package event maps",
+    "@OnEvent(NAME) class decorator + discovery-based registration",
+    "useOnEvent(NAME, handler) React hook with auto-unmount",
+    "Package-owned *.events.ts constants (single source of truth)",
+    "Transport subpath for pluggable delivery",
+    "Testing subpath with recorded-emit assertion helpers"
+  ],
+  "when_to_use": "Fan-out communication where one thing happens and N unrelated concerns react (Lane 3 in communication-patterns).",
+  "when_not_to_use": "For direct 1:1 calls with a return value use DI (Lane 1); for tree-scoped values use React context (Lane 2).",
+  "peer_deps": [
+    "@stackra/config",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/decorators",
+    "@stackra/logger",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/events",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/events/README.md"]
+}

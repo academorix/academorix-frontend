@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/csp",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Content-Security-Policy runtime — nonce generation, policy header building, feature-scoped source registry with discovery, and React bindings.",
+  "capabilities": [
+    "Per-request nonce generation + rotation",
+    "CSP policy header building with directive merging",
+    "@CspSources() discoverable per-feature source registration",
+    "NonceProvider + useNonce React binding",
+    "Script + CspMeta React helpers",
+    "Testing subpath with policy assertion utilities"
+  ],
+  "when_to_use": "Wiring nonce-based Content-Security-Policy for a Vite/SSR app with per-feature source contributions.",
+  "when_not_to_use": "For plain security headers unrelated to CSP use the deployment layer; for auth headers use @stackra/http.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/csp/README.md"]
+}

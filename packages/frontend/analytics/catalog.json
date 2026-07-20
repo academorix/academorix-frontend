@@ -1,0 +1,33 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/analytics",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "feature",
+  "purpose": "Consent-gated, fan-out analytics manager over pluggable destinations (GA4, console) and marketing pixels (Meta, TikTok, Snapchat).",
+  "capabilities": [
+    "Fan-out manager over N destinations with per-provider isolation",
+    "Consent-gated dispatch (integrates with @stackra/consent)",
+    "@Analytics(...) discoverable destination auto-registration",
+    "Built-in GA4, console, Meta, TikTok, Snapchat destinations",
+    "React bindings for hook-based page + event tracking",
+    "Testing subpath with recorded-event assertion helpers"
+  ],
+  "when_to_use": "Recording user events, marketing pixels, and cross-vertical funnel metrics with per-tenant consent enforcement.",
+  "when_not_to_use": "For error reporting use @stackra/monitoring; for pure audit trails use the backend audit log.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/logger",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/analytics",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/analytics/README.md"]
+}

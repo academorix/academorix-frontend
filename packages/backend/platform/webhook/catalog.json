@@ -1,0 +1,42 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/webhook",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Outbound webhook substrate — WebhookSubscription + WebhookDelivery aggregates with HMAC-SHA256 signing, rotation grace, Bus::batch fan-out, and 4 destinations.",
+  "capabilities": [
+    "WebhookSubscription customer-registered destination + filter",
+    "WebhookDelivery per-attempt outbound audit trail",
+    "HMAC-SHA256 signing with rotation-grace dual signatures",
+    "Attribute-driven #[AsWebhookEvent] + #[AsWebhookDestination]",
+    "4 destinations: HTTPS + EventBridge + PubSub + mTLS",
+    "Auto-disable on 410 / N consecutive failures",
+    "webhook:list/retry/rotate-secret/test/probe/prune commands",
+    "Bus::batch fan-out with static + retry-after-aware backoff"
+  ],
+  "when_to_use": "Publishing Academorix domain events out to a tenant's external endpoint with reliable delivery and signing.",
+  "when_not_to_use": "For inbound third-party integrations (OAuth, sync), use the sibling academorix/integrations package.",
+  "peer_deps": [
+    "academorix/application",
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "academorix/tenancy",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/platform/webhook/README.md"]
+}

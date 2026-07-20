@@ -1,0 +1,42 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/notifications-sms",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "SMS notification channel — SmsOptOut aggregate for TCPA + CASL evidence, plus Twilio / MessageBird / Vonage / Plivo / AWS SNS drivers with cost-cap entitlement.",
+  "capabilities": [
+    "SmsOptOut aggregate — TCPA + CASL evidence-grade records",
+    "Providers: Twilio, MessageBird, Vonage, Plivo, AWS SNS",
+    "STOP-keyword auto-opt-out + START re-consent",
+    "Per-message cost + destination-country pricing",
+    "Cost-cap entitlement prevents runaway spend",
+    "GDPR Art. 17 phone-hash on erasure",
+    "Priority 28"
+  ],
+  "when_to_use": "An app needs SMS notifications with multi-provider transport plus TCPA/CASL opt-out evidence and STOP-keyword handling.",
+  "when_not_to_use": "For push or email transports, use the matching sibling channel packages.",
+  "peer_deps": [
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/notifications",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "academorix/tenancy",
+    "academorix/webhook",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/notifications/notifications-sms/README.md"]
+}

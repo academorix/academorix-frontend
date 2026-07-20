@@ -1,0 +1,38 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/http",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Multi-driver HTTP client — axios/fetch connectors, middleware + interceptor pipelines, streaming (SSE/NDJSON), circuit breaker, rate limiting, React hooks.",
+  "capabilities": [
+    "Named client instances via MultipleInstanceManager",
+    "Axios + fetch driver implementations",
+    "Middleware + interceptor pipelines per client",
+    "SSE + NDJSON streaming primitives",
+    "Circuit breaker + rate limiting per client",
+    "React hooks: useHttp, useMutation adapters",
+    "Testing subpath with mockable transport",
+    "Optional rxjs bridge for reactive consumers"
+  ],
+  "when_to_use": "Making authenticated REST calls, streaming responses, or wiring per-endpoint circuit breakers.",
+  "when_not_to_use": "For server-cached queries prefer @stackra/query; for realtime channels use @stackra/realtime.",
+  "peer_deps": [
+    "@stackra/actions",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/logger",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "axios",
+    "react",
+    "reflect-metadata",
+    "rxjs"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/http/README.md"]
+}

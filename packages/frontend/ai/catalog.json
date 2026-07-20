@@ -1,0 +1,41 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/ai",
+  "tier": "saas",
+  "surfaces": ["core", "react", "native", "testing"],
+  "kind": "feature",
+  "purpose": "Client AI toolkit — swappable streaming transport (SSE/WebSocket), mount-scoped client tools, personas, draft-then-confirm writes, and HeroUI chat components.",
+  "capabilities": [
+    "SSE + WebSocket streaming transports with resume support",
+    "Mount-scoped client tools + UI context frames",
+    "Persona system with tenant + role gating",
+    "Draft-then-confirm write flow (LLM writes yield to human confirm)",
+    "HeroUI Pro chat components (web) + HeroUI Native Pro (native)",
+    "Testing subpath with in-memory transport + tool mocks"
+  ],
+  "when_to_use": "Building an AI-powered chat or assistant surface that streams tokens and can invoke typed client tools.",
+  "when_not_to_use": "For plain REST calls use @stackra/http; for background job execution use @stackra/queue.",
+  "peer_deps": [
+    "@stackra/actions",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/coordinator",
+    "@stackra/devtools",
+    "@stackra/http",
+    "@stackra/logger",
+    "@stackra/network",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "heroui-native",
+    "react",
+    "react-native",
+    "reflect-metadata",
+    "zod"
+  ],
+  "backend_pair": "academorix/ai",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/ai/README.md"]
+}

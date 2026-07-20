@@ -1,0 +1,33 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/auth",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Server-side auth module — cross-app SSO grants, HS256 JWT signing keys, refresh tokens with reuse detection, deny-lists, email verification, and password reset.",
+  "capabilities": [
+    "AuthCrossAppGrant one-time SSO handoff between Applications",
+    "HS256 JwtSigningKey with per-Application binding + rotation",
+    "AuthRefreshToken rotation with reuse detection",
+    "AuthJwtDenyList for immediate token revocation before expiry",
+    "AuthEmailVerification + AuthPasswordReset flows",
+    "AuthMfaChallenge ledger consumed by the mfa module",
+    "JWKS endpoint published for downstream signature verification"
+  ],
+  "when_to_use": "Provisioning the identity service's auth surface — token issuance, cross-app SSO, session lifecycle.",
+  "when_not_to_use": "For per-user MFA enrolment and challenge orchestration, reach for the sibling academorix/mfa package.",
+  "peer_deps": [
+    "academorix-identity/auth-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/identity/auth/README.md"]
+}

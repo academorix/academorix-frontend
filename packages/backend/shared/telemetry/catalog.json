@@ -1,0 +1,29 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/telemetry",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Cross-cutting telemetry seam — provides the shared PII redactor and telemetry contracts every observability + integration consumer plugs into.",
+  "capabilities": [
+    "Shared telemetry contracts + PII redactor",
+    "Attribute-first Providers + Contracts + Services",
+    "Wire SDK companion at academorix-shared/telemetry-sdk"
+  ],
+  "when_to_use": "A module emits telemetry payloads (metrics, traces, translation source strings) that must pass through a shared redactor before hitting a third party.",
+  "when_not_to_use": "For structured user-facing activity or compliance-grade audit trails, use academorix/activity or academorix/audit.",
+  "peer_deps": [
+    "academorix-shared/telemetry-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/shared/telemetry/README.md"]
+}

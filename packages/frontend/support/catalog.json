@@ -1,0 +1,34 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/support",
+  "tier": "saas",
+  "surfaces": ["core", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Foundation utility layer — Str, Arr, Num, Env, Pipeline, Fluent, Uri, BaseRegistry, Manager, plus timing and control-flow helpers.",
+  "capabilities": [
+    "Str (case, slug, plural, trim, replace)",
+    "Arr + collect() over collect.js for chained pipelines",
+    "Num (currency, fileSize, ordinal, abbreviate)",
+    "Uri fluent URL builder + Env normaliser",
+    "BaseRegistry + Manager + MultipleInstanceManager base classes",
+    "sleep / retry / once / tap / optional / timebox helpers",
+    "HtmlString, Fluent, Pipeline, Benchmark",
+    "Testing subpath with support helper mocks"
+  ],
+  "when_to_use": "Any package needs string / array / number / URL / env / control-flow helpers with a single canonical API.",
+  "when_not_to_use": "Do not use native String / Array methods directly in application code — go through the Str / Arr façades.",
+  "peer_deps": [
+    "@stackra/contracts",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "collect.js",
+    "path-browserify",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": "academorix/support",
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/support/README.md"]
+}

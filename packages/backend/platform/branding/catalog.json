@@ -1,0 +1,40 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/branding",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "White-label Branding aggregate per Tenant — palette, logo variants, typography, custom CSS variables, and OG-image renderer with a 1-hour cached read path.",
+  "capabilities": [
+    "Branding Eloquent model (brd_...) with palette + logo bundle",
+    "BrandingResolverInterface per-domain resolution binding",
+    "OgImageRendererInterface open-graph card renderer binding",
+    "BrandingPayload cast — structured palette + logo DTO",
+    "Cacheable(ttl=3600) with tag-based invalidation",
+    "BrandingCreated/Updated/Reset/Archived events",
+    "valid_hex_color validator"
+  ],
+  "when_to_use": "Letting a tenant author their brand palette, logo variants, and social share image without a code change.",
+  "when_not_to_use": "For design tokens driving the frontend theme (colors, radius, spacing), use the sibling academorix/theme package.",
+  "peer_deps": [
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "academorix/tenancy",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/platform/branding/README.md"]
+}

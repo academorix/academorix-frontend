@@ -1,0 +1,43 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/versioning",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Public-interface versioning — ApiVersion + DeprecationNotice aggregates plus resolver chain, payload transformer registry, and RFC 8594 sunset workflow.",
+  "capabilities": [
+    "ApiVersion + DeprecationNotice aggregates",
+    "Resolver chain (URL / header / query / webhook / GraphQL)",
+    "#[AsPayloadTransformer] + #[VersionedField] + #[AsApiSurface] attributes",
+    "SemVer + CalVer scheme adapters",
+    "RFC 8594 Sunset + Deprecation headers",
+    "Payload transformer chains between versions",
+    "Webhook subscription api_version pinning + auto-upgrade",
+    "GraphQL @api(version) directive (feature-flag guarded)"
+  ],
+  "when_to_use": "A public API surface must evolve across breaking changes with per-consumer version pinning and orderly deprecation.",
+  "when_not_to_use": "For row-level model history + rollback, use academorix/foundation's HasVersions trait — different concern.",
+  "peer_deps": [
+    "academorix/authorization",
+    "academorix/console",
+    "academorix/crud",
+    "academorix/database",
+    "academorix/enum",
+    "academorix/events",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/retention",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "mattiverse/userstamps",
+    "olvlvl/composer-attribute-collector",
+    "owen-it/laravel-auditing",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/shared/versioning/README.md"]
+}

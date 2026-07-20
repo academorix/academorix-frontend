@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/reporting",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Tenant reporting surface — Dashboard layout, ReportDefinition + SavedReport catalogue, and ReportRun execution ledger for exports and scheduled digests.",
+  "capabilities": [
+    "Dashboard Eloquent model (dsh_...) with widget layout",
+    "ReportDefinition + SavedReport catalogue",
+    "ReportRun execution ledger with status + output",
+    "Query builder over analytics + attribution rollups",
+    "CSV + PDF exports on-demand",
+    "Scheduled email digests per dashboard"
+  ],
+  "when_to_use": "Composing tenant-facing dashboards over analytics, attribution, and campaign data.",
+  "when_not_to_use": "For raw event ingestion, use the sibling academorix/analytics package upstream.",
+  "peer_deps": [
+    "academorix-platform/reporting-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/platform/reporting/README.md"]
+}

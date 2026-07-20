@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/consent",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "feature",
+  "purpose": "Client-side GDPR/CCPA consent — categories, reactive preferences, pluggable storage adapters, React hooks, and a HeroUI consent banner.",
+  "capabilities": [
+    "Category-based consent model (necessary, analytics, marketing, ...)",
+    "Reactive store with per-category grant/revoke",
+    "Storage adapters via @stackra/storage",
+    "React hooks: useConsent, useConsentFor(category)",
+    "HeroUI consent banner + preferences drawer",
+    "Backend-agnostic — no wire contract required"
+  ],
+  "when_to_use": "Displaying a cookie banner or gating third-party scripts and analytics on user consent.",
+  "when_not_to_use": "For per-tenant retention policies use the backend compliance package; for pure feature flags use @stackra/settings.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/storage",
+    "@stackra/testing",
+    "@stackra/ui",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/consent/README.md"]
+}

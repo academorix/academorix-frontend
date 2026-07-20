@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/announcements",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Broadcast announcements — Announcement + AnnouncementView aggregates for tenant admins to publish acknowledgement-tracked messages to segments.",
+  "capabilities": [
+    "Announcement aggregate (ann_ prefix)",
+    "AnnouncementView (anv_ prefix) — per-user read + acknowledged tracking",
+    "Segment targeting (all users, roles, individuals)",
+    "Attribute-first CRUD, Actions, Policies, Events",
+    "Wire SDK companion at academorix-notifications/announcements-sdk"
+  ],
+  "when_to_use": "A tenant admin needs to broadcast a message with per-user acknowledgement tracking to all or a subset of users.",
+  "when_not_to_use": "For transactional per-user notifications, use academorix/notifications. For editorial newsletter cadences, use academorix/newsletter.",
+  "peer_deps": [
+    "academorix-notifications/announcements-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/notifications/announcements/README.md"]
+}

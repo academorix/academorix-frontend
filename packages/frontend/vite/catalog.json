@@ -1,0 +1,22 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/vite",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Neutral Vite-config orchestrator — typed defineConfig helper and { enabled, factory, options } plugin-map envelope. Consumers bring their own plugin factories.",
+  "capabilities": [
+    "Typed defineConfig(...) helper",
+    "Plugin-map envelope { enabled, factory, options }",
+    "Zero opinionated plugins — consumers register their own",
+    "Composable with @stackra/pwa, @stackra/i18n, @stackra/routing Vite plugins"
+  ],
+  "when_to_use": "Composing an app's vite.config.ts from a workspace-consistent plugin-map envelope.",
+  "when_not_to_use": "For per-plugin config use each plugin's own factory; for build-time discovery use the owning package's /vite subpath.",
+  "peer_deps": ["vite"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/vite/README.md"]
+}

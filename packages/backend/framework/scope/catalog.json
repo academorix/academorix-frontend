@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/scope",
+  "tier": "framework",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Dynamic hierarchical scope platform — per-tenant configurable hierarchy, materialised-path node graph, namespaced cascading value store, and request-context propagation.",
+  "capabilities": [
+    "Per-tenant configurable hierarchy (scope_definitions)",
+    "Materialised-path node graph for O(1) ancestor traversal",
+    "Namespaced cascading value store (scope_values)",
+    "ResolveScope middleware (Header, JWT, TenantContext, Root fallback)",
+    "Eloquent auto-scoping via #[ScopedTo] attribute",
+    "#[BypassScope(reason)] audit-friendly opt-out",
+    "Scope::resolve() cascading key resolution"
+  ],
+  "when_to_use": "Any configuration owner needs a per-tenant hierarchy of override values — settings, permissions, feature flags, pricing, notifications.",
+  "when_not_to_use": "For row-level tenant scoping, use the BelongsToTenant trait from the tenancy module instead.",
+  "peer_deps": [
+    "academorix/caching",
+    "academorix/database",
+    "academorix/exceptions",
+    "academorix/foundation",
+    "academorix/service-provider",
+    "olvlvl/composer-attribute-collector"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/framework/scope/README.md"]
+}

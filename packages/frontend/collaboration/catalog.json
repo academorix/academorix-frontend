@@ -1,0 +1,34 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/collaboration",
+  "tier": "saas",
+  "surfaces": ["core", "testing"],
+  "kind": "feature",
+  "purpose": "Liveblocks-style real-time collaboration — presence, cursors, threads, shared state, and notifications with pluggable transports.",
+  "capabilities": [
+    "Multiplayer presence + cursor sharing",
+    "Comment threads scoped to any entity",
+    "Shared CRDT-style state with conflict resolution",
+    "Pluggable transports over @stackra/realtime",
+    "Storage adapter via @stackra/storage",
+    "Testing subpath with in-memory transport"
+  ],
+  "when_to_use": "Adding multiplayer presence, cursors, or shared comments to a client surface.",
+  "when_not_to_use": "For plain event pub/sub use @stackra/realtime directly; for local UI state use @stackra/state.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/logger",
+    "@stackra/realtime",
+    "@stackra/storage",
+    "@stackra/support",
+    "@stackra/testing",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/collaboration/README.md"]
+}

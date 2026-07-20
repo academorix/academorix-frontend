@@ -1,0 +1,37 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/queue",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Client-side job queue — pluggable connectors (memory, localStorage, IndexedDB, BroadcastChannel, QStash), workers, decorators.",
+  "capabilities": [
+    "@Job() + @Handler() decorators for typed job classes",
+    "Pluggable connectors: memory, localStorage, IndexedDB, BroadcastChannel, QStash",
+    "Worker + processor lifecycle with retry + backoff",
+    "Failed-job storage + replay",
+    "Cross-tab queue via BroadcastChannel + @stackra/coordinator",
+    "React binding for monitoring queue depth",
+    "Testing subpath with in-memory connector"
+  ],
+  "when_to_use": "Running deferred or retriable work client-side (image resizing, offline sends, batched writes).",
+  "when_not_to_use": "For scheduled recurring work use @stackra/scheduler; for reactive reads use @stackra/query.",
+  "peer_deps": [
+    "@stackra/config",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/decorators",
+    "@stackra/logger",
+    "@stackra/storage",
+    "@stackra/support",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/queue/README.md"]
+}

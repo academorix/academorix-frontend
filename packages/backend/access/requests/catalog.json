@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/requests",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Access-request projection over the workflow approvals engine — surfaces role- and permission-request lifecycle as a first-class UX for admins.",
+  "capabilities": [
+    "AccessRequestProjection DTO over workflow/approvals",
+    "Request submission, review, approval, denial flow",
+    "Attribute-first Actions + Policies + Events",
+    "Filterable list + show HTTP surface",
+    "Wire SDK companion at academorix-access/requests-sdk"
+  ],
+  "when_to_use": "A tenant user requests a role or permission grant that requires admin approval before taking effect.",
+  "when_not_to_use": "For synchronous role assignment by an admin with authority to grant directly, use academorix/rbac.",
+  "peer_deps": [
+    "academorix-access/requests-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/access/requests/README.md"]
+}

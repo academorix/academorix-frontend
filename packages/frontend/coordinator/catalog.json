@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/coordinator",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Cross-tab coordination for browser apps — leader election, distributed locks over Web Locks + BroadcastChannel, and event relay across tabs.",
+  "capabilities": [
+    "Leader election across browser tabs",
+    "Compare-and-swap locks (Web Locks API with localStorage fallback)",
+    "BroadcastChannel event relay",
+    "Deduplicated cross-tab side effects (sync, push, refresh)",
+    "React hooks: useIsLeader, useLock",
+    "Testing subpath with in-memory coordinator"
+  ],
+  "when_to_use": "Deduplicating side effects (sync push, refresh token rotation, notification click) across multiple browser tabs.",
+  "when_not_to_use": "For single-tab pub/sub use @stackra/events; for persistent job scheduling use @stackra/scheduler.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/support",
+    "@stackra/testing",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/coordinator/README.md"]
+}

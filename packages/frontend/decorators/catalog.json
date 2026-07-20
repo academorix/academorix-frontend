@@ -1,0 +1,29 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/decorators",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Centralised decorator library — generic factories for class/method/property metadata, plus domain wrappers (@DevtoolsPanel, @OnEvent, @Cacheable, @Route).",
+  "capabilities": [
+    "Generic factories for class / method / property decorators",
+    "Per-consumer subpaths (core, devtools, logger, events, cache, queue, routing)",
+    "Metadata stamping decoupled from runtime loaders",
+    "Tree-shakes per consumer subpath",
+    "Feature packages stay decoupled from loader implementations"
+  ],
+  "when_to_use": "You are shipping a package that discovers contributors via metadata and want the decorator surface to live in one place.",
+  "when_not_to_use": "For plain method wrapping without metadata use function composition; for lifecycle hooks use @stackra/container directly.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/testing",
+    "@vivtel/metadata",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/decorators/README.md"]
+}

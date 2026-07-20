@@ -1,0 +1,23 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/testing",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "framework-plumbing",
+  "purpose": "Shared Vitest preset, setup lifecycle, and assertable primitives — SWC-based transform with full decorator metadata support.",
+  "capabilities": [
+    "@stackra/testing/preset — Vitest defineConfig preset",
+    "@stackra/testing/setup — global setup lifecycle",
+    "@stackra/testing/matchers — assertable-DSL matchers",
+    "SWC + unplugin-swc transform for decorator metadata",
+    "Consumed by every workspace package's vitest.config.ts"
+  ],
+  "when_to_use": "Every workspace package's vitest.config.ts merges @stackra/testing/preset for consistent test transforms.",
+  "when_not_to_use": "For runtime testing hooks use the per-package /testing subpath; for e2e use Playwright directly.",
+  "peer_deps": ["@swc/core", "unplugin-swc"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/testing/README.md"]
+}

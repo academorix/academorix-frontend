@@ -1,0 +1,32 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/forms",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Dynamic form builder — Form root definition, FormVersion immutable schema snapshot, and FormSubmission per-completion row with per-field validation.",
+  "capabilities": [
+    "Form root definition Eloquent model (fom_...)",
+    "FormVersion immutable schema snapshot per Form",
+    "FormSubmission capture with per-field validation",
+    "Consent + captcha field types built in",
+    "Draft + in-progress submission state",
+    "Feeds the leads pipeline for signup forms"
+  ],
+  "when_to_use": "Rolling out a signup, feedback, or intake form the tenant authors themselves without a code change.",
+  "when_not_to_use": "For post-submission qualification and CRM hand-off, chain into the sibling academorix/leads package.",
+  "peer_deps": [
+    "academorix-platform/forms-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/platform/forms/README.md"]
+}

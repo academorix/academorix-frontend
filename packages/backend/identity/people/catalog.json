@@ -1,0 +1,31 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "academorix/people",
+  "tier": "saas",
+  "surfaces": ["core"],
+  "kind": "feature",
+  "purpose": "Central-plane people directory — global PersonIdentity records carrying the Academorix ID, guardian/minor links, and consent-gated tenant link requests.",
+  "capabilities": [
+    "PersonIdentity global record carrying the Academorix ID",
+    "PersonGuardianLink survives cross-tenant boundaries",
+    "TenantLinkRequest consent-gated tenant → central link",
+    "Deduplication across tenants for the same real human",
+    "Foundation for cross-tenant reporting and safeguarding"
+  ],
+  "when_to_use": "Linking a tenant-local Athlete/Staff row to a central PersonIdentity that survives cross-tenant, or wiring guardian relationships.",
+  "when_not_to_use": "For per-Application User rows and tenant membership, use the sibling academorix/user package.",
+  "peer_deps": [
+    "academorix-identity/people-sdk",
+    "academorix/crud",
+    "academorix/foundation",
+    "academorix/routing",
+    "academorix/service-provider",
+    "academorix/support",
+    "spatie/laravel-data"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "laravel-feature-builder",
+  "docs": ["packages/backend/identity/people/README.md"]
+}

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/query",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Store-backed data fetching — TanStack Query cache + fetcher registry, DI-integrated, composable with @stackra/state stores for reactive reads.",
+  "capabilities": [
+    "TanStack Query core wired into the DI container",
+    "@Fetcher() registry for typed query keys",
+    "Optimistic + undoable mutations",
+    "Realtime invalidation via @stackra/realtime hooks",
+    "State-store composition for cross-app reactive reads",
+    "React bindings + actions subpath for @Query dispatch",
+    "Testing subpath with in-memory query client"
+  ],
+  "when_to_use": "Reading server data with cache-first UX, optimistic mutations, and realtime-driven invalidation.",
+  "when_not_to_use": "For local ephemeral state use @stackra/state; for direct HTTP without caching use @stackra/http.",
+  "peer_deps": [
+    "@stackra/actions",
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/devtools",
+    "@stackra/http",
+    "@stackra/logger",
+    "@stackra/realtime",
+    "@stackra/state",
+    "@stackra/testing",
+    "@stackra/ui",
+    "@tanstack/query-core",
+    "@tanstack/react-query",
+    "@tanstack/react-store",
+    "@tanstack/store",
+    "react",
+    "reflect-metadata"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/query/README.md"]
+}

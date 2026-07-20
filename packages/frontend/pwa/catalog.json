@@ -1,0 +1,40 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/pwa",
+  "tier": "saas",
+  "surfaces": ["core", "react", "testing"],
+  "kind": "feature",
+  "purpose": "Production PWA runtime + build toolkit — install prompts, service-worker updates, standalone detection, Web Share, Wake Lock, and vite-plugin-pwa options.",
+  "capabilities": [
+    "beforeinstallprompt handling + iOS Safari tutorial",
+    "Service worker update prompt orchestration",
+    "Standalone / install status detection",
+    "UTM attribution + Web Share + Vibration + Wake Lock",
+    "Safe-area insets + adaptive loading helpers",
+    "QR-code install helper + splash screen + PwaHead meta",
+    "Locale-aware Web App Manifest builder",
+    "Curated Workbox runtime-caching presets",
+    "vite-plugin-pwa + @vite-pwa/assets-generator + Bubblewrap TWA builders"
+  ],
+  "when_to_use": "Turning a Vite React app into an installable PWA with update prompts, share, and platform-aware install UX.",
+  "when_not_to_use": "For pure service-worker authoring use Workbox directly; for background sync use @stackra/sync.",
+  "peer_deps": [
+    "@stackra/container",
+    "@stackra/contracts",
+    "@stackra/network",
+    "@stackra/support",
+    "@stackra/testing",
+    "@stackra/ui",
+    "@vite-pwa/assets-generator",
+    "qrcode",
+    "react",
+    "reflect-metadata",
+    "vite",
+    "vite-plugin-pwa"
+  ],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/pwa/README.md"]
+}

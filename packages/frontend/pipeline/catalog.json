@@ -1,0 +1,24 @@
+{
+  "$schema": "https://gist.githubusercontent.com/academorix-user/073a1ab687cd93ede7ae927b96a025ea/raw/catalog.v1.json",
+  "name": "@stackra/pipeline",
+  "tier": "saas",
+  "surfaces": ["core", "testing"],
+  "kind": "framework-plumbing",
+  "purpose": "Laravel-style middleware pipeline — fluent send/through/then API, DI integration, and Hub presets for named pipelines.",
+  "capabilities": [
+    "Fluent pipeline.send(x).through([...]).then(cb) API",
+    "Sync + async middleware support",
+    "Container-resolved middleware classes",
+    "Hub presets for named, reusable pipelines",
+    "Composable with @stackra/actions dispatcher",
+    "Testing subpath with recording middleware"
+  ],
+  "when_to_use": "Composing an ordered chain of middleware around a value (HTTP request, action, event, ...).",
+  "when_not_to_use": "For simple function composition use plain reduce; for event fan-out use @stackra/events.",
+  "peer_deps": ["@stackra/container", "@stackra/contracts", "@stackra/testing", "reflect-metadata"],
+  "backend_pair": null,
+  "size_gzip_kb": {},
+  "maturity": "alpha",
+  "owning_agent": "framework-core-builder",
+  "docs": ["packages/frontend/pipeline/README.md"]
+}
