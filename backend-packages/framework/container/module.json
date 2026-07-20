@@ -11,7 +11,7 @@
     "discovery"
   ],
   "priority": 1,
-  "providers": ["Stackra\\Container\\Providers\\ContainerServiceProvider"],
+  "providers": ["Academorix\\Container\\Providers\\ContainerServiceProvider"],
   "aliases": {},
   "files": [],
   "requires": ["support"]

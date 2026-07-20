@@ -1,5 +1,5 @@
 {
-  "name": "stackra/laravel-container",
+  "name": "academorix/container",
   "description": "Dependency injection container utilities and extensions",
   "type": "library",
   "license": "MIT",
@@ -8,12 +8,12 @@
     "dependency-injection",
     "ioc",
     "laravel",
-    "stackra"
+    "academorix"
   ],
   "authors": [
     {
-      "name": "Stackra Team",
-      "email": "dev@stackra.com"
+      "name": "Academorix Team",
+      "email": "dev@academorix.com"
     }
   ],
   "require": {
@@ -22,13 +22,13 @@
   },
   "autoload": {
     "psr-4": {
-      "Stackra\\Container\\": "src/"
+      "Academorix\\Container\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "Stackra\\Container\\Providers\\ContainerServiceProvider"
+        "Academorix\\Container\\Providers\\ContainerServiceProvider"
       ]
     }
   },
@@ -37,10 +37,10 @@
     "mockery/mockery": "^1.6",
     "orchestra/testbench": "^10.0"
   },
-  "homepage": "https://github.com/stackra-inc/laravel-framework/container",
+  "homepage": "https://github.com/academorix/academorix-backend/tree/main/backend-packages/framework/container",
   "support": {
-    "issues": "https://github.com/stackra-inc/laravel-framework/container/-/issues",
-    "source": "https://github.com/stackra-inc/laravel-framework/container"
+    "issues": "https://github.com/academorix/academorix-backend/issues",
+    "source": "https://github.com/academorix/academorix-backend/tree/main/backend-packages/framework/container"
   },
   "config": {
     "sort-packages": true,
