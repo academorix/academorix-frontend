@@ -13,26 +13,17 @@ declare(strict_types=1);
 
 namespace Academorix\Cli\Concerns;
 
-use PDPhilip\OmniTerm\OmniTerm;
-use Symfony\Component\Console\Output\OutputInterface;
+use OmniTerm\HasOmniTerm;
 
 /**
  * Composed by every command through {@see \Academorix\Cli\Commands\AbstractCommand}.
  *
- * Every command carries a `$this->omni` handle after `bootUsesOmniTerm()`
- * runs. Commands call `$this->omni->titleBar(...)`, `->tableRow(...)`,
+ * Every command carries a `$this->omni` handle after Symfony Console
+ * calls `initialize()` on the command (from `HasOmniTerm`). Commands
+ * call `$this->omni->titleBar(...)`, `->tableRow(...)`,
  * `->statusSuccess(...)` etc. directly.
  */
 trait UsesOmniTerm
 {
-    public OmniTerm $omni;
-
-    /**
-     * Called from {@see \Academorix\Cli\Commands\AbstractCommand::initializeConcerns()}
-     * before the concrete `handle()` runs.
-     */
-    protected function bootUsesOmniTerm(OutputInterface $output): void
-    {
-        $this->omni = new OmniTerm($output);
-    }
+    use HasOmniTerm;
 }

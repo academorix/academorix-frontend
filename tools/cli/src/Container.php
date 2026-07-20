@@ -18,6 +18,7 @@ use Academorix\Cli\Blueprint\BlueprintValidator;
 use Academorix\Cli\Bootstrap\ViewBootstrapper;
 use Academorix\Cli\Catalog\CatalogQuery;
 use Academorix\Cli\Catalog\CatalogReader;
+use Academorix\Cli\Composer\ComposerPathRepoWirer;
 use Academorix\Cli\Stubs\StubFormatter;
 use Academorix\Cli\Stubs\StubRegistry;
 use Academorix\Cli\Stubs\StubRenderer;
@@ -150,6 +151,14 @@ final class Container
             fn (IlluminateContainer $c) => new TemplateManager(
                 $c->make(TemplateRegistry::class),
                 $c->make(TemplateHydrator::class),
+            ),
+        );
+
+        // Composer wiring subsystem.
+        $this->container->singleton(
+            ComposerPathRepoWirer::class,
+            fn (IlluminateContainer $c) => new ComposerPathRepoWirer(
+                $c->make(Filesystem::class),
             ),
         );
 

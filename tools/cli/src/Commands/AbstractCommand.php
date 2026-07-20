@@ -86,12 +86,15 @@ abstract class AbstractCommand extends Command
      * Standard execute wraps the concrete's `handle()` in banner + error
      * rendering. Concrete commands never override this — they implement
      * `handle()` and let the trait stack do the framing.
+     *
+     * Trait initialisation happens BEFORE `execute()` via Symfony
+     * Console's own `initialize()` hook, which `HasOmniTerm` composes.
+     * By the time `handle()` runs, every `$this->omni` / `$this->foo`
+     * accessor is safe to use.
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $this->initializeConcerns($input, $output);
-
             if ($this->shouldRenderBanner($input, $output)) {
                 $this->renderBrandArt($output);
             }
@@ -108,16 +111,6 @@ abstract class AbstractCommand extends Command
      * `$this->catalog()`, etc. directly.
      */
     abstract protected function handle(InputInterface $input, OutputInterface $output): int;
-
-    /**
-     * Trait initialisation hook. Called before {@see handle()}. Each trait
-     * that needs state (currently only `UsesOmniTerm`) populates itself
-     * here.
-     */
-    protected function initializeConcerns(InputInterface $input, OutputInterface $output): void
-    {
-        $this->bootUsesOmniTerm($output);
-    }
 
     /**
      * The banner renders only in decorated terminals and when the caller

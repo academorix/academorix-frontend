@@ -19,6 +19,7 @@ That's it. The binary is at `tools/cli/bin/academorix` and is executable.
 | `make:action`        | Emit a single Laravel action                             | v0.1 shipped |
 | `catalog:list`       | List every catalog entry                                 | v0.1 shipped |
 | `catalog:search`     | Search catalog by capability                             | v0.1 shipped |
+| `composer:sync`      | Wire Composer @dev deps to path repositories             | v0.1 shipped |
 | `package:add`        | Install a package from the workspace catalog             | v0.2 planned |
 | `module:new`         | Scaffold a new module blueprint                          | v0.2 planned |
 | `module:generate`    | Regenerate a module from its blueprint                   | v0.2 planned |

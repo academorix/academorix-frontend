@@ -46,7 +46,7 @@
       "providers": [
         "Academorix\\Chargeback\\Providers\\ChargebackServiceProvider"
       ],
-      "aliases": {}
+      "aliases": []
     }
   },
   "scripts": {

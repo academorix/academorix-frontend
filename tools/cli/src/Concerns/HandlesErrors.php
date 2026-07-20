@@ -26,24 +26,45 @@ trait HandlesErrors
 {
     public function renderFatalError(Throwable $e, OutputInterface $output): int
     {
+        // OmniTerm is initialised by `HasOmniTerm::initialize()` (which
+        // Symfony Console dispatches before `execute()`). If a fatal
+        // happens BEFORE that hook fires — command-construction errors,
+        // input-validation errors thrown by Symfony itself — fall back
+        // to plain output so the operator sees the actual root cause
+        // instead of a secondary "property not initialised" fatal.
+        $hasOmni = isset($this->omni);
+
         if ($e instanceof CliException) {
-            $this->omni->statusError(
-                $e->headline(),
-                $e->getMessage(),
-                $e->remediation(),
-            );
+            if ($hasOmni) {
+                $this->omni->statusError(
+                    $e->headline(),
+                    $e->getMessage(),
+                    $e->remediation(),
+                );
+            } else {
+                $output->writeln('<error>'.$e->headline().'</error>');
+                $output->writeln($e->getMessage());
+                foreach ($e->remediation() as $line) {
+                    $output->writeln('  - '.$line);
+                }
+            }
 
             return $e->exitCode();
         }
 
-        $this->omni->statusError(
-            'Unexpected error',
-            $e->getMessage() !== '' ? $e->getMessage() : $e::class,
-            [
-                'This is a bug in the Academorix CLI, not in your project.',
-                'Re-run with -vvv to capture the full stack trace and file a report.',
-            ],
-        );
+        if ($hasOmni) {
+            $this->omni->statusError(
+                'Unexpected error',
+                $e->getMessage() !== '' ? $e->getMessage() : $e::class,
+                [
+                    'This is a bug in the Academorix CLI, not in your project.',
+                    'Re-run with -vvv to capture the full stack trace and file a report.',
+                ],
+            );
+        } else {
+            $output->writeln('<error>Unexpected error (pre-boot)</error>');
+            $output->writeln($e::class.': '.($e->getMessage() !== '' ? $e->getMessage() : '(no message)'));
+        }
 
         if ($output->isVerbose()) {
             $output->writeln('');

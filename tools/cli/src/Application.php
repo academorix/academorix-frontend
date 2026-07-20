@@ -15,6 +15,7 @@ namespace Academorix\Cli;
 
 use Academorix\Cli\Commands\CatalogListCommand;
 use Academorix\Cli\Commands\CatalogSearchCommand;
+use Academorix\Cli\Commands\ComposerSyncCommand;
 use Academorix\Cli\Commands\MakeActionCommand;
 use Academorix\Cli\Commands\MakeModelCommand;
 use Academorix\Cli\Commands\MakeNativeScreenCommand;
@@ -73,6 +74,7 @@ final class Application extends SymfonyApplication
             new MakeActionCommand($this->container),
             new CatalogListCommand($this->container),
             new CatalogSearchCommand($this->container),
+            new ComposerSyncCommand($this->container),
             new PackageAddCommand($this->container),
             new ModuleNewCommand($this->container),
             new ModuleGenerateCommand($this->container),
