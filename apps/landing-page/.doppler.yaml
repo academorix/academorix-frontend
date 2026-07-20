@@ -1,5 +1,0 @@
-# Pins this app to `academorix-frontend` / `dev_landing_page`.
-# See docs/doppler.md at the monorepo root for the design.
-setup:
-  project: academorix-frontend
-  config: dev_landing_page

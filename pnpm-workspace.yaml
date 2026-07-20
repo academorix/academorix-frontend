@@ -1,11 +1,10 @@
 packages:
   - "apps/*"
-  - "old/*"
-  - "old/config/*"
-  - "contracts-app"
   - "packages/*"
-  - "packages/old/*"
-  - "packages/old/config/*"
+  - "packages/sdk/*"
+  - "packages/config/*"
+  - "packages/backend/*"
+  - "packages/frontend/*"
 
 # Force every transitive `react-stately` resolution to a single version.
 # Without this, `@heroui/react` and `@heroui-pro/react` can pull in two
