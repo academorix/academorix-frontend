@@ -13,7 +13,9 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Rbac\Contracts\Data\RoleHasPermissionsInterface;
 use Academorix\Rbac\Database\Factories\RoleHasPermissionsFactory;
-
+use Academorix\Tenancy\Concerns\BelongsToTenantOptional;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a RoleHasPermissions.
@@ -33,7 +35,8 @@ use Academorix\Rbac\Database\Factories\RoleHasPermissionsFactory;
 ])]
 #[UseFactory(RoleHasPermissionsFactory::class)]
 #[WithoutIncrementing]
-final class RoleHasPermissions extends Model implements RoleHasPermissionsInterface
+final class RoleHasPermissions extends Model implements RoleHasPermissionsInterface, AuditableContract
 {
-
+    use Auditable;
+    use BelongsToTenantOptional;
 }

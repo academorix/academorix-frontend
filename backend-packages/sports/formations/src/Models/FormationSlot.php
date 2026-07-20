@@ -18,6 +18,8 @@ use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a FormationSlot.
@@ -40,11 +42,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 ])]
 #[UseFactory(FormationSlotFactory::class)]
 #[WithoutIncrementing]
-final class FormationSlot extends Model implements FormationSlotInterface
+final class FormationSlot extends Model implements FormationSlotInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
     use Filterable;
+    use Auditable;
 }

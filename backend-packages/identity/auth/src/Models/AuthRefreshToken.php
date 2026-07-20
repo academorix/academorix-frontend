@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -47,7 +49,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 ])]
 #[UseFactory(AuthRefreshTokenFactory::class)]
 #[WithoutIncrementing]
-final class AuthRefreshToken extends Model implements AuthRefreshTokenInterface
+final class AuthRefreshToken extends Model implements AuthRefreshTokenInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
@@ -56,6 +58,7 @@ final class AuthRefreshToken extends Model implements AuthRefreshTokenInterface
     use LogsActivity;
     use Filterable;
     use SoftDeletes;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

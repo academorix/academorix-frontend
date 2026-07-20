@@ -20,6 +20,8 @@ use Academorix\Realtime\Policies\BroadcastSubscriptionPolicy;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a BroadcastSubscription.
@@ -47,13 +49,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 #[UseFactory(BroadcastSubscriptionFactory::class)]
 #[WithoutIncrementing]
 #[UsePolicy(BroadcastSubscriptionPolicy::class)]
-final class BroadcastSubscription extends Model implements BroadcastSubscriptionInterface
+final class BroadcastSubscription extends Model implements BroadcastSubscriptionInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
     use Filterable;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

@@ -17,6 +17,8 @@ use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a Presence.
@@ -38,12 +40,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 ])]
 #[UseFactory(PresenceFactory::class)]
 #[WithoutIncrementing]
-final class Presence extends Model implements PresenceInterface
+final class Presence extends Model implements PresenceInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use Filterable;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

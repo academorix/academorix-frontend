@@ -17,6 +17,8 @@ use Academorix\Foundation\Concerns\Filterable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -38,13 +40,14 @@ use Spatie\Activitylog\Traits\LogsActivity;
 ])]
 #[UseFactory(AuthEmailVerificationFactory::class)]
 #[WithoutIncrementing]
-final class AuthEmailVerification extends Model implements AuthEmailVerificationInterface
+final class AuthEmailVerification extends Model implements AuthEmailVerificationInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use Userstamps;
     use LogsActivity;
     use Filterable;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

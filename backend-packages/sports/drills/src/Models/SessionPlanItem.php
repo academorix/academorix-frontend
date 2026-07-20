@@ -17,6 +17,8 @@ use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a SessionPlanItem.
@@ -39,10 +41,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 ])]
 #[UseFactory(SessionPlanItemFactory::class)]
 #[WithoutIncrementing]
-final class SessionPlanItem extends Model implements SessionPlanItemInterface
+final class SessionPlanItem extends Model implements SessionPlanItemInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
+    use Auditable;
 }

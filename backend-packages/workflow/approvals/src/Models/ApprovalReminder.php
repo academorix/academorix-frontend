@@ -16,6 +16,8 @@ use Academorix\Approvals\Database\Factories\ApprovalReminderFactory;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ApprovalReminder.
@@ -36,11 +38,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 ])]
 #[UseFactory(ApprovalReminderFactory::class)]
 #[WithoutIncrementing]
-final class ApprovalReminder extends Model implements ApprovalReminderInterface
+final class ApprovalReminder extends Model implements ApprovalReminderInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use BelongsToTenant;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ApprovableAction.
@@ -49,7 +51,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
 #[UseFactory(ApprovableActionFactory::class)]
 #[WithoutIncrementing]
 #[UsePolicy(ApprovableActionPolicy::class)]
-final class ApprovableAction extends Model implements ApprovableActionInterface
+final class ApprovableAction extends Model implements ApprovableActionInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
@@ -59,6 +61,7 @@ final class ApprovableAction extends Model implements ApprovableActionInterface
     use Filterable;
     use Searchable;
     use SoftDeletes;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

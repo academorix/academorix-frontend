@@ -766,10 +766,123 @@ interface {e.class_name}Interface
 # Model emitter (src/Models/*.php).
 # ---------------------------------------------------------------------------
 
-def _extract_traits(schema: dict[str, Any]) -> list[str]:
-    """Extract the `x-eloquent.traits` list from a schema."""
+# ---------------------------------------------------------------------------
+# Trait auto-injection — Auditable + BelongsToTenant.
+# ---------------------------------------------------------------------------
+#
+# Every tenant-scoped row carries an audit trail + participates in the
+# tenant global scope by construction. The blueprint author SHOULD list
+# `Auditable` / `BelongsToTenant` explicitly, but many older schemas
+# predate this rule. Rather than churn every schema, the emitter
+# auto-injects the two traits when:
+#
+#   1. `Auditable` — the class is NOT on `_AUDITABLE_EXEMPT_CLASSES` (which
+#      covers cross-tenant framework rows, DTOs erroneously modeled as
+#      Eloquent Models, and the audit/activity storage models themselves —
+#      auditing the audit table is nonsensical).
+#
+#   2. `BelongsToTenant` — the entity carries a `tenant_id` column AND the
+#      class is NOT on `_BELONGS_TO_TENANT_EXEMPT_CLASSES` AND neither
+#      `BelongsToTenant` nor `BelongsToTenantOptional` is already declared
+#      in the schema. Nullable `tenant_id` → `BelongsToTenantOptional`.
+#
+# Referenced by `.kiro/steering/tenancy-columns.md` §3 (the tenant-column
+# mandate) and §7 (the tenancy-compliance-auditor's fixture rules).
+
+_AUDITABLE_EXEMPT_CLASSES: set[str] = {
+    # Global identity plane — spans every application, has no tenant scope.
+    "Identity",
+    "PlatformUser",
+    # Machine credentials — auth-plane, spans applications by design.
+    "ServiceAccount",
+    # Cross-application SSO grants — application-plane, above tenancy.
+    "AuthCrossAppGrant",
+    # JWT signing infrastructure — global keyring; auditing key rotation
+    # lives in the signer service, not the row itself.
+    "AuthJwtSigningKey",
+    "AuthJwtDenyList",
+    # JWKS + JWT payloads are wire-visible DTOs that leak into Model/
+    # emission by blueprint quirk — they don't persist, so auditing them
+    # is meaningless. (Long-term these should stop being Model subclasses.)
+    "JwksResponse",
+    "JwtPayload",
+    # Audit + activity backing stores — the audit trail itself must not
+    # be audit-recorded (infinite recursion / write-storms).
+    "Audit",
+    "Activity",
+}
+
+_BELONGS_TO_TENANT_EXEMPT_CLASSES: set[str] = {
+    # Global identity plane — Identity is the CREDENTIAL, one per human.
+    # tenant_id lives on the `users` per-application projection, not here.
+    "Identity",
+    # Central-plane admins.
+    "PlatformUser",
+    # Application plane — above tenancy.
+    "Application",
+    "AuthCrossAppGrant",
+    # Tenant itself IS the tenant scope — composing BelongsToTenant would
+    # scope Tenant queries to themselves (nonsensical).
+    "Tenant",
+    # Machine credentials — the ServiceAccount can belong to a tenant OR
+    # to the platform; treated case-by-case via BelongsToTenantOptional
+    # inside the schema (not auto-injected).
+    "ServiceAccount",
+    # Wire DTOs.
+    "JwksResponse",
+    "JwtPayload",
+}
+
+
+def _entity_has_tenant_id(schema: dict[str, Any]) -> tuple[bool, bool]:
+    """Return `(has_column, is_nullable)` for `tenant_id` on the entity.
+
+    Handles both the dict-shape (`{name: {nullable, type, ...}}`) and the
+    older list-shape (`[{name, nullable, ...}, ...]`) that a small handful
+    of schemas still use.
+    """
+    cols = schema.get("x-database", {}).get("columns", {}) or {}
+    if isinstance(cols, dict):
+        spec = cols.get("tenant_id")
+        if spec is None:
+            return False, False
+        nullable = bool(spec.get("nullable", False)) if isinstance(spec, dict) else False
+        return True, nullable
+    if isinstance(cols, list):
+        for col in cols:
+            if not isinstance(col, dict):
+                continue
+            if col.get("name") == "tenant_id":
+                return True, bool(col.get("nullable", False))
+    return False, False
+
+
+def _extract_traits(schema: dict[str, Any], class_name: str | None = None) -> list[str]:
+    """Extract `x-eloquent.traits` and auto-inject `Auditable` /
+    `BelongsToTenant` when the entity qualifies (see comment above)."""
     x_el = schema.get("x-eloquent", {}) or {}
-    return list(x_el.get("traits", []) or [])
+    traits: list[str] = list(x_el.get("traits", []) or [])
+
+    # Auto-inject Auditable / HasAuditable when not exempt.
+    if class_name and class_name not in _AUDITABLE_EXEMPT_CLASSES:
+        # Any of the three known aliases counts as "already declared".
+        if not any(t in ("Auditable", "HasAuditable", "HasAudit") for t in traits):
+            traits.append("Auditable")
+
+    # Auto-inject BelongsToTenant[Optional] when the entity has tenant_id
+    # AND the class is not exempt AND no BelongsToTenant variant is set.
+    if class_name and class_name not in _BELONGS_TO_TENANT_EXEMPT_CLASSES:
+        already_declared = any(
+            t in ("BelongsToTenant", "BelongsToTenantOptional") for t in traits
+        )
+        if not already_declared:
+            has_tid, tid_nullable = _entity_has_tenant_id(schema)
+            if has_tid:
+                traits.append(
+                    "BelongsToTenantOptional" if tid_nullable else "BelongsToTenant"
+                )
+
+    return traits
 
 
 # Trait alias -> (FQCN, in-class alias). The schema alias is what appears
@@ -952,7 +1065,10 @@ def emit_model(m: Module, e: Entity) -> str:
     schema = json.loads(schema_path.read_text()) if schema_path.is_file() else {}
 
     # ── Trait resolution ────────────────────────────────────────
-    traits = _extract_traits(schema)
+    # `_extract_traits` also auto-injects `Auditable` and
+    # `BelongsToTenant[Optional]` when the entity qualifies — see the
+    # comment above `_AUDITABLE_EXEMPT_CLASSES` for the invariants.
+    traits = _extract_traits(schema, class_name=e.class_name)
     trait_imports: list[str] = []
     trait_use_lines: list[str] = []
     contract_imports: list[str] = []

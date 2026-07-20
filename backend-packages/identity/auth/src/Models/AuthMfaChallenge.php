@@ -18,6 +18,8 @@ use Academorix\Foundation\Concerns\HasMetadata;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AuthMfaChallenge.
@@ -39,13 +41,14 @@ use Mattiverse\Userstamps\Traits\Userstamps;
 ])]
 #[UseFactory(AuthMfaChallengeFactory::class)]
 #[WithoutIncrementing]
-final class AuthMfaChallenge extends Model implements AuthMfaChallengeInterface
+final class AuthMfaChallenge extends Model implements AuthMfaChallengeInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use Userstamps;
     use HasMetadata;
     use Filterable;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

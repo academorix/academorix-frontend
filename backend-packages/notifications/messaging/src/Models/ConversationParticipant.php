@@ -17,6 +17,8 @@ use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ConversationParticipant.
@@ -41,10 +43,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 ])]
 #[UseFactory(ConversationParticipantFactory::class)]
 #[WithoutIncrementing]
-final class ConversationParticipant extends Model implements ConversationParticipantInterface
+final class ConversationParticipant extends Model implements ConversationParticipantInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
+    use Auditable;
 }

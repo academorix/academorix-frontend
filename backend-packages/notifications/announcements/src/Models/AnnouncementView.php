@@ -17,6 +17,8 @@ use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a AnnouncementView.
@@ -38,10 +40,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 ])]
 #[UseFactory(AnnouncementViewFactory::class)]
 #[WithoutIncrementing]
-final class AnnouncementView extends Model implements AnnouncementViewInterface
+final class AnnouncementView extends Model implements AnnouncementViewInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
+    use Auditable;
 }

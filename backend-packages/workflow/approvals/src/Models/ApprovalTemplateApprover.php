@@ -19,6 +19,8 @@ use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -45,7 +47,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 ])]
 #[UseFactory(ApprovalTemplateApproverFactory::class)]
 #[WithoutIncrementing]
-final class ApprovalTemplateApprover extends Model implements ApprovalTemplateApproverInterface
+final class ApprovalTemplateApprover extends Model implements ApprovalTemplateApproverInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
@@ -54,6 +56,7 @@ final class ApprovalTemplateApprover extends Model implements ApprovalTemplateAp
     use Userstamps;
     use LogsActivity;
     use Filterable;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

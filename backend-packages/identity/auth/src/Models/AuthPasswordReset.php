@@ -17,6 +17,8 @@ use Academorix\Foundation\Concerns\Filterable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -39,13 +41,14 @@ use Spatie\Activitylog\Traits\LogsActivity;
 ])]
 #[UseFactory(AuthPasswordResetFactory::class)]
 #[WithoutIncrementing]
-final class AuthPasswordReset extends Model implements AuthPasswordResetInterface
+final class AuthPasswordReset extends Model implements AuthPasswordResetInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
     use Userstamps;
     use LogsActivity;
     use Filterable;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

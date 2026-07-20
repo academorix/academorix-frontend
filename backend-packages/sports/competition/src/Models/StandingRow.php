@@ -20,6 +20,8 @@ use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a StandingRow.
@@ -51,11 +53,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 #[UseFactory(StandingRowFactory::class)]
 #[WithoutIncrementing]
 #[UsePolicy(StandingRowPolicy::class)]
-final class StandingRow extends Model implements StandingRowInterface
+final class StandingRow extends Model implements StandingRowInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
     use BelongsToTenant;
     use HasMetadata;
     use Filterable;
+    use Auditable;
 }

@@ -13,7 +13,8 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Mfa\Contracts\Data\MfaChallengeInterface;
 use Academorix\Mfa\Database\Factories\MfaChallengeFactory;
-
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a MfaChallenge.
@@ -40,7 +41,7 @@ use Academorix\Mfa\Database\Factories\MfaChallengeFactory;
 ])]
 #[UseFactory(MfaChallengeFactory::class)]
 #[WithoutIncrementing]
-final class MfaChallenge extends Model implements MfaChallengeInterface
+final class MfaChallenge extends Model implements MfaChallengeInterface, AuditableContract
 {
-
+    use Auditable;
 }

@@ -17,12 +17,15 @@ use Academorix\Database\Concerns\HasSystemFlag;
 use Academorix\Foundation\Concerns\Filterable;
 use Academorix\Foundation\Concerns\HasMetadata;
 use Academorix\Rbac\Policies\PermissionPolicy;
+use Academorix\Tenancy\Concerns\BelongsToTenantOptional;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -49,7 +52,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 #[UseFactory(PermissionFactory::class)]
 #[WithoutIncrementing]
 #[UsePolicy(PermissionPolicy::class)]
-final class Permission extends Model implements PermissionInterface
+final class Permission extends Model implements PermissionInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
@@ -60,6 +63,8 @@ final class Permission extends Model implements PermissionInterface
     use Filterable;
     use Searchable;
     use SoftDeletes;
+    use Auditable;
+    use BelongsToTenantOptional;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

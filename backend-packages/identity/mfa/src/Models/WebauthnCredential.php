@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
@@ -52,7 +54,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 #[UseFactory(WebauthnCredentialFactory::class)]
 #[WithoutIncrementing]
 #[UsePolicy(WebauthnCredentialPolicy::class)]
-final class WebauthnCredential extends Model implements WebauthnCredentialInterface
+final class WebauthnCredential extends Model implements WebauthnCredentialInterface, AuditableContract
 {
     use HasFactory;
     use HasUlids;
@@ -62,6 +64,7 @@ final class WebauthnCredential extends Model implements WebauthnCredentialInterf
     use Filterable;
     use Searchable;
     use SoftDeletes;
+    use Auditable;
 
     /**
      * Cast map — from the blueprint's `x-eloquent.casts`.

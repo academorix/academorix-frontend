@@ -13,7 +13,9 @@ use Illuminate\Database\Eloquent\Attributes\WithoutIncrementing;
 use Illuminate\Database\Eloquent\Model;
 use Academorix\Rbac\Contracts\Data\ModelHasRolesInterface;
 use Academorix\Rbac\Database\Factories\ModelHasRolesFactory;
-
+use Academorix\Tenancy\Concerns\BelongsToTenantOptional;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a ModelHasRoles.
@@ -37,7 +39,8 @@ use Academorix\Rbac\Database\Factories\ModelHasRolesFactory;
 ])]
 #[UseFactory(ModelHasRolesFactory::class)]
 #[WithoutIncrementing]
-final class ModelHasRoles extends Model implements ModelHasRolesInterface
+final class ModelHasRoles extends Model implements ModelHasRolesInterface, AuditableContract
 {
-
+    use Auditable;
+    use BelongsToTenantOptional;
 }

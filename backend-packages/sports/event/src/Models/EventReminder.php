@@ -19,6 +19,8 @@ use Academorix\Foundation\Concerns\HasPrefixedUlid;
 use Academorix\Tenancy\Concerns\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Mattiverse\Userstamps\Traits\Userstamps;
+use OwenIt\Auditing\Auditable;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
 /**
  * Eloquent model for a EventReminder.
@@ -41,7 +43,7 @@ use Mattiverse\Userstamps\Traits\Userstamps;
 ])]
 #[UseFactory(EventReminderFactory::class)]
 #[WithoutIncrementing]
-final class EventReminder extends Model implements EventReminderInterface
+final class EventReminder extends Model implements EventReminderInterface, AuditableContract
 {
     use HasFactory;
     use HasPrefixedUlid;
@@ -49,4 +51,5 @@ final class EventReminder extends Model implements EventReminderInterface
     use HasMetadata;
     use Userstamps;
     use Filterable;
+    use Auditable;
 }
