@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Webhook\Http\Middleware;
+namespace Academorix\Webhook\Middleware;
 
 use Academorix\Routing\Attributes\AsMiddleware;
 use Academorix\Webhook\Exceptions\SignatureVerificationFailedException;

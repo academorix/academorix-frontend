@@ -130,7 +130,7 @@ final class ExceptionsServiceProvider extends AbstractModuleServiceProvider
      *
      * The `exception-context` alias is registered by the Routing
      * package's `#[AsMiddleware]` discovery pass — see
-     * {@see \Academorix\Exceptions\Http\Middleware\CaptureExceptionContext}.
+     * {@see \Academorix\Exceptions\Middleware\CaptureExceptionContext}.
      * Nothing to wire imperatively here.
      */
     protected array $middlewareAliases = [];

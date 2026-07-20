@@ -5,7 +5,7 @@
  *
  * @description
  * Locks in the end-to-end behaviour of
- * {@see \Academorix\Foundation\Http\Middleware\AssignCorrelationId}:
+ * {@see \Academorix\Foundation\Middleware\AssignCorrelationId}:
  * how it accepts / rejects inbound ids, when it mints its own, and
  * how the id is exposed to downstream code via
  * {@see \Academorix\Foundation\Support\CorrelationId::current()}.
@@ -29,7 +29,7 @@
 
 declare(strict_types=1);
 
-use Academorix\Foundation\Http\Middleware\AssignCorrelationId;
+use Academorix\Foundation\Middleware\AssignCorrelationId;
 use Academorix\Foundation\Providers\FoundationServiceProvider;
 use Academorix\Foundation\Support\CorrelationId;
 use Illuminate\Foundation\Http\Events\RequestHandled;

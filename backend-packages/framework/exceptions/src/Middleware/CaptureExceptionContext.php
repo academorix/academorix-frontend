@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file packages/exceptions/src/Http/Middleware/CaptureExceptionContext.php
+ * @file packages/exceptions/src/Middleware/CaptureExceptionContext.php
  *
  * @description
  * Snapshots per-request metadata into a container-scoped array so
@@ -50,7 +50,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Exceptions\Http\Middleware;
+namespace Academorix\Exceptions\Middleware;
 
 use Academorix\Routing\Attributes\AsMiddleware;
 use Closure;

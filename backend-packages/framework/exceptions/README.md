@@ -1,10 +1,9 @@
 # academorix/exceptions
 
-Structured exception hierarchy, translation-aware user messages,
-sensitive-data masking, JSON error renderer, structured log reporter,
-Sentry context enrichment, and Spatie Ignition + `laravel/ai` solution
-providers for every Academorix app and package. Depends on
-[`academorix/foundation`](../foundation).
+Structured exception hierarchy, translation-aware user messages, sensitive-data
+masking, JSON error renderer, structured log reporter, Sentry context
+enrichment, and Spatie Ignition + `laravel/ai` solution providers for every
+Academorix app and package. Depends on [`academorix/foundation`](../foundation).
 
 ## What you get in one line
 
@@ -19,22 +18,27 @@ That single call gives you:
 
 - Every throwable rendered as a uniform RFC 7807-flavoured JSON envelope
 - Every 4xx / 5xx tagged with a stable `errorCode`
-- Sensitive fields (`password`, `token`, `Bearer …`, JWTs, Stripe keys, JWTs, credit cards, emails, ...) redacted from responses, logs, and Sentry events by a shared masker
-- Structured JSON log lines at the correct PSR-3 severity per exception, routed to per-category channels
-- Sentry events enriched with `errorCode`, `category`, `severity`, `correlation_id`, `tenant_id`, `route`
+- Sensitive fields (`password`, `token`, `Bearer …`, JWTs, Stripe keys, JWTs,
+  credit cards, emails, ...) redacted from responses, logs, and Sentry events by
+  a shared masker
+- Structured JSON log lines at the correct PSR-3 severity per exception, routed
+  to per-category channels
+- Sentry events enriched with `errorCode`, `category`, `severity`,
+  `correlation_id`, `tenant_id`, `route`
 - Deterministic Ignition solution hints for our own exception types in dev
-- Opt-in AI-generated fix suggestions via `laravel/ai` (provider-agnostic — OpenAI, Anthropic, Gemini, Ollama, ...)
+- Opt-in AI-generated fix suggestions via `laravel/ai` (provider-agnostic —
+  OpenAI, Anthropic, Gemini, Ollama, ...)
 
 ## Response shape
 
 ```json
 {
   "error": {
-    "type":     "urn:academorix:error:http.validation",
-    "code":     "http.validation",
-    "title":    "Please review the highlighted fields and try again.",
-    "status":   422,
-    "detail":   "Validation failed.",
+    "type": "urn:academorix:error:http.validation",
+    "code": "http.validation",
+    "title": "Please review the highlighted fields and try again.",
+    "status": 422,
+    "detail": "Validation failed.",
     "correlationId": "01H5MZ8...",
     "fields": [
       { "field": "email", "messages": ["Not a valid email address."] }
@@ -47,15 +51,15 @@ That single call gives you:
 }
 ```
 
-In `local` / `testing` / `development` envs the envelope also
-includes `error.meta.context` (masked structured metadata) and
-`error.debug` (class, file, line, first 20 stack frames, previous
-throwable, also masked). Both are suppressed in `staging` / `production`.
+In `local` / `testing` / `development` envs the envelope also includes
+`error.meta.context` (masked structured metadata) and `error.debug` (class,
+file, line, first 20 stack frames, previous throwable, also masked). Both are
+suppressed in `staging` / `production`.
 
 ## Throwing exceptions in your code
 
-Prefer domain-specific classes with named factories. Every class
-inherits `::make()` from the base for the free-form path:
+Prefer domain-specific classes with named factories. Every class inherits
+`::make()` from the base for the free-form path:
 
 ```php
 use Academorix\Exceptions\Http\ValidationException;
@@ -91,28 +95,27 @@ throw ForbiddenException::make('Custom denial reason.')
 ```
 
 Framework throwables you don't own — Laravel's own `ValidationException`,
-`ModelNotFoundException`, Symfony HTTP exceptions — are transparently
-converted by `ExceptionMapper`, so the response shape stays uniform
-even for exceptions you never touched.
+`ModelNotFoundException`, Symfony HTTP exceptions — are transparently converted
+by `ExceptionMapper`, so the response shape stays uniform even for exceptions
+you never touched.
 
 ## Translation
 
 Every exception carries a `TRANSLATION_KEY` constant pointing at
-`exceptions::errors.<path>`. The package ships four locales out of
-the box:
+`exceptions::errors.<path>`. The package ships four locales out of the box:
 
-| Locale | File |
-|---|---|
+| Locale  | File                           |
+| ------- | ------------------------------ |
 | English | `resources/lang/en/errors.php` |
-| French | `resources/lang/fr/errors.php` |
+| French  | `resources/lang/fr/errors.php` |
 | Spanish | `resources/lang/es/errors.php` |
-| Arabic | `resources/lang/ar/errors.php` |
+| Arabic  | `resources/lang/ar/errors.php` |
 
-Placeholders (`:permission`, `:role`, `:resource`, `:rule_id`, `:from`,
-`:to`, `:ability`, ...) are interpolated from the exception's
-`translationReplacements` map, populated by the named factories.
-Missing keys fall through to the exception's literal `$userMessage`
-if set, otherwise to `null` (renderer picks its own default title).
+Placeholders (`:permission`, `:role`, `:resource`, `:rule_id`, `:from`, `:to`,
+`:ability`, ...) are interpolated from the exception's `translationReplacements`
+map, populated by the named factories. Missing keys fall through to the
+exception's literal `$userMessage` if set, otherwise to `null` (renderer picks
+its own default title).
 
 Add a locale:
 
@@ -132,17 +135,16 @@ php artisan vendor:publish --tag=exceptions-translations
 ## Sensitive data masking
 
 The `SensitiveDataMasker` (`Academorix\Exceptions\Support\SensitiveDataMasker`)
-runs at every egress boundary — JSON response, log line, Sentry event.
-It:
+runs at every egress boundary — JSON response, log line, Sentry event. It:
 
-- **Redacts sensitive keys** by case-insensitive substring match
-  (`password`, `secret`, `api_key`, `token`, `bearer`, `ssn`,
-  `card_number`, `cvc`, `stripe_secret`, ...)
-- **Redacts sensitive patterns** in free-form strings (Bearer /
-  Basic auth headers, JWTs, Stripe / GitHub / OpenAI / Slack / AWS
-  keys, credit-card-shaped numbers, emails — partial mask)
-- **Rewrites stack-trace file paths** to repo-relative (strips the
-  container / host path prefix)
+- **Redacts sensitive keys** by case-insensitive substring match (`password`,
+  `secret`, `api_key`, `token`, `bearer`, `ssn`, `card_number`, `cvc`,
+  `stripe_secret`, ...)
+- **Redacts sensitive patterns** in free-form strings (Bearer / Basic auth
+  headers, JWTs, Stripe / GitHub / OpenAI / Slack / AWS keys, credit-card-shaped
+  numbers, emails — partial mask)
+- **Rewrites stack-trace file paths** to repo-relative (strips the container /
+  host path prefix)
 - **Unwraps `#[SensitiveParameter]`** metadata (PHP 8.2+)
 
 Extend via config:
@@ -159,8 +161,8 @@ Extend via config:
 ],
 ```
 
-Temporarily disable masking (support consoles, integration tests
-that need the raw payload):
+Temporarily disable masking (support consoles, integration tests that need the
+raw payload):
 
 ```php
 use Academorix\Exceptions\Support\SensitiveDataMasker;
@@ -170,13 +172,13 @@ $raw = SensitiveDataMasker::reveal(function () use ($masker, $context) {
 });
 ```
 
-`reveal()` is stack-scoped and restores masking on exit, even on
-exception. Never wrap production HTTP handlers with it.
+`reveal()` is stack-scoped and restores masking on exit, even on exception.
+Never wrap production HTTP handlers with it.
 
 ## Structured log reporter
 
-`LogReporter` (`Academorix\Exceptions\Reporting\LogReporter`) writes a
-JSON log line per exception:
+`LogReporter` (`Academorix\Exceptions\Reporting\LogReporter`) writes a JSON log
+line per exception:
 
 ```json
 {
@@ -195,27 +197,26 @@ JSON log line per exception:
 }
 ```
 
-- **PSR-3 level from severity** — Warning/Info stay out of alert
-  channels, Error+ page on-call.
-- **Category-routed channels** — security events to `security`,
-  integration failures to `upstream`, everything else to `daily`.
-  All configurable per-category in `exceptions.log.channels`.
+- **PSR-3 level from severity** — Warning/Info stay out of alert channels,
+  Error+ page on-call.
+- **Category-routed channels** — security events to `security`, integration
+  failures to `upstream`, everything else to `daily`. All configurable
+  per-category in `exceptions.log.channels`.
 - **Masked** — same masker Sentry uses.
-- **Short-circuits Laravel's default reporter** — no duplicate
-  unstructured log lines.
+- **Short-circuits Laravel's default reporter** — no duplicate unstructured log
+  lines.
 
 ## Ignition + AI solutions
 
 Two providers registered when Ignition is installed:
 
-- **`AcademorixSolutionsProvider`** — deterministic hints for our own
-  exception types (`ConfigurationException` → "check Doppler",
-  `IntegrationException` → "check upstream status page", ...)
+- **`AcademorixSolutionsProvider`** — deterministic hints for our own exception
+  types (`ConfigurationException` → "check Doppler", `IntegrationException` →
+  "check upstream status page", ...)
 - **`AcademorixAiSolutionsProvider`** — delegates to the first-party
-  [Laravel AI SDK](https://laravel.com/docs/13.x/ai-sdk). Provider,
-  model, and API keys come from `config/ai.php` — the SDK's own
-  config — so switching from OpenAI to Anthropic to Ollama is a
-  single-line change.
+  [Laravel AI SDK](https://laravel.com/docs/13.x/ai-sdk). Provider, model, and
+  API keys come from `config/ai.php` — the SDK's own config — so switching from
+  OpenAI to Anthropic to Ollama is a single-line change.
 
 Toggle AI suggestions in Doppler:
 
@@ -227,20 +228,20 @@ Then set your provider in `config/ai.php` per the SDK docs.
 
 ## Public API
 
-| Namespace | Purpose |
-|---|---|
-| `Academorix\Exceptions\AcademorixException` | Base class. Provides `::make()`, translation, masking hook, fluent setters. |
-| `Academorix\Exceptions\Enums\ErrorSeverity` | PSR-3 aligned severity. |
-| `Academorix\Exceptions\Enums\ErrorCategory` | Coarse bucket for dashboards. |
-| `Academorix\Exceptions\Support\ExceptionsBootstrap::configure()` | Single-call wiring for `bootstrap/app.php`. |
-| `Academorix\Exceptions\Support\ExceptionMapper` | Framework → Academorix translator. |
-| `Academorix\Exceptions\Support\SensitiveDataMasker` | Redactor used at every egress boundary. |
-| `Academorix\Exceptions\Http\Responses\JsonErrorRenderer` | Invokable JSON response builder. |
-| `Academorix\Exceptions\Http\Middleware\CaptureExceptionContext` | Snapshots request metadata for reporters. |
-| `Academorix\Exceptions\Reporting\LogReporter` | Structured, masked, PSR-3-aware log writer. |
-| `Academorix\Exceptions\Reporting\SentryContextEnricher` | Sentry scope enrichment. |
-| `Academorix\Exceptions\Ignition\AcademorixSolutionsProvider` | Deterministic Ignition solutions. |
-| `Academorix\Exceptions\Ignition\AcademorixAiSolutionsProvider` | AI-powered Ignition solutions via `laravel/ai`. |
+| Namespace                                                        | Purpose                                                                     |
+| ---------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `Academorix\Exceptions\AcademorixException`                      | Base class. Provides `::make()`, translation, masking hook, fluent setters. |
+| `Academorix\Exceptions\Enums\ErrorSeverity`                      | PSR-3 aligned severity.                                                     |
+| `Academorix\Exceptions\Enums\ErrorCategory`                      | Coarse bucket for dashboards.                                               |
+| `Academorix\Exceptions\Support\ExceptionsBootstrap::configure()` | Single-call wiring for `bootstrap/app.php`.                                 |
+| `Academorix\Exceptions\Support\ExceptionMapper`                  | Framework → Academorix translator.                                          |
+| `Academorix\Exceptions\Support\SensitiveDataMasker`              | Redactor used at every egress boundary.                                     |
+| `Academorix\Exceptions\Http\Responses\JsonErrorRenderer`         | Invokable JSON response builder.                                            |
+| `Academorix\Exceptions\Middleware\CaptureExceptionContext`       | Snapshots request metadata for reporters.                                   |
+| `Academorix\Exceptions\Reporting\LogReporter`                    | Structured, masked, PSR-3-aware log writer.                                 |
+| `Academorix\Exceptions\Reporting\SentryContextEnricher`          | Sentry scope enrichment.                                                    |
+| `Academorix\Exceptions\Ignition\AcademorixSolutionsProvider`     | Deterministic Ignition solutions.                                           |
+| `Academorix\Exceptions\Ignition\AcademorixAiSolutionsProvider`   | AI-powered Ignition solutions via `laravel/ai`.                             |
 
 ## Testing
 
@@ -248,7 +249,7 @@ Then set your provider in `config/ai.php` per the SDK docs.
 pnpm turbo run test --filter=@academorix/exceptions
 ```
 
-The full catalogue of shipped classes + the "what to add next" list
-lives in [`RECOMMENDATIONS.md`](./RECOMMENDATIONS.md).
+The full catalogue of shipped classes + the "what to add next" list lives in
+[`RECOMMENDATIONS.md`](./RECOMMENDATIONS.md).
 
 See parent [`docs/package-authoring.md`](../../docs/package-authoring.md).

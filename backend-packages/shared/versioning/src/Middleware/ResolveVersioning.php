@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Versioning\Http\Middleware;
+namespace Academorix\Versioning\Middleware;
 
 use Academorix\Routing\Attributes\AsMiddleware;
 use Academorix\Versioning\Contracts\Services\SunsetHeaderEmitterInterface;

@@ -11,7 +11,7 @@ use Illuminate\Container\Attributes\Scoped;
 /**
  * Request-scoped Application context.
  *
- * Populated by {@see \Academorix\Application\Http\Middleware\ResolveApplication}
+ * Populated by {@see \Academorix\Application\Middleware\ResolveApplication}
  * on every request that carries a resolvable host / `X-Application-Id`
  * header. Every domain module reads through this resolver — never
  * `request()->attribute` scans, never facade lookups.

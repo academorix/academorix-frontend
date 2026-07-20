@@ -28,7 +28,7 @@ use Academorix\Scope\Attributes\AsScopeResolver;
 use Academorix\Scope\Attributes\ScopedTo;
 use Academorix\Scope\Contracts\ScopeResolverChainInterface;
 use Academorix\Scope\Contracts\ScopeResolverInterface;
-use Academorix\Scope\Http\Middleware\ResolveScope;
+use Academorix\Scope\Middleware\ResolveScope;
 use Academorix\Scope\Scopes\ScopedGlobalScope;
 use Academorix\ServiceProvider\Attributes\LoadsResources;
 use Academorix\ServiceProvider\Attributes\AsModule;

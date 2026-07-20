@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Http\Middleware;
+namespace Academorix\Tenancy\Middleware;
 
 use Academorix\Application\Contracts\Repositories\ApplicationRepositoryInterface;
 use Academorix\Application\Models\Application;

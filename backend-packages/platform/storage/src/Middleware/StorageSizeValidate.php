@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Http\Middleware;
+namespace Academorix\Storage\Middleware;
 
 use Academorix\Routing\Attributes\AsMiddleware;
-use Academorix\Storage\Contracts\Services\FileKindRegistryInterface;
+use Academorix\Storage\Contracts\Registries\FileKindRegistryInterface;
 use Academorix\Storage\Enums\FileKind;
 use Closure;
 use Illuminate\Http\JsonResponse;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Entitlements\Http\Middleware;
+namespace Academorix\Entitlements\Middleware;
 
 use Academorix\Entitlements\Contracts\Services\EnforcerInterface;
 use Academorix\Routing\Attributes\AsMiddleware;

@@ -17,7 +17,7 @@ namespace Academorix\Scope\Contracts;
 
 use Academorix\Scope\Data\ScopeContextData;
 use Academorix\Scope\Exceptions\ScopeContextRequiredException;
-use Academorix\Scope\Http\Middleware\ResolveScope;
+use Academorix\Scope\Middleware\ResolveScope;
 use Academorix\Scope\Services\ScopeContext;
 use Illuminate\Container\Attributes\Bind;
 use Illuminate\Container\Attributes\Scoped;

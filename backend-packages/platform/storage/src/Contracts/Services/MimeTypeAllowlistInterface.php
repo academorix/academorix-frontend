@@ -14,7 +14,7 @@ use Illuminate\Container\Attributes\Bind;
  * Reads the `#[FileKind]` recipe from
  * {@see FileKindRegistryInterface} and enforces the per-kind
  * allow-list on every upload. Used by
- * {@see \Academorix\Storage\Http\Middleware\StorageMimeValidate} +
+ * {@see \Academorix\Storage\Middleware\StorageMimeValidate} +
  * the `ValidMimeForKind` validation rule.
  *
  * `#[Bind(DefaultMimeTypeAllowlist::class)]` — Pattern A per

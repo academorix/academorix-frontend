@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Storage\Http\Middleware;
+namespace Academorix\Storage\Middleware;
 
 use Academorix\Routing\Attributes\AsMiddleware;
 use Academorix\Storage\Contracts\Services\MimeTypeAllowlistInterface;

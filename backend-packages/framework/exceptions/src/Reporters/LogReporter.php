@@ -31,7 +31,7 @@ use Throwable;
  *      `error_code`, `category`, `severity`, `correlation_id`,
  *      `retry_after`, plus the exception's own `context()` metadata,
  *      the request context stashed by
- *      {@see \Academorix\Exceptions\Http\Middleware\CaptureExceptionContext},
+ *      {@see \Academorix\Exceptions\Middleware\CaptureExceptionContext},
  *      and a cleaned stack trace.
  *
  *   3. **Masked** — everything runs through the {@see Redactor} +

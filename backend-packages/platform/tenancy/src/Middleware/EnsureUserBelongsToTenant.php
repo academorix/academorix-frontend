@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Tenancy\Http\Middleware;
+namespace Academorix\Tenancy\Middleware;
 
 use Academorix\Routing\Attributes\AsMiddleware;
 use Academorix\Tenancy\Contracts\Services\TenantContextInterface;

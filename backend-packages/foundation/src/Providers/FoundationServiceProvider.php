@@ -11,7 +11,7 @@
  *   - The `correlation-id` middleware alias — registered by the
  *     Routing package's `#[AsMiddleware]` discovery pass, driven
  *     by the attribute on
- *     {@see \Academorix\Foundation\Http\Middleware\AssignCorrelationId}.
+ *     {@see \Academorix\Foundation\Middleware\AssignCorrelationId}.
  *     Nothing to wire imperatively here.
  *   - The default {@see Clock} implementation
  *     ({@see SystemClock}) so packages that depend on the `Clock`
@@ -37,7 +37,7 @@
  * some after). Register from `bootstrap/app.php`:
  *
  *     $middleware->api(prepend: [
- *         \Academorix\Foundation\Http\Middleware\AssignCorrelationId::class,
+ *         \Academorix\Foundation\Middleware\AssignCorrelationId::class,
  *     ]);
  *
  * ## Publish tags
@@ -87,7 +87,7 @@ final class FoundationServiceProvider extends AbstractModuleServiceProvider
      *
      * The `correlation-id` alias is registered by the Routing
      * package's `#[AsMiddleware]` discovery pass — see
-     * {@see \Academorix\Foundation\Http\Middleware\AssignCorrelationId}.
+     * {@see \Academorix\Foundation\Middleware\AssignCorrelationId}.
      * Host apps prepend it to the api middleware group in
      * `bootstrap/app.php` where placement (before CORS, after
      * auth) is app-specific.

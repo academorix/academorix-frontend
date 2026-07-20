@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file packages/foundation/src/Http/Middleware/AssignCorrelationId.php
+ * @file packages/foundation/src/Middleware/AssignCorrelationId.php
  *
  * @description
  * Reads `X-Request-Id` (or `X-Correlation-Id`) from the inbound
@@ -21,7 +21,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Foundation\Http\Middleware;
+namespace Academorix\Foundation\Middleware;
 
 use Academorix\Foundation\Support\CorrelationId;
 use Academorix\Routing\Attributes\AsMiddleware;

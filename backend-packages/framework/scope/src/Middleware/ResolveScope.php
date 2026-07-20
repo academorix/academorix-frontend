@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file src/Http/Middleware/ResolveScope.php
+ * @file src/Middleware/ResolveScope.php
  *
  * @description
  * Middleware that walks the resolver chain, sets the active
@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Academorix\Scope\Http\Middleware;
+namespace Academorix\Scope\Middleware;
 
 use Academorix\Scope\Contracts\ScopeContextInterface;
 use Academorix\Scope\Contracts\ScopeResolverChainInterface;
